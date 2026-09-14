@@ -22,7 +22,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// 2. ModelをViewModelに変換（Presentation層内の変換）
+	// 2. ModelをViewModelに変換 (Presentation層内の変換)
 	viewWorks := viewmodel.NewWorksFromModels(result.Works, h.imageHelper)
 
 	// コンテキストからユーザー情報を取得してviewmodelに変換
@@ -36,7 +36,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "popular_anime") // "人気アニメ | Annict" / "Popular Anime | Annict"
 
-	// 3. テンプレートにViewModelを渡す（templ使用）
+	// 3. テンプレートにViewModelを渡す (templ使用)
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	component := layouts.Default(
 		ctx,

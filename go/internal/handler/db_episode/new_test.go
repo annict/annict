@@ -15,11 +15,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// newNewRequest builds a GET request for a work's bulk-create form with the work_id URL
-// parameter chi would have extracted from the route pattern.
-//
-// [Ja] newNewRequest はある作品の一括作成フォームへの GET リクエストを、chi がルートパターン
-// から取り出す work_id の URL パラメータ付きで組み立てる。
+// newNewRequestはある作品の一括作成フォームへのGETリクエストを、chiがルートパターン
+// から取り出すwork_idのURLパラメータ付きで組み立てる。
 func newNewRequest(workID model.WorkID) *http.Request {
 	req := httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/episodes/new", int64(workID)), nil)
 
@@ -42,7 +39,7 @@ func TestNew(t *testing.T) {
 	handler.New(rr, newNewRequest(workID))
 
 	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 	}
 
 	body := rr.Body.String()
@@ -50,14 +47,10 @@ func TestNew(t *testing.T) {
 	expectedContents := []string{
 		"<title>エピソード登録 | テストアニメ | Annict DB</title>",
 		fmt.Sprintf(`<meta property="og:url" content="https://test.annict.com/db/works/%d/episodes/new">`, int64(workID)),
-		// The heading names the parent work, and the shared subnav links back to its form.
-		//
-		// [Ja] 見出しは親作品を名指しし、共有のサブナビはそのフォームへ戻るリンクを持つ。
+		// 見出しは親作品を名指しし、共有のサブナビはそのフォームへ戻るリンクを持つ。
 		"テストアニメ",
 		fmt.Sprintf(`href="/db/works/%d/edit"`, int64(workID)),
-		// The form posts the lines to the work's episode collection.
-		//
-		// [Ja] フォームは行を作品のエピソードコレクションへ POST する。
+		// フォームは行を作品のエピソードコレクションへPOSTする。
 		fmt.Sprintf(`action="/db/works/%d/episodes"`, int64(workID)),
 		`method="POST"`,
 		`name="csrf_token"`,
@@ -67,7 +60,7 @@ func TestNew(t *testing.T) {
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("レスポンスに %q が含まれていません", expected)
+			t.Errorf("レスポンスに%qが含まれていません", expected)
 		}
 	}
 }
@@ -111,25 +104,22 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 			rr := httptest.NewRecorder()
 			handler.New(rr, withCreateTestUser(newNewRequest(workID), tt.user))
 			if rr.Code != http.StatusOK {
-				t.Fatalf("status = %d, want 200", rr.Code)
+				t.Fatalf("ステータスコード = %d、期待値 = 200", rr.Code)
 			}
 			body := rr.Body.String()
-			// The editor heading is a suffix of the admin one, so the whole element is matched:
-			// substring alone would let the admin wording satisfy the editor case.
-			//
-			// [Ja] 編集者向けの見出しは管理者向けの見出しの後方一致になるため、要素全体で
+			// 編集者向けの見出しは管理者向けの見出しの後方一致になるため、要素全体で
 			// 照合する。部分一致だけでは管理者向けの文言でも編集者のケースが通ってしまう。
 			if !strings.Contains(body, "<h2>"+tt.wantTitle+"</h2>") {
-				t.Errorf("手動作成制限の警告の見出しが %q ではありません", tt.wantTitle)
+				t.Errorf("手動作成制限の警告の見出しが%qではありません", tt.wantTitle)
 			}
 			if !strings.Contains(body, "話数分のエピソード") || !strings.Contains(body, tt.wantMessage) {
-				t.Errorf("手動作成制限の警告に %q が含まれていません", tt.wantMessage)
+				t.Errorf("手動作成制限の警告に%qが含まれていません", tt.wantMessage)
 			}
 			if got := strings.Contains(body, "readonly"); got != tt.wantReadonly {
-				t.Errorf("readonly = %v, want %v", got, tt.wantReadonly)
+				t.Errorf("readonly = %v、期待値 = %v", got, tt.wantReadonly)
 			}
 			if got := strings.Contains(body, "disabled"); got != tt.wantReadonly {
-				t.Errorf("disabled = %v, want %v", got, tt.wantReadonly)
+				t.Errorf("disabled = %v、期待値 = %v", got, tt.wantReadonly)
 			}
 		})
 	}
@@ -152,7 +142,7 @@ func TestNew_NotFound(t *testing.T) {
 		handler.New(rr, newNewRequest(model.WorkID(999999999)))
 
 		if status := rr.Code; status != http.StatusNotFound {
-			t.Errorf("status code: got %v want %v", status, http.StatusNotFound)
+			t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 		}
 		assertNotFoundPage(t, rr)
 	})
@@ -162,12 +152,12 @@ func TestNew_NotFound(t *testing.T) {
 		handler.New(rr, newNewRequest(deletedWorkID))
 
 		if status := rr.Code; status != http.StatusNotFound {
-			t.Errorf("status code: got %v want %v", status, http.StatusNotFound)
+			t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 		}
 		assertNotFoundPage(t, rr)
 	})
 
-	t.Run("数値でない work_id", func(t *testing.T) {
+	t.Run("数値でないwork_id", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/db/works/abc/episodes/new", nil)
 		routeCtx := chi.NewRouteContext()
 		routeCtx.URLParams.Add("work_id", "abc")
@@ -177,18 +167,14 @@ func TestNew_NotFound(t *testing.T) {
 		handler.New(rr, req)
 
 		if status := rr.Code; status != http.StatusNotFound {
-			t.Errorf("status code: got %v want %v", status, http.StatusNotFound)
+			t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 		}
 		assertNotFoundPage(t, rr)
 	})
 }
 
-// TestNew_RequiresCommitter verifies the bulk-create form is protected by the committer role
-// (committer proceeds, a regular user 403, an unauthenticated request is redirected to
-// sign-in).
-//
-// [Ja] TestNew_RequiresCommitter は一括作成フォームが committer ロールで保護されていることを
-// 検証する (committer は処理続行、一般ユーザーは 403、未認証はサインインへリダイレクト)。
+// TestNew_RequiresCommitterは一括作成フォームがcommitterロールで保護されていることを
+// 検証する (committerは処理続行、一般ユーザーは403、未認証はサインインへリダイレクト)。
 func TestNew_RequiresCommitter(t *testing.T) {
 	t.Parallel()
 
@@ -220,7 +206,7 @@ func TestNew_RequiresCommitter(t *testing.T) {
 			r.ServeHTTP(rr, req)
 
 			if rr.Code != tt.wantStatus {
-				t.Errorf("status = %d, want %d", rr.Code, tt.wantStatus)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatus)
 			}
 		})
 	}

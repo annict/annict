@@ -35,11 +35,7 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	workRepo := repository.NewWorkRepository(queries)
 	episodeRepo := repository.NewEpisodeRepository(queries)
 
-	// The create, update and delete usecases open their own transactions, so they are wired
-	// against the pool rather than the test transaction. Their tests clean the committed rows
-	// up themselves.
-	//
-	// [Ja] 作成・更新・削除 UseCase は自前のトランザクションを開くため、テスト用トランザクション
+	// 作成・更新・削除UseCaseは自前のトランザクションを開くため、テスト用トランザクション
 	// ではなくプールに対して組み立てる。コミットされた行はそのテスト側で後始末する。
 	createEpisodesUC := usecase.NewCreateEpisodesUsecase(
 		db,
@@ -75,11 +71,8 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	)
 }
 
-// newIndexRequest builds a GET request for a work's episode list with the work_id URL
-// parameter chi would have extracted from the route pattern.
-//
-// [Ja] newIndexRequest はある作品のエピソード一覧への GET リクエストを、chi がルートパターン
-// から取り出す work_id の URL パラメータ付きで組み立てる。
+// newIndexRequestはある作品のエピソード一覧へのGETリクエストを、chiがルートパターン
+// から取り出すwork_idのURLパラメータ付きで組み立てる。
 func newIndexRequest(workID model.WorkID, query string) *http.Request {
 	path := fmt.Sprintf("/db/works/%d/episodes", int64(workID))
 	req := httptest.NewRequest("GET", path+query, nil)
@@ -107,21 +100,16 @@ func TestIndex(t *testing.T) {
 	handler.Index(rr, newIndexRequest(workID, ""))
 
 	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
 	expectedContents := []string{
-		// The DB pages carry the " | Annict DB" title suffix so they stay distinguishable
-		// from the public pages in browser tabs.
-		//
-		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
+		// DBのページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
 		// タイトルサフィックスを持つ。
 		"<title>エピソード | テストアニメ | Annict DB</title>",
-		// The heading names the parent work, and the subnav links back to its form.
-		//
-		// [Ja] 見出しは親作品を名指しし、サブナビはそのフォームへ戻るリンクを持つ。
+		// 見出しは親作品を名指しし、サブナビはそのフォームへ戻るリンクを持つ。
 		"テストアニメ",
 		fmt.Sprintf(`href="/db/works/%d/edit"`, int64(workID)),
 		"<table",
@@ -129,31 +117,23 @@ func TestIndex(t *testing.T) {
 		"<tbody",
 		"第1話",
 		"はじまり",
-		// The ID column links to the episode's public page in a new tab.
-		//
-		// [Ja] ID 列はエピソードの公開ページを新しいタブで開くリンクになる。
+		// ID列はエピソードの公開ページを新しいタブで開くリンクになる。
 		fmt.Sprintf(`href="/works/%d/episodes/%d"`, int64(workID), int64(episodeID)),
 		`target="_blank"`,
 		fmt.Sprintf(`aria-label="エピソード %d を新しいタブで開く"`, int64(episodeID)),
-		// A published episode shows the published badge.
-		//
-		// [Ja] 公開中のエピソードには公開のバッジが出る。
+		// 公開中のエピソードには公開のバッジが出る。
 		`<span class="badge" data-variant="success">公開</span>`,
 	}
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("レスポンスに %q が含まれていません", expected)
+			t.Errorf("レスポンスに%qが含まれていません", expected)
 		}
 	}
 }
 
-// TestIndex_NewEpisodesLinkIsCommitterOnly covers the way into the bulk-create form. The list
-// is public, so the link is shown to committers and withheld from everyone else rather than
-// offering a link that answers with a 403.
-//
-// [Ja] TestIndex_NewEpisodesLinkIsCommitterOnly は一括作成フォームへの導線を検証する。一覧は
-// 公開のため、リンクは committer にだけ出し、それ以外には出さない。403 が返るだけのリンクを
+// TestIndex_NewEpisodesLinkIsCommitterOnlyは一括作成フォームへの導線を検証する。一覧は
+// 公開のため、リンクはcommitterにだけ出し、それ以外には出さない。403が返るだけのリンクを
 // 出さないようにするため。
 func TestIndex_NewEpisodesLinkIsCommitterOnly(t *testing.T) {
 	t.Parallel()
@@ -164,12 +144,8 @@ func TestIndex_NewEpisodesLinkIsCommitterOnly(t *testing.T) {
 	handler := newTestHandler(t, db, tx)
 
 	newLink := fmt.Sprintf(`href="/db/works/%d/episodes/new"`, int64(workID))
-	// actionsContainer is the wrapper the heading renders around its actions. A viewer with no
-	// action must not get it either: an empty wrapper is a full-width flex row of its own at
-	// mobile widths, so it would add a gap under the heading of the public list.
-	//
-	// [Ja] actionsContainer は見出しが操作の周りに描画するラッパー。操作の無い閲覧者にはこれも
-	// 出さない。空のラッパーはモバイル幅では単独で全幅の flex 行になり、公開されている一覧の
+	// actionsContainerは見出しが操作の周りに描画するラッパー。操作の無い閲覧者にはこれも
+	// 出さない。空のラッパーはモバイル幅では単独で全幅のflex行になり、公開されている一覧の
 	// 見出しの下に余白を足してしまうため。
 	actionsContainer := `<div class="flex w-full flex-none justify-end gap-2 md:w-auto">`
 
@@ -193,27 +169,22 @@ func TestIndex_NewEpisodesLinkIsCommitterOnly(t *testing.T) {
 			handler.Index(rr, req)
 
 			if status := rr.Code; status != http.StatusOK {
-				t.Fatalf("status code: got %v want %v", status, http.StatusOK)
+				t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 			}
 			body := rr.Body.String()
 			if got := strings.Contains(body, newLink); got != tt.wantLink {
-				t.Errorf("一括作成フォームへのリンクの有無 = %v, want %v", got, tt.wantLink)
+				t.Errorf("一括作成フォームへのリンクの有無 = %v、期待値 = %v", got, tt.wantLink)
 			}
 			if got := strings.Contains(body, actionsContainer); got != tt.wantLink {
-				t.Errorf("見出しの操作コンテナの有無 = %v, want %v", got, tt.wantLink)
+				t.Errorf("見出しの操作コンテナの有無 = %v、期待値 = %v", got, tt.wantLink)
 			}
 		})
 	}
 }
 
-// TestIndex_ActionColumnFollowsViewerRole covers the per-row action column end to end: the
-// list is public, so the viewer's role decides which controls the page renders. The edit,
-// unpublish and publish actions are for committers and the delete action for admins, matching
-// the middleware guarding each endpoint, so the page never offers a control that answers 403.
-//
-// [Ja] TestIndex_ActionColumnFollowsViewerRole は行ごとの操作列を通しで検証する。一覧は公開の
-// ため、閲覧者のロールがどのコントロールを描画するかを決める。編集・非公開・公開は committer、
-// 削除は admin の操作で、各エンドポイントを守る middleware と揃う。これにより 403 が返るだけの
+// TestIndex_ActionColumnFollowsViewerRoleは行ごとの操作列を通しで検証する。一覧は公開の
+// ため、閲覧者のロールがどのコントロールを描画するかを決める。編集・非公開・公開はcommitter、
+// 削除はadminの操作で、各エンドポイントを守るmiddlewareと揃う。これにより403が返るだけの
 // コントロールを出さない。
 func TestIndex_ActionColumnFollowsViewerRole(t *testing.T) {
 	t.Parallel()
@@ -257,12 +228,8 @@ func TestIndex_ActionColumnFollowsViewerRole(t *testing.T) {
 			if tt.user != nil {
 				req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, tt.user))
 
-				// The role in context drives visibility, while the persisted login session supplies
-				// the CSRF token used by the rendered htmx requests. Keep both parts of the real
-				// request wiring in this handler-level test.
-				//
-				// [Ja] コンテキスト内のロールが表示を決め、永続化したログインセッションが描画後の
-				// htmx リクエスト用 CSRF トークンを供給する。実リクエストの両方の配線をこの
+				// コンテキスト内のロールが表示を決め、永続化したログインセッションが描画後の
+				// htmxリクエスト用CSRFトークンを供給する。実リクエストの両方の配線をこの
 				// ハンドラーレベルのテストで通す。
 				sessionRecorder := httptest.NewRecorder()
 				if err := sessionManager.CreateSession(req.Context(), sessionRecorder, req, tt.user.ID); err != nil {
@@ -277,56 +244,49 @@ func TestIndex_ActionColumnFollowsViewerRole(t *testing.T) {
 					}
 				}
 				if sessionCookie == nil {
-					t.Fatal("セッション Cookie が設定されていません")
+					t.Fatal("セッションCookieが設定されていません")
 				}
 				req.AddCookie(sessionCookie)
 
 				csrfToken = authMiddleware.GetCSRFToken(req, sessionManager)
 				if csrfToken == "" {
-					t.Fatal("セッションから空でない CSRF トークンを取得できませんでした")
+					t.Fatal("セッションから空でないCSRFトークンを取得できませんでした")
 				}
 			}
 			rr := httptest.NewRecorder()
 			handler.Index(rr, req)
 
 			if status := rr.Code; status != http.StatusOK {
-				t.Fatalf("status code: got %v want %v", status, http.StatusOK)
+				t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 			}
 			body := rr.Body.String()
 
 			for _, control := range []string{editLink, archiveLink, publishButton} {
 				if got := strings.Contains(body, control); got != tt.wantCommitterOnly {
-					t.Errorf("%q の有無 = %v, want %v", control, got, tt.wantCommitterOnly)
+					t.Errorf("%qの有無 = %v、期待値 = %v", control, got, tt.wantCommitterOnly)
 				}
 			}
 			if got := strings.Contains(body, deleteButton); got != tt.wantAdminOnly {
-				t.Errorf("%q の有無 = %v, want %v", deleteButton, got, tt.wantAdminOnly)
+				t.Errorf("%qの有無 = %v、期待値 = %v", deleteButton, got, tt.wantAdminOnly)
 			}
-			// The column header rides with the controls: a viewer with no action gets no
-			// column at all rather than a column of empty cells.
-			//
-			// [Ja] 列の見出しはコントロールと同じ条件で出る。操作の無い閲覧者には、空の
+			// 列の見出しはコントロールと同じ条件で出る。操作の無い閲覧者には、空の
 			// セルが並ぶ列ではなく列そのものを出さない。
 			wantHeader := tt.wantCommitterOnly || tt.wantAdminOnly
 			if got := strings.Contains(body, `<th scope="col" class="text-center">操作</th>`); got != wantHeader {
-				t.Errorf("操作列の見出しの有無 = %v, want %v", got, wantHeader)
+				t.Errorf("操作列の見出しの有無 = %v、期待値 = %v", got, wantHeader)
 			}
 			if wantHeader {
 				wantCSRFHeader := fmt.Sprintf(`hx-headers="{&#34;X-CSRF-Token&#34;:&#34;%s&#34;}"`, csrfToken)
 				if !strings.Contains(body, wantCSRFHeader) {
-					t.Errorf("操作ボタンにセッションの CSRF トークンが含まれていません: %q", wantCSRFHeader)
+					t.Errorf("操作ボタンにセッションのCSRFトークンが含まれていません: %q", wantCSRFHeader)
 				}
 			}
 		})
 	}
 }
 
-// TestIndex_ShowsGenerationNoticeAndDerivedColumns covers the information the page carries
-// beyond the episodes themselves: the auto-generation notice the editor plans by, and the
-// two per-row columns the list derives (the preceding episode and the records count).
-//
-// [Ja] TestIndex_ShowsGenerationNoticeAndDerivedColumns は、エピソードそのもの以外にページが
-// 運ぶ情報を検証する。編集者が計画に使う自動生成の案内と、一覧が行ごとに導出する 2 つの列
+// TestIndex_ShowsGenerationNoticeAndDerivedColumnsは、エピソードそのもの以外にページが
+// 運ぶ情報を検証する。編集者が計画に使う自動生成の案内と、一覧が行ごとに導出する2つの列
 // (直前のエピソードと記録数)。
 func TestIndex_ShowsGenerationNoticeAndDerivedColumns(t *testing.T) {
 	t.Parallel()
@@ -349,26 +309,20 @@ func TestIndex_ShowsGenerationNoticeAndDerivedColumns(t *testing.T) {
 	handler.Index(rr, newIndexRequest(workID, ""))
 
 	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
 	expectedContents := []string{
-		// The notice reports the work's expected total, its published episodes and how many
-		// episodes auto-generation produces.
-		//
-		// [Ja] 案内は作品の予定総話数・公開中のエピソード数・自動生成されるエピソード数を報告する。
+		// 案内は作品の予定総話数・公開中のエピソード数・自動生成されるエピソード数を報告する。
 		"<dt>予定総話数</dt>",
 		`<dd class="text-card-foreground">12</dd>`,
 		"<dt>公開中のエピソード数</dt>",
 		`<dd class="text-card-foreground">2</dd>`,
 		"<dt>自動生成されるエピソード数</dt>",
 		`<dd class="text-card-foreground">9</dd>`,
-		// The second episode names the first one as its preceding episode, and carries
-		// its records count.
-		//
-		// [Ja] 第2話は直前のエピソードとして第1話を名指しし、記録数を持つ。
+		// 第2話は直前のエピソードとして第1話を名指しし、記録数を持つ。
 		"前のエピソード",
 		`<td class="whitespace-normal [overflow-wrap:anywhere]">第1話</td>`,
 		"<td>42</td>",
@@ -376,17 +330,13 @@ func TestIndex_ShowsGenerationNoticeAndDerivedColumns(t *testing.T) {
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("レスポンスに %q が含まれていません", expected)
+			t.Errorf("レスポンスに%qが含まれていません", expected)
 		}
 	}
 }
 
-// insertEpisodeForIndex creates an episode with an explicit sort_number and records count.
-// The shared EpisodeBuilder fixes both, and the list derives the preceding episode from
-// sort_number order, so the rows this test orders are inserted directly.
-//
-// [Ja] insertEpisodeForIndex は sort_number と記録数を明示してエピソードを作成する。共有の
-// EpisodeBuilder はどちらも固定しており、一覧は直前のエピソードを sort_number 順から導出する
+// insertEpisodeForIndexはsort_numberと記録数を明示してエピソードを作成する。共有の
+// EpisodeBuilderはどちらも固定しており、一覧は直前のエピソードをsort_number順から導出する
 // ため、順序を問うこのテストの行は直接挿入する。
 func insertEpisodeForIndex(t *testing.T, tx *sql.Tx, workID model.WorkID, number string, sortNumber, episodeRecordsCount int32) {
 	t.Helper()
@@ -422,7 +372,7 @@ func TestIndex_ExcludesDeletedEpisodes(t *testing.T) {
 	handler.Index(rr, newIndexRequest(workID, ""))
 
 	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 	}
 
 	body := rr.Body.String()
@@ -455,7 +405,7 @@ func TestIndex_NotFound(t *testing.T) {
 		handler.Index(rr, newIndexRequest(model.WorkID(999999999), ""))
 
 		if status := rr.Code; status != http.StatusNotFound {
-			t.Errorf("status code: got %v want %v", status, http.StatusNotFound)
+			t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 		}
 		assertNotFoundPage(t, rr)
 	})
@@ -465,12 +415,12 @@ func TestIndex_NotFound(t *testing.T) {
 		handler.Index(rr, newIndexRequest(deletedWorkID, ""))
 
 		if status := rr.Code; status != http.StatusNotFound {
-			t.Errorf("status code: got %v want %v", status, http.StatusNotFound)
+			t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 		}
 		assertNotFoundPage(t, rr)
 	})
 
-	t.Run("数値でない work_id", func(t *testing.T) {
+	t.Run("数値でないwork_id", func(t *testing.T) {
 		req := httptest.NewRequest("GET", "/db/works/abc/episodes", nil)
 		routeCtx := chi.NewRouteContext()
 		routeCtx.URLParams.Add("work_id", "abc")
@@ -480,7 +430,7 @@ func TestIndex_NotFound(t *testing.T) {
 		handler.Index(rr, req)
 
 		if status := rr.Code; status != http.StatusNotFound {
-			t.Errorf("status code: got %v want %v", status, http.StatusNotFound)
+			t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 		}
 		assertNotFoundPage(t, rr)
 	})
@@ -490,7 +440,7 @@ func assertNotFoundPage(t *testing.T, rr *httptest.ResponseRecorder) {
 	t.Helper()
 
 	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
-		t.Errorf("Content-Type = %q, want text/html; charset=utf-8", contentType)
+		t.Errorf("Content-Type = %q、期待値 = text/html; charset=utf-8", contentType)
 	}
 
 	body := rr.Body.String()
@@ -501,7 +451,7 @@ func assertNotFoundPage(t *testing.T, rr *httptest.ResponseRecorder) {
 		"ホームに戻る",
 	} {
 		if !strings.Contains(body, expected) {
-			t.Errorf("404 レスポンスに %q が含まれていません", expected)
+			t.Errorf("404レスポンスに%qが含まれていません", expected)
 		}
 	}
 }
@@ -555,19 +505,15 @@ func TestSetIndexTitle(t *testing.T) {
 			setIndexTitle(ctx, &meta, viewmodel.DBEpisodeListWorkName(tt.workTitle), tt.page)
 
 			if meta.Title != tt.want {
-				t.Errorf("meta.Title = %q, want %q", meta.Title, tt.want)
+				t.Errorf("meta.Title = %q、期待値 = %q", meta.Title, tt.want)
 			}
 		})
 	}
 }
 
-// canonicalTag builds the og:url tag a work's episode list carries for the given query. The
-// DB pages carry their representative URL as og:url (DBHead leaves out the canonical link,
-// since robots.txt disallows these pages), so the assertions read that tag.
-//
-// [Ja] canonicalTag は、ある作品のエピソード一覧が指定のクエリで持つ og:url タグを組み立てる。
-// DB のページは代表 URL を og:url として持つ (robots.txt でクロールを禁止しているため DBHead
-// は canonical のリンクを出さない)。そのためこのタグを検証する。
+// canonicalTagは、ある作品のエピソード一覧が指定のクエリで持つog:urlタグを組み立てる。
+// DBのページは代表URLをog:urlとして持つ (robots.txtでクロールを禁止しているためDBHead
+// はcanonicalのリンクを出さない)。そのためこのタグを検証する。
 func canonicalTag(workID model.WorkID, query string) string {
 	return fmt.Sprintf(`<meta property="og:url" content="https://test.annict.com/db/works/%d/episodes%s">`, int64(workID), query)
 }
@@ -588,14 +534,10 @@ func TestIndex_Pagination(t *testing.T) {
 		wantCanonical string
 		wantTitle     string
 	}{
-		// The first page and its ?page=1 form share one representative URL.
-		//
-		// [Ja] 1 ページ目と ?page=1 の形は 1 つの代表 URL を共有する。
+		// 1ページ目と ?page=1の形は1つの代表URLを共有する。
 		{name: "ページ指定なし", query: "", wantCanonical: canonicalTag(workID, ""), wantTitle: "エピソード | テストアニメ | Annict DB"},
-		{name: "page=1", query: "?page=1", wantCanonical: canonicalTag(workID, ""), wantTitle: "エピソード | テストアニメ | Annict DB"},
-		// A page number that is not a positive integer falls back to the first page.
-		//
-		// [Ja] 正の整数でないページ番号は 1 ページ目にフォールバックする。
+		{name: "1ページ目の明示指定", query: "?page=1", wantCanonical: canonicalTag(workID, ""), wantTitle: "エピソード | テストアニメ | Annict DB"},
+		// 正の整数でないページ番号は1ページ目にフォールバックする。
 		{name: "不正なページ番号", query: "?page=abc", wantCanonical: canonicalTag(workID, ""), wantTitle: "エピソード | テストアニメ | Annict DB"},
 	}
 
@@ -605,24 +547,21 @@ func TestIndex_Pagination(t *testing.T) {
 			handler.Index(rr, newIndexRequest(workID, tt.query))
 
 			if status := rr.Code; status != http.StatusOK {
-				t.Fatalf("status code: got %v want %v", status, http.StatusOK)
+				t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 			}
 
 			if !strings.Contains(rr.Body.String(), tt.wantCanonical) {
-				t.Errorf("canonical URL に %q が含まれていません", tt.wantCanonical)
+				t.Errorf("canonical URLに%qが含まれていません", tt.wantCanonical)
 			}
 
 			if !strings.Contains(rr.Body.String(), "<title>"+tt.wantTitle+"</title>") {
-				t.Errorf("title に %q が含まれていません", tt.wantTitle)
+				t.Errorf("titleに%qが含まれていません", tt.wantTitle)
 			}
 		})
 	}
 }
 
-// TestIndex_SecondPage covers a page number the work really has: the representative URL and
-// the document title name that page, and only the rows belonging to it are listed.
-//
-// [Ja] TestIndex_SecondPage は作品が実際に持つページ番号を検証する。代表 URL と文書タイトルが
+// TestIndex_SecondPageは作品が実際に持つページ番号を検証する。代表URLと文書タイトルが
 // そのページを名乗り、そのページに属する行だけが並ぶ。
 func TestIndex_SecondPage(t *testing.T) {
 	t.Parallel()
@@ -631,13 +570,9 @@ func TestIndex_SecondPage(t *testing.T) {
 
 	workID := testutil.NewWorkBuilder(t, tx).WithTitle("テストアニメ").Build()
 
-	// One episode past the 100-per-page boundary, so the second page holds exactly the
-	// lowest-sorted one. The rows go in with a single statement: the builder inserts one row
-	// per call, and the list order here depends on sort_number, which it fixes.
-	//
-	// [Ja] 1 ページ 100 件の境界をちょうど 1 件超える件数を入れ、2 ページ目に並び順が最も
-	// 小さい 1 件だけが載るようにする。行は 1 文で投入する。ビルダーは 1 回の呼び出しにつき
-	// 1 行を挿入するうえ、ここでの一覧の並びはビルダーが固定する sort_number に依存するため。
+	// 1ページ100件の境界をちょうど1件超える件数を入れ、2ページ目に並び順が最も
+	// 小さい1件だけが載るようにする。行は1文で投入する。ビルダーは1回の呼び出しにつき
+	// 1行を挿入するうえ、ここでの一覧の並びはビルダーが固定するsort_numberに依存するため。
 	if _, err := tx.Exec(`
 		INSERT INTO episodes (work_id, number, sort_number, created_at, updated_at)
 		SELECT $1, '第' || i || '話', i, NOW(), NOW()
@@ -652,7 +587,7 @@ func TestIndex_SecondPage(t *testing.T) {
 	handler.Index(rr, newIndexRequest(workID, "?page=2"))
 
 	if status := rr.Code; status != http.StatusOK {
-		t.Fatalf("status code: got %v want %v", status, http.StatusOK)
+		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 	}
 
 	body := rr.Body.String()
@@ -660,28 +595,21 @@ func TestIndex_SecondPage(t *testing.T) {
 	for _, expected := range []string{
 		canonicalTag(workID, "?page=2"),
 		"<title>エピソード (2ページ目) | テストアニメ | Annict DB</title>",
-		// sort_number ascends with the episode number and the list is sorted descending, so
-		// the second page holds the first episode alone.
-		//
-		// [Ja] sort_number は話数とともに増え、一覧は降順に並ぶため、2 ページ目には第1話が
-		// 1 件だけ載る。
+		// sort_numberは話数とともに増え、一覧は降順に並ぶため、2ページ目には第1話が
+		// 1件だけ載る。
 		"第1話",
 	} {
 		if !strings.Contains(body, expected) {
-			t.Errorf("レスポンスに %q が含まれていません", expected)
+			t.Errorf("レスポンスに%qが含まれていません", expected)
 		}
 	}
 
 	if strings.Contains(body, "第101話") {
-		t.Error("1 ページ目のエピソードが 2 ページ目に含まれています")
+		t.Error("1ページ目のエピソードが2ページ目に含まれています")
 	}
 }
 
-// TestIndex_PageBeyondLastRedirects covers page numbers past the end of the list. Rendering
-// them would leave the reader on an empty list that names a page the work does not have, with
-// the pagination dropped alongside the table, so they are sent to the last page instead.
-//
-// [Ja] TestIndex_PageBeyondLastRedirects は一覧の末尾を超えるページ番号を検証する。そのまま
+// TestIndex_PageBeyondLastRedirectsは一覧の末尾を超えるページ番号を検証する。そのまま
 // 描画すると、作品が持たないページ番号を名乗る空の一覧に着地し、テーブルと一緒に
 // ページネーションも落ちてしまうため、代わりに最後のページへ送る。
 func TestIndex_PageBeyondLastRedirects(t *testing.T) {
@@ -714,10 +642,7 @@ func TestIndex_PageBeyondLastRedirects(t *testing.T) {
 			query:        fmt.Sprintf("?page=%d", math.MaxInt32),
 			wantLocation: fmt.Sprintf("/db/works/%d/episodes", int64(withEpisodeID)),
 		},
-		// A work with no episodes still has a first page, so its empty list stays reachable
-		// at the path without a page number.
-		//
-		// [Ja] エピソードが無い作品も 1 ページ目は持つため、空の一覧はページ番号なしのパスで
+		// エピソードが無い作品も1ページ目は持つため、空の一覧はページ番号なしのパスで
 		// 見られる。
 		{
 			name:         "エピソードが無い作品",
@@ -733,10 +658,10 @@ func TestIndex_PageBeyondLastRedirects(t *testing.T) {
 			handler.Index(rr, newIndexRequest(tt.workID, tt.query))
 
 			if status := rr.Code; status != http.StatusFound {
-				t.Fatalf("status code: got %v want %v", status, http.StatusFound)
+				t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusFound)
 			}
 			if location := rr.Header().Get("Location"); location != tt.wantLocation {
-				t.Errorf("Location = %q, want %q", location, tt.wantLocation)
+				t.Errorf("リダイレクト先 = %q、期待値 = %q", location, tt.wantLocation)
 			}
 		})
 	}
@@ -763,7 +688,7 @@ func TestLastPageNumber(t *testing.T) {
 			t.Parallel()
 
 			if got := lastPageNumber(tt.totalCount, tt.perPage); got != tt.want {
-				t.Errorf("lastPageNumber(%d, %d) = %d, want %d", tt.totalCount, tt.perPage, got, tt.want)
+				t.Errorf("lastPageNumber(%d, %d) = %d、期待値 = %d", tt.totalCount, tt.perPage, got, tt.want)
 			}
 		})
 	}

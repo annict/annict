@@ -28,41 +28,41 @@ func TestPasswordResetSender_Send(t *testing.T) {
 			ctx := context.Background()
 			err := sender.Send(ctx, "test@example.com", "https://annict.com/password/reset?token=abc", tt.locale)
 			if err != nil {
-				t.Fatalf("Send() error = %v", err)
+				t.Fatalf("Send()のエラー = %v", err)
 			}
 
 			if len(noop.SentEmails) != 1 {
-				t.Fatalf("SentEmails length = %d, want 1", len(noop.SentEmails))
+				t.Fatalf("SentEmailsの件数 = %d、期待値 = 1", len(noop.SentEmails))
 			}
 
 			sent := noop.SentEmails[0]
 			if sent.To != "test@example.com" {
-				t.Errorf("To = %s, want test@example.com", sent.To)
+				t.Errorf("To = %s、期待値 = test@example.com", sent.To)
 			}
 			if sent.Subject == "" {
-				t.Error("Subject が空です")
+				t.Error("Subjectが空です")
 			}
 
 			if sent.HTMLBody == nil {
-				t.Fatal("HTMLBody が nil です")
+				t.Fatal("HTMLBodyがnilです")
 			}
 			var htmlBuf bytes.Buffer
 			if err := sent.HTMLBody.Render(ctx, &htmlBuf); err != nil {
-				t.Fatalf("HTMLBody.Render() error = %v", err)
+				t.Fatalf("HTMLBody.Render()のエラー = %v", err)
 			}
 			if htmlBuf.Len() == 0 {
-				t.Error("HTMLBody の出力が空です")
+				t.Error("HTMLBodyの出力が空です")
 			}
 
 			if sent.TextBody == nil {
-				t.Fatal("TextBody が nil です")
+				t.Fatal("TextBodyがnilです")
 			}
 			var textBuf bytes.Buffer
 			if err := sent.TextBody.Render(ctx, &textBuf); err != nil {
-				t.Fatalf("TextBody.Render() error = %v", err)
+				t.Fatalf("TextBody.Render()のエラー = %v", err)
 			}
 			if textBuf.Len() == 0 {
-				t.Error("TextBody の出力が空です")
+				t.Error("TextBodyの出力が空です")
 			}
 		})
 	}

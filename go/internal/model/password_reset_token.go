@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// PasswordResetToken はパスワードリセットトークンのドメインエンティティ
+// PasswordResetTokenはパスワードリセットトークンのドメインエンティティ
 type PasswordResetToken struct {
 	ID          PasswordResetTokenID
 	UserID      UserID

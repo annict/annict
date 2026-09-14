@@ -5,23 +5,23 @@ import (
 	"fmt"
 )
 
-// ValidationError はバリデーションエラーを表す。
-// Handler はこのエラーを受け取ったらフォームを再描画する（422）。
+// ValidationErrorはバリデーションエラーを表す。
+// Handlerはこのエラーを受け取ったらフォームを再描画する (422)。
 type ValidationError struct {
-	// Global はフォーム全体のエラーメッセージ（特定のフィールドに紐づかないエラー）
+	// Globalはフォーム全体のエラーメッセージ (特定のフィールドに紐づかないエラー)
 	Global []string `json:"global,omitempty"`
-	// Fields はフィールドごとのエラーメッセージ
+	// Fieldsはフィールドごとのエラーメッセージ
 	Fields map[string][]string `json:"fields,omitempty"`
 }
 
 func (e *ValidationError) Error() string { return "validation failed" }
 
-// AddGlobal はグローバルエラーを追加する
+// AddGlobalはグローバルエラーを追加する
 func (e *ValidationError) AddGlobal(message string) {
 	e.Global = append(e.Global, message)
 }
 
-// AddField はフィールドエラーを追加する
+// AddFieldはフィールドエラーを追加する
 func (e *ValidationError) AddField(field, message string) {
 	if e.Fields == nil {
 		e.Fields = make(map[string][]string)
@@ -29,7 +29,7 @@ func (e *ValidationError) AddField(field, message string) {
 	e.Fields[field] = append(e.Fields[field], message)
 }
 
-// HasErrors はエラーがあるかどうかを返す
+// HasErrorsはエラーがあるかどうかを返す
 func (e *ValidationError) HasErrors() bool {
 	if e == nil {
 		return false
@@ -37,7 +37,7 @@ func (e *ValidationError) HasErrors() bool {
 	return len(e.Global) > 0 || len(e.Fields) > 0
 }
 
-// HasFieldError は指定されたフィールドにエラーがあるかどうかを返す
+// HasFieldErrorは指定されたフィールドにエラーがあるかどうかを返す
 func (e *ValidationError) HasFieldError(field string) bool {
 	if e == nil || e.Fields == nil {
 		return false
@@ -45,7 +45,7 @@ func (e *ValidationError) HasFieldError(field string) bool {
 	return len(e.Fields[field]) > 0
 }
 
-// GetFieldErrors は指定されたフィールドのエラーメッセージを返す
+// GetFieldErrorsは指定されたフィールドのエラーメッセージを返す
 func (e *ValidationError) GetFieldErrors(field string) []string {
 	if e == nil || e.Fields == nil {
 		return nil
@@ -53,13 +53,13 @@ func (e *ValidationError) GetFieldErrors(field string) []string {
 	return e.Fields[field]
 }
 
-// FieldError はフィールドエラーを表す構造体（テンプレート用）
+// FieldErrorはフィールドエラーを表す構造体 (テンプレート用)
 type FieldError struct {
 	Field   string
 	Message string
 }
 
-// FieldErrors はフィールドエラーを列挙可能な形式で取得する
+// FieldErrorsはフィールドエラーを列挙可能な形式で取得する
 func (e *ValidationError) FieldErrors() []FieldError {
 	if e == nil || e.Fields == nil {
 		return nil
@@ -76,7 +76,7 @@ func (e *ValidationError) FieldErrors() []FieldError {
 	return errs
 }
 
-// NewValidationError は新しい ValidationError を生成する
+// NewValidationErrorは新しいValidationErrorを生成する
 func NewValidationError() *ValidationError {
 	return &ValidationError{
 		Global: []string{},
@@ -84,7 +84,7 @@ func NewValidationError() *ValidationError {
 	}
 }
 
-// AppErrorCode はアプリケーションエラーの種別を表す型
+// AppErrorCodeはアプリケーションエラーの種別を表す型
 type AppErrorCode int
 
 const (
@@ -92,41 +92,37 @@ const (
 	AppErrCodeForbidden
 	AppErrCodeConflict
 	AppErrCodeInternal
-	// AppErrCodeBusy states that another write held what the request needed, so it was not
-	// applied. Unlike AppErrCodeConflict it does not mean the request disagreed with the stored
-	// state: nothing was written, and repeating the same request can succeed.
-	//
-	// [Ja] AppErrCodeBusy は、リクエストが必要としたものを他の書き込みが保持していたため適用
-	// されなかったことを表す。AppErrCodeConflict と違い、保存済みの状態と食い違ったことを意味
+	// AppErrCodeBusyは、リクエストが必要としたものを他の書き込みが保持していたため適用
+	// されなかったことを表す。AppErrCodeConflictと違い、保存済みの状態と食い違ったことを意味
 	// しない。何も書かれておらず、同じリクエストをやり直せば成功しうる。
 	AppErrCodeBusy
 )
 
-// AppError はアプリケーションエラーを表す（SafeError パターン）。
+// AppErrorはアプリケーションエラーを表す (SafeErrorパターン)。
 // Error() はユーザー安全なメッセージのみを返す。
 type AppError struct {
-	// Code はエラー種別。Handler がステータスコードを決定するために使用する
+	// Codeはエラー種別。Handlerがステータスコードを決定するために使用する
 	Code AppErrorCode
-	// UserMsg はユーザーに表示する安全なメッセージ。内部情報を含めてはならない
+	// UserMsgはユーザーに表示する安全なメッセージ。内部情報を含めてはならない
 	UserMsg string
-	// Internal はログ出力用の内部エラー。ユーザーには公開しない
+	// Internalはログ出力用の内部エラー。ユーザーには公開しない
 	Internal error
-	// Metadata は構造化ログ用のメタデータ（user_id, email 等）
+	// Metadataは構造化ログ用のメタデータ (user_id, email等)
 	Metadata map[string]string
 }
 
 func (e *AppError) Error() string { return e.UserMsg }
 
-// Unwrap は内部エラーを返す（errors.Is / errors.As チェーン用）
+// Unwrapは内部エラーを返す (errors.Is / errors.Asチェーン用)
 func (e *AppError) Unwrap() error { return e.Internal }
 
-// LogString はログ出力用の詳細文字列を返す
+// LogStringはログ出力用の詳細文字列を返す
 func (e *AppError) LogString() string {
 	return fmt.Sprintf("Code: %d | Msg: %s | Cause: %v | Meta: %v",
 		e.Code, e.UserMsg, e.Internal, e.Metadata)
 }
 
-// NewAppError は新しい AppError を生成する
+// NewAppErrorは新しいAppErrorを生成する
 func NewAppError(code AppErrorCode, userMsg string, internal error) *AppError {
 	return &AppError{
 		Code:     code,
@@ -135,8 +131,8 @@ func NewAppError(code AppErrorCode, userMsg string, internal error) *AppError {
 	}
 }
 
-// AsValidationError は err から *ValidationError を取り出す。
-// 取り出せない場合は nil を返す。
+// AsValidationErrorはerrから *ValidationErrorを取り出す。
+// 取り出せない場合はnilを返す。
 func AsValidationError(err error) *ValidationError {
 	var ve *ValidationError
 	if errors.As(err, &ve) {
@@ -145,8 +141,8 @@ func AsValidationError(err error) *ValidationError {
 	return nil
 }
 
-// AsAppError は err から *AppError を取り出す。
-// 取り出せない場合は nil を返す。
+// AsAppErrorはerrから *AppErrorを取り出す。
+// 取り出せない場合はnilを返す。
 func AsAppError(err error) *AppError {
 	var ae *AppError
 	if errors.As(err, &ae) {

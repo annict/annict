@@ -43,10 +43,10 @@ func TestGetPopularWorksUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background())
 		if err != nil {
-			t.Fatalf("Execute() error = %v", err)
+			t.Fatalf("Execute()のエラー = %v", err)
 		}
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("resultがnilだった")
 		}
 
 		var work1, work2 *model.Work
@@ -63,14 +63,14 @@ func TestGetPopularWorksUsecase_Execute(t *testing.T) {
 			t.Fatalf("作品1 (ID=%d) が結果に含まれていません", workID1)
 		}
 		if len(work1.Casts) != 2 {
-			t.Errorf("作品1 のキャスト数 = %d, want 2", len(work1.Casts))
+			t.Errorf("作品1のキャスト数 = %d、期待値 = 2", len(work1.Casts))
 		}
 		if len(work1.Staffs) != 2 {
-			t.Errorf("作品1 のスタッフ数 = %d, want 2", len(work1.Staffs))
+			t.Errorf("作品1のスタッフ数 = %d、期待値 = 2", len(work1.Staffs))
 		}
 		for _, c := range work1.Casts {
 			if c.WorkID != workID1 {
-				t.Errorf("作品1 にグルーピングされたキャストの WorkID = %v, want %v", c.WorkID, workID1)
+				t.Errorf("作品1にグルーピングされたキャストのWorkID = %v、期待値 = %v", c.WorkID, workID1)
 			}
 		}
 
@@ -78,10 +78,10 @@ func TestGetPopularWorksUsecase_Execute(t *testing.T) {
 			t.Fatalf("作品2 (ID=%d) が結果に含まれていません", workID2)
 		}
 		if len(work2.Casts) != 1 {
-			t.Errorf("作品2 のキャスト数 = %d, want 1", len(work2.Casts))
+			t.Errorf("作品2のキャスト数 = %d、期待値 = 1", len(work2.Casts))
 		}
 		if len(work2.Staffs) != 0 {
-			t.Errorf("作品2 のスタッフ数 = %d, want 0 (キャスト・スタッフがなくても結果に含まれる)", len(work2.Staffs))
+			t.Errorf("作品2のスタッフ数 = %d、期待値 = 0 (キャスト・スタッフがなくても結果に含まれる)", len(work2.Staffs))
 		}
 	})
 
@@ -98,13 +98,13 @@ func TestGetPopularWorksUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background())
 		if err != nil {
-			t.Fatalf("Execute() error = %v", err)
+			t.Fatalf("Execute()のエラー = %v", err)
 		}
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("resultがnilだった")
 		}
 		if len(result.Works) != 0 {
-			t.Errorf("len(result.Works) = %d, want 0", len(result.Works))
+			t.Errorf("len(result.Works) = %d、期待値 = 0", len(result.Works))
 		}
 	})
 }

@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New は新規登録フォームを表示します (GET /sign_up)
+// Newは新規登録フォームを表示します (GET /sign_up)
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -29,8 +29,8 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNewForm(w, r, http.StatusOK, nil, "")
 }
 
-// renderNewForm は新規登録フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormは新規登録フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string) {
 	ctx := r.Context()
 

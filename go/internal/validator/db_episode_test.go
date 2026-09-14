@@ -10,20 +10,14 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// episodeRowPtr builds the pointer fields of an expected row. The parsed row distinguishes
-// an empty column (nil) from a filled one, so the expectations have to be pointers too.
-//
-// [Ja] episodeRowPtr は期待する行のポインタフィールドを組み立てる。パース結果は空の列 (nil)
+// episodeRowPtrは期待する行のポインタフィールドを組み立てる。パース結果は空の列 (nil)
 // と入力された列を区別するため、期待値の側もポインタで書く必要がある。
 func episodeRowPtr[T any](value T) *T {
 	return &value
 }
 
-// formatEpisodeRow renders a parsed row for failure messages, spelling nil out instead of
-// printing the pointer addresses %+v would show.
-//
-// [Ja] formatEpisodeRow は失敗メッセージ用にパース結果を文字列化する。%+v が出すポインタの
-// アドレスではなく nil を明示する。
+// formatEpisodeRowは失敗メッセージ用にパース結果を文字列化する。%+vが出すポインタの
+// アドレスではなくnilを明示する。
 func formatEpisodeRow(row DBEpisodeRow) string {
 	number := "nil"
 	if row.Number != nil {
@@ -45,12 +39,12 @@ func assertEpisodeRowsEqual(t *testing.T, got, want []DBEpisodeRow) {
 	t.Helper()
 
 	if len(got) != len(want) {
-		t.Fatalf("行数が想定と異なる: got %d, want %d", len(got), len(want))
+		t.Fatalf("行数 = %d、期待値 = %d", len(got), len(want))
 	}
 
 	for i := range want {
 		if formatEpisodeRow(got[i]) != formatEpisodeRow(want[i]) {
-			t.Errorf("%d 番目の行が想定と異なる: got %s, want %s", i, formatEpisodeRow(got[i]), formatEpisodeRow(want[i]))
+			t.Errorf("行[%d] = %s、期待値 = %s", i, formatEpisodeRow(got[i]), formatEpisodeRow(want[i]))
 		}
 	}
 }
@@ -64,7 +58,7 @@ func TestDBEpisodeCreateValidatorValidateSuccess(t *testing.T) {
 		want  []DBEpisodeRow
 	}{
 		{
-			name:  "正常系: 3 列そろった 1 行",
+			name:  "正常系: 3列そろった1行",
 			input: DBEpisodeCreateValidatorInput{Rows: "#1,1,教えてティーチャー"},
 			want: []DBEpisodeRow{
 				{Number: episodeRowPtr("#1"), RawNumber: episodeRowPtr(1.0), Title: episodeRowPtr("教えてティーチャー")},
@@ -79,7 +73,7 @@ func TestDBEpisodeCreateValidatorValidateSuccess(t *testing.T) {
 			},
 		},
 		{
-			name:  "正常系: フォーム送信の CRLF 改行",
+			name:  "正常系: フォーム送信のCRLF改行",
 			input: DBEpisodeCreateValidatorInput{Rows: "#1,1,教えてティーチャー\r\n#2,2,まずいよ☆先生\r\n"},
 			want: []DBEpisodeRow{
 				{Number: episodeRowPtr("#1"), RawNumber: episodeRowPtr(1.0), Title: episodeRowPtr("教えてティーチャー")},
@@ -176,21 +170,21 @@ func TestDBEpisodeCreateValidatorValidateRowLimit(t *testing.T) {
 	rowsAtLimit := strings.TrimSuffix(strings.Repeat("#1,1,はじまり\n", episodeCreateMaxRows), "\n")
 	rows, err := v.Validate(ctx, DBEpisodeCreateValidatorInput{Rows: rowsAtLimit})
 	if err != nil {
-		t.Fatalf("上限ちょうどの Validate() error = %v", err)
+		t.Fatalf("上限ちょうどのValidate()のエラー = %v", err)
 	}
 	if len(rows) != episodeCreateMaxRows {
-		t.Errorf("上限ちょうどの行数 = %d, want %d", len(rows), episodeCreateMaxRows)
+		t.Errorf("上限ちょうどの行数 = %d、期待値 = %d", len(rows), episodeCreateMaxRows)
 	}
 
 	rowsOverLimit := rowsAtLimit + "\n#101,101,おわり"
 	_, err = v.Validate(ctx, DBEpisodeCreateValidatorInput{Rows: rowsOverLimit})
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("上限超過の error = %v, want *model.ValidationError", err)
+		t.Fatalf("上限超過のエラー = %v、期待値 = *model.ValidationError", err)
 	}
 	messages := ve.GetFieldErrors("rows")
 	if len(messages) != 1 || !strings.Contains(messages[0], "100件以内") {
-		t.Errorf("上限超過のエラー = %v, want 100件以内", messages)
+		t.Errorf("上限超過のエラー = %v、期待値 = 100件以内", messages)
 	}
 }
 
@@ -200,10 +194,7 @@ func TestDBEpisodeCreateValidatorValidateErrors(t *testing.T) {
 	tests := []struct {
 		name  string
 		input DBEpisodeCreateValidatorInput
-		// wantMessages are the substrings each reported error has to contain, in the order
-		// the errors are reported.
-		//
-		// [Ja] wantMessages は報告された各エラーが含むべき部分文字列を、報告順に並べたもの。
+		// wantMessagesは報告された各エラーが含むべき部分文字列を、報告順に並べたもの。
 		wantMessages []string
 	}{
 		{
@@ -222,7 +213,7 @@ func TestDBEpisodeCreateValidatorValidateErrors(t *testing.T) {
 			wantMessages: []string{"1 行目: 数値話数は数値で入力してください"},
 		},
 		{
-			name:         "異常系: 数値話数が NaN",
+			name:         "異常系: 数値話数がNaN",
 			input:        DBEpisodeCreateValidatorInput{Rows: "#1,NaN,教えてティーチャー"},
 			wantMessages: []string{"1 行目: 数値話数は数値で入力してください"},
 		},
@@ -247,7 +238,7 @@ func TestDBEpisodeCreateValidatorValidateErrors(t *testing.T) {
 			wantMessages: []string{"1 行目: タイトルは500文字以内で入力してください"},
 		},
 		{
-			name:  "異常系: 1 行の複数の問題をまとめて報告する",
+			name:  "異常系: 1行の複数の問題をまとめて報告する",
 			input: DBEpisodeCreateValidatorInput{Rows: "#1,いち," + strings.Repeat("あ", 501)},
 			wantMessages: []string{
 				"1 行目: タイトルは500文字以内で入力してください",
@@ -274,33 +265,29 @@ func TestDBEpisodeCreateValidatorValidateErrors(t *testing.T) {
 
 			rows, err := v.Validate(ctx, tt.input)
 			if rows != nil {
-				t.Errorf("エラー時は行を返さないはず: got %v", rows)
+				t.Errorf("エラー時の行 = %v、期待値 = 0件", rows)
 			}
 
 			ve := model.AsValidationError(err)
 			if ve == nil {
-				t.Fatalf("*model.ValidationError を期待したが得られなかった: %v", err)
+				t.Fatalf("*model.ValidationErrorを期待したが得られなかった: %v", err)
 			}
 
 			messages := ve.GetFieldErrors("rows")
 			if len(messages) != len(tt.wantMessages) {
-				t.Fatalf("エラー件数が想定と異なる: got %d (%v), want %d", len(messages), messages, len(tt.wantMessages))
+				t.Fatalf("エラー件数 = %d (%v)、期待値 = %d", len(messages), messages, len(tt.wantMessages))
 			}
 			for i, want := range tt.wantMessages {
 				if !strings.Contains(messages[i], want) {
-					t.Errorf("%d 番目のエラーメッセージが想定と異なる: got %q, want to contain %q", i, messages[i], want)
+					t.Errorf("エラーメッセージ[%d] = %q、期待値 = %qを含むこと", i, messages[i], want)
 				}
 			}
 		})
 	}
 }
 
-// TestDBEpisodeCreateValidatorValidateRejectsWholeSubmit fixes that a single bad line fails
-// the whole submit. The caller creates the rows in one transaction, so returning the good
-// rows alongside the errors would describe a state it can never produce.
-//
-// [Ja] TestDBEpisodeCreateValidatorValidateRejectsWholeSubmit は 1 行でも不正なら送信全体が
-// 失敗することを固定する。呼び出し元は行を 1 トランザクションで作成するため、エラーと一緒に
+// TestDBEpisodeCreateValidatorValidateRejectsWholeSubmitは1行でも不正なら送信全体が
+// 失敗することを固定する。呼び出し元は行を1トランザクションで作成するため、エラーと一緒に
 // 正常な行を返すと呼び出し元が作れない状態を表すことになる。
 func TestDBEpisodeCreateValidatorValidateRejectsWholeSubmit(t *testing.T) {
 	t.Parallel()
@@ -313,10 +300,10 @@ func TestDBEpisodeCreateValidatorValidateRejectsWholeSubmit(t *testing.T) {
 	})
 
 	if rows != nil {
-		t.Errorf("正常な行も返さないはず: got %v", rows)
+		t.Errorf("正常な行 = %v、期待値 = 0件", rows)
 	}
 	if ve := model.AsValidationError(err); ve == nil {
-		t.Fatalf("*model.ValidationError を期待したが得られなかった: %v", err)
+		t.Fatalf("*model.ValidationErrorを期待したが得られなかった: %v", err)
 	}
 }
 
@@ -345,24 +332,21 @@ func TestDBEpisodeCreateValidatorValidateLocalizesMessages(t *testing.T) {
 
 			ve := model.AsValidationError(err)
 			if ve == nil {
-				t.Fatalf("*model.ValidationError を期待したが得られなかった: %v", err)
+				t.Fatalf("*model.ValidationErrorを期待したが得られなかった: %v", err)
 			}
 
 			messages := ve.GetFieldErrors("rows")
 			if len(messages) != 1 {
-				t.Fatalf("エラー件数が想定と異なる: got %d (%v), want 1", len(messages), messages)
+				t.Fatalf("エラー件数 = %d (%v)、期待値 = 1", len(messages), messages)
 			}
 			if messages[0] != tt.want {
-				t.Errorf("エラーメッセージが想定と異なる: got %q, want %q", messages[0], tt.want)
+				t.Errorf("エラーメッセージ = %q、期待値 = %q", messages[0], tt.want)
 			}
 		})
 	}
 }
 
-// dbEpisodeUpdateInput returns a submit that passes every check, so each case below states only
-// the field it is about.
-//
-// [Ja] dbEpisodeUpdateInput はすべての検査を通る送信を返す。以降の各ケースが、対象のフィールド
+// dbEpisodeUpdateInputはすべての検査を通る送信を返す。以降の各ケースが、対象のフィールド
 // だけを述べられるようにするため。
 func dbEpisodeUpdateInput() DBEpisodeUpdateValidatorInput {
 	return DBEpisodeUpdateValidatorInput{
@@ -386,37 +370,34 @@ func TestDBEpisodeUpdateValidatorValidateSuccess(t *testing.T) {
 
 		got, err := v.Validate(ctx, dbEpisodeUpdateInput())
 		if err != nil {
-			t.Fatalf("Validate() error = %v", err)
+			t.Fatalf("Validate()のエラー = %v", err)
 		}
 		if got.Number == nil || *got.Number != "第2話" {
-			t.Errorf("Number = %v, want %q", got.Number, "第2話")
+			t.Errorf("Number = %v、期待値 = %q", got.Number, "第2話")
 		}
 		if got.RawNumber == nil || *got.RawNumber != 2.5 {
-			t.Errorf("RawNumber = %v, want 2.5", got.RawNumber)
+			t.Errorf("RawNumber = %v、期待値 = 2.5", got.RawNumber)
 		}
 		if got.Title == nil || *got.Title != "もう、お婿にいけません" {
-			t.Errorf("Title = %v, want %q", got.Title, "もう、お婿にいけません")
+			t.Errorf("Title = %v、期待値 = %q", got.Title, "もう、お婿にいけません")
 		}
 		if got.TitleEn != "No Longer Marriageable" {
-			t.Errorf("TitleEn = %q, want %q", got.TitleEn, "No Longer Marriageable")
+			t.Errorf("TitleEn = %q、期待値 = %q", got.TitleEn, "No Longer Marriageable")
 		}
 		if got.SortNumber != 200 {
-			t.Errorf("SortNumber = %d, want 200", got.SortNumber)
+			t.Errorf("SortNumber = %d、期待値 = 200", got.SortNumber)
 		}
 		if got.UpdatedAt == nil {
-			t.Fatal("UpdatedAt = nil, want 送信された版")
+			t.Fatal("UpdatedAt = nil、期待値 = 送信された版")
 		}
 		if formatted := got.UpdatedAt.UTC().Format(FormVersionLayout); formatted != "2026-08-14T12:34:56.123456789Z" {
-			t.Errorf("UpdatedAt = %q, want %q", formatted, "2026-08-14T12:34:56.123456789Z")
+			t.Errorf("UpdatedAt = %q、期待値 = %q", formatted, "2026-08-14T12:34:56.123456789Z")
 		}
 	})
 
-	// A field the editor cleared has to reach the column as NULL: an empty string is a value no
-	// existing row carries, and the list would render it as a filled-in but blank number.
-	//
-	// [Ja] 編集者が消したフィールドは NULL としてカラムに届く必要がある。空文字列は既存のどの行も
+	// 編集者が消したフィールドはNULLとしてカラムに届く必要がある。空文字列は既存のどの行も
 	// 持たない値で、一覧では「入力されているが空」の話数として描画されてしまう。
-	t.Run("正常系: 空にした任意入力は nil になる", func(t *testing.T) {
+	t.Run("正常系: 空にした任意入力はnilになる", func(t *testing.T) {
 		t.Parallel()
 
 		input := dbEpisodeUpdateInput()
@@ -426,19 +407,16 @@ func TestDBEpisodeUpdateValidatorValidateSuccess(t *testing.T) {
 
 		got, err := v.Validate(ctx, input)
 		if err != nil {
-			t.Fatalf("Validate() error = %v", err)
+			t.Fatalf("Validate()のエラー = %v", err)
 		}
 		if got.Number != nil || got.RawNumber != nil || got.Title != nil {
-			t.Errorf("(Number, RawNumber, Title) = (%v, %v, %v), want (nil, nil, nil)", got.Number, got.RawNumber, got.Title)
+			t.Errorf("(Number, RawNumber, Title) = (%v, %v, %v)、期待値 = (nil, nil, nil)", got.Number, got.RawNumber, got.Title)
 		}
 	})
 
-	// The NULL sentinel is an explicit version, so it has to be accepted and reach the update as
-	// "match a row whose updated_at is NULL".
-	//
-	// [Ja] NULL のセンチネルは明示的な版のため、受理して「updated_at が NULL の行に一致させる」と
+	// NULLのセンチネルは明示的な版のため、受理して「updated_atがNULLの行に一致させる」と
 	// して更新側へ届く必要がある。
-	t.Run("正常系: null のセンチネルは版なしとして受理される", func(t *testing.T) {
+	t.Run("正常系: nullのセンチネルは版なしとして受理される", func(t *testing.T) {
 		t.Parallel()
 
 		input := dbEpisodeUpdateInput()
@@ -446,10 +424,10 @@ func TestDBEpisodeUpdateValidatorValidateSuccess(t *testing.T) {
 
 		got, err := v.Validate(ctx, input)
 		if err != nil {
-			t.Fatalf("Validate() error = %v", err)
+			t.Fatalf("Validate()のエラー = %v", err)
 		}
 		if got.UpdatedAt != nil {
-			t.Errorf("UpdatedAt = %v, want nil", got.UpdatedAt)
+			t.Errorf("UpdatedAt = %v、期待値 = nil", got.UpdatedAt)
 		}
 	})
 }
@@ -477,7 +455,7 @@ func TestDBEpisodeUpdateValidatorValidateErrors(t *testing.T) {
 			wantField: "sort_number",
 		},
 		{
-			name:      "異常系: ソート番号が int32 を超える",
+			name:      "異常系: ソート番号がint32を超える",
 			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.SortNumber = "2147483648" },
 			wantField: "sort_number",
 		},
@@ -487,7 +465,7 @@ func TestDBEpisodeUpdateValidatorValidateErrors(t *testing.T) {
 			wantField: "raw_number",
 		},
 		{
-			name:      "異常系: 数値話数が NaN",
+			name:      "異常系: 数値話数がNaN",
 			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.RawNumber = "NaN" },
 			wantField: "raw_number",
 		},
@@ -502,11 +480,7 @@ func TestDBEpisodeUpdateValidatorValidateErrors(t *testing.T) {
 			wantField: "title",
 		},
 		{
-			// An empty version means the submit stated none at all, which is not the same as
-			// the NULL sentinel: accepting it would let a crafted request skip the check that
-			// stops one editor from overwriting another.
-			//
-			// [Ja] 空の版は、送信が版をまったく示していないことを意味し、NULL のセンチネルとは
+			// 空の版は、送信が版をまったく示していないことを意味し、NULLのセンチネルとは
 			// 別物である。受理すると、ある編集者が別の編集者を上書きするのを止める検査を、
 			// 改変されたリクエストが素通りできてしまう。
 			name:       "異常系: 版が空",
@@ -529,14 +503,14 @@ func TestDBEpisodeUpdateValidatorValidateErrors(t *testing.T) {
 
 			got, err := v.Validate(ctx, input)
 			if got != nil {
-				t.Errorf("Validate() = %+v, want nil", got)
+				t.Errorf("Validate() = %+v、期待値 = nil", got)
 			}
 			ve := model.AsValidationError(err)
 			if ve == nil {
-				t.Fatalf("Validate() error = %v, want *model.ValidationError", err)
+				t.Fatalf("Validate()のエラー = %v、期待値 = *model.ValidationError", err)
 			}
 			if tt.wantField != "" && !ve.HasFieldError(tt.wantField) {
-				t.Errorf("フィールド %q のエラーがありません: %+v", tt.wantField, ve)
+				t.Errorf("フィールド%qのエラーがありません: %+v", tt.wantField, ve)
 			}
 			if tt.wantGlobal && len(ve.Global) == 0 {
 				t.Errorf("グローバルエラーがありません: %+v", ve)
@@ -545,12 +519,8 @@ func TestDBEpisodeUpdateValidatorValidateErrors(t *testing.T) {
 	}
 }
 
-// TestDBEpisodeUpdateValidatorValidateReportsEveryProblem covers a submit with several problems
-// at once: every one is reported so the editor fixes them in a single pass instead of
-// discovering them one submit at a time.
-//
-// [Ja] TestDBEpisodeUpdateValidatorValidateReportsEveryProblem は複数の問題を同時に含む送信を
-// 検証する。すべてが報告されるため、編集者は送信するたびに 1 つずつ気付くのではなく一度に直せる。
+// TestDBEpisodeUpdateValidatorValidateReportsEveryProblemは複数の問題を同時に含む送信を
+// 検証する。すべてが報告されるため、編集者は送信するたびに1つずつ気付くのではなく一度に直せる。
 func TestDBEpisodeUpdateValidatorValidateReportsEveryProblem(t *testing.T) {
 	t.Parallel()
 
@@ -565,7 +535,7 @@ func TestDBEpisodeUpdateValidatorValidateReportsEveryProblem(t *testing.T) {
 	_, err := v.Validate(ctx, input)
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("Validate() error = %v, want *model.ValidationError", err)
+		t.Fatalf("Validate()のエラー = %v、期待値 = *model.ValidationError", err)
 	}
 	if !ve.HasFieldError("sort_number") || !ve.HasFieldError("raw_number") || len(ve.Global) == 0 {
 		t.Errorf("報告されたエラーが不足しています: %+v", ve)

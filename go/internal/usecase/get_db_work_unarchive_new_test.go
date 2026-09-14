@@ -12,13 +12,9 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsArchivedWork verifies the usecase returns
-// a currently archived work for the publish confirmation. It is a read-only usecase that
-// opens no transaction, so the test uses SetupTx.
-//
-// [Ja] TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsArchivedWork は、公開確認のために
-// 現在アーカイブ済みの work を返すことを検証する。本 UseCase は読み取りのみでトランザクションを
-// 開かないため SetupTx を使う。
+// TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsArchivedWorkは、公開確認のために
+// 現在アーカイブ済みのworkを返すことを検証する。本UseCaseは読み取りのみでトランザクションを
+// 開かないためSetupTxを使う。
 func TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsArchivedWork(t *testing.T) {
 	t.Parallel()
 
@@ -37,28 +33,24 @@ func TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsArchivedWork(t *testing.T) 
 				WorkID: workID,
 			})
 			if err != nil {
-				t.Fatalf("Execute() error = %v", err)
+				t.Fatalf("Execute()のエラー = %v", err)
 			}
 			if output.Work == nil {
-				t.Fatal("Work should not be nil")
+				t.Fatal("Workがnilだった")
 			}
 			if output.Work.ID != workID {
-				t.Errorf("Work.ID = %d, want %d", output.Work.ID, workID)
+				t.Errorf("Work.ID = %d、期待値 = %d", output.Work.ID, workID)
 			}
 			if output.Work.Title != "公開確認テスト" {
-				t.Errorf("Work.Title = %q, want %q", output.Work.Title, "公開確認テスト")
+				t.Errorf("Work.Title = %q、期待値 = %q", output.Work.Title, "公開確認テスト")
 			}
 		})
 	}
 }
 
-// TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsNonPublishableWork verifies the usecase
-// reports a work that is not currently archived (still published, or deleted) as not found,
-// matching the publishable scope Work.without_deleted.unpublished.
-//
-// [Ja] TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsNonPublishableWork は、現在アーカイブ
-// 済みでない (公開中、または削除済みの) work を not found として報告することを検証する。
-// 公開可能な scope Work.without_deleted.unpublished に一致する。
+// TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsNonPublishableWorkは、現在アーカイブ
+// 済みでない (公開中、または削除済みの) workをnot foundとして報告することを検証する。
+// 公開可能なscope Work.without_deleted.unpublishedに一致する。
 func TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsNonPublishableWork(t *testing.T) {
 	t.Parallel()
 
@@ -69,13 +61,13 @@ func TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsNonPublishableWork(t *testi
 		prepare func(b *testutil.WorkBuilder) *testutil.WorkBuilder
 	}{
 		{
-			name: "公開中 (unpublished_at なし)",
+			name: "公開中 (unpublished_atなし)",
 			prepare: func(b *testutil.WorkBuilder) *testutil.WorkBuilder {
 				return b
 			},
 		},
 		{
-			name: "削除済み (deleted_at あり)",
+			name: "削除済み (deleted_atあり)",
 			prepare: func(b *testutil.WorkBuilder) *testutil.WorkBuilder {
 				return b.WithUnpublishedAt(now).WithDeletedAt(now)
 			},
@@ -96,21 +88,18 @@ func TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsNonPublishableWork(t *testi
 				WorkID: workID,
 			})
 			if output != nil {
-				t.Errorf("output = %+v, want nil for a non-publishable work", output)
+				t.Errorf("output = %+v、期待値 = nil (公開できない作品のため)", output)
 			}
 			ae := model.AsAppError(err)
 			if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
-				t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
+				t.Fatalf("エラーコード = %v、期待値 = AppErrCodeResourceNotFound", err)
 			}
 		})
 	}
 }
 
-// TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsNotFoundForMissingWork verifies a
-// non-existent work id is reported as not found.
-//
-// [Ja] TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsNotFoundForMissingWork は、存在しない
-// work id が not found として報告されることを検証する。
+// TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsNotFoundForMissingWorkは、存在しない
+// work idがnot foundとして報告されることを検証する。
 func TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T) {
 	t.Parallel()
 
@@ -122,20 +111,16 @@ func TestGetDBWorkUnarchiveNewUsecase_Execute_ReturnsNotFoundForMissingWork(t *t
 		WorkID: model.WorkID(1 << 62),
 	})
 	if output != nil {
-		t.Errorf("output = %+v, want nil for a missing work", output)
+		t.Errorf("output = %+v、期待値 = nil (存在しない作品のため)", output)
 	}
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
-		t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
+		t.Fatalf("エラーコード = %v、期待値 = AppErrCodeResourceNotFound", err)
 	}
 }
 
-// TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup verifies the
-// authorization boundary rejects unauthenticated and regular users before looking up either
-// an existing or a missing work.
-//
-// [Ja] TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup は、
-// 認可境界が既存・未存在どちらの work を取得するより前に、未認証と一般ユーザーを拒否する
+// TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookupは、
+// 認可境界が既存・未存在どちらのworkを取得するより前に、未認証と一般ユーザーを拒否する
 // ことを検証する。
 func TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup(t *testing.T) {
 	t.Parallel()
@@ -166,11 +151,11 @@ func TestGetDBWorkUnarchiveNewUsecase_Execute_RejectsUnauthorizedUserBeforeLooku
 				WorkID: tt.workID,
 			})
 			if output != nil {
-				t.Errorf("output = %+v, want nil for an unauthorized user", output)
+				t.Errorf("output = %+v、期待値 = nil (権限の無いユーザーのため)", output)
 			}
 			ae := model.AsAppError(err)
 			if ae == nil || ae.Code != model.AppErrCodeForbidden {
-				t.Fatalf("expected AppErrCodeForbidden, got %v", err)
+				t.Fatalf("エラーコード = %v、期待値 = AppErrCodeForbidden", err)
 			}
 		})
 	}

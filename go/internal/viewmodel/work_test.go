@@ -62,59 +62,59 @@ func TestNewWorkFromModel(t *testing.T) {
 
 		// 基本フィールドの検証
 		if work.ID != 123 {
-			t.Errorf("ID: got %d, want 123", work.ID)
+			t.Errorf("ID = %d、期待値 = 123", work.ID)
 		}
 		if work.Title != "テストアニメ" {
-			t.Errorf("Title: got %s, want テストアニメ", work.Title)
+			t.Errorf("Title = %s、期待値 = テストアニメ", work.Title)
 		}
 		if work.TitleEn != "Test Anime" {
-			t.Errorf("TitleEn: got %s, want Test Anime", work.TitleEn)
+			t.Errorf("TitleEn = %s、期待値 = Test Anime", work.TitleEn)
 		}
 		if work.WatchersCount != 100 {
-			t.Errorf("WatchersCount: got %d, want 100", work.WatchersCount)
+			t.Errorf("WatchersCount = %d、期待値 = 100", work.WatchersCount)
 		}
 
 		// ImageDataJSONが正しく設定されていることを確認
 		if work.ImageDataJSON != m.ImageData {
-			t.Errorf("ImageDataJSON: got %s, want %s", work.ImageDataJSON, m.ImageData)
+			t.Errorf("ImageDataJSON = %s、期待値 = %s", work.ImageDataJSON, m.ImageData)
 		}
 
 		// imageHelperが設定されていることを確認
 		if work.imageHelper == nil {
-			t.Error("imageHelper should not be nil")
+			t.Error("imageHelperがnilだった")
 		}
 
 		// シーズン情報の検証
 		if work.SeasonYear == nil || *work.SeasonYear != 2024 {
-			t.Errorf("SeasonYear: got %v, want 2024", work.SeasonYear)
+			t.Errorf("SeasonYear = %v、期待値 = 2024", work.SeasonYear)
 		}
 		if work.SeasonNumber == nil || *work.SeasonNumber != 1 {
-			t.Errorf("SeasonNumber: got %v, want 1", work.SeasonNumber)
+			t.Errorf("SeasonNumber = %v、期待値 = 1", work.SeasonNumber)
 		}
 		if work.SeasonName == nil || *work.SeasonName != "春" {
-			t.Errorf("SeasonName: got %v, want 春", work.SeasonName)
+			t.Errorf("SeasonName = %v、期待値 = 春", work.SeasonName)
 		}
 
 		// キャストの検証
 		if len(work.Casts) != 1 {
-			t.Fatalf("Casts length: got %d, want 1", len(work.Casts))
+			t.Fatalf("Castsの件数 = %d、期待値 = 1", len(work.Casts))
 		}
 		if work.Casts[0].ID != 1 {
-			t.Errorf("Cast ID: got %d, want 1", work.Casts[0].ID)
+			t.Errorf("Cast ID = %d、期待値 = 1", work.Casts[0].ID)
 		}
 		if work.Casts[0].Name != "キャラクター名" {
-			t.Errorf("Cast Name: got %s, want キャラクター名", work.Casts[0].Name)
+			t.Errorf("Cast Name = %s、期待値 = キャラクター名", work.Casts[0].Name)
 		}
 
 		// スタッフの検証
 		if len(work.Staffs) != 1 {
-			t.Fatalf("Staffs length: got %d, want 1", len(work.Staffs))
+			t.Fatalf("Staffsの件数 = %d、期待値 = 1", len(work.Staffs))
 		}
 		if work.Staffs[0].ID != 2 {
-			t.Errorf("Staff ID: got %d, want 2", work.Staffs[0].ID)
+			t.Errorf("Staff ID = %d、期待値 = 2", work.Staffs[0].ID)
 		}
 		if work.Staffs[0].Name != "スタッフ名" {
-			t.Errorf("Staff Name: got %s, want スタッフ名", work.Staffs[0].Name)
+			t.Errorf("Staff Name = %s、期待値 = スタッフ名", work.Staffs[0].Name)
 		}
 	})
 
@@ -131,11 +131,11 @@ func TestNewWorkFromModel(t *testing.T) {
 
 		// 英語タイトルがフォールバックされることを確認
 		if work.Title != "Fallback Title" {
-			t.Errorf("Title should fallback to TitleEn: got %s, want Fallback Title", work.Title)
+			t.Errorf("TitleEnへフォールバックしたTitle = %s、期待値 = Fallback Title", work.Title)
 		}
 	})
 
-	t.Run("シーズン情報が nil の場合", func(t *testing.T) {
+	t.Run("シーズン情報がnilの場合", func(t *testing.T) {
 		t.Parallel()
 
 		m := &model.Work{
@@ -148,13 +148,13 @@ func TestNewWorkFromModel(t *testing.T) {
 		work := NewWorkFromModel(m, helper)
 
 		if work.SeasonYear != nil {
-			t.Errorf("SeasonYear should be nil: got %v", work.SeasonYear)
+			t.Errorf("SeasonYear = %v、期待値 = nil", work.SeasonYear)
 		}
 		if work.SeasonNumber != nil {
-			t.Errorf("SeasonNumber should be nil: got %v", work.SeasonNumber)
+			t.Errorf("SeasonNumber = %v、期待値 = nil", work.SeasonNumber)
 		}
 		if work.SeasonName != nil {
-			t.Errorf("SeasonName should be nil: got %v", work.SeasonName)
+			t.Errorf("SeasonName = %v、期待値 = nil", work.SeasonName)
 		}
 	})
 
@@ -171,14 +171,14 @@ func TestNewWorkFromModel(t *testing.T) {
 		work := NewWorkFromModel(m, helper)
 
 		if len(work.Casts) != 0 {
-			t.Errorf("Casts should be empty: got %d", len(work.Casts))
+			t.Errorf("Castsの件数 = %d、期待値 = 0", len(work.Casts))
 		}
 		if len(work.Staffs) != 0 {
-			t.Errorf("Staffs should be empty: got %d", len(work.Staffs))
+			t.Errorf("Staffsの件数 = %d、期待値 = 0", len(work.Staffs))
 		}
 	})
 
-	t.Run("image.Helper が nil の場合", func(t *testing.T) {
+	t.Run("image.Helperがnilの場合", func(t *testing.T) {
 		t.Parallel()
 
 		m := &model.Work{
@@ -191,11 +191,11 @@ func TestNewWorkFromModel(t *testing.T) {
 
 		// ImageURLが空になることを確認
 		if work.ImageURL != "" {
-			t.Errorf("ImageURL should be empty when helper is nil: got %s", work.ImageURL)
+			t.Errorf("helperがnilのときのImageURL = %s、期待値 = 空", work.ImageURL)
 		}
 	})
 
-	t.Run("シーズン番号の変換（冬=0、春=1、夏=2、秋=3）", func(t *testing.T) {
+	t.Run("シーズン番号の変換 (冬=0、春=1、夏=2、秋=3)", func(t *testing.T) {
 		t.Parallel()
 
 		testCases := []struct {
@@ -219,7 +219,7 @@ func TestNewWorkFromModel(t *testing.T) {
 			work := NewWorkFromModel(m, helper)
 
 			if work.SeasonName == nil || *work.SeasonName != tc.expectedName {
-				t.Errorf("SeasonNumber %d: got %v, want %s", tc.seasonNumber, work.SeasonName, tc.expectedName)
+				t.Errorf("SeasonNumber %d = %v、期待値 = %s", tc.seasonNumber, work.SeasonName, tc.expectedName)
 			}
 		}
 	})
@@ -262,23 +262,23 @@ func TestNewWorksFromModels(t *testing.T) {
 		result := NewWorksFromModels(works, helper)
 
 		if len(result) != 2 {
-			t.Fatalf("works length: got %d, want 2", len(result))
+			t.Fatalf("worksの件数 = %d、期待値 = 2", len(result))
 		}
 
 		// 1つ目の作品の検証
 		if result[0].ID != 1 {
-			t.Errorf("works[0].ID: got %d, want 1", result[0].ID)
+			t.Errorf("works[0].ID = %d、期待値 = 1", result[0].ID)
 		}
 		if result[0].Title != "アニメ1" {
-			t.Errorf("works[0].Title: got %s, want アニメ1", result[0].Title)
+			t.Errorf("works[0].Title = %s、期待値 = アニメ1", result[0].Title)
 		}
 
 		// 2つ目の作品の検証
 		if result[1].ID != 2 {
-			t.Errorf("works[1].ID: got %d, want 2", result[1].ID)
+			t.Errorf("works[1].ID = %d、期待値 = 2", result[1].ID)
 		}
 		if result[1].Title != "アニメ2" {
-			t.Errorf("works[1].Title: got %s, want アニメ2", result[1].Title)
+			t.Errorf("works[1].Title = %s、期待値 = アニメ2", result[1].Title)
 		}
 	})
 
@@ -289,7 +289,7 @@ func TestNewWorksFromModels(t *testing.T) {
 		result := NewWorksFromModels(works, helper)
 
 		if len(result) != 0 {
-			t.Errorf("works should be empty: got %d", len(result))
+			t.Errorf("worksの件数 = %d、期待値 = 0", len(result))
 		}
 	})
 }

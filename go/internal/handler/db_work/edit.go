@@ -20,24 +20,15 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// dbWorkEditPath builds the representative GET path of a work's edit form. Edit serves the
-// page at this path and Update re-renders the same page from PATCH /db/works/:id, so both take
-// their canonical URL from here rather than from the request path. Create and Update also
-// redirect here once the work is saved.
-//
-// [Ja] dbWorkEditPath は作品編集フォームの代表 GET パスを生成する。Edit はこのパスでページを
-// 配信し、Update は同じページを PATCH /db/works/:id から再描画するため、双方ともリクエスト
-// パスではなくここから canonical URL を取る。Create と Update の保存後のリダイレクト先でも
+// dbWorkEditPathは作品編集フォームの代表GETパスを生成する。Editはこのパスでページを
+// 配信し、Updateは同じページをPATCH /db/works/:idから再描画するため、双方ともリクエスト
+// パスではなくここからcanonical URLを取る。CreateとUpdateの保存後のリダイレクト先でも
 // ある。
 func dbWorkEditPath(id model.WorkID) string {
 	return fmt.Sprintf("/db/works/%d/edit", int64(id))
 }
 
-// setEditTitle gives meta a document title that starts with the page name, followed by the work
-// once it has a display name. A work without one leaves the page name standing alone, which is
-// also what the heading shows, so the two never disagree on whether the target can be named.
-//
-// [Ja] setEditTitle は meta に、画面名から始まり、表示名があれば作品が続く文書タイトルを
+// setEditTitleはmetaに、画面名から始まり、表示名があれば作品が続く文書タイトルを
 // 設定する。表示名が無い作品では画面名だけになり、見出しの表示とも揃う。対象を名指しできる
 // かどうかの判断が両者で食い違わないようにするため。
 func setEditTitle(ctx context.Context, meta *viewmodel.PageMeta, workName string) {
@@ -49,9 +40,7 @@ func setEditTitle(ctx context.Context, meta *viewmodel.PageMeta, workName string
 	meta.SetDBTitle(ctx, "db_works_edit_document_title", map[string]any{"WorkTitle": workName})
 }
 
-// Edit renders the work edit form page in the Annict DB admin UI (GET /db/works/:id/edit).
-//
-// [Ja] Annict DB 管理画面の作品編集フォームページ (GET /db/works/:id/edit) を描画する。
+// EditはAnnict DB管理画面の作品編集フォームページ (GET /db/works/:id/edit) を描画する。
 func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

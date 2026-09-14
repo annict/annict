@@ -11,10 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Create processes a bulk-create submit for a work's episodes in the Annict DB admin UI
-// (POST /db/works/:work_id/episodes).
-//
-// [Ja] Annict DB 管理画面の、ある作品のエピソード一括作成の送信 (POST
+// CreateはAnnict DB管理画面の、ある作品のエピソード一括作成の送信 (POST
 // /db/works/:work_id/episodes) を処理する。
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -57,10 +54,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// A successful submit lands on the work's episode list, matching the Rails create action
-	// (db_episode_list_path): the created rows are what the editor checks next.
-	//
-	// [Ja] 送信が成功したらその作品のエピソード一覧に着地する。Rails の create アクション
+	// 送信が成功したらその作品のエピソード一覧に着地する。Railsのcreateアクション
 	// (db_episode_list_path) と同じ遷移で、編集者が次に確認するのは作成された行であるため。
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_episodes_created"))
 	http.Redirect(w, r, indexPath(workID, 1), http.StatusSeeOther)

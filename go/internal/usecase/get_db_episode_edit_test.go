@@ -12,11 +12,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// newGetDBEpisodeEditUsecase wires the usecase against the test transaction. It is a
-// read-only usecase that opens no transaction of its own, so the test uses SetupTx.
-//
-// [Ja] newGetDBEpisodeEditUsecase はテスト用トランザクション上に UseCase を組み立てる。本
-// UseCase は読み取りのみで自らトランザクションを開かないため SetupTx を使う。
+// newGetDBEpisodeEditUsecaseはテスト用トランザクション上にUseCaseを組み立てる。本
+// UseCaseは読み取りのみで自らトランザクションを開かないためSetupTxを使う。
 func newGetDBEpisodeEditUsecase(t *testing.T) (*GetDBEpisodeEditUsecase, *sql.Tx) {
 	t.Helper()
 
@@ -25,10 +22,7 @@ func newGetDBEpisodeEditUsecase(t *testing.T) (*GetDBEpisodeEditUsecase, *sql.Tx
 	return NewGetDBEpisodeEditUsecase(repository.NewEpisodeRepository(query.New(db).WithTx(tx))), tx
 }
 
-// TestGetDBEpisodeEditUsecase_Execute_ReturnsEpisodeAndWork verifies the usecase returns the
-// episode the form starts from together with the parent work its heading and subnav describe.
-//
-// [Ja] TestGetDBEpisodeEditUsecase_Execute_ReturnsEpisodeAndWork は、フォームの初期値になる
+// TestGetDBEpisodeEditUsecase_Execute_ReturnsEpisodeAndWorkは、フォームの初期値になる
 // エピソードと、その見出しとサブナビが示す親作品を返すことを検証する。
 func TestGetDBEpisodeEditUsecase_Execute_ReturnsEpisodeAndWork(t *testing.T) {
 	t.Parallel()
@@ -40,33 +34,30 @@ func TestGetDBEpisodeEditUsecase_Execute_ReturnsEpisodeAndWork(t *testing.T) {
 
 	output, err := uc.Execute(context.Background(), GetDBEpisodeEditInput{EpisodeID: episodeID})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if output.Episode == nil {
-		t.Fatal("Episode should not be nil")
+		t.Fatal("Episodeがnilだった")
 	}
 	if output.Episode.ID != episodeID {
-		t.Errorf("Episode.ID = %d, want %d", int64(output.Episode.ID), int64(episodeID))
+		t.Errorf("Episode.ID = %d、期待値 = %d", int64(output.Episode.ID), int64(episodeID))
 	}
 	if output.Episode.Number == nil || *output.Episode.Number != "第2話" {
-		t.Errorf("Episode.Number = %v, want %q", output.Episode.Number, "第2話")
+		t.Errorf("Episode.Number = %v、期待値 = %q", output.Episode.Number, "第2話")
 	}
 	if output.Work == nil {
-		t.Fatal("Work should not be nil")
+		t.Fatal("Workがnilだった")
 	}
 	if output.Work.ID != workID {
-		t.Errorf("Work.ID = %d, want %d", int64(output.Work.ID), int64(workID))
+		t.Errorf("Work.ID = %d、期待値 = %d", int64(output.Work.ID), int64(workID))
 	}
 	if output.Work.Title != "エピソード編集テスト" {
-		t.Errorf("Work.Title = %q, want %q", output.Work.Title, "エピソード編集テスト")
+		t.Errorf("Work.Title = %q、期待値 = %q", output.Work.Title, "エピソード編集テスト")
 	}
 }
 
-// TestGetDBEpisodeEditUsecase_Execute_NotFound verifies every episode the edit form cannot be
-// opened for is reported as a not-found AppError, which the handler renders as 404.
-//
-// [Ja] TestGetDBEpisodeEditUsecase_Execute_NotFound は、編集フォームを開けないエピソードが
-// いずれも not found の AppError として報告されることを検証する (Handler はこれを 404 として
+// TestGetDBEpisodeEditUsecase_Execute_NotFoundは、編集フォームを開けないエピソードが
+// いずれもnot foundのAppErrorとして報告されることを検証する (Handlerはこれを404として
 // 描画する)。
 func TestGetDBEpisodeEditUsecase_Execute_NotFound(t *testing.T) {
 	t.Parallel()
@@ -92,14 +83,14 @@ func TestGetDBEpisodeEditUsecase_Execute_NotFound(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			output, err := uc.Execute(context.Background(), GetDBEpisodeEditInput{EpisodeID: tt.episodeID})
 			if output != nil {
-				t.Error("output should be nil")
+				t.Error("outputがnilでなかった")
 			}
 			ae := model.AsAppError(err)
 			if ae == nil {
-				t.Fatalf("AppError を期待したが %v", err)
+				t.Fatalf("AppErrorを期待したが%v", err)
 			}
 			if ae.Code != model.AppErrCodeResourceNotFound {
-				t.Errorf("Code = %v, want %v", ae.Code, model.AppErrCodeResourceNotFound)
+				t.Errorf("Code = %v、期待値 = %v", ae.Code, model.AppErrCodeResourceNotFound)
 			}
 		})
 	}

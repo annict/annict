@@ -9,13 +9,9 @@ import (
 	"testing"
 )
 
-// taskNamePattern is the naming convention for task names: lowercase alphanumerics in
-// hyphen-separated words. The names are typed by operators on a shell, so they stay in
-// one shape rather than mixing underscores and camelCase.
-//
-// [Ja] taskNamePattern はタスク名の命名規則で、英小文字と数字の語をハイフンで繋いだ形。
+// taskNamePatternはタスク名の命名規則で、英小文字と数字の語をハイフンで繋いだ形。
 // 運用者がシェルで打ち込む名前であるため、アンダースコアやキャメルケースを混在させず
-// 形を 1 つに揃える。
+// 形を1つに揃える。
 var taskNamePattern = regexp.MustCompile(`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
 
 func TestTasks_Registry(t *testing.T) {
@@ -23,19 +19,19 @@ func TestTasks_Registry(t *testing.T) {
 
 	for name, task := range tasks {
 		if !taskNamePattern.MatchString(name) {
-			t.Errorf("task name %q does not match %s", name, taskNamePattern)
+			t.Errorf("タスク名%qが%sに一致しない", name, taskNamePattern)
 		}
 		if name == listTaskName {
-			t.Errorf("task name %q is reserved for the listing command", name)
+			t.Errorf("タスク名%qは一覧表示コマンドの予約語", name)
 		}
 		if task.desc == "" {
-			t.Errorf("task %q has no description", name)
+			t.Errorf("タスク%qに説明が無い", name)
 		}
 		if task.body == nil {
-			t.Errorf("task %q has no body", name)
+			t.Errorf("タスク%qにbodyが無い", name)
 		}
 		if task.run == nil {
-			t.Errorf("task %q has no run function", name)
+			t.Errorf("タスク%qにrun関数が無い", name)
 		}
 	}
 }
@@ -45,19 +41,19 @@ func TestRunTask_List(t *testing.T) {
 
 	var out bytes.Buffer
 	if err := runTask(context.Background(), &out, []string{"list"}, tasks); err != nil {
-		t.Fatalf("runTask() error = %v", err)
+		t.Fatalf("runTask()のエラー = %v", err)
 	}
 
 	listing := out.String()
 	if !strings.Contains(listing, listTaskName) {
-		t.Errorf("listing does not contain %q:\n%s", listTaskName, listing)
+		t.Errorf("一覧に含まれていない文字列 = %q:\n%s", listTaskName, listing)
 	}
 	for name, task := range tasks {
 		if !strings.Contains(listing, name) {
-			t.Errorf("listing does not contain task %q:\n%s", name, listing)
+			t.Errorf("一覧に含まれていないタスク = %q:\n%s", name, listing)
 		}
 		if !strings.Contains(listing, task.desc) {
-			t.Errorf("listing does not contain the description of task %q:\n%s", name, listing)
+			t.Errorf("一覧に含まれていないタスク%qの説明:\n%s", name, listing)
 		}
 	}
 }
@@ -83,12 +79,12 @@ func TestRunTask_Errors(t *testing.T) {
 		{
 			name:     "タスク名の後ろに余分な引数",
 			args:     []string{"sync-animes", "--dry-run"},
-			wantErrs: []string{`タスク "sync-animes" は引数を取りません`},
+			wantErrs: []string{`タスク "sync-animes"は引数を取りません`},
 		},
 		{
-			name:     "list の後ろに余分な引数",
+			name:     "listの後ろに余分な引数",
 			args:     []string{"list", "extra"},
-			wantErrs: []string{`タスク "list" は引数を取りません`},
+			wantErrs: []string{`タスク "list"は引数を取りません`},
 		},
 		{
 			name:     "未知のタスク名の後ろに余分な引数",
@@ -104,21 +100,19 @@ func TestRunTask_Errors(t *testing.T) {
 			var out bytes.Buffer
 			err := runTask(context.Background(), &out, tt.args, tasks)
 			if err == nil {
-				t.Fatal("runTask() error = nil, want error")
+				t.Fatal("runTask()のエラー = nil、期待値 = エラーあり")
 			}
 			for _, want := range tt.wantErrs {
 				if !strings.Contains(err.Error(), want) {
-					t.Errorf("runTask() error = %q, want it to contain %q", err, want)
+					t.Errorf("runTask()のエラー = %q、期待値 = %qを含むこと", err, want)
 				}
 			}
-			// The error carries the usage text, so the caller does not need a second run.
-			//
-			// [Ja] エラーは usage テキストを含むため、呼び出し元が再実行しなくても済む。
+			// エラーはusageテキストを含むため、呼び出し元が再実行しなくても済む。
 			if !strings.Contains(err.Error(), "使い方: annict task <name>") {
-				t.Errorf("runTask() error = %q, want it to contain the task usage", err)
+				t.Errorf("runTask()のエラー = %q、期待値 = タスクの使い方を含むこと", err)
 			}
 			if out.Len() != 0 {
-				t.Errorf("runTask() wrote %q to out, want nothing", out.String())
+				t.Errorf("runTask()がoutへ書き出した内容 = %q、期待値 = 空", out.String())
 			}
 		})
 	}
@@ -129,11 +123,11 @@ func TestRun_TaskList(t *testing.T) {
 
 	var out bytes.Buffer
 	if err := run(context.Background(), &out, []string{"task", "list"}, tasks); err != nil {
-		t.Fatalf("run() error = %v", err)
+		t.Fatalf("run()のエラー = %v", err)
 	}
 
 	if got, want := out.String(), taskListing(tasks); got != want {
-		t.Errorf("run() output = %q, want %q", got, want)
+		t.Errorf("run()がoutへ書き出した内容 = %q、期待値 = %q", got, want)
 	}
 }
 
@@ -150,7 +144,7 @@ func TestRun_TaskDispatch(t *testing.T) {
 			run: func(gotCtx context.Context) error {
 				called = true
 				if gotCtx != ctx {
-					t.Errorf("task context = %v, want %v", gotCtx, ctx)
+					t.Errorf("タスクに渡されたcontext = %v、期待値 = %v", gotCtx, ctx)
 				}
 				return wantErr
 			},
@@ -159,10 +153,10 @@ func TestRun_TaskDispatch(t *testing.T) {
 
 	err := run(ctx, &bytes.Buffer{}, []string{"task", "test-task"}, registry)
 	if !called {
-		t.Error("task was not called")
+		t.Error("タスクが呼ばれなかった")
 	}
 	if !errors.Is(err, wantErr) {
-		t.Errorf("run() error = %v, want %v", err, wantErr)
+		t.Errorf("run()のエラー = %v、期待値 = %v", err, wantErr)
 	}
 }
 
@@ -193,17 +187,17 @@ func TestRun_Errors(t *testing.T) {
 			var out bytes.Buffer
 			err := run(context.Background(), &out, tt.args, tasks)
 			if err == nil {
-				t.Fatal("run() error = nil, want error")
+				t.Fatal("run()のエラー = nil、期待値 = エラーあり")
 			}
 			if !strings.Contains(err.Error(), tt.wantErr) {
-				t.Errorf("run() error = %q, want it to contain %q", err, tt.wantErr)
+				t.Errorf("run()のエラー = %q、期待値 = %qを含むこと", err, tt.wantErr)
 			}
 			if !strings.Contains(err.Error(), "使い方: annict <command>") {
-				t.Errorf("run() error = %q, want it to contain the usage", err)
+				t.Errorf("run()のエラー = %q、期待値 = 使い方を含むこと", err)
 			}
 			for name := range tasks {
 				if !strings.Contains(err.Error(), name) {
-					t.Errorf("run() error = %q, want it to list task %q", err, name)
+					t.Errorf("run()のエラー = %q、期待値 = タスク%qを含むこと", err, name)
 				}
 			}
 		})

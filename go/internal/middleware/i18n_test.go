@@ -10,13 +10,9 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// TestI18n verifies which locale reaches the handler: a signed-in user's preference outranks
-// the header, an unsupported stored value falls back to the default language, and a request
-// without a user follows Accept-Language.
-//
-// [Ja] TestI18n はハンドラーにどのロケールが届くかを検証する。ログイン済みユーザーの設定が
+// TestI18nはハンドラーにどのロケールが届くかを検証する。ログイン済みユーザーの設定が
 // ヘッダーより優先されること、保存値が未対応の言語ならデフォルト言語にフォールバックすること、
-// ユーザーの無いリクエストは Accept-Language に従うことを確認する。
+// ユーザーの無いリクエストはAccept-Languageに従うことを確認する。
 func TestI18n(t *testing.T) {
 	t.Parallel()
 
@@ -72,20 +68,17 @@ func TestI18n(t *testing.T) {
 			handler.ServeHTTP(httptest.NewRecorder(), req)
 
 			if gotLocale != tt.wantLocale {
-				t.Errorf("locale = %q, want %q", gotLocale, tt.wantLocale)
+				t.Errorf("locale = %q、期待値 = %q", gotLocale, tt.wantLocale)
 			}
 
-			// The localizer travels with the locale, so a translation resolved downstream
-			// is in the same language rather than the message ID.
-			//
-			// [Ja] Localizer はロケールと一緒に運ばれるため、下流で解決した翻訳は
-			// メッセージ ID ではなく同じ言語の文言になる。
+			// Localizerはロケールと一緒に運ばれるため、下流で解決した翻訳は
+			// メッセージIDではなく同じ言語の文言になる。
 			wantTranslation := "ページが見つかりません"
 			if tt.wantLocale == i18n.LangEn {
 				wantTranslation = "Page not found"
 			}
 			if gotTranslation != wantTranslation {
-				t.Errorf("翻訳 = %q, want %q", gotTranslation, wantTranslation)
+				t.Errorf("翻訳 = %q、期待値 = %q", gotTranslation, wantTranslation)
 			}
 		})
 	}

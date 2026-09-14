@@ -2,21 +2,21 @@ package viewmodel
 
 import "time"
 
-// SupporterStatus はサポーターの状態を表します
+// SupporterStatusはサポーターの状態を表します
 type SupporterStatus int
 
 const (
-	// SupporterStatusNone は非サポーター
+	// SupporterStatusNoneは非サポーター
 	SupporterStatusNone SupporterStatus = iota
-	// SupporterStatusGumroad はGumroadサポーター（アクティブ）
+	// SupporterStatusGumroadはGumroadサポーター (アクティブ)
 	SupporterStatusGumroad
-	// SupporterStatusStripe はStripeサポーター（アクティブ）
+	// SupporterStatusStripeはStripeサポーター (アクティブ)
 	SupporterStatusStripe
-	// SupporterStatusBoth はGumroadとStripe両方アクティブ
+	// SupporterStatusBothはGumroadとStripe両方アクティブ
 	SupporterStatusBoth
 )
 
-// StripeSubscriberView はStripeサブスクライバーのビューモデルです
+// StripeSubscriberViewはStripeサブスクライバーのビューモデルです
 type StripeSubscriberView struct {
 	CustomerID       string
 	Status           string
@@ -24,15 +24,15 @@ type StripeSubscriberView struct {
 	CancelAt         *time.Time
 }
 
-// GumroadSubscriberView はGumroadサブスクライバーのビューモデルです
+// GumroadSubscriberViewはGumroadサブスクライバーのビューモデルです
 type GumroadSubscriberView struct {
 	GumroadID   string
 	CreatedAt   time.Time
-	CancelledAt *time.Time // 契約終了予定日（gumroad_cancelled_at）
-	EndedAt     *time.Time // 実際の終了日（gumroad_ended_at）
+	CancelledAt *time.Time // 契約終了予定日 (gumroad_cancelled_at)
+	EndedAt     *time.Time // 実際の終了日 (gumroad_ended_at)
 }
 
-// SupporterPageData はサポーターページのビューモデルです
+// SupporterPageDataはサポーターページのビューモデルです
 type SupporterPageData struct {
 	IsLoggedIn          bool
 	Status              SupporterStatus

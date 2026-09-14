@@ -12,14 +12,9 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// WorkFormInput carries the Annict DB work form values shared by the create and update
-// flows. Every field is a string because it comes straight from the HTML form; the
-// typed conversion lives in buildWorkFormParams and the validation in toValidatorInput,
-// so create and update stay single-sourced and cannot drift when a column is added.
-//
-// [Ja] WorkFormInput は Annict DB 作品フォームの入力値を、作成と更新の両フローで共有する。
-// 各フィールドは HTML フォーム由来のため文字列で持つ。型変換は buildWorkFormParams、検証は
-// toValidatorInput に集約し、作成と更新の写像・検証の正本を 1 つに保つ。カラム追加時に
+// WorkFormInputはAnnict DB作品フォームの入力値を、作成と更新の両フローで共有する。
+// 各フィールドはHTMLフォーム由来のため文字列で持つ。型変換はbuildWorkFormParams、検証は
+// toValidatorInputに集約し、作成と更新の写像・検証の正本を1つに保つ。カラム追加時に
 // 片方だけ追従してドリフトする事故を防ぐ。
 type WorkFormInput struct {
 	Title                 string
@@ -50,17 +45,10 @@ type WorkFormInput struct {
 	NoEpisodes            string
 }
 
-// toValidatorInput projects the form values onto the validator input. Create and update
-// validate the identical set of fields, so both go through this single mapping.
-// excludeWorkID and updatedAt are what differ between the two flows: update passes the work
-// being edited so the title uniqueness check does not match it against itself, along with the
-// version its form carries, and create passes nil for both. Taking them as arguments makes
-// both call sites state which flow they are.
-//
-// [Ja] toValidatorInput はフォーム値をバリデーター入力に射影する。作成と更新は同一の
+// toValidatorInputはフォーム値をバリデーター入力に射影する。作成と更新は同一の
 // フィールド集合を検証するため、双方ともこの単一の写像を通す。両フローで異なるのは
-// excludeWorkID と updatedAt で、更新は編集中の work を渡してタイトルの一意性検査が自分自身に
-// 一致しないようにし、併せてそのフォームが運ぶ版も渡す。作成はどちらにも nil を渡す。引数で
+// excludeWorkIDとupdatedAtで、更新は編集中のworkを渡してタイトルの一意性検査が自分自身に
+// 一致しないようにし、併せてそのフォームが運ぶ版も渡す。作成はどちらにもnilを渡す。引数で
 // 受け取ることで、両方の呼び出し側がどちらのフローかを明示する。
 func (in WorkFormInput) toValidatorInput(excludeWorkID *model.WorkID, updatedAt *string) validator.DBWorkCreateValidatorInput {
 	return validator.DBWorkCreateValidatorInput{
@@ -95,21 +83,13 @@ func (in WorkFormInput) toValidatorInput(excludeWorkID *model.WorkID, updatedAt 
 	}
 }
 
-// buildWorkFormParams converts the string form values into the typed works columns
-// shared by create and update. repository.CreateWorkParams is exactly the common shape;
-// the update flow adds the target ID (see buildUpdateWorkParams).
-//
-// Every parse failure is returned as an error. The validator accepts exactly the values
-// converted here, so a failure means the two drifted apart; failing loudly turns that into
-// a logged 500 instead of a save that quietly stores NULL for what the submitter typed.
-//
-// [Ja] buildWorkFormParams は文字列のフォーム値を、作成と更新で共有する works の型付き
-// カラムに変換する。repository.CreateWorkParams が共通の形そのもので、更新フローは対象 ID を
-// 足す (buildUpdateWorkParams を参照)。
+// buildWorkFormParamsは文字列のフォーム値を、作成と更新で共有するworksの型付き
+// カラムに変換する。repository.CreateWorkParamsが共通の形そのもので、更新フローは対象IDを
+// 足す (buildUpdateWorkParamsを参照)。
 //
 // パースの失敗はすべてエラーとして返す。バリデーターはここで変換する値をそのまま許容するため、
 // 失敗は両者がドリフトしたことを意味する。明示的に失敗させることで、送信者が入力した値を
-// 黙って NULL で保存する代わりに、ログの残る 500 になる。
+// 黙ってNULLで保存する代わりに、ログの残る500になる。
 func buildWorkFormParams(input WorkFormInput) (repository.CreateWorkParams, error) {
 	media, err := strconv.ParseInt(input.Media, 10, 32)
 	if err != nil {
@@ -160,11 +140,11 @@ func buildWorkFormParams(input WorkFormInput) (repository.CreateWorkParams, erro
 	}
 
 	if params.ScTid, err = parseOptionalInt32(input.ScTid); err != nil {
-		return repository.CreateWorkParams{}, fmt.Errorf("しょぼいカレンダー TID の変換に失敗: %w", err)
+		return repository.CreateWorkParams{}, fmt.Errorf("しょぼいカレンダーTIDの変換に失敗: %w", err)
 	}
 
 	if params.MalAnimeID, err = parseOptionalInt32(input.MalAnimeID); err != nil {
-		return repository.CreateWorkParams{}, fmt.Errorf("MyAnimeList ID の変換に失敗: %w", err)
+		return repository.CreateWorkParams{}, fmt.Errorf("MyAnimeList IDの変換に失敗: %w", err)
 	}
 
 	if params.ManualEpisodesCount, err = parseOptionalInt32(input.ManualEpisodesCount); err != nil {
@@ -190,12 +170,8 @@ func buildWorkFormParams(input WorkFormInput) (repository.CreateWorkParams, erro
 	return params, nil
 }
 
-// parseOptionalInt32 converts an optional form value into the works integer columns,
-// mapping an empty value to NULL. The bit size is what the validator checks against, so
-// the two accept the same range.
-//
-// [Ja] parseOptionalInt32 は任意入力のフォーム値を works の integer カラムに変換し、空値を
-// NULL に写像する。ビット幅はバリデーターが検査するものと同じで、両者は同一の範囲を許容する。
+// parseOptionalInt32は任意入力のフォーム値をworksのintegerカラムに変換し、空値を
+// NULLに写像する。ビット幅はバリデーターが検査するものと同じで、両者は同一の範囲を許容する。
 func parseOptionalInt32(value string) (sql.NullInt32, error) {
 	if value == "" {
 		return sql.NullInt32{}, nil
@@ -207,11 +183,8 @@ func parseOptionalInt32(value string) (sql.NullInt32, error) {
 	return sql.NullInt32{Int32: int32(v), Valid: true}, nil
 }
 
-// parseOptionalDate converts an optional date form value into a works date column, mapping
-// an empty value to NULL.
-//
-// [Ja] parseOptionalDate は任意入力の日付フォーム値を works の date カラムに変換し、空値を
-// NULL に写像する。
+// parseOptionalDateは任意入力の日付フォーム値をworksのdateカラムに変換し、空値を
+// NULLに写像する。
 func parseOptionalDate(value string) (sql.NullTime, error) {
 	if value == "" {
 		return sql.NullTime{}, nil

@@ -67,12 +67,12 @@ func TestSignInPasswordCreateValidatorValidate_FormatErrors(t *testing.T) {
 				t.Fatal("エラーが期待されましたが、エラーがありませんでした")
 			}
 			if output != nil {
-				t.Error("エラー時は output が nil になるべきです")
+				t.Error("エラー時はoutputがnilになるべきです")
 			}
 
 			for _, field := range tt.wantFieldErrors {
 				if _, exists := ve.Fields[field]; !exists {
-					t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+					t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 				}
 			}
 
@@ -80,15 +80,15 @@ func TestSignInPasswordCreateValidatorValidate_FormatErrors(t *testing.T) {
 				for field, expectedMsg := range tt.wantErrorMessages {
 					actualMsgs, exists := ve.Fields[field]
 					if !exists {
-						t.Errorf("フィールド %s のエラーメッセージが見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーメッセージが見つかりませんでした", field)
 						continue
 					}
 					if len(actualMsgs) == 0 {
-						t.Errorf("フィールド %s のエラーメッセージが空です", field)
+						t.Errorf("フィールド%sのエラーメッセージが空です", field)
 						continue
 					}
 					if actualMsgs[0] != expectedMsg {
-						t.Errorf("フィールド %s のエラーメッセージが一致しません\n期待: %q\n実際: %q", field, expectedMsg, actualMsgs[0])
+						t.Errorf("フィールド%sのエラーメッセージが一致しません\n期待: %q\n実際: %q", field, expectedMsg, actualMsgs[0])
 					}
 				}
 			}
@@ -116,7 +116,7 @@ func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 
 	v := NewSignInPasswordCreateValidator(userRepo)
 
-	t.Run("正常系（メールアドレス）", func(t *testing.T) {
+	t.Run("正常系 (メールアドレス)", func(t *testing.T) {
 		ctx := context.Background()
 		output, err := v.Validate(ctx, SignInPasswordCreateValidatorInput{
 			EmailOrUsername: "validator_password_test@example.com",
@@ -126,14 +126,14 @@ func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 			t.Errorf("エラーは期待されていませんでしたが、返されました: %v", err)
 		}
 		if output == nil {
-			t.Fatal("成功時は output が返されるべきです")
+			t.Fatal("成功時はoutputが返されるべきです")
 		}
 		if output.User.Email != "validator_password_test@example.com" {
-			t.Errorf("User.Email = %q, want %q", output.User.Email, "validator_password_test@example.com")
+			t.Errorf("User.Email = %q、期待値 = %q", output.User.Email, "validator_password_test@example.com")
 		}
 	})
 
-	t.Run("正常系（ユーザー名）", func(t *testing.T) {
+	t.Run("正常系 (ユーザー名)", func(t *testing.T) {
 		ctx := context.Background()
 		output, err := v.Validate(ctx, SignInPasswordCreateValidatorInput{
 			EmailOrUsername: "validator_password_test",
@@ -143,10 +143,10 @@ func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 			t.Errorf("エラーは期待されていませんでしたが、返されました: %v", err)
 		}
 		if output == nil {
-			t.Fatal("成功時は output が返されるべきです")
+			t.Fatal("成功時はoutputが返されるべきです")
 		}
 		if output.User.Username != "validator_password_test" {
-			t.Errorf("User.Username = %q, want %q", output.User.Username, "validator_password_test")
+			t.Errorf("User.Username = %q、期待値 = %q", output.User.Username, "validator_password_test")
 		}
 	})
 
@@ -161,7 +161,7 @@ func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 			t.Fatal("バリデーションエラーが期待されましたが、返されませんでした")
 		}
 		if output != nil {
-			t.Error("エラー時は output が nil になるべきです")
+			t.Error("エラー時はoutputがnilになるべきです")
 		}
 		if len(ve.Global) == 0 {
 			t.Error("グローバルエラーが期待されましたが、ありませんでした")
@@ -179,7 +179,7 @@ func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 			t.Fatal("バリデーションエラーが期待されましたが、返されませんでした")
 		}
 		if output != nil {
-			t.Error("エラー時は output が nil になるべきです")
+			t.Error("エラー時はoutputがnilになるべきです")
 		}
 		if len(ve.Global) == 0 {
 			t.Error("グローバルエラーが期待されましたが、ありませんでした")
@@ -208,7 +208,7 @@ func TestSignInPasswordCreateValidator_ValidateI18nMessages(t *testing.T) {
 			t.Fatal("エラーが期待されましたが、エラーがありませんでした")
 		}
 		if output != nil {
-			t.Error("エラー時は output が nil になるべきです")
+			t.Error("エラー時はoutputがnilになるべきです")
 		}
 
 		expectedMsg := i18n.T(ctx, "sign_in_error_password_required")

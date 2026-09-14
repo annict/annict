@@ -1,7 +1,7 @@
-// Package model はドメインモデルを提供します
+// Package modelはドメインモデルを提供します
 package model
 
-// Cast はキャスト情報を表します
+// Castはキャスト情報を表します
 type Cast struct {
 	ID              CastID
 	WorkID          WorkID

@@ -39,28 +39,28 @@ func TestShow(t *testing.T) {
 
 	// ステータスコードを確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	// Content-Typeを確認
 	if ct := rr.Header().Get("Content-Type"); ct != "application/json" {
-		t.Errorf("wrong content type: got %v want %v", ct, "application/json")
+		t.Errorf("Content-Type = %v、期待値 = %v", ct, "application/json")
 	}
 
 	// レスポンスボディをパース
 	var response map[string]any
 	if err := json.NewDecoder(rr.Body).Decode(&response); err != nil {
-		t.Fatalf("failed to decode response: %v", err)
+		t.Fatalf("レスポンスのデコードエラー = %v", err)
 	}
 
 	// レスポンスの内容を確認
 	if response["status"] != "ok" {
-		t.Errorf("wrong status: got %v want %v", response["status"], "ok")
+		t.Errorf("レスポンスのstatus = %v、期待値 = %v", response["status"], "ok")
 	}
 	if response["database"] != "healthy" {
-		t.Errorf("wrong database status: got %v want %v", response["database"], "healthy")
+		t.Errorf("データベースの状態 = %v、期待値 = %v", response["database"], "healthy")
 	}
 	if response["env"] != "test" {
-		t.Errorf("wrong env: got %v want %v", response["env"], "test")
+		t.Errorf("環境名 = %v、期待値 = %v", response["env"], "test")
 	}
 }

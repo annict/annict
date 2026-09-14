@@ -16,7 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// CreatePasswordResetTokenUsecase はパスワードリセットトークンを生成するユースケースです
+// CreatePasswordResetTokenUsecaseはパスワードリセットトークンを生成するユースケースです
 type CreatePasswordResetTokenUsecase struct {
 	db                     *sql.DB
 	userRepo               *repository.UserRepository
@@ -26,7 +26,7 @@ type CreatePasswordResetTokenUsecase struct {
 	validator              *validator.PasswordResetCreateValidator
 }
 
-// NewCreatePasswordResetTokenUsecase は新しいCreatePasswordResetTokenUsecaseを作成します
+// NewCreatePasswordResetTokenUsecaseは新しいCreatePasswordResetTokenUsecaseを作成します
 func NewCreatePasswordResetTokenUsecase(db *sql.DB, userRepo *repository.UserRepository, passwordResetTokenRepo *repository.PasswordResetTokenRepository, cfg *config.Config, dispatcher *dispatcher.Dispatcher, validator *validator.PasswordResetCreateValidator) *CreatePasswordResetTokenUsecase {
 	return &CreatePasswordResetTokenUsecase{
 		db:                     db,
@@ -38,19 +38,19 @@ func NewCreatePasswordResetTokenUsecase(db *sql.DB, userRepo *repository.UserRep
 	}
 }
 
-// CreatePasswordResetTokenInput はユースケースの入力パラメータです
+// CreatePasswordResetTokenInputはユースケースの入力パラメータです
 type CreatePasswordResetTokenInput struct {
 	Email string
 }
 
-// CreatePasswordResetTokenOutput はトークン生成の結果を表します
+// CreatePasswordResetTokenOutputはトークン生成の結果を表します
 type CreatePasswordResetTokenOutput struct {
-	Token  string       // 平文トークン（メール送信用）
+	Token  string       // 平文トークン (メール送信用)
 	UserID model.UserID // ユーザーID
 }
 
-// Execute はバリデーション・ユーザー検索・パスワードリセットトークン生成を行います。
-// ユーザーが存在しない場合は nil を返す（セキュリティ対策: ユーザーの存在を明かさない）。
+// Executeはバリデーション・ユーザー検索・パスワードリセットトークン生成を行います。
+// ユーザーが存在しない場合はnilを返す (セキュリティ対策: ユーザーの存在を明かさない)。
 func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input CreatePasswordResetTokenInput) (*CreatePasswordResetTokenOutput, error) {
 	// 1. バリデーション
 	if err := uc.validator.Validate(ctx, validator.PasswordResetCreateValidatorInput{
@@ -59,7 +59,7 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input Cr
 		return nil, err
 	}
 
-	// 2. ユーザー検索（存在しない場合もエラーを返さない - セキュリティ対策）
+	// 2. ユーザー検索 (存在しない場合もエラーを返さない - セキュリティ対策)
 	user, err := uc.userRepo.GetByEmail(ctx, input.Email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -72,7 +72,7 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input Cr
 	return uc.createToken(ctx, model.UserID(user.ID))
 }
 
-// createToken はパスワードリセットトークンを生成します
+// createTokenはパスワードリセットトークンを生成します
 func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, userID model.UserID) (*CreatePasswordResetTokenOutput, error) {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -83,7 +83,7 @@ func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, user
 
 	passwordResetTokenRepo := uc.passwordResetTokenRepo.WithTx(tx)
 
-	// 既存の未使用トークンを無効化（削除）
+	// 既存の未使用トークンを無効化 (削除)
 	if err := passwordResetTokenRepo.DeleteUnusedByUserID(ctx, userID); err != nil {
 		return nil, fmt.Errorf("古いトークンの削除に失敗: %w", err)
 	}
@@ -97,7 +97,7 @@ func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, user
 	// トークンをハッシュ化
 	tokenDigest := password_reset.HashToken(token)
 
-	// トークンをデータベースに保存（有効期限: 1時間）
+	// トークンをデータベースに保存 (有効期限: 1時間)
 	if _, err := passwordResetTokenRepo.Create(ctx, userID, tokenDigest, time.Now().Add(1*time.Hour)); err != nil {
 		return nil, fmt.Errorf("パスワードリセットトークンの作成に失敗: %w", err)
 	}
@@ -133,7 +133,7 @@ func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, user
 			}
 		}
 	} else {
-		slog.WarnContext(ctx, "Dispatcher が設定されていないため、メール送信ジョブをエンキューできませんでした",
+		slog.WarnContext(ctx, "Dispatcherが設定されていないため、メール送信ジョブをエンキューできませんでした",
 			"user_id", userID,
 		)
 	}

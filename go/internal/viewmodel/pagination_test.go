@@ -79,10 +79,10 @@ func TestNewPagination(t *testing.T) {
 			p := NewPagination(tt.currentPage, tt.totalCount, tt.perPage, tt.basePath)
 
 			if p.CurrentPage != tt.wantCurrentPage {
-				t.Errorf("CurrentPage = %d, want %d", p.CurrentPage, tt.wantCurrentPage)
+				t.Errorf("CurrentPage = %d、期待値 = %d", p.CurrentPage, tt.wantCurrentPage)
 			}
 			if p.TotalPages != tt.wantTotalPages {
-				t.Errorf("TotalPages = %d, want %d", p.TotalPages, tt.wantTotalPages)
+				t.Errorf("TotalPages = %d、期待値 = %d", p.TotalPages, tt.wantTotalPages)
 			}
 		})
 	}
@@ -108,7 +108,7 @@ func TestPagination_ShouldShow(t *testing.T) {
 
 			p := NewPagination(1, tt.totalCount, tt.perPage, "/test")
 			if got := p.ShouldShow(); got != tt.want {
-				t.Errorf("ShouldShow() = %v, want %v", got, tt.want)
+				t.Errorf("ShouldShow() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
@@ -137,10 +137,10 @@ func TestPagination_HasPrevAndHasNext(t *testing.T) {
 
 			p := NewPagination(tt.currentPage, tt.totalCount, tt.perPage, "/test")
 			if got := p.HasPrev(); got != tt.wantPrev {
-				t.Errorf("HasPrev() = %v, want %v", got, tt.wantPrev)
+				t.Errorf("HasPrev() = %v、期待値 = %v", got, tt.wantPrev)
 			}
 			if got := p.HasNext(); got != tt.wantNext {
-				t.Errorf("HasNext() = %v, want %v", got, tt.wantNext)
+				t.Errorf("HasNext() = %v、期待値 = %v", got, tt.wantNext)
 			}
 		})
 	}
@@ -158,7 +158,7 @@ func TestPagination_PageURL(t *testing.T) {
 		{"1ページ目はpageパラメータなし", "/db/works", 1, "/db/works"},
 		{"2ページ目以降はpageパラメータあり", "/db/works", 3, "/db/works?page=3"},
 		{"既存クエリパラメータを保持", "/db/works?q=test", 2, "/db/works?page=2&q=test"},
-		{"既存クエリパラメータを保持（1ページ目）", "/db/works?q=test", 1, "/db/works?q=test"},
+		{"既存クエリパラメータを保持 (1ページ目)", "/db/works?q=test", 1, "/db/works?q=test"},
 	}
 
 	for _, tt := range tests {
@@ -167,7 +167,7 @@ func TestPagination_PageURL(t *testing.T) {
 
 			p := NewPagination(1, 100, 10, tt.basePath)
 			if got := p.PageURL(tt.page); got != tt.want {
-				t.Errorf("PageURL(%d) = %q, want %q", tt.page, got, tt.want)
+				t.Errorf("PageURL(%d) = %q、期待値 = %q", tt.page, got, tt.want)
 			}
 		})
 	}
@@ -216,11 +216,11 @@ func TestPagination_Pages(t *testing.T) {
 			got := p.Pages()
 
 			if len(got) != len(tt.want) {
-				t.Fatalf("Pages() = %v, want %v", got, tt.want)
+				t.Fatalf("Pages() = %v、期待値 = %v", got, tt.want)
 			}
 			for i := range got {
 				if got[i] != tt.want[i] {
-					t.Errorf("Pages()[%d] = %d, want %d (full: %v)", i, got[i], tt.want[i], got)
+					t.Errorf("Pages()[%d] = %d、期待値 = %d (full: %v)", i, got[i], tt.want[i], got)
 					break
 				}
 			}

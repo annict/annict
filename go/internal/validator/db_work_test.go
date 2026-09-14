@@ -13,24 +13,14 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// dbWorkTestTitle is the title the cases that are not about the title itself submit. The
-// title uniqueness check queries works, so the value has to be one no other test commits:
-// a title another test leaves behind would turn every "no error" case in this file red.
-//
-// [Ja] dbWorkTestTitle はタイトル以外を対象とするケースが送信するタイトル。タイトルの
-// 一意性検査は works を参照するため、他のテストがコミットしない値である必要がある。他の
+// dbWorkTestTitleはタイトル以外を対象とするケースが送信するタイトル。タイトルの
+// 一意性検査はworksを参照するため、他のテストがコミットしない値である必要がある。他の
 // テストが残したタイトルと重なると、本ファイルの「エラーなし」のケースがすべて落ちる。
 const dbWorkTestTitle = "バリデーターテスト作品"
 
-// newTestDBWorkValidator wires the validator against the shared test database. The title
-// uniqueness and number format checks read works and number_formats, so every case needs
-// the repositories; SetupTx hides the rows a test inserts from the others and rolls them
-// back when it ends. The transaction is returned so a test can seed the rows it wants
-// those checks to find.
-//
-// [Ja] newTestDBWorkValidator は共有テスト DB に対してバリデーターを組み立てる。タイトルの
-// 一意性検査と話数フォーマットの検査が works と number_formats を読むため、全ケースで
-// リポジトリが要る。SetupTx はテストが挿入した行を他のテストから隠し、終了時にロール
+// newTestDBWorkValidatorは共有テストDBに対してバリデーターを組み立てる。タイトルの
+// 一意性検査と話数フォーマットの検査がworksとnumber_formatsを読むため、全ケースで
+// リポジトリが要る。SetupTxはテストが挿入した行を他のテストから隠し、終了時にロール
 // バックする。これらの検査に見つけさせたい行をテストが用意できるよう、トランザクションも返す。
 func newTestDBWorkValidator(t *testing.T) (*DBWorkCreateValidator, *sql.Tx) {
 	t.Helper()
@@ -43,13 +33,8 @@ func newTestDBWorkValidator(t *testing.T) (*DBWorkCreateValidator, *sql.Tx) {
 	), tx
 }
 
-// seedNumberFormat inserts a number format and returns its id. The id comes from a
-// sequence, so it cannot be written into a test case literal and has to be substituted at
-// run time. number_formats.name is uniquely indexed and the concurrent transactions of
-// parallel tests share the table, so the name is derived from the test name.
-//
-// [Ja] seedNumberFormat は話数フォーマットを挿入し、その id を返す。id はシーケンス由来の
-// ためテストケースのリテラルに書けず、実行時に差し込む必要がある。number_formats.name には
+// seedNumberFormatは話数フォーマットを挿入し、そのidを返す。idはシーケンス由来の
+// ためテストケースのリテラルに書けず、実行時に差し込む必要がある。number_formats.nameには
 // 一意インデックスがあり、並行するテストのトランザクションがテーブルを共有するため、名前は
 // テスト名から作る。
 func seedNumberFormat(t *testing.T, tx *sql.Tx) model.NumberFormatID {
@@ -63,7 +48,7 @@ func seedNumberFormat(t *testing.T, tx *sql.Tx) model.NumberFormatID {
 		"話数フォーマット_"+t.Name(),
 	).Scan(&id)
 	if err != nil {
-		t.Fatalf("number_formats の挿入に失敗: %v", err)
+		t.Fatalf("number_formatsの挿入に失敗: %v", err)
 	}
 
 	return model.NumberFormatID(id)
@@ -75,12 +60,8 @@ func TestDBWorkCreateValidatorValidate(t *testing.T) {
 	tests := []struct {
 		name  string
 		input DBWorkCreateValidatorInput
-		// withSeededNumberFormat replaces input.NumberFormatID with the id of a number
-		// format seeded for the case, because a sequence-issued id cannot be written into
-		// the literal below.
-		//
-		// [Ja] withSeededNumberFormat は input.NumberFormatID を、ケースごとに用意した話数
-		// フォーマットの id で置き換える。シーケンス採番の id は下のリテラルに書けないため。
+		// withSeededNumberFormatはinput.NumberFormatIDを、ケースごとに用意した話数
+		// フォーマットのidで置き換える。シーケンス採番のidは下のリテラルに書けないため。
 		withSeededNumberFormat bool
 		wantErrors             bool
 		wantFields             []string
@@ -171,7 +152,7 @@ func TestDBWorkCreateValidatorValidate(t *testing.T) {
 			wantFields: []string{"title", "media"},
 		},
 		{
-			name: "正常系: メディアが0（その他）",
+			name: "正常系: メディアが0 (その他)",
 			input: DBWorkCreateValidatorInput{
 				Title: dbWorkTestTitle,
 				Media: "0",
@@ -203,7 +184,7 @@ func TestDBWorkCreateValidatorValidate(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if !ve.HasFieldError(field) {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {
@@ -225,7 +206,7 @@ func TestDBWorkCreateValidatorValidate_URL(t *testing.T) {
 		wantFields []string
 	}{
 		{
-			name: "正常系: URLが空（スキップ）",
+			name: "正常系: URLが空 (スキップ)",
 			input: DBWorkCreateValidatorInput{
 				Title:           dbWorkTestTitle,
 				Media:           "1",
@@ -314,7 +295,7 @@ func TestDBWorkCreateValidatorValidate_URL(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if !ve.HasFieldError(field) {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {
@@ -336,7 +317,7 @@ func TestDBWorkCreateValidatorValidate_NumericFields(t *testing.T) {
 		wantFields []string
 	}{
 		{
-			name: "正常系: sc_tidが空（スキップ）",
+			name: "正常系: sc_tidが空 (スキップ)",
 			input: DBWorkCreateValidatorInput{
 				Title: dbWorkTestTitle,
 				Media: "1",
@@ -393,11 +374,7 @@ func TestDBWorkCreateValidatorValidate_NumericFields(t *testing.T) {
 			wantFields: []string{"mal_anime_id"},
 		},
 		{
-			// The integer columns are int32; a value beyond that has to be reported here,
-			// because the conversion parses with the same bit size and would otherwise drop
-			// it without a word.
-			//
-			// [Ja] integer カラムは int32 で、それを超える値はここで報告される必要がある。
+			// integerカラムはint32で、それを超える値はここで報告される必要がある。
 			// 変換も同じビット幅でパースするため、報告しないと何も言わずに捨てられる。
 			name: "異常系: sc_tidがint32の範囲外",
 			input: DBWorkCreateValidatorInput{
@@ -507,10 +484,7 @@ func TestDBWorkCreateValidatorValidate_NumericFields(t *testing.T) {
 			wantFields: []string{"number_format_id"},
 		},
 		{
-			// start_episode_raw_number backs a double precision column, so a decimal is a
-			// valid value here while the integer fields reject one.
-			//
-			// [Ja] start_episode_raw_number は double precision カラムに対応するため、
+			// start_episode_raw_numberはdouble precisionカラムに対応するため、
 			// 整数フィールドが弾く小数もここでは有効な値になる。
 			name: "正常系: start_episode_raw_numberが小数",
 			input: DBWorkCreateValidatorInput{
@@ -531,10 +505,7 @@ func TestDBWorkCreateValidatorValidate_NumericFields(t *testing.T) {
 			wantFields: []string{"start_episode_raw_number"},
 		},
 		{
-			// NaN and the infinities parse as float64 and double precision stores them, so
-			// only an explicit check keeps them out of the column.
-			//
-			// [Ja] NaN と無限大は float64 としてパースでき、double precision にも格納できる
+			// NaNと無限大はfloat64としてパースでき、double precisionにも格納できる
 			// ため、明示的に検査しない限りカラムに入ってしまう。
 			name: "異常系: start_episode_raw_numberがNaN",
 			input: DBWorkCreateValidatorInput{
@@ -575,7 +546,7 @@ func TestDBWorkCreateValidatorValidate_NumericFields(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if !ve.HasFieldError(field) {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {
@@ -627,7 +598,7 @@ func TestDBWorkCreateValidatorValidate_PresencePair(t *testing.T) {
 			wantFields: []string{"synopsis_source"},
 		},
 		{
-			name: "正常系: 出典のみ（あらすじなし）は許可",
+			name: "正常系: 出典のみ (あらすじなし) は許可",
 			input: DBWorkCreateValidatorInput{
 				Title:          dbWorkTestTitle,
 				Media:          "1",
@@ -688,7 +659,7 @@ func TestDBWorkCreateValidatorValidate_PresencePair(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if !ve.HasFieldError(field) {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {
@@ -700,20 +671,13 @@ func TestDBWorkCreateValidatorValidate_PresencePair(t *testing.T) {
 	}
 }
 
-// TestDBWorkCreateValidatorValidate_MaxLength covers the works columns declared as
-// character varying(510). Before the limit was checked here, an over-long value reached the
-// INSERT and came back as a 500 with the whole form lost.
-//
-// [Ja] TestDBWorkCreateValidatorValidate_MaxLength は character varying(510) で宣言された
-// works のカラムを対象とする。ここで上限を検査する前は、長すぎる値が INSERT まで届き、
-// フォームの入力を丸ごと失ったまま 500 で返っていた。
+// TestDBWorkCreateValidatorValidate_MaxLengthはcharacter varying(510) で宣言された
+// worksのカラムを対象とする。ここで上限を検査する前は、長すぎる値がINSERTまで届き、
+// フォームの入力を丸ごと失ったまま500で返っていた。
 func TestDBWorkCreateValidatorValidate_MaxLength(t *testing.T) {
 	t.Parallel()
 
-	// A URL long enough to exceed the limit while staying a valid URL, so the case is
-	// about the length and not the format.
-	//
-	// [Ja] 形式ではなく長さのケースにするため、有効な URL のまま上限を超える長さにする。
+	// 形式ではなく長さのケースにするため、有効なURLのまま上限を超える長さにする。
 	longURL := func(length int) string {
 		const prefix = "https://example.com/"
 		return prefix + strings.Repeat("a", length-len(prefix))
@@ -726,12 +690,9 @@ func TestDBWorkCreateValidatorValidate_MaxLength(t *testing.T) {
 		wantFields []string
 	}{
 		{
-			// 500 multibyte characters weigh 1500 bytes: the case fails if the limit is
-			// measured in bytes rather than characters, which is how varchar(n) counts.
-			//
-			// [Ja] 全角 500 文字は 1500 バイトある。varchar(n) の数え方である文字数ではなく
+			// 全角500文字は1500バイトある。varchar(n) の数え方である文字数ではなく
 			// バイト数で上限を測っていると、このケースが落ちる。
-			name: "正常系: タイトルが上限ちょうど（全角500文字）",
+			name: "正常系: タイトルが上限ちょうど (全角500文字)",
 			input: DBWorkCreateValidatorInput{
 				Title: strings.Repeat("あ", 500),
 				Media: "1",
@@ -788,10 +749,7 @@ func TestDBWorkCreateValidatorValidate_MaxLength(t *testing.T) {
 			wantFields: []string{"twitter_hashtag"},
 		},
 		{
-			// The English URL columns have no length limit in the schema, so a long value
-			// is accepted rather than rejected for a limit the column does not have.
-			//
-			// [Ja] 英語版の URL カラムはスキーマ上の長さ制限が無いため、長い値は、カラムに
+			// 英語版のURLカラムはスキーマ上の長さ制限が無いため、長い値は、カラムに
 			// 存在しない上限で弾かずに受け入れる。
 			name: "正常系: 英語版URLは長さ制限なし",
 			input: DBWorkCreateValidatorInput{
@@ -820,7 +778,7 @@ func TestDBWorkCreateValidatorValidate_MaxLength(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if !ve.HasFieldError(field) {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else if ve != nil {
@@ -830,11 +788,7 @@ func TestDBWorkCreateValidatorValidate_MaxLength(t *testing.T) {
 	}
 }
 
-// TestDBWorkCreateValidatorValidate_DateFields covers the date fields. An unparsable date
-// used to be dropped on the way to the column, so the work saved successfully with the
-// dates the submitter typed silently missing.
-//
-// [Ja] TestDBWorkCreateValidatorValidate_DateFields は日付フィールドを対象とする。以前は
+// TestDBWorkCreateValidatorValidate_DateFieldsは日付フィールドを対象とする。以前は
 // 解釈できない日付がカラムへ渡る途中で捨てられ、送信者が入力した日付が黙って欠けたまま
 // 作品が保存されていた。
 func TestDBWorkCreateValidatorValidate_DateFields(t *testing.T) {
@@ -902,7 +856,7 @@ func TestDBWorkCreateValidatorValidate_DateFields(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if !ve.HasFieldError(field) {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else if ve != nil {
@@ -912,15 +866,10 @@ func TestDBWorkCreateValidatorValidate_DateFields(t *testing.T) {
 	}
 }
 
-// TestDBWorkCreateValidatorValidate_NumberFormatExistence covers number_format_id, which
-// names a row in number_formats. works.number_format_id and
-// anime_classifications.number_format_id are both foreign keys to that table, so an id that
-// is not there fails the INSERT and the submit ends as a 500 with the input lost.
-//
-// [Ja] TestDBWorkCreateValidatorValidate_NumberFormatExistence は number_formats の行を指す
-// number_format_id を対象とする。works.number_format_id と
-// anime_classifications.number_format_id はいずれも同表への外部キーのため、存在しない id は
-// INSERT で失敗し、送信は入力を失ったまま 500 で終わる。
+// TestDBWorkCreateValidatorValidate_NumberFormatExistenceはnumber_formatsの行を指す
+// number_format_idを対象とする。works.number_format_idと
+// anime_classifications.number_format_idはいずれも同表への外部キーのため、存在しないidは
+// INSERTで失敗し、送信は入力を失ったまま500で終わる。
 func TestDBWorkCreateValidatorValidate_NumberFormatExistence(t *testing.T) {
 	t.Parallel()
 
@@ -959,11 +908,8 @@ func TestDBWorkCreateValidatorValidate_NumberFormatExistence(t *testing.T) {
 
 		v, _ := newTestDBWorkValidator(t)
 
-		// An id far beyond what the number_formats sequence will hand out, so no row can
-		// exist for it however many formats other tests register.
-		//
-		// [Ja] number_formats のシーケンスが採番する範囲を大きく超えた id。他のテストが
-		// いくつフォーマットを登録しても、この id の行は存在し得ない。
+		// number_formatsのシーケンスが採番する範囲を大きく超えたid。他のテストが
+		// いくつフォーマットを登録しても、このidの行は存在し得ない。
 		const missingNumberFormatID = "9000000000000000000"
 
 		_, err := v.Validate(context.Background(), DBWorkCreateValidatorInput{
@@ -977,28 +923,21 @@ func TestDBWorkCreateValidatorValidate_NumberFormatExistence(t *testing.T) {
 			t.Fatalf("エラーが期待されましたが、エラーがありませんでした (err=%v)", err)
 		}
 		if !ve.HasFieldError("number_format_id") {
-			t.Errorf("フィールド number_format_id のエラーが期待されましたが、見つかりませんでした: %+v", ve)
+			t.Errorf("フィールドnumber_format_idのエラーが期待されましたが、見つかりませんでした: %+v", ve)
 		}
 	})
 }
 
-// TestDBWorkCreateValidatorValidate_TitleUniqueness covers the title uniqueness rule, which
-// mirrors the Rails Work validation (uniqueness scoped to only_kept). Archived and deleted
-// works are outside that scope, so their titles stay available for a new work.
-//
-// [Ja] TestDBWorkCreateValidatorValidate_TitleUniqueness はタイトルの一意性を対象とする。
-// Rails の Work のバリデーション (only_kept にスコープした uniqueness) に対応する。非公開・
+// TestDBWorkCreateValidatorValidate_TitleUniquenessはタイトルの一意性を対象とする。
+// RailsのWorkのバリデーション (only_keptにスコープしたuniqueness) に対応する。非公開・
 // 削除済みの作品はそのスコープの外にあり、タイトルは新しい作品のために空いたままになる。
 func TestDBWorkCreateValidatorValidate_TitleUniqueness(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
 		name string
-		// seed builds the work already in the database, and returns its id so the case can
-		// exclude it the way the edit form does.
-		//
-		// [Ja] seed は既に DB にある work を作り、編集フォームと同じように除外できるよう
-		// その id を返す。
+		// seedは既にDBにあるworkを作り、編集フォームと同じように除外できるよう
+		// そのidを返す。
 		seed          func(t *testing.T, tx *sql.Tx, title string) model.WorkID
 		excludeSeeded bool
 		wantErrors    bool
@@ -1011,7 +950,7 @@ func TestDBWorkCreateValidatorValidate_TitleUniqueness(t *testing.T) {
 			wantErrors: true,
 		},
 		{
-			name: "正常系: 重複相手が自分自身（編集で除外される）",
+			name: "正常系: 重複相手が自分自身 (編集で除外される)",
 			seed: func(t *testing.T, tx *sql.Tx, title string) model.WorkID {
 				return testutil.NewWorkBuilder(t, tx).WithTitle(title).Build()
 			},
@@ -1053,11 +992,7 @@ func TestDBWorkCreateValidatorValidate_TitleUniqueness(t *testing.T) {
 
 			v, tx := newTestDBWorkValidator(t)
 
-			// The seeded row lives in this test's transaction, but the title still has to
-			// be unique to the case: the check reads the whole table, including the rows
-			// other tests have committed.
-			//
-			// [Ja] 用意する行は本テストのトランザクション内にあるが、タイトルはケースごとに
+			// 用意する行は本テストのトランザクション内にあるが、タイトルはケースごとに
 			// ユニークである必要がある。検査はテーブル全体を読み、他のテストがコミットした
 			// 行も対象になるため。
 			title := "一意性テスト作品_" + t.Name()
@@ -1076,7 +1011,7 @@ func TestDBWorkCreateValidatorValidate_TitleUniqueness(t *testing.T) {
 					t.Fatalf("エラーが期待されましたが、エラーがありませんでした (err=%v)", err)
 				}
 				if !ve.HasFieldError("title") {
-					t.Error("フィールド title のエラーが期待されましたが、見つかりませんでした")
+					t.Error("フィールドtitleのエラーが期待されましたが、見つかりませんでした")
 				}
 			} else if err != nil {
 				t.Errorf("エラーは期待されていませんでしたが、返されました: %v", err)
@@ -1085,11 +1020,7 @@ func TestDBWorkCreateValidatorValidate_TitleUniqueness(t *testing.T) {
 	}
 }
 
-// TestDBWorkCreateValidatorValidate_Version covers the version the edit form carries: the create
-// flow states none, the edit flow has to state one, and what it states decides which stored row
-// the update is allowed to write.
-//
-// [Ja] TestDBWorkCreateValidatorValidate_Version は編集フォームが運ぶ版を対象とする。作成フローは
+// TestDBWorkCreateValidatorValidate_Versionは編集フォームが運ぶ版を対象とする。作成フローは
 // 版を示さず、編集フローは示す必要がある。何を示すかが、更新がどの保存済みの行に書けるかを決める。
 func TestDBWorkCreateValidatorValidate_Version(t *testing.T) {
 	t.Parallel()
@@ -1098,10 +1029,7 @@ func TestDBWorkCreateValidatorValidate_Version(t *testing.T) {
 
 	tests := []struct {
 		name string
-		// updatedAt is the hidden field as it arrives. A nil pointer is the create flow,
-		// which has no stored row to state a version for.
-		//
-		// [Ja] updatedAt は届いたままの hidden フィールド。nil のポインタは作成フローで、版を
+		// updatedAtは届いたままのhiddenフィールド。nilのポインタは作成フローで、版を
 		// 示すべき保存済みの行が無い。
 		updatedAt   *string
 		wantErr     bool
@@ -1117,11 +1045,11 @@ func TestDBWorkCreateValidatorValidate_Version(t *testing.T) {
 			wantVersion: &stored,
 		},
 		{
-			name:      "正常系: updated_at が NULL の行はセンチネルで表す",
+			name:      "正常系: updated_atがNULLの行はセンチネルで表す",
 			updatedAt: ptrString(FormNullVersion),
 		},
 		{
-			name:      "異常系: 版が空 (hidden フィールドを伴わない送信)",
+			name:      "異常系: 版が空 (hiddenフィールドを伴わない送信)",
 			updatedAt: ptrString(""),
 			wantErr:   true,
 		},
@@ -1149,16 +1077,13 @@ func TestDBWorkCreateValidatorValidate_Version(t *testing.T) {
 				if ve == nil {
 					t.Fatalf("エラーが期待されましたが、エラーがありませんでした (err=%v)", err)
 				}
-				// The version is not an editable field, so it is reported for the form as a
-				// whole rather than against an input the editor could correct.
-				//
-				// [Ja] 版は編集できるフィールドではないため、編集者が直せる入力欄に対してでは
+				// 版は編集できるフィールドではないため、編集者が直せる入力欄に対してでは
 				// なくフォーム全体に対して報告する。
 				if len(ve.Global) == 0 {
 					t.Error("フォーム全体のエラーが期待されましたが、見つかりませんでした")
 				}
 				if version != nil {
-					t.Errorf("version = %v, want nil", version)
+					t.Errorf("version = %v、期待値 = nil", version)
 				}
 				return
 			}
@@ -1168,19 +1093,17 @@ func TestDBWorkCreateValidatorValidate_Version(t *testing.T) {
 			}
 			switch {
 			case tt.wantVersion == nil && version != nil:
-				t.Errorf("version = %v, want nil", version)
+				t.Errorf("version = %v、期待値 = nil", version)
 			case tt.wantVersion != nil && version == nil:
-				t.Errorf("version = nil, want %v", tt.wantVersion)
+				t.Errorf("version = nil、期待値 = %v", tt.wantVersion)
 			case tt.wantVersion != nil && !version.Equal(*tt.wantVersion):
-				t.Errorf("version = %v, want %v", version, tt.wantVersion)
+				t.Errorf("version = %v、期待値 = %v", version, tt.wantVersion)
 			}
 		})
 	}
 }
 
-// ptrString returns a pointer to value, for the optional fields whose absence is meaningful.
-//
-// [Ja] ptrString は value へのポインタを返す。不在に意味がある任意フィールド用。
+// ptrStringはvalueへのポインタを返す。不在に意味がある任意フィールド用。
 func ptrString(value string) *string {
 	return &value
 }

@@ -19,7 +19,7 @@ func ptrSeasonName(v seed.SeasonName) *seed.SeasonName {
 }
 
 func TestCreateHeavyUserUsecase(t *testing.T) {
-	// テストDBをセットアップ（トランザクションは使用しない）
+	// テストDBをセットアップ (トランザクションは使用しない)
 	db, _ := testutil.SetupTx(t)
 
 	// 前回のテストの残骸をクリーンアップ
@@ -35,7 +35,7 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 	}
 	defer tx.Rollback()
 
-	// テストデータを準備（作品とエピソードを作成）
+	// テストデータを準備 (作品とエピソードを作成)
 	createWorkUC := NewCreateWorkUsecase(db)
 	createEpisodeUC := NewCreateEpisodeUsecase(db)
 
@@ -55,7 +55,7 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 		t.Fatalf("作品作成に失敗: %v", err)
 	}
 
-	// 各作品に10エピソードずつ作成（合計100エピソード）
+	// 各作品に10エピソードずつ作成 (合計100エピソード)
 	episodeParams := make([]CreateEpisodeParams, 0, 100)
 	for _, workResult := range workResults {
 		for i := 1; i <= 10; i++ {
@@ -73,7 +73,7 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 		t.Fatalf("エピソード作成に失敗: %v", err)
 	}
 
-	// トランザクションをコミット（ヘビーユーザー作成時にエピソードが見えるようにする）
+	// トランザクションをコミット (ヘビーユーザー作成時にエピソードが見えるようにする)
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)
 	}
@@ -89,7 +89,7 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 	queries := query.New(db)
 	uc := NewCreateHeavyUserUsecase(db, queries)
 
-	// テスト: 小規模なヘビーユーザーを作成（テスト時間を短縮するため）
+	// テスト: 小規模なヘビーユーザーを作成 (テスト時間を短縮するため)
 	params := CreateHeavyUserParams{
 		Username:          "test_heavy_user",
 		Password:          "password",
@@ -112,17 +112,17 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 	}
 
 	if len(result.FollowerUserIDs) != params.FollowersCount {
-		t.Errorf("フォロワー数が不一致: got %d, want %d", len(result.FollowerUserIDs), params.FollowersCount)
+		t.Errorf("フォロワー数 = %d、期待値 = %d", len(result.FollowerUserIDs), params.FollowersCount)
 	}
 
 	if len(result.FollowingUserIDs) != params.FollowingCount {
-		t.Errorf("フォロー数が不一致: got %d, want %d", len(result.FollowingUserIDs), params.FollowingCount)
+		t.Errorf("フォロー数 = %d、期待値 = %d", len(result.FollowingUserIDs), params.FollowingCount)
 	}
 
-	// フォロー関係数の検証（フォロワー + フォロー）
+	// フォロー関係数の検証 (フォロワー + フォロー)
 	expectedFollowCount := params.FollowersCount + params.FollowingCount
 	if result.FollowCount != expectedFollowCount {
-		t.Errorf("フォロー関係数が不一致: got %d, want %d", result.FollowCount, expectedFollowCount)
+		t.Errorf("フォロー関係数 = %d、期待値 = %d", result.FollowCount, expectedFollowCount)
 	}
 
 	// データベース検証: ユーザーが作成されているか
@@ -142,7 +142,7 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 		t.Fatalf("視聴記録数取得に失敗: %v", err)
 	}
 	if recordCount != params.EpisodeRecords {
-		t.Errorf("視聴記録数が不一致: got %d, want %d", recordCount, params.EpisodeRecords)
+		t.Errorf("視聴記録数 = %d、期待値 = %d", recordCount, params.EpisodeRecords)
 	}
 
 	// データベース検証: フォロー関係が作成されているか
@@ -155,7 +155,7 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 		t.Fatalf("フォロー関係数取得に失敗: %v", err)
 	}
 	if followCount != expectedFollowCount {
-		t.Errorf("フォロー関係数が不一致: got %d, want %d", followCount, expectedFollowCount)
+		t.Errorf("フォロー関係数 = %d、期待値 = %d", followCount, expectedFollowCount)
 	}
 
 	// データベース検証: フォロワーのカウンターが更新されているか
@@ -165,7 +165,7 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 		t.Fatalf("フォロワー数取得に失敗: %v", err)
 	}
 	if followersCount != int32(params.FollowersCount) {
-		t.Errorf("フォロワー数カウンターが不一致: got %d, want %d", followersCount, params.FollowersCount)
+		t.Errorf("フォロワー数カウンター = %d、期待値 = %d", followersCount, params.FollowersCount)
 	}
 
 	// データベース検証: フォロー数のカウンターが更新されているか
@@ -175,7 +175,7 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 		t.Fatalf("フォロー数取得に失敗: %v", err)
 	}
 	if followingCount != int32(params.FollowingCount) {
-		t.Errorf("フォロー数カウンターが不一致: got %d, want %d", followingCount, params.FollowingCount)
+		t.Errorf("フォロー数カウンター = %d、期待値 = %d", followingCount, params.FollowingCount)
 	}
 
 	// データベース検証: 各フォロイーの視聴記録が作成されているか
@@ -183,19 +183,19 @@ func TestCreateHeavyUserUsecase(t *testing.T) {
 		var followerRecordCount int
 		err = db.QueryRow("SELECT COUNT(*) FROM episode_records WHERE user_id = $1", followerID).Scan(&followerRecordCount)
 		if err != nil {
-			t.Fatalf("フォロイー視聴記録数取得に失敗（user_id: %d）: %v", followerID, err)
+			t.Fatalf("フォロイー視聴記録数取得に失敗 (user_id: %d): %v", followerID, err)
 		}
 		if followerRecordCount != params.FolloweeRecords {
-			t.Errorf("フォロイー視聴記録数が不一致（user_id: %d）: got %d, want %d", followerID, followerRecordCount, params.FolloweeRecords)
+			t.Errorf("フォロイー視聴記録数 (user_id: %d) = %d、期待値 = %d", followerID, followerRecordCount, params.FolloweeRecords)
 		}
 	}
 
-	// テスト終了時にクリーンアップ（重複エラーを避けるため）
+	// テスト終了時にクリーンアップ (重複エラーを避けるため)
 	_, err = db.Exec("DELETE FROM users WHERE username LIKE 'test_%' OR username LIKE 'follower_%' OR username LIKE 'following_%'")
 	if err != nil {
 		t.Logf("クリーンアップに失敗: %v", err)
 	}
 }
 
-// TestCreateHeavyUserUsecase_DefaultParams と TestCreateHeavyUserUsecase_NoEpisodes は
+// TestCreateHeavyUserUsecase_DefaultParamsとTestCreateHeavyUserUsecase_NoEpisodesは
 // テストの複雑さを避けるため、一旦コメントアウト

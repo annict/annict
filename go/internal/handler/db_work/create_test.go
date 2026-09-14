@@ -17,16 +17,10 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// deleteWorkFromEditRedirect deletes the work whose edit page the create handler
-// redirected to (/db/works/{id}/edit). Create commits the new work through the usecase's
-// own transaction, so the row escapes the test's rolled-back transaction and must be
-// cleaned up to keep the parallel test suite isolated. It is a no-op when the location is
-// not an edit path.
-//
-// [Ja] deleteWorkFromEditRedirect は create ハンドラーがリダイレクトした編集ページ
-// (/db/works/{id}/edit) の作品を削除する。Create は UseCase 自前のトランザクションで新規
-// work をコミットするため、行はテストのロールバックされるトランザクションの外に残り、並行
-// テストを隔離するには削除が要る。location が編集パスでない場合は何もしない。
+// deleteWorkFromEditRedirectはcreateハンドラーがリダイレクトした編集ページ
+// (/db/works/{id}/edit) の作品を削除する。CreateはUseCase自前のトランザクションで新規
+// workをコミットするため、行はテストのロールバックされるトランザクションの外に残り、並行
+// テストを隔離するには削除が要る。locationが編集パスでない場合は何もしない。
 func deleteWorkFromEditRedirect(db *sql.DB, location string) {
 	const prefix, suffix = "/db/works/", "/edit"
 	if !strings.HasPrefix(location, prefix) || !strings.HasSuffix(location, suffix) {
@@ -38,7 +32,7 @@ func deleteWorkFromEditRedirect(db *sql.DB, location string) {
 	}
 }
 
-// TestCreate_ValidationError はバリデーションエラー時にフォームが再表示されることをテスト
+// TestCreate_ValidationErrorはバリデーションエラー時にフォームが再表示されることをテスト
 func TestCreate_ValidationError(t *testing.T) {
 	t.Parallel()
 
@@ -58,7 +52,7 @@ func TestCreate_ValidationError(t *testing.T) {
 
 	// 422 Unprocessable Entityが返ることを確認
 	if status := rr.Code; status != http.StatusUnprocessableEntity {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusUnprocessableEntity)
 	}
 
 	body := rr.Body.String()
@@ -70,22 +64,19 @@ func TestCreate_ValidationError(t *testing.T) {
 		`action="/db/works"`,
 		`method="POST"`,
 		`role="alert"`,
-		// The re-rendered page is the new-work form, so og:url names its own GET path and not
-		// the POST endpoint (which serves the work list on GET).
-		//
-		// [Ja] 再描画するのは新規作成フォームなので、og:url は POST 先ではなくそのページ自身の
-		// GET パスを指す (POST 先は GET では作品一覧を返す)。
+		// 再描画するのは新規作成フォームなので、og:urlはPOST先ではなくそのページ自身の
+		// GETパスを指す (POST先はGETでは作品一覧を返す)。
 		`<meta property="og:url" content="https://test.annict.com/db/works/new">`,
 	}
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("response doesn't contain expected string: %q", expected)
+			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
 		}
 	}
 }
 
-// TestCreate_ValidationError_PreservesFormValues はバリデーションエラー時にフォーム値が保持されることをテスト
+// TestCreate_ValidationError_PreservesFormValuesはバリデーションエラー時にフォーム値が保持されることをテスト
 func TestCreate_ValidationError_PreservesFormValues(t *testing.T) {
 	t.Parallel()
 
@@ -105,21 +96,21 @@ func TestCreate_ValidationError_PreservesFormValues(t *testing.T) {
 	handler.Create(rr, req)
 
 	if status := rr.Code; status != http.StatusUnprocessableEntity {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusUnprocessableEntity)
 	}
 
 	body := rr.Body.String()
 
 	// 入力値が保持されていることを確認
 	if !strings.Contains(body, "テスト作品") {
-		t.Error("response doesn't preserve title value")
+		t.Error("レスポンスがtitleの値を保持していない")
 	}
 	if !strings.Contains(body, "てすとさくひん") {
-		t.Error("response doesn't preserve title_kana value")
+		t.Error("レスポンスがtitle_kanaの値を保持していない")
 	}
 }
 
-// TestCreate_Success は正常に作品が作成されることをテスト
+// TestCreate_Successは正常に作品が作成されることをテスト
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
 
@@ -144,25 +135,18 @@ func TestCreate_Success(t *testing.T) {
 
 	// 303 See Otherでリダイレクトされることを確認
 	if status := rr.Code; status != http.StatusSeeOther {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusSeeOther)
 	}
 
-	// The create handler redirects to the new work's edit page, mirroring the Rails create
-	// action (db_edit_work_path) and the Update handler.
-	//
-	// [Ja] create ハンドラーは新規作品の編集ページへリダイレクトする (Rails の create
-	// アクション db_edit_work_path や Update ハンドラーと同じ)。
+	// createハンドラーは新規作品の編集ページへリダイレクトする (Railsのcreate
+	// アクションdb_edit_work_pathやUpdateハンドラーと同じ)。
 	if !strings.HasPrefix(location, "/db/works/") || !strings.HasSuffix(location, "/edit") {
-		t.Errorf("handler returned wrong redirect location: got %v", location)
+		t.Errorf("リダイレクト先 = %v、期待値 = /db/works/で始まり/editで終わるURL", location)
 	}
 }
 
-// TestCreate_RequiresCommitter verifies the work creation route is protected by the
-// committer role (committer proceeds, a regular user 403, an unauthenticated request is
-// redirected to sign-in).
-//
-// [Ja] TestCreate_RequiresCommitter は作品作成ルートが committer ロールで保護されている
-// ことを検証する (committer は処理続行、一般ユーザーは 403、未認証はサインインへ
+// TestCreate_RequiresCommitterは作品作成ルートがcommitterロールで保護されている
+// ことを検証する (committerは処理続行、一般ユーザーは403、未認証はサインインへ
 // リダイレクト)。
 func TestCreate_RequiresCommitter(t *testing.T) {
 	t.Parallel()
@@ -208,15 +192,12 @@ func TestCreate_RequiresCommitter(t *testing.T) {
 			rr := httptest.NewRecorder()
 			r.ServeHTTP(rr, req)
 
-			// The committer path commits a new work through the usecase's own transaction;
-			// delete it so the parallel test suite is unaffected (mirrors TestCreate_Success).
-			//
-			// [Ja] committer 経路は UseCase 自前のトランザクションで新規 work をコミットするため、
-			// 並行テストへ影響しないよう削除する (TestCreate_Success と同じ)。
+			// committer経路はUseCase自前のトランザクションで新規workをコミットするため、
+			// 並行テストへ影響しないよう削除する (TestCreate_Successと同じ)。
 			deleteWorkFromEditRedirect(db, rr.Header().Get("Location"))
 
 			if rr.Code != tt.wantStatus {
-				t.Errorf("status = %d, want %d", rr.Code, tt.wantStatus)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatus)
 			}
 		})
 	}

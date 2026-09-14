@@ -11,7 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateSessionUsecase_Execute は正常系のテストです
+// TestCreateSessionUsecase_Executeは正常系のテストです
 func TestCreateSessionUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
@@ -30,14 +30,14 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 		WithEncryptedPassword(hashedPassword).
 		Build()
 
-	// ユーザー情報を取得（encrypted_passwordが必要）
+	// ユーザー情報を取得 (encrypted_passwordが必要)
 	queries := query.New(db).WithTx(tx)
 	user, err := queries.GetUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
 
-	// UseCase を作成
+	// UseCaseを作成
 	sessionRepo := repository.NewSessionRepository(queries)
 	uc := NewCreateSessionUsecase(sessionRepo)
 
@@ -53,7 +53,7 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 		t.Error("PublicIDが空です")
 	}
 	if result.UserID != userID {
-		t.Errorf("ユーザーIDが一致しません: got %d, want %d", result.UserID, userID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", result.UserID, userID)
 	}
 
 	// セッションがデータベースに保存されているか確認
@@ -66,7 +66,7 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 	}
 }
 
-// TestCreateSessionUsecase_Execute_WithMultipleUsers は複数ユーザーでのセッション作成をテストします
+// TestCreateSessionUsecase_Execute_WithMultipleUsersは複数ユーザーでのセッション作成をテストします
 func TestCreateSessionUsecase_Execute_WithMultipleUsers(t *testing.T) {
 	t.Parallel()
 
@@ -92,7 +92,7 @@ func TestCreateSessionUsecase_Execute_WithMultipleUsers(t *testing.T) {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
 
-	// UseCase を作成
+	// UseCaseを作成
 	sessionRepo := repository.NewSessionRepository(queries)
 	uc := NewCreateSessionUsecase(sessionRepo)
 
@@ -108,11 +108,11 @@ func TestCreateSessionUsecase_Execute_WithMultipleUsers(t *testing.T) {
 		t.Error("PublicIDが空です")
 	}
 	if result.UserID != userID {
-		t.Errorf("ユーザーIDが一致しません: got %d, want %d", result.UserID, userID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", result.UserID, userID)
 	}
 }
 
-// TestCreateSessionUsecase_Execute_WithInvalidUserID はfail-fastケース：存在しないユーザーIDでのセッション作成をテストします
+// TestCreateSessionUsecase_Execute_WithInvalidUserIDはfail-fastケース：存在しないユーザーIDでのセッション作成をテストします
 // 注: sessionsテーブルにはuser_idカラムがなく、外部キー制約もないため、存在しないユーザーIDでもセッション作成は成功します
 // このテストは、将来的にuser_id外部キー制約が追加された場合のための参考として残します
 func TestCreateSessionUsecase_Execute_WithInvalidUserID(t *testing.T) {
@@ -137,7 +137,7 @@ func TestCreateSessionUsecase_Execute_WithInvalidUserID(t *testing.T) {
 	// セッションは作成されるが、存在しないユーザーIDが格納される
 	// これは実運用では問題となる可能性がある
 	if result.UserID != invalidUserID {
-		t.Errorf("ユーザーIDが一致しません: got %d, want %d", result.UserID, invalidUserID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", result.UserID, invalidUserID)
 	}
 
 	// 将来的にuser_id外部キー制約が追加された場合、このテストは以下のように変更すべき：
@@ -146,7 +146,7 @@ func TestCreateSessionUsecase_Execute_WithInvalidUserID(t *testing.T) {
 	// }
 }
 
-// TestCreateSessionUsecase_Execute_WithEmptyEncryptedPassword はfail-fastケース：encrypted_passwordが空の場合のテストです
+// TestCreateSessionUsecase_Execute_WithEmptyEncryptedPasswordはfail-fastケース：encrypted_passwordが空の場合のテストです
 func TestCreateSessionUsecase_Execute_WithEmptyEncryptedPassword(t *testing.T) {
 	t.Parallel()
 
@@ -188,7 +188,7 @@ func TestCreateSessionUsecase_Execute_WithEmptyEncryptedPassword(t *testing.T) {
 	// これは実運用では発生すべきではない状況です
 }
 
-// TestCreateSessionUsecase_Execute_WithShortEncryptedPassword はfail-fastケース：encrypted_passwordが29文字未満の場合のテストです
+// TestCreateSessionUsecase_Execute_WithShortEncryptedPasswordはfail-fastケース：encrypted_passwordが29文字未満の場合のテストです
 func TestCreateSessionUsecase_Execute_WithShortEncryptedPassword(t *testing.T) {
 	t.Parallel()
 
@@ -227,10 +227,10 @@ func TestCreateSessionUsecase_Execute_WithShortEncryptedPassword(t *testing.T) {
 	}
 
 	// 注意: encrypted_passwordが29文字未満の場合、authenticatable_saltも短くなります
-	// これは実運用では発生すべきではない状況です（bcryptハッシュは60文字）
+	// これは実運用では発生すべきではない状況です (bcryptハッシュは60文字)
 }
 
-// TestCreateSessionUsecase_Execute_WithoutTransaction はトランザクションなしでのセッション作成をテストします
+// TestCreateSessionUsecase_Execute_WithoutTransactionはトランザクションなしでのセッション作成をテストします
 func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 	t.Parallel()
 
@@ -256,7 +256,7 @@ func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
 
-	// トランザクションをコミット（UseCaseがトランザクションなしで動作するため）
+	// トランザクションをコミット (UseCaseがトランザクションなしで動作するため)
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)
 	}
@@ -267,7 +267,7 @@ func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 		_, _ = db.Exec("DELETE FROM users WHERE id = $1", userID)
 	})
 
-	// UseCase を作成（トランザクションなしのqueries）
+	// UseCaseを作成 (トランザクションなしのqueries)
 	queriesWithoutTx := query.New(db)
 	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
 	uc := NewCreateSessionUsecase(sessionRepo)
@@ -284,11 +284,11 @@ func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 		t.Error("PublicIDが空です")
 	}
 	if result.UserID != userID {
-		t.Errorf("ユーザーIDが一致しません: got %d, want %d", result.UserID, userID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", result.UserID, userID)
 	}
 }
 
-// TestCreateSessionUsecase_Execute_DuplicateSessionID はfail-fastケース：セッションID重複時のテストです
+// TestCreateSessionUsecase_Execute_DuplicateSessionIDはfail-fastケース：セッションID重複時のテストです
 func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 	t.Parallel()
 
@@ -314,7 +314,7 @@ func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
 
-	// UseCase を作成
+	// UseCaseを作成
 	sessionRepo := repository.NewSessionRepository(queries)
 	uc := NewCreateSessionUsecase(sessionRepo)
 
@@ -325,7 +325,7 @@ func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 		t.Fatalf("最初のセッション作成に失敗: %v", err)
 	}
 
-	// 2番目のセッションを作成（異なるpublicIDが生成されるはず）
+	// 2番目のセッションを作成 (異なるpublicIDが生成されるはず)
 	result2, err := uc.Execute(ctx, tx, userID, user.EncryptedPassword)
 	if err != nil {
 		t.Fatalf("2番目のセッション作成に失敗: %v", err)
@@ -348,7 +348,7 @@ func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 	}
 }
 
-// TestCreateSessionUsecase_Execute_WithNullUserData はfail-fastケース：ユーザーデータにNULL値がある場合のテストです
+// TestCreateSessionUsecase_Execute_WithNullUserDataはfail-fastケース：ユーザーデータにNULL値がある場合のテストです
 // 注: このテストは現在の実装ではユーザー情報を直接取得しないため、スキップします
 // 将来的にユーザー情報の検証が追加された場合に有効化してください
 func TestCreateSessionUsecase_Execute_WithNullUserData(t *testing.T) {

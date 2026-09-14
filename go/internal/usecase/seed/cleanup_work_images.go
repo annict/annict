@@ -14,8 +14,8 @@ import (
 	"github.com/annict/annict/go/internal/seed"
 )
 
-// CleanupWorkImagesUsecase 作品画像クリーンアップUsecase（シード専用）
-// Cloudflare R2上の shrine/workimage/ プレフィックス配下のすべての画像を削除します
+// CleanupWorkImagesUsecase作品画像クリーンアップUsecase (シード専用)
+// Cloudflare R2上のshrine/workimage/ プレフィックス配下のすべての画像を削除します
 type CleanupWorkImagesUsecase struct {
 	endpoint        string
 	accessKeyID     string
@@ -24,7 +24,7 @@ type CleanupWorkImagesUsecase struct {
 	bucketName      string
 }
 
-// NewCleanupWorkImagesUsecase 新しいCleanupWorkImagesUsecaseを作成
+// NewCleanupWorkImagesUsecase新しいCleanupWorkImagesUsecaseを作成
 func NewCleanupWorkImagesUsecase(
 	endpoint string,
 	accessKeyID string,
@@ -41,16 +41,11 @@ func NewCleanupWorkImagesUsecase(
 	}
 }
 
-// Execute deletes all images under the shrine/workimage/ prefix in Cloudflare R2.
-//
-// In the seed generation flow, seeder.Run deletes the corresponding database rows
-// before this usecase removes the objects from storage.
-//
-// [Ja] Execute は Cloudflare R2 上の shrine/workimage/ プレフィックス配下にある画像を
+// ExecuteはCloudflare R2上のshrine/workimage/ プレフィックス配下にある画像を
 // すべて削除する。
 //
-// シード生成フローでは、この UseCase がストレージ上のオブジェクトを削除する前に、
-// seeder.Run が対応するデータベース行を削除する。
+// シード生成フローでは、このUseCaseがストレージ上のオブジェクトを削除する前に、
+// seeder.Runが対応するデータベース行を削除する。
 func (uc *CleanupWorkImagesUsecase) Execute(ctx context.Context) error {
 	// S3設定がない場合はスキップ
 	if uc.endpoint == "" || uc.accessKeyID == "" || uc.secretAccessKey == "" || uc.bucketName == "" {
@@ -58,7 +53,7 @@ func (uc *CleanupWorkImagesUsecase) Execute(ctx context.Context) error {
 		return nil
 	}
 
-	// S3クライアントを作成（Cloudflare R2はS3互換API）
+	// S3クライアントを作成 (Cloudflare R2はS3互換API)
 	cfg := aws.Config{
 		Region: uc.region,
 		Credentials: credentials.NewStaticCredentialsProvider(
@@ -121,7 +116,7 @@ func (uc *CleanupWorkImagesUsecase) Execute(ctx context.Context) error {
 	return nil
 }
 
-// listAllObjects S3バケット内の shrine/workimage/ プレフィックス配下のすべてのオブジェクトを取得します
+// listAllObjects S3バケット内のshrine/workimage/ プレフィックス配下のすべてのオブジェクトを取得します
 func (uc *CleanupWorkImagesUsecase) listAllObjects(ctx context.Context, client *s3.Client) ([]types.Object, error) {
 	var allObjects []types.Object
 	var continuationToken *string
@@ -150,7 +145,7 @@ func (uc *CleanupWorkImagesUsecase) listAllObjects(ctx context.Context, client *
 	return allObjects, nil
 }
 
-// deleteObjectsBatch 複数のオブジェクトをバッチで削除します（最大1000件）
+// deleteObjectsBatch複数のオブジェクトをバッチで削除します (最大1000件)
 func (uc *CleanupWorkImagesUsecase) deleteObjectsBatch(ctx context.Context, client *s3.Client, objects []types.Object) error {
 	// DeleteObjects用のObjectIdentifierリストを作成
 	identifiers := make([]types.ObjectIdentifier, len(objects))

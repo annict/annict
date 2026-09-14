@@ -16,14 +16,14 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// TestCreate_Success ログイン成功のテスト
+// TestCreate_Successログイン成功のテスト
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
-	// テストユーザーを作成（bcryptでハッシュ化したパスワード）
+	// テストユーザーを作成 (bcryptでハッシュ化したパスワード)
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
 	if err != nil {
 		t.Fatalf("パスワードハッシュ生成エラー: %v", err)
@@ -65,15 +65,15 @@ func TestCreate_Success(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
+	// ステータスコードを確認 (リダイレクト)
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	// リダイレクト先を確認
 	location := rr.Header().Get("Location")
 	if location != "/" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/")
 	}
 
 	// セッションCookieが設定されているか確認
@@ -98,13 +98,13 @@ func TestCreate_Success(t *testing.T) {
 			expectedDomain = expectedDomain[1:]
 		}
 		if newSessionCookie.Domain != expectedDomain {
-			t.Errorf("セッションCookieのドメインが正しくない: got %v want %v",
+			t.Errorf("セッションCookieのドメイン = %v、期待値 = %v",
 				newSessionCookie.Domain, expectedDomain)
 		}
 		if !newSessionCookie.HttpOnly {
 			t.Error("セッションCookieがHttpOnlyではありません")
 		}
-		// テスト環境ではSecureはfalse（本番環境ではtrue）
+		// テスト環境ではSecureはfalse (本番環境ではtrue)
 		if newSessionCookie.Secure {
 			t.Error("セッションCookieがSecureになっていますが、テスト環境ではfalseであるべきです")
 		}
@@ -113,7 +113,7 @@ func TestCreate_Success(t *testing.T) {
 	_ = userID // 未使用変数の警告を回避
 }
 
-// TestCreate_InvalidCredentials 認証失敗のテスト
+// TestCreate_InvalidCredentials認証失敗のテスト
 func TestCreate_InvalidCredentials(t *testing.T) {
 	t.Parallel()
 
@@ -158,13 +158,13 @@ func TestCreate_InvalidCredentials(t *testing.T) {
 
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rr, req)
 
-	// 422 でフォーム再描画されるか確認
+	// 422でフォーム再描画されるか確認
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
-// TestCreate_WithBackParam ログイン成功時にbackパラメータでリダイレクトされることをテスト
+// TestCreate_WithBackParamログイン成功時にbackパラメータでリダイレクトされることをテスト
 func TestCreate_WithBackParam(t *testing.T) {
 	t.Parallel()
 
@@ -211,17 +211,17 @@ func TestCreate_WithBackParam(t *testing.T) {
 	handler.Create(rr, req)
 
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	// backパラメータで指定したURLにリダイレクトされることを確認
 	location := rr.Header().Get("Location")
 	if location != "/oauth/authorize?client_id=test" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/oauth/authorize?client_id=test")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/oauth/authorize?client_id=test")
 	}
 }
 
-// TestCreate_WithInvalidBackParam 無効なbackパラメータの場合はデフォルトリダイレクトになることをテスト
+// TestCreate_WithInvalidBackParam無効なbackパラメータの場合はデフォルトリダイレクトになることをテスト
 func TestCreate_WithInvalidBackParam(t *testing.T) {
 	t.Parallel()
 
@@ -255,7 +255,7 @@ func TestCreate_WithInvalidBackParam(t *testing.T) {
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_invalid_back@example.com")
 
-	// 無効なbackパラメータ（絶対URL）でログイン
+	// 無効なbackパラメータ (絶対URL) でログイン
 	form := url.Values{}
 	form.Set("password", "password123")
 	form.Set("back", "https://evil.com/phishing")
@@ -268,17 +268,17 @@ func TestCreate_WithInvalidBackParam(t *testing.T) {
 	handler.Create(rr, req)
 
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
-	// 無効なbackパラメータの場合はデフォルト（"/"）にリダイレクトされることを確認
+	// 無効なbackパラメータの場合はデフォルト ("/") にリダイレクトされることを確認
 	location := rr.Header().Get("Location")
 	if location != "/" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v（無効なbackパラメータはデフォルトにリダイレクトされるべき）", location, "/")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v (無効なbackパラメータはデフォルトにリダイレクトされるべき)", location, "/")
 	}
 }
 
-// TestCreate_WithProtocolRelativeBackParam プロトコル相対URLのbackパラメータは無効になることをテスト
+// TestCreate_WithProtocolRelativeBackParamプロトコル相対URLのbackパラメータは無効になることをテスト
 func TestCreate_WithProtocolRelativeBackParam(t *testing.T) {
 	t.Parallel()
 
@@ -325,17 +325,17 @@ func TestCreate_WithProtocolRelativeBackParam(t *testing.T) {
 	handler.Create(rr, req)
 
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
-	// プロトコル相対URLの場合もデフォルト（"/"）にリダイレクトされることを確認
+	// プロトコル相対URLの場合もデフォルト ("/") にリダイレクトされることを確認
 	location := rr.Header().Get("Location")
 	if location != "/" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v（プロトコル相対URLはデフォルトにリダイレクトされるべき）", location, "/")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v (プロトコル相対URLはデフォルトにリダイレクトされるべき)", location, "/")
 	}
 }
 
-// TestCreate_GlobalError グローバルエラー時のform_errorsパーシャルが正しく読み込まれているか確認するテスト
+// TestCreate_GlobalErrorグローバルエラー時のform_errorsパーシャルが正しく読み込まれているか確認するテスト
 // このテストは認証失敗時のグローバルエラーメッセージが正しく表示されることを確認する
 func TestCreate_GlobalError(t *testing.T) {
 	t.Parallel()
@@ -343,7 +343,7 @@ func TestCreate_GlobalError(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
-	// テストユーザーを作成（パスワードが間違っている場合のテスト）
+	// テストユーザーを作成 (パスワードが間違っている場合のテスト)
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("correctpassword"), bcrypt.DefaultCost)
 	if err != nil {
 		t.Fatalf("パスワードハッシュ生成エラー: %v", err)
@@ -370,7 +370,7 @@ func TestCreate_GlobalError(t *testing.T) {
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_global_error@example.com")
 
-	// 間違ったパスワードでPOST（グローバルエラーを発生させる）
+	// 間違ったパスワードでPOST (グローバルエラーを発生させる)
 	form := url.Values{}
 	form.Set("password", "wrongpassword")
 
@@ -382,25 +382,25 @@ func TestCreate_GlobalError(t *testing.T) {
 	// I18nミドルウェアを適用
 	testutil.ApplyI18nMiddleware(t, handler.Create)(rrPost, reqPost)
 
-	// 422 でフォーム再描画されることを確認
+	// 422でフォーム再描画されることを確認
 	if rrPost.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rrPost.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rrPost.Code, http.StatusUnprocessableEntity)
 	}
 
-	// レスポンスボディを確認（form_errorsパーシャルが正しくレンダリングされているか）
+	// レスポンスボディを確認 (form_errorsパーシャルが正しくレンダリングされているか)
 	body := rrPost.Body.String()
 	if !strings.Contains(body, `class="alert" data-variant="destructive"`) {
-		t.Error("エラーメッセージのスタイルクラスが見つかりません（form_errorsパーシャルが読み込まれていない可能性があります）")
+		t.Error("エラーメッセージのスタイルクラスが見つかりません (form_errorsパーシャルが読み込まれていない可能性があります)")
 	}
 
 	// Content-Typeを確認
 	contentType := rrPost.Header().Get("Content-Type")
 	if !strings.Contains(contentType, "text/html") {
-		t.Errorf("Content-Typeが正しくない: got %v", contentType)
+		t.Errorf("Content-Type = %v、期待値 = text/htmlを含むこと", contentType)
 	}
 }
 
-// TestCreate_WithoutSessionEmail セッションにメールアドレスがない場合は/sign_inにリダイレクト
+// TestCreate_WithoutSessionEmailセッションにメールアドレスがない場合は/sign_inにリダイレクト
 func TestCreate_WithoutSessionEmail(t *testing.T) {
 	t.Parallel()
 
@@ -431,11 +431,11 @@ func TestCreate_WithoutSessionEmail(t *testing.T) {
 
 	// /sign_inにリダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in")
 	}
 }

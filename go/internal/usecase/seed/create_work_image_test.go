@@ -11,7 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateWorkImageUsecase_ExecuteBatchWithTx はExecuteBatchWithTxメソッドのテスト（トランザクションあり、シーケンシャル処理）
+// TestCreateWorkImageUsecase_ExecuteBatchWithTxはExecuteBatchWithTxメソッドのテスト (トランザクションあり、シーケンシャル処理)
 func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 	// テストケース
 	tests := []struct {
@@ -32,7 +32,7 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 			db, tx := testutil.SetupTx(t)
 			queries := query.New(db)
 
-			// Usecaseを作成（R2設定は空にしてアップロードをスキップ）
+			// Usecaseを作成 (R2設定は空にしてアップロードをスキップ)
 			uc := NewCreateWorkImageUsecase(db, queries, "", "", "", "", "")
 
 			// テスト用ユーザーを作成
@@ -53,7 +53,7 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ExecuteBatchWithTx() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ExecuteBatchWithTx()のエラー = %v、期待値 = %v", err, tt.wantErr)
 				return
 			}
 
@@ -63,7 +63,7 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 
 			// 作成された作品画像の数を確認
 			if len(results) != tt.numImages {
-				t.Errorf("作成された作品画像の数が期待値と異なります: got %d, want %d", len(results), tt.numImages)
+				t.Errorf("作成された作品画像の数 = %d、期待値 = %d", len(results), tt.numImages)
 			}
 
 			// 各結果を検証
@@ -81,7 +81,7 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 				// 画像パスのプレフィックスを確認
 				expectedPrefix := seed.ShrinePathPrefix
 				if len(result.ImagePath) < len(expectedPrefix) || result.ImagePath[:len(expectedPrefix)] != expectedPrefix {
-					t.Errorf("results[%d]: ImagePathのプレフィックスが期待値と異なります: got %s, want prefix %s", i, result.ImagePath, expectedPrefix)
+					t.Errorf("results[%d]: ImagePathのプレフィックス = %s、期待値 = %sで始まること", i, result.ImagePath, expectedPrefix)
 				}
 			}
 
@@ -96,10 +96,10 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 
 				// work_idとuser_idを確認
 				if model.WorkID(workID) != params[0].WorkID {
-					t.Errorf("work_idが期待値と異なります: got %d, want %d", workID, params[0].WorkID)
+					t.Errorf("work_id = %d、期待値 = %d", workID, params[0].WorkID)
 				}
 				if model.UserID(userID) != params[0].UserID {
-					t.Errorf("user_idが期待値と異なります: got %d, want %d", userID, params[0].UserID)
+					t.Errorf("user_id = %d、期待値 = %d", userID, params[0].UserID)
 				}
 
 				// image_dataのJSON形式を確認
@@ -110,26 +110,26 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 
 				// Shrine形式のフィールドを確認
 				if shrineData.Master.Storage != "store" {
-					t.Errorf("storage が期待値と異なります: got %s, want store", shrineData.Master.Storage)
+					t.Errorf("storage = %s、期待値 = store", shrineData.Master.Storage)
 				}
 				if shrineData.Master.Metadata.MimeType != "image/png" {
-					t.Errorf("mime_type が期待値と異なります: got %s, want image/png", shrineData.Master.Metadata.MimeType)
+					t.Errorf("mime_type = %s、期待値 = image/png", shrineData.Master.Metadata.MimeType)
 				}
 				if shrineData.Master.Metadata.Width != seed.WorkImageWidth {
-					t.Errorf("width が期待値と異なります: got %d, want %d", shrineData.Master.Metadata.Width, seed.WorkImageWidth)
+					t.Errorf("width = %d、期待値 = %d", shrineData.Master.Metadata.Width, seed.WorkImageWidth)
 				}
 				if shrineData.Master.Metadata.Height != seed.WorkImageHeight {
-					t.Errorf("height が期待値と異なります: got %d, want %d", shrineData.Master.Metadata.Height, seed.WorkImageHeight)
+					t.Errorf("height = %d、期待値 = %d", shrineData.Master.Metadata.Height, seed.WorkImageHeight)
 				}
 				if shrineData.Master.Metadata.Size <= 0 {
-					t.Errorf("size が0以下です: got %d", shrineData.Master.Metadata.Size)
+					t.Errorf("size = %d、期待値 = 1以上", shrineData.Master.Metadata.Size)
 				}
 			}
 		})
 	}
 }
 
-// TestCreateWorkImageUsecase_ExecuteBatch はExecuteBatchメソッドのテスト（トランザクションなし、並列処理）
+// TestCreateWorkImageUsecase_ExecuteBatchはExecuteBatchメソッドのテスト (トランザクションなし、並列処理)
 // このテストは並列処理パスがコンパイルされ、基本的に動作することを確認します
 func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 	// テストケース
@@ -147,11 +147,11 @@ func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// テストDBをセットアップ（トランザクションはコミット前に準備データを作成）
+			// テストDBをセットアップ (トランザクションはコミット前に準備データを作成)
 			db, tx := testutil.SetupTx(t)
 			queries := query.New(db)
 
-			// Usecaseを作成（R2設定は空にしてアップロードをスキップ）
+			// Usecaseを作成 (R2設定は空にしてアップロードをスキップ)
 			uc := NewCreateWorkImageUsecase(db, queries, "", "", "", "", "")
 
 			// テスト用ユーザーを作成
@@ -167,17 +167,17 @@ func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 				}
 			}
 
-			// トランザクションをコミット（並列処理で参照するため）
+			// トランザクションをコミット (並列処理で参照するため)
 			if err := tx.Commit(); err != nil {
 				t.Fatalf("トランザクションのコミットエラー: %v", err)
 			}
 
-			// ExecuteBatchを実行（トランザクションなし、並列処理パス）
+			// ExecuteBatchを実行 (トランザクションなし、並列処理パス)
 			results, err := uc.ExecuteBatch(context.Background(), params, nil)
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ExecuteBatch() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ExecuteBatch()のエラー = %v、期待値 = %v", err, tt.wantErr)
 				return
 			}
 
@@ -187,7 +187,7 @@ func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 
 			// 作成された作品画像の数を確認
 			if len(results) != tt.numImages {
-				t.Errorf("作成された作品画像の数が期待値と異なります: got %d, want %d", len(results), tt.numImages)
+				t.Errorf("作成された作品画像の数 = %d、期待値 = %d", len(results), tt.numImages)
 			}
 
 			// 各結果を検証
@@ -205,7 +205,7 @@ func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 				// 画像パスのプレフィックスを確認
 				expectedPrefix := seed.ShrinePathPrefix
 				if len(result.ImagePath) < len(expectedPrefix) || result.ImagePath[:len(expectedPrefix)] != expectedPrefix {
-					t.Errorf("results[%d]: ImagePathのプレフィックスが期待値と異なります: got %s, want prefix %s", i, result.ImagePath, expectedPrefix)
+					t.Errorf("results[%d]: ImagePathのプレフィックス = %s、期待値 = %sで始まること", i, result.ImagePath, expectedPrefix)
 				}
 
 				// work_imagesテーブルからレコードを取得して検証
@@ -219,10 +219,10 @@ func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 
 				// work_idとuser_idを確認
 				if model.WorkID(workID) != params[i].WorkID {
-					t.Errorf("results[%d]: work_idが期待値と異なります: got %d, want %d", i, workID, params[i].WorkID)
+					t.Errorf("results[%d]: work_id = %d、期待値 = %d", i, workID, params[i].WorkID)
 				}
 				if model.UserID(userID) != params[i].UserID {
-					t.Errorf("results[%d]: user_idが期待値と異なります: got %d, want %d", i, userID, params[i].UserID)
+					t.Errorf("results[%d]: user_id = %d、期待値 = %d", i, userID, params[i].UserID)
 				}
 
 				// image_dataのJSON形式を確認
@@ -234,19 +234,19 @@ func TestCreateWorkImageUsecase_ExecuteBatch(t *testing.T) {
 
 				// Shrine形式のフィールドを確認
 				if shrineData.Master.Storage != "store" {
-					t.Errorf("results[%d]: storage が期待値と異なります: got %s, want store", i, shrineData.Master.Storage)
+					t.Errorf("results[%d]: storage = %s、期待値 = store", i, shrineData.Master.Storage)
 				}
 				if shrineData.Master.Metadata.MimeType != "image/png" {
-					t.Errorf("results[%d]: mime_type が期待値と異なります: got %s, want image/png", i, shrineData.Master.Metadata.MimeType)
+					t.Errorf("results[%d]: mime_type = %s、期待値 = image/png", i, shrineData.Master.Metadata.MimeType)
 				}
 				if shrineData.Master.Metadata.Width != seed.WorkImageWidth {
-					t.Errorf("results[%d]: width が期待値と異なります: got %d, want %d", i, shrineData.Master.Metadata.Width, seed.WorkImageWidth)
+					t.Errorf("results[%d]: width = %d、期待値 = %d", i, shrineData.Master.Metadata.Width, seed.WorkImageWidth)
 				}
 				if shrineData.Master.Metadata.Height != seed.WorkImageHeight {
-					t.Errorf("results[%d]: height が期待値と異なります: got %d, want %d", i, shrineData.Master.Metadata.Height, seed.WorkImageHeight)
+					t.Errorf("results[%d]: height = %d、期待値 = %d", i, shrineData.Master.Metadata.Height, seed.WorkImageHeight)
 				}
 				if shrineData.Master.Metadata.Size <= 0 {
-					t.Errorf("results[%d]: size が0以下です: got %d", i, shrineData.Master.Metadata.Size)
+					t.Errorf("results[%d]のsize = %d、期待値 = 1以上", i, shrineData.Master.Metadata.Size)
 				}
 			}
 

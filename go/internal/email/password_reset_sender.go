@@ -9,17 +9,17 @@ import (
 	"github.com/annict/annict/go/internal/templates/emails/password_reset"
 )
 
-// PasswordResetSender はパスワードリセットメールの送信を行う
+// PasswordResetSenderはパスワードリセットメールの送信を行う
 type PasswordResetSender struct {
 	sender Sender
 }
 
-// NewPasswordResetSender は新しい PasswordResetSender を作成する
+// NewPasswordResetSenderは新しいPasswordResetSenderを作成する
 func NewPasswordResetSender(sender Sender) *PasswordResetSender {
 	return &PasswordResetSender{sender: sender}
 }
 
-// Send はパスワードリセットメールをレンダリングして送信する
+// Sendはパスワードリセットメールをレンダリングして送信する
 func (s *PasswordResetSender) Send(ctx context.Context, to, resetURL, locale string) error {
 	ctx = i18n.SetLocale(ctx, locale)
 	subject := i18n.T(ctx, "password_reset_email_subject")

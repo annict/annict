@@ -16,10 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Edit renders the edit form of a single episode in the Annict DB admin UI
-// (GET /db/episodes/:id/edit).
-//
-// [Ja] Annict DB 管理画面の単一エピソードの編集フォーム (GET /db/episodes/:id/edit) を
+// EditはAnnict DB管理画面の単一エピソードの編集フォーム (GET /db/episodes/:id/edit) を
 // 描画する。
 func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	episodeID, ok := parseEpisodeIDParam(r)
@@ -31,25 +28,14 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	h.renderEdit(w, r, episodeID, editFormState{Status: http.StatusOK})
 }
 
-// editFormState is the part of the edit page that depends on the submission: nothing when the
-// form is opened, and the submitted values with what was wrong about them after a rejected
-// submit. FormInput is nil in the former case, where the page renders the stored values.
-//
-// [Ja] editFormState は編集ページのうち送信に依存する部分。フォームを開いたときは空で、送信が
-// 却下された後は送信された値とその問題点を持つ。前者では FormInput が nil で、ページは保存済み
+// editFormStateは編集ページのうち送信に依存する部分。フォームを開いたときは空で、送信が
+// 却下された後は送信された値とその問題点を持つ。前者ではFormInputがnilで、ページは保存済み
 // の値を描画する。
 type editFormState struct {
 	Status     int
 	FormErrors *model.ValidationError
 	FormInput  *viewmodel.DBEpisodeFormInput
-	// Conflict states that the submit was refused because someone else had written the episode
-	// first. The page then shows the stored values beside the submitted ones and carries the
-	// stored version, so the editor can compare the two and, if they decide their values are
-	// the ones to keep, submit again against the row they have just seen. A submit refused for
-	// any other reason echoes back the version it was made against, since nothing about the
-	// stored row was shown.
-	//
-	// [Ja] Conflict は、他者が先にそのエピソードを書いたために送信が却下されたことを表す。
+	// Conflictは、他者が先にそのエピソードを書いたために送信が却下されたことを表す。
 	// ページは保存済みの値を送信された値と並べて表示し、保存済みの版を運ぶ。編集者が両者を
 	// 見比べ、自分の値を残すと判断したなら、いま見た行に対して送信し直せるようにするため。
 	// それ以外の理由で却下された送信は、保存済みの行について何も示していないため、送信が前提と
@@ -57,11 +43,7 @@ type editFormState struct {
 	Conflict bool
 }
 
-// renderEdit renders the edit page. Edit serves it, and Update re-renders it with the submitted
-// values when they are rejected, so both go through here and cannot drift apart in how they
-// describe the same page.
-//
-// [Ja] renderEdit は編集ページを描画する。Edit はこれを配信し、Update は送信された値が却下され
+// renderEditは編集ページを描画する。Editはこれを配信し、Updateは送信された値が却下され
 // たときにこれで再描画する。同じページの説明が両者でずれないよう、双方がここを通る。
 func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, episodeID model.EpisodeID, state editFormState) {
 	ctx := r.Context()
@@ -83,10 +65,7 @@ func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, episodeID m
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, editPath(output.Episode.ID))
 	setEditTitle(ctx, &meta, episodeIdentifier, workName)
 
-	// The stored values open the form; a rejected submit replaces them with what was typed so
-	// the editor corrects the input instead of retyping it.
-	//
-	// [Ja] フォームは保存済みの値で開き、却下された送信では入力された内容に差し替える。編集者が
+	// フォームは保存済みの値で開き、却下された送信では入力された内容に差し替える。編集者が
 	// 入力を打ち直さずに手直しできるようにするため。
 	stored := viewmodel.NewDBEpisodeFormInputFromEpisode(output.Episode)
 	formInput := stored
@@ -127,12 +106,7 @@ func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, episodeID m
 	}
 }
 
-// setEditTitle gives meta a document title that starts with the page name, followed by the
-// episode and then the work when it has a name. The episode remains when the work has no name,
-// so edit pages whose episode labels differ stay distinguishable in tabs, history, and
-// assistive technology even where a tab is too narrow to show the whole title.
-//
-// [Ja] setEditTitle は meta に、画面名から始まり、エピソード、名前があれば作品が続く文書
+// setEditTitleはmetaに、画面名から始まり、エピソード、名前があれば作品が続く文書
 // タイトルを設定する。作品に表示名が無くてもエピソードを残し、タイトル全体が収まらない幅の
 // タブでも、エピソードのラベルが異なる編集ページをタブ・履歴・支援技術で区別できるようにする。
 func setEditTitle(ctx context.Context, meta *viewmodel.PageMeta, episodeIdentifier string, workName string) {
@@ -146,10 +120,7 @@ func setEditTitle(ctx context.Context, meta *viewmodel.PageMeta, episodeIdentifi
 	meta.SetDBTitle(ctx, "db_episodes_edit_document_title", templateData)
 }
 
-// editPath builds the representative GET path of an episode's edit form, which the page
-// takes its og:url from.
-//
-// [Ja] editPath はエピソード編集フォームの代表 GET パスを生成する。ページはここから og:url
+// editPathはエピソード編集フォームの代表GETパスを生成する。ページはここからog:url
 // を取る。
 func editPath(episodeID model.EpisodeID) string {
 	return fmt.Sprintf("/db/episodes/%d/edit", int64(episodeID))

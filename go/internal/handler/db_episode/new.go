@@ -16,10 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New renders the bulk-create form for a work's episodes in the Annict DB admin UI
-// (GET /db/works/:work_id/episodes/new).
-//
-// [Ja] Annict DB 管理画面の、ある作品のエピソード一括作成フォーム
+// NewはAnnict DB管理画面の、ある作品のエピソード一括作成フォーム
 // (GET /db/works/:work_id/episodes/new) を描画する。
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	workID, ok := parseWorkIDParam(r)
@@ -31,10 +28,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNew(w, r, workID, newFormState{Status: http.StatusOK})
 }
 
-// newFormState is the part of the bulk-create page that depends on the submission: nothing
-// on a fresh form, and the rejected lines with their messages after a failed submit.
-//
-// [Ja] newFormState は一括作成ページのうち送信に依存する部分。新規フォームでは空で、送信が
+// newFormStateは一括作成ページのうち送信に依存する部分。新規フォームでは空で、送信が
 // 失敗した後は却下された行とそのメッセージを持つ。
 type newFormState struct {
 	Status     int
@@ -42,11 +36,7 @@ type newFormState struct {
 	Rows       string
 }
 
-// renderNew renders the bulk-create page. New serves it, and Create re-renders it with the
-// submitted lines when they are rejected, so both go through here and cannot drift apart in
-// how they describe the same page.
-//
-// [Ja] renderNew は一括作成ページを描画する。New はこれを配信し、Create は送信された行が
+// renderNewは一括作成ページを描画する。Newはこれを配信し、Createは送信された行が
 // 却下されたときにこれで再描画する。同じページの説明が両者でずれないよう、双方がここを通る。
 func (h *Handler) renderNew(w http.ResponseWriter, r *http.Request, workID model.WorkID, state newFormState) {
 	ctx := r.Context()
@@ -96,11 +86,7 @@ func (h *Handler) renderNew(w http.ResponseWriter, r *http.Request, workID model
 	}
 }
 
-// setNewTitle gives meta a document title that identifies the work whose episodes are being
-// created. A work with no name to show falls back to the generic form title, matching the
-// page heading.
-//
-// [Ja] setNewTitle は meta に、エピソードを作成する対象の作品を識別できる文書タイトルを設定
+// setNewTitleはmetaに、エピソードを作成する対象の作品を識別できる文書タイトルを設定
 // する。表示できる名前が無い作品では、ページ見出しと同じく汎用のフォームタイトルへフォール
 // バックする。
 func setNewTitle(ctx context.Context, meta *viewmodel.PageMeta, workName string) {
@@ -112,13 +98,9 @@ func setNewTitle(ctx context.Context, meta *viewmodel.PageMeta, workName string)
 	meta.SetDBTitle(ctx, "db_episodes_new_document_title", map[string]any{"WorkTitle": workName})
 }
 
-// newPath builds the representative GET path of the bulk-create form. New serves the page at
-// this path and Create re-renders the same page from POST /db/works/:work_id/episodes, so
-// both take their og:url from here rather than from the request path.
-//
-// [Ja] newPath は一括作成フォームの代表 GET パスを生成する。New はこのパスでページを配信し、
-// Create は同じページを POST /db/works/:work_id/episodes から再描画するため、双方とも
-// リクエストパスではなくここから og:url を取る。
+// newPathは一括作成フォームの代表GETパスを生成する。Newはこのパスでページを配信し、
+// Createは同じページをPOST /db/works/:work_id/episodesから再描画するため、双方とも
+// リクエストパスではなくここからog:urlを取る。
 func newPath(workID model.WorkID) string {
 	return fmt.Sprintf("/db/works/%d/episodes/new", int64(workID))
 }

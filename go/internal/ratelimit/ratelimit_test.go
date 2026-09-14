@@ -15,10 +15,7 @@ func TestLimiter_Check(t *testing.T) {
 	limiter := NewLimiter(rdb)
 	ctx := context.Background()
 
-	// Scope keys to this test so parallel tests sharing the same Redis DB
-	// do not interfere with each other.
-	//
-	// [Ja] 同じ Redis DB を共有する並列テストと干渉しないよう、本テストに
+	// 同じRedis DBを共有する並列テストと干渉しないよう、本テストに
 	// スコープしたキーを使う。
 	prefix := testutil.UniqueRateLimitPrefix(t)
 
@@ -58,24 +55,21 @@ func TestLimiter_Check(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// Reset only this case's key so the counter starts at 0 even
-			// if a prior run left state on the shared Redis DB.
-			//
-			// [Ja] 共有 Redis に前回の状態が残っていてもカウンタを 0 から
-			// 始められるよう、本ケースのキーだけを Reset する。
+			// 共有Redisに前回の状態が残っていてもカウンタを0から
+			// 始められるよう、本ケースのキーだけをResetする。
 			if err := limiter.Reset(ctx, tt.key); err != nil {
-				t.Fatalf("reset failed: %v", err)
+				t.Fatalf("resetのエラー = %v", err)
 			}
 			t.Cleanup(func() { _ = limiter.Reset(ctx, tt.key) })
 
 			for i := 0; i < tt.attempts; i++ {
 				allowed, err := limiter.Check(ctx, tt.key, tt.limit, tt.window)
 				if err != nil {
-					t.Fatalf("attempt %d: unexpected error: %v", i+1, err)
+					t.Fatalf("%d回目の試行の想定外のエラー = %v", i+1, err)
 				}
 
 				if allowed != tt.wantAllowed[i] {
-					t.Errorf("attempt %d: allowed = %v, want %v", i+1, allowed, tt.wantAllowed[i])
+					t.Errorf("%d回目の試行のallowed = %v、期待値 = %v", i+1, allowed, tt.wantAllowed[i])
 				}
 			}
 		})
@@ -89,22 +83,16 @@ func TestLimiter_Reset(t *testing.T) {
 	limiter := NewLimiter(rdb)
 	ctx := context.Background()
 
-	// Scope the key to this test so parallel tests sharing the same Redis
-	// DB do not interfere.
-	//
-	// [Ja] 同じ Redis DB を共有する並列テストと干渉しないよう、本テストに
+	// 同じRedis DBを共有する並列テストと干渉しないよう、本テストに
 	// スコープしたキーを使う。
 	key := testutil.UniqueRateLimitPrefix(t) + ":reset"
 	limit := 3
 	window := 1 * time.Hour
 
-	// Reset only this test's key so the counter starts at 0 even if a
-	// prior run left state on the shared Redis DB.
-	//
-	// [Ja] 共有 Redis に前回の状態が残っていてもカウンタを 0 から始められる
-	// よう、このテストのキーだけを Reset する。
+	// 共有Redisに前回の状態が残っていてもカウンタを0から始められる
+	// よう、このテストのキーだけをResetする。
 	if err := limiter.Reset(ctx, key); err != nil {
-		t.Fatalf("reset failed: %v", err)
+		t.Fatalf("resetのエラー = %v", err)
 	}
 	t.Cleanup(func() { _ = limiter.Reset(ctx, key) })
 
@@ -112,34 +100,34 @@ func TestLimiter_Reset(t *testing.T) {
 	for i := 0; i < 3; i++ {
 		allowed, err := limiter.Check(ctx, key, limit, window)
 		if err != nil {
-			t.Fatalf("check failed: %v", err)
+			t.Fatalf("checkのエラー = %v", err)
 		}
 		if !allowed {
-			t.Errorf("attempt %d should be allowed", i+1)
+			t.Errorf("%d回目の試行が許可されなかった", i+1)
 		}
 	}
 
 	// 4回目は制限される
 	allowed, err := limiter.Check(ctx, key, limit, window)
 	if err != nil {
-		t.Fatalf("check failed: %v", err)
+		t.Fatalf("checkのエラー = %v", err)
 	}
 	if allowed {
-		t.Error("4th attempt should be blocked")
+		t.Error("4回目の試行がブロックされなかった")
 	}
 
 	// リセット
 	if err := limiter.Reset(ctx, key); err != nil {
-		t.Fatalf("reset failed: %v", err)
+		t.Fatalf("resetのエラー = %v", err)
 	}
 
 	// リセット後は再び許可される
 	allowed, err = limiter.Check(ctx, key, limit, window)
 	if err != nil {
-		t.Fatalf("check after reset failed: %v", err)
+		t.Fatalf("リセット後の確認エラー = %v", err)
 	}
 	if !allowed {
-		t.Error("first attempt after reset should be allowed")
+		t.Error("リセット後の1回目の試行が許可されなかった")
 	}
 }
 
@@ -150,38 +138,32 @@ func TestLimiter_TTL(t *testing.T) {
 	limiter := NewLimiter(rdb)
 	ctx := context.Background()
 
-	// Scope the key to this test so parallel tests sharing the same Redis
-	// DB do not interfere.
-	//
-	// [Ja] 同じ Redis DB を共有する並列テストと干渉しないよう、本テストに
+	// 同じRedis DBを共有する並列テストと干渉しないよう、本テストに
 	// スコープしたキーを使う。
 	key := testutil.UniqueRateLimitPrefix(t) + ":ttl"
 	limit := 5
 	window := 2 * time.Second // 短い時間窓でテスト
 
-	// Reset only this test's key so the counter starts at 0 even if a
-	// prior run left state on the shared Redis DB.
-	//
-	// [Ja] 共有 Redis に前回の状態が残っていてもカウンタを 0 から始められる
-	// よう、このテストのキーだけを Reset する。
+	// 共有Redisに前回の状態が残っていてもカウンタを0から始められる
+	// よう、このテストのキーだけをResetする。
 	if err := limiter.Reset(ctx, key); err != nil {
-		t.Fatalf("reset failed: %v", err)
+		t.Fatalf("resetのエラー = %v", err)
 	}
 	t.Cleanup(func() { _ = limiter.Reset(ctx, key) })
 
 	// 1回アクセス
 	allowed, err := limiter.Check(ctx, key, limit, window)
 	if err != nil {
-		t.Fatalf("check failed: %v", err)
+		t.Fatalf("checkのエラー = %v", err)
 	}
 	if !allowed {
-		t.Error("first attempt should be allowed")
+		t.Error("1回目の試行が許可されなかった")
 	}
 
 	// TTLが設定されているか確認
 	ttl := rdb.TTL(ctx, "rate_limit:"+key).Val()
 	if ttl <= 0 || ttl > window {
-		t.Errorf("TTL should be between 0 and %v, got %v", window, ttl)
+		t.Errorf("TTLの期待値 = 0より大きく%v以下、実測値 = %v", window, ttl)
 	}
 
 	// 時間窓を超えて待機
@@ -190,9 +172,9 @@ func TestLimiter_TTL(t *testing.T) {
 	// カウンタがリセットされているか確認
 	allowed, err = limiter.Check(ctx, key, limit, window)
 	if err != nil {
-		t.Fatalf("check after TTL failed: %v", err)
+		t.Fatalf("TTL経過後の確認エラー = %v", err)
 	}
 	if !allowed {
-		t.Error("first attempt after TTL should be allowed")
+		t.Error("TTL経過後の1回目の試行が許可されなかった")
 	}
 }

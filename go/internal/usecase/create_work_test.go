@@ -13,14 +13,9 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// newCreateWorkUsecase wires the create-work usecase against the shared test DB. The
-// usecase opens its own transaction, so its tests use GetTestDB (not SetupTx) so the
-// committed rows are visible to the usecase's inner transaction and to the follow-up
-// sync invariant check.
-//
-// [Ja] newCreateWorkUsecase は共有テスト DB に対して作品作成 UseCase を組み立てる。
-// 本 UseCase は内部で自前のトランザクションを開くため、テストは SetupTx ではなく
-// GetTestDB を使い、コミット済みの行が UseCase の内側トランザクションと後続の同期
+// newCreateWorkUsecaseは共有テストDBに対して作品作成UseCaseを組み立てる。
+// 本UseCaseは内部で自前のトランザクションを開くため、テストはSetupTxではなく
+// GetTestDBを使い、コミット済みの行がUseCaseの内側トランザクションと後続の同期
 // 不変条件チェックから見えるようにする。
 func newCreateWorkUsecase(db *sql.DB) *CreateWorkUsecase {
 	queries := query.New(db)
@@ -36,10 +31,7 @@ func newCreateWorkUsecase(db *sql.DB) *CreateWorkUsecase {
 	)
 }
 
-// newTestWorkSatelliteRepos builds the satellite repository bundle the create / update
-// usecases dual-write through.
-//
-// [Ja] newTestWorkSatelliteRepos は作成 / 更新 UseCase が両書きする別表リポジトリの束を作る。
+// newTestWorkSatelliteReposは作成 / 更新UseCaseが両書きする別表リポジトリの束を作る。
 func newTestWorkSatelliteRepos(queries *query.Queries) WorkSatelliteRepos {
 	return WorkSatelliteRepos{
 		ExternalID:      repository.NewAnimeExternalIDRepository(queries),
@@ -51,12 +43,7 @@ func newTestWorkSatelliteRepos(queries *query.Queries) WorkSatelliteRepos {
 	}
 }
 
-// newSyncSatellitesUsecase wires the phase 2 satellite sync (SyncWorkSatellitesUsecase)
-// with all six reconcilers, so a test can run it right after a create / update and assert
-// no diff is detected (the invariant that the dual-write and the sync derive the same
-// satellite rows).
-//
-// [Ja] newSyncSatellitesUsecase はフェーズ 2 の別表同期 (SyncWorkSatellitesUsecase) を 6 つ
+// newSyncSatellitesUsecaseはフェーズ2の別表同期 (SyncWorkSatellitesUsecase) を6つ
 // のリコンサイラすべてと組み立てる。作成 / 更新の直後にこれを走らせ差分ゼロを検証できるように
 // する (両書きと同期が同じ別表行を導出するという不変条件)。
 func newSyncSatellitesUsecase(db *sql.DB) *SyncWorkSatellitesUsecase {
@@ -72,17 +59,11 @@ func newSyncSatellitesUsecase(db *sql.DB) *SyncWorkSatellitesUsecase {
 	)
 }
 
-// validCreateWorkInput returns a form input that passes DBWorkCreateValidator, with
-// enough non-default fields set to exercise the work -> anime / classification mapping.
-// The title is taken as an argument so each test can pass a unique value (e.g. t.Name()):
-// these tests use GetTestDB and commit their rows to the shared DB, so a per-test title
-// keeps parallel tests from sharing works rows.
-//
-// [Ja] validCreateWorkInput は DBWorkCreateValidator を通過するフォーム入力を返す。
+// validCreateWorkInputはDBWorkCreateValidatorを通過するフォーム入力を返す。
 // work -> anime / 分類 の写像を検証できるよう、非デフォルトのフィールドを十分にセットする。
 // タイトルは引数で受け取り、各テストがユニークな値 (例: t.Name()) を渡せるようにする。
-// 本テスト群は GetTestDB を使い行を共有 DB にコミットするため、テストごとのタイトルで
-// 並行テストが works 行を共有しないようにする。
+// 本テスト群はGetTestDBを使い行を共有DBにコミットするため、テストごとのタイトルで
+// 並行テストがworks行を共有しないようにする。
 func validCreateWorkInput(title string) CreateWorkInput {
 	return CreateWorkInput{
 		WorkFormInput: WorkFormInput{
@@ -95,10 +76,7 @@ func validCreateWorkInput(title string) CreateWorkInput {
 			ManualEpisodesCount:   "12",
 			StartEpisodeRawNumber: "2.5",
 			NoEpisodes:            "1",
-			// Satellite source fields so create dual-writes rows into all six satellite
-			// tables (external IDs / links / official account / hashtag / season / event).
-			//
-			// [Ja] create が 6 つの別表 (外部 ID / リンク / 公式アカウント / ハッシュタグ /
+			// createが6つの別表 (外部ID / リンク / 公式アカウント / ハッシュタグ /
 			// 季節 / イベント) に行を両書きするよう、別表ソースのフィールドをセットする。
 			SeasonYear:      "2024",
 			SeasonName:      "2", // spring
@@ -123,75 +101,66 @@ func TestCreateWorkUsecase_Execute_CreatesWorkAnimeAndClassification(t *testing.
 	title := "作成テストアニメ_" + t.Name()
 	output, err := uc.Execute(context.Background(), validCreateWorkInput(title))
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if output == nil || output.WorkID == 0 {
-		t.Fatalf("output = %+v, want a non-zero WorkID", output)
+		t.Fatalf("output = %+v、期待値 = WorkIDが0以外", output)
 	}
 
-	// works.anime_id must be written back so the work is mapped to the new anime.
-	//
-	// [Ja] works.anime_id が書き戻され、作品が新規 anime にマッピングされていること。
+	// works.anime_idが書き戻され、作品が新規animeにマッピングされていること。
 	work := reloadSyncWork(t, db, output.WorkID)
 	if work.AnimeID == nil {
-		t.Fatal("works.anime_id should be written back, got nil")
+		t.Fatal("works.anime_id = nil、期待値 = 書き戻された値")
 	}
 	animeID := *work.AnimeID
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(context.Background(), animeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Title.String != title {
-		t.Errorf("anime.Title = %q, want %q", anime.Title.String, title)
+		t.Errorf("anime.Title = %q、期待値 = %q", anime.Title.String, title)
 	}
 	if anime.TitleKana.String != "さくせいてすとあにめ" {
-		t.Errorf("anime.TitleKana = %q, want さくせいてすとあにめ", anime.TitleKana.String)
+		t.Errorf("anime.TitleKana = %q、期待値 = さくせいてすとあにめ", anime.TitleKana.String)
 	}
 	if anime.TitleEn.String != "Create Test Anime" {
-		t.Errorf("anime.TitleEn = %q, want Create Test Anime", anime.TitleEn.String)
+		t.Errorf("anime.TitleEn = %q、期待値 = Create Test Anime", anime.TitleEn.String)
 	}
 	if anime.Synopsis.String != "あらすじ本文" {
-		t.Errorf("anime.Synopsis = %q, want あらすじ本文", anime.Synopsis.String)
+		t.Errorf("anime.Synopsis = %q、期待値 = あらすじ本文", anime.Synopsis.String)
 	}
 	if anime.Media != model.AnimeMediaOVA {
-		t.Errorf("anime.Media = %q, want ova", anime.Media)
+		t.Errorf("anime.Media = %q、期待値 = ova", anime.Media)
 	}
-	// A newly created work is always published, so its anime mirrors that status.
-	//
-	// [Ja] 新規作成の作品は常に published のため、その anime も同じステータスを写す。
+	// 新規作成の作品は常にpublishedのため、そのanimeも同じステータスを写す。
 	if anime.Status != model.AnimeStatusPublished {
-		t.Errorf("anime.Status = %q, want published", anime.Status)
+		t.Errorf("anime.Status = %q、期待値 = published", anime.Status)
 	}
 
 	classRepo := repository.NewAnimeClassificationRepository(query.New(db))
 	classification, err := classRepo.GetByAnimeID(context.Background(), animeID)
 	if err != nil || classification == nil {
-		t.Fatalf("GetByAnimeID() classification=%v err=%v", classification, err)
+		t.Fatalf("GetByAnimeID()のclassification = %v、エラー = %v", classification, err)
 	}
 	if classification.Kind != model.AnimeClassificationKindWork {
-		t.Errorf("classification.Kind = %q, want work", classification.Kind)
+		t.Errorf("classification.Kind = %q、期待値 = work", classification.Kind)
 	}
 	if !classification.Standalone {
-		t.Error("classification.Standalone = false, want true (no_episodes=1)")
+		t.Error("classification.Standalone = false、期待値 = true (no_episodes=1)")
 	}
 	if classification.EpisodeStartNumber.String != "2.5" {
-		t.Errorf("classification.EpisodeStartNumber = %q, want 2.5", classification.EpisodeStartNumber.String)
+		t.Errorf("classification.EpisodeStartNumber = %q、期待値 = 2.5", classification.EpisodeStartNumber.String)
 	}
 	if !classification.ExpectedEpisodesCount.Valid || classification.ExpectedEpisodesCount.Int32 != 12 {
-		t.Errorf("classification.ExpectedEpisodesCount = %+v, want {12 true}", classification.ExpectedEpisodesCount)
+		t.Errorf("classification.ExpectedEpisodesCount = %+v、期待値 = {12 true}", classification.ExpectedEpisodesCount)
 	}
 }
 
-// TestCreateWorkUsecase_Execute_ProducesSyncConsistentMapping is the invariant that
-// justifies reusing the sync mapping helpers: a sync run right after a create must
-// detect no diff (Unchanged), proving create and sync derive the same anime /
-// classification from the work and the create path never inflates the diff metric.
-//
-// [Ja] TestCreateWorkUsecase_Execute_ProducesSyncConsistentMapping は同期の写像ヘルパー
+// TestCreateWorkUsecase_Execute_ProducesSyncConsistentMappingは同期の写像ヘルパー
 // 再利用を正当化する不変条件。作成直後の同期実行は差分なし (Unchanged) を検出しなければ
-// ならず、create と同期が同じ anime / 分類を work から導出していること、create 経路が
+// ならず、createと同期が同じanime / 分類をworkから導出していること、create経路が
 // 差分メトリクスを水増ししないことを示す。
 func TestCreateWorkUsecase_Execute_ProducesSyncConsistentMapping(t *testing.T) {
 	t.Parallel()
@@ -201,27 +170,22 @@ func TestCreateWorkUsecase_Execute_ProducesSyncConsistentMapping(t *testing.T) {
 
 	output, err := uc.Execute(context.Background(), validCreateWorkInput("作成テストアニメ_"+t.Name()))
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	syncUC := newSyncUsecase(db)
 	result, err := syncUC.Execute(context.Background(), SyncWorksToAnimesInput{WorkIDs: []model.WorkID{output.WorkID}})
 	if err != nil {
-		t.Fatalf("sync Execute() error = %v", err)
+		t.Fatalf("同期のExecute()のエラー = %v", err)
 	}
 	if result.Processed != 1 || result.Created != 0 || result.Updated != 0 || result.Unchanged != 1 {
-		t.Fatalf("sync result = %+v, want {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
+		t.Fatalf("同期の結果 = %+v、期待値 = {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
 	}
 }
 
-// TestCreateWorkUsecase_Execute_WritesSatelliteRows verifies the create dual-writes the
-// six satellite tables from the work's source columns: the external IDs, links, official
-// account, hashtag, season and broadcast event derived from the form input all land on the
-// new anime.
-//
-// [Ja] TestCreateWorkUsecase_Execute_WritesSatelliteRows は、create が work のソース列から
-// 6 つの別表を両書きすることを検証する。フォーム入力から導出した外部 ID・リンク・公式
-// アカウント・ハッシュタグ・季節・放送イベントがすべて新規 anime に載る。
+// TestCreateWorkUsecase_Execute_WritesSatelliteRowsは、createがworkのソース列から
+// 6つの別表を両書きすることを検証する。フォーム入力から導出した外部ID・リンク・公式
+// アカウント・ハッシュタグ・季節・放送イベントがすべて新規animeに載る。
 func TestCreateWorkUsecase_Execute_WritesSatelliteRows(t *testing.T) {
 	t.Parallel()
 
@@ -231,7 +195,7 @@ func TestCreateWorkUsecase_Execute_WritesSatelliteRows(t *testing.T) {
 
 	output, err := uc.Execute(ctx, validCreateWorkInput("別表作成テストアニメ_"+t.Name()))
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	animeID := *reloadSyncWork(t, db, output.WorkID).AnimeID
 	queries := query.New(db)
@@ -239,22 +203,22 @@ func TestCreateWorkUsecase_Execute_WritesSatelliteRows(t *testing.T) {
 
 	externalIDs, err := repository.NewAnimeExternalIDRepository(queries).ListByAnimeIDs(ctx, animeIDs)
 	if err != nil {
-		t.Fatalf("ListByAnimeIDs(external_ids) error = %v", err)
+		t.Fatalf("ListByAnimeIDs(external_ids)のエラー = %v", err)
 	}
 	gotExternalIDs := map[model.AnimeExternalService]string{}
 	for _, e := range externalIDs {
 		gotExternalIDs[e.Service] = e.ExternalID
 	}
 	if gotExternalIDs[model.AnimeExternalServiceSyobocal] != "5678" {
-		t.Errorf("syobocal external_id = %q, want 5678", gotExternalIDs[model.AnimeExternalServiceSyobocal])
+		t.Errorf("syobocal external_id = %q、期待値 = 5678", gotExternalIDs[model.AnimeExternalServiceSyobocal])
 	}
 	if gotExternalIDs[model.AnimeExternalServiceMal] != "1234" {
-		t.Errorf("mal external_id = %q, want 1234", gotExternalIDs[model.AnimeExternalServiceMal])
+		t.Errorf("mal external_id = %q、期待値 = 1234", gotExternalIDs[model.AnimeExternalServiceMal])
 	}
 
 	links, err := repository.NewAnimeLinkRepository(queries).ListByAnimeIDs(ctx, animeIDs)
 	if err != nil {
-		t.Fatalf("ListByAnimeIDs(links) error = %v", err)
+		t.Fatalf("ListByAnimeIDs(links)のエラー = %v", err)
 	}
 	gotLinks := map[animeLinkKey]string{}
 	for _, l := range links {
@@ -262,61 +226,56 @@ func TestCreateWorkUsecase_Execute_WritesSatelliteRows(t *testing.T) {
 	}
 	officialSiteJa := gotLinks[animeLinkKey{animeID: animeID, kind: model.AnimeLinkKindOfficialSite, language: model.LanguageJa}]
 	if officialSiteJa != "https://example.com/anime" {
-		t.Errorf("official_site/ja url = %q, want https://example.com/anime", officialSiteJa)
+		t.Errorf("official_site/ja url = %q、期待値 = https://example.com/anime", officialSiteJa)
 	}
 	wikipediaJa := gotLinks[animeLinkKey{animeID: animeID, kind: model.AnimeLinkKindWikipedia, language: model.LanguageJa}]
 	if wikipediaJa != "https://ja.wikipedia.org/wiki/anime" {
-		t.Errorf("wikipedia/ja url = %q, want https://ja.wikipedia.org/wiki/anime", wikipediaJa)
+		t.Errorf("wikipedia/ja url = %q、期待値 = https://ja.wikipedia.org/wiki/anime", wikipediaJa)
 	}
 
 	accounts, err := repository.NewAnimeOfficialAccountRepository(queries).ListByAnimeIDs(ctx, animeIDs)
 	if err != nil {
-		t.Fatalf("ListByAnimeIDs(official_accounts) error = %v", err)
+		t.Fatalf("ListByAnimeIDs(official_accounts)のエラー = %v", err)
 	}
 	if len(accounts) != 1 || accounts[0].Service != model.AnimeAccountServiceX || accounts[0].Account != "anime_official" {
-		t.Errorf("official accounts = %+v, want one x=anime_official", accounts)
+		t.Errorf("accounts = %+v、期待値 = x=anime_officialが1件", accounts)
 	}
 
 	hashtags, err := repository.NewAnimeHashtagRepository(queries).ListByAnimeIDs(ctx, animeIDs)
 	if err != nil {
-		t.Fatalf("ListByAnimeIDs(hashtags) error = %v", err)
+		t.Fatalf("ListByAnimeIDs(hashtags)のエラー = %v", err)
 	}
 	if len(hashtags) != 1 || hashtags[0].Hashtag != "anime2024" {
-		t.Errorf("hashtags = %+v, want one anime2024", hashtags)
+		t.Errorf("hashtags = %+v、期待値 = anime2024が1件", hashtags)
 	}
 
 	seasons, err := repository.NewAnimeSeasonRepository(queries).ListByAnimeIDs(ctx, animeIDs)
 	if err != nil {
-		t.Fatalf("ListByAnimeIDs(seasons) error = %v", err)
+		t.Fatalf("ListByAnimeIDs(seasons)のエラー = %v", err)
 	}
 	if len(seasons) != 1 {
-		t.Fatalf("seasons = %+v, want one row", seasons)
+		t.Fatalf("seasons = %+v、期待値 = 1件", seasons)
 	}
 	if seasons[0].Year != 2024 || seasons[0].Name == nil || *seasons[0].Name != model.SeasonNameSpring || !seasons[0].IsPrimary {
-		t.Errorf("season = %+v, want year 2024 name spring is_primary true", seasons[0])
+		t.Errorf("season = %+v、期待値 = year 2024 name spring is_primary true", seasons[0])
 	}
 
 	events, err := repository.NewAnimeEventRepository(queries).ListByAnimeIDs(ctx, animeIDs)
 	if err != nil {
-		t.Fatalf("ListByAnimeIDs(events) error = %v", err)
+		t.Fatalf("ListByAnimeIDs(events)のエラー = %v", err)
 	}
 	if len(events) != 1 {
-		t.Fatalf("events = %+v, want one row", events)
+		t.Fatalf("events = %+v、期待値 = 1件", events)
 	}
 	if events[0].Kind != model.AnimeEventKindBroadcast || events[0].StartedOn.Format("2006-01-02") != "2024-04-05" ||
 		events[0].EndedOn == nil || events[0].EndedOn.Format("2006-01-02") != "2024-06-28" {
-		t.Errorf("event = %+v, want broadcast 2024-04-05..2024-06-28", events[0])
+		t.Errorf("event = %+v、期待値 = broadcast 2024-04-05..2024-06-28", events[0])
 	}
 }
 
-// TestCreateWorkUsecase_Execute_ProducesSyncConsistentSatellites extends the create
-// invariant to the satellite tables: the phase 2 satellite sync run right after a create
-// must detect no diff, proving the create dual-write and the sync derive the same
-// satellite rows from the work.
-//
-// [Ja] TestCreateWorkUsecase_Execute_ProducesSyncConsistentSatellites は create の不変条件を
-// 別表に広げる。作成直後のフェーズ 2 別表同期は差分を検出してはならず、create の両書きと同期が
-// 同じ別表行を work から導出していることを示す。
+// TestCreateWorkUsecase_Execute_ProducesSyncConsistentSatellitesはcreateの不変条件を
+// 別表に広げる。作成直後のフェーズ2別表同期は差分を検出してはならず、createの両書きと同期が
+// 同じ別表行をworkから導出していることを示す。
 func TestCreateWorkUsecase_Execute_ProducesSyncConsistentSatellites(t *testing.T) {
 	t.Parallel()
 
@@ -325,18 +284,18 @@ func TestCreateWorkUsecase_Execute_ProducesSyncConsistentSatellites(t *testing.T
 
 	output, err := uc.Execute(context.Background(), validCreateWorkInput("別表整合作成_"+t.Name()))
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	result, err := newSyncSatellitesUsecase(db).Execute(context.Background(), SyncWorkSatellitesInput{WorkIDs: []model.WorkID{output.WorkID}})
 	if err != nil {
-		t.Fatalf("satellite sync Execute() error = %v", err)
+		t.Fatalf("サテライトの同期のExecute()のエラー = %v", err)
 	}
 	if result.Processed != 1 || result.SkippedNoAnime != 0 {
-		t.Fatalf("satellite sync result = %+v, want Processed:1 SkippedNoAnime:0", result)
+		t.Fatalf("サテライトの同期の結果 = %+v、期待値 = Processed:1 SkippedNoAnime:0", result)
 	}
 	if result.Created != 0 || result.Updated != 0 || result.Deleted != 0 {
-		t.Fatalf("satellite sync detected a diff = %+v, want Created:0 Updated:0 Deleted:0", result)
+		t.Fatalf("サテライトの同期結果 = %+v、期待値 = Created:0 Updated:0 Deleted:0", result)
 	}
 }
 
@@ -347,28 +306,23 @@ func TestCreateWorkUsecase_Execute_ReturnsValidationError(t *testing.T) {
 	uc := newCreateWorkUsecase(db)
 
 	input := validCreateWorkInput("作成テストアニメ_" + t.Name())
-	input.Title = "" // required
+	input.Title = "" // 必須項目
 
 	output, err := uc.Execute(context.Background(), input)
 	if output != nil {
-		t.Errorf("output = %+v, want nil on validation error", output)
+		t.Errorf("output = %+v、期待値 = nil (バリデーションエラーのため)", output)
 	}
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("expected *model.ValidationError, got %v", err)
+		t.Fatalf("エラーの型 = %v、期待値 = *model.ValidationError", err)
 	}
 	if len(ve.GetFieldErrors("title")) == 0 {
-		t.Error("expected a validation error on the title field")
+		t.Error("titleフィールドのバリデーションエラーを期待したが、無かった")
 	}
 }
 
-// TestCreateWorkUsecase_Execute_RejectsDuplicateTitle covers the title uniqueness rule the
-// usecase inherits from the validator. The rule mirrors the Rails Work model, so the two
-// implementations cannot disagree about which titles are free while both write the same
-// database.
-//
-// [Ja] TestCreateWorkUsecase_Execute_RejectsDuplicateTitle は UseCase がバリデーターから
-// 引き継ぐタイトル一意性を対象とする。Rails の Work モデルに対応する規則で、同じ DB に
+// TestCreateWorkUsecase_Execute_RejectsDuplicateTitleはUseCaseがバリデーターから
+// 引き継ぐタイトル一意性を対象とする。RailsのWorkモデルに対応する規則で、同じDBに
 // 書き込む両実装が「どのタイトルが空いているか」で食い違わないようにする。
 func TestCreateWorkUsecase_Execute_RejectsDuplicateTitle(t *testing.T) {
 	t.Parallel()
@@ -378,29 +332,24 @@ func TestCreateWorkUsecase_Execute_RejectsDuplicateTitle(t *testing.T) {
 
 	title := "作成テストアニメ_" + t.Name()
 	if _, err := uc.Execute(context.Background(), validCreateWorkInput(title)); err != nil {
-		t.Fatalf("1 件目の Execute() error = %v", err)
+		t.Fatalf("1件目のExecute()のエラー = %v", err)
 	}
 
 	output, err := uc.Execute(context.Background(), validCreateWorkInput(title))
 	if output != nil {
-		t.Errorf("output = %+v, want nil on validation error", output)
+		t.Errorf("output = %+v、期待値 = nil (バリデーションエラーのため)", output)
 	}
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("expected *model.ValidationError, got %v", err)
+		t.Fatalf("エラーの型 = %v、期待値 = *model.ValidationError", err)
 	}
 	if len(ve.GetFieldErrors("title")) == 0 {
-		t.Error("expected a validation error on the title field")
+		t.Error("titleフィールドのバリデーションエラーを期待したが、無かった")
 	}
 }
 
-// TestCreateWorkUsecase_Execute_RejectsUnstorableValues covers the values that used to be
-// accepted and then lost: an over-long title failed at the INSERT with a 500, and a
-// malformed number was dropped on the way to the column so the work saved with the field
-// silently empty. Both now come back as a validation error naming the field.
-//
-// [Ja] TestCreateWorkUsecase_Execute_RejectsUnstorableValues は、以前は受け付けたうえで
-// 失われていた値を対象とする。長すぎるタイトルは INSERT で失敗して 500 になり、数値として
+// TestCreateWorkUsecase_Execute_RejectsUnstorableValuesは、以前は受け付けたうえで
+// 失われていた値を対象とする。長すぎるタイトルはINSERTで失敗して500になり、数値として
 // 不正な値はカラムへ渡る途中で捨てられ、そのフィールドが黙って空のまま作品が保存されていた。
 // どちらも今はフィールドを名指ししたバリデーションエラーとして返る。
 func TestCreateWorkUsecase_Execute_RejectsUnstorableValues(t *testing.T) {
@@ -440,13 +389,9 @@ func TestCreateWorkUsecase_Execute_RejectsUnstorableValues(t *testing.T) {
 			wantField: "started_on",
 		},
 		{
-			// works.number_format_id and anime_classifications.number_format_id are foreign
-			// keys to number_formats, so an id no row carries used to fail the INSERT inside
-			// the transaction. An id beyond what the sequence hands out can never exist.
-			//
-			// [Ja] works.number_format_id と anime_classifications.number_format_id は
-			// number_formats への外部キーで、どの行も持たない id は以前はトランザクション内の
-			// INSERT で失敗していた。シーケンスの採番範囲を超えた id は存在し得ない。
+			// works.number_format_idとanime_classifications.number_format_idは
+			// number_formatsへの外部キーで、どの行も持たないidは以前はトランザクション内の
+			// INSERTで失敗していた。シーケンスの採番範囲を超えたidは存在し得ない。
 			name: "話数フォーマットが登録されていない",
 			mutate: func(input *CreateWorkInput) {
 				input.NumberFormatID = "9000000000000000000"
@@ -467,14 +412,14 @@ func TestCreateWorkUsecase_Execute_RejectsUnstorableValues(t *testing.T) {
 
 			output, err := uc.Execute(context.Background(), input)
 			if output != nil {
-				t.Errorf("output = %+v, want nil on validation error", output)
+				t.Errorf("output = %+v、期待値 = nil (バリデーションエラーのため)", output)
 			}
 			ve := model.AsValidationError(err)
 			if ve == nil {
-				t.Fatalf("expected *model.ValidationError, got %v", err)
+				t.Fatalf("エラーの型 = %v、期待値 = *model.ValidationError", err)
 			}
 			if len(ve.GetFieldErrors(tt.wantField)) == 0 {
-				t.Errorf("expected a validation error on the %s field, got %+v", tt.wantField, ve)
+				t.Errorf("%sフィールドのエラー = %+v、期待値 = バリデーションエラー", tt.wantField, ve)
 			}
 		})
 	}

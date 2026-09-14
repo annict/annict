@@ -9,25 +9,19 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// CleanupExpiredTokensUsecase is responsible for cleaning up expired password reset tokens.
-//
-// [Ja] CleanupExpiredTokensUsecase は有効期限切れトークンのクリーンアップを担当する。
+// CleanupExpiredTokensUsecaseは有効期限切れトークンのクリーンアップを担当する。
 type CleanupExpiredTokensUsecase struct {
 	passwordResetTokenRepo *repository.PasswordResetTokenRepository
 }
 
-// NewCleanupExpiredTokensUsecase creates a new CleanupExpiredTokensUsecase.
-//
-// [Ja] NewCleanupExpiredTokensUsecase は新しい CleanupExpiredTokensUsecase を作成する。
+// NewCleanupExpiredTokensUsecaseは新しいCleanupExpiredTokensUsecaseを作成する。
 func NewCleanupExpiredTokensUsecase(passwordResetTokenRepo *repository.PasswordResetTokenRepository) *CleanupExpiredTokensUsecase {
 	return &CleanupExpiredTokensUsecase{
 		passwordResetTokenRepo: passwordResetTokenRepo,
 	}
 }
 
-// Execute deletes tokens that expired or were used more than 24 hours ago.
-//
-// [Ja] Execute は 24 時間以上前に期限切れまたは使用済みになったトークンを削除する。
+// Executeは24時間以上前に期限切れまたは使用済みになったトークンを削除する。
 func (uc *CleanupExpiredTokensUsecase) Execute(ctx context.Context) error {
 	slog.InfoContext(ctx, "トークンクリーンアップを開始します")
 

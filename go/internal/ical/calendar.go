@@ -1,4 +1,4 @@
-// Package ical はiCalendar形式（RFC 5545）のカレンダーデータを生成する機能を提供します
+// Package icalはiCalendar形式 (RFC 5545) のカレンダーデータを生成する機能を提供します
 package ical
 
 import (
@@ -7,24 +7,24 @@ import (
 	"time"
 )
 
-// Calendar はiCalendar形式のカレンダーを表します
+// CalendarはiCalendar形式のカレンダーを表します
 type Calendar struct {
 	TimeZone string
 	CalName  string
 	Events   []Event
 }
 
-// Event はカレンダーイベントを表します
+// Eventはカレンダーイベントを表します
 type Event struct {
 	UID         string
 	Summary     string
 	Description string
 	Start       time.Time
 	End         time.Time
-	AllDay      bool // trueの場合はDate形式（終日イベント）、falseの場合はDateTime形式
+	AllDay      bool // trueの場合はDate形式 (終日イベント)、falseの場合はDateTime形式
 }
 
-// ToICS はiCalendar形式の文字列を生成します（RFC 5545準拠）
+// ToICSはiCalendar形式の文字列を生成します (RFC 5545準拠)
 func (c *Calendar) ToICS() string {
 	var b strings.Builder
 
@@ -50,7 +50,7 @@ func (c *Calendar) ToICS() string {
 	return b.String()
 }
 
-// generateVTimezone はVTIMEZONEコンポーネントを生成します
+// generateVTimezoneはVTIMEZONEコンポーネントを生成します
 func (c *Calendar) generateVTimezone() string {
 	loc, err := time.LoadLocation(c.TimeZone)
 	if err != nil {
@@ -79,7 +79,7 @@ func (c *Calendar) generateVTimezone() string {
 	return b.String()
 }
 
-// generateVEvent はVEVENTコンポーネントを生成します
+// generateVEventはVEVENTコンポーネントを生成します
 func (c *Calendar) generateVEvent(event Event) string {
 	var b strings.Builder
 
@@ -93,12 +93,12 @@ func (c *Calendar) generateVEvent(event Event) string {
 	fmt.Fprintf(&b, "UID:%s\r\n", event.UID)
 
 	if event.AllDay {
-		// 終日イベント（Date形式）
+		// 終日イベント (Date形式)
 		// 終日イベントもタイムゾーン変換してから日付を取得
 		fmt.Fprintf(&b, "DTSTART;VALUE=DATE:%s\r\n", formatDate(event.Start.In(loc)))
 		fmt.Fprintf(&b, "DTEND;VALUE=DATE:%s\r\n", formatDate(event.End.In(loc)))
 	} else {
-		// 時刻指定イベント（DateTime形式）
+		// 時刻指定イベント (DateTime形式)
 		// UTCで渡された時刻をカレンダーのタイムゾーンに変換してからフォーマット
 		fmt.Fprintf(&b, "DTSTART;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.Start.In(loc)))
 		fmt.Fprintf(&b, "DTEND;TZID=%s:%s\r\n", c.TimeZone, formatDateTime(event.End.In(loc)))
@@ -111,7 +111,7 @@ func (c *Calendar) generateVEvent(event Event) string {
 	return b.String()
 }
 
-// formatTimezoneOffset は秒単位のオフセットをiCalendar形式（例: +0900）に変換します
+// formatTimezoneOffsetは秒単位のオフセットをiCalendar形式 (例: +0900) に変換します
 func formatTimezoneOffset(offsetSeconds int) string {
 	sign := "+"
 	if offsetSeconds < 0 {
@@ -125,25 +125,25 @@ func formatTimezoneOffset(offsetSeconds int) string {
 	return fmt.Sprintf("%s%02d%02d", sign, hours, minutes)
 }
 
-// formatDate は日付をiCalendar形式（YYYYMMDD）に変換します
+// formatDateは日付をiCalendar形式 (YYYYMMDD) に変換します
 func formatDate(t time.Time) string {
 	return t.Format("20060102")
 }
 
-// formatDateTime は日時をiCalendar形式（YYYYMMDDTHHMMSS）に変換します
+// formatDateTimeは日時をiCalendar形式 (YYYYMMDDTHHMMSS) に変換します
 func formatDateTime(t time.Time) string {
 	return t.Format("20060102T150405")
 }
 
-// escapeText はiCalendar形式のテキストをエスケープします
-// RFC 5545 Section 3.3.11 に従い、バックスラッシュ、セミコロン、カンマ、改行をエスケープします
+// escapeTextはiCalendar形式のテキストをエスケープします
+// RFC 5545 Section 3.3.11に従い、バックスラッシュ、セミコロン、カンマ、改行をエスケープします
 func escapeText(s string) string {
 	// バックスラッシュを最初にエスケープ
 	s = strings.ReplaceAll(s, "\\", "\\\\")
 	// セミコロンとカンマをエスケープ
 	s = strings.ReplaceAll(s, ";", "\\;")
 	s = strings.ReplaceAll(s, ",", "\\,")
-	// 改行をエスケープ（\n を \\n に変換）
+	// 改行をエスケープ (\nを \\nに変換)
 	s = strings.ReplaceAll(s, "\n", "\\n")
 	s = strings.ReplaceAll(s, "\r", "")
 

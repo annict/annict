@@ -11,9 +11,9 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateWorkUsecase_ExecuteBatch はExecuteBatchメソッドのテスト
+// TestCreateWorkUsecase_ExecuteBatchはExecuteBatchメソッドのテスト
 func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
-	// テストDBをセットアップ（トランザクションは各サブテストで作成）
+	// テストDBをセットアップ (トランザクションは各サブテストで作成)
 	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
@@ -102,18 +102,18 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 
 			ctx := context.Background()
 
-			// ExecuteBatchWithTxを実行（テスト用トランザクションを使用）
+			// ExecuteBatchWithTxを実行 (テスト用トランザクションを使用)
 			results, err := uc.ExecuteBatchWithTx(ctx, tx, tt.works, nil)
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ExecuteBatch() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ExecuteBatch()のエラー = %v、期待値 = %v", err, tt.wantErr)
 				return
 			}
 
 			// 結果の数をチェック
 			if len(results) != tt.wantCount {
-				t.Errorf("ExecuteBatch() got %d results, want %d", len(results), tt.wantCount)
+				t.Errorf("ExecuteBatch()の結果件数 = %d、期待値 = %d", len(results), tt.wantCount)
 				return
 			}
 
@@ -121,7 +121,7 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 			for i, result := range results {
 				// WorkIDが取得できていることを確認
 				if result.WorkID == 0 {
-					t.Errorf("result[%d].WorkID is 0", i)
+					t.Errorf("result[%d].WorkID = 0、期待値 = 0以外", i)
 				}
 
 				// worksテーブルにレコードが作成されたか確認
@@ -140,12 +140,12 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 
 				// タイトルが正しいか確認
 				if title != tt.works[i].Title {
-					t.Errorf("title = %v, want %v", title, tt.works[i].Title)
+					t.Errorf("title = %v、期待値 = %v", title, tt.works[i].Title)
 				}
 
 				// title_kanaが正しいか確認
 				if titleKana != tt.works[i].TitleKana {
-					t.Errorf("title_kana = %v, want %v", titleKana, tt.works[i].TitleKana)
+					t.Errorf("title_kana = %v、期待値 = %v", titleKana, tt.works[i].TitleKana)
 				}
 
 				// MediaTypeが正しく変換されているか確認
@@ -161,31 +161,31 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 					expectedMedia = 4
 				}
 				if media.Valid && media.Int32 != expectedMedia {
-					t.Errorf("media = %v, want %v", media.Int32, expectedMedia)
+					t.Errorf("media = %v、期待値 = %v", media.Int32, expectedMedia)
 				}
 
 				// official_site_urlが正しいか確認
 				if officialSiteURL != tt.works[i].OfficialSiteURL {
-					t.Errorf("official_site_url = %v, want %v", officialSiteURL, tt.works[i].OfficialSiteURL)
+					t.Errorf("official_site_url = %v、期待値 = %v", officialSiteURL, tt.works[i].OfficialSiteURL)
 				}
 
 				// season_yearが正しいか確認
 				if tt.works[i].SeasonYear != nil {
 					if !seasonYear.Valid {
-						t.Errorf("season_year should be valid")
+						t.Errorf("season_yearが有効でなかった")
 					} else if seasonYear.Int32 != *tt.works[i].SeasonYear {
-						t.Errorf("season_year = %v, want %v", seasonYear.Int32, *tt.works[i].SeasonYear)
+						t.Errorf("season_year = %v、期待値 = %v", seasonYear.Int32, *tt.works[i].SeasonYear)
 					}
 				} else {
 					if seasonYear.Valid {
-						t.Errorf("season_year should be NULL")
+						t.Errorf("season_yearがNULLでなかった")
 					}
 				}
 
-				// season_nameが正しいか確認（enum値）
+				// season_nameが正しいか確認 (enum値)
 				if tt.works[i].SeasonName != nil {
 					if !seasonName.Valid {
-						t.Errorf("season_name should be valid")
+						t.Errorf("season_nameが有効でなかった")
 					} else {
 						var expectedSeasonName int32
 						switch *tt.works[i].SeasonName {
@@ -199,12 +199,12 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 							expectedSeasonName = 4
 						}
 						if seasonName.Int32 != expectedSeasonName {
-							t.Errorf("season_name = %v, want %v", seasonName.Int32, expectedSeasonName)
+							t.Errorf("season_name = %v、期待値 = %v", seasonName.Int32, expectedSeasonName)
 						}
 					}
 				} else {
 					if seasonName.Valid {
-						t.Errorf("season_name should be NULL")
+						t.Errorf("season_nameがNULLでなかった")
 					}
 				}
 			}
@@ -212,7 +212,7 @@ func TestCreateWorkUsecase_ExecuteBatch(t *testing.T) {
 	}
 }
 
-// TestCreateWorkUsecase_MediaTypeConversion はMediaType変換のテスト
+// TestCreateWorkUsecase_MediaTypeConversionはMediaType変換のテスト
 func TestCreateWorkUsecase_MediaTypeConversion(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
@@ -250,11 +250,11 @@ func TestCreateWorkUsecase_MediaTypeConversion(t *testing.T) {
 
 		results, err := uc.ExecuteBatchWithTx(ctx, tx, works, nil)
 		if err != nil {
-			t.Fatalf("ExecuteBatch() error = %v", err)
+			t.Fatalf("ExecuteBatch()のエラー = %v", err)
 		}
 
 		if len(results) != 1 {
-			t.Fatalf("ExecuteBatch() returned %d results, want 1", len(results))
+			t.Fatalf("ExecuteBatch()の結果件数 = %d、期待値 = 1", len(results))
 		}
 
 		// DBからmediaを取得
@@ -266,12 +266,12 @@ func TestCreateWorkUsecase_MediaTypeConversion(t *testing.T) {
 
 		// 期待値と比較
 		if media != mt.expected {
-			t.Errorf("MediaType %s: media = %v, want %v", mt.mediaType, media, mt.expected)
+			t.Errorf("MediaType %s: media = %v、期待値 = %v", mt.mediaType, media, mt.expected)
 		}
 	}
 }
 
-// TestCreateWorkUsecase_LargeBatch は大量の作品作成のテスト
+// TestCreateWorkUsecase_LargeBatchは大量の作品作成のテスト
 func TestCreateWorkUsecase_LargeBatch(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
@@ -281,7 +281,7 @@ func TestCreateWorkUsecase_LargeBatch(t *testing.T) {
 
 	ctx := context.Background()
 
-	// 250の作品を作成（100件チャンク×3回でマルチチャンク処理を検証）
+	// 250の作品を作成 (100件チャンク×3回でマルチチャンク処理を検証)
 	workCount := 250
 	works := make([]CreateWorkParams, workCount)
 	seasonYear := int32(2024)
@@ -298,29 +298,29 @@ func TestCreateWorkUsecase_LargeBatch(t *testing.T) {
 		}
 	}
 
-	// ExecuteBatchWithTxを実行（テスト用トランザクションを使用）
+	// ExecuteBatchWithTxを実行 (テスト用トランザクションを使用)
 	results, err := uc.ExecuteBatchWithTx(ctx, tx, works, nil)
 	if err != nil {
-		t.Fatalf("ExecuteBatch() error = %v", err)
+		t.Fatalf("ExecuteBatch()のエラー = %v", err)
 	}
 
 	// 結果の数をチェック
 	if len(results) != workCount {
-		t.Errorf("ExecuteBatch() got %d results, want %d", len(results), workCount)
+		t.Errorf("ExecuteBatch()の結果件数 = %d、期待値 = %d", len(results), workCount)
 	}
 
 	// 最初と最後の作品を検証
 	if len(results) > 0 {
 		if results[0].WorkID == 0 {
-			t.Error("results[0].WorkID is 0")
+			t.Error("results[0].WorkID = 0、期待値 = 0以外")
 		}
 		if results[len(results)-1].WorkID == 0 {
-			t.Error("results[last].WorkID is 0")
+			t.Error("results[last].WorkID = 0、期待値 = 0以外")
 		}
 	}
 }
 
-// TestGenerateRandomWorkParams はランダム作品パラメータ生成のテスト
+// TestGenerateRandomWorkParamsはランダム作品パラメータ生成のテスト
 func TestGenerateRandomWorkParams(t *testing.T) {
 	// 固定シードでランダム生成器を初期化
 	r := rand.New(rand.NewSource(12345))
@@ -330,7 +330,7 @@ func TestGenerateRandomWorkParams(t *testing.T) {
 
 	// タイトルが空でないことを確認
 	if params.Title == "" {
-		t.Error("Title should not be empty")
+		t.Error("params.Titleが空だった")
 	}
 
 	// MediaTypeが有効な値であることを確認
@@ -342,13 +342,13 @@ func TestGenerateRandomWorkParams(t *testing.T) {
 		}
 	}
 	if !validMedia {
-		t.Errorf("Invalid Media: %v", params.Media)
+		t.Errorf("Media = %v、期待値 = seed.AllMediaTypesのいずれか", params.Media)
 	}
 
 	// SeasonYearが2020〜2025の範囲であることを確認
 	if params.SeasonYear != nil {
 		if *params.SeasonYear < 2020 || *params.SeasonYear > 2025 {
-			t.Errorf("SeasonYear out of range: %v", *params.SeasonYear)
+			t.Errorf("SeasonYear = %v、期待値 = 2020〜2025", *params.SeasonYear)
 		}
 	}
 
@@ -362,7 +362,7 @@ func TestGenerateRandomWorkParams(t *testing.T) {
 			}
 		}
 		if !validSeason {
-			t.Errorf("Invalid SeasonName: %v", *params.SeasonName)
+			t.Errorf("SeasonName = %v、期待値 = seed.AllSeasonsのいずれか", *params.SeasonName)
 		}
 	}
 }

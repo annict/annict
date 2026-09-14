@@ -11,10 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Create archives (unpublishes) an episode in the Annict DB admin UI
-// (POST /db/episodes/:id/archive).
-//
-// [Ja] Annict DB 管理画面でエピソードを非公開 (アーカイブ) にする
+// CreateはAnnict DB管理画面でエピソードを非公開 (アーカイブ) にする
 // (POST /db/episodes/:id/archive)。
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()

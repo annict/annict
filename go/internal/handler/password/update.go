@@ -11,7 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Update はパスワードを更新します (PATCH /password)
+// Updateはパスワードを更新します (PATCH /password)
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

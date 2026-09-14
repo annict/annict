@@ -13,7 +13,7 @@ func TestValidationError_Error(t *testing.T) {
 
 	ve := model.NewValidationError()
 	if got := ve.Error(); got != "validation failed" {
-		t.Errorf("Error() = %q, want %q", got, "validation failed")
+		t.Errorf("Error() = %q、期待値 = %q", got, "validation failed")
 	}
 }
 
@@ -25,13 +25,13 @@ func TestValidationError_AddGlobal(t *testing.T) {
 	ve.AddGlobal("エラー2")
 
 	if len(ve.Global) != 2 {
-		t.Fatalf("len(Global) = %d, want 2", len(ve.Global))
+		t.Fatalf("len(Global) = %d、期待値 = 2", len(ve.Global))
 	}
 	if ve.Global[0] != "エラー1" {
-		t.Errorf("Global[0] = %q, want %q", ve.Global[0], "エラー1")
+		t.Errorf("Global[0] = %q、期待値 = %q", ve.Global[0], "エラー1")
 	}
 	if ve.Global[1] != "エラー2" {
-		t.Errorf("Global[1] = %q, want %q", ve.Global[1], "エラー2")
+		t.Errorf("Global[1] = %q、期待値 = %q", ve.Global[1], "エラー2")
 	}
 }
 
@@ -45,15 +45,15 @@ func TestValidationError_AddField(t *testing.T) {
 
 	emailErrors := ve.Fields["email"]
 	if len(emailErrors) != 2 {
-		t.Fatalf("len(Fields[email]) = %d, want 2", len(emailErrors))
+		t.Fatalf("len(Fields[email]) = %d、期待値 = 2", len(emailErrors))
 	}
 	if emailErrors[0] != "メールアドレスを入力してください" {
-		t.Errorf("Fields[email][0] = %q, want %q", emailErrors[0], "メールアドレスを入力してください")
+		t.Errorf("Fields[email][0] = %q、期待値 = %q", emailErrors[0], "メールアドレスを入力してください")
 	}
 
 	passwordErrors := ve.Fields["password"]
 	if len(passwordErrors) != 1 {
-		t.Fatalf("len(Fields[password]) = %d, want 1", len(passwordErrors))
+		t.Fatalf("len(Fields[password]) = %d、期待値 = 1", len(passwordErrors))
 	}
 }
 
@@ -64,7 +64,7 @@ func TestValidationError_AddField_NilFields(t *testing.T) {
 	ve.AddField("email", "必須です")
 
 	if !ve.HasFieldError("email") {
-		t.Error("HasFieldError(email) = false, want true")
+		t.Error("HasFieldError(email) = false、期待値 = true")
 	}
 }
 
@@ -112,7 +112,7 @@ func TestValidationError_HasErrors(t *testing.T) {
 
 			ve := tt.setup()
 			if got := ve.HasErrors(); got != tt.want {
-				t.Errorf("HasErrors() = %v, want %v", got, tt.want)
+				t.Errorf("HasErrors() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
@@ -125,16 +125,16 @@ func TestValidationError_HasFieldError(t *testing.T) {
 	ve.AddField("email", "必須です")
 
 	if !ve.HasFieldError("email") {
-		t.Error("HasFieldError(email) = false, want true")
+		t.Error("HasFieldError(email) = false、期待値 = true")
 	}
 	if ve.HasFieldError("password") {
-		t.Error("HasFieldError(password) = true, want false")
+		t.Error("HasFieldError(password) = true、期待値 = false")
 	}
 
 	// nilレシーバー
 	var nilVE *model.ValidationError
 	if nilVE.HasFieldError("email") {
-		t.Error("nil.HasFieldError(email) = true, want false")
+		t.Error("nil.HasFieldError(email) = true、期待値 = false")
 	}
 }
 
@@ -147,20 +147,20 @@ func TestValidationError_GetFieldErrors(t *testing.T) {
 
 	errs := ve.GetFieldErrors("email")
 	if len(errs) != 2 {
-		t.Fatalf("len(GetFieldErrors(email)) = %d, want 2", len(errs))
+		t.Fatalf("len(GetFieldErrors(email)) = %d、期待値 = 2", len(errs))
 	}
 
 	// 存在しないフィールド
 	errs = ve.GetFieldErrors("password")
 	if errs != nil {
-		t.Errorf("GetFieldErrors(password) = %v, want nil", errs)
+		t.Errorf("GetFieldErrors(password) = %v、期待値 = nil", errs)
 	}
 
 	// nilレシーバー
 	var nilVE *model.ValidationError
 	errs = nilVE.GetFieldErrors("email")
 	if errs != nil {
-		t.Errorf("nil.GetFieldErrors(email) = %v, want nil", errs)
+		t.Errorf("nil.GetFieldErrors(email) = %v、期待値 = nil", errs)
 	}
 }
 
@@ -173,7 +173,7 @@ func TestValidationError_FieldErrors(t *testing.T) {
 
 	errs := ve.FieldErrors()
 	if len(errs) != 2 {
-		t.Fatalf("len(FieldErrors()) = %d, want 2", len(errs))
+		t.Fatalf("len(FieldErrors()) = %d、期待値 = 2", len(errs))
 	}
 
 	// フィールド名とメッセージの組み合わせが含まれていることを確認
@@ -182,16 +182,16 @@ func TestValidationError_FieldErrors(t *testing.T) {
 		found[fe.Field+":"+fe.Message] = true
 	}
 	if !found["email:必須です"] {
-		t.Error("FieldErrors() に email:必須です が含まれていない")
+		t.Error("FieldErrors()にemail:必須ですが含まれていない")
 	}
 	if !found["password:短すぎます"] {
-		t.Error("FieldErrors() に password:短すぎます が含まれていない")
+		t.Error("FieldErrors()にpassword:短すぎますが含まれていない")
 	}
 
 	// nilレシーバー
 	var nilVE *model.ValidationError
 	if errs := nilVE.FieldErrors(); errs != nil {
-		t.Errorf("nil.FieldErrors() = %v, want nil", errs)
+		t.Errorf("nil.FieldErrors() = %v、期待値 = nil", errs)
 	}
 }
 
@@ -209,7 +209,7 @@ func TestAppError_Error(t *testing.T) {
 		UserMsg: "リソースが見つかりません",
 	}
 	if got := ae.Error(); got != "リソースが見つかりません" {
-		t.Errorf("Error() = %q, want %q", got, "リソースが見つかりません")
+		t.Errorf("Error() = %q、期待値 = %q", got, "リソースが見つかりません")
 	}
 }
 
@@ -224,7 +224,7 @@ func TestAppError_Unwrap(t *testing.T) {
 	}
 
 	if !errors.Is(ae, inner) {
-		t.Error("errors.Is(ae, inner) = false, want true")
+		t.Error("errors.Is(ae, inner) = false、期待値 = true")
 	}
 }
 
@@ -237,7 +237,7 @@ func TestAppError_Unwrap_Nil(t *testing.T) {
 	}
 
 	if ae.Unwrap() != nil {
-		t.Errorf("Unwrap() = %v, want nil", ae.Unwrap())
+		t.Errorf("Unwrap() = %v、期待値 = nil", ae.Unwrap())
 	}
 }
 
@@ -255,7 +255,7 @@ func TestAppError_LogString(t *testing.T) {
 	expected := fmt.Sprintf("Code: %d | Msg: %s | Cause: %v | Meta: %v",
 		model.AppErrCodeForbidden, "権限がありません", ae.Internal, ae.Metadata)
 	if got != expected {
-		t.Errorf("LogString() = %q, want %q", got, expected)
+		t.Errorf("LogString() = %q、期待値 = %q", got, expected)
 	}
 }
 
@@ -266,16 +266,16 @@ func TestNewAppError(t *testing.T) {
 	ae := model.NewAppError(model.AppErrCodeInternal, "内部エラーが発生しました", inner)
 
 	if ae.Code != model.AppErrCodeInternal {
-		t.Errorf("Code = %d, want %d", ae.Code, model.AppErrCodeInternal)
+		t.Errorf("Code = %d、期待値 = %d", ae.Code, model.AppErrCodeInternal)
 	}
 	if ae.UserMsg != "内部エラーが発生しました" {
-		t.Errorf("UserMsg = %q, want %q", ae.UserMsg, "内部エラーが発生しました")
+		t.Errorf("UserMsg = %q、期待値 = %q", ae.UserMsg, "内部エラーが発生しました")
 	}
 	if ae.Internal != inner {
-		t.Errorf("Internal = %v, want %v", ae.Internal, inner)
+		t.Errorf("Internal = %v、期待値 = %v", ae.Internal, inner)
 	}
 	if ae.Metadata != nil {
-		t.Errorf("Metadata = %v, want nil", ae.Metadata)
+		t.Errorf("Metadata = %v、期待値 = nil", ae.Metadata)
 	}
 }
 
@@ -285,19 +285,19 @@ func TestNewAppError_NilInternal(t *testing.T) {
 	ae := model.NewAppError(model.AppErrCodeResourceNotFound, "見つかりません", nil)
 
 	if ae.Code != model.AppErrCodeResourceNotFound {
-		t.Errorf("Code = %d, want %d", ae.Code, model.AppErrCodeResourceNotFound)
+		t.Errorf("Code = %d、期待値 = %d", ae.Code, model.AppErrCodeResourceNotFound)
 	}
 	if ae.Internal != nil {
-		t.Errorf("Internal = %v, want nil", ae.Internal)
+		t.Errorf("Internal = %v、期待値 = nil", ae.Internal)
 	}
 }
 
 func TestAppErrorCode_Constants(t *testing.T) {
 	t.Parallel()
 
-	// iota + 1 で始まるため、ゼロ値と区別できることを確認
+	// iota + 1で始まるため、ゼロ値と区別できることを確認
 	if model.AppErrCodeResourceNotFound == 0 {
-		t.Error("AppErrCodeResourceNotFound should not be 0")
+		t.Error("AppErrCodeResourceNotFoundが0だった")
 	}
 
 	// 各定数が異なる値であることを確認
@@ -311,7 +311,7 @@ func TestAppErrorCode_Constants(t *testing.T) {
 	seen := map[model.AppErrorCode]bool{}
 	for _, code := range codes {
 		if seen[code] {
-			t.Errorf("duplicate AppErrorCode: %d", code)
+			t.Errorf("重複したAppErrorCode = %d", code)
 		}
 		seen[code] = true
 	}
@@ -328,7 +328,7 @@ func TestAsValidationError(t *testing.T) {
 
 		got := model.AsValidationError(ve)
 		if got == nil {
-			t.Fatal("AsValidationError() = nil, want non-nil")
+			t.Fatal("AsValidationError() = nil、期待値 = 非nil")
 		}
 		if !got.HasFieldError("email") {
 			t.Error("取り出したValidationErrorにemailエラーがない")
@@ -344,10 +344,10 @@ func TestAsValidationError(t *testing.T) {
 
 		got := model.AsValidationError(wrapped)
 		if got == nil {
-			t.Fatal("AsValidationError() = nil, want non-nil")
+			t.Fatal("AsValidationError() = nil、期待値 = 非nil")
 		}
 		if len(got.Global) != 1 {
-			t.Errorf("len(Global) = %d, want 1", len(got.Global))
+			t.Errorf("len(Global) = %d、期待値 = 1", len(got.Global))
 		}
 	})
 
@@ -357,7 +357,7 @@ func TestAsValidationError(t *testing.T) {
 		err := errors.New("通常のエラー")
 		got := model.AsValidationError(err)
 		if got != nil {
-			t.Errorf("AsValidationError() = %v, want nil", got)
+			t.Errorf("AsValidationError() = %v、期待値 = nil", got)
 		}
 	})
 
@@ -366,7 +366,7 @@ func TestAsValidationError(t *testing.T) {
 
 		got := model.AsValidationError(nil)
 		if got != nil {
-			t.Errorf("AsValidationError(nil) = %v, want nil", got)
+			t.Errorf("AsValidationError(nil) = %v、期待値 = nil", got)
 		}
 	})
 }
@@ -384,10 +384,10 @@ func TestAsAppError(t *testing.T) {
 
 		got := model.AsAppError(ae)
 		if got == nil {
-			t.Fatal("AsAppError() = nil, want non-nil")
+			t.Fatal("AsAppError() = nil、期待値 = 非nil")
 		}
 		if got.Code != model.AppErrCodeResourceNotFound {
-			t.Errorf("Code = %d, want %d", got.Code, model.AppErrCodeResourceNotFound)
+			t.Errorf("Code = %d、期待値 = %d", got.Code, model.AppErrCodeResourceNotFound)
 		}
 	})
 
@@ -402,10 +402,10 @@ func TestAsAppError(t *testing.T) {
 
 		got := model.AsAppError(wrapped)
 		if got == nil {
-			t.Fatal("AsAppError() = nil, want non-nil")
+			t.Fatal("AsAppError() = nil、期待値 = 非nil")
 		}
 		if got.Code != model.AppErrCodeForbidden {
-			t.Errorf("Code = %d, want %d", got.Code, model.AppErrCodeForbidden)
+			t.Errorf("Code = %d、期待値 = %d", got.Code, model.AppErrCodeForbidden)
 		}
 	})
 
@@ -415,7 +415,7 @@ func TestAsAppError(t *testing.T) {
 		err := errors.New("通常のエラー")
 		got := model.AsAppError(err)
 		if got != nil {
-			t.Errorf("AsAppError() = %v, want nil", got)
+			t.Errorf("AsAppError() = %v、期待値 = nil", got)
 		}
 	})
 
@@ -424,7 +424,7 @@ func TestAsAppError(t *testing.T) {
 
 		got := model.AsAppError(nil)
 		if got != nil {
-			t.Errorf("AsAppError(nil) = %v, want nil", got)
+			t.Errorf("AsAppError(nil) = %v、期待値 = nil", got)
 		}
 	})
 }

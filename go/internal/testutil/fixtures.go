@@ -14,7 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// シーズン名のenum値（Rails互換）
+// シーズン名のenum値 (Rails互換)
 const (
 	SeasonWinter = 1
 	SeasonSpring = 2
@@ -22,7 +22,7 @@ const (
 	SeasonAutumn = 4
 )
 
-// WorkBuilder は作品テストデータのビルダー
+// WorkBuilderは作品テストデータのビルダー
 type WorkBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
@@ -30,36 +30,26 @@ type WorkBuilder struct {
 	title     string
 	titleKana string
 	titleEn   string
-	// Rails media enum: tv=1, ova=2, movie=3, web=4, other=0.
-	//
-	// [Ja] Rails の media enum: tv=1, ova=2, movie=3, web=4, other=0。
+	// Railsのmedia enum: tv=1, ova=2, movie=3, web=4, other=0。
 	media      int32
 	seasonName int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
 	seasonYear int32
 	noSeason   bool // trueの場合、season_year/season_nameをNULLにする
 	noEpisodes bool // no_episodesカラムの値
-	// External-service ids (nullable). nil leaves the column NULL.
-	//
-	// [Ja] 外部サービスの ID (NULL 許容)。nil の場合はカラムを NULL のままにする。
+	// 外部サービスのID (NULL許容)。nilの場合はカラムをNULLのままにする。
 	scTid      *int32
 	malAnimeID *int32
-	// manualEpisodesCount is the work's expected total episode count
-	// (works.manual_episodes_count). nil leaves the column NULL.
-	//
-	// [Ja] manualEpisodesCount は作品の予定総話数 (works.manual_episodes_count)。
-	// nil の場合はカラムを NULL のままにします。
+	// manualEpisodesCountは作品の予定総話数 (works.manual_episodes_count)。
+	// nilの場合はカラムをNULLのままにします。
 	manualEpisodesCount *int32
 	watchersCount       int32
-	// unpublishedAt / deletedAt set the Unpublishable / SoftDeletable state
-	// columns. nil leaves the column NULL (published / not deleted).
-	//
-	// [Ja] unpublishedAt / deletedAt は Unpublishable / SoftDeletable の状態カラムを
-	// 設定します。nil の場合はカラムを NULL のまま (公開 / 未削除) にします。
+	// unpublishedAt / deletedAtはUnpublishable / SoftDeletableの状態カラムを
+	// 設定します。nilの場合はカラムをNULLのまま (公開 / 未削除) にします。
 	unpublishedAt *time.Time
 	deletedAt     *time.Time
 }
 
-// NewWorkBuilder は新しいWorkBuilderを作成します
+// NewWorkBuilderは新しいWorkBuilderを作成します
 func NewWorkBuilder(t *testing.T, tx *sql.Tx) *WorkBuilder {
 	return &WorkBuilder{
 		tx:            tx,
@@ -72,60 +62,50 @@ func NewWorkBuilder(t *testing.T, tx *sql.Tx) *WorkBuilder {
 	}
 }
 
-// WithID は作品IDを設定します
+// WithIDは作品IDを設定します
 func (b *WorkBuilder) WithID(id model.WorkID) *WorkBuilder {
 	b.id = id
 	return b
 }
 
-// WithTitle は作品タイトルを設定します
+// WithTitleは作品タイトルを設定します
 func (b *WorkBuilder) WithTitle(title string) *WorkBuilder {
 	b.title = title
 	return b
 }
 
-// WithTitleKana sets the kana (furigana) title.
-//
-// [Ja] WithTitleKana はふりがなタイトルを設定します。
+// WithTitleKanaはふりがなタイトルを設定します。
 func (b *WorkBuilder) WithTitleKana(titleKana string) *WorkBuilder {
 	b.titleKana = titleKana
 	return b
 }
 
-// WithTitleEn sets the English title.
-//
-// [Ja] WithTitleEn は英語タイトルを設定します。
+// WithTitleEnは英語タイトルを設定します。
 func (b *WorkBuilder) WithTitleEn(titleEn string) *WorkBuilder {
 	b.titleEn = titleEn
 	return b
 }
 
-// WithMedia sets the media kind (Rails enum: tv=1, ova=2, movie=3, web=4, other=0).
-//
-// [Ja] WithMedia はメディア種別を設定します (Rails enum: tv=1, ova=2, movie=3, web=4, other=0)。
+// WithMediaはメディア種別を設定します (Rails enum: tv=1, ova=2, movie=3, web=4, other=0)。
 func (b *WorkBuilder) WithMedia(media int32) *WorkBuilder {
 	b.media = media
 	return b
 }
 
-// WithScTid sets the Syoboi Calendar program id (works.sc_tid).
-//
-// [Ja] WithScTid はしょぼいカレンダーの番組 ID (works.sc_tid) を設定します。
+// WithScTidはしょぼいカレンダーの番組ID (works.sc_tid) を設定します。
 func (b *WorkBuilder) WithScTid(scTid int32) *WorkBuilder {
 	b.scTid = &scTid
 	return b
 }
 
-// WithMalAnimeID sets the MyAnimeList anime id (works.mal_anime_id).
-//
-// [Ja] WithMalAnimeID は MyAnimeList のアニメ ID (works.mal_anime_id) を設定します。
+// WithMalAnimeIDはMyAnimeListのアニメID (works.mal_anime_id) を設定します。
 func (b *WorkBuilder) WithMalAnimeID(malAnimeID int32) *WorkBuilder {
 	b.malAnimeID = &malAnimeID
 	return b
 }
 
-// WithSeason はシーズンを設定します
-// seasonNameは SeasonWinter(1), SeasonSpring(2), SeasonSummer(3), SeasonAutumn(4) のいずれか
+// WithSeasonはシーズンを設定します
+// seasonNameはSeasonWinter(1), SeasonSpring(2), SeasonSummer(3), SeasonAutumn(4) のいずれか
 func (b *WorkBuilder) WithSeason(year int32, seasonName int32) *WorkBuilder {
 	b.seasonName = seasonName
 	b.seasonYear = year
@@ -133,55 +113,46 @@ func (b *WorkBuilder) WithSeason(year int32, seasonName int32) *WorkBuilder {
 	return b
 }
 
-// WithNoSeason はシーズン情報なしに設定します
+// WithNoSeasonはシーズン情報なしに設定します
 func (b *WorkBuilder) WithNoSeason() *WorkBuilder {
 	b.noSeason = true
 	return b
 }
 
-// WithNoEpisodes はno_episodesフラグを設定します
+// WithNoEpisodesはno_episodesフラグを設定します
 func (b *WorkBuilder) WithNoEpisodes(noEpisodes bool) *WorkBuilder {
 	b.noEpisodes = noEpisodes
 	return b
 }
 
-// WithUnpublishedAt sets works.unpublished_at, marking the work as archived
-// (Unpublishable). The default leaves it NULL (published).
-//
-// [Ja] WithUnpublishedAt は works.unpublished_at を設定し、作品を非公開 (アーカイブ、
-// Unpublishable) とします。既定では NULL (公開) のままにします。
+// WithUnpublishedAtはworks.unpublished_atを設定し、作品を非公開 (アーカイブ、
+// Unpublishable) とします。既定ではNULL (公開) のままにします。
 func (b *WorkBuilder) WithUnpublishedAt(unpublishedAt time.Time) *WorkBuilder {
 	b.unpublishedAt = &unpublishedAt
 	return b
 }
 
-// WithDeletedAt sets works.deleted_at, marking the work as soft-deleted
-// (SoftDeletable). The default leaves it NULL (not deleted).
-//
-// [Ja] WithDeletedAt は works.deleted_at を設定し、作品をソフトデリート
-// (SoftDeletable) とします。既定では NULL (未削除) のままにします。
+// WithDeletedAtはworks.deleted_atを設定し、作品をソフトデリート
+// (SoftDeletable) とします。既定ではNULL (未削除) のままにします。
 func (b *WorkBuilder) WithDeletedAt(deletedAt time.Time) *WorkBuilder {
 	b.deletedAt = &deletedAt
 	return b
 }
 
-// WithManualEpisodesCount sets works.manual_episodes_count, the total number of episodes
-// the work is expected to have. The default leaves it NULL (unknown).
-//
-// [Ja] WithManualEpisodesCount は作品が最終的に持つ予定の話数
-// (works.manual_episodes_count) を設定します。既定では NULL (不明) のままにします。
+// WithManualEpisodesCountは作品が最終的に持つ予定の話数
+// (works.manual_episodes_count) を設定します。既定ではNULL (不明) のままにします。
 func (b *WorkBuilder) WithManualEpisodesCount(manualEpisodesCount int32) *WorkBuilder {
 	b.manualEpisodesCount = &manualEpisodesCount
 	return b
 }
 
-// WithWatchersCount はウォッチャー数を設定します
+// WithWatchersCountはウォッチャー数を設定します
 func (b *WorkBuilder) WithWatchersCount(count int32) *WorkBuilder {
 	b.watchersCount = count
 	return b
 }
 
-// Build はテスト用の作品データをデータベースに作成します
+// Buildはテスト用の作品データをデータベースに作成します
 func (b *WorkBuilder) Build() model.WorkID {
 	b.t.Helper()
 
@@ -259,7 +230,7 @@ func (b *WorkBuilder) Build() model.WorkID {
 	return model.WorkID(id)
 }
 
-// EpisodeBuilder はエピソードテストデータのビルダー
+// EpisodeBuilderはエピソードテストデータのビルダー
 type EpisodeBuilder struct {
 	tx            *sql.Tx
 	t             *testing.T
@@ -270,7 +241,7 @@ type EpisodeBuilder struct {
 	deletedAt     *time.Time
 }
 
-// NewEpisodeBuilder は新しいEpisodeBuilderを作成します
+// NewEpisodeBuilderは新しいEpisodeBuilderを作成します
 func NewEpisodeBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *EpisodeBuilder {
 	return &EpisodeBuilder{
 		tx:     tx,
@@ -281,39 +252,33 @@ func NewEpisodeBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *EpisodeBu
 	}
 }
 
-// WithNumber はエピソード番号を設定します
+// WithNumberはエピソード番号を設定します
 func (b *EpisodeBuilder) WithNumber(number string) *EpisodeBuilder {
 	b.number = number
 	return b
 }
 
-// WithTitle はエピソードタイトルを設定します
+// WithTitleはエピソードタイトルを設定します
 func (b *EpisodeBuilder) WithTitle(title string) *EpisodeBuilder {
 	b.title = title
 	return b
 }
 
-// WithUnpublishedAt sets episodes.unpublished_at, marking the episode as archived
-// (Unpublishable). The default leaves it NULL (published).
-//
-// [Ja] WithUnpublishedAt は episodes.unpublished_at を設定し、エピソードを非公開
-// (アーカイブ、Unpublishable) とします。既定では NULL (公開) のままにします。
+// WithUnpublishedAtはepisodes.unpublished_atを設定し、エピソードを非公開
+// (アーカイブ、Unpublishable) とします。既定ではNULL (公開) のままにします。
 func (b *EpisodeBuilder) WithUnpublishedAt(unpublishedAt time.Time) *EpisodeBuilder {
 	b.unpublishedAt = &unpublishedAt
 	return b
 }
 
-// WithDeletedAt sets episodes.deleted_at, marking the episode as soft-deleted
-// (SoftDeletable). The default leaves it NULL (not deleted).
-//
-// [Ja] WithDeletedAt は episodes.deleted_at を設定し、エピソードをソフトデリート
-// (SoftDeletable) とします。既定では NULL (未削除) のままにします。
+// WithDeletedAtはepisodes.deleted_atを設定し、エピソードをソフトデリート
+// (SoftDeletable) とします。既定ではNULL (未削除) のままにします。
 func (b *EpisodeBuilder) WithDeletedAt(deletedAt time.Time) *EpisodeBuilder {
 	b.deletedAt = &deletedAt
 	return b
 }
 
-// Build はテスト用のエピソードデータをデータベースに作成します
+// Buildはテスト用のエピソードデータをデータベースに作成します
 func (b *EpisodeBuilder) Build() model.EpisodeID {
 	b.t.Helper()
 
@@ -358,7 +323,7 @@ func (b *EpisodeBuilder) Build() model.EpisodeID {
 	return model.EpisodeID(id)
 }
 
-// UserBuilder はユーザーテストデータのビルダー
+// UserBuilderはユーザーテストデータのビルダー
 type UserBuilder struct {
 	tx                 *sql.Tx
 	t                  *testing.T
@@ -370,9 +335,9 @@ type UserBuilder struct {
 	stripeSubscriberID *model.StripeSubscriberID
 }
 
-// NewUserBuilder は新しいUserBuilderを作成します
+// NewUserBuilderは新しいUserBuilderを作成します
 func NewUserBuilder(t *testing.T, tx *sql.Tx) *UserBuilder {
-	// ユニークなIDを生成（テスト間の衝突を避ける）
+	// ユニークなIDを生成 (テスト間の衝突を避ける)
 	uniqueID := uuid.New().String()[:8]
 	uniqueUsername := fmt.Sprintf("testuser_%s", uniqueID)
 	uniqueEmail := fmt.Sprintf("test_%s@example.com", uniqueID)
@@ -387,43 +352,43 @@ func NewUserBuilder(t *testing.T, tx *sql.Tx) *UserBuilder {
 	}
 }
 
-// WithUsername はユーザー名を設定します
+// WithUsernameはユーザー名を設定します
 func (b *UserBuilder) WithUsername(username string) *UserBuilder {
 	b.username = username
 	return b
 }
 
-// WithEmail はメールアドレスを設定します
+// WithEmailはメールアドレスを設定します
 func (b *UserBuilder) WithEmail(email string) *UserBuilder {
 	b.email = email
 	return b
 }
 
-// WithEncryptedPassword はハッシュ化されたパスワードを設定します
+// WithEncryptedPasswordはハッシュ化されたパスワードを設定します
 func (b *UserBuilder) WithEncryptedPassword(password string) *UserBuilder {
 	b.encryptedPassword = password
 	return b
 }
 
-// WithLocale はロケールを設定します
+// WithLocaleはロケールを設定します
 func (b *UserBuilder) WithLocale(locale string) *UserBuilder {
 	b.locale = locale
 	return b
 }
 
-// WithRole はユーザーの権限を設定します（0: user, 1: admin, 2: editor）
+// WithRoleはユーザーの権限を設定します (0: user, 1: admin, 2: editor)
 func (b *UserBuilder) WithRole(role int32) *UserBuilder {
 	b.role = role
 	return b
 }
 
-// WithStripeSubscriberID はStripeサブスクライバーIDを設定します
+// WithStripeSubscriberIDはStripeサブスクライバーIDを設定します
 func (b *UserBuilder) WithStripeSubscriberID(id *model.StripeSubscriberID) *UserBuilder {
 	b.stripeSubscriberID = id
 	return b
 }
 
-// Build はテスト用のユーザーデータをデータベースに作成します
+// Buildはテスト用のユーザーデータをデータベースに作成します
 func (b *UserBuilder) Build() model.UserID {
 	b.t.Helper()
 
@@ -460,7 +425,7 @@ func (b *UserBuilder) Build() model.UserID {
 		b.t.Fatalf("ユーザーデータの作成に失敗しました: %v", err)
 	}
 
-	// プロフィールを作成（CompleteSignUpUsecaseと同様）
+	// プロフィールを作成 (CompleteSignUpUsecaseと同様)
 	_, err = b.tx.Exec(`
 		INSERT INTO profiles (user_id, name, description, created_at, updated_at, background_image_animated)
 		VALUES ($1, $2, '', NOW(), NOW(), false)
@@ -469,7 +434,7 @@ func (b *UserBuilder) Build() model.UserID {
 		b.t.Fatalf("プロフィールデータの作成に失敗しました: %v", err)
 	}
 
-	// 設定を作成（CompleteSignUpUsecaseと同様）
+	// 設定を作成 (CompleteSignUpUsecaseと同様)
 	_, err = b.tx.Exec(`
 		INSERT INTO settings (
 			user_id,
@@ -498,7 +463,7 @@ func (b *UserBuilder) Build() model.UserID {
 		b.t.Fatalf("設定データの作成に失敗しました: %v", err)
 	}
 
-	// メール通知設定を作成（CompleteSignUpUsecaseと同様）
+	// メール通知設定を作成 (CompleteSignUpUsecaseと同様)
 	unsubscriptionKey := fmt.Sprintf("%s-%s", uuid.New().String(), uuid.New().String())
 	_, err = b.tx.Exec(`
 		INSERT INTO email_notifications (
@@ -530,22 +495,13 @@ func (b *UserBuilder) Build() model.UserID {
 	return model.UserID(id)
 }
 
-// DeleteUser removes a user built by NewUserBuilder together with the rows the builder inserts
-// alongside it (profile / settings / email notifications). Tests that commit a user to the
-// shared pool instead of building it inside a rolled-back transaction call this to clean up:
-// those tables reference users without ON DELETE CASCADE, so deleting the user row on its own
-// fails and leaves every row behind for the rest of the run.
-//
-// It lives next to the builder so the two stay in step: a table the builder starts inserting
-// into is one this function has to start deleting from.
-//
-// [Ja] DeleteUser は NewUserBuilder が作ったユーザーを、builder が併せて挿入する行
+// DeleteUserはNewUserBuilderが作ったユーザーを、builderが併せて挿入する行
 // (プロフィール / 設定 / メール通知設定) と一緒に削除する。ロールバックされる
 // トランザクションではなく共有プールにユーザーをコミットしたテストが、後始末に使う。これらの
-// テーブルは ON DELETE CASCADE 無しで users を参照しているため、ユーザー行だけを消そうとすると
+// テーブルはON DELETE CASCADE無しでusersを参照しているため、ユーザー行だけを消そうとすると
 // 失敗し、実行中ずっとすべての行が残ってしまう。
 //
-// builder の隣に置くのは両者を揃えて保つため。builder が挿入し始めたテーブルは、本関数が削除し
+// builderの隣に置くのは両者を揃えて保つため。builderが挿入し始めたテーブルは、本関数が削除し
 // 始めるべきテーブルでもある。
 func DeleteUser(t *testing.T, db *sql.DB, userID model.UserID) {
 	t.Helper()
@@ -563,7 +519,7 @@ func DeleteUser(t *testing.T, db *sql.DB, userID model.UserID) {
 	}
 }
 
-// UserResult はテスト用のユーザー結果
+// UserResultはテスト用のユーザー結果
 type UserResult struct {
 	ID                 model.UserID
 	Username           string
@@ -571,7 +527,7 @@ type UserResult struct {
 	StripeSubscriberID *model.StripeSubscriberID
 }
 
-// BuildWithResult はテスト用のユーザーデータをデータベースに作成し、結果を返します
+// BuildWithResultはテスト用のユーザーデータをデータベースに作成し、結果を返します
 func (b *UserBuilder) BuildWithResult() UserResult {
 	b.t.Helper()
 	id := b.Build()
@@ -584,7 +540,7 @@ func (b *UserBuilder) BuildWithResult() UserResult {
 	}
 }
 
-// WorkImageBuilder は作品画像テストデータのビルダー
+// WorkImageBuilderは作品画像テストデータのビルダー
 type WorkImageBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
@@ -593,7 +549,7 @@ type WorkImageBuilder struct {
 	imageData string
 }
 
-// NewWorkImageBuilder は新しいWorkImageBuilderを作成します
+// NewWorkImageBuilderは新しいWorkImageBuilderを作成します
 func NewWorkImageBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *WorkImageBuilder {
 	// テストユーザーを作成
 	userID := CreateTestUser(t, tx, fmt.Sprintf("image_uploader_%d", workID))
@@ -620,13 +576,13 @@ func NewWorkImageBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *WorkIma
 	}
 }
 
-// WithImageData は画像データJSONを設定します
+// WithImageDataは画像データJSONを設定します
 func (b *WorkImageBuilder) WithImageData(imageData string) *WorkImageBuilder {
 	b.imageData = imageData
 	return b
 }
 
-// Build はテスト用の作品画像データをデータベースに作成します
+// Buildはテスト用の作品画像データをデータベースに作成します
 func (b *WorkImageBuilder) Build() int64 {
 	b.t.Helper()
 
@@ -658,7 +614,7 @@ func (b *WorkImageBuilder) Build() int64 {
 	return id
 }
 
-// SessionBuilder はセッションテストデータのビルダー
+// SessionBuilderはセッションテストデータのビルダー
 type SessionBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
@@ -667,7 +623,7 @@ type SessionBuilder struct {
 	data      string
 }
 
-// NewSessionBuilder は新しいSessionBuilderを作成します
+// NewSessionBuilderは新しいSessionBuilderを作成します
 func NewSessionBuilder(t *testing.T, tx *sql.Tx) *SessionBuilder {
 	return &SessionBuilder{
 		tx:        tx,
@@ -678,28 +634,28 @@ func NewSessionBuilder(t *testing.T, tx *sql.Tx) *SessionBuilder {
 	}
 }
 
-// WithSessionID はセッションIDを設定します
+// WithSessionIDはセッションIDを設定します
 func (b *SessionBuilder) WithSessionID(sessionID string) *SessionBuilder {
 	b.sessionID = sessionID
 	return b
 }
 
-// WithUserID はユーザーIDを設定します
+// WithUserIDはユーザーIDを設定します
 func (b *SessionBuilder) WithUserID(userID model.UserID) *SessionBuilder {
 	b.userID = userID
-	// セッションデータにユーザーIDを含める（Rails/Rack互換フォーマット）
+	// セッションデータにユーザーIDを含める (Rails/Rack互換フォーマット)
 	// "warden.user.user.key": [[userID], "authenticatable_salt"]
 	b.data = fmt.Sprintf(`{"warden.user.user.key": [[%d], "salt"]}`, userID)
 	return b
 }
 
-// Build はテスト用のセッションデータをデータベースに作成します
-// Rails/Rackの仕様に合わせて、private ID（"2::" + SHA256(publicID)）をデータベースに保存し、
+// Buildはテスト用のセッションデータをデータベースに作成します
+// Rails/Rackの仕様に合わせて、private ID ("2::" + SHA256(publicID)) をデータベースに保存し、
 // public IDを返します
 func (b *SessionBuilder) Build() string {
 	b.t.Helper()
 
-	// public IDからprivate IDを生成（Rails/Rack互換）
+	// public IDからprivate IDを生成 (Rails/Rack互換)
 	privateID := b.generatePrivateID(b.sessionID)
 
 	query := `
@@ -727,24 +683,24 @@ func (b *SessionBuilder) Build() string {
 		b.t.Fatalf("セッションデータの作成に失敗しました: %v", err)
 	}
 
-	// public IDを返す（テストで使用するため）
+	// public IDを返す (テストで使用するため)
 	return b.sessionID
 }
 
-// generatePrivateID はpublic IDからprivate IDを生成
+// generatePrivateIDはpublic IDからprivate IDを生成
 // Rails/Rackの実装と互換性のある形式: "2::" + SHA256(publicID)
 func (b *SessionBuilder) generatePrivateID(publicID string) string {
 	hash := sha256.Sum256([]byte(publicID))
 	return fmt.Sprintf("2::%s", hex.EncodeToString(hash[:]))
 }
 
-// CreateTestWork は簡単にテスト用作品を作成するヘルパー関数
+// CreateTestWorkは簡単にテスト用作品を作成するヘルパー関数
 func CreateTestWork(t *testing.T, tx *sql.Tx, title string) model.WorkID {
 	t.Helper()
 	return NewWorkBuilder(t, tx).WithTitle(title).Build()
 }
 
-// CreateTestWorkWithImage は画像付きの作品を作成するヘルパー関数
+// CreateTestWorkWithImageは画像付きの作品を作成するヘルパー関数
 func CreateTestWorkWithImage(t *testing.T, tx *sql.Tx, title string) (workID model.WorkID, imageID int64) {
 	t.Helper()
 	workID = NewWorkBuilder(t, tx).WithTitle(title).Build()
@@ -752,19 +708,19 @@ func CreateTestWorkWithImage(t *testing.T, tx *sql.Tx, title string) (workID mod
 	return workID, imageID
 }
 
-// CreateTestUser は簡単にテスト用ユーザーを作成するヘルパー関数
+// CreateTestUserは簡単にテスト用ユーザーを作成するヘルパー関数
 func CreateTestUser(t *testing.T, tx *sql.Tx, username string) model.UserID {
 	t.Helper()
 	return NewUserBuilder(t, tx).WithUsername(username).Build()
 }
 
-// CreateTestEpisode は簡単にテスト用エピソードを作成するヘルパー関数
+// CreateTestEpisodeは簡単にテスト用エピソードを作成するヘルパー関数
 func CreateTestEpisode(t *testing.T, tx *sql.Tx, workID model.WorkID, number string) model.EpisodeID {
 	t.Helper()
 	return NewEpisodeBuilder(t, tx, workID).WithNumber(number).Build()
 }
 
-// StripeSubscriberBuilder はStripeサブスクライバーテストデータのビルダー
+// StripeSubscriberBuilderはStripeサブスクライバーテストデータのビルダー
 type StripeSubscriberBuilder struct {
 	tx                       *sql.Tx
 	t                        *testing.T
@@ -778,7 +734,7 @@ type StripeSubscriberBuilder struct {
 	stripeCanceledAt         sql.NullTime
 }
 
-// NewStripeSubscriberBuilder は新しいStripeSubscriberBuilderを作成します
+// NewStripeSubscriberBuilderは新しいStripeSubscriberBuilderを作成します
 func NewStripeSubscriberBuilder(t *testing.T, tx *sql.Tx) *StripeSubscriberBuilder {
 	uniqueID := uuid.New().String()[:8]
 	now := time.Now()
@@ -797,57 +753,57 @@ func NewStripeSubscriberBuilder(t *testing.T, tx *sql.Tx) *StripeSubscriberBuild
 	}
 }
 
-// WithStripeCustomerID はStripe顧客IDを設定します
+// WithStripeCustomerIDはStripe顧客IDを設定します
 func (b *StripeSubscriberBuilder) WithStripeCustomerID(id string) *StripeSubscriberBuilder {
 	b.stripeCustomerID = id
 	return b
 }
 
-// WithStripeSubscriptionID はStripeサブスクリプションIDを設定します
+// WithStripeSubscriptionIDはStripeサブスクリプションIDを設定します
 func (b *StripeSubscriberBuilder) WithStripeSubscriptionID(id string) *StripeSubscriberBuilder {
 	b.stripeSubscriptionID = id
 	return b
 }
 
-// WithStripePriceID はStripe価格IDを設定します
+// WithStripePriceIDはStripe価格IDを設定します
 func (b *StripeSubscriberBuilder) WithStripePriceID(id string) *StripeSubscriberBuilder {
 	b.stripePriceID = id
 	return b
 }
 
-// WithStripeStatus はStripeサブスクリプションステータスを設定します
+// WithStripeStatusはStripeサブスクリプションステータスを設定します
 func (b *StripeSubscriberBuilder) WithStripeStatus(status string) *StripeSubscriberBuilder {
 	b.stripeStatus = status
 	return b
 }
 
-// WithCurrentPeriod は現在の請求期間を設定します
+// WithCurrentPeriodは現在の請求期間を設定します
 func (b *StripeSubscriberBuilder) WithCurrentPeriod(start, end time.Time) *StripeSubscriberBuilder {
 	b.stripeCurrentPeriodStart = start
 	b.stripeCurrentPeriodEnd = end
 	return b
 }
 
-// WithCancelAt はキャンセル予定日時を設定します
+// WithCancelAtはキャンセル予定日時を設定します
 func (b *StripeSubscriberBuilder) WithCancelAt(cancelAt time.Time) *StripeSubscriberBuilder {
 	b.stripeCancelAt = sql.NullTime{Time: cancelAt, Valid: true}
 	return b
 }
 
-// WithCanceledAt は実際にキャンセルされた日時を設定します
+// WithCanceledAtは実際にキャンセルされた日時を設定します
 func (b *StripeSubscriberBuilder) WithCanceledAt(canceledAt time.Time) *StripeSubscriberBuilder {
 	b.stripeCanceledAt = sql.NullTime{Time: canceledAt, Valid: true}
 	return b
 }
 
-// Build はテスト用のStripeサブスクライバーデータをデータベースに作成し、IDを返します
+// Buildはテスト用のStripeサブスクライバーデータをデータベースに作成し、IDを返します
 func (b *StripeSubscriberBuilder) Build() model.StripeSubscriberID {
 	b.t.Helper()
 	result := b.BuildWithResult()
 	return result.ID
 }
 
-// BuildWithResult はテスト用のStripeサブスクライバーデータをデータベースに作成し、全フィールドを返します
+// BuildWithResultはテスト用のStripeサブスクライバーデータをデータベースに作成し、全フィールドを返します
 func (b *StripeSubscriberBuilder) BuildWithResult() StripeSubscriberResult {
 	b.t.Helper()
 
@@ -907,7 +863,7 @@ func (b *StripeSubscriberBuilder) BuildWithResult() StripeSubscriberResult {
 	return result
 }
 
-// StripeSubscriberResult はテスト用のStripeサブスクライバー結果
+// StripeSubscriberResultはテスト用のStripeサブスクライバー結果
 type StripeSubscriberResult struct {
 	ID                       model.StripeSubscriberID
 	StripeCustomerID         string
@@ -922,19 +878,19 @@ type StripeSubscriberResult struct {
 	UpdatedAt                time.Time
 }
 
-// CreateTestStripeSubscriber は簡単にテスト用Stripeサブスクライバーを作成するヘルパー関数
+// CreateTestStripeSubscriberは簡単にテスト用Stripeサブスクライバーを作成するヘルパー関数
 func CreateTestStripeSubscriber(t *testing.T, tx *sql.Tx) model.StripeSubscriberID {
 	t.Helper()
 	return NewStripeSubscriberBuilder(t, tx).Build()
 }
 
-// CreateTestStripeSubscriberWithStatus は指定ステータスでテスト用Stripeサブスクライバーを作成するヘルパー関数
+// CreateTestStripeSubscriberWithStatusは指定ステータスでテスト用Stripeサブスクライバーを作成するヘルパー関数
 func CreateTestStripeSubscriberWithStatus(t *testing.T, tx *sql.Tx, status string) model.StripeSubscriberID {
 	t.Helper()
 	return NewStripeSubscriberBuilder(t, tx).WithStripeStatus(status).Build()
 }
 
-// StripeWebhookEventBuilder はStripe Webhookイベントテストデータのビルダー
+// StripeWebhookEventBuilderはStripe Webhookイベントテストデータのビルダー
 type StripeWebhookEventBuilder struct {
 	tx              *sql.Tx
 	t               *testing.T
@@ -945,7 +901,7 @@ type StripeWebhookEventBuilder struct {
 	receivedAt      time.Time
 }
 
-// NewStripeWebhookEventBuilder は新しいStripeWebhookEventBuilderを作成します
+// NewStripeWebhookEventBuilderは新しいStripeWebhookEventBuilderを作成します
 func NewStripeWebhookEventBuilder(t *testing.T, tx *sql.Tx) *StripeWebhookEventBuilder {
 	uniqueID := uuid.New().String()[:8]
 
@@ -960,37 +916,37 @@ func NewStripeWebhookEventBuilder(t *testing.T, tx *sql.Tx) *StripeWebhookEventB
 	}
 }
 
-// WithStripeEventID はStripeイベントIDを設定します
+// WithStripeEventIDはStripeイベントIDを設定します
 func (b *StripeWebhookEventBuilder) WithStripeEventID(id string) *StripeWebhookEventBuilder {
 	b.stripeEventID = id
 	return b
 }
 
-// WithStripeEventType はStripeイベントタイプを設定します
+// WithStripeEventTypeはStripeイベントタイプを設定します
 func (b *StripeWebhookEventBuilder) WithStripeEventType(eventType string) *StripeWebhookEventBuilder {
 	b.stripeEventType = eventType
 	return b
 }
 
-// WithStripePayload はStripeペイロードを設定します
+// WithStripePayloadはStripeペイロードを設定します
 func (b *StripeWebhookEventBuilder) WithStripePayload(payload string) *StripeWebhookEventBuilder {
 	b.stripePayload = payload
 	return b
 }
 
-// WithStatus はステータスを設定します
+// WithStatusはステータスを設定します
 func (b *StripeWebhookEventBuilder) WithStatus(status string) *StripeWebhookEventBuilder {
 	b.status = status
 	return b
 }
 
-// WithReceivedAt は受信日時を設定します
+// WithReceivedAtは受信日時を設定します
 func (b *StripeWebhookEventBuilder) WithReceivedAt(receivedAt time.Time) *StripeWebhookEventBuilder {
 	b.receivedAt = receivedAt
 	return b
 }
 
-// Build はテスト用のStripe Webhookイベントデータをデータベースに作成します
+// Buildはテスト用のStripe Webhookイベントデータをデータベースに作成します
 func (b *StripeWebhookEventBuilder) Build() model.StripeWebhookEventID {
 	b.t.Helper()
 
@@ -1027,19 +983,19 @@ func (b *StripeWebhookEventBuilder) Build() model.StripeWebhookEventID {
 	return model.StripeWebhookEventID(id)
 }
 
-// CreateTestStripeWebhookEvent は簡単にテスト用Stripe Webhookイベントを作成するヘルパー関数
+// CreateTestStripeWebhookEventは簡単にテスト用Stripe Webhookイベントを作成するヘルパー関数
 func CreateTestStripeWebhookEvent(t *testing.T, tx *sql.Tx) model.StripeWebhookEventID {
 	t.Helper()
 	return NewStripeWebhookEventBuilder(t, tx).Build()
 }
 
-// CreateTestStripeWebhookEventWithStatus は指定ステータスでテスト用Stripe Webhookイベントを作成するヘルパー関数
+// CreateTestStripeWebhookEventWithStatusは指定ステータスでテスト用Stripe Webhookイベントを作成するヘルパー関数
 func CreateTestStripeWebhookEventWithStatus(t *testing.T, tx *sql.Tx, status string) model.StripeWebhookEventID {
 	t.Helper()
 	return NewStripeWebhookEventBuilder(t, tx).WithStatus(status).Build()
 }
 
-// GumroadSubscriberBuilder はGumroadサブスクライバーテストデータのビルダー
+// GumroadSubscriberBuilderはGumroadサブスクライバーテストデータのビルダー
 type GumroadSubscriberBuilder struct {
 	tx                 *sql.Tx
 	t                  *testing.T
@@ -1053,7 +1009,7 @@ type GumroadSubscriberBuilder struct {
 	gumroadEndedAt     sql.NullTime
 }
 
-// NewGumroadSubscriberBuilder は新しいGumroadSubscriberBuilderを作成します
+// NewGumroadSubscriberBuilderは新しいGumroadSubscriberBuilderを作成します
 func NewGumroadSubscriberBuilder(t *testing.T, tx *sql.Tx) *GumroadSubscriberBuilder {
 	uniqueID := uuid.New().String()[:8]
 	now := time.Now()
@@ -1072,25 +1028,25 @@ func NewGumroadSubscriberBuilder(t *testing.T, tx *sql.Tx) *GumroadSubscriberBui
 	}
 }
 
-// WithGumroadID はGumroad IDを設定します
+// WithGumroadIDはGumroad IDを設定します
 func (b *GumroadSubscriberBuilder) WithGumroadID(id string) *GumroadSubscriberBuilder {
 	b.gumroadID = id
 	return b
 }
 
-// WithGumroadCancelledAt はキャンセル日時を設定します
+// WithGumroadCancelledAtはキャンセル日時を設定します
 func (b *GumroadSubscriberBuilder) WithGumroadCancelledAt(cancelledAt time.Time) *GumroadSubscriberBuilder {
 	b.gumroadCancelledAt = sql.NullTime{Time: cancelledAt, Valid: true}
 	return b
 }
 
-// WithGumroadEndedAt は終了日時を設定します
+// WithGumroadEndedAtは終了日時を設定します
 func (b *GumroadSubscriberBuilder) WithGumroadEndedAt(endedAt time.Time) *GumroadSubscriberBuilder {
 	b.gumroadEndedAt = sql.NullTime{Time: endedAt, Valid: true}
 	return b
 }
 
-// Build はテスト用のGumroadサブスクライバーデータをデータベースに作成します
+// Buildはテスト用のGumroadサブスクライバーデータをデータベースに作成します
 func (b *GumroadSubscriberBuilder) Build() model.GumroadSubscriberID {
 	b.t.Helper()
 
@@ -1135,13 +1091,13 @@ func (b *GumroadSubscriberBuilder) Build() model.GumroadSubscriberID {
 	return model.GumroadSubscriberID(id)
 }
 
-// CreateTestGumroadSubscriber は簡単にテスト用Gumroadサブスクライバーを作成するヘルパー関数
+// CreateTestGumroadSubscriberは簡単にテスト用Gumroadサブスクライバーを作成するヘルパー関数
 func CreateTestGumroadSubscriber(t *testing.T, tx *sql.Tx) model.GumroadSubscriberID {
 	t.Helper()
 	return NewGumroadSubscriberBuilder(t, tx).Build()
 }
 
-// ChannelBuilder はチャンネルテストデータのビルダー
+// ChannelBuilderはチャンネルテストデータのビルダー
 type ChannelBuilder struct {
 	tx             *sql.Tx
 	t              *testing.T
@@ -1149,7 +1105,7 @@ type ChannelBuilder struct {
 	channelGroupID int64
 }
 
-// NewChannelBuilder は新しいChannelBuilderを作成します
+// NewChannelBuilderは新しいChannelBuilderを作成します
 func NewChannelBuilder(t *testing.T, tx *sql.Tx) *ChannelBuilder {
 	uniqueID := uuid.New().String()[:8]
 	return &ChannelBuilder{
@@ -1159,19 +1115,19 @@ func NewChannelBuilder(t *testing.T, tx *sql.Tx) *ChannelBuilder {
 	}
 }
 
-// WithName はチャンネル名を設定します
+// WithNameはチャンネル名を設定します
 func (b *ChannelBuilder) WithName(name string) *ChannelBuilder {
 	b.name = name
 	return b
 }
 
-// WithChannelGroupID はチャンネルグループIDを設定します
+// WithChannelGroupIDはチャンネルグループIDを設定します
 func (b *ChannelBuilder) WithChannelGroupID(channelGroupID int64) *ChannelBuilder {
 	b.channelGroupID = channelGroupID
 	return b
 }
 
-// Build はテスト用のチャンネルデータをデータベースに作成します
+// Buildはテスト用のチャンネルデータをデータベースに作成します
 func (b *ChannelBuilder) Build() int64 {
 	b.t.Helper()
 
@@ -1207,14 +1163,14 @@ func (b *ChannelBuilder) Build() int64 {
 	return id
 }
 
-// ChannelGroupBuilder はチャンネルグループテストデータのビルダー
+// ChannelGroupBuilderはチャンネルグループテストデータのビルダー
 type ChannelGroupBuilder struct {
 	tx   *sql.Tx
 	t    *testing.T
 	name string
 }
 
-// NewChannelGroupBuilder は新しいChannelGroupBuilderを作成します
+// NewChannelGroupBuilderは新しいChannelGroupBuilderを作成します
 func NewChannelGroupBuilder(t *testing.T, tx *sql.Tx) *ChannelGroupBuilder {
 	uniqueID := uuid.New().String()[:8]
 	return &ChannelGroupBuilder{
@@ -1224,13 +1180,13 @@ func NewChannelGroupBuilder(t *testing.T, tx *sql.Tx) *ChannelGroupBuilder {
 	}
 }
 
-// WithName はチャンネルグループ名を設定します
+// WithNameはチャンネルグループ名を設定します
 func (b *ChannelGroupBuilder) WithName(name string) *ChannelGroupBuilder {
 	b.name = name
 	return b
 }
 
-// Build はテスト用のチャンネルグループデータをデータベースに作成します
+// Buildはテスト用のチャンネルグループデータをデータベースに作成します
 func (b *ChannelGroupBuilder) Build() int64 {
 	b.t.Helper()
 
@@ -1258,7 +1214,7 @@ func (b *ChannelGroupBuilder) Build() int64 {
 	return id
 }
 
-// ProgramBuilder はプログラムテストデータのビルダー
+// ProgramBuilderはプログラムテストデータのビルダー
 type ProgramBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
@@ -1266,7 +1222,7 @@ type ProgramBuilder struct {
 	workID    model.WorkID
 }
 
-// NewProgramBuilder は新しいProgramBuilderを作成します
+// NewProgramBuilderは新しいProgramBuilderを作成します
 func NewProgramBuilder(t *testing.T, tx *sql.Tx) *ProgramBuilder {
 	return &ProgramBuilder{
 		tx: tx,
@@ -1274,19 +1230,19 @@ func NewProgramBuilder(t *testing.T, tx *sql.Tx) *ProgramBuilder {
 	}
 }
 
-// WithChannelID はチャンネルIDを設定します
+// WithChannelIDはチャンネルIDを設定します
 func (b *ProgramBuilder) WithChannelID(channelID int64) *ProgramBuilder {
 	b.channelID = channelID
 	return b
 }
 
-// WithWorkID は作品IDを設定します
+// WithWorkIDは作品IDを設定します
 func (b *ProgramBuilder) WithWorkID(workID model.WorkID) *ProgramBuilder {
 	b.workID = workID
 	return b
 }
 
-// Build はテスト用のプログラムデータをデータベースに作成します
+// Buildはテスト用のプログラムデータをデータベースに作成します
 func (b *ProgramBuilder) Build() int64 {
 	b.t.Helper()
 
@@ -1315,38 +1271,28 @@ func (b *ProgramBuilder) Build() int64 {
 	return id
 }
 
-// SlotBuilder は放送枠テストデータのビルダー
+// SlotBuilderは放送枠テストデータのビルダー
 type SlotBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
 	workID    model.WorkID
 	channelID int64
 	startedAt time.Time
-	// episodeID / programID are the rows the slot points at (slots.episode_id /
-	// slots.program_id). Both are nullable and carry a foreign key, so nil leaves the
-	// column NULL rather than writing an id no row has.
-	//
-	// [Ja] episodeID / programID はスロットが指す行 (slots.episode_id / slots.program_id)。
-	// どちらも NULL 許容で外部キーを持つため、nil の場合は存在しない ID を書かず
-	// カラムを NULL のままにします。
+	// episodeID / programIDはスロットが指す行 (slots.episode_id / slots.program_id)。
+	// どちらもNULL許容で外部キーを持つため、nilの場合は存在しないIDを書かず
+	// カラムをNULLのままにします。
 	episodeID *model.EpisodeID
 	programID *int64
-	// number is the episode number the slot carries (slots.number). nil leaves the column
-	// NULL, as it is for a slot whose episode number is not known yet.
-	//
-	// [Ja] number はスロットが持つ話数 (slots.number)。nil の場合はカラムを NULL のままに
+	// numberはスロットが持つ話数 (slots.number)。nilの場合はカラムをNULLのままに
 	// します (話数がまだ分からないスロットの状態)。
 	number *int32
-	// unpublishedAt / deletedAt set the Unpublishable / SoftDeletable state columns.
-	// nil leaves the column NULL (published / not deleted).
-	//
-	// [Ja] unpublishedAt / deletedAt は Unpublishable / SoftDeletable の状態カラムを
-	// 設定します。nil の場合はカラムを NULL (公開中 / 未削除) のままにします。
+	// unpublishedAt / deletedAtはUnpublishable / SoftDeletableの状態カラムを
+	// 設定します。nilの場合はカラムをNULL (公開中 / 未削除) のままにします。
 	unpublishedAt *time.Time
 	deletedAt     *time.Time
 }
 
-// NewSlotBuilder は新しいSlotBuilderを作成します
+// NewSlotBuilderは新しいSlotBuilderを作成します
 func NewSlotBuilder(t *testing.T, tx *sql.Tx) *SlotBuilder {
 	return &SlotBuilder{
 		tx:        tx,
@@ -1355,67 +1301,58 @@ func NewSlotBuilder(t *testing.T, tx *sql.Tx) *SlotBuilder {
 	}
 }
 
-// WithWorkID は作品IDを設定します
+// WithWorkIDは作品IDを設定します
 func (b *SlotBuilder) WithWorkID(workID model.WorkID) *SlotBuilder {
 	b.workID = workID
 	return b
 }
 
-// WithEpisodeID はエピソードIDを設定します
+// WithEpisodeIDはエピソードIDを設定します
 func (b *SlotBuilder) WithEpisodeID(episodeID model.EpisodeID) *SlotBuilder {
 	b.episodeID = &episodeID
 	return b
 }
 
-// WithChannelID はチャンネルIDを設定します
+// WithChannelIDはチャンネルIDを設定します
 func (b *SlotBuilder) WithChannelID(channelID int64) *SlotBuilder {
 	b.channelID = channelID
 	return b
 }
 
-// WithProgramID はプログラムIDを設定します
+// WithProgramIDはプログラムIDを設定します
 func (b *SlotBuilder) WithProgramID(programID int64) *SlotBuilder {
 	b.programID = &programID
 	return b
 }
 
-// WithStartedAt は放送開始時刻を設定します
+// WithStartedAtは放送開始時刻を設定します
 func (b *SlotBuilder) WithStartedAt(startedAt time.Time) *SlotBuilder {
 	b.startedAt = startedAt
 	return b
 }
 
-// WithNumber sets slots.number, the episode number the auto-generation would reach through
-// this slot. The default leaves it NULL (no episode number assigned).
-//
-// [Ja] WithNumber は slots.number を設定します。自動生成がこのスロットを通じて到達する
-// 話数を表します。既定では NULL (話数未割り当て) のままにします。
+// WithNumberはslots.numberを設定します。自動生成がこのスロットを通じて到達する
+// 話数を表します。既定ではNULL (話数未割り当て) のままにします。
 func (b *SlotBuilder) WithNumber(number int32) *SlotBuilder {
 	b.number = &number
 	return b
 }
 
-// WithUnpublishedAt sets slots.unpublished_at, marking the slot as unpublished
-// (Unpublishable). The default leaves it NULL (published).
-//
-// [Ja] WithUnpublishedAt は slots.unpublished_at を設定し、スロットを非公開
-// (Unpublishable) とします。既定では NULL (公開) のままにします。
+// WithUnpublishedAtはslots.unpublished_atを設定し、スロットを非公開
+// (Unpublishable) とします。既定ではNULL (公開) のままにします。
 func (b *SlotBuilder) WithUnpublishedAt(unpublishedAt time.Time) *SlotBuilder {
 	b.unpublishedAt = &unpublishedAt
 	return b
 }
 
-// WithDeletedAt sets slots.deleted_at, marking the slot as soft-deleted (SoftDeletable).
-// The default leaves it NULL (not deleted).
-//
-// [Ja] WithDeletedAt は slots.deleted_at を設定し、スロットをソフトデリート
-// (SoftDeletable) とします。既定では NULL (未削除) のままにします。
+// WithDeletedAtはslots.deleted_atを設定し、スロットをソフトデリート
+// (SoftDeletable) とします。既定ではNULL (未削除) のままにします。
 func (b *SlotBuilder) WithDeletedAt(deletedAt time.Time) *SlotBuilder {
 	b.deletedAt = &deletedAt
 	return b
 }
 
-// Build はテスト用の放送枠データをデータベースに作成します
+// Buildはテスト用の放送枠データをデータベースに作成します
 func (b *SlotBuilder) Build() model.SlotID {
 	b.t.Helper()
 
@@ -1470,7 +1407,7 @@ func (b *SlotBuilder) Build() model.SlotID {
 	return model.SlotID(id)
 }
 
-// LibraryEntryBuilder はライブラリエントリテストデータのビルダー
+// LibraryEntryBuilderはライブラリエントリテストデータのビルダー
 type LibraryEntryBuilder struct {
 	tx        *sql.Tx
 	t         *testing.T
@@ -1480,7 +1417,7 @@ type LibraryEntryBuilder struct {
 	status    string
 }
 
-// NewLibraryEntryBuilder は新しいLibraryEntryBuilderを作成します
+// NewLibraryEntryBuilderは新しいLibraryEntryBuilderを作成します
 func NewLibraryEntryBuilder(t *testing.T, tx *sql.Tx) *LibraryEntryBuilder {
 	return &LibraryEntryBuilder{
 		tx:     tx,
@@ -1489,35 +1426,35 @@ func NewLibraryEntryBuilder(t *testing.T, tx *sql.Tx) *LibraryEntryBuilder {
 	}
 }
 
-// WithUserID はユーザーIDを設定します
+// WithUserIDはユーザーIDを設定します
 func (b *LibraryEntryBuilder) WithUserID(userID model.UserID) *LibraryEntryBuilder {
 	b.userID = userID
 	return b
 }
 
-// WithWorkID は作品IDを設定します
+// WithWorkIDは作品IDを設定します
 func (b *LibraryEntryBuilder) WithWorkID(workID model.WorkID) *LibraryEntryBuilder {
 	b.workID = workID
 	return b
 }
 
-// WithProgramID はプログラムIDを設定します
+// WithProgramIDはプログラムIDを設定します
 func (b *LibraryEntryBuilder) WithProgramID(programID int64) *LibraryEntryBuilder {
 	b.programID = programID
 	return b
 }
 
-// WithStatus はステータスを設定します（watching, wanna_watch など）
+// WithStatusはステータスを設定します (watching, wanna_watchなど)
 func (b *LibraryEntryBuilder) WithStatus(status string) *LibraryEntryBuilder {
 	b.status = status
 	return b
 }
 
-// Build はテスト用のライブラリエントリデータをデータベースに作成します
+// Buildはテスト用のライブラリエントリデータをデータベースに作成します
 func (b *LibraryEntryBuilder) Build() int64 {
 	b.t.Helper()
 
-	// ステータスをRails enumの数値に変換（kindカラム）
+	// ステータスをRails enumの数値に変換 (kindカラム)
 	kind := 0
 	switch b.status {
 	case "wanna_watch":
@@ -1553,7 +1490,7 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		b.t.Fatalf("ステータスデータの作成に失敗しました: %v", err)
 	}
 
-	// ライブラリエントリを作成（status_idを設定）
+	// ライブラリエントリを作成 (status_idを設定)
 	query := `
 		INSERT INTO library_entries (
 			user_id, work_id, program_id, kind, status_id, created_at, updated_at
@@ -1581,7 +1518,7 @@ func (b *LibraryEntryBuilder) Build() int64 {
 	return id
 }
 
-// CastBuilder はキャストテストデータのビルダー
+// CastBuilderはキャストテストデータのビルダー
 type CastBuilder struct {
 	tx            *sql.Tx
 	t             *testing.T
@@ -1590,7 +1527,7 @@ type CastBuilder struct {
 	personName    string
 }
 
-// NewCastBuilder は新しいCastBuilderを作成します
+// NewCastBuilderは新しいCastBuilderを作成します
 func NewCastBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *CastBuilder {
 	return &CastBuilder{
 		tx:            tx,
@@ -1601,19 +1538,19 @@ func NewCastBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *CastBuilder 
 	}
 }
 
-// WithCharacterName はキャラクター名を設定します
+// WithCharacterNameはキャラクター名を設定します
 func (b *CastBuilder) WithCharacterName(name string) *CastBuilder {
 	b.characterName = name
 	return b
 }
 
-// WithPersonName は人物名を設定します
+// WithPersonNameは人物名を設定します
 func (b *CastBuilder) WithPersonName(name string) *CastBuilder {
 	b.personName = name
 	return b
 }
 
-// Build はテスト用のキャストデータをデータベースに作成します
+// Buildはテスト用のキャストデータをデータベースに作成します
 func (b *CastBuilder) Build() model.CastID {
 	b.t.Helper()
 
@@ -1651,7 +1588,7 @@ func (b *CastBuilder) Build() model.CastID {
 	return model.CastID(castID)
 }
 
-// StaffBuilder はスタッフテストデータのビルダー
+// StaffBuilderはスタッフテストデータのビルダー
 type StaffBuilder struct {
 	tx     *sql.Tx
 	t      *testing.T
@@ -1660,7 +1597,7 @@ type StaffBuilder struct {
 	role   string
 }
 
-// NewStaffBuilder は新しいStaffBuilderを作成します
+// NewStaffBuilderは新しいStaffBuilderを作成します
 func NewStaffBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *StaffBuilder {
 	return &StaffBuilder{
 		tx:     tx,
@@ -1671,19 +1608,19 @@ func NewStaffBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *StaffBuilde
 	}
 }
 
-// WithName はスタッフ名を設定します
+// WithNameはスタッフ名を設定します
 func (b *StaffBuilder) WithName(name string) *StaffBuilder {
 	b.name = name
 	return b
 }
 
-// WithRole はスタッフ役割を設定します（director, series_composition, other 等）
+// WithRoleはスタッフ役割を設定します (director, series_composition, other等)
 func (b *StaffBuilder) WithRole(role string) *StaffBuilder {
 	b.role = role
 	return b
 }
 
-// Build はテスト用のスタッフデータをデータベースに作成します
+// Buildはテスト用のスタッフデータをデータベースに作成します
 func (b *StaffBuilder) Build() model.StaffID {
 	b.t.Helper()
 

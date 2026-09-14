@@ -5,18 +5,18 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// サイドバー用アバター画像サイズ（Retina対応で表示サイズの2倍）
+// サイドバー用アバター画像サイズ (Retina対応で表示サイズの2倍)
 const sidebarAvatarImageSize = 100 // 50px × 2
 
-// User はテンプレート表示用のユーザーデータです
+// Userはテンプレート表示用のユーザーデータです
 type User struct {
 	ID                 model.UserID
 	Username           string
-	AvatarURL          string // サイドバー用アバター画像URL（50px表示、100px画像）
+	AvatarURL          string // サイドバー用アバター画像URL (50px表示、100px画像)
 	NotificationsCount int32  // 未読通知数
 }
 
-// NewUserForSidebar はサイドバー表示用の viewmodel.User を作成します
+// NewUserForSidebarはサイドバー表示用のviewmodel.Userを作成します
 func NewUserForSidebar(row *model.User, helper *image.Helper) *User {
 	if row == nil {
 		return nil

@@ -23,79 +23,60 @@ import (
 	"github.com/annict/annict/go/internal/session"
 )
 
-// DeviceTokenCookieName is the cookie name used to identify a device (browser).
-//
-// [Ja] デバイス (ブラウザ) を識別する Cookie のキー名。
+// DeviceTokenCookieNameはデバイス (ブラウザ) を識別するCookieのキー名。
 const DeviceTokenCookieName = "device_token"
 
-// featureFlagChecker abstracts the feature flag evaluator that the reverse proxy depends on.
-//
-// [Ja] リバースプロキシが依存するフィーチャーフラグ判定の抽象化インターフェース。
+// リバースプロキシが依存するフィーチャーフラグ判定の抽象化インターフェース。
 type featureFlagChecker interface {
 	IsEnabledByDeviceOrUser(ctx context.Context, deviceToken string, userID model.UserID, name model.FeatureFlagName) (bool, error)
 }
 
-// featureFlaggedPattern pairs a URL pattern with the feature flag that gates routing for it.
-//
-// [Ja] URL パターンと、その経路をゲートするフィーチャーフラグの対応を表す。
+// URLパターンと、その経路をゲートするフィーチャーフラグの対応を表す。
 type featureFlaggedPattern struct {
 	pattern *regexp.Regexp
 	flag    model.FeatureFlagName
 }
 
-// No path is gated by a flag at the moment. The list stays rather than being removed
-// because the next screen moved from Rails to Go is rolled out through it (ADR 0002).
-//
-// [Ja] 現在フラグでゲートされているパスは無い。次に Rails 版から Go 版へ移す画面は
+// 現在フラグでゲートされているパスは無い。次にRails版からGo版へ移す画面は
 // この仕組みで段階的に公開するため、リストは削除せず空のまま残す (ADR 0002)。
 var featureFlaggedPatterns []featureFlaggedPattern
 
-// ReverseProxyMiddleware はRails版へのリバースプロキシミドルウェア
+// ReverseProxyMiddlewareはRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
 	railsURL *url.URL
 	proxy    *httputil.ReverseProxy
 	cfg      *config.Config
-	// optional; falls back to Rails when nil.
-	//
-	// [Ja] nil 許容。フラグ機能不要時は nil
+	// nil許容。フラグ機能不要時はnil
 	featureFlagRepo featureFlagChecker
-	// optional; nil during tests or when session is not needed.
-	//
-	// [Ja] nil 許容。テスト時やセッション不要時は nil
+	// nil許容。テスト時やセッション不要時はnil
 	sessionMgr *session.Manager
-	// optional; set via SetRouter. Lets the middleware tell whether a path that Go and
-	// Rails share matches a registered Go route. nil leaves those paths to the Go chain.
-	//
-	// [Ja] nil 許容。SetRouter で設定する。Go 版と Rails 版で分け合っているパスが
-	// 登録済みの Go ルートにマッチするかをミドルウェアが判定できるようにする。
-	// nil のときはそれらのパスを Go チェーンに委ねる。
+	// nil許容。SetRouterで設定する。Go版とRails版で分け合っているパスが
+	// 登録済みのGoルートにマッチするかをミドルウェアが判定できるようにする。
+	// nilのときはそれらのパスをGoチェーンに委ねる。
 	router chi.Router
 }
 
-// Go版で処理するパス（ホワイトリスト）
+// Go版で処理するパス (ホワイトリスト)
 // これらのパスはRails版にプロキシせず、Go版のハンドラーで処理する
 var goHandledPaths = []string{
-	"/static",           // 静的ファイル（CSS、JS、画像など）
+	"/static",           // 静的ファイル (CSS、JS、画像など)
 	"/health",           // ヘルスチェックエンドポイント
 	"/manifest.json",    // Web App Manifest
 	"/sign_in/password", // パスワードログインページ・処理
 	"/sign_in/code",     // 6桁コード入力・検証・再送信
 	"/sign_in",          // メールアドレス入力・ログイン方法自動判定
 	"/sign_out",         // ログアウト処理
-	"/sign_up",          // 新規登録（メールアドレス入力・確認コード送信）
+	"/sign_up",          // 新規登録 (メールアドレス入力・確認コード送信)
 	"/password/reset",   // パスワードリセット申請
 	"/password/edit",    // パスワードリセット実行
 	"/password",         // パスワード更新
 	"/supporters",       // サポーターページ
 	"/webhooks/stripe",  // Stripe Webhook受信
-	"/ics",              // iCalendar配信（Apple カレンダー互換パス）
+	"/ics",              // iCalendar配信 (Appleカレンダー互換パス)
 }
 
-// Standalone error pages Go serves, matched exactly by isGoHandledPath. Registered as routes in
-// cmd/annict/serve.go, and reached when a rejected HTMX request is told to navigate to one.
-//
-// [Ja] Go が配信する全画面エラーページ。isGoHandledPath が完全一致で判定する。
-// cmd/annict/serve.go でルートとして登録し、拒否された HTMX リクエストに遷移を指示したときに
+// Goが配信する全画面エラーページ。isGoHandledPathが完全一致で判定する。
+// cmd/annict/serve.goでルートとして登録し、拒否されたHTMXリクエストに遷移を指示したときに
 // 到達する。
 var goHandledErrorPaths = []string{
 	httperror.NotFoundPath,
@@ -104,26 +85,18 @@ var goHandledErrorPaths = []string{
 	httperror.InternalServerErrorPath,
 }
 
-// Path prefixes Go and Rails share: Go serves the screens it has routes for and Rails serves
-// the rest. isGoSharedPath matches the prefix and matchesGoRoute then asks the router, so a
-// path with no Go route reaches Rails instead of the Go 404. This is what separates the list
-// from goHandledPaths, whose prefixes hand everything below them to Go.
+// Go版とRails版が分け合っているパスの接頭辞。Go版はルートを持つ画面だけを処理し、
+// 残りはRails版が処理する。isGoSharedPathが接頭辞で判定したうえでmatchesGoRouteが
+// ルーターに問い合わせるため、Go版にルートが無いパスはGoの404ではなくRails版に届く。
+// 接頭辞の配下すべてをGo版に渡すgoHandledPathsとの違いはここにある。
 //
-// /db/ is such a prefix: the work and episode CRUD screens live in Go while casts, staffs,
-// slots, images, series and the rest of Annict DB are still only in Rails.
-//
-// [Ja] Go 版と Rails 版が分け合っているパスの接頭辞。Go 版はルートを持つ画面だけを処理し、
-// 残りは Rails 版が処理する。isGoSharedPath が接頭辞で判定したうえで matchesGoRoute が
-// ルーターに問い合わせるため、Go 版にルートが無いパスは Go の 404 ではなく Rails 版に届く。
-// 接頭辞の配下すべてを Go 版に渡す goHandledPaths との違いはここにある。
-//
-// /db/ がこの接頭辞にあたる。作品とエピソードの CRUD 画面は Go 版にあるが、キャスト・
-// スタッフ・放送枠・作品画像・シリーズなど Annict DB の残りは Rails 版にしかない。
+// /db/ がこの接頭辞にあたる。作品とエピソードのCRUD画面はGo版にあるが、キャスト・
+// スタッフ・放送枠・作品画像・シリーズなどAnnict DBの残りはRails版にしかない。
 var goSharedPaths = []string{
 	"/db/",
 }
 
-// NewReverseProxyMiddleware は新しいReverseProxyMiddlewareを作成
+// NewReverseProxyMiddlewareは新しいReverseProxyMiddlewareを作成
 func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagRepo featureFlagChecker, sessionMgr *session.Manager) (*ReverseProxyMiddleware, error) {
 	parsedURL, err := url.Parse(railsURL)
 	if err != nil {
@@ -133,7 +106,7 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 	// httputil.ReverseProxyを作成
 	proxy := &httputil.ReverseProxy{}
 
-	// カスタムのHTTP Transportを設定（タイムアウトと接続プーリング）
+	// カスタムのHTTP Transportを設定 (タイムアウトと接続プーリング)
 	proxy.Transport = &http.Transport{
 		// 接続タイムアウト: 10秒
 		DialContext: (&net.Dialer{
@@ -150,65 +123,42 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 		ExpectContinueTimeout: 1 * time.Second,
 	}
 
-	// Customize header rewriting via the proxy's Rewrite function. ReverseProxy strips Forwarded /
-	// X-Forwarded-For / X-Forwarded-Host / X-Forwarded-Proto from Out.Header before calling Rewrite,
-	// so read the original values from pr.In.Header when they need to be preserved.
-	//
-	// [Ja] プロキシの Rewrite 関数でヘッダー設定を行う。httputil.ReverseProxy は Rewrite 呼び出し前に
-	// Forwarded / X-Forwarded-For / X-Forwarded-Host / X-Forwarded-Proto を Out.Header から削除するため、
-	// 元の値を参照したい場合は pr.In.Header から取得する必要がある。
+	// プロキシのRewrite関数でヘッダー設定を行う。httputil.ReverseProxyはRewrite呼び出し前に
+	// Forwarded / X-Forwarded-For / X-Forwarded-Host / X-Forwarded-ProtoをOut.Headerから削除するため、
+	// 元の値を参照したい場合はpr.In.Headerから取得する必要がある。
 	proxy.Rewrite = func(pr *httputil.ProxyRequest) {
-		// Rewrite the URL to the Rails host. SetURL sets Out.Host = "", so follow it with
-		// Out.Host = In.Host to keep forwarding the client's Host header to Rails unchanged.
-		//
-		// [Ja] URL を Rails 版のホストに書き換える。SetURL は Out.Host = "" をセットしてしまうため、
-		// 続けて Out.Host = In.Host を設定し、クライアントが送ってきた Host ヘッダをそのまま Rails 版に
+		// URLをRails版のホストに書き換える。SetURLはOut.Host = "" をセットしてしまうため、
+		// 続けてOut.Host = In.Hostを設定し、クライアントが送ってきたHostヘッダをそのままRails版に
 		// 転送する挙動を維持する。
 		pr.SetURL(parsedURL)
 		pr.Out.Host = pr.In.Host
 
-		// Get the client IP (priority: CF-Connecting-IP > first IP of X-Forwarded-For > RemoteAddr).
-		//
-		// [Ja] クライアント IP アドレスを取得 (優先順位: CF-Connecting-IP > X-Forwarded-For の最初の IP > RemoteAddr)
+		// クライアントIPアドレスを取得 (優先順位: CF-Connecting-IP > X-Forwarded-Forの最初のIP > RemoteAddr)
 		clientIP := clientip.GetClientIP(pr.In)
 
-		// Set X-Forwarded-For.
-		//
-		// [Ja] X-Forwarded-For の設定
+		// X-Forwarded-Forの設定
 		if originalXForwardedFor := pr.In.Header.Get("X-Forwarded-For"); originalXForwardedFor != "" {
-			// Keep the existing value (preserve what Cloudflare etc. set).
-			//
-			// [Ja] 既存の値を維持 (Cloudflare などが設定した値を保持)
+			// 既存の値を維持 (Cloudflareなどが設定した値を保持)
 			pr.Out.Header.Set("X-Forwarded-For", originalXForwardedFor)
 		} else {
-			// Set clientIP when there is no existing value.
-			//
-			// [Ja] 既存の値がない場合、clientIPを設定
+			// 既存の値がない場合、clientIPを設定
 			pr.Out.Header.Set("X-Forwarded-For", clientIP)
 		}
 
-		// Set X-Real-IP (set clientIP only when there is no existing value).
-		//
-		// [Ja] X-Real-IP の設定 (既存の値がない場合のみ clientIP を設定)
+		// X-Real-IPの設定 (既存の値がない場合のみclientIPを設定)
 		if originalXRealIP := pr.In.Header.Get("X-Real-IP"); originalXRealIP != "" {
 			pr.Out.Header.Set("X-Real-IP", originalXRealIP)
 		} else {
 			pr.Out.Header.Set("X-Real-IP", clientIP)
 		}
 
-		// Set X-Forwarded-Proto.
-		//
-		// [Ja] X-Forwarded-Proto の設定
+		// X-Forwarded-Protoの設定
 		pr.Out.Header.Set("X-Forwarded-Proto", "https")
 
-		// Set X-Forwarded-Host.
-		//
-		// [Ja] X-Forwarded-Host の設定
+		// X-Forwarded-Hostの設定
 		pr.Out.Header.Set("X-Forwarded-Host", cfg.Domain)
 
-		// Log output (for developers).
-		//
-		// [Ja] ログ出力 (開発者向け)
+		// ログ出力 (開発者向け)
 		slog.Info("リバースプロキシでRails版にリクエストを転送",
 			"path", pr.In.URL.Path,
 			"method", pr.In.Method,
@@ -217,9 +167,9 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 		)
 	}
 
-	// レスポンス処理後のログ出力（成功時）
+	// レスポンス処理後のログ出力 (成功時)
 	proxy.ModifyResponse = func(resp *http.Response) error {
-		// プロキシが成功した場合のレスポンスログを出力（開発者向け）
+		// プロキシが成功した場合のレスポンスログを出力 (開発者向け)
 		slog.Info("Rails版からレスポンスを受信",
 			"status_code", resp.StatusCode,
 			"status", resp.Status,
@@ -233,13 +183,9 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 	proxy.ErrorHandler = func(w http.ResponseWriter, r *http.Request, err error) {
 		ctx := r.Context()
 
-		// Detailed error log for developers. The source attribute lets the
-		// Sentry beforeSend hook drop this event: Rails-side proxy failures
-		// belong to the Rails Sentry project, not the Go one.
-		//
-		// [Ja] 開発者向けの詳細エラーログ。source 属性を載せておくと
-		// Sentry の beforeSend で本イベントを破棄できる (Rails 側のプロキシ
-		// 失敗は Rails の Sentry プロジェクトで扱うべきため)。
+		// 開発者向けの詳細エラーログ。source属性を載せておくと
+		// SentryのbeforeSendで本イベントを破棄できる (Rails側のプロキシ
+		// 失敗はRailsのSentryプロジェクトで扱うべきため)。
 		slog.ErrorContext(ctx, "Rails版へのプロキシでエラーが発生",
 			annictSentry.SourceAttrKey, annictSentry.ReverseProxySource,
 			"error", err,
@@ -248,20 +194,12 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 			"remote_addr", r.RemoteAddr,
 		)
 
-		// The page below is rendered by Go, not relayed from Rails, so it carries the same
-		// headers as the rest of the Go responses. The SecurityHeaders middleware cannot
-		// supply them: it sits inside this middleware and the request never got that far.
-		//
-		// [Ja] 以下のページは Rails から中継したものではなく Go が描画するため、他の Go の
-		// レスポンスと同じヘッダーを付ける。SecurityHeaders ミドルウェアは本ミドルウェアの
+		// 以下のページはRailsから中継したものではなくGoが描画するため、他のGoの
+		// レスポンスと同じヘッダーを付ける。SecurityHeadersミドルウェアは本ミドルウェアの
 		// 内側にあり、リクエストはそこまで到達していないため、付与を任せられない。
 		setSecurityHeaders(w)
 
-		// This handler runs at the proxy layer, outside the Go middleware chain, so no
-		// locale has been resolved onto the context yet. Resolve it here so the shared
-		// error page speaks the reader's language like the pages served from the chain.
-		//
-		// [Ja] 本ハンドラーは Go のミドルウェアチェーンの外側であるプロキシ層で動くため、
+		// 本ハンドラーはGoのミドルウェアチェーンの外側であるプロキシ層で動くため、
 		// コンテキストにはまだロケールが載っていない。ここで解決し、共通エラーページが
 		// チェーンの内側で配信されるページと同じく読み手の言語で表示されるようにする。
 		httperror.BadGateway(w, r.WithContext(i18n.SetLocale(ctx, resolveLocale(r))))
@@ -276,10 +214,10 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 	}, nil
 }
 
-// Middleware はHTTPミドルウェアを返す
+// MiddlewareはHTTPミドルウェアを返す
 func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// api.annict.com（または開発環境の相当するホスト）の場合、すべてRails版にプロキシ
+		// api.annict.com (または開発環境の相当するホスト) の場合、すべてRails版にプロキシ
 		if m.isAPISubdomain(r.Host) {
 			m.proxy.ServeHTTP(w, r)
 			return
@@ -295,17 +233,10 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 		}
 
 		if m.isFeatureFlagEnabled(r, deviceToken) {
-			// The path is gated by an enabled migration flag. Hand it to the Go
-			// chain only when a Go route matches; otherwise the screen is not
-			// implemented in Go yet, so proxy to Rails here — the same layer as the
-			// flag-disabled path below — instead of letting it fall through to chi's
-			// NotFound handler, which runs inside the Sentry / CSRF middleware chain
-			// that Rails-bound requests must skip.
-			//
-			// [Ja] パスは有効な移行フラグでゲートされている。Go ルートにマッチするときだけ
-			// Go チェーンに渡し、マッチしない場合はその画面が Go 未実装のため、ここで
-			// Rails へプロキシする (下のフラグ無効時と同じレイヤー)。chi の NotFound
-			// ハンドラー (Rails 行きのリクエストがスキップすべき Sentry / CSRF
+			// パスは有効な移行フラグでゲートされている。Goルートにマッチするときだけ
+			// Goチェーンに渡し、マッチしない場合はその画面がGo未実装のため、ここで
+			// Railsへプロキシする (下のフラグ無効時と同じレイヤー)。chiのNotFound
+			// ハンドラー (Rails行きのリクエストがスキップすべきSentry / CSRF
 			// ミドルウェアチェーンの内側で走る) へ流さないためにこうする。
 			if m.matchesGoRoute(r) {
 				next.ServeHTTP(w, r)
@@ -315,12 +246,8 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// The path is one Go and Rails share. Hand it to the Go chain only when a Go
-		// route matches; otherwise the screen is Rails-only, so fall through to the
-		// proxy below.
-		//
-		// [Ja] パスは Go 版と Rails 版が分け合っているもの。Go ルートにマッチするときだけ
-		// Go チェーンに渡し、マッチしない場合はその画面が Rails 版にしかないため、
+		// パスはGo版とRails版が分け合っているもの。Goルートにマッチするときだけ
+		// Goチェーンに渡し、マッチしない場合はその画面がRails版にしかないため、
 		// 下のプロキシに流す。
 		if m.isGoSharedPath(r.URL.Path) && m.matchesGoRoute(r) {
 			next.ServeHTTP(w, r)
@@ -332,47 +259,27 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-// SetRouter injects the chi router so the middleware can tell whether a path Go and
-// Rails share (e.g. /db/*) matches a registered Go route. Call it once during setup,
-// after the router is created and before it serves. When such a path matches no Go
-// route the screen belongs to Rails, so Middleware proxies to Rails itself rather than
-// deferring to chi's NotFound handler, which runs inside the Sentry / CSRF middleware
-// chain that Rails-bound requests must skip.
-//
-// [Ja] SetRouter は chi ルーターを注入し、Go 版と Rails 版が分け合っているパス
-// (例: /db/*) が登録済みの Go ルートにマッチするかをミドルウェアが判定できるようにする。
-// ルーター生成後・配信開始前にセットアップで 1 回呼ぶ。そうしたパスがどの Go ルートにも
-// マッチしない場合、その画面は Rails 版のものなので、Middleware は chi の NotFound
-// ハンドラー (Rails 行きのリクエストがスキップすべき Sentry / CSRF ミドルウェアチェーンの
-// 内側で走る) に委ねず、自身で Rails へプロキシする。
+// SetRouterはchiルーターを注入し、Go版とRails版が分け合っているパス
+// (例: /db/*) が登録済みのGoルートにマッチするかをミドルウェアが判定できるようにする。
+// ルーター生成後・配信開始前にセットアップで1回呼ぶ。そうしたパスがどのGoルートにも
+// マッチしない場合、その画面はRails版のものなので、MiddlewareはchiのNotFound
+// ハンドラー (Rails行きのリクエストがスキップすべきSentry / CSRFミドルウェアチェーンの
+// 内側で走る) に委ねず、自身でRailsへプロキシする。
 func (m *ReverseProxyMiddleware) SetRouter(router chi.Router) {
 	m.router = router
 }
 
-// matchesGoRoute reports whether a Go route handles the request. Without a router every
-// request goes to the Go chain, which is the behaviour before SetRouter is called.
+// matchesGoRouteはリクエストをGoのルートが処理するかどうかを返す。ルーターが無い場合は
+// すべてGoチェーンへ渡す (SetRouter呼び出し前の挙動)。
 //
-// An HTML form can only send GET or POST, so routes registered as PUT / PATCH / DELETE are
-// reached through the _method parameter that MethodOverride applies. MethodOverride runs
-// inside this middleware, so the method seen here is still the POST the browser sent, and
-// matching on it alone would miss those routes and proxy an implemented screen to Rails.
-// Reading _method here is not an option: it lives in the body, which a proxied request still
-// needs intact. A POST that matches no route is therefore re-checked against the methods the
-// override can produce. A POST carrying no _method then reaches the Go chain and ends in 405
-// rather than at Rails, which is the honest answer for a path Go owns but does not accept a
-// POST on.
-//
-// [Ja] matchesGoRoute はリクエストを Go のルートが処理するかどうかを返す。ルーターが無い場合は
-// すべて Go チェーンへ渡す (SetRouter 呼び出し前の挙動)。
-//
-// HTML フォームは GET と POST しか送れないため、PUT / PATCH / DELETE で登録したルートには
-// MethodOverride が適用する _method パラメータ経由で到達する。MethodOverride は本ミドルウェアの
-// 内側で動くため、ここで見えるメソッドはブラウザが送った POST のままであり、それだけで判定すると
-// 該当ルートを取りこぼして実装済みの画面を Rails へプロキシしてしまう。ここで _method を読むことは
-// できない。_method はボディにあり、プロキシするリクエストはそのボディを必要とするため。そこで、
-// どのルートにもマッチしない POST は、オーバーライドが生みうるメソッドで再判定する。_method を
-// 持たない POST はこの結果 Go チェーンへ渡り Rails ではなく 405 で終わるが、Go が所有していて
-// POST を受け付けないパスに対する答えとしてはそのほうが正しい。
+// HTMLフォームはGETとPOSTしか送れないため、PUT / PATCH / DELETEで登録したルートには
+// MethodOverrideが適用する _methodパラメータ経由で到達する。MethodOverrideは本ミドルウェアの
+// 内側で動くため、ここで見えるメソッドはブラウザが送ったPOSTのままであり、それだけで判定すると
+// 該当ルートを取りこぼして実装済みの画面をRailsへプロキシしてしまう。ここで _methodを読むことは
+// できない。_methodはボディにあり、プロキシするリクエストはそのボディを必要とするため。そこで、
+// どのルートにもマッチしないPOSTは、オーバーライドが生みうるメソッドで再判定する。_methodを
+// 持たないPOSTはこの結果Goチェーンへ渡りRailsではなく405で終わるが、Goが所有していて
+// POSTを受け付けないパスに対する答えとしてはそのほうが正しい。
 func (m *ReverseProxyMiddleware) matchesGoRoute(r *http.Request) bool {
 	if m.router == nil {
 		return true
@@ -395,10 +302,7 @@ func (m *ReverseProxyMiddleware) matchesGoRoute(r *http.Request) bool {
 	return false
 }
 
-// ensureDeviceToken returns the device_token cookie value from the request, generating and setting a new one on the
-// response when missing. An empty string is returned only when token generation itself fails.
-//
-// [Ja] リクエストから device_token Cookie を取得し、未設定の場合は新規生成してレスポンスにセットしたうえで返す。
+// リクエストからdevice_token Cookieを取得し、未設定の場合は新規生成してレスポンスにセットしたうえで返す。
 // トークン生成自体に失敗した場合のみ空文字列を返す。
 func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *http.Request) string {
 	if c, err := r.Cookie(DeviceTokenCookieName); err == nil && c.Value != "" {
@@ -416,9 +320,7 @@ func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *htt
 		Name:  DeviceTokenCookieName,
 		Value: token,
 		Path:  "/",
-		// 10 years.
-		//
-		// [Ja] 10 年
+		// 10年
 		MaxAge:   10 * 365 * 24 * 60 * 60,
 		HttpOnly: true,
 		Secure:   secure,
@@ -428,13 +330,9 @@ func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *htt
 	return token
 }
 
-// isFeatureFlagEnabled reports whether the request path is enabled by a feature flag. It receives the device token
-// returned by ensureDeviceToken. When featureFlagRepo is nil or evaluation fails, it returns false so the caller falls
-// back to the Rails proxy.
-//
-// [Ja] リクエストパスがフィーチャーフラグで有効化されているかを判定する。device token は ensureDeviceToken で
-// 確保済みのトークンを受け取る。featureFlagRepo が nil の場合や判定に失敗した場合は false を返し、呼び出し側に
-// Rails 版へのフォールバックを促す。
+// リクエストパスがフィーチャーフラグで有効化されているかを判定する。device tokenはensureDeviceTokenで
+// 確保済みのトークンを受け取る。featureFlagRepoがnilの場合や判定に失敗した場合はfalseを返し、呼び出し側に
+// Rails版へのフォールバックを促す。
 func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceToken string) bool {
 	if m.featureFlagRepo == nil {
 		return false
@@ -475,13 +373,10 @@ func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceTok
 	return enabled
 }
 
-// isGoHandledPath はGo版で処理するパスかどうかを判定
+// isGoHandledPathはGo版で処理するパスかどうかを判定
 func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
-	// goHandledPaths matches by prefix, which would hand every /errors/... path to Go.
-	// Go owns only the error pages listed below, so they are matched exactly.
-	//
-	// [Ja] goHandledPaths は前方一致で判定するため、一覧に入れると /errors 配下すべてを
-	// Go 側が引き取ることになる。Go が持つエラーページは下記の一覧だけなので完全一致で判定する。
+	// goHandledPathsは前方一致で判定するため、一覧に入れると /errors配下すべてを
+	// Go側が引き取ることになる。Goが持つエラーページは下記の一覧だけなので完全一致で判定する。
 	for _, p := range goHandledErrorPaths {
 		if path == p {
 			return true
@@ -494,18 +389,14 @@ func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
 		}
 	}
 
-	// /@{username}/ics パターンの判定
+	// /@{username}/icsパターンの判定
 	if strings.HasPrefix(path, "/@") && strings.HasSuffix(path, "/ics") {
 		return true
 	}
 
-	// /fragment/@{username}/tracking_heatmap pattern. Only the tracking
-	// heatmap fragment endpoint moves to Go; other /fragment/... paths are
-	// still served by Rails until their Go versions land.
-	//
-	// [Ja] /fragment/@{username}/tracking_heatmap パターンの判定。
-	// /fragment/ 配下のうち、tracking_heatmap だけが Go 版に移行している段階で、
-	// 他の /fragment/... は Go 版実装が揃うまで Rails 版が処理する。
+	// /fragment/@{username}/tracking_heatmapパターンの判定。
+	// /fragment/ 配下のうち、tracking_heatmapだけがGo版に移行している段階で、
+	// 他の /fragment/... はGo版実装が揃うまでRails版が処理する。
 	if strings.HasPrefix(path, "/fragment/@") && strings.HasSuffix(path, "/tracking_heatmap") {
 		return true
 	}
@@ -513,11 +404,8 @@ func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
 	return false
 }
 
-// isGoSharedPath reports whether the path falls under a prefix Go and Rails share. The
-// caller pairs it with matchesGoRoute to decide which side handles the request.
-//
-// [Ja] isGoSharedPath はパスが Go 版と Rails 版で分け合っている接頭辞の配下かどうかを返す。
-// 呼び出し側は matchesGoRoute と組み合わせ、どちらが処理するかを判定する。
+// isGoSharedPathはパスがGo版とRails版で分け合っている接頭辞の配下かどうかを返す。
+// 呼び出し側はmatchesGoRouteと組み合わせ、どちらが処理するかを判定する。
 func (m *ReverseProxyMiddleware) isGoSharedPath(path string) bool {
 	for _, p := range goSharedPaths {
 		if strings.HasPrefix(path, p) {
@@ -528,9 +416,9 @@ func (m *ReverseProxyMiddleware) isGoSharedPath(path string) bool {
 	return false
 }
 
-// isAPISubdomain はAPIサブドメイン（api.annict.com または api.annict-dev.page）かどうかを判定
+// isAPISubdomainはAPIサブドメイン (api.annict.comまたはapi.annict-dev.page) かどうかを判定
 func (m *ReverseProxyMiddleware) isAPISubdomain(host string) bool {
-	// ポート番号を除去（開発環境では :8080 などのポートが含まれる場合がある）
+	// ポート番号を除去 (開発環境では :8080などのポートが含まれる場合がある)
 	hostWithoutPort := host
 	if idx := strings.Index(host, ":"); idx != -1 {
 		hostWithoutPort = host[:idx]

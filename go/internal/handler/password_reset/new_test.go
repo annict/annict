@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestNew_PageMeta はパスワードリセット申請ページのPageMeta設定をテストします
+// TestNew_PageMetaはパスワードリセット申請ページのPageMeta設定をテストします
 func TestNew_PageMeta(t *testing.T) {
 	t.Parallel()
 
@@ -30,11 +30,7 @@ func TestNew_PageMeta(t *testing.T) {
 		t.Fatalf("設定の読み込みに失敗: %v", err)
 	}
 
-	// The site key is overridden because config.Load can clear it in test and development
-	// when ANNICT_TURNSTILE_DISABLE=true. The positive assertions below must not depend on
-	// the caller's environment.
-	//
-	// [Ja] config.Load は test / dev で ANNICT_TURNSTILE_DISABLE=true のときサイトキーを
+	// config.Loadはtest / devでANNICT_TURNSTILE_DISABLE=trueのときサイトキーを
 	// 空にしうるため、上書きする。以下の存在検証を実行環境に依存させないため。
 	cfg.TurnstileSiteKey = "1x00000000000000000000AA"
 

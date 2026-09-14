@@ -1,4 +1,4 @@
-// Package middleware はHTTPミドルウェアを提供します
+// Package middlewareはHTTPミドルウェアを提供します
 package middleware
 
 import (
@@ -9,13 +9,13 @@ import (
 	"github.com/annict/annict/go/internal/session"
 )
 
-// CSRFMiddleware はCSRF保護ミドルウェア
+// CSRFMiddlewareはCSRF保護ミドルウェア
 type CSRFMiddleware struct {
 	sessionManager *session.Manager
 	skipPaths      []string
 }
 
-// NewCSRFMiddleware は新しいCSRFミドルウェアを作成
+// NewCSRFMiddlewareは新しいCSRFミドルウェアを作成
 func NewCSRFMiddleware(sessionManager *session.Manager) *CSRFMiddleware {
 	return &CSRFMiddleware{
 		sessionManager: sessionManager,
@@ -26,7 +26,7 @@ func NewCSRFMiddleware(sessionManager *session.Manager) *CSRFMiddleware {
 	}
 }
 
-// Middleware はCSRFトークン検証ミドルウェアを返す
+// MiddlewareはCSRFトークン検証ミドルウェアを返す
 func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -45,11 +45,7 @@ func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 			}
 		}
 
-		// The three checks below (no session ID, no session data, token mismatch) all answer with
-		// the same response. Distinguishing them would tell the sender whether a session exists,
-		// and the reader's next action is the same in every case: reopen the page and submit again.
-		//
-		// [Ja] 以下の 3 つの判定 (セッション ID 無し / セッションデータ無し / トークン不一致) は
+		// 以下の3つの判定 (セッションID無し / セッションデータ無し / トークン不一致) は
 		// いずれも同じ応答を返す。区別すると送信側にセッションの有無を伝えることになり、
 		// 読み手に求める次の行動もどの場合も同じ (ページを開き直して再送信する) であるため。
 
@@ -67,7 +63,7 @@ func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// フォームからCSRFトークンを取得（フォームパラメータまたはヘッダー）
+		// フォームからCSRFトークンを取得 (フォームパラメータまたはヘッダー)
 		formToken := r.FormValue("csrf_token")
 		if formToken == "" {
 			formToken = r.Header.Get("X-CSRF-Token")
@@ -82,7 +78,7 @@ func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-// GetCSRFToken はリクエストからCSRFトークンを取得
+// GetCSRFTokenはリクエストからCSRFトークンを取得
 // テンプレートでトークンを表示する際に使用
 func GetCSRFToken(r *http.Request, sessionManager *session.Manager) string {
 	ctx := r.Context()
@@ -102,7 +98,7 @@ func GetCSRFToken(r *http.Request, sessionManager *session.Manager) string {
 	return sessionData.CSRFToken
 }
 
-// GetOrCreateCSRFToken はCSRFトークンを取得し、セッションが存在しない場合は新規作成
+// GetOrCreateCSRFTokenはCSRFトークンを取得し、セッションが存在しない場合は新規作成
 // ログインページなど、セッションがまだ存在しない可能性があるページで使用
 func GetOrCreateCSRFToken(w http.ResponseWriter, r *http.Request, sessionManager *session.Manager) string {
 	ctx := r.Context()

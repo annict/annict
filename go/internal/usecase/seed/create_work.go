@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/seed"
 )
 
-// CreateWorkParams 作品作成のパラメータ
+// CreateWorkParams作品作成のパラメータ
 type CreateWorkParams struct {
 	Title           string
 	TitleKana       string
@@ -23,42 +23,42 @@ type CreateWorkParams struct {
 	SeasonName      *seed.SeasonName
 }
 
-// CreateWorkResult 作品作成の結果
+// CreateWorkResult作品作成の結果
 type CreateWorkResult struct {
 	WorkID model.WorkID
 }
 
-// CreateWorkUsecase 作品生成Usecase（シード専用、バルクインサート対応）
+// CreateWorkUsecase作品生成Usecase (シード専用、バルクインサート対応)
 type CreateWorkUsecase struct {
 	db *sql.DB
 }
 
-// NewCreateWorkUsecase 新しいCreateWorkUsecaseを作成
+// NewCreateWorkUsecase新しいCreateWorkUsecaseを作成
 func NewCreateWorkUsecase(db *sql.DB) *CreateWorkUsecase {
 	return &CreateWorkUsecase{
 		db: db,
 	}
 }
 
-// ExecuteBatch 複数の作品をバッチで作成します
+// ExecuteBatch複数の作品をバッチで作成します
 // 1000件ごとにコミットしてパフォーマンスを最適化します
 func (uc *CreateWorkUsecase) ExecuteBatch(ctx context.Context, works []CreateWorkParams, progressBar *progressbar.ProgressBar) ([]CreateWorkResult, error) {
 	return uc.executeBatchWithTx(ctx, nil, works, progressBar)
 }
 
-// ExecuteBatchWithTx 複数の作品をバッチで作成します（テスト用：既存トランザクションを使用）
+// ExecuteBatchWithTx複数の作品をバッチで作成します (テスト用：既存トランザクションを使用)
 // txがnilの場合は内部でトランザクションを作成します
 func (uc *CreateWorkUsecase) ExecuteBatchWithTx(ctx context.Context, tx *sql.Tx, works []CreateWorkParams, progressBar *progressbar.ProgressBar) ([]CreateWorkResult, error) {
 	return uc.executeBatchWithTx(ctx, tx, works, progressBar)
 }
 
-// executeBatchWithTx 内部実装：トランザクションを受け取るか新規作成する
+// executeBatchWithTx内部実装：トランザクションを受け取るか新規作成する
 func (uc *CreateWorkUsecase) executeBatchWithTx(ctx context.Context, existingTx *sql.Tx, works []CreateWorkParams, progressBar *progressbar.ProgressBar) ([]CreateWorkResult, error) {
 	results := make([]CreateWorkResult, 0, len(works))
 
 	// 既存トランザクションがある場合は、バッチサイズを無視して全件処理
 	if existingTx != nil {
-		// マルチ行INSERTのチャンクサイズ（100件ずつ）
+		// マルチ行INSERTのチャンクサイズ (100件ずつ)
 		multiInsertChunkSize := 100
 		for i := 0; i < len(works); i += multiInsertChunkSize {
 			end := i + multiInsertChunkSize
@@ -70,7 +70,7 @@ func (uc *CreateWorkUsecase) executeBatchWithTx(ctx context.Context, existingTx 
 			// マルチ行INSERTで作成
 			chunkResults, err := uc.createMultipleWorks(ctx, existingTx, chunk)
 			if err != nil {
-				return nil, fmt.Errorf("作品マルチ行INSERT エラー: %w", err)
+				return nil, fmt.Errorf("作品マルチ行INSERTエラー: %w", err)
 			}
 			results = append(results, chunkResults...)
 
@@ -111,7 +111,7 @@ func (uc *CreateWorkUsecase) executeBatchWithTx(ctx context.Context, existingTx 
 			// マルチ行INSERTで作成
 			chunkResults, err := uc.createMultipleWorks(ctx, tx, chunk)
 			if err != nil {
-				return nil, fmt.Errorf("作品マルチ行INSERT エラー: %w", err)
+				return nil, fmt.Errorf("作品マルチ行INSERTエラー: %w", err)
 			}
 			results = append(results, chunkResults...)
 
@@ -130,7 +130,7 @@ func (uc *CreateWorkUsecase) executeBatchWithTx(ctx context.Context, existingTx 
 	return results, nil
 }
 
-// createMultipleWorks 複数の作品をマルチ行INSERTで作成します（トランザクション内）
+// createMultipleWorks複数の作品をマルチ行INSERTで作成します (トランザクション内)
 func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx, worksList []CreateWorkParams) ([]CreateWorkResult, error) {
 	if len(worksList) == 0 {
 		return []CreateWorkResult{}, nil
@@ -153,15 +153,12 @@ func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx
 			queryBuilder += ", "
 		}
 
-		// プレースホルダーの開始位置（各行は11個のパラメータ）
+		// プレースホルダーの開始位置 (各行は11個のパラメータ)
 		offset := i * 11
 		queryBuilder += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)",
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7, offset+8, offset+9, offset+10, offset+11)
 
-		// Convert the MediaType to the works.media integer, matching the Rails
-		// Work#media enum (tv=1, ova=2, movie=3, web=4, other=0).
-		//
-		// [Ja] MediaType を works.media の integer に変換する。Rails の Work#media enum
+		// MediaTypeをworks.mediaのintegerに変換する。RailsのWork#media enum
 		// (tv=1, ova=2, movie=3, web=4, other=0) に合わせる。
 		var mediaInt int
 		switch params.Media {
@@ -177,7 +174,7 @@ func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx
 			mediaInt = 0
 		}
 
-		// SeasonNameをinteger値に変換（Rails enum互換）
+		// SeasonNameをinteger値に変換 (Rails enum互換)
 		var seasonNameInt interface{}
 		if params.SeasonName != nil {
 			switch *params.SeasonName {
@@ -217,7 +214,7 @@ func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx
 	// マルチ行INSERTを実行
 	rows, err := tx.QueryContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return nil, fmt.Errorf("worksテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("worksテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 	defer rows.Close()
 
@@ -226,7 +223,7 @@ func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx
 	for rows.Next() {
 		var workID int64
 		if err := rows.Scan(&workID); err != nil {
-			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
+			return nil, fmt.Errorf("RETURNING idのスキャンエラー: %w", err)
 		}
 		results = append(results, CreateWorkResult{WorkID: model.WorkID(workID)})
 	}
@@ -238,19 +235,19 @@ func (uc *CreateWorkUsecase) createMultipleWorks(ctx context.Context, tx *sql.Tx
 	return results, nil
 }
 
-// GenerateRandomWorkParams はランダムな作品パラメータを生成します
+// GenerateRandomWorkParamsはランダムな作品パラメータを生成します
 // シードデータ生成時に使用するヘルパー関数
 func GenerateRandomWorkParams(r *rand.Rand) CreateWorkParams {
 	title := seed.GenerateAnimeTitle(r)
 	seasonYear := seed.GenerateSeasonYear(r)
 	seasonName := seed.GenerateSeasonName(r)
-	media := seed.GenerateMediaType(r, true) // 加重ランダム（TVアニメの出現率を高く）
+	media := seed.GenerateMediaType(r, true) // 加重ランダム (TVアニメの出現率を高く)
 
 	return CreateWorkParams{
 		Title:           title,
-		TitleKana:       "",                              // 空文字でOK（NOT NULL制約対応）
+		TitleKana:       "",                              // 空文字でOK (NOT NULL制約対応)
 		Media:           media,                           // TV, OVA, Movie, Web
-		OfficialSiteURL: "",                              // 空文字でOK（NOT NULL制約対応）
+		OfficialSiteURL: "",                              // 空文字でOK (NOT NULL制約対応)
 		SeasonYear:      &seasonYear,                     // 2020〜2025
 		SeasonName:      (*seed.SeasonName)(&seasonName), // spring, summer, autumn, winter
 	}

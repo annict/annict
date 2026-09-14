@@ -11,7 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// CreateEpisodeRecordParams 視聴記録作成のパラメータ
+// CreateEpisodeRecordParams視聴記録作成のパラメータ
 type CreateEpisodeRecordParams struct {
 	UserID    model.UserID
 	EpisodeID model.EpisodeID
@@ -21,7 +21,7 @@ type CreateEpisodeRecordParams struct {
 	WatchedAt time.Time
 }
 
-// CreateEpisodeRecordResult 視聴記録作成の結果
+// CreateEpisodeRecordResult視聴記録作成の結果
 type CreateEpisodeRecordResult struct {
 	RecordID        int64
 	EpisodeRecordID int64
@@ -29,52 +29,43 @@ type CreateEpisodeRecordResult struct {
 	ActivityGroupID int64
 }
 
-// CreateEpisodeRecordUsecase 視聴記録生成Usecase（シード専用、バルクインサート対応）
+// CreateEpisodeRecordUsecase視聴記録生成Usecase (シード専用、バルクインサート対応)
 type CreateEpisodeRecordUsecase struct {
 	db *sql.DB
 }
 
-// NewCreateEpisodeRecordUsecase 新しいCreateEpisodeRecordUsecaseを作成
+// NewCreateEpisodeRecordUsecase新しいCreateEpisodeRecordUsecaseを作成
 func NewCreateEpisodeRecordUsecase(db *sql.DB) *CreateEpisodeRecordUsecase {
 	return &CreateEpisodeRecordUsecase{
 		db: db,
 	}
 }
 
-// ExecuteBatch 複数の視聴記録をバッチで作成します
+// ExecuteBatch複数の視聴記録をバッチで作成します
 // 1000件ごとにコミットしてパフォーマンスを最適化します
 func (uc *CreateEpisodeRecordUsecase) ExecuteBatch(ctx context.Context, records []CreateEpisodeRecordParams, progressBar *progressbar.ProgressBar) ([]CreateEpisodeRecordResult, error) {
 	return uc.executeBatchWithTx(ctx, nil, records, progressBar)
 }
 
-// ExecuteBatchWithTx creates episode records in batch inside the caller's transaction, or
-// opens its own when tx is nil. Callers pass a transaction when the records have to be
-// committed together with whatever else that transaction did: the heavy-user seed selects the
-// episodes its records point at in the same transaction, so no other process can delete one of
-// them between the selection and the insert.
-//
-// A passed-in transaction is neither committed nor split into several commits here: the caller
-// owns the boundary and decides how much one commit carries.
-//
-// [Ja] ExecuteBatchWithTx は呼び出し元のトランザクションで視聴記録をバッチ作成する。tx が nil
+// ExecuteBatchWithTxは呼び出し元のトランザクションで視聴記録をバッチ作成する。txがnil
 // の場合は内部でトランザクションを開く。呼び出し元がトランザクションを渡すのは、記録をその
 // トランザクションの他の処理と一緒にコミットする必要があるとき。ヘビーユーザーのシードは記録が
-// 指すエピソードを同じトランザクションで抽選するため、抽選から INSERT までの間に他のプロセスが
+// 指すエピソードを同じトランザクションで抽選するため、抽選からINSERTまでの間に他のプロセスが
 // そのエピソードを削除できない。
 //
 // 渡されたトランザクションを本メソッドはコミットせず、複数のコミットにも分割しない。境界は
-// 呼び出し元が持ち、1 コミットが運ぶ量も呼び出し元が決める。
+// 呼び出し元が持ち、1コミットが運ぶ量も呼び出し元が決める。
 func (uc *CreateEpisodeRecordUsecase) ExecuteBatchWithTx(ctx context.Context, tx *sql.Tx, records []CreateEpisodeRecordParams, progressBar *progressbar.ProgressBar) ([]CreateEpisodeRecordResult, error) {
 	return uc.executeBatchWithTx(ctx, tx, records, progressBar)
 }
 
-// executeBatchWithTx 内部実装：トランザクションを受け取るか新規作成する
+// executeBatchWithTx内部実装：トランザクションを受け取るか新規作成する
 func (uc *CreateEpisodeRecordUsecase) executeBatchWithTx(ctx context.Context, existingTx *sql.Tx, records []CreateEpisodeRecordParams, progressBar *progressbar.ProgressBar) ([]CreateEpisodeRecordResult, error) {
 	results := make([]CreateEpisodeRecordResult, 0, len(records))
 
 	// 既存トランザクションがある場合は、バッチサイズを無視して全件処理
 	if existingTx != nil {
-		// マルチ行INSERTのチャンクサイズ（100件ずつ）
+		// マルチ行INSERTのチャンクサイズ (100件ずつ)
 		multiInsertChunkSize := 100
 		for i := 0; i < len(records); i += multiInsertChunkSize {
 			end := i + multiInsertChunkSize
@@ -86,7 +77,7 @@ func (uc *CreateEpisodeRecordUsecase) executeBatchWithTx(ctx context.Context, ex
 			// マルチ行INSERTで作成
 			chunkResults, err := uc.createMultipleEpisodeRecords(ctx, existingTx, chunk)
 			if err != nil {
-				return nil, fmt.Errorf("視聴記録マルチ行INSERT エラー: %w", err)
+				return nil, fmt.Errorf("視聴記録マルチ行INSERTエラー: %w", err)
 			}
 			results = append(results, chunkResults...)
 
@@ -127,7 +118,7 @@ func (uc *CreateEpisodeRecordUsecase) executeBatchWithTx(ctx context.Context, ex
 			// マルチ行INSERTで作成
 			chunkResults, err := uc.createMultipleEpisodeRecords(ctx, tx, chunk)
 			if err != nil {
-				return nil, fmt.Errorf("視聴記録マルチ行INSERT エラー: %w", err)
+				return nil, fmt.Errorf("視聴記録マルチ行INSERTエラー: %w", err)
 			}
 			results = append(results, chunkResults...)
 
@@ -146,38 +137,38 @@ func (uc *CreateEpisodeRecordUsecase) executeBatchWithTx(ctx context.Context, ex
 	return results, nil
 }
 
-// createMultipleEpisodeRecords 複数の視聴記録をマルチ行INSERTで作成します（トランザクション内）
-// Record（親）→ EpisodeRecord（子）→ ActivityGroup → Activity の順で作成します
+// createMultipleEpisodeRecords複数の視聴記録をマルチ行INSERTで作成します (トランザクション内)
+// Record (親) → EpisodeRecord (子) → ActivityGroup → Activityの順で作成します
 func (uc *CreateEpisodeRecordUsecase) createMultipleEpisodeRecords(ctx context.Context, tx *sql.Tx, recordsList []CreateEpisodeRecordParams) ([]CreateEpisodeRecordResult, error) {
 	if len(recordsList) == 0 {
 		return []CreateEpisodeRecordResult{}, nil
 	}
 
-	// 1. Record（親レコード）をマルチ行INSERTで作成
+	// 1. Record (親レコード) をマルチ行INSERTで作成
 	recordIDs, err := uc.createMultipleRecordsInDB(ctx, tx, recordsList)
 	if err != nil {
-		return nil, fmt.Errorf("recordsテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("recordsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
-	// 2. EpisodeRecord（子レコード）をマルチ行INSERTで作成
+	// 2. EpisodeRecord (子レコード) をマルチ行INSERTで作成
 	episodeRecordIDs, err := uc.createMultipleEpisodeRecordsInDB(ctx, tx, recordsList, recordIDs)
 	if err != nil {
-		return nil, fmt.Errorf("episode_recordsテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("episode_recordsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
-	// 3. ActivityGroup（アクティビティグループ）を作成（ユーザーごとに1つ）
+	// 3. ActivityGroup (アクティビティグループ) を作成 (ユーザーごとに1つ)
 	activityGroupIDs, err := uc.createActivityGroupsForUsers(ctx, tx, recordsList)
 	if err != nil {
-		return nil, fmt.Errorf("activity_groupsテーブルへのINSERT エラー: %w", err)
+		return nil, fmt.Errorf("activity_groupsテーブルへのINSERTエラー: %w", err)
 	}
 
-	// 4. Activity（アクティビティ）をマルチ行INSERTで作成
+	// 4. Activity (アクティビティ) をマルチ行INSERTで作成
 	activityIDs, err := uc.createMultipleActivitiesInDB(ctx, tx, recordsList, episodeRecordIDs, activityGroupIDs)
 	if err != nil {
-		return nil, fmt.Errorf("activitiesテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("activitiesテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
-	// 5. カウンターを更新（users.episode_records_count, works.records_count, episodes.episode_records_count）
+	// 5. カウンターを更新 (users.episode_records_count, works.records_count, episodes.episode_records_count)
 	if err := uc.updateCounters(ctx, tx, recordsList); err != nil {
 		return nil, fmt.Errorf("カウンター更新エラー: %w", err)
 	}
@@ -230,7 +221,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleRecordsInDB(ctx context.Cont
 
 	rows, err := tx.QueryContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return nil, fmt.Errorf("recordsテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("recordsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 	defer rows.Close()
 
@@ -238,7 +229,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleRecordsInDB(ctx context.Cont
 	for rows.Next() {
 		var recordID int64
 		if err := rows.Scan(&recordID); err != nil {
-			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
+			return nil, fmt.Errorf("RETURNING idのスキャンエラー: %w", err)
 		}
 		recordIDs = append(recordIDs, recordID)
 	}
@@ -275,7 +266,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleEpisodeRecordsInDB(ctx conte
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7, offset+8, offset+9,
 			offset+10, offset+11, offset+12, offset+13, offset+14, offset+15, offset+16, offset+17, offset+18)
 
-		// rating_stateを決定（ratingがnilの場合は空文字、それ以外は評価に応じて設定）
+		// rating_stateを決定 (ratingがnilの場合は空文字、それ以外は評価に応じて設定)
 		var ratingState string
 		if params.Rating != nil {
 			rating := *params.Rating
@@ -318,7 +309,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleEpisodeRecordsInDB(ctx conte
 
 	rows, err := tx.QueryContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return nil, fmt.Errorf("episode_recordsテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("episode_recordsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 	defer rows.Close()
 
@@ -326,7 +317,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleEpisodeRecordsInDB(ctx conte
 	for rows.Next() {
 		var episodeRecordID int64
 		if err := rows.Scan(&episodeRecordID); err != nil {
-			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
+			return nil, fmt.Errorf("RETURNING idのスキャンエラー: %w", err)
 		}
 		episodeRecordIDs = append(episodeRecordIDs, episodeRecordID)
 	}
@@ -338,7 +329,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleEpisodeRecordsInDB(ctx conte
 	return episodeRecordIDs, nil
 }
 
-// createActivityGroupsForUsers ユーザーごとにActivityGroupを作成します
+// createActivityGroupsForUsersユーザーごとにActivityGroupを作成します
 // 既存のActivityGroupがあればそれを返し、なければ新規作成します
 func (uc *CreateEpisodeRecordUsecase) createActivityGroupsForUsers(ctx context.Context, tx *sql.Tx, recordsList []CreateEpisodeRecordParams) (map[model.UserID]int64, error) {
 	// ユニークなユーザーIDを抽出
@@ -379,7 +370,7 @@ func (uc *CreateEpisodeRecordUsecase) createActivityGroupsForUsers(ctx context.C
 			`, int64(userID), "EpisodeRecord", false, 0, now, now).Scan(&activityGroupID)
 
 			if err != nil {
-				return nil, fmt.Errorf("activity_groupsテーブルへのINSERT エラー: %w", err)
+				return nil, fmt.Errorf("activity_groupsテーブルへのINSERTエラー: %w", err)
 			}
 			activityGroupIDs[userID] = activityGroupID
 		}
@@ -427,7 +418,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleActivitiesInDB(ctx context.C
 
 	rows, err := tx.QueryContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return nil, fmt.Errorf("activitiesテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("activitiesテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 	defer rows.Close()
 
@@ -435,7 +426,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleActivitiesInDB(ctx context.C
 	for rows.Next() {
 		var activityID int64
 		if err := rows.Scan(&activityID); err != nil {
-			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
+			return nil, fmt.Errorf("RETURNING idのスキャンエラー: %w", err)
 		}
 		activityIDs = append(activityIDs, activityID)
 	}
@@ -447,7 +438,7 @@ func (uc *CreateEpisodeRecordUsecase) createMultipleActivitiesInDB(ctx context.C
 	return activityIDs, nil
 }
 
-// updateCounters カウンターを更新します
+// updateCountersカウンターを更新します
 // - users.episode_records_count: ユーザーの視聴記録数
 // - works.records_count: 作品の視聴記録数
 // - episodes.episode_records_count: エピソードの視聴記録数
@@ -479,7 +470,7 @@ func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sq
 			WHERE id = $2
 		`, count, int64(userID))
 		if err != nil {
-			return fmt.Errorf("users.episode_records_count更新エラー（user_id: %d）: %w", userID, err)
+			return fmt.Errorf("users.episode_records_count更新エラー (user_id: %d): %w", userID, err)
 		}
 	}
 
@@ -491,7 +482,7 @@ func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sq
 			WHERE id = $2
 		`, count, int64(workID))
 		if err != nil {
-			return fmt.Errorf("works.records_count更新エラー（work_id: %d）: %w", workID, err)
+			return fmt.Errorf("works.records_count更新エラー (work_id: %d): %w", workID, err)
 		}
 	}
 
@@ -503,7 +494,7 @@ func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sq
 			WHERE id = $2
 		`, count, int64(episodeID))
 		if err != nil {
-			return fmt.Errorf("episodes.episode_records_count更新エラー（episode_id: %d）: %w", episodeID, err)
+			return fmt.Errorf("episodes.episode_records_count更新エラー (episode_id: %d): %w", episodeID, err)
 		}
 	}
 
@@ -515,7 +506,7 @@ func (uc *CreateEpisodeRecordUsecase) updateCounters(ctx context.Context, tx *sq
 			WHERE user_id = $2 AND itemable_type = 'EpisodeRecord' AND single = false
 		`, count, int64(userID))
 		if err != nil {
-			return fmt.Errorf("activity_groups.activities_count更新エラー（user_id: %d）: %w", userID, err)
+			return fmt.Errorf("activity_groups.activities_count更新エラー (user_id: %d): %w", userID, err)
 		}
 	}
 

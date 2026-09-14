@@ -1,4 +1,4 @@
-// Package sign_up はsign_up機能を提供します
+// Package sign_upはsign_up機能を提供します
 package sign_up
 
 import (
@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Create はメールアドレス送信処理と確認コード送信を行います (POST /sign_up)
+// Createはメールアドレス送信処理と確認コード送信を行います (POST /sign_up)
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -48,7 +48,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	slog.DebugContext(ctx, "Turnstile検証成功")
 
-	// Rate Limiting チェック: IP単位（5回/時間）→ メールアドレス単位（3回/時間）
+	// Rate Limitingチェック: IP単位 (5回/時間) → メールアドレス単位 (3回/時間)
 	if blocked := h.enforceSignUpRateLimit(ctx, w, r, "sign_up:ip:"+clientip.GetClientIP(r), 5, "IP単位", email); blocked {
 		return
 	}
@@ -56,10 +56,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// ユーザーのロケールを取得（デフォルトは日本語）
+	// ユーザーのロケールを取得 (デフォルトは日本語)
 	locale := i18n.GetLocale(ctx)
 
-	// UseCaseを呼び出し（バリデーション + メールアドレス重複チェック + 確認コード生成・送信）
+	// UseCaseを呼び出し (バリデーション + メールアドレス重複チェック + 確認コード生成・送信)
 	_, err = h.sendSignUpCodeUC.Execute(ctx, usecase.SendSignUpCodeInput{
 		Email:  email,
 		Locale: locale,
@@ -96,8 +96,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
 }
 
-// enforceSignUpRateLimit は Rate Limit に引っかかった場合に 422 でフォームを再描画し true を返します。
-// チェックが無効化されている、またはチェック自体のエラー時はリクエストを通過させます（true は返しません）。
+// enforceSignUpRateLimitはRate Limitに引っかかった場合に422でフォームを再描画しtrueを返します。
+// チェックが無効化されている、またはチェック自体のエラー時はリクエストを通過させます (trueは返しません)。
 func (h *Handler) enforceSignUpRateLimit(ctx context.Context, w http.ResponseWriter, r *http.Request, key string, limit int, scopeLabel string, email string) bool {
 	if h.limiter == nil || h.cfg.DisableRateLimit {
 		return false

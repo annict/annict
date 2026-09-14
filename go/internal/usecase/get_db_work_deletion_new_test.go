@@ -11,15 +11,10 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestGetDBWorkDeletionNewUsecase_Execute_ReturnsDeletableWork verifies the usecase returns
-// both a published and an archived work for the delete confirmation, matching the deletable
-// scope Work.without_deleted. It is a read-only usecase that opens no transaction, so the
-// test uses SetupTx.
-//
-// [Ja] TestGetDBWorkDeletionNewUsecase_Execute_ReturnsDeletableWork は、削除確認のために
-// 公開中の work もアーカイブ済みの work も返すことを検証する (削除可能な scope
-// Work.without_deleted に一致する)。本 UseCase は読み取りのみでトランザクションを開かないため
-// SetupTx を使う。
+// TestGetDBWorkDeletionNewUsecase_Execute_ReturnsDeletableWorkは、削除確認のために
+// 公開中のworkもアーカイブ済みのworkも返すことを検証する (削除可能なscope
+// Work.without_deletedに一致する)。本UseCaseは読み取りのみでトランザクションを開かないため
+// SetupTxを使う。
 func TestGetDBWorkDeletionNewUsecase_Execute_ReturnsDeletableWork(t *testing.T) {
 	t.Parallel()
 
@@ -28,13 +23,13 @@ func TestGetDBWorkDeletionNewUsecase_Execute_ReturnsDeletableWork(t *testing.T) 
 		prepare func(b *testutil.WorkBuilder) *testutil.WorkBuilder
 	}{
 		{
-			name: "公開中 (unpublished_at なし)",
+			name: "公開中 (unpublished_atなし)",
 			prepare: func(b *testutil.WorkBuilder) *testutil.WorkBuilder {
 				return b
 			},
 		},
 		{
-			name: "アーカイブ済み (unpublished_at あり)",
+			name: "アーカイブ済み (unpublished_atあり)",
 			prepare: func(b *testutil.WorkBuilder) *testutil.WorkBuilder {
 				return b.WithUnpublishedAt(time.Now())
 			},
@@ -55,28 +50,24 @@ func TestGetDBWorkDeletionNewUsecase_Execute_ReturnsDeletableWork(t *testing.T) 
 				WorkID: workID,
 			})
 			if err != nil {
-				t.Fatalf("Execute() error = %v", err)
+				t.Fatalf("Execute()のエラー = %v", err)
 			}
 			if output.Work == nil {
-				t.Fatal("Work should not be nil")
+				t.Fatal("Workがnilだった")
 			}
 			if output.Work.ID != workID {
-				t.Errorf("Work.ID = %d, want %d", output.Work.ID, workID)
+				t.Errorf("Work.ID = %d、期待値 = %d", output.Work.ID, workID)
 			}
 			if output.Work.Title != "削除確認テスト" {
-				t.Errorf("Work.Title = %q, want %q", output.Work.Title, "削除確認テスト")
+				t.Errorf("Work.Title = %q、期待値 = %q", output.Work.Title, "削除確認テスト")
 			}
 		})
 	}
 }
 
-// TestGetDBWorkDeletionNewUsecase_Execute_RejectsDeletedWork verifies the usecase reports an
-// already deleted work as not found, so a stale delete link turns into a 404 rather than a
-// confirmation for a work that is already gone.
-//
-// [Ja] TestGetDBWorkDeletionNewUsecase_Execute_RejectsDeletedWork は、すでに削除済みの work を
-// not found として報告することを検証する。古い削除リンクが、すでに失われた作品の確認画面では
-// なく 404 になるようにする。
+// TestGetDBWorkDeletionNewUsecase_Execute_RejectsDeletedWorkは、すでに削除済みのworkを
+// not foundとして報告することを検証する。古い削除リンクが、すでに失われた作品の確認画面では
+// なく404になるようにする。
 func TestGetDBWorkDeletionNewUsecase_Execute_RejectsDeletedWork(t *testing.T) {
 	t.Parallel()
 
@@ -93,19 +84,16 @@ func TestGetDBWorkDeletionNewUsecase_Execute_RejectsDeletedWork(t *testing.T) {
 		WorkID: workID,
 	})
 	if output != nil {
-		t.Errorf("output = %+v, want nil for a deleted work", output)
+		t.Errorf("output = %+v、期待値 = nil (削除済みの作品のため)", output)
 	}
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
-		t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
+		t.Fatalf("エラーコード = %v、期待値 = AppErrCodeResourceNotFound", err)
 	}
 }
 
-// TestGetDBWorkDeletionNewUsecase_Execute_ReturnsNotFoundForMissingWork verifies a
-// non-existent work id is reported as not found.
-//
-// [Ja] TestGetDBWorkDeletionNewUsecase_Execute_ReturnsNotFoundForMissingWork は、存在しない
-// work id が not found として報告されることを検証する。
+// TestGetDBWorkDeletionNewUsecase_Execute_ReturnsNotFoundForMissingWorkは、存在しない
+// work idがnot foundとして報告されることを検証する。
 func TestGetDBWorkDeletionNewUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T) {
 	t.Parallel()
 
@@ -117,20 +105,16 @@ func TestGetDBWorkDeletionNewUsecase_Execute_ReturnsNotFoundForMissingWork(t *te
 		WorkID: model.WorkID(1 << 62),
 	})
 	if output != nil {
-		t.Errorf("output = %+v, want nil for a missing work", output)
+		t.Errorf("output = %+v、期待値 = nil (存在しない作品のため)", output)
 	}
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
-		t.Fatalf("expected AppErrCodeResourceNotFound, got %v", err)
+		t.Fatalf("エラーコード = %v、期待値 = AppErrCodeResourceNotFound", err)
 	}
 }
 
-// TestGetDBWorkDeletionNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup verifies the
-// authorization boundary rejects every non-admin role before looking up either an existing
-// or a missing work.
-//
-// [Ja] TestGetDBWorkDeletionNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup は、
-// 認可境界が既存・未存在どちらの work を取得するより前に、admin 以外の全ロールを拒否する
+// TestGetDBWorkDeletionNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookupは、
+// 認可境界が既存・未存在どちらのworkを取得するより前に、admin以外の全ロールを拒否する
 // ことを検証する。
 func TestGetDBWorkDeletionNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup(t *testing.T) {
 	t.Parallel()
@@ -160,11 +144,11 @@ func TestGetDBWorkDeletionNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup
 				WorkID: tt.workID,
 			})
 			if output != nil {
-				t.Errorf("output = %+v, want nil for an unauthorized user", output)
+				t.Errorf("output = %+v、期待値 = nil (権限の無いユーザーのため)", output)
 			}
 			ae := model.AsAppError(err)
 			if ae == nil || ae.Code != model.AppErrCodeForbidden {
-				t.Fatalf("expected AppErrCodeForbidden, got %v", err)
+				t.Fatalf("エラーコード = %v、期待値 = AppErrCodeForbidden", err)
 			}
 		})
 	}

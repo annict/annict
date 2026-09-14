@@ -99,7 +99,7 @@ func TestUpdate_Success(t *testing.T) {
 	// I18nミドルウェアを適用
 	testutil.ApplyI18nMiddleware(t, handler.Update)(rr, req)
 
-	// リダイレクトされることを確認（ステータス303）
+	// リダイレクトされることを確認 (ステータス303)
 	if rr.Code != http.StatusSeeOther {
 		t.Fatalf("パスワード更新が失敗しました: status=%d, body=%s", rr.Code, rr.Body.String())
 	}
@@ -107,7 +107,7 @@ func TestUpdate_Success(t *testing.T) {
 	// ログインページにリダイレクトされることを確認
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("リダイレクト先が正しくありません: got=%s, want=/sign_in", location)
+		t.Errorf("リダイレクト先 = %s、期待値 = /sign_in", location)
 	}
 
 	// トークンが使用済みになっていることを確認
@@ -215,18 +215,18 @@ func TestUpdate_PasswordMismatch(t *testing.T) {
 	// I18nミドルウェアを適用
 	testutil.ApplyI18nMiddleware(t, handler.Update)(rr, req)
 
-	// バリデーションエラーは 422 + フォーム再描画
+	// バリデーションエラーは422 + フォーム再描画
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusUnprocessableEntity)
 	}
 
-	// 再描画されたフォームに hidden token と編集フォームが含まれることを確認
+	// 再描画されたフォームにhidden tokenと編集フォームが含まれることを確認
 	body := rr.Body.String()
 	if !strings.Contains(body, `name="token" value="`+plainToken+`"`) {
-		t.Errorf("再描画フォームに token hidden フィールドが含まれていません")
+		t.Errorf("再描画フォームにtoken hiddenフィールドが含まれていません")
 	}
 	if !strings.Contains(body, `action="/password"`) {
-		t.Errorf("再描画フォームの action が正しくありません")
+		t.Errorf("再描画フォームのactionが正しくありません")
 	}
 	assertPasswordEditCanonicalURL(t, body)
 }
@@ -277,7 +277,7 @@ func TestUpdate_InvalidToken(t *testing.T) {
 
 	// BadRequestが返されることを確認
 	if rr.Code != http.StatusBadRequest {
-		t.Errorf("ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusBadRequest)
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusBadRequest)
 	}
 
 	assertPasswordEditCanonicalURL(t, rr.Body.String())

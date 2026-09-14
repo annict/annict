@@ -9,33 +9,23 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// AnimeRepository handles data access for the animes table (layer 1: content
-// identity).
-//
-// [Ja] AnimeRepository は animes テーブル (第 1 層: コンテンツ同一性) への
+// AnimeRepositoryはanimesテーブル (第1層: コンテンツ同一性) への
 // データアクセスを担う。
 type AnimeRepository struct {
 	queries *query.Queries
 }
 
-// NewAnimeRepository constructs an AnimeRepository.
-//
-// [Ja] NewAnimeRepository は AnimeRepository を生成する。
+// NewAnimeRepositoryはAnimeRepositoryを生成する。
 func NewAnimeRepository(queries *query.Queries) *AnimeRepository {
 	return &AnimeRepository{queries: queries}
 }
 
-// WithTx returns a new AnimeRepository bound to the given transaction.
-//
-// [Ja] WithTx はトランザクションを使用する新しい AnimeRepository を返す。
+// WithTxはトランザクションを使用する新しいAnimeRepositoryを返す。
 func (r *AnimeRepository) WithTx(tx *sql.Tx) *AnimeRepository {
 	return &AnimeRepository{queries: r.queries.WithTx(tx)}
 }
 
-// CreateAnimeParams holds the content attributes for creating an anime. The id
-// and timestamps are assigned by the database.
-//
-// [Ja] CreateAnimeParams はアニメ作成時の内容属性を保持する。id とタイムスタンプは
+// CreateAnimeParamsはアニメ作成時の内容属性を保持する。idとタイムスタンプは
 // データベースが採番する。
 type CreateAnimeParams struct {
 	Title            sql.NullString
@@ -56,9 +46,7 @@ type CreateAnimeParams struct {
 	ArchiveMessage   sql.NullString
 }
 
-// Create inserts a new anime and returns the created row.
-//
-// [Ja] Create は新しいアニメを挿入し、作成された行を返す。
+// Createは新しいアニメを挿入し、作成された行を返す。
 func (r *AnimeRepository) Create(ctx context.Context, params CreateAnimeParams) (*model.Anime, error) {
 	row, err := r.queries.CreateAnime(ctx, query.CreateAnimeParams{
 		Title:            params.Title,
@@ -85,10 +73,7 @@ func (r *AnimeRepository) Create(ctx context.Context, params CreateAnimeParams) 
 	return &anime, nil
 }
 
-// UpdateAnimeParams holds the content attributes for updating an anime,
-// identified by ID.
-//
-// [Ja] UpdateAnimeParams は ID で特定したアニメの更新時の内容属性を保持する。
+// UpdateAnimeParamsはIDで特定したアニメの更新時の内容属性を保持する。
 type UpdateAnimeParams struct {
 	ID               model.AnimeID
 	Title            sql.NullString
@@ -109,9 +94,7 @@ type UpdateAnimeParams struct {
 	ArchiveMessage   sql.NullString
 }
 
-// Update overwrites an anime's content attributes.
-//
-// [Ja] Update はアニメの内容属性を上書きする。
+// Updateはアニメの内容属性を上書きする。
 func (r *AnimeRepository) Update(ctx context.Context, params UpdateAnimeParams) error {
 	return r.queries.UpdateAnime(ctx, query.UpdateAnimeParams{
 		ID:               int64(params.ID),
@@ -134,10 +117,7 @@ func (r *AnimeRepository) Update(ctx context.Context, params UpdateAnimeParams) 
 	})
 }
 
-// UpdateStatus updates only an anime's lifecycle status, preserving every content attribute.
-// Archive paths use it to avoid replaying a stale full-row snapshot over a concurrent edit.
-//
-// [Ja] UpdateStatus は anime のライフサイクル状態だけを更新し、内容属性をすべて保持する。
+// UpdateStatusはanimeのライフサイクル状態だけを更新し、内容属性をすべて保持する。
 // 非公開の経路が古い行全体のスナップショットを競合した編集へ上書きしないために使う。
 func (r *AnimeRepository) UpdateStatus(ctx context.Context, id model.AnimeID, status model.AnimeStatus) error {
 	return r.queries.UpdateAnimeStatus(ctx, query.UpdateAnimeStatusParams{
@@ -146,11 +126,8 @@ func (r *AnimeRepository) UpdateStatus(ctx context.Context, id model.AnimeID, st
 	})
 }
 
-// GetByID looks up an anime by its ID. It returns (nil, nil) when no row
-// matches, keeping sql.ErrNoRows from leaking out of the repository.
-//
-// [Ja] GetByID は ID でアニメを検索する。該当行が無い場合は (nil, nil) を返し、
-// sql.ErrNoRows を Repository の外へ漏らさない。
+// GetByIDはIDでアニメを検索する。該当行が無い場合は (nil, nil) を返し、
+// sql.ErrNoRowsをRepositoryの外へ漏らさない。
 func (r *AnimeRepository) GetByID(ctx context.Context, id model.AnimeID) (*model.Anime, error) {
 	row, err := r.queries.GetAnimeByID(ctx, int64(id))
 	if err != nil {
@@ -163,14 +140,9 @@ func (r *AnimeRepository) GetByID(ctx context.Context, id model.AnimeID) (*model
 	return &anime, nil
 }
 
-// ListByIDs loads the animes with the given IDs, ordered by id. It is used by the
-// phase 2 reconciliation to batch-fetch the existing animes for a page of mapped
-// works in one query instead of N per-row lookups. An empty input returns an empty
-// slice without querying.
-//
-// [Ja] ListByIDs は指定 ID の animes を id 昇順でロードする。フェーズ 2 の
-// リコンシリエーションが、マッピング済み works の 1 ページぶんの既存 anime を
-// N 回の行単位ルックアップではなく 1 クエリで一括取得するために使う。
+// ListByIDsは指定IDのanimesをid昇順でロードする。フェーズ2の
+// リコンシリエーションが、マッピング済みworksの1ページぶんの既存animeを
+// N回の行単位ルックアップではなく1クエリで一括取得するために使う。
 // 空入力ではクエリせず空スライスを返す。
 func (r *AnimeRepository) ListByIDs(ctx context.Context, ids []model.AnimeID) ([]*model.Anime, error) {
 	if len(ids) == 0 {
@@ -195,11 +167,8 @@ func (r *AnimeRepository) ListByIDs(ctx context.Context, ids []model.AnimeID) ([
 	return animes, nil
 }
 
-// toAnimeModel converts a query row into the domain model. Nullable enum
-// columns map to the empty string when NULL.
-//
-// [Ja] toAnimeModel は query の行をドメインモデルに変換する。NULL 許容の enum
-// カラムは NULL のとき空文字列に写像する。
+// toAnimeModelはqueryの行をドメインモデルに変換する。NULL許容のenum
+// カラムはNULLのとき空文字列に写像する。
 func toAnimeModel(row query.Anime) model.Anime {
 	anime := model.Anime{
 		ID:               model.AnimeID(row.ID),
@@ -229,11 +198,8 @@ func toAnimeModel(row query.Anime) model.Anime {
 	return anime
 }
 
-// toQueryNullAnimeMedia maps the domain medium to the sqlc nullable enum,
-// treating the empty string as NULL.
-//
-// [Ja] toQueryNullAnimeMedia はドメインの媒体を sqlc の NULL 許容 enum に写像し、
-// 空文字列を NULL として扱う。
+// toQueryNullAnimeMediaはドメインの媒体をsqlcのNULL許容enumに写像し、
+// 空文字列をNULLとして扱う。
 func toQueryNullAnimeMedia(m model.AnimeMedia) query.NullAnimeMedia {
 	if m == "" {
 		return query.NullAnimeMedia{}
@@ -241,11 +207,8 @@ func toQueryNullAnimeMedia(m model.AnimeMedia) query.NullAnimeMedia {
 	return query.NullAnimeMedia{AnimeMedia: query.AnimeMedia(m), Valid: true}
 }
 
-// toQueryNullReleaseStatus maps the domain release status to the sqlc nullable
-// enum, treating the empty string as NULL.
-//
-// [Ja] toQueryNullReleaseStatus はドメインの公開ステータスを sqlc の NULL 許容
-// enum に写像し、空文字列を NULL として扱う。
+// toQueryNullReleaseStatusはドメインの公開ステータスをsqlcのNULL許容
+// enumに写像し、空文字列をNULLとして扱う。
 func toQueryNullReleaseStatus(s model.ReleaseStatus) query.NullReleaseStatus {
 	if s == "" {
 		return query.NullReleaseStatus{}
@@ -253,10 +216,7 @@ func toQueryNullReleaseStatus(s model.ReleaseStatus) query.NullReleaseStatus {
 	return query.NullReleaseStatus{ReleaseStatus: query.ReleaseStatus(s), Valid: true}
 }
 
-// toQueryAnimeStatus maps the domain status to the sqlc enum, defaulting the
-// empty string to 'published' to mirror the column default.
-//
-// [Ja] toQueryAnimeStatus はドメインのステータスを sqlc の enum に写像し、
+// toQueryAnimeStatusはドメインのステータスをsqlcのenumに写像し、
 // カラムの既定値に合わせて空文字列を 'published' に既定する。
 func toQueryAnimeStatus(s model.AnimeStatus) query.AnimeStatus {
 	if s == "" {

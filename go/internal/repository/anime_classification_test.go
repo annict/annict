@@ -11,10 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// createTestAnime inserts a minimal anime via the repository and returns its ID,
-// used as the identity a classification attaches to.
-//
-// [Ja] createTestAnime はリポジトリ経由で最小のアニメを 1 件作成し、その ID を返す。
+// createTestAnimeはリポジトリ経由で最小のアニメを1件作成し、そのIDを返す。
 // 分類が結びつく同一性として使う。
 func createTestAnime(t *testing.T, repo *repository.AnimeRepository, title string) model.AnimeID {
 	t.Helper()
@@ -30,7 +27,7 @@ func createTestAnime(t *testing.T, repo *repository.AnimeRepository, title strin
 func TestAnimeClassificationRepository_Create(t *testing.T) {
 	t.Parallel()
 
-	t.Run("正常系: work 分類を作成する", func(t *testing.T) {
+	t.Run("正常系: work分類を作成する", func(t *testing.T) {
 		t.Parallel()
 
 		db, tx := testutil.SetupTx(t)
@@ -40,10 +37,7 @@ func TestAnimeClassificationRepository_Create(t *testing.T) {
 
 		animeID := createTestAnime(t, animeRepo, "作品アニメ")
 
-		// A work carries no parent and no sort_number, but may carry the
-		// generation settings (episode_start_number / expected_episodes_count).
-		//
-		// [Ja] work は親と sort_number を持たないが、生成設定
+		// workは親とsort_numberを持たないが、生成設定
 		// (episode_start_number / expected_episodes_count) は持てる。
 		created, err := repo.Create(context.Background(), repository.CreateAnimeClassificationParams{
 			AnimeID:               animeID,
@@ -53,37 +47,37 @@ func TestAnimeClassificationRepository_Create(t *testing.T) {
 			ExpectedEpisodesCount: sql.NullInt32{Int32: 12, Valid: true},
 		})
 		if err != nil {
-			t.Fatalf("Create() error = %v", err)
+			t.Fatalf("Create()のエラー = %v", err)
 		}
 		if created.ID == 0 {
-			t.Error("created.ID should be assigned")
+			t.Error("created.IDが採番されていない")
 		}
 
 		got, err := repo.GetByAnimeID(context.Background(), animeID)
 		if err != nil {
-			t.Fatalf("GetByAnimeID() error = %v", err)
+			t.Fatalf("GetByAnimeID()のエラー = %v", err)
 		}
 		if got == nil {
-			t.Fatal("GetByAnimeID() returned nil for an existing classification")
+			t.Fatal("既存のclassificationに対してGetByAnimeID()がnilを返した")
 		}
 		if got.Kind != model.AnimeClassificationKindWork {
-			t.Errorf("Kind = %q, want work", got.Kind)
+			t.Errorf("Kind = %q、期待値 = work", got.Kind)
 		}
 		if got.ParentAnimeID != nil {
-			t.Errorf("ParentAnimeID = %v, want nil for a work", got.ParentAnimeID)
+			t.Errorf("ParentAnimeID = %v、期待値 = nil (作品のため)", got.ParentAnimeID)
 		}
 		if !got.Standalone {
-			t.Error("Standalone = false, want true")
+			t.Error("Standalone = false、期待値 = true")
 		}
 		if got.EpisodeStartNumber.String != "1" {
-			t.Errorf("EpisodeStartNumber = %q, want 1", got.EpisodeStartNumber.String)
+			t.Errorf("EpisodeStartNumber = %q、期待値 = 1", got.EpisodeStartNumber.String)
 		}
 		if got.ExpectedEpisodesCount.Int32 != 12 {
-			t.Errorf("ExpectedEpisodesCount = %d, want 12", got.ExpectedEpisodesCount.Int32)
+			t.Errorf("ExpectedEpisodesCount = %d、期待値 = 12", got.ExpectedEpisodesCount.Int32)
 		}
 	})
 
-	t.Run("正常系: episode 分類を親作品付きで作成する", func(t *testing.T) {
+	t.Run("正常系: episode分類を親作品付きで作成する", func(t *testing.T) {
 		t.Parallel()
 
 		db, tx := testutil.SetupTx(t)
@@ -94,10 +88,7 @@ func TestAnimeClassificationRepository_Create(t *testing.T) {
 		parentAnimeID := createTestAnime(t, animeRepo, "親作品アニメ")
 		episodeAnimeID := createTestAnime(t, animeRepo, "エピソードアニメ")
 
-		// An episode always carries a parent and a sort_number; the numeric
-		// number preserves a decimal recap such as 3.5.
-		//
-		// [Ja] episode は必ず親と sort_number を持つ。数値の number は 3.5 の
+		// episodeは必ず親とsort_numberを持つ。数値のnumberは3.5の
 		// ような小数の総集編をそのまま保つ。
 		_, err := repo.Create(context.Background(), repository.CreateAnimeClassificationParams{
 			AnimeID:       episodeAnimeID,
@@ -108,27 +99,27 @@ func TestAnimeClassificationRepository_Create(t *testing.T) {
 			SortNumber:    sql.NullInt32{Int32: 35, Valid: true},
 		})
 		if err != nil {
-			t.Fatalf("Create() error = %v", err)
+			t.Fatalf("Create()のエラー = %v", err)
 		}
 
 		got, err := repo.GetByAnimeID(context.Background(), episodeAnimeID)
 		if err != nil {
-			t.Fatalf("GetByAnimeID() error = %v", err)
+			t.Fatalf("GetByAnimeID()のエラー = %v", err)
 		}
 		if got.Kind != model.AnimeClassificationKindEpisode {
-			t.Errorf("Kind = %q, want episode", got.Kind)
+			t.Errorf("Kind = %q、期待値 = episode", got.Kind)
 		}
 		if got.ParentAnimeID == nil || *got.ParentAnimeID != parentAnimeID {
-			t.Errorf("ParentAnimeID = %v, want %d", got.ParentAnimeID, parentAnimeID)
+			t.Errorf("ParentAnimeID = %v、期待値 = %d", got.ParentAnimeID, parentAnimeID)
 		}
 		if got.Number.String != "3.5" {
-			t.Errorf("Number = %q, want 3.5", got.Number.String)
+			t.Errorf("Number = %q、期待値 = 3.5", got.Number.String)
 		}
 		if got.NumberText.String != "第3.5話" {
-			t.Errorf("NumberText = %q, want 第3.5話", got.NumberText.String)
+			t.Errorf("NumberText = %q、期待値 = 第3.5話", got.NumberText.String)
 		}
 		if got.SortNumber.Int32 != 35 {
-			t.Errorf("SortNumber = %d, want 35", got.SortNumber.Int32)
+			t.Errorf("SortNumber = %d、期待値 = 35", got.SortNumber.Int32)
 		}
 	})
 }
@@ -136,27 +127,18 @@ func TestAnimeClassificationRepository_Create(t *testing.T) {
 func TestAnimeClassificationRepository_Create_ConstraintViolation(t *testing.T) {
 	t.Parallel()
 
-	// The work/episode shape is enforced by CHECK constraints in the schema, not
-	// by the repository (CreateAnimeClassificationParams documents that supplying a
-	// consistent shape is the caller's responsibility). These cases verify that an
-	// inconsistent shape is rejected by the database and the error is propagated
-	// out of Create, so the param struct and the constraints cannot silently drift
-	// apart.
-	//
-	// [Ja] work/episode の形状はリポジトリではなくスキーマの CHECK 制約で守られる
-	// (整合した形での指定は呼び出し元の責務だと CreateAnimeClassificationParams が
-	// 明記している)。以下のケースは、不整合な形状が DB に拒否され、そのエラーが
-	// Create から伝搬することを確認する。param 構造体と CHECK 制約が気付かぬうちに
+	// work/episodeの形状はリポジトリではなくスキーマのCHECK制約で守られる
+	// (整合した形での指定は呼び出し元の責務だとCreateAnimeClassificationParamsが
+	// 明記している)。以下のケースは、不整合な形状がDBに拒否され、そのエラーが
+	// Createから伝搬することを確認する。param構造体とCHECK制約が気付かぬうちに
 	// ドリフトしないようにする。
 	tests := []struct {
 		name   string
 		params func(animeID model.AnimeID) repository.CreateAnimeClassificationParams
 	}{
 		{
-			// A work must not carry sort_number (sort_number_check).
-			//
-			// [Ja] work は sort_number を持てない (sort_number_check)。
-			name: "異常系: work に sort_number を設定すると CHECK 制約違反になる",
+			// workはsort_numberを持てない (sort_number_check)。
+			name: "異常系: workにsort_numberを設定するとCHECK制約違反になる",
 			params: func(animeID model.AnimeID) repository.CreateAnimeClassificationParams {
 				return repository.CreateAnimeClassificationParams{
 					AnimeID:    animeID,
@@ -166,10 +148,8 @@ func TestAnimeClassificationRepository_Create_ConstraintViolation(t *testing.T) 
 			},
 		},
 		{
-			// An episode must carry a parent (parent_check).
-			//
-			// [Ja] episode は親を持たなければならない (parent_check)。
-			name: "異常系: 親を持たない episode は CHECK 制約違反になる",
+			// episodeは親を持たなければならない (parent_check)。
+			name: "異常系: 親を持たないepisodeはCHECK制約違反になる",
 			params: func(animeID model.AnimeID) repository.CreateAnimeClassificationParams {
 				return repository.CreateAnimeClassificationParams{
 					AnimeID:    animeID,
@@ -192,7 +172,7 @@ func TestAnimeClassificationRepository_Create_ConstraintViolation(t *testing.T) 
 			animeID := createTestAnime(t, animeRepo, "制約違反テストアニメ")
 
 			if _, err := repo.Create(context.Background(), tt.params(animeID)); err == nil {
-				t.Fatal("Create() error = nil, want a CHECK constraint violation")
+				t.Fatal("Create()のエラー = nil、期待値 = CHECK制約違反")
 			}
 		})
 	}
@@ -206,10 +186,10 @@ func TestAnimeClassificationRepository_GetByAnimeID_NotFound(t *testing.T) {
 
 	got, err := repo.GetByAnimeID(context.Background(), model.AnimeID(999999999))
 	if err != nil {
-		t.Fatalf("GetByAnimeID() error = %v", err)
+		t.Fatalf("GetByAnimeID()のエラー = %v", err)
 	}
 	if got != nil {
-		t.Errorf("GetByAnimeID() = %+v, want nil for a missing classification", got)
+		t.Errorf("GetByAnimeID() = %+v、期待値 = nil (存在しないclassificationのため)", got)
 	}
 }
 
@@ -229,7 +209,7 @@ func TestAnimeClassificationRepository_UpdateByAnimeID(t *testing.T) {
 		Standalone:            false,
 		ExpectedEpisodesCount: sql.NullInt32{Int32: 12, Valid: true},
 	}); err != nil {
-		t.Fatalf("Create() error = %v", err)
+		t.Fatalf("Create()のエラー = %v", err)
 	}
 
 	err := repo.UpdateByAnimeID(context.Background(), repository.UpdateAnimeClassificationParams{
@@ -239,25 +219,22 @@ func TestAnimeClassificationRepository_UpdateByAnimeID(t *testing.T) {
 		ExpectedEpisodesCount: sql.NullInt32{Int32: 24, Valid: true},
 	})
 	if err != nil {
-		t.Fatalf("UpdateByAnimeID() error = %v", err)
+		t.Fatalf("UpdateByAnimeID()のエラー = %v", err)
 	}
 
 	got, err := repo.GetByAnimeID(context.Background(), animeID)
 	if err != nil {
-		t.Fatalf("GetByAnimeID() error = %v", err)
+		t.Fatalf("GetByAnimeID()のエラー = %v", err)
 	}
 	if !got.Standalone {
-		t.Error("Standalone = false, want true after update")
+		t.Error("更新後のStandalone = false、期待値 = true")
 	}
 	if got.ExpectedEpisodesCount.Int32 != 24 {
-		t.Errorf("ExpectedEpisodesCount = %d, want 24 after update", got.ExpectedEpisodesCount.Int32)
+		t.Errorf("更新後のExpectedEpisodesCount = %d、期待値 = 24", got.ExpectedEpisodesCount.Int32)
 	}
 }
 
-// TestAnimeClassificationRepository_Upsert verifies both outcomes needed by episode editing:
-// a missing classification is inserted, and a later call updates that same row in place.
-//
-// [Ja] TestAnimeClassificationRepository_Upsert はエピソード編集に必要な 2 経路を検証する。
+// TestAnimeClassificationRepository_Upsertはエピソード編集に必要な2経路を検証する。
 // 欠損した分類を挿入し、後続の呼び出しでは同じ行をその場で更新する。
 func TestAnimeClassificationRepository_Upsert(t *testing.T) {
 	t.Parallel()
@@ -279,33 +256,33 @@ func TestAnimeClassificationRepository_Upsert(t *testing.T) {
 	}
 
 	if err := repo.Upsert(context.Background(), params); err != nil {
-		t.Fatalf("1 回目の Upsert() error = %v", err)
+		t.Fatalf("1回目のUpsert()のエラー = %v", err)
 	}
 	created, err := repo.GetByAnimeID(context.Background(), animeID)
 	if err != nil || created == nil {
-		t.Fatalf("1 回目の GetByAnimeID() classification=%v err=%v", created, err)
+		t.Fatalf("1回目のGetByAnimeID() classification=%v err=%v", created, err)
 	}
 	if created.NumberText.String != "#1" || created.SortNumber.Int32 != 100 {
-		t.Errorf("1 回目の classification = %+v, want number_text=#1 sort_number=100", created)
+		t.Errorf("1回目のclassification = %+v、期待値 = number_text=#1 sort_number=100", created)
 	}
 
 	params.Number = nullStr("2.5")
 	params.NumberText = nullStr("第2話")
 	params.SortNumber = sql.NullInt32{Int32: 250, Valid: true}
 	if err := repo.Upsert(context.Background(), params); err != nil {
-		t.Fatalf("2 回目の Upsert() error = %v", err)
+		t.Fatalf("2回目のUpsert()のエラー = %v", err)
 	}
 	updated, err := repo.GetByAnimeID(context.Background(), animeID)
 	if err != nil || updated == nil {
-		t.Fatalf("2 回目の GetByAnimeID() classification=%v err=%v", updated, err)
+		t.Fatalf("2回目のGetByAnimeID() classification=%v err=%v", updated, err)
 	}
 	if updated.ID != created.ID {
-		t.Errorf("2 回目の ID = %d, want %d (同じ行を更新)", int64(updated.ID), int64(created.ID))
+		t.Errorf("2回目のID = %d、期待値 = %d (同じ行を更新)", int64(updated.ID), int64(created.ID))
 	}
 	if updated.Number.String != "2.5" || updated.NumberText.String != "第2話" {
-		t.Errorf("2 回目の classification = %+v, want submitted numbering", updated)
+		t.Errorf("2回目のclassification = %+v、期待値 = 送信した話数情報", updated)
 	}
 	if !updated.SortNumber.Valid || updated.SortNumber.Int32 != 250 {
-		t.Errorf("2 回目の SortNumber = %+v, want {250 true}", updated.SortNumber)
+		t.Errorf("2回目のSortNumber = %+v、期待値 = {250 true}", updated.SortNumber)
 	}
 }

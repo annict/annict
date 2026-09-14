@@ -10,20 +10,20 @@ import (
 
 var codeRegex = regexp.MustCompile(`^\d{6}$`)
 
-// SignInCodeCreateValidator は6桁コード検証のバリデーションを行う
+// SignInCodeCreateValidatorは6桁コード検証のバリデーションを行う
 type SignInCodeCreateValidator struct{}
 
-// NewSignInCodeCreateValidator は SignInCodeCreateValidator を生成する
+// NewSignInCodeCreateValidatorはSignInCodeCreateValidatorを生成する
 func NewSignInCodeCreateValidator() *SignInCodeCreateValidator {
 	return &SignInCodeCreateValidator{}
 }
 
-// SignInCodeCreateValidatorInput はバリデーションの入力パラメータ
+// SignInCodeCreateValidatorInputはバリデーションの入力パラメータ
 type SignInCodeCreateValidatorInput struct {
 	Code string // 6桁の数字コード
 }
 
-// Validate はバリデーションを行う
+// Validateはバリデーションを行う
 func (v *SignInCodeCreateValidator) Validate(ctx context.Context, input SignInCodeCreateValidatorInput) error {
 	ve := model.NewValidationError()
 

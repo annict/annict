@@ -1,4 +1,4 @@
-// Package usecase はビジネスロジック層のユースケースを提供します
+// Package usecaseはビジネスロジック層のユースケースを提供します
 package usecase
 
 import (
@@ -13,18 +13,14 @@ import (
 	annictstripe "github.com/annict/annict/go/internal/stripe"
 )
 
-// SubscriptionRetriever abstracts retrieving a subscription from Stripe. It is
-// defined on the caller (UseCase) side so the UseCase depends on a small
-// interface rather than the concrete *stripe.Client, and tests can inject a fake.
-//
-// [Ja] SubscriptionRetriever は Stripe からのサブスクリプション取得を抽象化する。
-// 呼び出し側 (UseCase) で定義することで、UseCase は具象 *stripe.Client ではなく
-// 小さな interface に依存し、テストでは fake を注入できる。
+// SubscriptionRetrieverはStripeからのサブスクリプション取得を抽象化する。
+// 呼び出し側 (UseCase) で定義することで、UseCaseは具象 *stripe.Clientではなく
+// 小さなinterfaceに依存し、テストではfakeを注入できる。
 type SubscriptionRetriever interface {
 	RetrieveSubscription(ctx context.Context, subscriptionID string) (*annictstripe.Subscription, error)
 }
 
-// CreateStripeSubscriberUsecase はcheckout.session.completedイベント処理のユースケース
+// CreateStripeSubscriberUsecaseはcheckout.session.completedイベント処理のユースケース
 type CreateStripeSubscriberUsecase struct {
 	db                    *sql.DB
 	stripeSubscriberRepo  *repository.StripeSubscriberRepository
@@ -32,7 +28,7 @@ type CreateStripeSubscriberUsecase struct {
 	subscriptionRetriever SubscriptionRetriever
 }
 
-// NewCreateStripeSubscriberUsecase はCreateStripeSubscriberUsecaseを作成します
+// NewCreateStripeSubscriberUsecaseはCreateStripeSubscriberUsecaseを作成します
 func NewCreateStripeSubscriberUsecase(
 	db *sql.DB,
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
@@ -47,19 +43,19 @@ func NewCreateStripeSubscriberUsecase(
 	}
 }
 
-// CreateStripeSubscriberInput はcheckout.session.completedイベントの入力データ
+// CreateStripeSubscriberInputはcheckout.session.completedイベントの入力データ
 type CreateStripeSubscriberInput struct {
 	StripeCustomerID     string       // Stripeの顧客ID (cus_xxx)
 	StripeSubscriptionID string       // StripeのサブスクリプションID (sub_xxx)
-	UserID               model.UserID // AnnictのユーザーID（metadataから取得）
+	UserID               model.UserID // AnnictのユーザーID (metadataから取得)
 }
 
-// CreateStripeSubscriberResult はcheckout.session.completedイベント処理の結果
+// CreateStripeSubscriberResultはcheckout.session.completedイベント処理の結果
 type CreateStripeSubscriberResult struct {
 	StripeSubscriber model.StripeSubscriber
 }
 
-// Execute はcheckout.session.completedイベントを処理します
+// Executeはcheckout.session.completedイベントを処理します
 //
 // 処理フロー:
 // 1. Stripe APIからサブスクリプション詳細を取得
@@ -86,7 +82,7 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 		return nil, &InvalidSubscriptionStatusError{Status: sub.Status}
 	}
 
-	// 価格IDと請求期間を取得（最初のアイテムから）
+	// 価格IDと請求期間を取得 (最初のアイテムから)
 	if len(sub.Items) == 0 {
 		return nil, fmt.Errorf("サブスクリプションにアイテムが含まれていません")
 	}
@@ -135,7 +131,7 @@ func (uc *CreateStripeSubscriberUsecase) Execute(
 	}, nil
 }
 
-// ParseUserIDFromMetadata はCheckoutセッションのmetadataからユーザーIDを取得します
+// ParseUserIDFromMetadataはCheckoutセッションのmetadataからユーザーIDを取得します
 func ParseUserIDFromMetadata(metadata map[string]string) (model.UserID, error) {
 	userIDStr, ok := metadata["user_id"]
 	if !ok {
@@ -150,7 +146,7 @@ func ParseUserIDFromMetadata(metadata map[string]string) (model.UserID, error) {
 	return model.UserID(userID), nil
 }
 
-// InvalidSubscriptionStatusError は無効なサブスクリプションステータスを示すエラー
+// InvalidSubscriptionStatusErrorは無効なサブスクリプションステータスを示すエラー
 type InvalidSubscriptionStatusError struct {
 	Status string
 }
@@ -159,26 +155,26 @@ func (e *InvalidSubscriptionStatusError) Error() string {
 	return fmt.Sprintf("invalid subscription status: %s", e.Status)
 }
 
-// IsInvalidSubscriptionStatusError はエラーがInvalidSubscriptionStatusErrorかどうかを判定します
+// IsInvalidSubscriptionStatusErrorはエラーがInvalidSubscriptionStatusErrorかどうかを判定します
 func IsInvalidSubscriptionStatusError(err error) bool {
 	var e *InvalidSubscriptionStatusError
 	return errors.As(err, &e)
 }
 
-// MetadataUserIDMissingError はmetadataにuser_idが含まれていないことを示すエラー
+// MetadataUserIDMissingErrorはmetadataにuser_idが含まれていないことを示すエラー
 type MetadataUserIDMissingError struct{}
 
 func (e *MetadataUserIDMissingError) Error() string {
 	return "user_id is missing from metadata"
 }
 
-// IsMetadataUserIDMissingError はエラーがMetadataUserIDMissingErrorかどうかを判定します
+// IsMetadataUserIDMissingErrorはエラーがMetadataUserIDMissingErrorかどうかを判定します
 func IsMetadataUserIDMissingError(err error) bool {
 	var e *MetadataUserIDMissingError
 	return errors.As(err, &e)
 }
 
-// MetadataUserIDInvalidError はmetadataのuser_idが無効であることを示すエラー
+// MetadataUserIDInvalidErrorはmetadataのuser_idが無効であることを示すエラー
 type MetadataUserIDInvalidError struct {
 	Value string
 }
@@ -187,7 +183,7 @@ func (e *MetadataUserIDInvalidError) Error() string {
 	return fmt.Sprintf("invalid user_id in metadata: %s", e.Value)
 }
 
-// IsMetadataUserIDInvalidError はエラーがMetadataUserIDInvalidErrorかどうかを判定します
+// IsMetadataUserIDInvalidErrorはエラーがMetadataUserIDInvalidErrorかどうかを判定します
 func IsMetadataUserIDInvalidError(err error) bool {
 	var e *MetadataUserIDInvalidError
 	return errors.As(err, &e)

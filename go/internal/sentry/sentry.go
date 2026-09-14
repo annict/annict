@@ -1,4 +1,4 @@
-// Package sentry はSentryエラー追跡サービスとの連携機能を提供します
+// Package sentryはSentryエラー追跡サービスとの連携機能を提供します
 package sentry
 
 import (
@@ -13,9 +13,7 @@ import (
 	"github.com/getsentry/sentry-go"
 )
 
-// Config holds the Sentry settings.
-//
-// [Ja] Sentry の設定を保持する。
+// ConfigはSentryの設定を保持する。
 type Config struct {
 	DSN              string
 	Environment      string
@@ -26,35 +24,29 @@ type Config struct {
 
 const maskedValue = "[FILTERED]"
 
-// sensitiveHeaders はマスクすべきHTTPヘッダー名のリスト（小文字）
+// sensitiveHeadersはマスクすべきHTTPヘッダー名のリスト (小文字)
 var sensitiveHeaders = []string{
 	"authorization",
 	"cookie",
 	"x-csrf-token",
 }
 
-// sensitiveBodyKeys はマスクすべきリクエストボディのキー（部分一致、小文字）
+// sensitiveBodyKeysはマスクすべきリクエストボディのキー (部分一致、小文字)
 var sensitiveBodyKeys = []string{
 	"password",
 	"token",
 	"secret",
 }
 
-// sensitiveQueryKeys はマスクすべきクエリパラメータのキー（部分一致、小文字）
+// sensitiveQueryKeysはマスクすべきクエリパラメータのキー (部分一致、小文字)
 var sensitiveQueryKeys = []string{
 	"token",
 	"key",
 }
 
-// sensitiveTagKeys lists tag keys to mask (partial match, lowercase). The
-// application Sentry event handler populates tags from slog attributes, so PII
-// logged as a structured attribute (e.g. "email" on email-send failure logs)
-// would reach Sentry unmasked without this filter. The stderr log keeps the
-// original value, so debugging is still possible there.
-//
-// [Ja] マスクすべきタグのキー (部分一致、小文字)。アプリケーションの Sentry
-// イベントハンドラーが slog 属性をタグへ載せるため、構造化属性としてログに
-// 載せた PII (例: メール送信失敗ログの "email") がマスクされないまま Sentry
+// マスクすべきタグのキー (部分一致、小文字)。アプリケーションのSentry
+// イベントハンドラーがslog属性をタグへ載せるため、構造化属性としてログに
+// 載せたPII (例: メール送信失敗ログの "email") がマスクされないままSentry
 // に届いてしまう。標準エラー出力側のログには元の値が残るため、デバッグは
 // そちらで行える。
 var sensitiveTagKeys = []string{
@@ -64,21 +56,15 @@ var sensitiveTagKeys = []string{
 	"token",
 }
 
-// ignoredErrorPatterns lists message-level patterns that skip Sentry capture (regular expression).
-// These filter out client-disconnect noise and Go runtime's normal aborts.
-//
-// [Ja] メッセージレベルで Sentry 送信をスキップするパターン (正規表現)。
-// クライアント切断由来のノイズや Go runtime の正常な中断をフィルタする。
+// メッセージレベルでSentry送信をスキップするパターン (正規表現)。
+// クライアント切断由来のノイズやGo runtimeの正常な中断をフィルタする。
 var ignoredErrorPatterns = []string{
 	"context canceled",
 	"net/http: abort Handler",
 }
 
-// Init initializes Sentry. If the DSN is empty, initialization is skipped
-// and nil is returned (used when Sentry is not used in development environments).
-//
-// [Ja] Sentry を初期化する。DSN が空の場合は初期化をスキップし nil を返す
-// (開発環境で Sentry を使用しない場合)。
+// InitはSentryを初期化する。DSNが空の場合は初期化をスキップしnilを返す
+// (開発環境でSentryを使用しない場合)。
 func Init(cfg Config) error {
 	if cfg.DSN == "" {
 		slog.Info("Sentry DSNが設定されていないため、Sentryは無効化されています")
@@ -107,27 +93,17 @@ func Init(cfg Config) error {
 	return nil
 }
 
-// beforeSend filters events before sending them to Sentry.
-// Errors caused by client disconnects or normal aborts are dropped,
-// reverse-proxy noise is filtered out via the source tag, and the rest
-// has its sensitive data masked.
-//
-// [Ja] Sentry にイベントを送信する前にフィルタリングを行う。
+// Sentryにイベントを送信する前にフィルタリングを行う。
 // クライアント切断や正常な中断由来のエラーは破棄し、リバースプロキシ経由の
-// ノイズは source タグで識別して捨てる。残りはセンシティブデータをマスクする。
+// ノイズはsourceタグで識別して捨てる。残りはセンシティブデータをマスクする。
 func beforeSend(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
 	if hint != nil && shouldDropError(hint.OriginalException) {
 		return nil
 	}
 
-	// Drop events tagged as reverse-proxy failures: those failures belong to
-	// the Rails Sentry project, not the Go one. The application Sentry event
-	// handler stamps the slog attribute SourceAttrKey onto event.Tags, so a
-	// simple tag check suffices.
-	//
-	// [Ja] リバースプロキシ由来とタグ付けされたイベントは捨てる。Rails 側の
-	// 障害は Rails の Sentry プロジェクトで扱うべきため。アプリケーションの
-	// Sentry イベントハンドラーは slog 属性 SourceAttrKey を event.Tags に
+	// リバースプロキシ由来とタグ付けされたイベントは捨てる。Rails側の
+	// 障害はRailsのSentryプロジェクトで扱うべきため。アプリケーションの
+	// Sentryイベントハンドラーはslog属性SourceAttrKeyをevent.Tagsに
 	// そのまま乗せるので、タグ照合で判別できる。
 	if event.Tags[SourceAttrKey] == ReverseProxySource {
 		return nil
@@ -143,11 +119,8 @@ func beforeSend(event *sentry.Event, hint *sentry.EventHint) *sentry.Event {
 	return event
 }
 
-// shouldDropError reports whether the error is caused by a client disconnect
-// or runtime abort. If true, the event should not be sent to Sentry.
-//
-// [Ja] クライアント切断・runtime 中断由来のエラーかを判定する。
-// 該当する場合は Sentry に送らない。
+// クライアント切断・runtime中断由来のエラーかを判定する。
+// 該当する場合はSentryに送らない。
 func shouldDropError(err error) bool {
 	if err == nil {
 		return false
@@ -161,13 +134,9 @@ func shouldDropError(err error) bool {
 	return false
 }
 
-// filterTags masks sensitive tag values such as email addresses. Unlike the
-// request filters below, this also covers events generated from slog records,
-// whose attributes the application event handler stamps onto event.Tags.
-//
-// [Ja] センシティブなタグ (メールアドレス等) をマスクする。下のリクエスト系
-// フィルタと異なり、アプリケーションのイベントハンドラーが slog 属性を
-// event.Tags に乗せて生成したイベントもカバーする。
+// センシティブなタグ (メールアドレス等) をマスクする。下のリクエスト系
+// フィルタと異なり、アプリケーションのイベントハンドラーがslog属性を
+// event.Tagsに乗せて生成したイベントもカバーする。
 func filterTags(event *sentry.Event) {
 	for key := range event.Tags {
 		lowerKey := strings.ToLower(key)
@@ -180,7 +149,7 @@ func filterTags(event *sentry.Event) {
 	}
 }
 
-// filterRequestHeaders はセンシティブなHTTPヘッダーをマスクする
+// filterRequestHeadersはセンシティブなHTTPヘッダーをマスクする
 func filterRequestHeaders(req *sentry.Request) {
 	if req.Headers == nil {
 		return
@@ -197,13 +166,13 @@ func filterRequestHeaders(req *sentry.Request) {
 	}
 }
 
-// filterRequestData はセンシティブなリクエストボディのフィールドをマスクする
+// filterRequestDataはセンシティブなリクエストボディのフィールドをマスクする
 func filterRequestData(req *sentry.Request) {
 	if req.Data == "" {
 		return
 	}
 
-	// フォームデータ（application/x-www-form-urlencoded）をパースしてフィルタリング
+	// フォームデータ (application/x-www-form-urlencoded) をパースしてフィルタリング
 	values, err := url.ParseQuery(req.Data)
 	if err != nil {
 		// パースできない場合は安全のためデータ全体を削除
@@ -228,7 +197,7 @@ func filterRequestData(req *sentry.Request) {
 	}
 }
 
-// filterQueryString はセンシティブなクエリパラメータをマスクする
+// filterQueryStringはセンシティブなクエリパラメータをマスクする
 func filterQueryString(req *sentry.Request) {
 	if req.QueryString == "" {
 		return
@@ -258,13 +227,13 @@ func filterQueryString(req *sentry.Request) {
 	}
 }
 
-// Flush はバッファリングされたイベントをSentryに送信する
+// FlushはバッファリングされたイベントをSentryに送信する
 // アプリケーション終了時に呼び出す
 func Flush(timeout time.Duration) {
 	sentry.Flush(timeout)
 }
 
-// CaptureError はエラーをSentryに送信する
+// CaptureErrorはエラーをSentryに送信する
 func CaptureError(ctx context.Context, err error) {
 	if hub := sentry.GetHubFromContext(ctx); hub != nil {
 		hub.CaptureException(err)
@@ -273,7 +242,7 @@ func CaptureError(ctx context.Context, err error) {
 	}
 }
 
-// CaptureMessage はメッセージをSentryに送信する
+// CaptureMessageはメッセージをSentryに送信する
 func CaptureMessage(ctx context.Context, message string) {
 	if hub := sentry.GetHubFromContext(ctx); hub != nil {
 		hub.CaptureMessage(message)

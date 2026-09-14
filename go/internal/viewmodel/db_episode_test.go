@@ -9,11 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// TestDBEpisodeListWorkName verifies that the work name is trimmed and that a title holding
-// nothing but whitespace collapses to the empty string, which the heading and the document
-// title read as "the work has no display name".
-//
-// [Ja] TestDBEpisodeListWorkName は作品の名前が前後の空白を落として返ること、および空白だけの
+// TestDBEpisodeListWorkNameは作品の名前が前後の空白を落として返ること、および空白だけの
 // タイトルが空文字列に畳まれることを検証する。見出しと文書タイトルはいずれもこれを「作品に
 // 表示名が無い」合図として読む。
 func TestDBEpisodeListWorkName(t *testing.T) {
@@ -35,20 +31,15 @@ func TestDBEpisodeListWorkName(t *testing.T) {
 			t.Parallel()
 
 			if got := DBEpisodeListWorkName(tt.workTitle); got != tt.want {
-				t.Errorf("DBEpisodeListWorkName(%q) = %q, want %q", tt.workTitle, got, tt.want)
+				t.Errorf("DBEpisodeListWorkName(%q) = %q、期待値 = %q", tt.workTitle, got, tt.want)
 			}
 		})
 	}
 }
 
-// TestDBEpisodeIdentifier verifies the label naming one episode in a document title. The display
-// number is returned as the editor entered it, so it reads the same in both locales; the fallback
-// for an episode without one is a translation, and both locales are covered because a key that
-// went missing from one of them would come back as its own message id rather than as a label.
-//
-// [Ja] TestDBEpisodeIdentifier は文書タイトルの中で 1 件のエピソードを名指しするラベルを検証する。
+// TestDBEpisodeIdentifierは文書タイトルの中で1件のエピソードを名指しするラベルを検証する。
 // 表示用話数は編集者が入力したまま返すため、どちらのロケールでも同じに読める。表示用話数が無い
-// ときのフォールバックは翻訳であり、片方から翻訳キーが抜けるとラベルではなくメッセージ ID が
+// ときのフォールバックは翻訳であり、片方から翻訳キーが抜けるとラベルではなくメッセージIDが
 // そのまま返るため、両ロケールを対象にする。
 func TestDBEpisodeIdentifier(t *testing.T) {
 	t.Parallel()
@@ -67,7 +58,7 @@ func TestDBEpisodeIdentifier(t *testing.T) {
 			want:    "第2話",
 		},
 		{
-			name:    "日本語: 表示用話数が無ければ ID を使う",
+			name:    "日本語: 表示用話数が無ければIDを使う",
 			locale:  "ja",
 			episode: &model.Episode{ID: 456},
 			want:    "ID: 456",
@@ -79,7 +70,7 @@ func TestDBEpisodeIdentifier(t *testing.T) {
 			want:    "第2話",
 		},
 		{
-			name:    "英語: 表示用話数が無ければ ID を使う",
+			name:    "英語: 表示用話数が無ければIDを使う",
 			locale:  "en",
 			episode: &model.Episode{ID: 456},
 			want:    "ID: 456",
@@ -93,20 +84,15 @@ func TestDBEpisodeIdentifier(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
 
 			if got := DBEpisodeIdentifier(ctx, tt.episode); got != tt.want {
-				t.Errorf("DBEpisodeIdentifier() = %q, want %q", got, tt.want)
+				t.Errorf("DBEpisodeIdentifier() = %q、期待値 = %q", got, tt.want)
 			}
 		})
 	}
 }
 
-// TestDBEpisodeName verifies how an episode is named in the running text of a page, for each
-// combination of the two columns that can name it. Both locales are covered for the same reason
-// the identifier test covers them: the formats live in the translation files, so a key missing
-// from one of them would come back as its own message id.
-//
-// [Ja] TestDBEpisodeName は、エピソードを名指しできる 2 つのカラムの組み合わせごとに、ページの
+// TestDBEpisodeNameは、エピソードを名指しできる2つのカラムの組み合わせごとに、ページの
 // 文章の中でエピソードがどう名指しされるかを検証する。両ロケールを対象にする理由は識別子の
-// テストと同じで、書式は翻訳ファイルにあるため、片方から翻訳キーが抜けるとメッセージ ID が
+// テストと同じで、書式は翻訳ファイルにあるため、片方から翻訳キーが抜けるとメッセージIDが
 // そのまま返る。
 func TestDBEpisodeName(t *testing.T) {
 	t.Parallel()
@@ -139,13 +125,10 @@ func TestDBEpisodeName(t *testing.T) {
 			episode: &model.Episode{ID: 123, Title: &title},
 			want:    "「もう、お婿にいけません」",
 		},
-		// Neither column names the episode, so the id does: the sentence still points at a
-		// row the editor can find in the list.
-		//
-		// [Ja] どちらのカラムもエピソードを名指ししないため ID が名指しする。文が、編集者が
+		// どちらのカラムもエピソードを名指ししないためIDが名指しする。文が、編集者が
 		// 一覧で見つけられる行を指し続けるようにするため。
 		{
-			name:    "日本語: どちらも無ければ ID を使う",
+			name:    "日本語: どちらも無ければIDを使う",
 			locale:  "ja",
 			episode: &model.Episode{ID: 456},
 			want:    "ID: 456 のエピソード",
@@ -163,7 +146,7 @@ func TestDBEpisodeName(t *testing.T) {
 			want:    "“もう、お婿にいけません”",
 		},
 		{
-			name:    "英語: どちらも無ければ ID を使う",
+			name:    "英語: どちらも無ければIDを使う",
 			locale:  "en",
 			episode: &model.Episode{ID: 456},
 			want:    "episode ID: 456",
@@ -177,18 +160,14 @@ func TestDBEpisodeName(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
 
 			if got := DBEpisodeName(ctx, tt.episode); got != tt.want {
-				t.Errorf("DBEpisodeName() = %q, want %q", got, tt.want)
+				t.Errorf("DBEpisodeName() = %q、期待値 = %q", got, tt.want)
 			}
 		})
 	}
 }
 
-// TestNewDBEpisodeListItem verifies the projection of an episode onto its display row:
-// the ids and the parent work id the row's link needs, the two number representations,
-// both titles, and the unset attributes left empty for the template to render as gaps.
-//
-// [Ja] TestNewDBEpisodeListItem はエピソードから表示行への射影を検証する。行のリンクが必要と
-// する各 ID と親作品 ID、2 系統の話数、両方のタイトル、およびテンプレートが欠落として描画
+// TestNewDBEpisodeListItemはエピソードから表示行への射影を検証する。行のリンクが必要と
+// する各IDと親作品ID、2系統の話数、両方のタイトル、およびテンプレートが欠落として描画
 // できるよう空のまま残す未設定の属性を確認する。
 func TestNewDBEpisodeListItem(t *testing.T) {
 	t.Parallel()
@@ -243,38 +222,34 @@ func TestNewDBEpisodeListItem(t *testing.T) {
 			got := NewDBEpisodeListItem(tt.episode)
 
 			if got.ID != EpisodeID(tt.episode.ID) {
-				t.Errorf("ID = %q, want %q", got.ID, EpisodeID(tt.episode.ID))
+				t.Errorf("ID = %q、期待値 = %q", got.ID, EpisodeID(tt.episode.ID))
 			}
 			if got.WorkID != WorkID(tt.episode.WorkID) {
-				t.Errorf("WorkID = %q, want %q", got.WorkID, WorkID(tt.episode.WorkID))
+				t.Errorf("WorkID = %q、期待値 = %q", got.WorkID, WorkID(tt.episode.WorkID))
 			}
 			if got.Number != tt.wantNumber {
-				t.Errorf("Number = %q, want %q", got.Number, tt.wantNumber)
+				t.Errorf("Number = %q、期待値 = %q", got.Number, tt.wantNumber)
 			}
 			if got.RawNumber != tt.wantRawNumber {
-				t.Errorf("RawNumber = %q, want %q", got.RawNumber, tt.wantRawNumber)
+				t.Errorf("RawNumber = %q、期待値 = %q", got.RawNumber, tt.wantRawNumber)
 			}
 			if got.Title != tt.wantTitle {
-				t.Errorf("Title = %q, want %q", got.Title, tt.wantTitle)
+				t.Errorf("Title = %q、期待値 = %q", got.Title, tt.wantTitle)
 			}
 			if got.TitleEn != tt.wantTitleEn {
-				t.Errorf("TitleEn = %q, want %q", got.TitleEn, tt.wantTitleEn)
+				t.Errorf("TitleEn = %q、期待値 = %q", got.TitleEn, tt.wantTitleEn)
 			}
 			if got.SortNumber != tt.episode.SortNumber {
-				t.Errorf("SortNumber = %d, want %d", got.SortNumber, tt.episode.SortNumber)
+				t.Errorf("SortNumber = %d、期待値 = %d", got.SortNumber, tt.episode.SortNumber)
 			}
 			if got.EpisodeRecordsCount != tt.episode.EpisodeRecordsCount {
-				t.Errorf("EpisodeRecordsCount = %d, want %d", got.EpisodeRecordsCount, tt.episode.EpisodeRecordsCount)
+				t.Errorf("EpisodeRecordsCount = %d、期待値 = %d", got.EpisodeRecordsCount, tt.episode.EpisodeRecordsCount)
 			}
 		})
 	}
 }
 
-// TestNewDBEpisodeListItem_PrevNumber verifies how the preceding episode is named: its
-// display number when it has one, its numeric number as a fallback, and the empty string
-// when there is no preceding episode at all, which the template renders as a gap.
-//
-// [Ja] TestNewDBEpisodeListItem_PrevNumber は直前のエピソードの名指し方を検証する。表示用
+// TestNewDBEpisodeListItem_PrevNumberは直前のエピソードの名指し方を検証する。表示用
 // 話数があればそれを、無ければ数値話数を使い、直前のエピソード自体が無ければ空文字列とする
 // (テンプレートはこれを欠落として描画する)。
 func TestNewDBEpisodeListItem_PrevNumber(t *testing.T) {
@@ -325,22 +300,16 @@ func TestNewDBEpisodeListItem_PrevNumber(t *testing.T) {
 			})
 
 			if got.PrevNumber != tt.want {
-				t.Errorf("PrevNumber = %q, want %q", got.PrevNumber, tt.want)
+				t.Errorf("PrevNumber = %q、期待値 = %q", got.PrevNumber, tt.want)
 			}
 		})
 	}
 }
 
-// TestNewDBEpisodeGenerationSummary verifies that the notice carries the published count
-// and maximum generatable episode number as given. It formats the work's expected episode
-// count, leaving it empty when the work records
-// none so the template can say so in words. A recorded 0 is a count the work states, not a
-// gap, so it must survive as "0" rather than collapsing into the unset case.
-//
-// [Ja] TestNewDBEpisodeGenerationSummary は案内が公開中のエピソード数と生成可能な最大話数を
+// TestNewDBEpisodeGenerationSummaryは案内が公開中のエピソード数と生成可能な最大話数を
 // そのまま持ち、作品の予定総話数を整形すること、および作品が記録していない場合は空のまま
 // 残し、テンプレートが言葉で示せるように
-// することを検証する。記録された 0 は作品が述べた件数であって欠落ではないため、未登録と同一視
+// することを検証する。記録された0は作品が述べた件数であって欠落ではないため、未登録と同一視
 // されず "0" のまま残ること。
 func TestNewDBEpisodeGenerationSummary(t *testing.T) {
 	t.Parallel()
@@ -354,7 +323,7 @@ func TestNewDBEpisodeGenerationSummary(t *testing.T) {
 		wantPlannedCount string
 	}{
 		{name: "予定総話数あり", plannedCount: &plannedCount, wantPlannedCount: "12"},
-		{name: "予定総話数 0 は未登録ではなく 0 として扱う", plannedCount: &zeroPlannedCount, wantPlannedCount: "0"},
+		{name: "予定総話数0は未登録ではなく0として扱う", plannedCount: &zeroPlannedCount, wantPlannedCount: "0"},
 		{name: "予定総話数なしは空文字列", plannedCount: nil, wantPlannedCount: ""},
 	}
 
@@ -365,23 +334,19 @@ func TestNewDBEpisodeGenerationSummary(t *testing.T) {
 			got := NewDBEpisodeGenerationSummary(tt.plannedCount, 5, 9)
 
 			if got.PlannedCount != tt.wantPlannedCount {
-				t.Errorf("PlannedCount = %q, want %q", got.PlannedCount, tt.wantPlannedCount)
+				t.Errorf("PlannedCount = %q、期待値 = %q", got.PlannedCount, tt.wantPlannedCount)
 			}
 			if got.PublishedEpisodeCount != 5 {
-				t.Errorf("PublishedEpisodeCount = %d, want 5", got.PublishedEpisodeCount)
+				t.Errorf("PublishedEpisodeCount = %d、期待値 = 5", got.PublishedEpisodeCount)
 			}
 			if got.MaxGeneratableEpisodeNumber != 9 {
-				t.Errorf("MaxGeneratableEpisodeNumber = %d, want 9", got.MaxGeneratableEpisodeNumber)
+				t.Errorf("MaxGeneratableEpisodeNumber = %d、期待値 = 9", got.MaxGeneratableEpisodeNumber)
 			}
 		})
 	}
 }
 
-// TestNewDBEpisodeListItem_RawNumberFormat verifies that a whole numeric number renders
-// without a decimal part while a fractional one keeps it, so the list shows "2" rather than
-// "2.000000" for a regular episode.
-//
-// [Ja] TestNewDBEpisodeListItem_RawNumberFormat は整数の数値話数が小数部なしで、小数の話数は
+// TestNewDBEpisodeListItem_RawNumberFormatは整数の数値話数が小数部なしで、小数の話数は
 // 小数部を保って描画されることを検証する。通常の話が "2.000000" ではなく "2" と表示される。
 func TestNewDBEpisodeListItem_RawNumberFormat(t *testing.T) {
 	t.Parallel()
@@ -392,7 +357,7 @@ func TestNewDBEpisodeListItem_RawNumberFormat(t *testing.T) {
 		want      string
 	}{
 		{name: "整数", rawNumber: 2, want: "2"},
-		{name: "0.5 話", rawNumber: 2.5, want: "2.5"},
+		{name: "0.5話", rawNumber: 2.5, want: "2.5"},
 		{name: "0", rawNumber: 0, want: "0"},
 	}
 
@@ -403,18 +368,14 @@ func TestNewDBEpisodeListItem_RawNumberFormat(t *testing.T) {
 			got := NewDBEpisodeListItem(&model.Episode{ID: 1, WorkID: 1, RawNumber: &tt.rawNumber})
 
 			if got.RawNumber != tt.want {
-				t.Errorf("RawNumber = %q, want %q", got.RawNumber, tt.want)
+				t.Errorf("RawNumber = %q、期待値 = %q", got.RawNumber, tt.want)
 			}
 		})
 	}
 }
 
-// TestNewDBEpisodeListItem_StatusFromTimestamps verifies that the display status is derived
-// from the episode's unpublished_at / deleted_at timestamps, with deleted_at taking
-// precedence over unpublished_at.
-//
-// [Ja] TestNewDBEpisodeListItem_StatusFromTimestamps は表示ステータスがエピソードの
-// unpublished_at / deleted_at タイムスタンプから導出され、deleted_at が unpublished_at より
+// TestNewDBEpisodeListItem_StatusFromTimestampsは表示ステータスがエピソードの
+// unpublished_at / deleted_atタイムスタンプから導出され、deleted_atがunpublished_atより
 // 優先されることを検証する。
 func TestNewDBEpisodeListItem_StatusFromTimestamps(t *testing.T) {
 	t.Parallel()
@@ -429,21 +390,21 @@ func TestNewDBEpisodeListItem_StatusFromTimestamps(t *testing.T) {
 		want          PublishingStatus
 	}{
 		{
-			name: "両方 nil なら published",
+			name: "両方nilならpublished",
 			want: PublishingStatusPublished,
 		},
 		{
-			name:          "unpublished_at のみなら archived",
+			name:          "unpublished_atのみならarchived",
 			unpublishedAt: &unpublishedAt,
 			want:          PublishingStatusArchived,
 		},
 		{
-			name:      "deleted_at のみなら deleted",
+			name:      "deleted_atのみならdeleted",
 			deletedAt: &deletedAt,
 			want:      PublishingStatusDeleted,
 		},
 		{
-			name:          "両方あれば deleted_at が優先される",
+			name:          "両方あればdeleted_atが優先される",
 			unpublishedAt: &unpublishedAt,
 			deletedAt:     &deletedAt,
 			want:          PublishingStatusDeleted,
@@ -462,17 +423,13 @@ func TestNewDBEpisodeListItem_StatusFromTimestamps(t *testing.T) {
 			})
 
 			if got.Status != tt.want {
-				t.Errorf("Status = %q, want %q", got.Status, tt.want)
+				t.Errorf("Status = %q、期待値 = %q", got.Status, tt.want)
 			}
 		})
 	}
 }
 
-// TestNewDBEpisodeListItems verifies that a page of episodes keeps its order and length
-// through the conversion, since the list renders the rows in the order the repository
-// returned them.
-//
-// [Ja] TestNewDBEpisodeListItems は 1 ページ分のエピソードが変換を通しても順序と件数を保つ
+// TestNewDBEpisodeListItemsは1ページ分のエピソードが変換を通しても順序と件数を保つ
 // ことを検証する。一覧はリポジトリが返した順で行を描画するため。
 func TestNewDBEpisodeListItems(t *testing.T) {
 	t.Parallel()
@@ -484,25 +441,20 @@ func TestNewDBEpisodeListItems(t *testing.T) {
 	})
 
 	if len(got) != 3 {
-		t.Fatalf("len = %d, want 3", len(got))
+		t.Fatalf("len = %d、期待値 = 3", len(got))
 	}
 
 	wantIDs := []EpisodeID{3, 1, 2}
 	for i, want := range wantIDs {
 		if got[i].ID != want {
-			t.Errorf("[%d].ID = %q, want %q", i, got[i].ID, want)
+			t.Errorf("[%d].ID = %q、期待値 = %q", i, got[i].ID, want)
 		}
 	}
 }
 
-// TestNewDBEpisodeManualCreationRestriction verifies that the domain state projects onto the
-// reason the page states, including the order the two conditions are resolved in: a work that
-// satisfies both reports the filled count. The page renders one warning per value, so a
-// projection that drifted would state the wrong reason or none at all.
-//
-// [Ja] TestNewDBEpisodeManualCreationRestriction は、ドメインの状態がページの述べる理由へ
-// 射影されること、および 2 つの条件を解決する順序 (両方に当てはまる作品は予定話数到達を報告
-// する) を検証する。ページは値ごとに 1 つの警告を描画するため、射影がずれると誤った理由を
+// TestNewDBEpisodeManualCreationRestrictionは、ドメインの状態がページの述べる理由へ
+// 射影されること、および2つの条件を解決する順序 (両方に当てはまる作品は予定話数到達を報告
+// する) を検証する。ページは値ごとに1つの警告を描画するため、射影がずれると誤った理由を
 // 述べるか、何も述べなくなる。
 func TestNewDBEpisodeManualCreationRestriction(t *testing.T) {
 	t.Parallel()
@@ -540,25 +492,19 @@ func TestNewDBEpisodeManualCreationRestriction(t *testing.T) {
 
 			got := NewDBEpisodeManualCreationRestriction(tt.state)
 			if got != tt.want {
-				t.Errorf("NewDBEpisodeManualCreationRestriction() = %q, want %q", got, tt.want)
+				t.Errorf("NewDBEpisodeManualCreationRestriction() = %q、期待値 = %q", got, tt.want)
 			}
 			if got.Restricted() != (tt.want != DBEpisodeManualCreationAllowed) {
-				t.Errorf("Restricted() = %v, want %v", got.Restricted(), tt.want != DBEpisodeManualCreationAllowed)
+				t.Errorf("Restricted() = %v、期待値 = %v", got.Restricted(), tt.want != DBEpisodeManualCreationAllowed)
 			}
 		})
 	}
 }
 
-// TestNewDBEpisodeFormInputFromEpisode verifies that a stored episode reaches the edit form
-// as the strings its fields render: unset optional columns become empty inputs, the numeric
-// number keeps its fraction without gaining trailing zeros, the version the form carries
-// keeps the sub-second digits that separate two writes made within the same second, and a NULL
-// updated_at is represented by an explicit version rather than by an absent precondition.
-//
-// [Ja] TestNewDBEpisodeFormInputFromEpisode は、保存済みのエピソードが編集フォームの各欄が
+// TestNewDBEpisodeFormInputFromEpisodeは、保存済みのエピソードが編集フォームの各欄が
 // 描画する文字列として届くことを検証する。未設定の任意カラムは空の入力欄になり、数値話数は
-// 末尾の 0 を増やさずに小数を保ち、フォームが運ぶ版は同一秒内の 2 つの書き込みを区別する
-// 秒未満の桁を保つ。NULL の updated_at は、前提条件の欠落ではなく明示的な版で表す。
+// 末尾の0を増やさずに小数を保ち、フォームが運ぶ版は同一秒内の2つの書き込みを区別する
+// 秒未満の桁を保つ。NULLのupdated_atは、前提条件の欠落ではなく明示的な版で表す。
 func TestNewDBEpisodeFormInputFromEpisode(t *testing.T) {
 	t.Parallel()
 
@@ -607,18 +553,13 @@ func TestNewDBEpisodeFormInputFromEpisode(t *testing.T) {
 
 			got := NewDBEpisodeFormInputFromEpisode(tt.episode)
 			if got != tt.want {
-				t.Errorf("NewDBEpisodeFormInputFromEpisode() = %+v, want %+v", got, tt.want)
+				t.Errorf("NewDBEpisodeFormInputFromEpisode() = %+v、期待値 = %+v", got, tt.want)
 			}
 		})
 	}
 }
 
-// TestNewDBEpisodeFormInputFromEpisode_VersionRoundTrips verifies the property the update side
-// relies on: the version the form carries parses back to the instant it was read from, whatever
-// offset the stored time arrives in. Without it the comparison against the stored column could
-// never match and every submit would be reported as a conflict.
-//
-// [Ja] TestNewDBEpisodeFormInputFromEpisode_VersionRoundTrips は更新側が依存する性質を検証
+// TestNewDBEpisodeFormInputFromEpisode_VersionRoundTripsは更新側が依存する性質を検証
 // する。フォームが運ぶ版は、保存済みの時刻がどのオフセットで届いても、読み取った時刻へ
 // パースし直せる。これが崩れると保存済みカラムとの比較が永久に一致せず、すべての送信が
 // 競合として報告される。
@@ -630,8 +571,8 @@ func TestNewDBEpisodeFormInputFromEpisode_VersionRoundTrips(t *testing.T) {
 		updatedAt time.Time
 	}{
 		{name: "UTC", updatedAt: time.Date(2026, 8, 12, 9, 30, 15, 123456000, time.UTC)},
-		{name: "UTC 以外のオフセット", updatedAt: time.Date(2026, 8, 12, 18, 30, 15, 123456000, time.FixedZone("JST", 9*60*60))},
-		{name: "秒未満が 0", updatedAt: time.Date(2026, 8, 12, 9, 30, 15, 0, time.UTC)},
+		{name: "UTC以外のオフセット", updatedAt: time.Date(2026, 8, 12, 18, 30, 15, 123456000, time.FixedZone("JST", 9*60*60))},
+		{name: "秒未満が0", updatedAt: time.Date(2026, 8, 12, 9, 30, 15, 0, time.UTC)},
 	}
 
 	for _, tt := range tests {
@@ -642,10 +583,10 @@ func TestNewDBEpisodeFormInputFromEpisode_VersionRoundTrips(t *testing.T) {
 
 			parsed, err := time.Parse(formVersionLayout, got.UpdatedAt)
 			if err != nil {
-				t.Fatalf("版 %q をパースできません: %v", got.UpdatedAt, err)
+				t.Fatalf("版%qをパースできません: %v", got.UpdatedAt, err)
 			}
 			if !parsed.Equal(tt.updatedAt) {
-				t.Errorf("版 %q は %v へ戻りました, want %v", got.UpdatedAt, parsed, tt.updatedAt)
+				t.Errorf("版%qは%vへ戻りました、期待値 = %v", got.UpdatedAt, parsed, tt.updatedAt)
 			}
 		})
 	}

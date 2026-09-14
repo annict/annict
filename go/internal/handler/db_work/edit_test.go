@@ -15,9 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestEdit verifies the work edit form renders with its existing values pre-filled.
-//
-// [Ja] TestEdit はDB作品編集フォームが既存値を埋めて描画されることを検証する。
+// TestEditはDB作品編集フォームが既存値を埋めて描画されることを検証する。
 func TestEdit(t *testing.T) {
 	t.Parallel()
 
@@ -36,7 +34,7 @@ func TestEdit(t *testing.T) {
 			media = 1
 		WHERE id = $1
 	`, int64(workID)); err != nil {
-		t.Fatalf("works のフィールド設定に失敗: %v", err)
+		t.Fatalf("worksのフィールド設定に失敗: %v", err)
 	}
 
 	handler := newTestHandler(t, db, tx)
@@ -49,16 +47,13 @@ func TestEdit(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
-		t.Fatalf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
 	expectedContents := []string{
-		// The DB pages carry the " | Annict DB" title suffix so they stay distinguishable from
-		// the public pages in browser tabs.
-		//
-		// [Ja] DB のページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
+		// DBのページはブラウザのタブで公開画面と区別できるよう " | Annict DB" の
 		// タイトルサフィックスを持つ。
 		"<title>作品編集 | 編集対象アニメ | Annict DB</title>",
 		"<form",
@@ -68,7 +63,7 @@ func TestEdit(t *testing.T) {
 		"csrf_token",
 		`value="編集対象アニメ"`,                   // タイトルが初期値として埋まる
 		`value="https://example.dev/anime"`, // 公式サイトURLが埋まる
-		"あらすじテキスト",                          // あらすじが textarea に埋まる
+		"あらすじテキスト",                          // あらすじがtextareaに埋まる
 		`value="anime_official"`,            // Twitterユーザー名が埋まる
 		`value="2024" selected`,             // シーズン年が選択済み
 		fmt.Sprintf(`href="/works/%d"`, int64(workID)),
@@ -76,19 +71,17 @@ func TestEdit(t *testing.T) {
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("response doesn't contain expected string: %q", expected)
+			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
 		}
 	}
 
 	expectedContentType := "text/html; charset=utf-8"
 	if ct := rr.Header().Get("Content-Type"); ct != expectedContentType {
-		t.Errorf("handler returned wrong content-type: got %v want %v", ct, expectedContentType)
+		t.Errorf("Content-Type = %v、期待値 = %v", ct, expectedContentType)
 	}
 }
 
-// TestEdit_NotFound verifies a nonexistent work ID returns 404.
-//
-// [Ja] TestEdit_NotFound は存在しない作品IDで404を返すことを検証する。
+// TestEdit_NotFoundは存在しない作品IDで404を返すことを検証する。
 func TestEdit_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -103,14 +96,12 @@ func TestEdit_NotFound(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusNotFound {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 	}
 	assertNotFoundPage(t, rr)
 }
 
-// TestEdit_InvalidID verifies a non-numeric ID returns 404.
-//
-// [Ja] TestEdit_InvalidID は数値でないIDで404を返すことを検証する。
+// TestEdit_InvalidIDは数値でないIDで404を返すことを検証する。
 func TestEdit_InvalidID(t *testing.T) {
 	t.Parallel()
 
@@ -125,17 +116,13 @@ func TestEdit_InvalidID(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusNotFound {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 	}
 	assertNotFoundPage(t, rr)
 }
 
-// TestEdit_RequiresCommitter verifies the edit form route is protected by the
-// committer role (committer gets 200, a regular user 403, and an unauthenticated
-// request is redirected to sign-in).
-//
-// [Ja] TestEdit_RequiresCommitter は編集フォームのルートが committer ロールで保護されている
-// ことを検証する (committer は 200、一般ユーザーは 403、未認証はサインインへリダイレクト)。
+// TestEdit_RequiresCommitterは編集フォームのルートがcommitterロールで保護されている
+// ことを検証する (committerは200、一般ユーザーは403、未認証はサインインへリダイレクト)。
 func TestEdit_RequiresCommitter(t *testing.T) {
 	t.Parallel()
 
@@ -183,16 +170,13 @@ func TestEdit_RequiresCommitter(t *testing.T) {
 			r.ServeHTTP(rr, req)
 
 			if rr.Code != tt.wantStatus {
-				t.Errorf("status = %d, want %d", rr.Code, tt.wantStatus)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatus)
 			}
 		})
 	}
 }
 
-// TestEdit_DocumentTitleWithoutWorkName verifies that a work whose title is only whitespace
-// leaves the document title as the page name alone, the same name the heading falls back to.
-//
-// [Ja] TestEdit_DocumentTitleWithoutWorkName は、タイトルが空白文字だけの作品では文書タイトルが
+// TestEdit_DocumentTitleWithoutWorkNameは、タイトルが空白文字だけの作品では文書タイトルが
 // 画面名だけになることを検証する。見出しがフォールバックする名前と同じものになる。
 func TestEdit_DocumentTitleWithoutWorkName(t *testing.T) {
 	t.Parallel()
@@ -209,7 +193,7 @@ func TestEdit_DocumentTitleWithoutWorkName(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusOK {
-		t.Fatalf("handler returned wrong status code: got %v want %v", status, http.StatusOK)
+		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
 	}
 
 	body := rr.Body.String()
@@ -218,7 +202,7 @@ func TestEdit_DocumentTitleWithoutWorkName(t *testing.T) {
 		">作品編集</h1>",
 	} {
 		if !strings.Contains(body, expected) {
-			t.Errorf("response doesn't contain expected string: %q", expected)
+			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
 		}
 	}
 }

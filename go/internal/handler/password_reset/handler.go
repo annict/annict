@@ -1,4 +1,4 @@
-// Package password_reset はパスワードリセット機能を提供します
+// Package password_resetはパスワードリセット機能を提供します
 package password_reset
 
 import (
@@ -9,7 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler はパスワードリセット申請機能のハンドラーです
+// Handlerはパスワードリセット申請機能のハンドラーです
 type Handler struct {
 	cfg                *config.Config
 	sessionMgr         *session.Manager
@@ -18,7 +18,7 @@ type Handler struct {
 	createTokenUseCase *usecase.CreatePasswordResetTokenUsecase
 }
 
-// NewHandler は新しいHandlerを作成します
+// NewHandlerは新しいHandlerを作成します
 func NewHandler(cfg *config.Config, sessionMgr *session.Manager, limiter *ratelimit.Limiter, turnstileClient turnstile.Verifier, createTokenUseCase *usecase.CreatePasswordResetTokenUsecase) *Handler {
 	return &Handler{
 		cfg:                cfg,

@@ -16,10 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New renders the archive-confirmation page of a single episode in the Annict DB admin UI
-// (GET /db/episodes/:id/archive/new).
-//
-// [Ja] Annict DB 管理画面の単一エピソードの非公開確認ページ
+// NewはAnnict DB管理画面の単一エピソードの非公開確認ページ
 // (GET /db/episodes/:id/archive/new) を描画する。
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
@@ -71,12 +68,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// setNewTitle gives meta a document title that starts with the page name, followed by the
-// episode and then the work when it has a name, as the episode edit page does. The episode
-// remains when the work has no name, so confirmation pages whose episode labels differ stay
-// distinguishable in tabs, history, and assistive technology.
-//
-// [Ja] setNewTitle は meta に、画面名から始まり、エピソード、名前があれば作品が続く文書
+// setNewTitleはmetaに、画面名から始まり、エピソード、名前があれば作品が続く文書
 // タイトルを設定する (エピソード編集ページと同じ形)。作品に表示名が無くてもエピソードを残し、
 // エピソードのラベルが異なる確認ページをタブ・履歴・支援技術で区別できるようにする。
 func setNewTitle(ctx context.Context, meta *viewmodel.PageMeta, episodeIdentifier string, workName string) {
@@ -90,14 +82,9 @@ func setNewTitle(ctx context.Context, meta *viewmodel.PageMeta, episodeIdentifie
 	meta.SetDBTitle(ctx, "db_episodes_archive_new_document_title", templateData)
 }
 
-// newPath builds the representative GET path of an episode's archive-confirmation page, which
-// the page takes its og:url from. It is built from the parsed episode ID rather than from the
-// request path so that links spelling the ID differently (a leading zero, say) still resolve to
-// one representative URL.
-//
-// [Ja] newPath はエピソードの非公開確認ページの代表 GET パスを生成する。ページはここから
-// og:url を取る。リクエストパスではなくパース済みのエピソード ID から組み立てることで、ID の
-// 表記が違うリンク (先頭ゼロなど) でも 1 つの代表 URL に収まるようにする。
+// newPathはエピソードの非公開確認ページの代表GETパスを生成する。ページはここから
+// og:urlを取る。リクエストパスではなくパース済みのエピソードIDから組み立てることで、IDの
+// 表記が違うリンク (先頭ゼロなど) でも1つの代表URLに収まるようにする。
 func newPath(episodeID model.EpisodeID) string {
 	return fmt.Sprintf("/db/episodes/%d/archive/new", int64(episodeID))
 }

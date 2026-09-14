@@ -10,12 +10,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestGetDBWorkEditUsecase_Execute_ReturnsWork verifies the usecase returns the
-// target work and the form options. It is a read-only usecase that opens no
-// transaction, so the test uses SetupTx.
-//
-// [Ja] TestGetDBWorkEditUsecase_Execute_ReturnsWork は対象 work とフォーム選択肢を返すことを
-// 検証する。本 UseCase は読み取りのみでトランザクションを開かないため SetupTx を使う。
+// TestGetDBWorkEditUsecase_Execute_ReturnsWorkは対象workとフォーム選択肢を返すことを
+// 検証する。本UseCaseは読み取りのみでトランザクションを開かないためSetupTxを使う。
 func TestGetDBWorkEditUsecase_Execute_ReturnsWork(t *testing.T) {
 	t.Parallel()
 
@@ -37,48 +33,45 @@ func TestGetDBWorkEditUsecase_Execute_ReturnsWork(t *testing.T) {
 			started_on = '2025-07-01'
 		WHERE id = $1
 	`, int64(workID)); err != nil {
-		t.Fatalf("works のフィールド設定に失敗: %v", err)
+		t.Fatalf("worksのフィールド設定に失敗: %v", err)
 	}
 
 	output, err := uc.Execute(context.Background(), GetDBWorkEditInput{WorkID: workID})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	if output.Work == nil {
-		t.Fatal("Work should not be nil")
+		t.Fatal("Workがnilだった")
 	}
 	if output.Work.ID != workID {
-		t.Errorf("Work.ID = %d, want %d", output.Work.ID, workID)
+		t.Errorf("Work.ID = %d、期待値 = %d", output.Work.ID, workID)
 	}
 	if output.Work.Title != "編集UseCaseテスト" {
-		t.Errorf("Work.Title = %q, want %q", output.Work.Title, "編集UseCaseテスト")
+		t.Errorf("Work.Title = %q、期待値 = %q", output.Work.Title, "編集UseCaseテスト")
 	}
 	if output.Work.OfficialSiteURL != "https://example.dev" {
-		t.Errorf("Work.OfficialSiteURL = %q, want %q", output.Work.OfficialSiteURL, "https://example.dev")
+		t.Errorf("Work.OfficialSiteURL = %q、期待値 = %q", output.Work.OfficialSiteURL, "https://example.dev")
 	}
 	if output.Work.TwitterUsername == nil || *output.Work.TwitterUsername != "handle" {
-		t.Errorf("Work.TwitterUsername = %v, want handle", output.Work.TwitterUsername)
+		t.Errorf("Work.TwitterUsername = %v、期待値 = handle", output.Work.TwitterUsername)
 	}
 	if output.Work.ScTid == nil || *output.Work.ScTid != 42 {
-		t.Errorf("Work.ScTid = %v, want 42", output.Work.ScTid)
+		t.Errorf("Work.ScTid = %v、期待値 = 42", output.Work.ScTid)
 	}
 	if output.Work.SeasonYear == nil || *output.Work.SeasonYear != 2025 {
-		t.Errorf("Work.SeasonYear = %v, want 2025", output.Work.SeasonYear)
+		t.Errorf("Work.SeasonYear = %v、期待値 = 2025", output.Work.SeasonYear)
 	}
 	if output.Work.StartedOn == nil {
-		t.Error("Work.StartedOn should not be nil")
+		t.Error("Work.StartedOnがnilだった")
 	}
 	if output.NumberFormats == nil {
-		t.Error("NumberFormats should not be nil (empty slice is acceptable)")
+		t.Error("NumberFormatsがnilだった (空のスライスは可)")
 	}
 }
 
-// TestGetDBWorkEditUsecase_Execute_NotFound verifies a nonexistent work returns
-// AppErrCodeResourceNotFound.
-//
-// [Ja] TestGetDBWorkEditUsecase_Execute_NotFound は存在しない work で
-// AppErrCodeResourceNotFound を返すことを検証する。
+// TestGetDBWorkEditUsecase_Execute_NotFoundは存在しないworkで
+// AppErrCodeResourceNotFoundを返すことを検証する。
 func TestGetDBWorkEditUsecase_Execute_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -90,13 +83,13 @@ func TestGetDBWorkEditUsecase_Execute_NotFound(t *testing.T) {
 
 	_, err := uc.Execute(context.Background(), GetDBWorkEditInput{WorkID: model.WorkID(999999999)})
 	if err == nil {
-		t.Fatal("expected error, got nil")
+		t.Fatal("エラーを期待したが、nilだった")
 	}
 	ae := model.AsAppError(err)
 	if ae == nil {
-		t.Fatalf("expected *model.AppError, got %T", err)
+		t.Fatalf("エラーの型 = %T、期待値 = *model.AppError", err)
 	}
 	if ae.Code != model.AppErrCodeResourceNotFound {
-		t.Errorf("AppError.Code = %v, want %v", ae.Code, model.AppErrCodeResourceNotFound)
+		t.Errorf("AppError.Code = %v、期待値 = %v", ae.Code, model.AppErrCodeResourceNotFound)
 	}
 }

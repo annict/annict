@@ -12,11 +12,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// newDeleteEpisodeUsecase wires the delete usecase against the shared test DB, on the pool rather
-// than on a test transaction for the reason newArchiveEpisodeUsecase states.
-//
-// [Ja] newDeleteEpisodeUsecase は共有テスト DB に対してエピソード削除 UseCase を組み立てる。
-// newArchiveEpisodeUsecase が述べる理由により、テスト用トランザクションではなくプールに対して
+// newDeleteEpisodeUsecaseは共有テストDBに対してエピソード削除UseCaseを組み立てる。
+// newArchiveEpisodeUsecaseが述べる理由により、テスト用トランザクションではなくプールに対して
 // 組み立てる。
 func newDeleteEpisodeUsecase(db *sql.DB) *DeleteEpisodeUsecase {
 	queries := query.New(db)
@@ -27,22 +24,14 @@ func newDeleteEpisodeUsecase(db *sql.DB) *DeleteEpisodeUsecase {
 	)
 }
 
-// unsavedDeleteActor is the administrator the delete tests authorize with. Deleting is admin-only
-// while archiving is open to committers (ADR 0009), so these tests cannot reuse the editor
-// unsavedCreateActor returns. The row is never persisted: the delete records no db_activity, so
-// nothing references the user.
-//
-// [Ja] unsavedDeleteActor は削除テストが認可に使う管理者。非公開が committer に開かれているのに
-// 対し削除は admin 専用のため (ADR 0009)、これらのテストは unsavedCreateActor が返す編集者を
-// 使えない。行は永続化しない。削除は db_activity を作らず、ユーザーを参照するものが無いため。
+// unsavedDeleteActorは削除テストが認可に使う管理者。非公開がcommitterに開かれているのに
+// 対し削除はadmin専用のため (ADR 0009)、これらのテストはunsavedCreateActorが返す編集者を
+// 使えない。行は永続化しない。削除はdb_activityを作らず、ユーザーを参照するものが無いため。
 func unsavedDeleteActor() *model.User {
 	return &model.User{ID: 1, Role: model.RoleAdmin}
 }
 
-// readDeletedEpisodeState returns the state column the delete writes, so a test can tell a
-// deleted episode from one the submit left alone.
-//
-// [Ja] readDeletedEpisodeState は削除が書く状態カラムを返す。削除されたエピソードと、送信が手を
+// readDeletedEpisodeStateは削除が書く状態カラムを返す。削除されたエピソードと、送信が手を
 // 触れなかったエピソードをテストが区別できるようにするため。
 func readDeletedEpisodeState(t *testing.T, db *sql.DB, episodeID model.EpisodeID) sql.NullTime {
 	t.Helper()
@@ -55,17 +44,11 @@ func readDeletedEpisodeState(t *testing.T, db *sql.DB, episodeID model.EpisodeID
 	return deletedAt
 }
 
-// TestDeleteEpisodeUsecase_Execute_DeletesEpisodeAndAnime verifies deleting a mapped, published
-// episode sets episodes.deleted_at (the state source of truth) and dual-writes the derived
-// anime.status = deleted, and that a phase 2 sync right after reports Unchanged (the delete and
-// the reconciliation derive the same status from deleted_at, so the sync does not clobber the
-// deleted anime back to published).
-//
-// [Ja] TestDeleteEpisodeUsecase_Execute_DeletesEpisodeAndAnime は、マッピング済みで公開中の
-// エピソードを削除すると episodes.deleted_at (状態の正本) が立ち、導出された anime.status =
-// deleted が両書きされること、および直後のフェーズ 2 同期が Unchanged を報告することを検証する
-// (削除とリコンシリエーションが deleted_at から同じ status を導出するため、同期は削除済み anime
-// を published に戻さない)。
+// TestDeleteEpisodeUsecase_Execute_DeletesEpisodeAndAnimeは、マッピング済みで公開中の
+// エピソードを削除するとepisodes.deleted_at (状態の正本) が立ち、導出されたanime.status =
+// deletedが両書きされること、および直後のフェーズ2同期がUnchangedを報告することを検証する
+// (削除とリコンシリエーションがdeleted_atから同じstatusを導出するため、同期は削除済みanime
+// をpublishedに戻さない)。
 func TestDeleteEpisodeUsecase_Execute_DeletesEpisodeAndAnime(t *testing.T) {
 	t.Parallel()
 
@@ -83,53 +66,46 @@ func TestDeleteEpisodeUsecase_Execute_DeletesEpisodeAndAnime(t *testing.T) {
 		WHERE id = $1`,
 		int64(episodeAnimeID),
 	); err != nil {
-		t.Fatalf("anime の準備に失敗: %v", err)
+		t.Fatalf("animeの準備に失敗: %v", err)
 	}
 
 	output, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: unsavedDeleteActor()})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if output.EpisodeID != episodeID || output.WorkID != workID {
-		t.Errorf("output = %+v, want {EpisodeID:%d WorkID:%d}", output, int64(episodeID), int64(workID))
+		t.Errorf("output = %+v、期待値 = {EpisodeID:%d WorkID:%d}", output, int64(episodeID), int64(workID))
 	}
 
 	if deletedAt := readDeletedEpisodeState(t, db, episodeID); !deletedAt.Valid {
-		t.Error("episodes.deleted_at = NULL, want 削除の時刻")
+		t.Error("episodes.deleted_at = NULL、期待値 = 削除の時刻")
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(context.Background(), episodeAnimeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Status != model.AnimeStatusDeleted {
-		t.Errorf("anime.Status = %q, want %q", anime.Status, model.AnimeStatusDeleted)
+		t.Errorf("anime.Status = %q、期待値 = %q", anime.Status, model.AnimeStatusDeleted)
 	}
-	// The delete maps status alone, so anime-owned content stays byte-for-byte unchanged. The
-	// row survives the delete because animes has no physical delete (ADR 0004).
-	//
-	// [Ja] 削除が写像するのは status だけなので、anime 固有の内容はそのまま保持される。animes は
+	// 削除が写像するのはstatusだけなので、anime固有の内容はそのまま保持される。animesは
 	// 物理削除を持たない (ADR 0004) ため、行は削除後も残る。
 	if anime.Title.String != "編集前のタイトル" {
-		t.Errorf("anime.Title = %q, want %q", anime.Title.String, "編集前のタイトル")
+		t.Errorf("anime.Title = %q、期待値 = %q", anime.Title.String, "編集前のタイトル")
 	}
 
 	syncUC := newSyncEpisodesUsecase(db)
 	result, err := syncUC.Execute(context.Background(), SyncEpisodesToAnimesInput{EpisodeIDs: []model.EpisodeID{episodeID}})
 	if err != nil {
-		t.Fatalf("sync Execute() error = %v", err)
+		t.Fatalf("同期のExecute()のエラー = %v", err)
 	}
 	if result.Processed != 1 || result.Created != 0 || result.Updated != 0 || result.Unchanged != 1 {
-		t.Fatalf("sync result = %+v, want {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
+		t.Fatalf("同期の結果 = %+v、期待値 = {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
 	}
 }
 
-// TestDeleteEpisodeUsecase_Execute_DeletesArchivedEpisode covers the state the archive left an
-// episode in. An archived episode is deletable, unlike the archive submit which refuses it, so
-// the administrator does not have to re-publish a row before removing it.
-//
-// [Ja] TestDeleteEpisodeUsecase_Execute_DeletesArchivedEpisode は非公開がエピソードに残した状態
+// TestDeleteEpisodeUsecase_Execute_DeletesArchivedEpisodeは非公開がエピソードに残した状態
 // を検証する。非公開の送信が拒否するのとは異なり、非公開のエピソードも削除できる。管理者が行を
 // 消す前に再公開しなくて済むようにするため。
 func TestDeleteEpisodeUsecase_Execute_DeletesArchivedEpisode(t *testing.T) {
@@ -143,29 +119,22 @@ func TestDeleteEpisodeUsecase_Execute_DeletesArchivedEpisode(t *testing.T) {
 	archiveFixtureEpisode(t, db, episodeID)
 
 	if _, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: unsavedDeleteActor()}); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	if deletedAt := readDeletedEpisodeState(t, db, episodeID); !deletedAt.Valid {
-		t.Error("episodes.deleted_at = NULL, want 削除の時刻")
+		t.Error("episodes.deleted_at = NULL、期待値 = 削除の時刻")
 	}
-	// The archive timestamp is left where it is: deleted_at wins in DerivedStatus, and keeping
-	// unpublished_at records that the row was already out of the counter when it was deleted.
-	//
-	// [Ja] 非公開の時刻はそのまま残す。DerivedStatus では deleted_at が優先され、unpublished_at
+	// 非公開の時刻はそのまま残す。DerivedStatusではdeleted_atが優先され、unpublished_at
 	// を残すことで、削除時点でその行が既にカウンターから外れていたことが記録される。
 	if unpublishedAt := readArchivedEpisodeState(t, db, episodeID); !unpublishedAt.Valid {
-		t.Error("episodes.unpublished_at = NULL, want 非公開の時刻のまま")
+		t.Error("episodes.unpublished_at = NULL、期待値 = 非公開の時刻のまま")
 	}
 }
 
-// TestDeleteEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode covers an episode with no anime
-// yet: only the episodes row is written, and the phase 2 sync creates the anime later with the
-// status the deleted episode now derives.
-//
-// [Ja] TestDeleteEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode は、まだ anime を持たない
-// エピソードを検証する。書かれるのは episodes の行だけで、anime は後でフェーズ 2 の同期が、
-// 削除されたエピソードが導出する status で作成する。
+// TestDeleteEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisodeは、まだanimeを持たない
+// エピソードを検証する。書かれるのはepisodesの行だけで、animeは後でフェーズ2の同期が、
+// 削除されたエピソードが導出するstatusで作成する。
 func TestDeleteEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing.T) {
 	t.Parallel()
 
@@ -176,29 +145,24 @@ func TestDeleteEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing.T)
 	episodeID := insertUpdateTargetEpisode(t, db, workID, sql.NullInt64{}, 100)
 
 	if _, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: unsavedDeleteActor()}); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	if deletedAt := readDeletedEpisodeState(t, db, episodeID); !deletedAt.Valid {
-		t.Error("episodes.deleted_at = NULL, want 削除の時刻")
+		t.Error("episodes.deleted_at = NULL、期待値 = 削除の時刻")
 	}
 
 	var animeID sql.NullInt64
 	if err := db.QueryRow(`SELECT anime_id FROM episodes WHERE id = $1`, int64(episodeID)).Scan(&animeID); err != nil {
-		t.Fatalf("episodes.anime_id の読み込みに失敗: %v", err)
+		t.Fatalf("episodes.anime_idの読み込みに失敗: %v", err)
 	}
 	if animeID.Valid {
-		t.Errorf("episodes.anime_id = %d, want NULL のまま", animeID.Int64)
+		t.Errorf("episodes.anime_id = %d、期待値 = NULLのまま", animeID.Int64)
 	}
 }
 
-// TestDeleteEpisodeUsecase_Execute_RequiresAdmin verifies authorization belongs to the write
-// usecase as well as the HTTP boundary, and that it is the admin rule rather than the committer
-// one the archive endpoints apply: an editor who may archive an episode may not delete it
-// (ADR 0009).
-//
-// [Ja] TestDeleteEpisodeUsecase_Execute_RequiresAdmin は認可が HTTP 境界だけでなく書き込み
-// UseCase にも属すること、そしてそれが非公開エンドポイントの committer の規則ではなく admin の
+// TestDeleteEpisodeUsecase_Execute_RequiresAdminは認可がHTTP境界だけでなく書き込み
+// UseCaseにも属すること、そしてそれが非公開エンドポイントのcommitterの規則ではなくadminの
 // 規則であることを検証する。エピソードを非公開にできる編集者も、削除はできない (ADR 0009)。
 func TestDeleteEpisodeUsecase_Execute_RequiresAdmin(t *testing.T) {
 	t.Parallel()
@@ -228,34 +192,26 @@ func TestDeleteEpisodeUsecase_Execute_RequiresAdmin(t *testing.T) {
 			if tt.wantForbidden {
 				appErr := model.AsAppError(err)
 				if appErr == nil || appErr.Code != model.AppErrCodeForbidden {
-					t.Fatalf("Execute() error = %v, want AppErrCodeForbidden", err)
+					t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeForbidden", err)
 				}
 				if deletedAt := readDeletedEpisodeState(t, db, episodeID); deletedAt.Valid {
-					t.Error("拒否された送信が episodes.deleted_at を立てました")
+					t.Error("拒否された送信がepisodes.deleted_atを立てました")
 				}
 				return
 			}
 			if err != nil {
-				t.Fatalf("Execute() error = %v", err)
+				t.Fatalf("Execute()のエラー = %v", err)
 			}
 		})
 	}
 }
 
-// TestDeleteEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWriteWaits fixes the
-// interleaving between the pre-transaction projection and the delete write. The delete waits on a
-// locked episode after its pre-read, while the locking transaction deletes the parent work. The
-// work guard must make the write report not found, and the usecase rollback must preserve the
-// episode, counter, and anime status. A static fixture cannot fix this: a parent deleted before
-// the statement starts is caught by the EXISTS guard on the episode update, while the guard that
-// catches a concurrent deletion is the one on the works update, which READ COMMITTED re-checks.
-//
-// [Ja] このテストはトランザクション前の射影と削除の書き込みの間の実行順を固定する。事前読み取り
-// 後の削除がロック済みの episode を待つ間に、ロック元のトランザクションが親作品を削除する。作品の
-// ガードにより not found を返し、UseCase のロールバックにより episode、カウンター、anime の状態を
+// このテストはトランザクション前の射影と削除の書き込みの間の実行順を固定する。事前読み取り
+// 後の削除がロック済みのepisodeを待つ間に、ロック元のトランザクションが親作品を削除する。作品の
+// ガードによりnot foundを返し、UseCaseのロールバックによりepisode、カウンター、animeの状態を
 // 保持しなければならない。静的なフィクスチャではこれを固定できない。ステートメント開始前に削除
-// された親は episode の更新側の EXISTS ガードが捉えるが、同時削除を捉えるのは READ COMMITTED が
-// 再検査する works の更新側のガードであるため。
+// された親はepisodeの更新側のEXISTSガードが捉えるが、同時削除を捉えるのはREAD COMMITTEDが
+// 再検査するworksの更新側のガードであるため。
 func TestDeleteEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWriteWaits(t *testing.T) {
 	t.Parallel()
 
@@ -277,20 +233,20 @@ func TestDeleteEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWr
 
 	blockerTx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		t.Fatalf("blocker transaction BeginTx() error = %v", err)
+		t.Fatalf("ブロッカー用トランザクションのBeginTx()のエラー = %v", err)
 	}
 	defer func() { _ = blockerTx.Rollback() }()
 
 	var blockerPID int
 	if err := blockerTx.QueryRowContext(ctx, `SELECT pg_backend_pid()`).Scan(&blockerPID); err != nil {
-		t.Fatalf("blocker backend PID の取得に失敗: %v", err)
+		t.Fatalf("ブロッカーのbackend PIDの取得に失敗: %v", err)
 	}
 	if _, err := blockerTx.ExecContext(
 		ctx,
 		`SELECT id FROM episodes WHERE id = $1 FOR UPDATE`,
 		int64(episodeID),
 	); err != nil {
-		t.Fatalf("episode のロック取得に失敗: %v", err)
+		t.Fatalf("episodeのロック取得に失敗: %v", err)
 	}
 
 	type deleteResult struct {
@@ -306,10 +262,7 @@ func TestDeleteEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWr
 		resultCh <- deleteResult{output: output, err: err}
 	}()
 
-	// Observe the delete waiting on blockerTx before deleting the work. This proves the pre-read
-	// completed and the guarded write started without relying on a sleep or test hook.
-	//
-	// [Ja] 作品を削除する前に、削除が blockerTx を待っていることを観測する。sleep やテスト用
+	// 作品を削除する前に、削除がblockerTxを待っていることを観測する。sleepやテスト用
 	// フックに依存せず、事前読み取りが完了してガード付きの書き込みが始まったことを証明する。
 	awaitBlockedByBackend(t, ctx, db, blockerPID, resultCh)
 
@@ -321,25 +274,25 @@ func TestDeleteEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWr
 		t.Fatalf("親作品の削除に失敗: %v", err)
 	}
 	if err := blockerTx.Commit(); err != nil {
-		t.Fatalf("blocker transaction Commit() error = %v", err)
+		t.Fatalf("ブロッカー用トランザクションのCommit()のエラー = %v", err)
 	}
 
 	var result deleteResult
 	select {
 	case result = <-resultCh:
 	case <-ctx.Done():
-		t.Fatalf("Execute() did not finish after blocker committed: %v", ctx.Err())
+		t.Fatalf("ブロッカーのコミット後にExecute()を待つcontextのエラー = %v、期待値 = nil (Execute()が完了すること)", ctx.Err())
 	}
 	if result.output != nil {
-		t.Fatalf("Execute() output = %+v, want nil", result.output)
+		t.Fatalf("Execute()のoutput = %+v、期待値 = nil", result.output)
 	}
 	appErr := model.AsAppError(result.err)
 	if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
-		t.Fatalf("Execute() error = %v, want AppErrCodeResourceNotFound", result.err)
+		t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", result.err)
 	}
 
 	if deletedAt := readDeletedEpisodeState(t, db, episodeID); deletedAt.Valid {
-		t.Error("episodes.deleted_at に値が入った, want NULL のまま")
+		t.Error("episodes.deleted_atに値が入った、期待値 = NULLのまま")
 	}
 	var episodesCountAfter int32
 	if err := db.QueryRow(
@@ -349,26 +302,22 @@ func TestDeleteEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWr
 		t.Fatalf("作品のカウンターの読み込みに失敗: %v", err)
 	}
 	if episodesCountAfter != episodesCountBefore {
-		t.Errorf("works.episodes_count = %d, want %d", episodesCountAfter, episodesCountBefore)
+		t.Errorf("works.episodes_count = %d、期待値 = %d", episodesCountAfter, episodesCountBefore)
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(ctx, episodeAnimeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Status != model.AnimeStatusPublished {
-		t.Errorf("anime.Status = %q, want %q", anime.Status, model.AnimeStatusPublished)
+		t.Errorf("anime.Status = %q、期待値 = %q", anime.Status, model.AnimeStatusPublished)
 	}
 }
 
-// TestDeleteEpisodeUsecase_Execute_NotFound covers the submits the episode list cannot offer the
-// delete action for: an episode that never existed, one already deleted, and one whose work was
-// deleted. All three are reported as not found, which the handler turns into a 404.
-//
-// [Ja] TestDeleteEpisodeUsecase_Execute_NotFound は、エピソード一覧が削除の操作を出せない送信を
+// TestDeleteEpisodeUsecase_Execute_NotFoundは、エピソード一覧が削除の操作を出せない送信を
 // 検証する。存在しなかったエピソード、すでに削除済みのエピソード、作品が削除されたエピソードの
-// 3 つ。いずれも not found として報告され、Handler はそれを 404 に変換する。
+// 3つ。いずれもnot foundとして報告され、Handlerはそれを404に変換する。
 func TestDeleteEpisodeUsecase_Execute_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -397,7 +346,7 @@ func TestDeleteEpisodeUsecase_Execute_NotFound(t *testing.T) {
 			_, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: unsavedDeleteActor()})
 			appErr := model.AsAppError(err)
 			if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
-				t.Fatalf("Execute() error = %v, want AppErrCodeResourceNotFound", err)
+				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", err)
 			}
 		})
 	}

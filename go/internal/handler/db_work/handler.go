@@ -1,6 +1,4 @@
-// Package db_work provides HTTP handlers for work-related features in the Annict DB admin UI.
-//
-// [Ja] Annict DB 管理画面の作品関連機能を提供する HTTP ハンドラーを定義する。
+// Package db_workはAnnict DB管理画面の作品関連機能を提供するHTTPハンドラーを定義する。
 package db_work
 
 import (
@@ -12,9 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler bundles the dependencies shared by work-related HTTP handlers in the Annict DB admin UI.
-//
-// [Ja] Annict DB 管理画面の作品関連 HTTP ハンドラーが共有する依存をまとめる。
+// HandlerはAnnict DB管理画面の作品関連HTTPハンドラーが共有する依存をまとめる。
 type Handler struct {
 	cfg                    *config.Config
 	sessionManager         *session.Manager
@@ -54,11 +50,8 @@ func NewHandler(
 	}
 }
 
-// parseWorkForm reads the Annict DB work form fields from the request into the shared
-// WorkFormInput, so the create and update handlers do not duplicate the field mapping.
-//
-// [Ja] parseWorkForm はリクエストから Annict DB 作品フォームのフィールドを共有の
-// WorkFormInput に読み取る。作成・更新ハンドラーがフィールドの写像を重複させないようにする。
+// parseWorkFormはリクエストからAnnict DB作品フォームのフィールドを共有の
+// WorkFormInputに読み取る。作成・更新ハンドラーがフィールドの写像を重複させないようにする。
 func parseWorkForm(r *http.Request) usecase.WorkFormInput {
 	return usecase.WorkFormInput{
 		Title:                 r.FormValue("title"),

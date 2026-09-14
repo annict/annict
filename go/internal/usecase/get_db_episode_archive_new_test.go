@@ -12,11 +12,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// newGetDBEpisodeArchiveNewUsecase wires the usecase against the test transaction. It is a
-// read-only usecase that opens no transaction of its own, so the test uses SetupTx.
-//
-// [Ja] newGetDBEpisodeArchiveNewUsecase はテスト用トランザクション上に UseCase を組み立てる。本
-// UseCase は読み取りのみで自らトランザクションを開かないため SetupTx を使う。
+// newGetDBEpisodeArchiveNewUsecaseはテスト用トランザクション上にUseCaseを組み立てる。本
+// UseCaseは読み取りのみで自らトランザクションを開かないためSetupTxを使う。
 func newGetDBEpisodeArchiveNewUsecase(t *testing.T) (*GetDBEpisodeArchiveNewUsecase, *sql.Tx) {
 	t.Helper()
 
@@ -25,11 +22,7 @@ func newGetDBEpisodeArchiveNewUsecase(t *testing.T) (*GetDBEpisodeArchiveNewUsec
 	return NewGetDBEpisodeArchiveNewUsecase(repository.NewEpisodeRepository(query.New(db).WithTx(tx))), tx
 }
 
-// TestGetDBEpisodeArchiveNewUsecase_Execute_ReturnsEpisodeAndWork verifies the usecase returns
-// the episode the confirmation names together with the parent work its heading and subnav
-// describe.
-//
-// [Ja] TestGetDBEpisodeArchiveNewUsecase_Execute_ReturnsEpisodeAndWork は、確認が名指しする
+// TestGetDBEpisodeArchiveNewUsecase_Execute_ReturnsEpisodeAndWorkは、確認が名指しする
 // エピソードと、その見出しとサブナビが示す親作品を返すことを検証する。
 func TestGetDBEpisodeArchiveNewUsecase_Execute_ReturnsEpisodeAndWork(t *testing.T) {
 	t.Parallel()
@@ -41,31 +34,26 @@ func TestGetDBEpisodeArchiveNewUsecase_Execute_ReturnsEpisodeAndWork(t *testing.
 
 	output, err := uc.Execute(context.Background(), GetDBEpisodeArchiveNewInput{EpisodeID: episodeID})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if output.Episode == nil || output.Episode.ID != episodeID {
-		t.Fatalf("Episode = %+v, want ID %d", output.Episode, int64(episodeID))
+		t.Fatalf("Episode = %+v、期待値 = ID %d", output.Episode, int64(episodeID))
 	}
 	if output.Episode.Number == nil || *output.Episode.Number != "第2話" {
-		t.Errorf("Episode.Number = %v, want %q", output.Episode.Number, "第2話")
+		t.Errorf("Episode.Number = %v、期待値 = %q", output.Episode.Number, "第2話")
 	}
 	if output.Episode.Title == nil || *output.Episode.Title != "二話目" {
-		t.Errorf("Episode.Title = %v, want %q", output.Episode.Title, "二話目")
+		t.Errorf("Episode.Title = %v、期待値 = %q", output.Episode.Title, "二話目")
 	}
 	if output.Work == nil || output.Work.ID != workID {
-		t.Fatalf("Work = %+v, want ID %d", output.Work, int64(workID))
+		t.Fatalf("Work = %+v、期待値 = ID %d", output.Work, int64(workID))
 	}
 	if output.Work.Title != "エピソード非公開テスト" {
-		t.Errorf("Work.Title = %q, want %q", output.Work.Title, "エピソード非公開テスト")
+		t.Errorf("Work.Title = %q、期待値 = %q", output.Work.Title, "エピソード非公開テスト")
 	}
 }
 
-// TestGetDBEpisodeArchiveNewUsecase_Execute_RejectsNonArchivableEpisode verifies the confirmation
-// page cannot be shown for an episode that is not currently published (already archived, or
-// deleted), for one whose work was deleted, or for one that does not exist. The submit rejects
-// the same set, so the two never disagree about which episodes are archivable.
-//
-// [Ja] TestGetDBEpisodeArchiveNewUsecase_Execute_RejectsNonArchivableEpisode は、現在公開中でない
+// TestGetDBEpisodeArchiveNewUsecase_Execute_RejectsNonArchivableEpisodeは、現在公開中でない
 // (すでに非公開、または削除済みの) エピソード、作品が削除されたエピソード、存在しないエピソード
 // に対して確認ページを出せないことを検証する。送信も同じ集合を拒否するため、非公開にできる
 // エピソードの判断が両者でずれない。
@@ -102,7 +90,7 @@ func TestGetDBEpisodeArchiveNewUsecase_Execute_RejectsNonArchivableEpisode(t *te
 			_, err := uc.Execute(context.Background(), GetDBEpisodeArchiveNewInput{EpisodeID: episodeID})
 			appErr := model.AsAppError(err)
 			if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
-				t.Fatalf("Execute() error = %v, want AppErrCodeResourceNotFound", err)
+				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", err)
 			}
 		})
 	}
