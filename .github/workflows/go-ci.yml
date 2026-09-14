@@ -26,10 +26,6 @@ jobs:
         working-directory: go
     steps:
       - uses: actions/checkout@v7
-        with:
-          # Fetch the full history because the comment-check diff mode needs the merge-base with the base branch.
-          # [Ja] コメント併記チェックの差分モードが基準ブランチとの merge-base を必要とするため全履歴を取得
-          fetch-depth: 0
 
       - name: Set up Go
         uses: actions/setup-go@v7
@@ -57,19 +53,11 @@ jobs:
           working-directory: go
           args: --config=.golangci.yml ./...
 
-      # Bilingual comment check ([Ja] marker misuse).
-      # Whole tree: scan the entire tree for the misuse where [Ja] sits on a line with no Japanese.
-      #
-      # [Ja] コメントの英日併記チェック ([Ja] マーカーの誤用)
-      # 全体: [Ja] が日本語を含まない行に付く誤用をツリー全体で検査
-      - name: Check bilingual comments (whole tree)
-        run: make lint-comments
-
-      # PR only: check marker placement (missing English block / duplicate markers), limited to added lines.
-      # [Ja] PR のみ: マーカー配置 (英語ブロックの欠落・マーカー重複) を追加行に限定して検査
-      - name: Check bilingual comments (added lines)
-        if: github.event_name == 'pull_request'
-        run: make lint-comments-base BASE=origin/${{ github.base_ref }}
+      # koryluslintのcommentサブコマンドで、コメント・文字列・日本語を含む行が
+      # korylus-lang.md §3の日本語テキストスタイルに従っているかを検査する。
+      # ツリー全体を走査するため、差分のためのベースブランチの取得 (fetch-depth: 0) は要らない。
+      - name: 日本語テキストスタイルをチェック
+        run: make lint-style
 
   test:
     name: Test
