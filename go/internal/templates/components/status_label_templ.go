@@ -12,14 +12,9 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// StatusLabel renders the publishing state of an Annict DB resource as a badge. It takes the
-// shared viewmodel.PublishingStatus, so every resource whose lifecycle is published /
-// archived / deleted (works, episodes, and so on) shows the same badge for the same state.
-// An unknown value renders nothing rather than an empty badge.
-//
-// [Ja] StatusLabel は Annict DB のリソースの公開状態をバッジとして描画する。共有の
-// viewmodel.PublishingStatus を受け取るため、ライフサイクルが published / archived /
-// deleted のリソース (作品・エピソードなど) はいずれも同じ状態に同じバッジを表示する。
+// StatusLabelはAnnict DBのリソースの公開状態をバッジとして描画する。共有の
+// viewmodel.PublishingStatusを受け取るため、ライフサイクルがpublished / archived /
+// deletedのリソース (作品・エピソードなど) はいずれも同じ状態に同じバッジを表示する。
 // 未知の値では空のバッジではなく何も描画しない。
 func StatusLabel(status viewmodel.PublishingStatus) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -51,7 +46,7 @@ func StatusLabel(status viewmodel.PublishingStatus) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_published"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 20, Col: 84}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 15, Col: 84}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -69,7 +64,7 @@ func StatusLabel(status viewmodel.PublishingStatus) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_archived"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 22, Col: 83}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 17, Col: 83}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -87,7 +82,7 @@ func StatusLabel(status viewmodel.PublishingStatus) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "status_deleted"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 24, Col: 86}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/status_label.templ`, Line: 19, Col: 86}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {

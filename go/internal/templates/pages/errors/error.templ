@@ -4,25 +4,17 @@ import (
 	"context"
 )
 
-// BackLink is the destination offered from an error page.
-//
-// [Ja] BackLink はエラーページから提示する移動先。
+// BackLinkはエラーページから提示する移動先。
 type BackLink struct {
 	URL  string
 	Text string
 }
 
-// Error renders an error message inside one of the regular layouts, which supply the document
-// shell and the application stylesheet. It carries its own horizontal gutter because the
-// layouts it renders in do not all provide one.
-//
-// The self-contained HTTP error pages use HTTPError instead.
-//
-// [Ja] Error は通常のレイアウトの内側にエラーメッセージを描画する。文書の枠とアプリケーション
+// Errorは通常のレイアウトの内側にエラーメッセージを描画する。文書の枠とアプリケーション
 // のスタイルシートはレイアウト側が用意する。描画先のレイアウトが必ずしも横余白を持たないため、
 // 横余白は本コンポーネント自身が持つ。
 //
-// 自己完結する HTTP エラーページには代わりに HTTPError を使う。
+// 自己完結するHTTPエラーページには代わりにHTTPErrorを使う。
 templ Error(ctx context.Context, errorTitle string, errorMessage string, backLink *BackLink) {
 	<div class="w-full max-w-md px-4">
 		<div class="card">

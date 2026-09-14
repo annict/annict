@@ -12,42 +12,26 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// DBWorkListItem is the per-row display data for the work list on the Annict DB admin screen.
-//
-// [Ja] DBWorkListItem は Annict DB 管理画面の作品一覧で 1 行ごとに表示する整形済みデータ。
+// DBWorkListItemはAnnict DB管理画面の作品一覧で1行ごとに表示する整形済みデータ。
 type DBWorkListItem struct {
 	ID    WorkID
 	Title string
-	// Alternate titles shown below the main title. Empty when unset; the
-	// template renders a "-" placeholder in that case.
-	//
-	// [Ja] メインタイトルの下に並べる別タイトル。未設定なら空文字列で、
+	// メインタイトルの下に並べる別タイトル。未設定なら空文字列で、
 	// テンプレート側で "-" のプレースホルダーを表示する。
 	TitleKana string
 	TitleEn   string
-	// Pre-translated media label (e.g. "TV", "OVA") shown in the media column.
-	//
-	// [Ja] メディア列に表示する翻訳済みのメディア名 (例: "TV", "OVA")。
+	// メディア列に表示する翻訳済みのメディア名 (例: "TV", "OVA")。
 	Media string
-	// Pre-formatted season display string.
-	//
-	// [Ja] フォーマット済みのシーズン表示文字列。
+	// フォーマット済みのシーズン表示文字列。
 	Season string
-	// External-service links (Syoboi Calendar / MyAnimeList) shown in the external
-	// services column. Each is the zero value when the work has no id for that
-	// service, and the template renders a "-" placeholder in that case.
-	//
-	// [Ja] 外部サービス列に表示するしょぼかる / MyAnimeList のリンク。作品にその外部 ID が
+	// 外部サービス列に表示するしょぼかる / MyAnimeListのリンク。作品にその外部IDが
 	// 無い場合はゼロ値になり、テンプレートは "-" のプレースホルダーを表示する。
 	Syobocal      ExternalServiceLink
 	MalAnime      ExternalServiceLink
 	WatchersCount int32
 	Status        PublishingStatus
-	// Thumbnail resolver, which falls back to the placeholder for works with no image.
-	// The display width is chosen by the template, so no URL is pre-generated here.
-	//
-	// [Ja] サムネイルの解決子。画像が無い作品ではプレースホルダーにフォールバックする。
-	// 表示幅はテンプレートが決めるため、ここでは URL を生成しない。
+	// サムネイルの解決子。画像が無い作品ではプレースホルダーにフォールバックする。
+	// 表示幅はテンプレートが決めるため、ここではURLを生成しない。
 	Image WorkImage
 }
 
@@ -75,12 +59,8 @@ func NewDBWorkListItem(ctx context.Context, work *model.Work, helper *image.Help
 	}
 }
 
-// formatMedia returns the translated media label for a works.media enum value,
-// mirroring the media_* option keys used by the work form. It returns "" for
-// unknown values so the template can decide how to render the gap.
-//
-// [Ja] formatMedia は works.media の enum 値に対応する翻訳済みのメディア名を返す。
-// 作品フォームで使う media_* のオプションキーと対応させている。未知の値では ""
+// formatMediaはworks.mediaのenum値に対応する翻訳済みのメディア名を返す。
+// 作品フォームで使うmedia_* のオプションキーと対応させている。未知の値では ""
 // を返し、テンプレート側で欠落の描画方法を決められるようにする。
 func formatMedia(ctx context.Context, media int32) string {
 	key := ""
@@ -104,17 +84,10 @@ func formatMedia(ctx context.Context, media int32) string {
 	return i18n.T(ctx, key)
 }
 
-// formatSeason returns the release-season display for a work's season_year /
-// season_name pair. A work may carry a year without a season, so the year alone is
-// shown with a note that the season is unregistered, matching the Rails version,
-// which falls back to the yearly label when season_name is blank. An unknown
-// season_name enum value takes the same path. It returns "" when season_year is
-// unset, and the template renders a "-" placeholder in that case.
-//
-// [Ja] formatSeason は work の season_year / season_name の組に対するリリース時期の
+// formatSeasonはworkのseason_year / season_nameの組に対するリリース時期の
 // 表示を返す。年だけが登録された作品があるため、季節が未登録である旨を添えて年のみを
-// 表示する。season_name が空のとき年のラベルにフォールバックする Rails 版に合わせて
-// いる。未知の season_name の enum 値も同じ経路を通る。season_year が未設定のときは
+// 表示する。season_nameが空のとき年のラベルにフォールバックするRails版に合わせて
+// いる。未知のseason_nameのenum値も同じ経路を通る。season_yearが未設定のときは
 // "" を返し、テンプレート側で "-" のプレースホルダーを表示する。
 func formatSeason(ctx context.Context, year *int32, name *int32) string {
 	if year == nil {
@@ -202,9 +175,7 @@ func buildNumberFormatOptions(formats []model.NumberFormat) []SelectOption {
 	return options
 }
 
-// DBWorkFormInput holds the submitted form values so the work form can be re-rendered with the user's input after a validation error.
-//
-// [Ja] DBWorkFormInput はバリデーションエラー時に作品フォームを再描画するために、送信された入力値を保持する。
+// DBWorkFormInputはバリデーションエラー時に作品フォームを再描画するために、送信された入力値を保持する。
 type DBWorkFormInput struct {
 	Title                 string
 	TitleKana             string
@@ -232,33 +203,19 @@ type DBWorkFormInput struct {
 	StartEpisodeRawNumber string
 	NumberFormatID        string
 	NoEpisodes            string
-	// UpdatedAt is the version the edit form was opened against, carried in a hidden field so
-	// the update can reject a submit made against a stale read instead of silently
-	// overwriting whoever wrote in between. It travels with the form values because a
-	// non-conflict rejection has to echo back the version the editor submitted. On a conflict,
-	// the handler instead presents the current stored state and replaces UpdatedAt with that
-	// state's version, so the next submit knowingly overwrites exactly the state that was shown.
-	//
-	// It is FormNullVersion for a work whose updated_at is unset, and empty on the create
-	// form, which has no stored row to state a version for.
-	//
-	// [Ja] UpdatedAt は編集フォームを開いた時点の版で、hidden で持ち回る。古い読み取りに対する
+	// UpdatedAtは編集フォームを開いた時点の版で、hiddenで持ち回る。古い読み取りに対する
 	// 送信を、間に書いた人の変更を黙って上書きせずに更新側で却下できるようにするため。入力値と
 	// 一緒に持つのは、非競合の却下では編集者が送った版をそのまま返す必要があるから。競合時は
-	// ハンドラーが現在の保存状態を示し、UpdatedAt をその状態の版へ載せ替える。これにより次の送信は、
+	// ハンドラーが現在の保存状態を示し、UpdatedAtをその状態の版へ載せ替える。これにより次の送信は、
 	// 示された状態を確認したうえで上書きする意味になる。
 	//
-	// updated_at を持たない作品では FormNullVersion になり、版を示すべき保存済みの行が無い
+	// updated_atを持たない作品ではFormNullVersionになり、版を示すべき保存済みの行が無い
 	// 作成フォームでは空になる。
 	UpdatedAt string
 }
 
-// NewDBWorkFormInput preserves the submitted work form values so the create or edit form
-// can be re-rendered with the user's input when validation fails. It takes the shared
-// usecase.WorkFormInput, so the create and update handlers feed the same converter.
-//
-// [Ja] NewDBWorkFormInput は送信された作品フォームの入力値を保持し、バリデーション失敗時に
-// 作成・編集フォームをユーザーの入力のまま再描画できるようにする。共有の usecase.WorkFormInput
+// NewDBWorkFormInputは送信された作品フォームの入力値を保持し、バリデーション失敗時に
+// 作成・編集フォームをユーザーの入力のまま再描画できるようにする。共有のusecase.WorkFormInput
 // を受け取るため、作成・更新ハンドラーが同じ変換を通す。
 func NewDBWorkFormInput(input usecase.WorkFormInput) *DBWorkFormInput {
 	return &DBWorkFormInput{
@@ -291,14 +248,9 @@ func NewDBWorkFormInput(input usecase.WorkFormInput) *DBWorkFormInput {
 	}
 }
 
-// NewDBWorkFormInputFromSubmit copies a rejected edit submit's values and version into the
-// re-rendered form exactly as submitted. Keeping the submitted version is correct for a
-// non-conflict rejection. When rendering a conflict, the caller presents the current stored
-// state and then replaces UpdatedAt with that state's version.
-//
-// [Ja] NewDBWorkFormInputFromSubmit は却下された編集の送信の値と版を、送信されたまま再描画する
+// NewDBWorkFormInputFromSubmitは却下された編集の送信の値と版を、送信されたまま再描画する
 // フォームへコピーする。送信された版を保つのは非競合の却下では正しい。競合を描画する呼び出し元は、
-// 現在の保存状態を示してから UpdatedAt をその状態の版へ載せ替える。
+// 現在の保存状態を示してからUpdatedAtをその状態の版へ載せ替える。
 func NewDBWorkFormInputFromSubmit(input usecase.UpdateWorkInput) *DBWorkFormInput {
 	formInput := NewDBWorkFormInput(input.WorkFormInput)
 	formInput.UpdatedAt = input.UpdatedAt
@@ -306,14 +258,9 @@ func NewDBWorkFormInputFromSubmit(input usecase.UpdateWorkInput) *DBWorkFormInpu
 	return formInput
 }
 
-// NewDBWorkFormInputFromWork projects an existing work onto the string form values
-// the work edit form renders. It is the inverse of buildWorkFormParams's
-// string->typed conversion: pointers and sql-nullable values become "" when unset,
-// dates use the YYYY-MM-DD input format, and the no_episodes checkbox uses "1".
-//
-// [Ja] NewDBWorkFormInputFromWork は既存の work を、作品編集フォームが描画する
-// 文字列のフォーム値に射影する。buildWorkFormParams の文字列→型変換の逆向きで、
-// ポインタや NULL 許容値は未設定なら "" に、日付は YYYY-MM-DD 形式に、no_episodes
+// NewDBWorkFormInputFromWorkは既存のworkを、作品編集フォームが描画する
+// 文字列のフォーム値に射影する。buildWorkFormParamsの文字列→型変換の逆向きで、
+// ポインタやNULL許容値は未設定なら "" に、日付はYYYY-MM-DD形式に、no_episodes
 // チェックボックスは "1" にする。
 func NewDBWorkFormInputFromWork(work *model.Work) *DBWorkFormInput {
 	return &DBWorkFormInput{
@@ -382,13 +329,9 @@ func formatCheckbox(checked bool) string {
 	return ""
 }
 
-// Val returns the form value for the given field, or "" when the receiver is nil. The hidden
-// version is reachable under "updated_at" alongside the editable fields, so the template reads
-// every input's value the same nil-safe way.
-//
-// [Ja] Val は指定フィールドのフォーム値を返す。レシーバが nil のときは "" を返す。hidden の版も
+// Valは指定フィールドのフォーム値を返す。レシーバがnilのときは "" を返す。hiddenの版も
 // 編集可能なフィールドと並んで "updated_at" で引ける。テンプレートがどの入力欄の値も同じく
-// nil 安全な方法で読めるようにするため。
+// nil安全な方法で読めるようにするため。
 func (d *DBWorkFormInput) Val(field string) string {
 	if d == nil {
 		return ""
@@ -453,16 +396,10 @@ func (d *DBWorkFormInput) Val(field string) string {
 	}
 }
 
-// LabelLinkURL returns the external link target shown next to a field's label, or ""
-// when the field is not linkable or has no value. It mirrors the Rails work form, which
-// renders an external-link icon beside the URL / Twitter / Syoboi Calendar / MyAnimeList
-// labels once the value is filled in. URL fields link to the submitted value itself,
-// while the id/username fields derive their service URL via the shared helpers.
-//
-// [Ja] LabelLinkURL はフィールドのラベル横に表示する外部リンク先を返す。フィールドがリンク
-// 対象でない、または値が無いときは "" を返す。Rails の作品フォーム (URL / Twitter / しょぼかる /
-// MyAnimeList のラベル横に、値が入っていれば外部リンクアイコンを出す) に対応させている。URL 系の
-// フィールドは送信された値自体をリンク先にし、ID / ユーザー名系は共有ヘルパーでサービス URL を導出する。
+// LabelLinkURLはフィールドのラベル横に表示する外部リンク先を返す。フィールドがリンク
+// 対象でない、または値が無いときは "" を返す。Railsの作品フォーム (URL / Twitter / しょぼかる /
+// MyAnimeListのラベル横に、値が入っていれば外部リンクアイコンを出す) に対応させている。URL系の
+// フィールドは送信された値自体をリンク先にし、ID / ユーザー名系は共有ヘルパーでサービスURLを導出する。
 func (d *DBWorkFormInput) LabelLinkURL(field string) string {
 	if d == nil {
 		return ""

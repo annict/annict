@@ -1,1 +1,0 @@
-@AGENTS.ja.md

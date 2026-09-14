@@ -6,15 +6,10 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// DBSidebarToggle renders the button that toggles the Annict DB sidebar at every viewport size.
-// It follows the disclosure ARIA pattern: aria-controls points at the sidebar's id and
-// aria-expanded reflects its open state. data-sidebar-toggle wires it to the sidebar via the
-// sidebar-toggle.ts module, so callers only need to drop this component in a title row.
-//
-// [Ja] DBSidebarToggle は全画面幅で Annict DB サイドバーを開閉するボタンを描画する。
-// disclosure の ARIA パターンに従い、aria-controls がサイドバーの id を指し、
-// aria-expanded が開閉状態を表す。
-// data-sidebar-toggle が sidebar-toggle.ts モジュール経由でサイドバーに結線するため、呼び出し側は
+// DBSidebarToggleは全画面幅でAnnict DBサイドバーを開閉するボタンを描画する。
+// disclosureのARIAパターンに従い、aria-controlsがサイドバーのidを指し、
+// aria-expandedが開閉状態を表す。
+// data-sidebar-toggleがsidebar-toggle.tsモジュール経由でサイドバーに結線するため、呼び出し側は
 // タイトル行に本コンポーネントを置くだけでよい。
 templ DBSidebarToggle() {
 	<button

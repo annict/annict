@@ -6,10 +6,7 @@ import (
 	"testing"
 )
 
-// TestDBSidebarStateMiddleware verifies valid, missing, and invalid Cookie values produce the
-// expected server-rendered desktop sidebar preference.
-//
-// [Ja] TestDBSidebarStateMiddleware は有効・未設定・不正な Cookie 値から、SSR 用の
+// TestDBSidebarStateMiddlewareは有効・未設定・不正なCookie値から、SSR用の
 // デスクトップサイドバー設定が期待どおり生成されることを検証する。
 func TestDBSidebarStateMiddleware(t *testing.T) {
 	t.Parallel()
@@ -19,10 +16,10 @@ func TestDBSidebarStateMiddleware(t *testing.T) {
 		cookieValue string
 		wantOpen    bool
 	}{
-		{name: "missing", wantOpen: true},
-		{name: "open", cookieValue: "true", wantOpen: true},
-		{name: "closed", cookieValue: "false", wantOpen: false},
-		{name: "invalid", cookieValue: "invalid", wantOpen: true},
+		{name: "未設定", wantOpen: true},
+		{name: "開いている", cookieValue: "true", wantOpen: true},
+		{name: "閉じている", cookieValue: "false", wantOpen: false},
+		{name: "不正な値", cookieValue: "invalid", wantOpen: true},
 	}
 
 	for _, tt := range tests {
@@ -41,7 +38,7 @@ func TestDBSidebarStateMiddleware(t *testing.T) {
 			handler.ServeHTTP(httptest.NewRecorder(), req)
 
 			if got != tt.wantOpen {
-				t.Errorf("IsDBSidebarOpen() = %v, want %v", got, tt.wantOpen)
+				t.Errorf("IsDBSidebarOpen() = %v、期待値 = %v", got, tt.wantOpen)
 			}
 		})
 	}

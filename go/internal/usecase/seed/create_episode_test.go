@@ -26,7 +26,7 @@ func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
 	}
 
 	if len(works) != 2 {
-		t.Fatalf("作品数が不正: got %d, want 2", len(works))
+		t.Fatalf("作品数 = %d、期待値 = 2", len(works))
 	}
 
 	workID1 := works[0].WorkID
@@ -53,7 +53,7 @@ func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
 
 	// 結果を検証
 	if len(results) != 5 {
-		t.Fatalf("エピソード数が不正: got %d, want 5", len(results))
+		t.Fatalf("エピソード数 = %d、期待値 = 5", len(results))
 	}
 
 	// エピソードIDが正しく設定されているか確認
@@ -63,16 +63,10 @@ func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
 		}
 	}
 
-	// Fetch the created episodes back and verify them. The query is scoped to the
-	// two work ids created here because `make test` runs `go test ./...` without
-	// resetting the shared DB between packages: other packages' usecase tests commit
-	// real rows via GetTestDB, so the episodes table may hold their rows too — some
-	// with a NULL title that this non-nullable string scan cannot accept.
-	//
-	// [Ja] 作成したエピソードを取得して検証する。クエリはここで作成した 2 つの work id に
-	// 限定する。`make test` は `go test ./...` をパッケージ間で共有 DB をリセットせずに
-	// 実行するため、他パッケージの usecase テストが GetTestDB で実行をコミットし、episodes
-	// テーブルにそれらの行 (この非 NULL の string スキャンが受け付けられない NULL タイトルを
+	// 作成したエピソードを取得して検証する。クエリはここで作成した2つのwork idに
+	// 限定する。`make test` は `go test ./...` をパッケージ間で共有DBをリセットせずに
+	// 実行するため、他パッケージのusecaseテストがGetTestDBで実行をコミットし、episodes
+	// テーブルにそれらの行 (この非NULLのstringスキャンが受け付けられないNULLタイトルを
 	// 含む) が残りうる。
 	query := `SELECT id, work_id, number, title, sort_number, prev_episode_id FROM episodes WHERE work_id IN ($1, $2) ORDER BY work_id, sort_number`
 	rows, err := tx.QueryContext(ctx, query, int64(workID1), int64(workID2))
@@ -106,7 +100,7 @@ func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
 	}
 
 	if len(episodesInDB) != 5 {
-		t.Fatalf("DBのエピソード数が不正: got %d, want 5", len(episodesInDB))
+		t.Fatalf("DBのエピソード数 = %d、期待値 = 5", len(episodesInDB))
 	}
 
 	// 作品1のエピソード連鎖を検証
@@ -119,14 +113,14 @@ func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
 	if episodesInDB[1].PrevEpisodeID == nil {
 		t.Errorf("作品1エピソード2のprev_episode_idがnilです")
 	} else if *episodesInDB[1].PrevEpisodeID != episodesInDB[0].ID {
-		t.Errorf("作品1エピソード2のprev_episode_idが不正: got %d, want %d", *episodesInDB[1].PrevEpisodeID, episodesInDB[0].ID)
+		t.Errorf("作品1エピソード2のprev_episode_id = %d、期待値 = %d", *episodesInDB[1].PrevEpisodeID, episodesInDB[0].ID)
 	}
 
 	// エピソード3: prev_episode_id = エピソード2のID
 	if episodesInDB[2].PrevEpisodeID == nil {
 		t.Errorf("作品1エピソード3のprev_episode_idがnilです")
 	} else if *episodesInDB[2].PrevEpisodeID != episodesInDB[1].ID {
-		t.Errorf("作品1エピソード3のprev_episode_idが不正: got %d, want %d", *episodesInDB[2].PrevEpisodeID, episodesInDB[1].ID)
+		t.Errorf("作品1エピソード3のprev_episode_id = %d、期待値 = %d", *episodesInDB[2].PrevEpisodeID, episodesInDB[1].ID)
 	}
 
 	// 作品2のエピソード連鎖を検証
@@ -139,7 +133,7 @@ func TestCreateEpisodeUsecase_ExecuteBatchWithTx(t *testing.T) {
 	if episodesInDB[4].PrevEpisodeID == nil {
 		t.Errorf("作品2エピソード2のprev_episode_idがnilです")
 	} else if *episodesInDB[4].PrevEpisodeID != episodesInDB[3].ID {
-		t.Errorf("作品2エピソード2のprev_episode_idが不正: got %d, want %d", *episodesInDB[4].PrevEpisodeID, episodesInDB[3].ID)
+		t.Errorf("作品2エピソード2のprev_episode_id = %d、期待値 = %d", *episodesInDB[4].PrevEpisodeID, episodesInDB[3].ID)
 	}
 }
 
@@ -152,7 +146,7 @@ func TestGenerateEpisodeParamsForWork(t *testing.T) {
 
 	// エピソード数を検証
 	if len(episodes) != episodeCount {
-		t.Errorf("エピソード数が不正: got %d, want %d", len(episodes), episodeCount)
+		t.Errorf("エピソード数 = %d、期待値 = %d", len(episodes), episodeCount)
 	}
 
 	// 各エピソードを検証
@@ -161,18 +155,18 @@ func TestGenerateEpisodeParamsForWork(t *testing.T) {
 
 		// WorkIDを検証
 		if ep.WorkID != workID {
-			t.Errorf("エピソード%dのWorkIDが不正: got %d, want %d", i+1, ep.WorkID, workID)
+			t.Errorf("エピソード%dのWorkID = %d、期待値 = %d", i+1, ep.WorkID, workID)
 		}
 
 		// Numberを検証
 		expectedNumberStr := fmt.Sprintf("第%d話", expectedNumber)
 		if ep.Number != expectedNumberStr {
-			t.Errorf("エピソード%dのNumberが不正: got %s, want %s", i+1, ep.Number, expectedNumberStr)
+			t.Errorf("エピソード%dのNumber = %s、期待値 = %s", i+1, ep.Number, expectedNumberStr)
 		}
 
 		// SortNumberを検証
 		if ep.SortNumber != int32(expectedNumber) {
-			t.Errorf("エピソード%dのSortNumberが不正: got %d, want %d", i+1, ep.SortNumber, expectedNumber)
+			t.Errorf("エピソード%dのSortNumber = %d、期待値 = %d", i+1, ep.SortNumber, expectedNumber)
 		}
 
 		// Titleが空でないことを検証
@@ -180,7 +174,7 @@ func TestGenerateEpisodeParamsForWork(t *testing.T) {
 			t.Errorf("エピソード%dのTitleが空です", i+1)
 		}
 
-		// PrevEpisodeIDがnilであることを検証（ExecuteBatch内で設定される）
+		// PrevEpisodeIDがnilであることを検証 (ExecuteBatch内で設定される)
 		if ep.PrevEpisodeID != nil {
 			t.Errorf("エピソード%dのPrevEpisodeIDがnilではありません: %v", i+1, *ep.PrevEpisodeID)
 		}
@@ -217,7 +211,7 @@ func TestCreateEpisodeUsecase_SingleEpisode(t *testing.T) {
 
 	// 結果を検証
 	if len(results) != 1 {
-		t.Fatalf("エピソード数が不正: got %d, want 1", len(results))
+		t.Fatalf("エピソード数 = %d、期待値 = 1", len(results))
 	}
 
 	if results[0].EpisodeID == 0 {
@@ -244,16 +238,16 @@ func TestCreateEpisodeUsecase_SingleEpisode(t *testing.T) {
 
 	// 検証
 	if model.WorkID(ep.WorkID) != workID {
-		t.Errorf("WorkIDが不正: got %d, want %d", ep.WorkID, workID)
+		t.Errorf("WorkID = %d、期待値 = %d", ep.WorkID, workID)
 	}
 	if ep.Number != "1" {
-		t.Errorf("Numberが不正: got %s, want 1", ep.Number)
+		t.Errorf("Number = %s、期待値 = 1", ep.Number)
 	}
 	if ep.Title != "第1話" {
-		t.Errorf("Titleが不正: got %s, want 第1話", ep.Title)
+		t.Errorf("Title = %s、期待値 = 第1話", ep.Title)
 	}
 	if ep.SortNumber != 1 {
-		t.Errorf("SortNumberが不正: got %d, want 1", ep.SortNumber)
+		t.Errorf("SortNumber = %d、期待値 = 1", ep.SortNumber)
 	}
 	if ep.PrevEpisodeID != nil {
 		t.Errorf("PrevEpisodeIDがnilではありません: %v", *ep.PrevEpisodeID)

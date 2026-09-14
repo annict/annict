@@ -46,7 +46,7 @@ func TestNewDBWorkFormInput(t *testing.T) {
 	got := NewDBWorkFormInput(input)
 
 	if got == nil {
-		t.Fatal("NewDBWorkFormInput returned nil")
+		t.Fatal("NewDBWorkFormInput()がnilを返した")
 	}
 
 	tests := []struct {
@@ -83,7 +83,7 @@ func TestNewDBWorkFormInput(t *testing.T) {
 
 	for _, tt := range tests {
 		if v := got.Val(tt.field); v != tt.want {
-			t.Errorf("Val(%q) = %q, want %q", tt.field, v, tt.want)
+			t.Errorf("Val(%q) = %q、期待値 = %q", tt.field, v, tt.want)
 		}
 	}
 }
@@ -96,10 +96,10 @@ func TestDBWorkFormInput_Val(t *testing.T) {
 
 		var d *DBWorkFormInput
 		if v := d.Val("title"); v != "" {
-			t.Errorf("nil receiver Val(\"title\") = %q, want \"\"", v)
+			t.Errorf("レシーバーがnilのときのVal(\"title\") = %q、期待値 = \"\"", v)
 		}
 		if v := d.Val("media"); v != "" {
-			t.Errorf("nil receiver Val(\"media\") = %q, want \"\"", v)
+			t.Errorf("レシーバーがnilのときのVal(\"media\") = %q、期待値 = \"\"", v)
 		}
 	})
 
@@ -108,7 +108,7 @@ func TestDBWorkFormInput_Val(t *testing.T) {
 
 		d := &DBWorkFormInput{Title: "x"}
 		if v := d.Val("unknown_field"); v != "" {
-			t.Errorf("Val(\"unknown_field\") = %q, want \"\"", v)
+			t.Errorf("Val(\"unknown_field\") = %q、期待値 = \"\"", v)
 		}
 	})
 
@@ -127,7 +127,7 @@ func TestDBWorkFormInput_Val(t *testing.T) {
 		}
 		for _, f := range fields {
 			if v := d.Val(f); v != "" {
-				t.Errorf("Val(%q) on zero value = %q, want \"\"", f, v)
+				t.Errorf("ゼロ値でのVal(%q) = %q、期待値 = \"\"", f, v)
 			}
 		}
 	})
@@ -141,7 +141,7 @@ func TestDBWorkFormInput_LabelLinkURL(t *testing.T) {
 
 		var d *DBWorkFormInput
 		if got := d.LabelLinkURL("official_site_url"); got != "" {
-			t.Errorf("nil receiver LabelLinkURL(\"official_site_url\") = %q, want \"\"", got)
+			t.Errorf("レシーバーがnilのときのLabelLinkURL(\"official_site_url\") = %q、期待値 = \"\"", got)
 		}
 	})
 
@@ -170,7 +170,7 @@ func TestDBWorkFormInput_LabelLinkURL(t *testing.T) {
 		}
 		for field, want := range tests {
 			if got := d.LabelLinkURL(field); got != want {
-				t.Errorf("LabelLinkURL(%q) = %q, want %q", field, got, want)
+				t.Errorf("LabelLinkURL(%q) = %q、期待値 = %q", field, got, want)
 			}
 		}
 	})
@@ -185,7 +185,7 @@ func TestDBWorkFormInput_LabelLinkURL(t *testing.T) {
 		}
 		for _, field := range linkable {
 			if got := d.LabelLinkURL(field); got != "" {
-				t.Errorf("LabelLinkURL(%q) on empty input = %q, want \"\"", field, got)
+				t.Errorf("空入力時のLabelLinkURL(%q) = %q、期待値 = \"\"", field, got)
 			}
 		}
 	})
@@ -196,7 +196,7 @@ func TestDBWorkFormInput_LabelLinkURL(t *testing.T) {
 		d := &DBWorkFormInput{Title: "x", Synopsis: "y"}
 		for _, field := range []string{"title", "synopsis", "media", "unknown"} {
 			if got := d.LabelLinkURL(field); got != "" {
-				t.Errorf("LabelLinkURL(%q) = %q, want \"\"", field, got)
+				t.Errorf("LabelLinkURL(%q) = %q、期待値 = \"\"", field, got)
 			}
 		}
 	})
@@ -227,7 +227,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 		wantSeasonHasJP string
 	}{
 		{
-			name: "正常系: 画像がある作品は Image が実サムネイルを解決する",
+			name: "正常系: 画像がある作品はImageが実サムネイルを解決する",
 			work: &model.Work{
 				ID:            1,
 				Title:         "画像あり作品",
@@ -250,7 +250,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantSeasonHasJP: "2024年春",
 		},
 		{
-			name: "正常系: unpublished_at があれば archived になり、title_kana 未設定は空文字列・画像なしは Image がプレースホルダーになる",
+			name: "正常系: unpublished_atがあればarchivedになり、title_kana未設定は空文字列・画像なしはImageがプレースホルダーになる",
 			work: &model.Work{
 				ID:            2,
 				Title:         "画像なし作品",
@@ -269,7 +269,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantHasImage:  false,
 		},
 		{
-			name: "正常系: シーズン未設定の場合 Season は空文字列になる",
+			name: "正常系: シーズン未設定の場合Seasonは空文字列になる",
 			work: &model.Work{
 				ID:    3,
 				Title: "シーズンなし作品",
@@ -283,13 +283,9 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantSeasonHasJP: "",
 		},
 		{
-			// season_name that falls outside the known enum (1..4) has no label key, so
-			// the season display falls back to the same year-only display as a work with
-			// no season at all.
-			//
-			// [Ja] season_name が既知の enum (1..4) の範囲外だとラベルキーが無いため、
+			// season_nameが既知のenum (1..4) の範囲外だとラベルキーが無いため、
 			// 季節が未登録の作品と同じ年のみの表示にフォールバックする。
-			name: "正常系: season_name が範囲外 enum のとき Season は年のみの表示になる",
+			name: "正常系: season_nameが範囲外enumのときSeasonは年のみの表示になる",
 			work: &model.Work{
 				ID:         6,
 				Title:      "範囲外シーズン作品",
@@ -305,7 +301,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantSeasonHasJP: "2024年 (季節未登録)",
 		},
 		{
-			name: "正常系: 年だけが登録された作品は Season が年のみの表示になる",
+			name: "正常系: 年だけが登録された作品はSeasonが年のみの表示になる",
 			work: &model.Work{
 				ID:         7,
 				Title:      "年のみ登録作品",
@@ -320,7 +316,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantSeasonHasJP: "2024年 (季節未登録)",
 		},
 		{
-			name: "正常系: media = 3 は 映画 に変換される",
+			name: "正常系: media = 3は 映画 に変換される",
 			work: &model.Work{
 				ID:    4,
 				Title: "映画作品",
@@ -332,7 +328,7 @@ func TestNewDBWorkListItem(t *testing.T) {
 			wantStatus: PublishingStatusPublished,
 		},
 		{
-			name: "正常系: media = 4 は Web に変換される",
+			name: "正常系: media = 4はWebに変換される",
 			work: &model.Work{
 				ID:    5,
 				Title: "Web作品",
@@ -352,41 +348,37 @@ func TestNewDBWorkListItem(t *testing.T) {
 			got := NewDBWorkListItem(ctx, tt.work, helper)
 
 			if got.ID != tt.wantID {
-				t.Errorf("ID = %v, want %v", got.ID, tt.wantID)
+				t.Errorf("ID = %v、期待値 = %v", got.ID, tt.wantID)
 			}
 			if got.Title != tt.wantTitle {
-				t.Errorf("Title = %q, want %q", got.Title, tt.wantTitle)
+				t.Errorf("Title = %q、期待値 = %q", got.Title, tt.wantTitle)
 			}
 			if got.TitleKana != tt.wantTitleKana {
-				t.Errorf("TitleKana = %q, want %q", got.TitleKana, tt.wantTitleKana)
+				t.Errorf("TitleKana = %q、期待値 = %q", got.TitleKana, tt.wantTitleKana)
 			}
 			if got.TitleEn != tt.wantTitleEn {
-				t.Errorf("TitleEn = %q, want %q", got.TitleEn, tt.wantTitleEn)
+				t.Errorf("TitleEn = %q、期待値 = %q", got.TitleEn, tt.wantTitleEn)
 			}
 			if got.Media != tt.wantMedia {
-				t.Errorf("Media = %q, want %q", got.Media, tt.wantMedia)
+				t.Errorf("Media = %q、期待値 = %q", got.Media, tt.wantMedia)
 			}
 			if got.WatchersCount != tt.wantWatchers {
-				t.Errorf("WatchersCount = %d, want %d", got.WatchersCount, tt.wantWatchers)
+				t.Errorf("WatchersCount = %d、期待値 = %d", got.WatchersCount, tt.wantWatchers)
 			}
 			if got.Status != tt.wantStatus {
-				t.Errorf("Status = %q, want %q", got.Status, tt.wantStatus)
+				t.Errorf("Status = %q、期待値 = %q", got.Status, tt.wantStatus)
 			}
 			if got.Image.Exists() != tt.wantHasImage {
-				t.Errorf("Image.Exists() = %v (URL %q), want %v", got.Image.Exists(), got.Image.URL(70, "jpg"), tt.wantHasImage)
+				t.Errorf("Image.Exists() = %v (URL %q)、期待値 = %v", got.Image.Exists(), got.Image.URL(70, "jpg"), tt.wantHasImage)
 			}
 			if got.Season != tt.wantSeasonHasJP {
-				t.Errorf("Season = %q, want %q", got.Season, tt.wantSeasonHasJP)
+				t.Errorf("Season = %q、期待値 = %q", got.Season, tt.wantSeasonHasJP)
 			}
 		})
 	}
 }
 
-// TestFormatSeason pins the release-season display for every season_year / season_name
-// combination in both locales, including the year-only display a work gets when the
-// season is unregistered and the empty string that makes the list render a "-".
-//
-// [Ja] TestFormatSeason は season_year / season_name の全ての組み合わせに対するリリース
+// TestFormatSeasonはseason_year / season_nameの全ての組み合わせに対するリリース
 // 時期の表示を、両ロケールで固定する。季節が未登録の作品が受け取る年のみの表示と、一覧に
 // "-" を描かせる空文字列も含む。
 func TestFormatSeason(t *testing.T) {
@@ -403,11 +395,11 @@ func TestFormatSeason(t *testing.T) {
 		season *int32
 		want   string
 	}{
-		{name: "正常系: ja で年と季節が揃っていれば両方を表示する", locale: "ja", year: &year, season: &spring, want: "2024年春"},
-		{name: "正常系: en で年と季節が揃っていれば両方を表示する", locale: "en", year: &year, season: &spring, want: "Spring 2024"},
-		{name: "正常系: ja で季節が未登録なら年のみを表示する", locale: "ja", year: &year, season: nil, want: "2024年 (季節未登録)"},
-		{name: "正常系: en で季節が未登録なら年のみを表示する", locale: "en", year: &year, season: nil, want: "2024 (No Season)"},
-		{name: "正常系: 範囲外 enum の季節は未登録と同じ表示になる", locale: "ja", year: &year, season: &unknownSeason, want: "2024年 (季節未登録)"},
+		{name: "正常系: jaで年と季節が揃っていれば両方を表示する", locale: "ja", year: &year, season: &spring, want: "2024年春"},
+		{name: "正常系: enで年と季節が揃っていれば両方を表示する", locale: "en", year: &year, season: &spring, want: "Spring 2024"},
+		{name: "正常系: jaで季節が未登録なら年のみを表示する", locale: "ja", year: &year, season: nil, want: "2024年 (季節未登録)"},
+		{name: "正常系: enで季節が未登録なら年のみを表示する", locale: "en", year: &year, season: nil, want: "2024 (No Season)"},
+		{name: "正常系: 範囲外enumの季節は未登録と同じ表示になる", locale: "ja", year: &year, season: &unknownSeason, want: "2024年 (季節未登録)"},
 		{name: "正常系: 年が未登録なら空文字列を返す", locale: "ja", year: nil, season: nil, want: ""},
 		{name: "正常系: 季節だけが登録されていても年が無ければ空文字列を返す", locale: "ja", year: nil, season: &spring, want: ""},
 	}
@@ -418,18 +410,14 @@ func TestFormatSeason(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
 
 			if got := formatSeason(ctx, tt.year, tt.season); got != tt.want {
-				t.Errorf("formatSeason() = %q, want %q", got, tt.want)
+				t.Errorf("formatSeason() = %q、期待値 = %q", got, tt.want)
 			}
 		})
 	}
 }
 
-// TestNewDBWorkListItem_StatusFromTimestamps verifies that the display status is
-// derived from the work's unpublished_at / deleted_at timestamps, with deleted_at
-// taking precedence over unpublished_at.
-//
-// [Ja] TestNewDBWorkListItem_StatusFromTimestamps は表示ステータスが work の
-// unpublished_at / deleted_at タイムスタンプから導出され、deleted_at が unpublished_at
+// TestNewDBWorkListItem_StatusFromTimestampsは表示ステータスがworkの
+// unpublished_at / deleted_atタイムスタンプから導出され、deleted_atがunpublished_at
 // より優先されることを検証する。
 func TestNewDBWorkListItem_StatusFromTimestamps(t *testing.T) {
 	t.Parallel()
@@ -447,21 +435,21 @@ func TestNewDBWorkListItem_StatusFromTimestamps(t *testing.T) {
 		want          PublishingStatus
 	}{
 		{
-			name: "両方 nil なら published",
+			name: "両方nilならpublished",
 			want: PublishingStatusPublished,
 		},
 		{
-			name:          "unpublished_at のみなら archived",
+			name:          "unpublished_atのみならarchived",
 			unpublishedAt: &unpublishedAt,
 			want:          PublishingStatusArchived,
 		},
 		{
-			name:      "deleted_at のみなら deleted",
+			name:      "deleted_atのみならdeleted",
 			deletedAt: &deletedAt,
 			want:      PublishingStatusDeleted,
 		},
 		{
-			name:          "両方あれば deleted_at が優先される",
+			name:          "両方あればdeleted_atが優先される",
 			unpublishedAt: &unpublishedAt,
 			deletedAt:     &deletedAt,
 			want:          PublishingStatusDeleted,
@@ -480,17 +468,14 @@ func TestNewDBWorkListItem_StatusFromTimestamps(t *testing.T) {
 			}, helper)
 
 			if got.Status != tt.want {
-				t.Errorf("Status = %q, want %q", got.Status, tt.want)
+				t.Errorf("Status = %q、期待値 = %q", got.Status, tt.want)
 			}
 		})
 	}
 }
 
-// TestNewDBWorkListItem_ExternalServices verifies that sc_tid / mal_anime_id map to
-// the Syoboi Calendar / MyAnimeList links, and that an unset id yields an empty link.
-//
-// [Ja] TestNewDBWorkListItem_ExternalServices は sc_tid / mal_anime_id が
-// しょぼかる / MyAnimeList リンクに写像されること、未設定の ID では空リンクになることを検証する。
+// TestNewDBWorkListItem_ExternalServicesはsc_tid / mal_anime_idが
+// しょぼかる / MyAnimeListリンクに写像されること、未設定のIDでは空リンクになることを検証する。
 func TestNewDBWorkListItem_ExternalServices(t *testing.T) {
 	t.Parallel()
 
@@ -500,7 +485,7 @@ func TestNewDBWorkListItem_ExternalServices(t *testing.T) {
 	scTid := int32(3524)
 	malAnimeID := int32(20)
 
-	t.Run("sc_tid / mal_anime_id があればラベルと URL を持つ", func(t *testing.T) {
+	t.Run("sc_tid / mal_anime_idがあればラベルとURLを持つ", func(t *testing.T) {
 		t.Parallel()
 
 		got := NewDBWorkListItem(ctx, &model.Work{
@@ -511,14 +496,14 @@ func TestNewDBWorkListItem_ExternalServices(t *testing.T) {
 		}, helper)
 
 		if got.Syobocal.Label != "3524" || got.Syobocal.URL != "http://cal.syoboi.jp/tid/3524" {
-			t.Errorf("Syobocal = %+v, want label 3524 / しょぼかる URL", got.Syobocal)
+			t.Errorf("Syobocal = %+v、期待値 = label 3524 / しょぼかるURL", got.Syobocal)
 		}
 		if got.MalAnime.Label != "20" || got.MalAnime.URL != "https://myanimelist.net/anime/20" {
-			t.Errorf("MalAnime = %+v, want label 20 / MyAnimeList URL", got.MalAnime)
+			t.Errorf("MalAnime = %+v、期待値 = label 20 / MyAnimeList URL", got.MalAnime)
 		}
 	})
 
-	t.Run("sc_tid / mal_anime_id が未設定なら空リンクになる", func(t *testing.T) {
+	t.Run("sc_tid / mal_anime_idが未設定なら空リンクになる", func(t *testing.T) {
 		t.Parallel()
 
 		got := NewDBWorkListItem(ctx, &model.Work{
@@ -527,19 +512,15 @@ func TestNewDBWorkListItem_ExternalServices(t *testing.T) {
 		}, helper)
 
 		if got.Syobocal != (ExternalServiceLink{}) {
-			t.Errorf("Syobocal = %+v, want zero value", got.Syobocal)
+			t.Errorf("Syobocal = %+v、期待値 = ゼロ値", got.Syobocal)
 		}
 		if got.MalAnime != (ExternalServiceLink{}) {
-			t.Errorf("MalAnime = %+v, want zero value", got.MalAnime)
+			t.Errorf("MalAnime = %+v、期待値 = ゼロ値", got.MalAnime)
 		}
 	})
 }
 
-// TestDBWorkListItem_Image verifies that the list item wires the work's image_data into
-// its WorkImage, so a work with an image resolves to a real thumbnail and one without
-// falls back to the placeholder.
-//
-// [Ja] TestDBWorkListItem_Image は一覧アイテムが作品の image_data を WorkImage に配線し、
+// TestDBWorkListItem_Imageは一覧アイテムが作品のimage_dataをWorkImageに配線し、
 // 画像がある作品は実サムネイルに、無い作品はプレースホルダーに解決されることを検証する。
 func TestDBWorkListItem_Image(t *testing.T) {
 	t.Parallel()
@@ -553,10 +534,10 @@ func TestDBWorkListItem_Image(t *testing.T) {
 		ImageData: `{"master":{"id":"workimage/1/image/master-abc.jpg","storage":"store"}}`,
 	}, helper)
 	if !withImage.Image.Exists() {
-		t.Error("画像がある作品では Image.Exists() が true になるべきです")
+		t.Error("画像がある作品ではImage.Exists()がtrueになるべきです")
 	}
 	if withImage.Image.SrcSet(70, "webp") == "" {
-		t.Error("画像がある作品では SrcSet が非空を返すべきです")
+		t.Error("画像がある作品ではSrcSetが非空を返すべきです")
 	}
 
 	withoutImage := NewDBWorkListItem(ctx, &model.Work{
@@ -565,10 +546,10 @@ func TestDBWorkListItem_Image(t *testing.T) {
 		ImageData: "",
 	}, helper)
 	if withoutImage.Image.Exists() {
-		t.Error("画像がない作品では Image.Exists() が false になるべきです")
+		t.Error("画像がない作品ではImage.Exists()がfalseになるべきです")
 	}
 	if got := withoutImage.Image.URL(70, "jpg"); got != NoWorkImagePath {
-		t.Errorf("画像がない作品の URL = %q, want %q", got, NoWorkImagePath)
+		t.Errorf("画像がない作品のURL = %q、期待値 = %q", got, NoWorkImagePath)
 	}
 }
 
@@ -585,20 +566,20 @@ func TestNewDBWorkListItems(t *testing.T) {
 	got := NewDBWorkListItems(ctx, works, helper)
 
 	if len(got) != 2 {
-		t.Fatalf("len(got) = %d, want 2", len(got))
+		t.Fatalf("len(got) = %d、期待値 = 2", len(got))
 	}
 	if got[0].ID != WorkID(10) || !got[0].Image.Exists() {
-		t.Errorf("got[0] = %+v, want ID=10 で画像あり", got[0])
+		t.Errorf("got[0] = %+v、期待値 = ID=10で画像あり", got[0])
 	}
 	if got[1].ID != WorkID(11) || got[1].Image.Exists() {
-		t.Errorf("got[1] = %+v, want ID=11 で画像なし", got[1])
+		t.Errorf("got[1] = %+v、期待値 = ID=11で画像なし", got[1])
 	}
 }
 
 func TestNewDBWorkFormInputFromWork(t *testing.T) {
 	t.Parallel()
 
-	t.Run("全フィールドが埋まった work を文字列フォーム値に射影する", func(t *testing.T) {
+	t.Run("全フィールドが埋まったworkを文字列フォーム値に射影する", func(t *testing.T) {
 		titleKana := "てすとさくひん"
 		twitterUsername := "test_user"
 		twitterHashtag := "test_hashtag"
@@ -643,7 +624,7 @@ func TestNewDBWorkFormInputFromWork(t *testing.T) {
 
 		got := NewDBWorkFormInputFromWork(work)
 		if got == nil {
-			t.Fatal("NewDBWorkFormInputFromWork returned nil")
+			t.Fatal("NewDBWorkFormInputFromWork()がnilを返した")
 		}
 
 		tests := []struct {
@@ -679,12 +660,12 @@ func TestNewDBWorkFormInputFromWork(t *testing.T) {
 		}
 		for _, tt := range tests {
 			if v := got.Val(tt.field); v != tt.want {
-				t.Errorf("Val(%q) = %q, want %q", tt.field, v, tt.want)
+				t.Errorf("Val(%q) = %q、期待値 = %q", tt.field, v, tt.want)
 			}
 		}
 	})
 
-	t.Run("nullable が未設定の work は空文字列で返す", func(t *testing.T) {
+	t.Run("nullableが未設定のworkは空文字列で返す", func(t *testing.T) {
 		work := &model.Work{
 			ID:                    2,
 			Title:                 "最小作品",
@@ -702,57 +683,50 @@ func TestNewDBWorkFormInputFromWork(t *testing.T) {
 		}
 		for _, field := range emptyFields {
 			if v := got.Val(field); v != "" {
-				t.Errorf("Val(%q) = %q, want empty string", field, v)
+				t.Errorf("Val(%q) = %q、期待値 = 空文字列", field, v)
 			}
 		}
 		if v := got.Val("media"); v != "0" {
-			t.Errorf("Val(media) = %q, want 0", v)
+			t.Errorf("Val(media) = %q、期待値 = 0", v)
 		}
 		if v := got.Val("start_episode_raw_number"); v != "1" {
-			t.Errorf("Val(start_episode_raw_number) = %q, want 1", v)
+			t.Errorf("Val(start_episode_raw_number) = %q、期待値 = 1", v)
 		}
 		if v := got.Val("title"); v != "最小作品" {
-			t.Errorf("Val(title) = %q, want 最小作品", v)
+			t.Errorf("Val(title) = %q、期待値 = 最小作品", v)
 		}
 	})
 }
 
-// TestDBWorkFormInput_Version covers the version the work edit form round-trips: opening the
-// form takes it from the stored row, and a rejected submit hands back the one the editor sent
-// rather than whatever the server holds by then.
-//
-// [Ja] TestDBWorkFormInput_Version は作品編集フォームが往復させる版を対象とする。フォームを開く
+// TestDBWorkFormInput_Versionは作品編集フォームが往復させる版を対象とする。フォームを開く
 // ときは保存済みの行から取り、却下された送信では、その時点でサーバーが持つ値ではなく編集者が
 // 送った版を返す。
 func TestDBWorkFormInput_Version(t *testing.T) {
 	t.Parallel()
 
-	t.Run("保存済みの updated_at をフォームの版に射影する", func(t *testing.T) {
+	t.Run("保存済みのupdated_atをフォームの版に射影する", func(t *testing.T) {
 		t.Parallel()
 
 		updatedAt := time.Date(2026, 8, 17, 1, 2, 3, 456789000, time.UTC)
 		got := NewDBWorkFormInputFromWork(&model.Work{Title: "版あり作品", UpdatedAt: &updatedAt})
 
-		// The form's value has to parse back to the instant it came from, since the update
-		// matches it against the stored column.
-		//
-		// [Ja] フォームの値は元の時刻へパースし直せる必要がある。更新側が保存済みのカラムと
+		// フォームの値は元の時刻へパースし直せる必要がある。更新側が保存済みのカラムと
 		// 照合するため。
 		parsed, err := time.Parse(formVersionLayout, got.Val("updated_at"))
 		if err != nil {
 			t.Fatalf("版のパースに失敗: %v (value=%q)", err, got.UpdatedAt)
 		}
 		if !parsed.Equal(updatedAt) {
-			t.Errorf("version = %v, want %v", parsed, updatedAt)
+			t.Errorf("version = %v、期待値 = %v", parsed, updatedAt)
 		}
 	})
 
-	t.Run("updated_at を持たない work はセンチネルを運ぶ", func(t *testing.T) {
+	t.Run("updated_atを持たないworkはセンチネルを運ぶ", func(t *testing.T) {
 		t.Parallel()
 
 		got := NewDBWorkFormInputFromWork(&model.Work{Title: "版なし作品"})
 		if got.UpdatedAt != FormNullVersion {
-			t.Errorf("UpdatedAt = %q, want %q", got.UpdatedAt, FormNullVersion)
+			t.Errorf("UpdatedAt = %q、期待値 = %q", got.UpdatedAt, FormNullVersion)
 		}
 	})
 
@@ -767,10 +741,10 @@ func TestDBWorkFormInput_Version(t *testing.T) {
 		})
 
 		if got.UpdatedAt != submitted {
-			t.Errorf("UpdatedAt = %q, want %q", got.UpdatedAt, submitted)
+			t.Errorf("UpdatedAt = %q、期待値 = %q", got.UpdatedAt, submitted)
 		}
 		if got.Title != "送信されたタイトル" {
-			t.Errorf("Title = %q, want 送信されたタイトル", got.Title)
+			t.Errorf("Title = %q、期待値 = 送信されたタイトル", got.Title)
 		}
 	})
 
@@ -779,7 +753,7 @@ func TestDBWorkFormInput_Version(t *testing.T) {
 
 		got := NewDBWorkFormInput(usecase.WorkFormInput{Title: "作成中の作品"})
 		if got.UpdatedAt != "" {
-			t.Errorf("UpdatedAt = %q, want empty", got.UpdatedAt)
+			t.Errorf("UpdatedAt = %q、期待値 = 空", got.UpdatedAt)
 		}
 	})
 }

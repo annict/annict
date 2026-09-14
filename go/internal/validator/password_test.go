@@ -92,7 +92,7 @@ func TestPasswordUpdateValidatorValidate(t *testing.T) {
 			wantErrors: true,
 			wantFields: []string{"password_confirmation"},
 			wantErrorMessages: map[string]string{
-				"password_confirmation": "新しいパスワード（確認）を入力してください",
+				"password_confirmation": "新しいパスワード (確認) を入力してください",
 			},
 		},
 		{
@@ -105,7 +105,7 @@ func TestPasswordUpdateValidatorValidate(t *testing.T) {
 			wantErrors: true,
 			wantFields: []string{"password_confirmation"},
 			wantErrorMessages: map[string]string{
-				"password_confirmation": "新しいパスワード（確認）を入力してください",
+				"password_confirmation": "新しいパスワード (確認) を入力してください",
 			},
 		},
 		{
@@ -181,7 +181,7 @@ func TestPasswordUpdateValidatorValidate(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if _, exists := ve.Fields[field]; !exists {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 
@@ -189,15 +189,15 @@ func TestPasswordUpdateValidatorValidate(t *testing.T) {
 					for field, expectedMsg := range tt.wantErrorMessages {
 						actualMsgs, exists := ve.Fields[field]
 						if !exists {
-							t.Errorf("フィールド %s のエラーメッセージが見つかりませんでした", field)
+							t.Errorf("フィールド%sのエラーメッセージが見つかりませんでした", field)
 							continue
 						}
 						if len(actualMsgs) == 0 {
-							t.Errorf("フィールド %s のエラーメッセージが空です", field)
+							t.Errorf("フィールド%sのエラーメッセージが空です", field)
 							continue
 						}
 						if actualMsgs[0] != expectedMsg {
-							t.Errorf("フィールド %s のエラーメッセージが一致しません\n期待: %q\n実際: %q", field, expectedMsg, actualMsgs[0])
+							t.Errorf("フィールド%sのエラーメッセージが一致しません\n期待: %q\n実際: %q", field, expectedMsg, actualMsgs[0])
 						}
 					}
 				}
@@ -330,7 +330,7 @@ func TestPasswordUpdateValidator_ValidateI18nMessages(t *testing.T) {
 	})
 }
 
-// TestPasswordUpdateValidator_PasswordStrength はパスワード強度エラーが i18n 翻訳に解決されることを検証する
+// TestPasswordUpdateValidator_PasswordStrengthはパスワード強度エラーがi18n翻訳に解決されることを検証する
 func TestPasswordUpdateValidator_PasswordStrength(t *testing.T) {
 	t.Parallel()
 
@@ -355,12 +355,12 @@ func TestPasswordUpdateValidator_PasswordStrength(t *testing.T) {
 			templateData:   map[string]any{"MaxLength": auth.MaxPasswordLength},
 		},
 		{
-			name:           "印字可能ASCII以外（スペース）",
+			name:           "印字可能ASCII以外 (スペース)",
 			password:       "password with space",
 			translationKey: "password_strength_invalid_chars",
 		},
 		{
-			name:           "印字可能ASCII以外（日本語）",
+			name:           "印字可能ASCII以外 (日本語)",
 			password:       "パスワード12345",
 			translationKey: "password_strength_invalid_chars",
 		},
@@ -380,7 +380,7 @@ func TestPasswordUpdateValidator_PasswordStrength(t *testing.T) {
 			ve := model.AsValidationError(err)
 
 			if ve == nil {
-				t.Fatal("ValidationError が期待されましたが返されませんでした")
+				t.Fatal("ValidationErrorが期待されましたが返されませんでした")
 			}
 
 			var expectedMsg string
@@ -391,10 +391,10 @@ func TestPasswordUpdateValidator_PasswordStrength(t *testing.T) {
 			}
 			actualMsgs, exists := ve.Fields["password"]
 			if !exists {
-				t.Fatal("password フィールドのエラーが見つかりませんでした")
+				t.Fatal("passwordフィールドのエラーが見つかりませんでした")
 			}
 			if len(actualMsgs) == 0 {
-				t.Fatal("password フィールドのエラーメッセージが空です")
+				t.Fatal("passwordフィールドのエラーメッセージが空です")
 			}
 			if actualMsgs[0] != expectedMsg {
 				t.Errorf("エラーメッセージが一致しません\n期待: %q\n実際: %q", expectedMsg, actualMsgs[0])
@@ -403,7 +403,7 @@ func TestPasswordUpdateValidator_PasswordStrength(t *testing.T) {
 	}
 }
 
-// TestPasswordUpdateValidator_PasswordStrengthLocales は日本語・英語ロケールで翻訳が切り替わることを検証する
+// TestPasswordUpdateValidator_PasswordStrengthLocalesは日本語・英語ロケールで翻訳が切り替わることを検証する
 func TestPasswordUpdateValidator_PasswordStrengthLocales(t *testing.T) {
 	t.Parallel()
 
@@ -416,37 +416,37 @@ func TestPasswordUpdateValidator_PasswordStrengthLocales(t *testing.T) {
 		expectedMsg string
 	}{
 		{
-			name:        "最小長エラー（日本語）",
+			name:        "最小長エラー (日本語)",
 			locale:      "ja",
 			password:    "short1!",
 			expectedMsg: fmt.Sprintf("パスワードは%d文字以上である必要があります", auth.MinPasswordLength),
 		},
 		{
-			name:        "最大長エラー（日本語）",
+			name:        "最大長エラー (日本語)",
 			locale:      "ja",
 			password:    strings.Repeat("a", auth.MaxPasswordLength+1),
 			expectedMsg: fmt.Sprintf("パスワードは%d文字以内である必要があります", auth.MaxPasswordLength),
 		},
 		{
-			name:        "無効な文字エラー（日本語）",
+			name:        "無効な文字エラー (日本語)",
 			locale:      "ja",
 			password:    "password with space",
 			expectedMsg: "パスワードは半角英数記号のみ使用できます",
 		},
 		{
-			name:        "最小長エラー（英語）",
+			name:        "最小長エラー (英語)",
 			locale:      "en",
 			password:    "short1!",
 			expectedMsg: fmt.Sprintf("Password must be at least %d characters long", auth.MinPasswordLength),
 		},
 		{
-			name:        "最大長エラー（英語）",
+			name:        "最大長エラー (英語)",
 			locale:      "en",
 			password:    strings.Repeat("a", auth.MaxPasswordLength+1),
 			expectedMsg: fmt.Sprintf("Password must be no more than %d characters long", auth.MaxPasswordLength),
 		},
 		{
-			name:        "無効な文字エラー（英語）",
+			name:        "無効な文字エラー (英語)",
 			locale:      "en",
 			password:    "password with space",
 			expectedMsg: "Password can only use alphanumeric characters and symbols",
@@ -467,15 +467,15 @@ func TestPasswordUpdateValidator_PasswordStrengthLocales(t *testing.T) {
 			ve := model.AsValidationError(err)
 
 			if ve == nil {
-				t.Fatal("ValidationError が期待されましたが返されませんでした")
+				t.Fatal("ValidationErrorが期待されましたが返されませんでした")
 			}
 
 			actualMsgs, exists := ve.Fields["password"]
 			if !exists {
-				t.Fatal("password フィールドのエラーが見つかりませんでした")
+				t.Fatal("passwordフィールドのエラーが見つかりませんでした")
 			}
 			if len(actualMsgs) == 0 {
-				t.Fatal("password フィールドのエラーメッセージが空です")
+				t.Fatal("passwordフィールドのエラーメッセージが空です")
 			}
 			if actualMsgs[0] != tt.expectedMsg {
 				t.Errorf("エラーメッセージが一致しません\n期待: %q\n実際: %q", tt.expectedMsg, actualMsgs[0])

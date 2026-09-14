@@ -16,13 +16,9 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// newUpdateEpisodeUsecase wires the update usecase against the shared test DB. The usecase
-// opens its own transaction, so its tests use GetTestDB (not SetupTx) so the committed rows are
-// visible to the usecase's inner transaction and to the follow-up sync invariant check.
-//
-// [Ja] newUpdateEpisodeUsecase は共有テスト DB に対して更新 UseCase を組み立てる。本 UseCase は
-// 内部で自前のトランザクションを開くため、テストは SetupTx ではなく GetTestDB を使い、コミット
-// 済みの行が UseCase の内側トランザクションと後続の同期不変条件チェックから見えるようにする。
+// newUpdateEpisodeUsecaseは共有テストDBに対して更新UseCaseを組み立てる。本UseCaseは
+// 内部で自前のトランザクションを開くため、テストはSetupTxではなくGetTestDBを使い、コミット
+// 済みの行がUseCaseの内側トランザクションと後続の同期不変条件チェックから見えるようにする。
 func newUpdateEpisodeUsecase(db *sql.DB) *UpdateEpisodeUsecase {
 	queries := query.New(db)
 	return NewUpdateEpisodeUsecase(
@@ -34,12 +30,8 @@ func newUpdateEpisodeUsecase(db *sql.DB) *UpdateEpisodeUsecase {
 	)
 }
 
-// insertUpdateTargetEpisode inserts the episode an update test edits under the given work,
-// already mapped to its own anime when one is passed. Its timestamps come from the database so
-// the version the form reads back is the one the update compares against.
-//
-// [Ja] insertUpdateTargetEpisode は更新テストが編集するエピソードを指定作品の配下に挿入する。
-// anime を渡した場合は自身の anime にマッピング済みにする。タイムスタンプは DB から取るため、
+// insertUpdateTargetEpisodeは更新テストが編集するエピソードを指定作品の配下に挿入する。
+// animeを渡した場合は自身のanimeにマッピング済みにする。タイムスタンプはDBから取るため、
 // フォームが読み戻す版と更新が照合する版が一致する。
 func insertUpdateTargetEpisode(t *testing.T, db *sql.DB, workID model.WorkID, animeID sql.NullInt64, sortNumber int32) model.EpisodeID {
 	t.Helper()
@@ -53,18 +45,14 @@ func insertUpdateTargetEpisode(t *testing.T, db *sql.DB, workID model.WorkID, an
 		RETURNING id`,
 		int64(workID), sortNumber, animeID,
 	).Scan(&id); err != nil {
-		t.Fatalf("episodes の挿入に失敗: %v", err)
+		t.Fatalf("episodesの挿入に失敗: %v", err)
 	}
 
 	return model.EpisodeID(id)
 }
 
-// insertMappedUpdateTargetEpisode inserts an episode already mapped to an anime with its
-// kind='episode' classification, the shape the phase 2 sync leaves behind and the one the
-// update dual-writes into.
-//
-// [Ja] insertMappedUpdateTargetEpisode は、kind='episode' の分類とともに anime へマッピング済み
-// のエピソードを挿入する。フェーズ 2 の同期が残す形であり、更新が両書きする先でもある。
+// insertMappedUpdateTargetEpisodeは、kind='episode' の分類とともにanimeへマッピング済み
+// のエピソードを挿入する。フェーズ2の同期が残す形であり、更新が両書きする先でもある。
 func insertMappedUpdateTargetEpisode(t *testing.T, db *sql.DB, workID model.WorkID, parentAnimeID model.AnimeID, sortNumber int32) (model.EpisodeID, model.AnimeID) {
 	t.Helper()
 
@@ -76,16 +64,13 @@ func insertMappedUpdateTargetEpisode(t *testing.T, db *sql.DB, workID model.Work
 		VALUES ($1, 'episode', $2, 1, '#1', $3, false)`,
 		int64(episodeAnimeID), int64(parentAnimeID), sortNumber,
 	); err != nil {
-		t.Fatalf("anime_classifications の挿入に失敗: %v", err)
+		t.Fatalf("anime_classificationsの挿入に失敗: %v", err)
 	}
 
 	return episodeID, episodeAnimeID
 }
 
-// readUpdateTargetVersion returns the version an episode's form would carry, which a submit has
-// to state to be accepted.
-//
-// [Ja] readUpdateTargetVersion はエピソードのフォームが運ぶ版を返す。送信が受理されるには、この
+// readUpdateTargetVersionはエピソードのフォームが運ぶ版を返す。送信が受理されるには、この
 // 版を名乗る必要がある。
 func readUpdateTargetVersion(t *testing.T, db *sql.DB, episodeID model.EpisodeID) string {
 	t.Helper()
@@ -101,10 +86,7 @@ func readUpdateTargetVersion(t *testing.T, db *sql.DB, episodeID model.EpisodeID
 	return updatedAt.Time.UTC().Format(validator.FormVersionLayout)
 }
 
-// updateEpisodeSubmit returns a submit that changes every editable field, with the version the
-// episode currently carries.
-//
-// [Ja] updateEpisodeSubmit は編集できる全フィールドを変更する送信を、エピソードが現在持つ版と
+// updateEpisodeSubmitは編集できる全フィールドを変更する送信を、エピソードが現在持つ版と
 // ともに返す。
 func updateEpisodeSubmit(t *testing.T, db *sql.DB, episodeID model.EpisodeID, user *model.User) UpdateEpisodeInput {
 	t.Helper()
@@ -121,12 +103,8 @@ func updateEpisodeSubmit(t *testing.T, db *sql.DB, episodeID model.EpisodeID, us
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_DualWritesAnimeAndClassification covers the update path of an
-// episode that is already mapped: the submitted values reach both the episodes row and the
-// anime / classification the reference model derives from it.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_DualWritesAnimeAndClassification は、既にマッピング済み
-// のエピソードの更新経路を検証する。送信された値が episodes の行と、そこから参照モデルが導出する
+// TestUpdateEpisodeUsecase_Execute_DualWritesAnimeAndClassificationは、既にマッピング済み
+// のエピソードの更新経路を検証する。送信された値がepisodesの行と、そこから参照モデルが導出する
 // anime / 分類の双方に届く。
 func TestUpdateEpisodeUsecase_Execute_DualWritesAnimeAndClassification(t *testing.T) {
 	t.Parallel()
@@ -140,69 +118,62 @@ func TestUpdateEpisodeUsecase_Execute_DualWritesAnimeAndClassification(t *testin
 
 	output, err := uc.Execute(context.Background(), updateEpisodeSubmit(t, db, episodeID, user))
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if output.EpisodeID != episodeID || output.WorkID != workID {
-		t.Errorf("output = %+v, want {EpisodeID:%d WorkID:%d}", output, int64(episodeID), int64(workID))
+		t.Errorf("output = %+v、期待値 = {EpisodeID:%d WorkID:%d}", output, int64(episodeID), int64(workID))
 	}
 
 	stored := readCreatedEpisode(t, db, episodeID)
 	if stored.number.String != "第2話" || stored.title.String != "もう、お婿にいけません" {
-		t.Errorf("(number, title) = (%q, %q), want (\"第2話\", \"もう、お婿にいけません\")", stored.number.String, stored.title.String)
+		t.Errorf("(number, title) = (%q, %q)、期待値 = (\"第2話\", \"もう、お婿にいけません\")", stored.number.String, stored.title.String)
 	}
 	if stored.rawNumber.Float64 != 2.5 {
-		t.Errorf("raw_number = %v, want 2.5", stored.rawNumber)
+		t.Errorf("raw_number = %v、期待値 = 2.5", stored.rawNumber)
 	}
 	if stored.sortNumber != 250 {
-		t.Errorf("sort_number = %d, want 250", stored.sortNumber)
+		t.Errorf("sort_number = %d、期待値 = 250", stored.sortNumber)
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(context.Background(), episodeAnimeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Title.String != "もう、お婿にいけません" {
-		t.Errorf("anime.Title = %q, want %q", anime.Title.String, "もう、お婿にいけません")
+		t.Errorf("anime.Title = %q、期待値 = %q", anime.Title.String, "もう、お婿にいけません")
 	}
 	if anime.TitleEn.String != "No Longer Marriageable" {
-		t.Errorf("anime.TitleEn = %q, want %q", anime.TitleEn.String, "No Longer Marriageable")
+		t.Errorf("anime.TitleEn = %q、期待値 = %q", anime.TitleEn.String, "No Longer Marriageable")
 	}
-	// The episode does not source title_ro, so the update carries the stored one over instead
-	// of blanking the column the form has no field for.
-	//
-	// [Ja] エピソードは title_ro を source としないため、更新は保存済みの値を引き継ぐ。フォームに
+	// エピソードはtitle_roをsourceとしないため、更新は保存済みの値を引き継ぐ。フォームに
 	// 欄の無いカラムを空にしないようにするため。
 	if anime.TitleRo.String != "Before" {
-		t.Errorf("anime.TitleRo = %q, want %q", anime.TitleRo.String, "Before")
+		t.Errorf("anime.TitleRo = %q、期待値 = %q", anime.TitleRo.String, "Before")
 	}
 
 	classRepo := repository.NewAnimeClassificationRepository(query.New(db))
 	classification, err := classRepo.GetByAnimeID(context.Background(), episodeAnimeID)
 	if err != nil || classification == nil {
-		t.Fatalf("GetByAnimeID() classification=%v err=%v", classification, err)
+		t.Fatalf("GetByAnimeID()のclassification = %v、エラー = %v", classification, err)
 	}
 	if classification.NumberText.String != "第2話" {
-		t.Errorf("classification.NumberText = %q, want %q", classification.NumberText.String, "第2話")
+		t.Errorf("classification.NumberText = %q、期待値 = %q", classification.NumberText.String, "第2話")
 	}
 	if classification.Number.String != "2.5" {
-		t.Errorf("classification.Number = %q, want %q", classification.Number.String, "2.5")
+		t.Errorf("classification.Number = %q、期待値 = %q", classification.Number.String, "2.5")
 	}
 	if !classification.SortNumber.Valid || classification.SortNumber.Int32 != 250 {
-		t.Errorf("classification.SortNumber = %+v, want {250 true}", classification.SortNumber)
+		t.Errorf("classification.SortNumber = %+v、期待値 = {250 true}", classification.SortNumber)
 	}
 	if classification.ParentAnimeID == nil || *classification.ParentAnimeID != parentAnimeID {
-		t.Errorf("classification.ParentAnimeID = %v, want %d", classification.ParentAnimeID, int64(parentAnimeID))
+		t.Errorf("classification.ParentAnimeID = %v、期待値 = %d", classification.ParentAnimeID, int64(parentAnimeID))
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode covers an episode whose work has
-// no anime yet: only the episodes row is written, and the phase 2 sync creates the anime once
-// the work is synced.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode は、作品がまだ anime を
-// 持たないエピソードを検証する。episodes の行だけを書き、その anime は作品が同期された後に
-// フェーズ 2 の同期が作る。
+// TestUpdateEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisodeは、作品がまだanimeを
+// 持たないエピソードを検証する。episodesの行だけを書き、そのanimeは作品が同期された後に
+// フェーズ2の同期が作る。
 func TestUpdateEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing.T) {
 	t.Parallel()
 
@@ -214,27 +185,22 @@ func TestUpdateEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing.T)
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	if _, err := uc.Execute(context.Background(), updateEpisodeSubmit(t, db, episodeID, user)); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	stored := readCreatedEpisode(t, db, episodeID)
 	if stored.title.String != "もう、お婿にいけません" {
-		t.Errorf("title = %q, want %q", stored.title.String, "もう、お婿にいけません")
+		t.Errorf("title = %q、期待値 = %q", stored.title.String, "もう、お婿にいけません")
 	}
 	if stored.animeID.Valid {
-		t.Errorf("episodes.anime_id = %+v, want NULL (未マッピングのまま)", stored.animeID)
+		t.Errorf("episodes.anime_id = %+v、期待値 = NULL (未マッピングのまま)", stored.animeID)
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_SkipsAnimeWhenParentMappingIsMissing covers a partially
-// stale mapping: the episode still points at an anime, but its parent work no longer does. The
-// episodes row remains editable, while the anime and its classification stay untouched until
-// the parent is mapped and phase 2 sync can derive a valid parent_anime_id.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_SkipsAnimeWhenParentMappingIsMissing は部分的に古い写像を
-// 検証する。episode は anime を指したままだが、親作品は anime を指していない。episodes の行は
-// 編集できる一方、親が再度マッピングされてフェーズ 2 同期が有効な parent_anime_id を導出できる
-// までは anime とその分類に触れない。
+// TestUpdateEpisodeUsecase_Execute_SkipsAnimeWhenParentMappingIsMissingは部分的に古い写像を
+// 検証する。episodeはanimeを指したままだが、親作品はanimeを指していない。episodesの行は
+// 編集できる一方、親が再度マッピングされてフェーズ2同期が有効なparent_anime_idを導出できる
+// まではanimeとその分類に触れない。
 func TestUpdateEpisodeUsecase_Execute_SkipsAnimeWhenParentMappingIsMissing(t *testing.T) {
 	t.Parallel()
 
@@ -249,40 +215,36 @@ func TestUpdateEpisodeUsecase_Execute_SkipsAnimeWhenParentMappingIsMissing(t *te
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	if _, err := uc.Execute(context.Background(), updateEpisodeSubmit(t, db, episodeID, user)); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	stored := readCreatedEpisode(t, db, episodeID)
 	if stored.title.String != "もう、お婿にいけません" {
-		t.Errorf("episodes.title = %q, want %q", stored.title.String, "もう、お婿にいけません")
+		t.Errorf("episodes.title = %q、期待値 = %q", stored.title.String, "もう、お婿にいけません")
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(context.Background(), episodeAnimeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Title.Valid {
-		t.Errorf("anime.Title = %+v, want unchanged NULL", anime.Title)
+		t.Errorf("anime.Title = %+v、期待値 = NULLのまま", anime.Title)
 	}
 
 	classRepo := repository.NewAnimeClassificationRepository(query.New(db))
 	classification, err := classRepo.GetByAnimeID(context.Background(), episodeAnimeID)
 	if err != nil || classification == nil {
-		t.Fatalf("GetByAnimeID() classification=%v err=%v", classification, err)
+		t.Fatalf("GetByAnimeID()のclassification = %v、エラー = %v", classification, err)
 	}
 	if classification.NumberText.String != "#1" || classification.SortNumber.Int32 != 100 {
-		t.Errorf("classification = %+v, want pre-update number_text=#1 sort_number=100", classification)
+		t.Errorf("classification = %+v、期待値 = 更新前のnumber_text=#1 sort_number=100", classification)
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_RecreatesMissingClassification covers a mapped episode whose
-// classification was removed independently. The edit recreates the classification in the same
-// transaction as the episodes / anime writes, and an immediate sync then reports Unchanged.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_RecreatesMissingClassification は、分類だけが独立して
-// 削除されたマッピング済みエピソードを検証する。編集は episodes / anime と同じトランザクションで
-// 分類を再作成し、直後の同期は Unchanged を報告する。
+// TestUpdateEpisodeUsecase_Execute_RecreatesMissingClassificationは、分類だけが独立して
+// 削除されたマッピング済みエピソードを検証する。編集はepisodes / animeと同じトランザクションで
+// 分類を再作成し、直後の同期はUnchangedを報告する。
 func TestUpdateEpisodeUsecase_Execute_RecreatesMissingClassification(t *testing.T) {
 	t.Parallel()
 
@@ -297,42 +259,37 @@ func TestUpdateEpisodeUsecase_Execute_RecreatesMissingClassification(t *testing.
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	if _, err := uc.Execute(context.Background(), updateEpisodeSubmit(t, db, episodeID, user)); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	classRepo := repository.NewAnimeClassificationRepository(query.New(db))
 	classification, err := classRepo.GetByAnimeID(context.Background(), episodeAnimeID)
 	if err != nil || classification == nil {
-		t.Fatalf("GetByAnimeID() classification=%v err=%v", classification, err)
+		t.Fatalf("GetByAnimeID()のclassification = %v、エラー = %v", classification, err)
 	}
 	if classification.ParentAnimeID == nil || *classification.ParentAnimeID != parentAnimeID {
-		t.Errorf("classification.ParentAnimeID = %v, want %d", classification.ParentAnimeID, int64(parentAnimeID))
+		t.Errorf("classification.ParentAnimeID = %v、期待値 = %d", classification.ParentAnimeID, int64(parentAnimeID))
 	}
 	if classification.NumberText.String != "第2話" || classification.Number.String != "2.5" {
-		t.Errorf("classification = %+v, want submitted numbering", classification)
+		t.Errorf("classification = %+v、期待値 = 送信した話数情報", classification)
 	}
 	if !classification.SortNumber.Valid || classification.SortNumber.Int32 != 250 {
-		t.Errorf("classification.SortNumber = %+v, want {250 true}", classification.SortNumber)
+		t.Errorf("classification.SortNumber = %+v、期待値 = {250 true}", classification.SortNumber)
 	}
 
 	syncUC := newSyncEpisodesUsecase(db)
 	result, err := syncUC.Execute(context.Background(), SyncEpisodesToAnimesInput{EpisodeIDs: []model.EpisodeID{episodeID}})
 	if err != nil {
-		t.Fatalf("sync Execute() error = %v", err)
+		t.Fatalf("同期のExecute()のエラー = %v", err)
 	}
 	if result.Processed != 1 || result.Created != 0 || result.Updated != 0 || result.Unchanged != 1 {
-		t.Fatalf("sync result = %+v, want {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
+		t.Fatalf("同期の結果 = %+v、期待値 = {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_ProducesSyncConsistentMapping is the invariant that justifies
-// reusing the sync mapping helpers: a sync run right after an update must detect no diff
-// (Unchanged), proving update and sync derive the same anime / classification from the episode
-// and the update path never inflates the diff metric.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_ProducesSyncConsistentMapping は同期の写像ヘルパー再利用
+// TestUpdateEpisodeUsecase_Execute_ProducesSyncConsistentMappingは同期の写像ヘルパー再利用
 // を正当化する不変条件。更新直後の同期実行は差分なし (Unchanged) を検出しなければならず、update
-// と同期が同じ anime / 分類をエピソードから導出していること、update 経路が差分メトリクスを
+// と同期が同じanime / 分類をエピソードから導出していること、update経路が差分メトリクスを
 // 水増ししないことを示す。
 func TestUpdateEpisodeUsecase_Execute_ProducesSyncConsistentMapping(t *testing.T) {
 	t.Parallel()
@@ -345,26 +302,22 @@ func TestUpdateEpisodeUsecase_Execute_ProducesSyncConsistentMapping(t *testing.T
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	if _, err := uc.Execute(context.Background(), updateEpisodeSubmit(t, db, episodeID, user)); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	syncUC := newSyncEpisodesUsecase(db)
 	result, err := syncUC.Execute(context.Background(), SyncEpisodesToAnimesInput{EpisodeIDs: []model.EpisodeID{episodeID}})
 	if err != nil {
-		t.Fatalf("sync Execute() error = %v", err)
+		t.Fatalf("同期のExecute()のエラー = %v", err)
 	}
 	if result.Processed != 1 || result.Created != 0 || result.Updated != 0 || result.Unchanged != 1 {
-		t.Fatalf("sync result = %+v, want {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
+		t.Fatalf("同期の結果 = %+v、期待値 = {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_KeepsArchivedAnimeArchived covers a content edit of an
-// archived episode: the state timestamps the form does not touch are carried over, so the
-// dual-write does not republish the anime behind the editor's back.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_KeepsArchivedAnimeArchived は、非公開エピソードの内容
+// TestUpdateEpisodeUsecase_Execute_KeepsArchivedAnimeArchivedは、非公開エピソードの内容
 // 編集を検証する。フォームが触れない状態のタイムスタンプが引き継がれるため、両書きが編集者の
-// 知らないうちに anime を再公開することはない。
+// 知らないうちにanimeを再公開することはない。
 func TestUpdateEpisodeUsecase_Execute_KeepsArchivedAnimeArchived(t *testing.T) {
 	t.Parallel()
 
@@ -377,30 +330,26 @@ func TestUpdateEpisodeUsecase_Execute_KeepsArchivedAnimeArchived(t *testing.T) {
 		t.Fatalf("エピソードの非公開化に失敗: %v", err)
 	}
 	if _, err := db.Exec(`UPDATE animes SET status = 'archived' WHERE id = $1`, int64(episodeAnimeID)); err != nil {
-		t.Fatalf("anime の非公開化に失敗: %v", err)
+		t.Fatalf("animeの非公開化に失敗: %v", err)
 	}
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	if _, err := uc.Execute(context.Background(), updateEpisodeSubmit(t, db, episodeID, user)); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(context.Background(), episodeAnimeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Status != model.AnimeStatusArchived {
-		t.Errorf("anime.Status = %q, want %q", anime.Status, model.AnimeStatusArchived)
+		t.Errorf("anime.Status = %q、期待値 = %q", anime.Status, model.AnimeStatusArchived)
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_RejectsStaleVersion covers two editors submitting from the
-// same form: the second submit is reported as a conflict and leaves the first one's values in
-// place instead of overwriting them.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_RejectsStaleVersion は、2 人の編集者が同じフォームから
-// 送信する場合を検証する。2 件目は競合として報告され、1 件目の値を上書きせずに残す。
+// TestUpdateEpisodeUsecase_Execute_RejectsStaleVersionは、2人の編集者が同じフォームから
+// 送信する場合を検証する。2件目は競合として報告され、1件目の値を上書きせずに残す。
 func TestUpdateEpisodeUsecase_Execute_RejectsStaleVersion(t *testing.T) {
 	t.Parallel()
 
@@ -411,15 +360,13 @@ func TestUpdateEpisodeUsecase_Execute_RejectsStaleVersion(t *testing.T) {
 	episodeID := insertUpdateTargetEpisode(t, db, workID, sql.NullInt64{}, 100)
 	user := insertCreateActor(t, db, model.RoleEditor)
 
-	// Both editors open the form at the same version.
-	//
-	// [Ja] 2 人の編集者は同じ版でフォームを開く。
+	// 2人の編集者は同じ版でフォームを開く。
 	shared := updateEpisodeSubmit(t, db, episodeID, user)
 
 	first := shared
 	first.Title = "先に保存したタイトル"
 	if _, err := uc.Execute(context.Background(), first); err != nil {
-		t.Fatalf("1 件目の Execute() error = %v", err)
+		t.Fatalf("1件目のExecute()のエラー = %v", err)
 	}
 
 	second := shared
@@ -427,22 +374,18 @@ func TestUpdateEpisodeUsecase_Execute_RejectsStaleVersion(t *testing.T) {
 	_, err := uc.Execute(context.Background(), second)
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeConflict {
-		t.Fatalf("2 件目の Execute() error = %v, want AppErrCodeConflict", err)
+		t.Fatalf("2件目のExecute()のエラー = %v、期待値 = AppErrCodeConflict", err)
 	}
 
 	stored := readCreatedEpisode(t, db, episodeID)
 	if stored.title.String != "先に保存したタイトル" {
-		t.Errorf("title = %q, want %q (後の送信は上書きしない)", stored.title.String, "先に保存したタイトル")
+		t.Errorf("title = %q、期待値 = %q (後の送信は上書きしない)", stored.title.String, "先に保存したタイトル")
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_NullVersion covers an episode written before updated_at was
-// populated: the NULL version is accepted once, and the write that advances the column makes a
-// second submit from the same form conflict.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_NullVersion は、updated_at が埋まる前に書かれた
-// エピソードを検証する。NULL の版は 1 度だけ受理され、カラムを進める書き込みによって同じ
-// フォームからの 2 件目は競合する。
+// TestUpdateEpisodeUsecase_Execute_NullVersionは、updated_atが埋まる前に書かれた
+// エピソードを検証する。NULLの版は1度だけ受理され、カラムを進める書き込みによって同じ
+// フォームからの2件目は競合する。
 func TestUpdateEpisodeUsecase_Execute_NullVersion(t *testing.T) {
 	t.Parallel()
 
@@ -452,32 +395,28 @@ func TestUpdateEpisodeUsecase_Execute_NullVersion(t *testing.T) {
 	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
 	episodeID := insertUpdateTargetEpisode(t, db, workID, sql.NullInt64{}, 100)
 	if _, err := db.Exec(`UPDATE episodes SET updated_at = NULL WHERE id = $1`, int64(episodeID)); err != nil {
-		t.Fatalf("updated_at の NULL 化に失敗: %v", err)
+		t.Fatalf("updated_atのNULL化に失敗: %v", err)
 	}
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	submit := updateEpisodeSubmit(t, db, episodeID, user)
 	if submit.UpdatedAt != validator.FormNullVersion {
-		t.Fatalf("フォームが運ぶ版 = %q, want %q", submit.UpdatedAt, validator.FormNullVersion)
+		t.Fatalf("フォームが運ぶ版 = %q、期待値 = %q", submit.UpdatedAt, validator.FormNullVersion)
 	}
 
 	if _, err := uc.Execute(context.Background(), submit); err != nil {
-		t.Fatalf("1 件目の Execute() error = %v", err)
+		t.Fatalf("1件目のExecute()のエラー = %v", err)
 	}
 
 	_, err := uc.Execute(context.Background(), submit)
 	ae := model.AsAppError(err)
 	if ae == nil || ae.Code != model.AppErrCodeConflict {
-		t.Fatalf("2 件目の Execute() error = %v, want AppErrCodeConflict", err)
+		t.Fatalf("2件目のExecute()のエラー = %v、期待値 = AppErrCodeConflict", err)
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_RejectsEmptyVersion covers a submit that states no version at
-// all, which is not the same as the NULL sentinel: accepting it would let a crafted request skip
-// the check that stops one editor from overwriting another.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_RejectsEmptyVersion は、版をまったく示さない送信を検証
-// する。これは NULL のセンチネルとは別物で、受理すると、ある編集者が別の編集者を上書きするのを
+// TestUpdateEpisodeUsecase_Execute_RejectsEmptyVersionは、版をまったく示さない送信を検証
+// する。これはNULLのセンチネルとは別物で、受理すると、ある編集者が別の編集者を上書きするのを
 // 止める検査を、改変されたリクエストが素通りできてしまう。
 func TestUpdateEpisodeUsecase_Execute_RejectsEmptyVersion(t *testing.T) {
 	t.Parallel()
@@ -494,19 +433,16 @@ func TestUpdateEpisodeUsecase_Execute_RejectsEmptyVersion(t *testing.T) {
 
 	_, err := uc.Execute(context.Background(), submit)
 	if ve := model.AsValidationError(err); ve == nil {
-		t.Fatalf("Execute() error = %v, want *model.ValidationError", err)
+		t.Fatalf("Execute()のエラー = %v、期待値 = *model.ValidationError", err)
 	}
 
 	stored := readCreatedEpisode(t, db, episodeID)
 	if stored.title.String != "編集前のタイトル" {
-		t.Errorf("title = %q, want %q (却下された送信は行を書かない)", stored.title.String, "編集前のタイトル")
+		t.Errorf("title = %q、期待値 = %q (却下された送信は行を書かない)", stored.title.String, "編集前のタイトル")
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_NotFound covers submits against episodes that have no edit
-// form: one that never existed, a deleted one, and one whose work was deleted.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_NotFound は、編集フォームを持たないエピソードへの送信を
+// TestUpdateEpisodeUsecase_Execute_NotFoundは、編集フォームを持たないエピソードへの送信を
 // 検証する。存在しないもの、削除済みのもの、作品が削除済みのもの。
 func TestUpdateEpisodeUsecase_Execute_NotFound(t *testing.T) {
 	t.Parallel()
@@ -544,17 +480,14 @@ func TestUpdateEpisodeUsecase_Execute_NotFound(t *testing.T) {
 			_, err := uc.Execute(context.Background(), tt.input)
 			ae := model.AsAppError(err)
 			if ae == nil || ae.Code != model.AppErrCodeResourceNotFound {
-				t.Fatalf("Execute() error = %v, want AppErrCodeResourceNotFound", err)
+				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", err)
 			}
 		})
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_RequiresCommitter keeps the role rule with the use case
-// rather than with the route, so an entry point added later cannot reach it without one.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_RequiresCommitter はロールの規則をルートではなく
-// UseCase 側に置いていることを検証する。後から増える経路がロール確認を経ずに到達できないように
+// TestUpdateEpisodeUsecase_Execute_RequiresCommitterはロールの規則をルートではなく
+// UseCase側に置いていることを検証する。後から増える経路がロール確認を経ずに到達できないように
 // するため。
 func TestUpdateEpisodeUsecase_Execute_RequiresCommitter(t *testing.T) {
 	t.Parallel()
@@ -580,22 +513,18 @@ func TestUpdateEpisodeUsecase_Execute_RequiresCommitter(t *testing.T) {
 			_, err := uc.Execute(context.Background(), input)
 			ae := model.AsAppError(err)
 			if ae == nil || ae.Code != model.AppErrCodeForbidden {
-				t.Fatalf("Execute() error = %v, want AppErrCodeForbidden", err)
+				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeForbidden", err)
 			}
 		})
 	}
 
 	stored := readCreatedEpisode(t, db, episodeID)
 	if stored.title.String != "編集前のタイトル" {
-		t.Errorf("title = %q, want %q (拒否された呼び出しは行を書かない)", stored.title.String, "編集前のタイトル")
+		t.Errorf("title = %q、期待値 = %q (拒否された呼び出しは行を書かない)", stored.title.String, "編集前のタイトル")
 	}
 }
 
-// TestUpdateEpisodeUsecase_Execute_RecordsRailsSaveSideEffects covers the side effects the Rails
-// update performs alongside the row: the change history the shared admin screen reads, and the
-// parent work's timestamp.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_RecordsRailsSaveSideEffects は、Rails の更新が行と一緒に
+// TestUpdateEpisodeUsecase_Execute_RecordsRailsSaveSideEffectsは、Railsの更新が行と一緒に
 // 行う副作用を検証する。共有の管理画面が読む変更履歴と、親作品のタイムスタンプ。
 func TestUpdateEpisodeUsecase_Execute_RecordsRailsSaveSideEffects(t *testing.T) {
 	t.Parallel()
@@ -609,7 +538,7 @@ func TestUpdateEpisodeUsecase_Execute_RecordsRailsSaveSideEffects(t *testing.T) 
 
 	before := time.Now()
 	if _, err := uc.Execute(context.Background(), updateEpisodeSubmit(t, db, episodeID, user)); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	var activityCount int
@@ -623,10 +552,10 @@ func TestUpdateEpisodeUsecase_Execute_RecordsRailsSaveSideEffects(t *testing.T) 
 			AND root_resource_type = 'Work'
 			AND root_resource_id = $3
 	`, int64(user.ID), int64(episodeID), int64(workID)).Scan(&activityCount); err != nil {
-		t.Fatalf("DB 活動履歴件数の読み込みに失敗: %v", err)
+		t.Fatalf("DB活動履歴件数の読み込みに失敗: %v", err)
 	}
 	if activityCount != 1 {
-		t.Errorf("DB 活動履歴 = %d 件, want 1", activityCount)
+		t.Errorf("DB活動履歴 = %d件、期待値 = 1", activityCount)
 	}
 
 	var workUpdatedAt time.Time
@@ -634,17 +563,13 @@ func TestUpdateEpisodeUsecase_Execute_RecordsRailsSaveSideEffects(t *testing.T) 
 		t.Fatalf("作品の保存副作用の読み込みに失敗: %v", err)
 	}
 	if workUpdatedAt.Before(before) {
-		t.Errorf("works.updated_at = %v, want >= %v", workUpdatedAt, before)
+		t.Errorf("works.updated_at = %v、期待値 = %v以降", workUpdatedAt, before)
 	}
 }
 
-// newRetryOnlyUpdateEpisodeUsecase builds a usecase whose retry bound is the production one but
-// whose backoff is short enough to run in a unit test. Only the retry helpers are exercised, so
-// no repositories are wired.
-//
-// [Ja] newRetryOnlyUpdateEpisodeUsecase は、再試行の上限は本番と同じまま、backoff だけを
-// ユニットテストで回せる長さにした UseCase を組み立てる。再試行のヘルパーだけを対象にするため、
-// Repository は組み込まない。
+// newRetryOnlyUpdateEpisodeUsecaseは、再試行の上限は本番と同じまま、backoffだけを
+// ユニットテストで回せる長さにしたUseCaseを組み立てる。再試行のヘルパーだけを対象にするため、
+// Repositoryは組み込まない。
 func newRetryOnlyUpdateEpisodeUsecase() *UpdateEpisodeUsecase {
 	return &UpdateEpisodeUsecase{
 		lockRetryLimit:     defaultUpdateEpisodeLockRetryLimit,
@@ -652,12 +577,8 @@ func newRetryOnlyUpdateEpisodeUsecase() *UpdateEpisodeUsecase {
 	}
 }
 
-// TestRetryEpisodeUpdateLock verifies that only the repository's NOWAIT lock miss reruns the
-// whole supplied attempt, that the reruns stop at the configured limit, and that any other
-// error is returned from the first attempt.
-//
-// [Ja] TestRetryEpisodeUpdateLock は、Repository の NOWAIT ロック取得失敗だけが渡された試行全体を
-// やり直すこと、やり直しが設定された上限で止まること、それ以外のエラーは 1 回目でそのまま返る
+// TestRetryEpisodeUpdateLockは、RepositoryのNOWAITロック取得失敗だけが渡された試行全体を
+// やり直すこと、やり直しが設定された上限で止まること、それ以外のエラーは1回目でそのまま返る
 // ことを検証する。
 func TestRetryEpisodeUpdateLock(t *testing.T) {
 	t.Parallel()
@@ -676,22 +597,18 @@ func TestRetryEpisodeUpdateLock(t *testing.T) {
 			return want, nil
 		})
 		if err != nil {
-			t.Fatalf("retryEpisodeUpdateLock() error = %v", err)
+			t.Fatalf("retryEpisodeUpdateLock()のエラー = %v", err)
 		}
 		if got != want {
-			t.Errorf("retryEpisodeUpdateLock() = %+v, want %+v", got, want)
+			t.Errorf("retryEpisodeUpdateLock() = %+v、期待値 = %+v", got, want)
 		}
 		if attempts != 3 {
-			t.Errorf("attempts = %d, want 3", attempts)
+			t.Errorf("attempts = %d、期待値 = 3", attempts)
 		}
 	})
 
-	// The bound is what keeps a submit that can never get the lock from holding the request
-	// open indefinitely, and the returned error is what updateEpisode turns into the response
-	// the editor sees.
-	//
-	// [Ja] 上限は、ロックを取れない送信がリクエストを開いたままにするのを防ぐためのもので、
-	// 返るエラーは updateEpisode が編集者に見せる応答へ変換するものである。
+	// 上限は、ロックを取れない送信がリクエストを開いたままにするのを防ぐためのもので、
+	// 返るエラーはupdateEpisodeが編集者に見せる応答へ変換するものである。
 	t.Run("ロックを取れないままなら上限で打ち切り、最後のエラーを返す", func(t *testing.T) {
 		t.Parallel()
 
@@ -702,10 +619,10 @@ func TestRetryEpisodeUpdateLock(t *testing.T) {
 			return nil, fmt.Errorf("エピソードの更新に失敗しました: %w", repository.ErrEpisodeLockUnavailable)
 		})
 		if !errors.Is(err, repository.ErrEpisodeLockUnavailable) {
-			t.Errorf("retryEpisodeUpdateLock() error = %v, want ErrEpisodeLockUnavailable", err)
+			t.Errorf("retryEpisodeUpdateLock()のエラー = %v、期待値 = ErrEpisodeLockUnavailable", err)
 		}
 		if attempts != defaultUpdateEpisodeLockRetryLimit {
-			t.Errorf("attempts = %d, want %d", attempts, defaultUpdateEpisodeLockRetryLimit)
+			t.Errorf("attempts = %d、期待値 = %d", attempts, defaultUpdateEpisodeLockRetryLimit)
 		}
 	})
 
@@ -720,21 +637,15 @@ func TestRetryEpisodeUpdateLock(t *testing.T) {
 			return nil, wantErr
 		})
 		if !errors.Is(err, wantErr) {
-			t.Errorf("retryEpisodeUpdateLock() error = %v, want %v", err, wantErr)
+			t.Errorf("retryEpisodeUpdateLock()のエラー = %v、期待値 = %v", err, wantErr)
 		}
 		if attempts != 1 {
-			t.Errorf("attempts = %d, want 1", attempts)
+			t.Errorf("attempts = %d、期待値 = 1", attempts)
 		}
 	})
 }
 
-// TestUpdateEpisodeUsecase_Execute_ReportsBusyWhenLockNeverFrees fixes what a submit gets when
-// every attempt finds a row it needs locked. Nothing is written and the version the form
-// carries still matches, so this must not be reported as the version conflict a concurrent edit
-// produces: the editor would be sent to compare their input against stored values that have not
-// moved.
-//
-// [Ja] TestUpdateEpisodeUsecase_Execute_ReportsBusyWhenLockNeverFrees は、どの試行でも必要な行が
+// TestUpdateEpisodeUsecase_Execute_ReportsBusyWhenLockNeverFreesは、どの試行でも必要な行が
 // ロックされていた送信が何を受け取るかを固定する。何も書かれず、フォームが運ぶ版も一致したまま
 // のため、並行編集が生む版の競合として報告してはならない。そうすると編集者は、動いていない
 // 保存済みの値と自分の入力を見比べに行かされてしまう。
@@ -750,14 +661,11 @@ func TestUpdateEpisodeUsecase_Execute_ReportsBusyWhenLockNeverFrees(t *testing.T
 	user := insertCreateActor(t, db, model.RoleEditor)
 	submit := updateEpisodeSubmit(t, db, episodeID, user)
 
-	// Hold the target the way a Rails write does: the row is locked for the whole of another
-	// transaction, so every attempt the usecase makes hits NOWAIT.
-	//
-	// [Ja] Rails の書き込みと同じ形で対象行を保持する。行は別トランザクションの間ずっとロック
-	// されるため、UseCase のどの試行も NOWAIT に当たる。
+	// Railsの書き込みと同じ形で対象行を保持する。行は別トランザクションの間ずっとロック
+	// されるため、UseCaseのどの試行もNOWAITに当たる。
 	holdTx, err := db.Begin()
 	if err != nil {
-		t.Fatalf("ロック保持トランザクションの Begin() に失敗: %v", err)
+		t.Fatalf("ロック保持トランザクションのBegin()に失敗: %v", err)
 	}
 	defer func() { _ = holdTx.Rollback() }()
 	if _, err := holdTx.Exec("UPDATE episodes SET title = title WHERE id = $1", int64(episodeID)); err != nil {
@@ -768,19 +676,16 @@ func TestUpdateEpisodeUsecase_Execute_ReportsBusyWhenLockNeverFrees(t *testing.T
 
 	appErr := model.AsAppError(err)
 	if appErr == nil {
-		t.Fatalf("Execute() error = %v, want *model.AppError", err)
+		t.Fatalf("Execute()のエラー = %v、期待値 = *model.AppError", err)
 	}
 	if appErr.Code != model.AppErrCodeBusy {
-		t.Errorf("Execute() AppError.Code = %v, want AppErrCodeBusy (%v)", appErr.Code, model.AppErrCodeBusy)
+		t.Errorf("Execute() AppError.Code = %v、期待値 = AppErrCodeBusy (%v)", appErr.Code, model.AppErrCodeBusy)
 	}
 	if appErr.UserMsg != i18n.T(context.Background(), "validation_record_busy") {
-		t.Errorf("Execute() AppError.UserMsg = %q, want the record-busy message", appErr.UserMsg)
+		t.Errorf("Execute()のAppError.UserMsg = %q、期待値 = レコードの競合を伝えるメッセージ", appErr.UserMsg)
 	}
 
-	// The stored row must be untouched: the message tells the editor to send the same submit
-	// again, which only works while the version they hold still matches.
-	//
-	// [Ja] 保存済みの行は触られていないこと。メッセージは同じ送信をもう一度送るよう伝えるが、
+	// 保存済みの行は触られていないこと。メッセージは同じ送信をもう一度送るよう伝えるが、
 	// それが成立するのは編集者が持つ版が一致したままの間だけである。
 	var storedTitle string
 	var storedSortNumber int32
@@ -790,6 +695,6 @@ func TestUpdateEpisodeUsecase_Execute_ReportsBusyWhenLockNeverFrees(t *testing.T
 		t.Fatalf("保存済みのエピソードの読み込みに失敗: %v", err)
 	}
 	if storedTitle != "編集前のタイトル" || storedSortNumber != 100 {
-		t.Errorf("保存済みの行 = (%q, %d), want (%q, %d)", storedTitle, storedSortNumber, "編集前のタイトル", 100)
+		t.Errorf("保存済みの行 = (%q, %d)、期待値 = (%q, %d)", storedTitle, storedSortNumber, "編集前のタイトル", 100)
 	}
 }

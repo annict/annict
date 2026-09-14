@@ -17,7 +17,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// TestCreate_Success は正常系のテスト
+// TestCreate_Successは正常系のテスト
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
 
@@ -39,7 +39,7 @@ func TestCreate_Success(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// Turnstileクライアントの初期化（テスト用）
+	// Turnstileクライアントの初期化 (テスト用)
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
@@ -64,13 +64,13 @@ func TestCreate_Success(t *testing.T) {
 	// 注: Turnstile検証は実際にAPIを呼び出すため、テスト環境ではスキップされる可能性があります
 	// そのため、このテストはTurnstile検証の実装に依存します
 
-	// ステータスコードが303（成功時のリダイレクト）または422（Turnstile検証失敗時のフォーム再描画）であることを確認
+	// ステータスコードが303 (成功時のリダイレクト) または422 (Turnstile検証失敗時のフォーム再描画) であることを確認
 	if rr.Code != http.StatusSeeOther && rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("予期しないステータスコード: got %v want %v or %v", rr.Code, http.StatusSeeOther, http.StatusUnprocessableEntity)
+		t.Errorf("予期しないステータスコード = %v、期待値 = %vまたは%v", rr.Code, http.StatusSeeOther, http.StatusUnprocessableEntity)
 	}
 }
 
-// TestCreate_EmailRequired はメールアドレス必須のバリデーションテスト
+// TestCreate_EmailRequiredはメールアドレス必須のバリデーションテスト
 func TestCreate_EmailRequired(t *testing.T) {
 	t.Parallel()
 
@@ -92,13 +92,13 @@ func TestCreate_EmailRequired(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// Turnstileクライアントの初期化（テスト用）
+	// Turnstileクライアントの初期化 (テスト用)
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
 	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignUpCodeUC, turnstileClient)
 
-	// リクエストパラメータを作成（emailを空にする）
+	// リクエストパラメータを作成 (emailを空にする)
 	formData := url.Values{}
 	formData.Set("email", "")
 	formData.Set("csrf_token", "test-csrf-token")
@@ -113,8 +113,8 @@ func TestCreate_EmailRequired(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードが422（バリデーションエラーでフォーム再描画）であることを確認
+	// ステータスコードが422 (バリデーションエラーでフォーム再描画) であることを確認
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("予期しないステータスコード: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("予期しないステータスコード = %v、期待値 = %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }

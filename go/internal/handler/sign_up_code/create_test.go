@@ -22,8 +22,8 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// TestCreate_ErrorMessageUnification は、コード検証失敗時にリダイレクトされることを確認します
-// （エラーメッセージは統一されているはず）
+// TestCreate_ErrorMessageUnificationは、コード検証失敗時にリダイレクトされることを確認します
+// (エラーメッセージは統一されているはず)
 func TestCreate_ErrorMessageUnification(t *testing.T) {
 	t.Parallel()
 
@@ -33,15 +33,10 @@ func TestCreate_ErrorMessageUnification(t *testing.T) {
 	// テスト用Redisをセットアップ
 	rdb := testutil.SetupTestRedis(t)
 
-	// Build a per-test unique IP so handler-managed rate limit keys
-	// (sign_up:verify:<ip>) do not collide with other tests running in
-	// parallel against the shared Redis DB, and clean up that key on
-	// teardown so repeated runs start from a zero counter.
-	//
-	// [Ja] ハンドラーが組み立てる rate limit キー (sign_up:verify:<ip>) が
-	// 共有 Redis DB の並列実行で他テストと衝突しないよう、本テスト固有の
-	// IP を使う。テスト終了時に該当キーを Reset し、繰り返し実行でも
-	// カウンタが 0 から始まるようにする。
+	// ハンドラーが組み立てるrate limitキー (sign_up:verify:<ip>) が
+	// 共有Redis DBの並列実行で他テストと衝突しないよう、本テスト固有の
+	// IPを使う。テスト終了時に該当キーをResetし、繰り返し実行でも
+	// カウンタが0から始まるようにする。
 	clientIP := testutil.UniqueRateLimitPrefix(t) + "-ip"
 	limiter := ratelimit.NewLimiter(rdb)
 	cleanupCtx := context.Background()
@@ -92,7 +87,7 @@ func TestCreate_ErrorMessageUnification(t *testing.T) {
 		{
 			name: "コードが見つからない場合",
 			setupCode: func(q *query.Queries) {
-				// 何もセットアップしない（コードが存在しない状態）
+				// 何もセットアップしない (コードが存在しない状態)
 			},
 			inputCode: "123456",
 		},
@@ -136,9 +131,9 @@ func TestCreate_ErrorMessageUnification(t *testing.T) {
 			// ハンドラーを実行
 			handler.Create(rr, req)
 
-			// このテストではセッション Cookie の往復が再現できないため、
-			// セッション切れ扱いとなり /sign_up にリダイレクトされる。
-			// （コード検証エラー時の振る舞いは実装側で保証されている）
+			// このテストではセッションCookieの往復が再現できないため、
+			// セッション切れ扱いとなり /sign_upにリダイレクトされる。
+			// (コード検証エラー時の振る舞いは実装側で保証されている)
 			if rr.Code != http.StatusSeeOther {
 				t.Errorf("期待されるステータスコード: %d, 実際: %d", http.StatusSeeOther, rr.Code)
 			}

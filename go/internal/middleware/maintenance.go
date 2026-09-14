@@ -8,19 +8,19 @@ import (
 	"github.com/annict/annict/go/internal/templates/pages/maintenance"
 )
 
-// MaintenanceMiddleware はメンテナンスモード時にアクセスを制限するミドルウェア
+// MaintenanceMiddlewareはメンテナンスモード時にアクセスを制限するミドルウェア
 type MaintenanceMiddleware struct {
 	cfg *config.Config
 }
 
-// NewMaintenanceMiddleware は新しいMaintenanceMiddlewareを作成
+// NewMaintenanceMiddlewareは新しいMaintenanceMiddlewareを作成
 func NewMaintenanceMiddleware(cfg *config.Config) *MaintenanceMiddleware {
 	return &MaintenanceMiddleware{
 		cfg: cfg,
 	}
 }
 
-// Middleware はHTTPミドルウェアを返す
+// MiddlewareはHTTPミドルウェアを返す
 // メンテナンスモードが有効で、管理者IP以外からのアクセスの場合は503を返す
 func (m *MaintenanceMiddleware) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -36,30 +36,20 @@ func (m *MaintenanceMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		// This middleware answers ahead of the reverse proxy, so the SecurityHeaders
-		// middleware registered inside it never runs for this response.
-		//
-		// [Ja] 本ミドルウェアはリバースプロキシより前で応答するため、その内側に登録した
-		// SecurityHeaders ミドルウェアは本レスポンスに対して走らない。
+		// 本ミドルウェアはリバースプロキシより前で応答するため、その内側に登録した
+		// SecurityHeadersミドルウェアは本レスポンスに対して走らない。
 		setSecurityHeaders(w)
 
-		// htmx swaps every response except 204 and 304, and an hx-delete without hx-target
-		// swaps into the element that issued it, so without this the maintenance document
-		// would be placed inside the button that was clicked. Every path answers with this
-		// page while maintenance is on, so reloading shows it full screen and there is
-		// nowhere else to send the reader (unlike the httperror pages, each of which
-		// navigates to a route of its own).
-		//
-		// [Ja] htmx は 204 と 304 以外のレスポンスをスワップし、hx-target を指定していない
-		// hx-delete のスワップ先はリクエスト元自身になるため、指示しなければメンテナンスの
+		// htmxは204と304以外のレスポンスをスワップし、hx-targetを指定していない
+		// hx-deleteのスワップ先はリクエスト元自身になるため、指示しなければメンテナンスの
 		// 文書が押したボタンの中へ挿入される。メンテナンス中はどのパスもこのページを返すため、
 		// リロードすれば全画面で表示され、他に送り先は要らない (それぞれ専用のルートへ遷移する
-		// httperror のページとはこの点が違う)。
+		// httperrorのページとはこの点が違う)。
 		if r.Header.Get("HX-Request") == "true" {
 			w.Header().Set("HX-Refresh", "true")
 		}
 
-		// メンテナンスページを返す（503 Service Unavailable）
+		// メンテナンスページを返す (503 Service Unavailable)
 		w.Header().Set("Content-Type", "text/html; charset=utf-8")
 		w.Header().Set("Retry-After", "3600") // 1時間後にリトライを推奨
 		w.WriteHeader(http.StatusServiceUnavailable)
@@ -70,7 +60,7 @@ func (m *MaintenanceMiddleware) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-// isAdminIP はリクエスト元IPが管理者IPかどうかをチェック
+// isAdminIPはリクエスト元IPが管理者IPかどうかをチェック
 func (m *MaintenanceMiddleware) isAdminIP(r *http.Request) bool {
 	// 管理者IPが設定されていない場合は常にfalse
 	if len(m.cfg.AdminIPs) == 0 {

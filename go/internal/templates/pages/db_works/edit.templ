@@ -11,28 +11,17 @@ import (
 type EditPageData struct {
 	CSRFToken string
 	WorkID    viewmodel.WorkID
-	// WorkTitle names the work being edited in the page heading. The update handler
-	// re-renders this form after a validation error without loading the work, so it
-	// passes the submitted title instead of the stored one.
-	//
-	// [Ja] WorkTitle はページ見出しで編集対象の作品を示す。更新ハンドラーはバリデーション
-	// エラー後に work を読み込まずにこのフォームを再描画するため、そこでは保存済みの
+	// WorkTitleはページ見出しで編集対象の作品を示す。更新ハンドラーはバリデーション
+	// エラー後にworkを読み込まずにこのフォームを再描画するため、そこでは保存済みの
 	// タイトルではなく送信されたタイトルを渡す。
 	WorkTitle   string
 	FormOptions viewmodel.DBWorkFormOptions
 	FormErrors  *viewmodel.FormErrors
 	FormInput   *viewmodel.DBWorkFormInput
-	// ConflictCurrent holds the stored values of a work someone else wrote between this form
-	// being opened and its submit, and is nil in every other case. The page shows the ones
-	// that differ from the submitted values that were refused: the editor is the one who
-	// decides which to keep, and cannot decide without seeing what would be overwritten. The
-	// hidden version the form carries is the one these values belong to, so submitting again
-	// overwrites exactly what is shown here and nothing that arrives afterwards.
-	//
-	// [Ja] ConflictCurrent は、本フォームを開いてから送信するまでの間に他者が書いた作品の
-	// 保存済みの値を持ち、それ以外の場合は nil になる。ページは、却下された送信の値と異なる
+	// ConflictCurrentは、本フォームを開いてから送信するまでの間に他者が書いた作品の
+	// 保存済みの値を持ち、それ以外の場合はnilになる。ページは、却下された送信の値と異なる
 	// ものを表示する。どちらを残すかを決めるのは編集者であり、何を上書きするのかを見なければ
-	// 決められないため。フォームが運ぶ hidden の版はこれらの値の版のため、もう一度送信すると
+	// 決められないため。フォームが運ぶhiddenの版はこれらの値の版のため、もう一度送信すると
 	// ここに表示された内容だけを上書きし、その後に届いた変更は上書きしない。
 	ConflictCurrent *viewmodel.DBWorkFormInput
 }
@@ -41,27 +30,17 @@ func (d EditPageData) hasFieldError(field string) bool {
 	return d.FormErrors != nil && d.FormErrors.HasFieldError(field)
 }
 
-// hasErrors reports whether the submit failed. It decides where the page starts out
-// focused: on a form opened for editing the title gets the caret, and after a failed submit
-// the error summary takes it instead, so the two never claim autofocus at the same time.
-//
-// [Ja] hasErrors は送信が失敗したかどうかを返す。ページの初期フォーカス位置の判断に使う。
+// hasErrorsは送信が失敗したかどうかを返す。ページの初期フォーカス位置の判断に使う。
 // 編集のために開いたフォームではタイトル欄が、送信が失敗した後はエラー要約がフォーカスを
-// 受け取り、両者が同時に autofocus を主張しないようにする。
+// 受け取り、両者が同時にautofocusを主張しないようにする。
 func (d EditPageData) hasErrors() bool {
 	return d.FormErrors.HasErrors()
 }
 
-// editFields lists every field this form writes, in the order it shows them, paired with the
-// labels it displays. The error summary names its entries from here, and so does the conflict
-// notice, so a field cannot be listed in one order by the first and another by the second. The
-// labels are looked up with literal keys rather than keys assembled from the field name, so
-// every translation key stays greppable from the place that uses it.
-//
-// [Ja] editFields は本フォームが書き込むフィールドを、表示する順で、表示中のラベルと対にして
+// editFieldsは本フォームが書き込むフィールドを、表示する順で、表示中のラベルと対にして
 // すべて並べる。エラー要約も競合の案内もここから項目を名指しするため、同じフィールドが両者で
 // 異なる順に並ぶことがない。ラベルはフィールド名から組み立てたキーではなく直書きのキーで引く。
-// 翻訳キーを使用箇所から grep で追える状態に保つため。
+// 翻訳キーを使用箇所からgrepで追える状態に保つため。
 func editFields(ctx context.Context) []components.FormErrorField {
 	return []components.FormErrorField{
 		{Name: "title", Label: templates.T(ctx, "db_works_edit_title_label")},
@@ -93,24 +72,16 @@ func editFields(ctx context.Context) []components.FormErrorField {
 	}
 }
 
-// editConflictField is one stored value the conflict notice states, paired with the label the
-// form shows for the same field.
-//
-// [Ja] editConflictField は競合の案内が述べる保存済みの値 1 つと、同じフィールドについてフォーム
+// editConflictFieldは競合の案内が述べる保存済みの値1つと、同じフィールドについてフォーム
 // が表示するラベルの組。
 type editConflictField struct {
 	Label string
 	Value string
 }
 
-// conflictFields lists the stored values that differ from what the refused submit carried, in
-// the order the form shows their fields. Only the differing ones are listed because they are
-// what a second submit would overwrite; naming all twenty-six would bury them among the values
-// the two sides already agree on.
-//
-// [Ja] conflictFields は、却下された送信が運んだ値と異なる保存済みの値を、フォームが各フィールド
+// conflictFieldsは、却下された送信が運んだ値と異なる保存済みの値を、フォームが各フィールド
 // を表示する順で並べる。異なるものだけを並べるのは、それが再送信で上書きされる対象であるため。
-// 26 件すべてを名指しすると、両者で既に一致している値の中にそれらが埋もれてしまう。
+// 26件すべてを名指しすると、両者で既に一致している値の中にそれらが埋もれてしまう。
 func (d EditPageData) conflictFields(ctx context.Context) []editConflictField {
 	if d.ConflictCurrent == nil {
 		return nil
@@ -131,11 +102,7 @@ func (d EditPageData) conflictFields(ctx context.Context) []editConflictField {
 	return fields
 }
 
-// editConflictValue renders a stored value the way its field shows it. The selects and the
-// checkbox hold codes their inputs never display, so the notice resolves them to the option
-// label the editor sees; every other field displays the value it stores.
-//
-// [Ja] editConflictValue は保存済みの値を、そのフィールドが表示する形で描画する。選択欄と
+// editConflictValueは保存済みの値を、そのフィールドが表示する形で描画する。選択欄と
 // チェックボックスは入力欄が表示することのないコードを保持するため、案内では編集者が目にする
 // 選択肢のラベルに解決する。それ以外のフィールドは保持している値をそのまま表示する。
 func editConflictValue(ctx context.Context, options viewmodel.DBWorkFormOptions, field, value string) string {
@@ -156,11 +123,7 @@ func editConflictValue(ctx context.Context, options viewmodel.DBWorkFormOptions,
 	}
 }
 
-// selectOptionLabel returns the label a select shows for a value, falling back to the value
-// itself when no option carries it. The fallback keeps a stored value the select can no longer
-// offer visible, rather than reporting it as absent.
-//
-// [Ja] selectOptionLabel は選択欄がある値に対して表示するラベルを返し、その値を持つ選択肢が
+// selectOptionLabelは選択欄がある値に対して表示するラベルを返し、その値を持つ選択肢が
 // 無い場合は値そのものを返す。このフォールバックにより、選択欄がもはや提示できない保存済みの
 // 値も、未設定として報告せずそのまま見せられる。
 func selectOptionLabel(options []viewmodel.SelectOption, value string) string {
@@ -173,11 +136,7 @@ func selectOptionLabel(options []viewmodel.SelectOption, value string) string {
 	return value
 }
 
-// heading returns the text of the page heading: the work title, falling back to the generic
-// page title while the title is blank. Clearing the title field is itself a validation error,
-// and the form re-rendered for it must not carry an empty heading.
-//
-// [Ja] heading はページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
+// headingはページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
 // 汎用のページタイトルにフォールバックする。タイトル欄を空にすること自体がバリデーション
 // エラーであり、そのために再描画するフォームの見出しを空にしないため。
 func (d EditPageData) heading(ctx context.Context) string {
@@ -240,11 +199,7 @@ templ Edit(data EditPageData) {
 				>
 					<input type="hidden" name="_method" value="PATCH"/>
 					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
-					// The version the form was opened against travels with the submit, so an
-					// update made from a stale read is rejected instead of silently overwriting
-					// whoever wrote in between.
-					//
-					// [Ja] フォームを開いた時点の版を送信と一緒に運ぶ。古い読み取りからの更新を、
+					// フォームを開いた時点の版を送信と一緒に運ぶ。古い読み取りからの更新を、
 					// 間に書いた人の変更を黙って上書きせずに却下できるようにするため。
 					<input type="hidden" name="updated_at" value={ data.FormInput.Val("updated_at") }/>
 
@@ -654,10 +609,7 @@ templ Edit(data EditPageData) {
 								value={ data.FormInput.Val("twitter_username") }
 							/>
 
-							// templ reads a bare @ as the start of a component call, so the prefix is
-							// written as a string expression.
-							//
-							// [Ja] templ は素の @ をコンポーネント呼び出しの開始として読むため、接頭辞は
+							// templは素の @ をコンポーネント呼び出しの開始として読むため、接頭辞は
 							// 文字列式として書く。
 							<span id="twitter_username-prefix" data-align="start">{ "@" }</span>
 						</div>
@@ -722,12 +674,7 @@ templ Edit(data EditPageData) {
 							@formLabelExternalLink(templates.T(ctx, "db_works_edit_sc_tid_label"), data.FormInput.LabelLinkURL("sc_tid"))
 						</div>
 
-						// The numeric fields of this form stay text and ask the touch keyboard for a
-						// keypad. A rejected submit is re-rendered with whatever was typed, and
-						// type="number" would show that value as an empty field whenever the browser
-						// cannot parse it, taking away the input the editor has to correct.
-						//
-						// [Ja] 本フォームの数値の欄は text の入力欄のままタッチキーボードにキーパッドを
+						// 本フォームの数値の欄はtextの入力欄のままタッチキーボードにキーパッドを
 						// 要求する。却下された送信は入力された内容のまま再描画するが、type="number" は
 						// ブラウザーがパースできない値を空の欄として表示するため、編集者が直すべき入力が
 						// 失われてしまう。
@@ -1002,14 +949,9 @@ templ Edit(data EditPageData) {
 	</div>
 }
 
-// editWorkPageLink renders the action shown beside the edit form's heading: a link to the
-// work's page on the public site. It opens in a new tab (with tabnabbing protection) so
-// the edits in progress stay in the form, and says so in its accessible name because the
-// visible label and the icon alone do not announce it.
-//
-// [Ja] editWorkPageLink は編集フォームの見出しの横に表示する操作を描画する。公開サイト側の
+// editWorkPageLinkは編集フォームの見出しの横に表示する操作を描画する。公開サイト側の
 // 作品ページへのリンクで、編集途中の内容をフォームに残したまま開けるよう新しいタブで開く
-// (tabnabbing 対策付き)。可視ラベルとアイコンだけでは新しいタブで開くことが伝わらないため、
+// (tabnabbing対策付き)。可視ラベルとアイコンだけでは新しいタブで開くことが伝わらないため、
 // アクセシブルネームでそれを伝える。
 templ editWorkPageLink(workID viewmodel.WorkID) {
 	<a

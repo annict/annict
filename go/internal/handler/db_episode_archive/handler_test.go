@@ -23,20 +23,12 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// archiveTargetWorkSeasonYear keeps the works these tests commit out of the "no season" bucket
-// the work list counts globally: the rows live in the shared test DB until the test ends and
-// are visible to the sibling packages running at the same time.
-//
-// [Ja] archiveTargetWorkSeasonYear は、本テスト群がコミットする作品を、作品一覧が全体に対して
-// 数える「シーズン未設定」の集合から外すためのもの。行はテストが終わるまで共有テスト DB に残り、
+// archiveTargetWorkSeasonYearは、本テスト群がコミットする作品を、作品一覧が全体に対して
+// 数える「シーズン未設定」の集合から外すためのもの。行はテストが終わるまで共有テストDBに残り、
 // 同時に走る他パッケージからも見えるため。
 const archiveTargetWorkSeasonYear = 1904
 
-// newTestHandler wires the handler against the shared test DB. The archive usecase opens its
-// own transaction, so it is built on the pool rather than on the test transaction; the tests
-// commit their fixtures and clean them up themselves.
-//
-// [Ja] newTestHandler は共有テスト DB に対してハンドラーを組み立てる。非公開 UseCase は自前の
+// newTestHandlerは共有テストDBに対してハンドラーを組み立てる。非公開UseCaseは自前の
 // トランザクションを開くため、テスト用トランザクションではなくプールに対して組み立てる。
 // フィクスチャは各テストがコミットし、後始末も行う。
 func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
@@ -57,13 +49,8 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	)
 }
 
-// insertArchiveTargetWork inserts the parent work of an archive test, committed to the shared
-// pool rather than to the test transaction: the archive usecase opens its own transaction and
-// would not see a work that is still uncommitted. Its cleanup also removes the episodes the
-// test archived under it.
-//
-// [Ja] insertArchiveTargetWork は非公開テストの親作品を、テスト用トランザクションではなく共有
-// プールにコミットして挿入する。非公開 UseCase は自前のトランザクションを開くため、未コミットの
+// insertArchiveTargetWorkは非公開テストの親作品を、テスト用トランザクションではなく共有
+// プールにコミットして挿入する。非公開UseCaseは自前のトランザクションを開くため、未コミットの
 // 作品は見えないからである。後始末では、そのテストが配下で非公開にしたエピソードも消す。
 func insertArchiveTargetWork(t *testing.T, db *sql.DB) model.WorkID {
 	t.Helper()
@@ -74,7 +61,7 @@ func insertArchiveTargetWork(t *testing.T, db *sql.DB) model.WorkID {
 		 VALUES ($1, 1, $2, 1, 1, NOW(), NOW()) RETURNING id`,
 		"非公開テストアニメ_"+t.Name(), archiveTargetWorkSeasonYear,
 	).Scan(&id); err != nil {
-		t.Fatalf("works の挿入に失敗: %v", err)
+		t.Fatalf("worksの挿入に失敗: %v", err)
 	}
 
 	t.Cleanup(func() {
@@ -91,12 +78,8 @@ func insertArchiveTargetWork(t *testing.T, db *sql.DB) model.WorkID {
 	return model.WorkID(id)
 }
 
-// insertArchiveTargetEpisode inserts the episode an archive test unpublishes, committed to the
-// shared pool for the reason insertArchiveTargetWork states. Its parent work's cleanup removes
-// it.
-//
-// [Ja] insertArchiveTargetEpisode は非公開テストが非公開にするエピソードを、
-// insertArchiveTargetWork が述べる理由により共有プールにコミットして挿入する。行の後始末は親作品
+// insertArchiveTargetEpisodeは非公開テストが非公開にするエピソードを、
+// insertArchiveTargetWorkが述べる理由により共有プールにコミットして挿入する。行の後始末は親作品
 // の後始末が行う。
 func insertArchiveTargetEpisode(t *testing.T, db *sql.DB, workID model.WorkID) model.EpisodeID {
 	t.Helper()
@@ -107,16 +90,13 @@ func insertArchiveTargetEpisode(t *testing.T, db *sql.DB, workID model.WorkID) m
 		VALUES ($1, '第2話', 200, 'もう、お婿にいけません', NOW(), NOW()) RETURNING id`,
 		int64(workID),
 	).Scan(&id); err != nil {
-		t.Fatalf("episodes の挿入に失敗: %v", err)
+		t.Fatalf("episodesの挿入に失敗: %v", err)
 	}
 
 	return model.EpisodeID(id)
 }
 
-// archiveTargetEpisode puts an inserted episode into the state the re-publish endpoint starts
-// from, which is also the state the archive endpoints refuse.
-//
-// [Ja] archiveTargetEpisode は挿入したエピソードを、再公開エンドポイントが起点とする状態にする。
+// archiveTargetEpisodeは挿入したエピソードを、再公開エンドポイントが起点とする状態にする。
 // これは非公開エンドポイントが拒否する状態でもある。
 func archiveTargetEpisode(t *testing.T, db *sql.DB, episodeID model.EpisodeID) {
 	t.Helper()
@@ -126,10 +106,7 @@ func archiveTargetEpisode(t *testing.T, db *sql.DB, episodeID model.EpisodeID) {
 	}
 }
 
-// readEpisodeUnpublishedAt returns the state column the archive and the re-publish write, so a
-// test can tell an episode either of them changed from one the submit left alone.
-//
-// [Ja] readEpisodeUnpublishedAt は非公開と再公開が書く状態カラムを返す。どちらかが変更した
+// readEpisodeUnpublishedAtは非公開と再公開が書く状態カラムを返す。どちらかが変更した
 // エピソードと、送信が手を触れなかったエピソードをテストが区別できるようにするため。
 func readEpisodeUnpublishedAt(t *testing.T, db *sql.DB, episodeID model.EpisodeID) sql.NullTime {
 	t.Helper()
@@ -158,11 +135,8 @@ func deleteRequest(target string) *http.Request {
 	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, editor))
 }
 
-// TestNew verifies the confirmation page names the episode, keeps the work's subnav and posts
-// to the episode's archive endpoint with a CSRF token.
-//
-// [Ja] TestNew は確認ページがエピソードを名指しし、作品のサブナビを保ち、CSRF トークン付きで
-// エピソードの非公開エンドポイントへ POST することを検証する。
+// TestNewは確認ページがエピソードを名指しし、作品のサブナビを保ち、CSRFトークン付きで
+// エピソードの非公開エンドポイントへPOSTすることを検証する。
 func TestNew(t *testing.T) {
 	t.Parallel()
 
@@ -178,7 +152,7 @@ func TestNew(t *testing.T) {
 	r.ServeHTTP(rr, getRequest(fmt.Sprintf("/db/episodes/%d/archive/new", int64(episodeID))))
 
 	if status := rr.Code; status != http.StatusOK {
-		t.Fatalf("status = %d, want %d", status, http.StatusOK)
+		t.Fatalf("ステータスコード = %d、期待値 = %d", status, http.StatusOK)
 	}
 
 	body := rr.Body.String()
@@ -189,29 +163,23 @@ func TestNew(t *testing.T) {
 		"csrf_token",
 		"第2話「もう、お婿にいけません」を非公開にしますか？",
 		fmt.Sprintf(`href="/db/works/%d/episodes"`, int64(workID)),
-		// The document title includes the episode label, so confirmation pages with different
-		// labels can be told apart in tabs, history and assistive technology.
-		//
-		// [Ja] 文書タイトルはエピソードのラベルを含む。ラベルが異なる確認ページを並べて
+		// 文書タイトルはエピソードのラベルを含む。ラベルが異なる確認ページを並べて
 		// 開いたときに、タブ・履歴・支援技術で区別できるようにするため。
 		fmt.Sprintf("<title>エピソード非公開 | 第2話 | 非公開テストアニメ_%s | Annict DB</title>", t.Name()),
 	}
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("レスポンスに %q が含まれていません", expected)
+			t.Errorf("レスポンスに%qが含まれていません", expected)
 		}
 	}
 
 	if ct := rr.Header().Get("Content-Type"); ct != "text/html; charset=utf-8" {
-		t.Errorf("Content-Type = %q, want %q", ct, "text/html; charset=utf-8")
+		t.Errorf("Content-Type = %q、期待値 = %q", ct, "text/html; charset=utf-8")
 	}
 }
 
-// TestSetNewTitle verifies both work-name branches use the localized document-title template.
-// Every combination keeps the episode identifier and the Annict DB suffix.
-//
-// [Ja] TestSetNewTitle は作品名の有無の両分岐がローカライズ済みの文書タイトルテンプレートを
-// 使うことを検証する。すべての組み合わせでエピソード識別子と Annict DB のサフィックスを保つ。
+// TestSetNewTitleは作品名の有無の両分岐がローカライズ済みの文書タイトルテンプレートを
+// 使うことを検証する。すべての組み合わせでエピソード識別子とAnnict DBのサフィックスを保つ。
 func TestSetNewTitle(t *testing.T) {
 	t.Parallel()
 
@@ -259,18 +227,14 @@ func TestSetNewTitle(t *testing.T) {
 			setNewTitle(ctx, &meta, tt.episodeIdentifier, tt.workName)
 
 			if meta.Title != tt.want {
-				t.Errorf("meta.Title = %q, want %q", meta.Title, tt.want)
+				t.Errorf("meta.Title = %q、期待値 = %q", meta.Title, tt.want)
 			}
 		})
 	}
 }
 
-// TestNew_OGURL verifies that og:url names the page's own GET path built from the parsed
-// episode ID, so that a link spelling the ID with leading zeros still declares the one
-// representative URL of that page.
-//
-// [Ja] TestNew_OGURL は og:url がパース済みのエピソード ID から組み立てたページ自身の GET パス
-// になることを検証する。ID を先頭ゼロ付きで書いたリンクでも、そのページの代表 URL は 1 つに
+// TestNew_OGURLはog:urlがパース済みのエピソードIDから組み立てたページ自身のGETパス
+// になることを検証する。IDを先頭ゼロ付きで書いたリンクでも、そのページの代表URLは1つに
 // 揃う。
 func TestNew_OGURL(t *testing.T) {
 	t.Parallel()
@@ -294,19 +258,16 @@ func TestNew_OGURL(t *testing.T) {
 			r.ServeHTTP(rr, getRequest(target))
 
 			if status := rr.Code; status != http.StatusOK {
-				t.Fatalf("status = %d, want %d", status, http.StatusOK)
+				t.Fatalf("ステータスコード = %d、期待値 = %d", status, http.StatusOK)
 			}
 			if body := rr.Body.String(); !strings.Contains(body, want) {
-				t.Errorf("レスポンスに %q が含まれていません", want)
+				t.Errorf("レスポンスに%qが含まれていません", want)
 			}
 		})
 	}
 }
 
-// TestNew_NotFound verifies the confirmation page is refused for an episode that is not
-// currently published and for a malformed id.
-//
-// [Ja] TestNew_NotFound は、現在公開中でないエピソードと不正な id に対して確認ページが拒否
+// TestNew_NotFoundは、現在公開中でないエピソードと不正なidに対して確認ページが拒否
 // されることを検証する。
 func TestNew_NotFound(t *testing.T) {
 	t.Parallel()
@@ -323,7 +284,7 @@ func TestNew_NotFound(t *testing.T) {
 	targets := map[string]string{
 		"非公開済みのエピソード": fmt.Sprintf("/db/episodes/%d/archive/new", int64(archivedID)),
 		"存在しないエピソード":  "/db/episodes/999999999/archive/new",
-		"数値でない id":    "/db/episodes/abc/archive/new",
+		"数値でないid":     "/db/episodes/abc/archive/new",
 	}
 	for name, target := range targets {
 		t.Run(name, func(t *testing.T) {
@@ -331,16 +292,13 @@ func TestNew_NotFound(t *testing.T) {
 			r.ServeHTTP(rr, getRequest(target))
 
 			if status := rr.Code; status != http.StatusNotFound {
-				t.Errorf("status = %d, want %d", status, http.StatusNotFound)
+				t.Errorf("ステータスコード = %d、期待値 = %d", status, http.StatusNotFound)
 			}
 		})
 	}
 }
 
-// TestCreate_Success verifies a submit archives the episode and lands on the work's episode
-// list, where the editor sees the archived row among the others.
-//
-// [Ja] TestCreate_Success は送信がエピソードを非公開にし、作品のエピソード一覧に着地すること
+// TestCreate_Successは送信がエピソードを非公開にし、作品のエピソード一覧に着地すること
 // を検証する。編集者はそこで他の行と並んだ非公開後の行を見る。
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
@@ -357,22 +315,19 @@ func TestCreate_Success(t *testing.T) {
 	r.ServeHTTP(rr, postRequest(fmt.Sprintf("/db/episodes/%d/archive", int64(episodeID))))
 
 	if status := rr.Code; status != http.StatusSeeOther {
-		t.Fatalf("status = %d, want %d", status, http.StatusSeeOther)
+		t.Fatalf("ステータスコード = %d、期待値 = %d", status, http.StatusSeeOther)
 	}
 	want := fmt.Sprintf("/db/works/%d/episodes", int64(workID))
 	if location := rr.Header().Get("Location"); location != want {
-		t.Errorf("Location = %q, want %q", location, want)
+		t.Errorf("リダイレクト先 = %q、期待値 = %q", location, want)
 	}
 	if unpublishedAt := readEpisodeUnpublishedAt(t, db, episodeID); !unpublishedAt.Valid {
-		t.Error("episodes.unpublished_at = NULL, want 非公開の時刻")
+		t.Error("episodes.unpublished_at = NULL、期待値 = 非公開の時刻")
 	}
 }
 
-// TestCreate_NotFound verifies a submit for an episode that cannot be archived returns 404
-// rather than reporting a write that did not happen.
-//
-// [Ja] TestCreate_NotFound は、非公開にできないエピソードへの送信が、起きなかった書き込みを
-// 報告せず 404 を返すことを検証する。
+// TestCreate_NotFoundは、非公開にできないエピソードへの送信が、起きなかった書き込みを
+// 報告せず404を返すことを検証する。
 func TestCreate_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -384,24 +339,21 @@ func TestCreate_NotFound(t *testing.T) {
 
 	for name, target := range map[string]string{
 		"存在しないエピソード": "/db/episodes/999999999/archive",
-		"数値でない id":   "/db/episodes/abc/archive",
+		"数値でないid":    "/db/episodes/abc/archive",
 	} {
 		t.Run(name, func(t *testing.T) {
 			rr := httptest.NewRecorder()
 			r.ServeHTTP(rr, postRequest(target))
 
 			if status := rr.Code; status != http.StatusNotFound {
-				t.Errorf("status = %d, want %d", status, http.StatusNotFound)
+				t.Errorf("ステータスコード = %d、期待値 = %d", status, http.StatusNotFound)
 			}
 		})
 	}
 }
 
-// TestCreate_Forbidden verifies a direct Handler invocation maps the UseCase authorization
-// failure to 403 instead of exposing it as an internal error.
-//
-// [Ja] TestCreate_Forbidden は Handler の直接呼び出しで UseCase の認可失敗を内部エラーとして
-// 公開せず、403 に変換することを検証する。
+// TestCreate_ForbiddenはHandlerの直接呼び出しでUseCaseの認可失敗を内部エラーとして
+// 公開せず、403に変換することを検証する。
 func TestCreate_Forbidden(t *testing.T) {
 	t.Parallel()
 
@@ -415,14 +367,11 @@ func TestCreate_Forbidden(t *testing.T) {
 	r.ServeHTTP(rr, httptest.NewRequest("POST", "/db/episodes/1/archive", nil))
 
 	if status := rr.Code; status != http.StatusForbidden {
-		t.Errorf("status = %d, want %d", status, http.StatusForbidden)
+		t.Errorf("ステータスコード = %d、期待値 = %d", status, http.StatusForbidden)
 	}
 }
 
-// TestDelete_Success verifies a re-publish submit clears the archived state and lands on the
-// work's episode list, where the editor sees the published row among the others.
-//
-// [Ja] TestDelete_Success は再公開の送信が非公開の状態を解除し、作品のエピソード一覧に着地する
+// TestDelete_Successは再公開の送信が非公開の状態を解除し、作品のエピソード一覧に着地する
 // ことを検証する。編集者はそこで他の行と並んだ公開後の行を見る。
 func TestDelete_Success(t *testing.T) {
 	t.Parallel()
@@ -440,22 +389,19 @@ func TestDelete_Success(t *testing.T) {
 	r.ServeHTTP(rr, deleteRequest(fmt.Sprintf("/db/episodes/%d/archive", int64(episodeID))))
 
 	if status := rr.Code; status != http.StatusSeeOther {
-		t.Fatalf("status = %d, want %d", status, http.StatusSeeOther)
+		t.Fatalf("ステータスコード = %d、期待値 = %d", status, http.StatusSeeOther)
 	}
 	want := fmt.Sprintf("/db/works/%d/episodes", int64(workID))
 	if location := rr.Header().Get("Location"); location != want {
-		t.Errorf("Location = %q, want %q", location, want)
+		t.Errorf("リダイレクト先 = %q、期待値 = %q", location, want)
 	}
 	if unpublishedAt := readEpisodeUnpublishedAt(t, db, episodeID); unpublishedAt.Valid {
-		t.Errorf("episodes.unpublished_at = %v, want NULL", unpublishedAt.Time)
+		t.Errorf("episodes.unpublished_at = %v、期待値 = NULL", unpublishedAt.Time)
 	}
 }
 
-// TestDelete_HTMX verifies the submit the episode list's publish button makes gets HX-Redirect
-// instead of a redirect htmx would follow and swap into the button.
-//
-// [Ja] TestDelete_HTMX は、エピソード一覧の公開ボタンが行う送信に対し、htmx が追ってボタンに
-// スワップしてしまうリダイレクトではなく HX-Redirect を返すことを検証する。
+// TestDelete_HTMXは、エピソード一覧の公開ボタンが行う送信に対し、htmxが追ってボタンに
+// スワップしてしまうリダイレクトではなくHX-Redirectを返すことを検証する。
 func TestDelete_HTMX(t *testing.T) {
 	t.Parallel()
 
@@ -474,25 +420,22 @@ func TestDelete_HTMX(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusNoContent {
-		t.Fatalf("status = %d, want %d", status, http.StatusNoContent)
+		t.Fatalf("ステータスコード = %d、期待値 = %d", status, http.StatusNoContent)
 	}
 	want := fmt.Sprintf("/db/works/%d/episodes", int64(workID))
 	if redirect := rr.Header().Get("HX-Redirect"); redirect != want {
-		t.Errorf("HX-Redirect = %q, want %q", redirect, want)
+		t.Errorf("HX-Redirect = %q、期待値 = %q", redirect, want)
 	}
 	if location := rr.Header().Get("Location"); location != "" {
-		t.Errorf("Location = %q, want 空 (htmx は HX-Redirect で遷移する)", location)
+		t.Errorf("リダイレクト先 = %q、期待値 = 空 (htmxはHX-Redirectで遷移する)", location)
 	}
 	if unpublishedAt := readEpisodeUnpublishedAt(t, db, episodeID); unpublishedAt.Valid {
-		t.Errorf("episodes.unpublished_at = %v, want NULL", unpublishedAt.Time)
+		t.Errorf("episodes.unpublished_at = %v、期待値 = NULL", unpublishedAt.Time)
 	}
 }
 
-// TestDelete_NotFound verifies a submit for an episode that cannot be re-published returns 404
-// rather than reporting a write that did not happen.
-//
-// [Ja] TestDelete_NotFound は、再公開できないエピソードへの送信が、起きなかった書き込みを報告
-// せず 404 を返すことを検証する。
+// TestDelete_NotFoundは、再公開できないエピソードへの送信が、起きなかった書き込みを報告
+// せず404を返すことを検証する。
 func TestDelete_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -507,24 +450,21 @@ func TestDelete_NotFound(t *testing.T) {
 	for name, target := range map[string]string{
 		"公開中のエピソード":  fmt.Sprintf("/db/episodes/%d/archive", int64(publishedID)),
 		"存在しないエピソード": "/db/episodes/999999999/archive",
-		"数値でない id":   "/db/episodes/abc/archive",
+		"数値でないid":    "/db/episodes/abc/archive",
 	} {
 		t.Run(name, func(t *testing.T) {
 			rr := httptest.NewRecorder()
 			r.ServeHTTP(rr, deleteRequest(target))
 
 			if status := rr.Code; status != http.StatusNotFound {
-				t.Errorf("status = %d, want %d", status, http.StatusNotFound)
+				t.Errorf("ステータスコード = %d、期待値 = %d", status, http.StatusNotFound)
 			}
 		})
 	}
 }
 
-// TestDelete_Forbidden verifies a direct Handler invocation maps the UseCase authorization
-// failure to 403 instead of exposing it as an internal error.
-//
-// [Ja] TestDelete_Forbidden は Handler の直接呼び出しで UseCase の認可失敗を内部エラーとして
-// 公開せず、403 に変換することを検証する。
+// TestDelete_ForbiddenはHandlerの直接呼び出しでUseCaseの認可失敗を内部エラーとして
+// 公開せず、403に変換することを検証する。
 func TestDelete_Forbidden(t *testing.T) {
 	t.Parallel()
 
@@ -538,16 +478,12 @@ func TestDelete_Forbidden(t *testing.T) {
 	r.ServeHTTP(rr, httptest.NewRequest("DELETE", "/db/episodes/1/archive", nil))
 
 	if status := rr.Code; status != http.StatusForbidden {
-		t.Errorf("status = %d, want %d", status, http.StatusForbidden)
+		t.Errorf("ステータスコード = %d、期待値 = %d", status, http.StatusForbidden)
 	}
 }
 
-// TestRequiresCommitter verifies every endpoint is gated by the committer role at the HTTP
-// boundary. The archive and re-publish write usecases repeat the role check for non-HTTP entry
-// points.
-//
-// [Ja] TestRequiresCommitter は HTTP 境界ですべてのエンドポイントが committer ロールによりゲート
-// されていることを検証する。非公開・再公開の書き込み UseCase は HTTP 以外の entry point に対して
+// TestRequiresCommitterはHTTP境界ですべてのエンドポイントがcommitterロールによりゲート
+// されていることを検証する。非公開・再公開の書き込みUseCaseはHTTP以外のentry pointに対して
 // もロール検査を繰り返す。
 func TestRequiresCommitter(t *testing.T) {
 	t.Parallel()
@@ -593,17 +529,13 @@ func TestRequiresCommitter(t *testing.T) {
 				r.ServeHTTP(rr, req)
 
 				if rr.Code != tt.wantStatus {
-					t.Errorf("status = %d, want %d", rr.Code, tt.wantStatus)
+					t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatus)
 				}
 			})
 		}
 	}
 
-	// A committer passes the middleware and must not be rejected. The confirmation page is
-	// used rather than the submit so the assertion does not depend on the episode still being
-	// archivable after another subtest has archived it.
-	//
-	// [Ja] committer はミドルウェアを通過し、弾かれてはならない。送信ではなく確認ページで確かめ
+	// committerはミドルウェアを通過し、弾かれてはならない。送信ではなく確認ページで確かめ
 	// るのは、他のサブテストが非公開にした後でもエピソードが非公開にできる状態かどうかに、検証が
 	// 左右されないようにするため。
 	t.Run("編集者は通過", func(t *testing.T) {
@@ -613,7 +545,7 @@ func TestRequiresCommitter(t *testing.T) {
 		r.ServeHTTP(rr, req)
 
 		if rr.Code != http.StatusOK {
-			t.Errorf("status = %d, want %d", rr.Code, http.StatusOK)
+			t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 		}
 	})
 }

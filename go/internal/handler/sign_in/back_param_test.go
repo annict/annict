@@ -19,7 +19,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// setupTestSessionManager はテスト用のセッションマネージャーを作成します
+// setupTestSessionManagerはテスト用のセッションマネージャーを作成します
 func setupTestSessionManager(t *testing.T, queries *query.Queries) *session.Manager {
 	t.Helper()
 	cfg := &config.Config{}
@@ -27,7 +27,7 @@ func setupTestSessionManager(t *testing.T, queries *query.Queries) *session.Mana
 	return session.NewManager(sessionRepo, cfg)
 }
 
-// TestNew_WithBackParameter はbackパラメータがテンプレートに渡されることを確認します
+// TestNew_WithBackParameterはbackパラメータがテンプレートに渡されることを確認します
 func TestNew_WithBackParameter(t *testing.T) {
 	t.Parallel()
 
@@ -41,7 +41,7 @@ func TestNew_WithBackParameter(t *testing.T) {
 	// セッションマネージャー
 	sessionMgr := setupTestSessionManager(t, queries)
 
-	// ハンドラーを作成（New()はUseCaseを使わないのでnilでOK）
+	// ハンドラーを作成 (New()はUseCaseを使わないのでnilでOK)
 	h := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, nil)
 
 	tests := []struct {
@@ -85,18 +85,18 @@ func TestNew_WithBackParameter(t *testing.T) {
 
 			// レスポンスを確認
 			if rr.Code != http.StatusOK {
-				t.Errorf("ステータスコード: got %d, want %d", rr.Code, http.StatusOK)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 			}
 
 			body := rr.Body.String()
 			if !strings.Contains(body, tt.wantInBody) {
-				t.Errorf("%s: レスポンスに期待する文字列が含まれていません\nwant: %s", tt.description, tt.wantInBody)
+				t.Errorf("%s: レスポンスに期待する文字列が含まれていません\n期待値: %s", tt.description, tt.wantInBody)
 			}
 		})
 	}
 }
 
-// TestCreate_BackParameterRedirect はbackパラメータがリダイレクトURLに含まれることを確認します
+// TestCreate_BackParameterRedirectはbackパラメータがリダイレクトURLに含まれることを確認します
 func TestCreate_BackParameterRedirect(t *testing.T) {
 	t.Parallel()
 
@@ -118,7 +118,7 @@ func TestCreate_BackParameterRedirect(t *testing.T) {
 	// セッションマネージャー
 	sessionMgr := setupTestSessionManager(t, queries)
 
-	// Turnstileクライアント（テスト用：SecretKeyが空なので常に検証成功）
+	// Turnstileクライアント (テスト用：SecretKeyが空なので常に検証成功)
 	turnstileClient := turnstile.NewClient("", "")
 
 	// ユースケースを作成
@@ -169,18 +169,18 @@ func TestCreate_BackParameterRedirect(t *testing.T) {
 
 			// リダイレクトを確認
 			if rr.Code != http.StatusSeeOther {
-				t.Errorf("ステータスコード: got %d, want %d", rr.Code, http.StatusSeeOther)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusSeeOther)
 			}
 
 			location := rr.Header().Get("Location")
 			if location != tt.wantRedirectPath {
-				t.Errorf("%s: リダイレクト先が異なります\ngot: %s\nwant: %s", tt.description, location, tt.wantRedirectPath)
+				t.Errorf("%s: リダイレクト先が異なります\n実測値: %s\n期待値: %s", tt.description, location, tt.wantRedirectPath)
 			}
 		})
 	}
 }
 
-// TestCreate_BackParameterRedirectToCode はパスワードなしユーザーの場合にbackパラメータがコード入力ページへのリダイレクトに含まれることを確認します
+// TestCreate_BackParameterRedirectToCodeはパスワードなしユーザーの場合にbackパラメータがコード入力ページへのリダイレクトに含まれることを確認します
 func TestCreate_BackParameterRedirectToCode(t *testing.T) {
 	// パスワードなしユーザーの場合、トランザクションをコミットするため並列実行を無効化
 
@@ -223,7 +223,7 @@ func TestCreate_BackParameterRedirectToCode(t *testing.T) {
 	// セッションマネージャー
 	sessionMgr := setupTestSessionManager(t, queries)
 
-	// Turnstileクライアント（テスト用：SecretKeyが空なので常に検証成功）
+	// Turnstileクライアント (テスト用：SecretKeyが空なので常に検証成功)
 	turnstileClient := turnstile.NewClient("", "")
 
 	// SendSignInCodeユースケース
@@ -251,17 +251,17 @@ func TestCreate_BackParameterRedirectToCode(t *testing.T) {
 
 	// リダイレクトを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコード: got %d, want %d", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusSeeOther)
 	}
 
 	wantRedirectPath := "/sign_in/code?back=%2Foauth%2Fauthorize%3Fclient_id%3Dxxx"
 	location := rr.Header().Get("Location")
 	if location != wantRedirectPath {
-		t.Errorf("リダイレクト先が異なります\ngot: %s\nwant: %s", location, wantRedirectPath)
+		t.Errorf("リダイレクト先が異なります\n実測値: %s\n期待値: %s", location, wantRedirectPath)
 	}
 }
 
-// TestCreate_ValidationErrorPreservesBackParameter はバリデーションエラー時にbackパラメータが保持されることを確認します
+// TestCreate_ValidationErrorPreservesBackParameterはバリデーションエラー時にbackパラメータが保持されることを確認します
 func TestCreate_ValidationErrorPreservesBackParameter(t *testing.T) {
 	t.Parallel()
 
@@ -275,20 +275,20 @@ func TestCreate_ValidationErrorPreservesBackParameter(t *testing.T) {
 	// セッションマネージャー
 	sessionMgr := setupTestSessionManager(t, queries)
 
-	// Turnstileクライアント（テスト用：SecretKeyが空なので常に検証成功）
+	// Turnstileクライアント (テスト用：SecretKeyが空なので常に検証成功)
 	turnstileClient := turnstile.NewClient("", "")
 
-	// ユースケースを作成（バリデーションエラーのためDBアクセスは発生しない）
+	// ユースケースを作成 (バリデーションエラーのためDBアクセスは発生しない)
 	v := validator.NewSignInCreateValidator()
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
 	// ハンドラーを作成
 	h := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), sendSignInCodeUC, turnstileClient)
 
-	// フォームデータを作成（メールアドレスが空）
+	// フォームデータを作成 (メールアドレスが空)
 	backURL := "/oauth/authorize?client_id=xxx"
 	formData := url.Values{}
-	formData.Set("email", "") // 空のメールアドレス（バリデーションエラー）
+	formData.Set("email", "") // 空のメールアドレス (バリデーションエラー)
 	formData.Set("csrf_token", "test-token")
 	formData.Set("cf-turnstile-response", "test-response")
 	formData.Set("back", backURL)
@@ -301,15 +301,15 @@ func TestCreate_ValidationErrorPreservesBackParameter(t *testing.T) {
 	// ハンドラーを実行
 	h.Create(rr, req)
 
-	// バリデーションエラー時は 422 でフォームを再描画する
+	// バリデーションエラー時は422でフォームを再描画する
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコード: got %d, want %d", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusUnprocessableEntity)
 	}
 
-	// 再描画されたフォームに back パラメータが保持されていることを確認
+	// 再描画されたフォームにbackパラメータが保持されていることを確認
 	wantHidden := `name="back" value="/oauth/authorize?client_id=xxx"`
 	body := rr.Body.String()
 	if !strings.Contains(body, wantHidden) {
-		t.Errorf("再描画フォームに back パラメータが含まれていません\nwant: %s", wantHidden)
+		t.Errorf("再描画フォームにbackパラメータが含まれていません\n期待値: %s", wantHidden)
 	}
 }

@@ -10,18 +10,11 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
-// HTTPError renders the body of a shared HTTP error page (404, 500 and the like).
-//
-// It styles itself with the classes layouts.Error defines inline rather than with the
-// application's utility and component classes, so the page stands on its own without the
-// application stylesheet. Error, in the same package, keeps using those application classes
-// because it renders inside the regular layouts.
-//
-// [Ja] HTTPError は共通の HTTP エラーページ (404・500 など) の本文を描画する。
+// HTTPErrorは共通のHTTPエラーページ (404・500など) の本文を描画する。
 //
 // スタイルにはアプリケーションのユーティリティ・コンポーネントのクラスではなく、
-// layouts.Error がインラインで定義するクラスを使う。アプリケーションのスタイルシートなしで
-// ページが成立するようにするため。同じパッケージの Error は通常のレイアウトの内側で描画する
+// layouts.Errorがインラインで定義するクラスを使う。アプリケーションのスタイルシートなしで
+// ページが成立するようにするため。同じパッケージのErrorは通常のレイアウトの内側で描画する
 // ため、引き続きアプリケーションのクラスを使う。
 func HTTPError(errorTitle string, errorMessage string, backLink *BackLink) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -51,7 +44,7 @@ func HTTPError(errorTitle string, errorMessage string, backLink *BackLink) templ
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(errorTitle)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/errors/http_error.templ`, Line: 18, Col: 38}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/errors/http_error.templ`, Line: 11, Col: 38}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -69,7 +62,7 @@ func HTTPError(errorTitle string, errorMessage string, backLink *BackLink) templ
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(errorMessage)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/errors/http_error.templ`, Line: 20, Col: 42}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/errors/http_error.templ`, Line: 13, Col: 42}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -88,7 +81,7 @@ func HTTPError(errorTitle string, errorMessage string, backLink *BackLink) templ
 			var templ_7745c5c3_Var4 templ.SafeURL
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(backLink.URL))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/errors/http_error.templ`, Line: 23, Col: 36}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/errors/http_error.templ`, Line: 16, Col: 36}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -101,7 +94,7 @@ func HTTPError(errorTitle string, errorMessage string, backLink *BackLink) templ
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(backLink.Text)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/errors/http_error.templ`, Line: 24, Col: 19}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/errors/http_error.templ`, Line: 17, Col: 19}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {

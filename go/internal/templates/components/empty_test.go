@@ -6,13 +6,8 @@ import (
 	"testing"
 )
 
-// TestEmpty verifies that the empty state names what is missing in a heading one level below
-// the page heading, and that the description is rendered only when the caller supplies one.
-// Basecoat lays the header out as a flex column with a gap, so an empty <p> would leave a
-// blank band under the heading.
-//
-// [Ja] TestEmpty は、空表示が何が無いのかをページ見出しの 1 段下の見出しで述べること、説明は
-// 呼び出し側が渡したときだけ描画されることを検証する。Basecoat は header を gap 付きの flex
+// TestEmptyは、空表示が何が無いのかをページ見出しの1段下の見出しで述べること、説明は
+// 呼び出し側が渡したときだけ描画されることを検証する。Basecoatはheaderをgap付きのflex
 // カラムとして並べるため、空の <p> があると見出しの下に余白の帯が残る。
 func TestEmpty(t *testing.T) {
 	t.Parallel()

@@ -22,7 +22,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// メールアドレスがない場合は /sign_in にリダイレクト
+	// メールアドレスがない場合は /sign_inにリダイレクト
 	if email == "" {
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
 		return
@@ -37,7 +37,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	backURL := r.FormValue("back")
 
-	// UseCase を実行
+	// UseCaseを実行
 	output, err := h.authenticateByPasswordUC.Execute(ctx, usecase.AuthenticateByPasswordInput{
 		Email:    email,
 		Password: r.FormValue("password"),
@@ -66,7 +66,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// ログイン成功のフラッシュメッセージを設定
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "sign_in_success"))
 
-	// ログイン後のリダイレクト先を取得（バリデーション付き）
+	// ログイン後のリダイレクト先を取得 (バリデーション付き)
 	redirectTo := redirect.GetSafeRedirectURL(backURL)
 
 	http.Redirect(w, r, redirectTo, http.StatusSeeOther)

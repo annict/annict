@@ -6,10 +6,7 @@ import (
 	"testing"
 )
 
-// TestContentCard_Class verifies the optional class argument is appended to the card's
-// class list, and that an empty argument leaves the base classes untouched.
-//
-// [Ja] TestContentCard_Class は任意の class 引数がカードのクラスリストへ追記されること、
+// TestContentCard_Classは任意のclass引数がカードのクラスリストへ追記されること、
 // 空引数のときは基底クラスがそのまま残ることを検証する。
 func TestContentCard_Class(t *testing.T) {
 	t.Parallel()
@@ -25,12 +22,9 @@ func TestContentCard_Class(t *testing.T) {
 			expected: `class="card py-4 rounded-none md:rounded-xl mx-0 md:mx-4"`,
 		},
 		{
-			// overflow-visible lets an inner combobox popover escape the card's default
-			// overflow-hidden clipping.
-			//
-			// [Ja] overflow-visible により、内側の combobox popover がカード既定の
-			// overflow-hidden によるクリップから逃れられる。
-			name:     "overflow-visible が追記される",
+			// overflow-visibleにより、内側のcombobox popoverがカード既定の
+			// overflow-hiddenによるクリップから逃れられる。
+			name:     "overflow-visibleが追記される",
 			class:    "overflow-visible",
 			expected: `class="card py-4 rounded-none md:rounded-xl mx-0 md:mx-4 overflow-visible"`,
 		},
@@ -46,7 +40,7 @@ func TestContentCard_Class(t *testing.T) {
 			}
 
 			if html := buf.String(); !strings.Contains(html, tt.expected) {
-				t.Errorf("期待する class が含まれていません: %q\n出力: %s", tt.expected, html)
+				t.Errorf("期待するclassが含まれていません: %q\n出力: %s", tt.expected, html)
 			}
 		})
 	}

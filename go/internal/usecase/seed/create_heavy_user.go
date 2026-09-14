@@ -15,19 +15,19 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// CreateHeavyUserParams ヘビーユーザー作成のパラメータ
+// CreateHeavyUserParamsヘビーユーザー作成のパラメータ
 type CreateHeavyUserParams struct {
 	Username          string  // デフォルト: "heavy_user"
 	Password          string  // デフォルト: "password"
-	EpisodeRecords    int     // ヘビーユーザーの視聴記録数（デフォルト: 10,000）
-	FollowersCount    int     // フォロワー数（デフォルト: 1,000）
-	FollowingCount    int     // フォロー数（デフォルト: 500）
-	FolloweeRecords   int     // 各フォロイー（フォロワー）の視聴記録数（デフォルト: 100）
-	RatingProbability float64 // 視聴記録に評価をつける確率（デフォルト: 0.7）
-	BodyProbability   float64 // 視聴記録にコメントをつける確率（デフォルト: 0.3）
+	EpisodeRecords    int     // ヘビーユーザーの視聴記録数 (デフォルト: 10,000)
+	FollowersCount    int     // フォロワー数 (デフォルト: 1,000)
+	FollowingCount    int     // フォロー数 (デフォルト: 500)
+	FolloweeRecords   int     // 各フォロイー (フォロワー) の視聴記録数 (デフォルト: 100)
+	RatingProbability float64 // 視聴記録に評価をつける確率 (デフォルト: 0.7)
+	BodyProbability   float64 // 視聴記録にコメントをつける確率 (デフォルト: 0.3)
 }
 
-// CreateHeavyUserResult ヘビーユーザー作成の結果
+// CreateHeavyUserResultヘビーユーザー作成の結果
 type CreateHeavyUserResult struct {
 	HeavyUserID        model.UserID
 	FollowerUserIDs    []model.UserID
@@ -36,14 +36,14 @@ type CreateHeavyUserResult struct {
 	FollowCount        int
 }
 
-// CreateHeavyUserUsecase ヘビーユーザー生成Usecase（シード専用）
+// CreateHeavyUserUsecaseヘビーユーザー生成Usecase (シード専用)
 // heavy_userという名前のユーザーを作成し、大量の視聴記録とフォロー関係を設定します
 type CreateHeavyUserUsecase struct {
 	db      *sql.DB
 	queries *query.Queries
 }
 
-// NewCreateHeavyUserUsecase 新しいCreateHeavyUserUsecaseを作成
+// NewCreateHeavyUserUsecase新しいCreateHeavyUserUsecaseを作成
 func NewCreateHeavyUserUsecase(db *sql.DB, queries *query.Queries) *CreateHeavyUserUsecase {
 	return &CreateHeavyUserUsecase{
 		db:      db,
@@ -51,7 +51,7 @@ func NewCreateHeavyUserUsecase(db *sql.DB, queries *query.Queries) *CreateHeavyU
 	}
 }
 
-// Execute ヘビーユーザーを作成します
+// Executeヘビーユーザーを作成します
 // 既存の作品とエピソードデータを使用して視聴記録を生成します
 func (uc *CreateHeavyUserUsecase) Execute(ctx context.Context, params CreateHeavyUserParams) (*CreateHeavyUserResult, error) {
 	// デフォルト値の設定
@@ -86,23 +86,23 @@ func (uc *CreateHeavyUserUsecase) Execute(ctx context.Context, params CreateHeav
 	if err != nil {
 		return nil, fmt.Errorf("ヘビーユーザー作成エラー: %w", err)
 	}
-	fmt.Printf("ヘビーユーザー作成完了（user_id: %d）\n", heavyUserID)
+	fmt.Printf("ヘビーユーザー作成完了 (user_id: %d)\n", heavyUserID)
 
-	// 2. フォロワーユーザー（heavy_userをフォローする人）を作成
+	// 2. フォロワーユーザー (heavy_userをフォローする人) を作成
 	fmt.Printf("%d人のフォロワーユーザーを作成しています...\n", params.FollowersCount)
 	followerUserIDs, err := uc.createFollowerUsers(ctx, params.FollowersCount)
 	if err != nil {
 		return nil, fmt.Errorf("フォロワーユーザー作成エラー: %w", err)
 	}
-	fmt.Printf("フォロワーユーザー作成完了（%d人）\n", len(followerUserIDs))
+	fmt.Printf("フォロワーユーザー作成完了 (%d人)\n", len(followerUserIDs))
 
-	// 3. フォローユーザー（heavy_userがフォローする人）を作成
+	// 3. フォローユーザー (heavy_userがフォローする人) を作成
 	fmt.Printf("%d人のフォローユーザーを作成しています...\n", params.FollowingCount)
 	followingUserIDs, err := uc.createFollowingUsers(ctx, params.FollowingCount)
 	if err != nil {
 		return nil, fmt.Errorf("フォローユーザー作成エラー: %w", err)
 	}
-	fmt.Printf("フォローユーザー作成完了（%d人）\n", len(followingUserIDs))
+	fmt.Printf("フォローユーザー作成完了 (%d人)\n", len(followingUserIDs))
 
 	// 4. heavy_userの視聴記録を作成
 	fmt.Printf("ヘビーユーザーの視聴記録を%d件作成しています...\n", params.EpisodeRecords)
@@ -110,18 +110,18 @@ func (uc *CreateHeavyUserUsecase) Execute(ctx context.Context, params CreateHeav
 	if err != nil {
 		return nil, fmt.Errorf("ヘビーユーザー視聴記録作成エラー: %w", err)
 	}
-	fmt.Printf("ヘビーユーザー視聴記録作成完了（%d件）\n", heavyUserRecordCount)
+	fmt.Printf("ヘビーユーザー視聴記録作成完了 (%d件)\n", heavyUserRecordCount)
 
-	// 5. フォロー関係を作成（フォロワー → heavy_user、heavy_user → フォロー）
+	// 5. フォロー関係を作成 (フォロワー → heavy_user、heavy_user → フォロー)
 	fmt.Println("フォロー関係を作成しています...")
 	followCount, err := uc.createFollowRelationships(ctx, heavyUserID, followerUserIDs, followingUserIDs)
 	if err != nil {
 		return nil, fmt.Errorf("フォロー関係作成エラー: %w", err)
 	}
-	fmt.Printf("フォロー関係作成完了（%d件）\n", followCount)
+	fmt.Printf("フォロー関係作成完了 (%d件)\n", followCount)
 
-	// 6. 各フォロイー（フォロワー）の視聴記録を作成
-	fmt.Printf("各フォロイーの視聴記録を作成しています（%d人 × %d件）...\n", params.FollowersCount, params.FolloweeRecords)
+	// 6. 各フォロイー (フォロワー) の視聴記録を作成
+	fmt.Printf("各フォロイーの視聴記録を作成しています (%d人 × %d件)...\n", params.FollowersCount, params.FolloweeRecords)
 	if err := uc.createFolloweeRecords(ctx, followerUserIDs, params.FolloweeRecords, params.RatingProbability, params.BodyProbability); err != nil {
 		return nil, fmt.Errorf("フォロイー視聴記録作成エラー: %w", err)
 	}
@@ -158,7 +158,7 @@ func (uc *CreateHeavyUserUsecase) createHeavyUser(ctx context.Context, username,
 	return results[0].UserID, nil
 }
 
-// createFollowerUsers フォロワーユーザー（heavy_userをフォローする人）を作成します
+// createFollowerUsersフォロワーユーザー (heavy_userをフォローする人) を作成します
 func (uc *CreateHeavyUserUsecase) createFollowerUsers(ctx context.Context, count int) ([]model.UserID, error) {
 	createUserUC := NewCreateUserUsecase(uc.db, uc.queries)
 
@@ -194,7 +194,7 @@ func (uc *CreateHeavyUserUsecase) createFollowerUsers(ctx context.Context, count
 	return userIDs, nil
 }
 
-// createFollowingUsers フォローユーザー（heavy_userがフォローする人）を作成します
+// createFollowingUsersフォローユーザー (heavy_userがフォローする人) を作成します
 func (uc *CreateHeavyUserUsecase) createFollowingUsers(ctx context.Context, count int) ([]model.UserID, error) {
 	createUserUC := NewCreateUserUsecase(uc.db, uc.queries)
 
@@ -232,9 +232,7 @@ func (uc *CreateHeavyUserUsecase) createFollowingUsers(ctx context.Context, coun
 
 // createHeavyUserRecords heavy_userの視聴記録を作成します
 func (uc *CreateHeavyUserUsecase) createHeavyUserRecords(ctx context.Context, userID model.UserID, count int, ratingProbability, bodyProbability float64) (int, error) {
-	// Build one owner entry per record, then pass the ordered list to the chunked writer.
-	//
-	// [Ja] 記録 1 件につき 1 エントリを持つ受け手の一覧にして、チャンク処理に渡す。
+	// 記録1件につき1エントリを持つ受け手の一覧にして、チャンク処理に渡す。
 	recordOwners := make([]model.UserID, count)
 	for i := range recordOwners {
 		recordOwners[i] = userID
@@ -250,16 +248,16 @@ func (uc *CreateHeavyUserUsecase) createHeavyUserRecords(ctx context.Context, us
 	return uc.createEpisodeRecordsForOwners(ctx, recordOwners, ratingProbability, bodyProbability, bar)
 }
 
-// createFollowRelationships フォロー関係を作成します
+// createFollowRelationshipsフォロー関係を作成します
 func (uc *CreateHeavyUserUsecase) createFollowRelationships(ctx context.Context, heavyUserID model.UserID, followerUserIDs, followingUserIDs []model.UserID) (int, error) {
 	createFollowUC := NewCreateFollowUsecase(uc.db)
 
-	// フォロワー → heavy_user のフォロー関係を作成
+	// フォロワー → heavy_userのフォロー関係を作成
 	followerFollows := make([]CreateFollowParams, len(followerUserIDs))
 	for i, followerID := range followerUserIDs {
 		followerFollows[i] = CreateFollowParams{
 			FollowerID:  followerID,  // フォローする人
-			FollowingID: heavyUserID, // フォローされる人（heavy_user）
+			FollowingID: heavyUserID, // フォローされる人 (heavy_user)
 		}
 	}
 
@@ -267,7 +265,7 @@ func (uc *CreateHeavyUserUsecase) createFollowRelationships(ctx context.Context,
 	heavyUserFollows := make([]CreateFollowParams, len(followingUserIDs))
 	for i, followingID := range followingUserIDs {
 		heavyUserFollows[i] = CreateFollowParams{
-			FollowerID:  heavyUserID, // フォローする人（heavy_user）
+			FollowerID:  heavyUserID, // フォローする人 (heavy_user)
 			FollowingID: followingID, // フォローされる人
 		}
 	}
@@ -290,11 +288,9 @@ func (uc *CreateHeavyUserUsecase) createFollowRelationships(ctx context.Context,
 	return len(allFollows), nil
 }
 
-// createFolloweeRecords フォロイー（フォロワー）の視聴記録を作成します
+// createFolloweeRecordsフォロイー (フォロワー) の視聴記録を作成します
 func (uc *CreateHeavyUserUsecase) createFolloweeRecords(ctx context.Context, followerUserIDs []model.UserID, recordsPerUser int, ratingProbability, bodyProbability float64) error {
-	// Build one owner entry per record, assigning recordsPerUser entries to each followee.
-	//
-	// [Ja] 各フォロイーに recordsPerUser 件ずつ割り当てた、記録 1 件につき 1 エントリの
+	// 各フォロイーにrecordsPerUser件ずつ割り当てた、記録1件につき1エントリの
 	// 受け手の一覧を作る。
 	recordOwners := make([]model.UserID, 0, len(followerUserIDs)*recordsPerUser)
 	for _, userID := range followerUserIDs {
@@ -315,22 +311,14 @@ func (uc *CreateHeavyUserUsecase) createFolloweeRecords(ctx context.Context, fol
 	return err
 }
 
-// episodeRecordCommitChunkSize is the number of episode records written per commit. Each
-// chunk uses one transaction that selects its episodes and inserts the records.
-//
-// [Ja] episodeRecordCommitChunkSize は視聴記録を何件ごとにコミットするかを決める。
-// 1 チャンクが 1 トランザクションになり、その中でエピソードの抽選と記録の INSERT を行う。
+// episodeRecordCommitChunkSizeは視聴記録を何件ごとにコミットするかを決める。
+// 1チャンクが1トランザクションになり、その中でエピソードの抽選と記録のINSERTを行う。
 const episodeRecordCommitChunkSize = 5000
 
-// createEpisodeRecordsForOwners creates one episode record for each entry in recordOwners.
-// Selecting the referenced episodes and inserting the records share a transaction. If they
-// used separate transactions, another test or process could delete a selected episode before
-// the insert and make the activities foreign key fail.
-//
-// [Ja] createEpisodeRecordsForOwners は recordOwners の 1 エントリにつき 1 件の視聴記録を
-// 作成する。記録が参照するエピソードの抽選と INSERT は同じトランザクションで行う。別々の
-// トランザクションで行うと、抽選から INSERT までの間に他のテストや処理がそのエピソードを
-// 削除でき、activities の外部キー違反になる。
+// createEpisodeRecordsForOwnersはrecordOwnersの1エントリにつき1件の視聴記録を
+// 作成する。記録が参照するエピソードの抽選とINSERTは同じトランザクションで行う。別々の
+// トランザクションで行うと、抽選からINSERTまでの間に他のテストや処理がそのエピソードを
+// 削除でき、activitiesの外部キー違反になる。
 func (uc *CreateHeavyUserUsecase) createEpisodeRecordsForOwners(
 	ctx context.Context,
 	recordOwners []model.UserID,
@@ -351,10 +339,7 @@ func (uc *CreateHeavyUserUsecase) createEpisodeRecordsForOwners(
 	return created, nil
 }
 
-// createEpisodeRecordChunk selects episodes and creates one chunk of records in a single
-// transaction.
-//
-// [Ja] createEpisodeRecordChunk は 1 トランザクションで、チャンク分のエピソードを抽選し、
+// createEpisodeRecordChunkは1トランザクションで、チャンク分のエピソードを抽選し、
 // そのエピソードに対する視聴記録を作成する。
 func (uc *CreateHeavyUserUsecase) createEpisodeRecordChunk(
 	ctx context.Context,
@@ -397,7 +382,7 @@ func (uc *CreateHeavyUserUsecase) createEpisodeRecordChunk(
 	return len(recordParams), nil
 }
 
-// episodeData エピソードデータの簡易構造体
+// episodeDataエピソードデータの簡易構造体
 type episodeData struct {
 	ID     model.EpisodeID
 	WorkID model.WorkID
@@ -405,14 +390,9 @@ type episodeData struct {
 
 var errNoEpisodesAvailable = errors.New("エピソードが存在しません。先に作品とエピソードを生成してください")
 
-// getRandomEpisodes returns the requested number of random episodes, allowing repeats when
-// the request exceeds the number of available rows. It runs inside the caller's transaction
-// and locks every selected row with FOR KEY SHARE, so another transaction cannot delete a
-// returned episode before the caller inserts its references and commits.
-//
-// [Ja] getRandomEpisodes は指定件数のエピソードをランダムに返し、利用可能な行数を超える場合は
-// 重複を許可する。呼び出し元のトランザクションで実行し、取得した行を FOR KEY SHARE でロック
-// する。これにより、返したエピソードは呼び出し元が参照行を INSERT してコミットするまで、他の
+// getRandomEpisodesは指定件数のエピソードをランダムに返し、利用可能な行数を超える場合は
+// 重複を許可する。呼び出し元のトランザクションで実行し、取得した行をFOR KEY SHAREでロック
+// する。これにより、返したエピソードは呼び出し元が参照行をINSERTしてコミットするまで、他の
 // トランザクションから削除されない。
 func (uc *CreateHeavyUserUsecase) getRandomEpisodes(ctx context.Context, tx *sql.Tx, count int) ([]episodeData, error) {
 	// 全エピソード数を取得
@@ -429,12 +409,8 @@ func (uc *CreateHeavyUserUsecase) getRandomEpisodes(ctx context.Context, tx *sql
 	return getRandomEpisodesForKnownTotal(ctx, tx, count, totalEpisodes)
 }
 
-// getRandomEpisodesForKnownTotal selects rows after the caller has counted the available
-// episodes. The observed total can become stale before this query under READ COMMITTED, so a
-// batch that returns no rows is an error rather than another iteration of the same loop.
-//
-// [Ja] getRandomEpisodesForKnownTotal は、呼び出し元が利用可能なエピソード数を数えた後で行を
-// 抽選する。READ COMMITTED では観測した件数がこのクエリまでに古くなる可能性があるため、1 件も
+// getRandomEpisodesForKnownTotalは、呼び出し元が利用可能なエピソード数を数えた後で行を
+// 抽選する。READ COMMITTEDでは観測した件数がこのクエリまでに古くなる可能性があるため、1件も
 // 返さないバッチは同じループの再試行ではなくエラーとして扱う。
 func getRandomEpisodesForKnownTotal(
 	ctx context.Context,
@@ -442,10 +418,7 @@ func getRandomEpisodesForKnownTotal(
 	count int,
 	totalEpisodes int64,
 ) ([]episodeData, error) {
-	// Fetch the requested episodes in random batches. When count exceeds totalEpisodes,
-	// repeated batches provide the allowed duplicate entries.
-	//
-	// [Ja] 必要な数のエピソードをランダムなバッチで取得する。count が totalEpisodes を超える
+	// 必要な数のエピソードをランダムなバッチで取得する。countがtotalEpisodesを超える
 	// 場合は複数のバッチから、許可されている重複エントリを得る。
 	episodes := make([]episodeData, 0, count)
 
@@ -457,9 +430,7 @@ func getRandomEpisodesForKnownTotal(
 			batchSize = int(totalEpisodes)
 		}
 
-		// Fetch one batch with ORDER BY RANDOM().
-		//
-		// [Ja] ORDER BY RANDOM() で 1 バッチを取得する。
+		// ORDER BY RANDOM() で1バッチを取得する。
 		rows, err := tx.QueryContext(ctx, `
 			SELECT id, work_id FROM episodes ORDER BY RANDOM() LIMIT $1 FOR KEY SHARE
 		`, batchSize)
@@ -489,7 +460,7 @@ func getRandomEpisodesForKnownTotal(
 	return episodes, nil
 }
 
-// generateRating 評価を生成します（確率に基づいて nil または 1.0〜5.0 の値を返す）
+// generateRating評価を生成します (確率に基づいてnilまたは1.0〜5.0の値を返す)
 // テストデータ生成用のため、暗号学的に安全な乱数は不要
 func (uc *CreateHeavyUserUsecase) generateRating(probability float64) *float64 {
 	// #nosec G404
@@ -501,7 +472,7 @@ func (uc *CreateHeavyUserUsecase) generateRating(probability float64) *float64 {
 	return &rating
 }
 
-// generateBody コメントを生成します（確率に基づいて nil または短いコメントを返す）
+// generateBodyコメントを生成します (確率に基づいてnilまたは短いコメントを返す)
 // テストデータ生成用のため、暗号学的に安全な乱数は不要
 func (uc *CreateHeavyUserUsecase) generateBody(probability float64) *string {
 	// #nosec G404
@@ -512,7 +483,7 @@ func (uc *CreateHeavyUserUsecase) generateBody(probability float64) *string {
 	return &body
 }
 
-// generateWatchedAt 視聴日時を生成します（過去1年以内のランダムな日時）
+// generateWatchedAt視聴日時を生成します (過去1年以内のランダムな日時)
 // テストデータ生成用のため、暗号学的に安全な乱数は不要
 func (uc *CreateHeavyUserUsecase) generateWatchedAt() time.Time {
 	now := time.Now()

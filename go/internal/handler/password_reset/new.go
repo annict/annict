@@ -11,13 +11,13 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New はパスワードリセット申請フォームを表示します (GET /password/reset)
+// Newはパスワードリセット申請フォームを表示します (GET /password/reset)
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNewForm(w, r, http.StatusOK, nil, "")
 }
 
-// renderNewForm はパスワードリセット申請フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormはパスワードリセット申請フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string) {
 	ctx := r.Context()
 

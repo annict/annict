@@ -15,45 +15,25 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// ArchiveNewPageData is the data the episode archive-confirmation page renders: the episode
-// whose archiving is being confirmed, and the parent work its heading, subnav and cancel link
-// describe.
-//
-// [Ja] ArchiveNewPageData はエピソード非公開確認ページが描画するデータ (非公開を確認する対象の
+// ArchiveNewPageDataはエピソード非公開確認ページが描画するデータ (非公開を確認する対象の
 // エピソードと、その見出し・サブナビ・キャンセルリンクが示す親作品)。
 type ArchiveNewPageData struct {
 	EpisodeID viewmodel.EpisodeID
-	// EpisodeName names the episode in the confirmation message, as
-	// viewmodel.DBEpisodeName resolved it. It is never empty: an episode with neither a
-	// display number nor a title falls back to its id, so the message always names its
-	// target.
-	//
-	// [Ja] EpisodeName は viewmodel.DBEpisodeName が解決した、確認メッセージがエピソードを
-	// 名指しする表記。空にはならない。表示用話数もタイトルも無いエピソードは ID に
+	// EpisodeNameはviewmodel.DBEpisodeNameが解決した、確認メッセージがエピソードを
+	// 名指しする表記。空にはならない。表示用話数もタイトルも無いエピソードはIDに
 	// フォールバックするため、メッセージは常に対象を名指しする。
 	EpisodeName string
 	WorkID      viewmodel.WorkID
-	// WorkName is the work's display name as viewmodel.DBEpisodeListWorkName resolved it. An
-	// empty value makes the heading fall back to the generic page name and the document title
-	// omit the work while retaining the episode identifier.
-	//
-	// [Ja] WorkName は viewmodel.DBEpisodeListWorkName が解決した作品の表示名。空の場合、
+	// WorkNameはviewmodel.DBEpisodeListWorkNameが解決した作品の表示名。空の場合、
 	// 見出しは汎用のページ名へフォールバックし、文書タイトルはエピソード識別子を残して作品を
 	// 省く。
 	WorkName string
-	// NoEpisodes carries the work's no_episodes flag through to the shared subnav.
-	//
-	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。
+	// NoEpisodesは作品のno_episodesフラグを共有サブナビへ渡す。
 	NoEpisodes bool
 	CSRFToken  string
 }
 
-// heading returns the text of the page heading: the work's name, falling back to the generic
-// page title while the work has none, so the page never renders an empty <h1>. The episode
-// itself is named by the confirmation message rather than by the heading, matching the other
-// episode pages, whose heading is the work they belong to.
-//
-// [Ja] heading はページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// headingはページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
 // ページタイトルにフォールバックし、空の <h1> を描画しないようにする。エピソード自身は見出しでは
 // なく確認メッセージが名指しする。見出しが所属作品になっている他のエピソードページと揃えるため。
 func (d ArchiveNewPageData) heading(ctx context.Context) string {
@@ -138,7 +118,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_archive_new_confirm_message", map[string]any{"Episode": data.EpisodeName}))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 88, Col: 114}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 65, Col: 114}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -151,7 +131,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var4 string
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_archive_new_help"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 89, Col: 96}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 66, Col: 96}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -164,7 +144,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var5 templ.SafeURL
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBEpisodeArchivePath(data.EpisodeID).SafeURL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 92, Col: 89}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 69, Col: 89}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -177,7 +157,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.CSRFToken)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 93, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 70, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -190,7 +170,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_archive_new_submit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 95, Col: 58}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 72, Col: 58}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -203,7 +183,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var8 templ.SafeURL
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBWorkEpisodesPath(data.WorkID).SafeURL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 97, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 74, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -216,7 +196,7 @@ func ArchiveNew(data ArchiveNewPageData) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_archive_new_cancel_link"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 98, Col: 63}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/archive_new.templ`, Line: 75, Col: 63}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {

@@ -1,4 +1,4 @@
-// Package repository はデータアクセス層を提供します
+// Package repositoryはデータアクセス層を提供します
 package repository
 
 import (
@@ -10,17 +10,17 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// UserCalendarRepository はカレンダーデータの取得を担当します
+// UserCalendarRepositoryはカレンダーデータの取得を担当します
 type UserCalendarRepository struct {
 	queries *query.Queries
 }
 
-// NewUserCalendarRepository はUserCalendarRepositoryを作成します
+// NewUserCalendarRepositoryはUserCalendarRepositoryを作成します
 func NewUserCalendarRepository(queries *query.Queries) *UserCalendarRepository {
 	return &UserCalendarRepository{queries: queries}
 }
 
-// GetByUsername はユーザー名からカレンダーデータを取得します
+// GetByUsernameはユーザー名からカレンダーデータを取得します
 // 読み取り専用の処理のためUsecaseは使用せず、Repositoryで完結します
 func (r *UserCalendarRepository) GetByUsername(ctx context.Context, username string, now time.Time) (*model.UserCalendar, error) {
 	// 1. ユーザー情報を取得
@@ -93,7 +93,7 @@ func (r *UserCalendarRepository) GetByUsername(ctx context.Context, username str
 		}
 	}
 
-	// 6. 作品（放送開始日）を取得
+	// 6. 作品 (放送開始日) を取得
 	worksRows, err := r.queries.GetCalendarWorks(ctx, user.ID)
 	if err != nil {
 		return nil, err

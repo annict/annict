@@ -15,12 +15,8 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// DeletionNewPageData is the data the delete-confirmation page renders: the CSRF token, the
-// target work id (for the form action), its title (for the page heading and the confirmation
-// prompt) and the listing to return to (for the cancel link and the submit).
-//
-// [Ja] DeletionNewPageData は削除確認ページが描画するデータ (CSRF トークン、フォームの
-// action に使う対象 work の id、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
+// DeletionNewPageDataは削除確認ページが描画するデータ (CSRFトークン、フォームの
+// actionに使う対象workのid、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
 // 戻り先にする一覧)。
 type DeletionNewPageData struct {
 	CSRFToken string
@@ -29,23 +25,15 @@ type DeletionNewPageData struct {
 	ReturnTo  string
 }
 
-// heading returns the text of the page heading: the work title, falling back to the generic
-// page title while the title is blank. The confirmation prompt names the same value, so both
-// places on the page point at the same target.
-//
-// [Ja] heading はページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
+// headingはページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
 // 汎用のページタイトルにフォールバックする。確認文も同じ値で対象を名指しするため、ページ上の
-// 2 箇所が同じ対象を指す。
+// 2箇所が同じ対象を指す。
 func (d DeletionNewPageData) heading(ctx context.Context) string {
 	return headingOrFallback(ctx, d.Title, "db_works_deletion_new_title")
 }
 
-// The form submits to the work itself, the endpoint the delete addresses. An HTML form can
-// only send GET or POST, so the method override the other /db forms use carries the DELETE
-// through.
-//
-// [Ja] フォームは削除が対象とするエンドポイントである作品自身へ送信する。HTML のフォームは
-// GET と POST しか送れないため、他の /db のフォームと同じメソッドオーバーライドで DELETE を
+// フォームは削除が対象とするエンドポイントである作品自身へ送信する。HTMLのフォームは
+// GETとPOSTしか送れないため、他の /dbのフォームと同じメソッドオーバーライドでDELETEを
 // 運ぶ。
 func DeletionNew(data DeletionNewPageData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -109,7 +97,7 @@ func DeletionNew(data DeletionNewPageData) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_works_deletion_new_confirm_message", map[string]any{"Title": data.heading(ctx)}))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 57, Col: 110}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 45, Col: 110}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {
@@ -122,7 +110,7 @@ func DeletionNew(data DeletionNewPageData) templ.Component {
 			var templ_7745c5c3_Var4 templ.SafeURL
 			templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBWorkPath(data.WorkID).SafeURL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 59, Col: 76}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 47, Col: 76}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 			if templ_7745c5c3_Err != nil {
@@ -135,7 +123,7 @@ func DeletionNew(data DeletionNewPageData) templ.Component {
 			var templ_7745c5c3_Var5 string
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.CSRFToken)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 61, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 49, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 			if templ_7745c5c3_Err != nil {
@@ -148,7 +136,7 @@ func DeletionNew(data DeletionNewPageData) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.ReturnTo)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 62, Col: 64}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 50, Col: 64}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -161,7 +149,7 @@ func DeletionNew(data DeletionNewPageData) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_works_deletion_new_submit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 64, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 52, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -174,7 +162,7 @@ func DeletionNew(data DeletionNewPageData) templ.Component {
 			var templ_7745c5c3_Var8 templ.SafeURL
 			templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.JoinURLErrs(data.ReturnTo)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 66, Col: 28}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 54, Col: 28}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var8))
 			if templ_7745c5c3_Err != nil {
@@ -187,7 +175,7 @@ func DeletionNew(data DeletionNewPageData) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_works_deletion_new_cancel_link"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 67, Col: 61}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/deletion_new.templ`, Line: 55, Col: 61}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {

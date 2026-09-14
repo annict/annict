@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// generatePublicID ランダムなpublic IDを生成
+// generatePublicIDランダムなpublic IDを生成
 func generatePublicID() (string, error) {
 	// 32バイトのランダムデータを生成
 	randomBytes := make([]byte, 32)
@@ -23,35 +23,35 @@ func generatePublicID() (string, error) {
 	return hex.EncodeToString(randomBytes), nil
 }
 
-// SessionResult セッション作成の結果
+// SessionResultセッション作成の結果
 type SessionResult struct {
 	PublicID string       // Cookie値として使用するID
 	UserID   model.UserID // ログインユーザーID
 }
 
-// CreateSessionUsecase セッション作成のビジネスロジック
+// CreateSessionUsecaseセッション作成のビジネスロジック
 type CreateSessionUsecase struct {
 	sessionRepo *repository.SessionRepository
 }
 
-// NewCreateSessionUsecase 新しいCreateSessionUsecaseを作成
+// NewCreateSessionUsecase新しいCreateSessionUsecaseを作成
 func NewCreateSessionUsecase(sessionRepo *repository.SessionRepository) *CreateSessionUsecase {
 	return &CreateSessionUsecase{
 		sessionRepo: sessionRepo,
 	}
 }
 
-// Execute セッションを作成する
-// tx: オプションでトランザクションを渡せる（nilの場合は通常のクエリ実行）
-// encryptedPassword: ユーザーのencrypted_password（authenticatable_salt生成に必要）
+// Executeセッションを作成する
+// tx: オプションでトランザクションを渡せる (nilの場合は通常のクエリ実行)
+// encryptedPassword: ユーザーのencrypted_password (authenticatable_salt生成に必要)
 func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID model.UserID, encryptedPassword string) (*SessionResult, error) {
-	// Public ID（Cookie値）を生成
+	// Public ID (Cookie値) を生成
 	publicID, err := generatePublicID()
 	if err != nil {
 		return nil, fmt.Errorf("public ID生成エラー: %w", err)
 	}
 
-	// authenticatable_saltを生成（encrypted_passwordの最初の29文字）
+	// authenticatable_saltを生成 (encrypted_passwordの最初の29文字)
 	// これはDeviseのセキュリティ機能で、パスワード変更時にセッションを無効化するために使用される
 	authenticatableSalt := ""
 	if len(encryptedPassword) >= 29 {
@@ -64,7 +64,7 @@ func (uc *CreateSessionUsecase) Execute(ctx context.Context, tx *sql.Tx, userID 
 		return nil, fmt.Errorf("CSRFトークン生成エラー: %w", err)
 	}
 
-	// セッションデータを作成（Railsのwarden形式）
+	// セッションデータを作成 (Railsのwarden形式)
 	sessionData := map[string]any{
 		"warden.user.user.key": []any{
 			[]any{userID},

@@ -20,21 +20,14 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// dbWorkArchiveNewPath builds the representative GET path of a work's archive confirmation
-// page. It is built from the parsed work ID rather than from the request path so that links
-// spelling the ID differently (a leading zero, say) still resolve to one representative URL.
-//
-// [Ja] dbWorkArchiveNewPath は作品の非公開確認ページの代表 GET パスを生成する。リクエスト
-// パスではなくパース済みの作品 ID から組み立てることで、ID の表記が違うリンク (先頭ゼロなど)
-// でも 1 つの代表 URL に収まるようにする。
+// dbWorkArchiveNewPathは作品の非公開確認ページの代表GETパスを生成する。リクエスト
+// パスではなくパース済みの作品IDから組み立てることで、IDの表記が違うリンク (先頭ゼロなど)
+// でも1つの代表URLに収まるようにする。
 func dbWorkArchiveNewPath(id model.WorkID) string {
 	return fmt.Sprintf("/db/works/%d/archive/new", int64(id))
 }
 
-// New renders the archive-confirmation page in the Annict DB admin UI
-// (GET /db/works/:id/archive/new).
-//
-// [Ja] Annict DB 管理画面の非公開確認ページ (GET /db/works/:id/archive/new) を描画する。
+// NewはAnnict DB管理画面の非公開確認ページ (GET /db/works/:id/archive/new) を描画する。
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -93,11 +86,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// setNewTitle gives meta a document title that starts with the page name, followed by the work
-// once it has a display name. A work without one leaves the page name standing alone, which is
-// also what the heading shows, so the two never disagree on whether the target can be named.
-//
-// [Ja] setNewTitle は meta に、画面名から始まり、表示名があれば作品が続く文書タイトルを
+// setNewTitleはmetaに、画面名から始まり、表示名があれば作品が続く文書タイトルを
 // 設定する。表示名が無い作品では画面名だけになり、見出しの表示とも揃う。対象を名指しできる
 // かどうかの判断が両者で食い違わないようにするため。
 func setNewTitle(ctx context.Context, meta *viewmodel.PageMeta, workName string) {

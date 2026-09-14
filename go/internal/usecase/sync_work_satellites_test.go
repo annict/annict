@@ -8,12 +8,8 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// fakeSatelliteWorkLoader returns canned works regardless of the requested IDs, so the
-// orchestration can be exercised without a database (the loader SQL is covered by the
-// repository test).
-//
-// [Ja] fakeSatelliteWorkLoader は要求 ID に関係なく固定の works を返し、DB なしで
-// オーケストレーションを動かせるようにする (ローダー SQL 自体はリポジトリテストでカバー)。
+// fakeSatelliteWorkLoaderは要求IDに関係なく固定のworksを返し、DBなしで
+// オーケストレーションを動かせるようにする (ローダーSQL自体はリポジトリテストでカバー)。
 type fakeSatelliteWorkLoader struct {
 	works []*model.Work
 	err   error
@@ -26,10 +22,7 @@ func (l *fakeSatelliteWorkLoader) ListForSatelliteSyncByIDs(_ context.Context, _
 	return l.works, nil
 }
 
-// fakeSatelliteReconciler records the works it was handed and returns canned counts, so
-// the test can assert the orchestration filters and aggregates correctly.
-//
-// [Ja] fakeSatelliteReconciler は渡された works を記録し固定の件数を返す。オーケストレーション
+// fakeSatelliteReconcilerは渡されたworksを記録し固定の件数を返す。オーケストレーション
 // のフィルタと集計が正しいかをテストで検証できるようにする。
 type fakeSatelliteReconciler struct {
 	gotWorks [][]*model.Work
@@ -53,9 +46,7 @@ func workWithAnimeID(id model.WorkID, animeID int64) *model.Work {
 func TestSyncWorkSatellitesUsecase_Execute_FiltersUnresolvedAndAggregates(t *testing.T) {
 	t.Parallel()
 
-	// Two anime-resolved works plus one still pending an anime_id.
-	//
-	// [Ja] anime 解決済みの 2 件と、anime_id 未解決の 1 件。
+	// anime解決済みの2件と、anime_id未解決の1件。
 	works := []*model.Work{
 		workWithAnimeID(1, 1001),
 		{ID: 2, AnimeID: nil},
@@ -69,34 +60,30 @@ func TestSyncWorkSatellitesUsecase_Execute_FiltersUnresolvedAndAggregates(t *tes
 
 	result, err := uc.Execute(context.Background(), SyncWorkSatellitesInput{WorkIDs: []model.WorkID{1, 2, 3}})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	if result.Processed != 3 {
-		t.Errorf("Processed = %d, want 3", result.Processed)
+		t.Errorf("Processed = %d、期待値 = 3", result.Processed)
 	}
 	if result.SkippedNoAnime != 1 {
-		t.Errorf("SkippedNoAnime = %d, want 1", result.SkippedNoAnime)
+		t.Errorf("SkippedNoAnime = %d、期待値 = 1", result.SkippedNoAnime)
 	}
 
-	// Each reconciler must receive only the two anime-resolved works (ids 1 and 3).
-	//
-	// [Ja] 各リコンサイラは anime 解決済みの 2 件 (id 1 と 3) だけを受け取る必要がある。
+	// 各リコンサイラはanime解決済みの2件 (id 1と3) だけを受け取る必要がある。
 	for name, r := range map[string]*fakeSatelliteReconciler{"r1": r1, "r2": r2} {
 		if len(r.gotWorks) != 1 {
-			t.Fatalf("%s called %d times, want 1", name, len(r.gotWorks))
+			t.Fatalf("%sの呼び出し回数 = %d、期待値 = 1", name, len(r.gotWorks))
 		}
 		got := r.gotWorks[0]
 		if len(got) != 2 || got[0].ID != 1 || got[1].ID != 3 {
-			t.Errorf("%s got works %v, want ids [1 3]", name, workIDsOf(got))
+			t.Errorf("%sのworks = %v、期待値 = idが [1 3]", name, workIDsOf(got))
 		}
 	}
 
-	// Counts are summed across both reconcilers.
-	//
-	// [Ja] 件数は両リコンサイラで合算される。
+	// 件数は両リコンサイラで合算される。
 	if result.Created != 1 || result.Updated != 2 || result.Unchanged != 1 || result.Deleted != 3 {
-		t.Errorf("counts = created %d / updated %d / unchanged %d / deleted %d, want 1 / 2 / 1 / 3",
+		t.Errorf("counts = created %d / updated %d / unchanged %d / deleted %d、期待値 = 1 / 2 / 1 / 3",
 			result.Created, result.Updated, result.Unchanged, result.Deleted)
 	}
 }
@@ -112,27 +99,24 @@ func TestSyncWorkSatellitesUsecase_Execute_NoResolvedWorksSkipsReconcilers(t *te
 
 	result, err := uc.Execute(context.Background(), SyncWorkSatellitesInput{WorkIDs: []model.WorkID{1, 2}})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	if len(reconciler.gotWorks) != 0 {
-		t.Errorf("reconciler called %d times, want 0", len(reconciler.gotWorks))
+		t.Errorf("reconcilerの呼び出し回数 = %d、期待値 = 0", len(reconciler.gotWorks))
 	}
 	if result.Processed != 2 || result.SkippedNoAnime != 2 {
-		t.Errorf("Processed/SkippedNoAnime = %d/%d, want 2/2", result.Processed, result.SkippedNoAnime)
+		t.Errorf("Processed/SkippedNoAnime = %d/%d、期待値 = 2/2", result.Processed, result.SkippedNoAnime)
 	}
 	if result.Created != 0 {
-		t.Errorf("Created = %d, want 0 (reconciler must not run)", result.Created)
+		t.Errorf("Created = %d、期待値 = 0 (reconcilerが動かないこと)", result.Created)
 	}
 }
 
 func TestSyncWorkSatellitesUsecase_Execute_NoReconcilersRegistered(t *testing.T) {
 	t.Parallel()
 
-	// This mirrors the task 2-7 production wiring: works resolve to an anime, but no
-	// reconciler is registered yet, so nothing is written and only the metrics move.
-	//
-	// [Ja] タスク 2-7 の本番配線を写したもの: works は anime に解決するが、リコンサイラは
+	// タスク2-7の本番配線を写したもの: worksはanimeに解決するが、リコンサイラは
 	// まだ未登録のため何も書かれず、メトリクスだけが動く。
 	loader := &fakeSatelliteWorkLoader{works: []*model.Work{workWithAnimeID(1, 1001)}}
 
@@ -140,14 +124,14 @@ func TestSyncWorkSatellitesUsecase_Execute_NoReconcilersRegistered(t *testing.T)
 
 	result, err := uc.Execute(context.Background(), SyncWorkSatellitesInput{WorkIDs: []model.WorkID{1}})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	if result.Processed != 1 || result.SkippedNoAnime != 0 {
-		t.Errorf("Processed/SkippedNoAnime = %d/%d, want 1/0", result.Processed, result.SkippedNoAnime)
+		t.Errorf("Processed/SkippedNoAnime = %d/%d、期待値 = 1/0", result.Processed, result.SkippedNoAnime)
 	}
 	if result.Created != 0 || result.Updated != 0 || result.Deleted != 0 || result.Unchanged != 0 {
-		t.Errorf("write counts = %d/%d/%d/%d, want all 0", result.Created, result.Updated, result.Deleted, result.Unchanged)
+		t.Errorf("書き込みのcounts = %d/%d/%d/%d、期待値 = すべて0", result.Created, result.Updated, result.Deleted, result.Unchanged)
 	}
 }
 
@@ -162,10 +146,10 @@ func TestSyncWorkSatellitesUsecase_Execute_PropagatesLoaderError(t *testing.T) {
 
 	_, err := uc.Execute(context.Background(), SyncWorkSatellitesInput{WorkIDs: []model.WorkID{1}})
 	if !errors.Is(err, wantErr) {
-		t.Fatalf("Execute() error = %v, want wraps %v", err, wantErr)
+		t.Fatalf("Execute()のエラー = %v、期待値 = %vをラップしたエラー", err, wantErr)
 	}
 	if len(reconciler.gotWorks) != 0 {
-		t.Errorf("reconciler called after loader error, want 0 calls")
+		t.Errorf("loaderのエラー後にreconcilerが呼ばれた。期待値 = 0回")
 	}
 }
 
@@ -180,7 +164,7 @@ func TestSyncWorkSatellitesUsecase_Execute_PropagatesReconcilerError(t *testing.
 
 	_, err := uc.Execute(context.Background(), SyncWorkSatellitesInput{WorkIDs: []model.WorkID{1}})
 	if !errors.Is(err, wantErr) {
-		t.Fatalf("Execute() error = %v, want wraps %v", err, wantErr)
+		t.Fatalf("Execute()のエラー = %v、期待値 = %vをラップしたエラー", err, wantErr)
 	}
 }
 

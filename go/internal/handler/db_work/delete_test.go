@@ -17,9 +17,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestDelete_Success verifies soft-deleting a work redirects to the work list.
-//
-// [Ja] TestDelete_Success は作品のソフトデリートが作品一覧へリダイレクトすることを検証する。
+// TestDelete_Successは作品のソフトデリートが作品一覧へリダイレクトすることを検証する。
 func TestDelete_Success(t *testing.T) {
 	t.Parallel()
 
@@ -34,16 +32,14 @@ func TestDelete_Success(t *testing.T) {
 	r.ServeHTTP(rr, deleteRequest(t, fmt.Sprintf("/db/works/%d", int64(workID))))
 
 	if status := rr.Code; status != http.StatusSeeOther {
-		t.Fatalf("handler returned wrong status code: got %v want %v", status, http.StatusSeeOther)
+		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusSeeOther)
 	}
 	if location := rr.Header().Get("Location"); location != "/db/works" {
-		t.Errorf("handler returned wrong redirect location: got %v want /db/works", location)
+		t.Errorf("リダイレクト先 = %v、期待値 = /db/works", location)
 	}
 }
 
-// TestDelete_NotFound verifies deleting a nonexistent work returns 404.
-//
-// [Ja] TestDelete_NotFound は存在しない作品の削除が 404 を返すことを検証する。
+// TestDelete_NotFoundは存在しない作品の削除が404を返すことを検証する。
 func TestDelete_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -57,16 +53,13 @@ func TestDelete_NotFound(t *testing.T) {
 	r.ServeHTTP(rr, deleteRequest(t, "/db/works/999999999"))
 
 	if status := rr.Code; status != http.StatusNotFound {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 	}
 	assertNotFoundPage(t, rr)
 }
 
-// TestDelete_NotFoundForDeletedWork verifies deleting an already soft-deleted work returns
-// 404 (Rails scope Work.without_deleted).
-//
-// [Ja] TestDelete_NotFoundForDeletedWork は、すでにソフトデリート済みの作品の削除が 404 を
-// 返すことを検証する (Rails の scope Work.without_deleted)。
+// TestDelete_NotFoundForDeletedWorkは、すでにソフトデリート済みの作品の削除が404を
+// 返すことを検証する (Railsのscope Work.without_deleted)。
 func TestDelete_NotFoundForDeletedWork(t *testing.T) {
 	t.Parallel()
 
@@ -81,14 +74,12 @@ func TestDelete_NotFoundForDeletedWork(t *testing.T) {
 	r.ServeHTTP(rr, deleteRequest(t, fmt.Sprintf("/db/works/%d", int64(workID))))
 
 	if status := rr.Code; status != http.StatusNotFound {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 	}
 	assertNotFoundPage(t, rr)
 }
 
-// TestDelete_InvalidID verifies a non-numeric id returns 404.
-//
-// [Ja] TestDelete_InvalidID は数値でない id で 404 を返すことを検証する。
+// TestDelete_InvalidIDは数値でないidで404を返すことを検証する。
 func TestDelete_InvalidID(t *testing.T) {
 	t.Parallel()
 
@@ -102,17 +93,13 @@ func TestDelete_InvalidID(t *testing.T) {
 	r.ServeHTTP(rr, deleteRequest(t, "/db/works/abc"))
 
 	if status := rr.Code; status != http.StatusNotFound {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusNotFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
 	}
 	assertNotFoundPage(t, rr)
 }
 
-// TestDelete_HTMXRedirect verifies that an htmx-issued delete (HX-Request) responds with 204
-// and an HX-Redirect header to the work list instead of the plain 303 redirect, so htmx
-// navigates rather than swapping the followed list page into the clicked button.
-//
-// [Ja] TestDelete_HTMXRedirect は htmx が発行する削除 (HX-Request) が素の 303 ではなく
-// 204 と作品一覧への HX-Redirect ヘッダーを返すことを検証する。htmx が押したボタンに一覧を
+// TestDelete_HTMXRedirectはhtmxが発行する削除 (HX-Request) が素の303ではなく
+// 204と作品一覧へのHX-Redirectヘッダーを返すことを検証する。htmxが押したボタンに一覧を
 // スワップせず遷移するようにするため。
 func TestDelete_HTMXRedirect(t *testing.T) {
 	t.Parallel()
@@ -130,28 +117,21 @@ func TestDelete_HTMXRedirect(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	if status := rr.Code; status != http.StatusNoContent {
-		t.Fatalf("status = %d, want %d", status, http.StatusNoContent)
+		t.Fatalf("ステータスコード = %d、期待値 = %d", status, http.StatusNoContent)
 	}
 	if got := rr.Header().Get("HX-Redirect"); got != "/db/works" {
-		t.Errorf("HX-Redirect = %q, want /db/works", got)
+		t.Errorf("HX-Redirect = %q、期待値 = /db/works", got)
 	}
 	if loc := rr.Header().Get("Location"); loc != "" {
-		t.Errorf("Location = %q, want empty (htmx navigates via HX-Redirect)", loc)
+		t.Errorf("リダイレクト先 = %q、期待値 = 空 (htmxはHX-Redirectで遷移するため)", loc)
 	}
 }
 
-// TestDelete_RequiresAdmin verifies the delete route is admin-only: an unauthenticated
-// request is redirected to sign-in, a regular user and an editor get 403, and an admin
-// passes through to a successful delete (303 to the work list). Unlike the committer-gated
-// write endpoints, an editor is rejected here (ADR 0009: deletion is admin-only). The full
-// role matrix of RequireAdmin itself is covered by TestRequireAdmin in the middleware
-// package.
-//
-// [Ja] TestDelete_RequiresAdmin は削除ルートが admin 専用であることを検証する (未認証は
-// サインインへリダイレクト、一般ユーザーと編集者は 403、admin は削除成功で作品一覧へ 303)。
-// committer でゲートされる書き込みエンドポイントと異なり、ここでは編集者も弾かれる
-// (ADR 0009: 削除は admin 専用)。RequireAdmin 自体のロール判定の網羅は middleware パッケージの
-// TestRequireAdmin で担保する。
+// TestDelete_RequiresAdminは削除ルートがadmin専用であることを検証する (未認証は
+// サインインへリダイレクト、一般ユーザーと編集者は403、adminは削除成功で作品一覧へ303)。
+// committerでゲートされる書き込みエンドポイントと異なり、ここでは編集者も弾かれる
+// (ADR 0009: 削除はadmin専用)。RequireAdmin自体のロール判定の網羅はmiddlewareパッケージの
+// TestRequireAdminで担保する。
 func TestDelete_RequiresAdmin(t *testing.T) {
 	t.Parallel()
 
@@ -185,19 +165,16 @@ func TestDelete_RequiresAdmin(t *testing.T) {
 			r.ServeHTTP(rr, req)
 
 			if rr.Code != tt.wantStatus {
-				t.Errorf("status = %d, want %d", rr.Code, tt.wantStatus)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatus)
 			}
 			if tt.wantLocation != "" && rr.Header().Get("Location") != tt.wantLocation {
-				t.Errorf("location = %q, want %q", rr.Header().Get("Location"), tt.wantLocation)
+				t.Errorf("リダイレクト先 = %q、期待値 = %q", rr.Header().Get("Location"), tt.wantLocation)
 			}
 		})
 	}
 }
 
-// deleteRequest builds a delete request from an administrator, the role the route requires and
-// the usecase repeats.
-//
-// [Ja] deleteRequest は管理者からの削除リクエストを組み立てる。ルートが要求し UseCase でも
+// deleteRequestは管理者からの削除リクエストを組み立てる。ルートが要求しUseCaseでも
 // 繰り返すロールに合わせるため。
 func deleteRequest(t *testing.T, target string) *http.Request {
 	t.Helper()
@@ -206,11 +183,8 @@ func deleteRequest(t *testing.T, target string) *http.Request {
 	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, user))
 }
 
-// TestDelete_ForbiddenWithoutMiddleware verifies the handler preserves the authorization
-// boundary even when it is invoked without the route middleware.
-//
-// [Ja] TestDelete_ForbiddenWithoutMiddleware はルートミドルウェアを通さず Handler を呼んでも、
-// 認可境界が維持され 403 を返すことを検証する。
+// TestDelete_ForbiddenWithoutMiddlewareはルートミドルウェアを通さずHandlerを呼んでも、
+// 認可境界が維持され403を返すことを検証する。
 func TestDelete_ForbiddenWithoutMiddleware(t *testing.T) {
 	t.Parallel()
 
@@ -225,16 +199,12 @@ func TestDelete_ForbiddenWithoutMiddleware(t *testing.T) {
 	r.ServeHTTP(rr, httptest.NewRequest("DELETE", fmt.Sprintf("/db/works/%d", int64(workID)), nil))
 
 	if status := rr.Code; status != http.StatusForbidden {
-		t.Errorf("handler returned wrong status code: got %v want %v", status, http.StatusForbidden)
+		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusForbidden)
 	}
 }
 
-// TestDelete_ReturnsToSubmittedListing verifies the delete lands on the listing the confirmation
-// screen submitted, and falls back to the work list when the value names something outside the
-// Annict DB admin UI, so a crafted return_to cannot send the reader off-site.
-//
-// [Ja] TestDelete_ReturnsToSubmittedListing は、削除が確認画面の送信した一覧に着地し、Annict DB
-// 管理画面の外を指す値では作品一覧にフォールバックすることを検証する。細工した return_to で
+// TestDelete_ReturnsToSubmittedListingは、削除が確認画面の送信した一覧に着地し、Annict DB
+// 管理画面の外を指す値では作品一覧にフォールバックすることを検証する。細工したreturn_toで
 // 読み手をサイト外へ送れないようにするため。
 func TestDelete_ReturnsToSubmittedListing(t *testing.T) {
 	t.Parallel()
@@ -253,9 +223,9 @@ func TestDelete_ReturnsToSubmittedListing(t *testing.T) {
 	}{
 		{name: "検索結果に戻る", returnTo: "/db/search?q=%E6%A4%9C%E7%B4%A2", wantLocation: "/db/search?q=%E6%A4%9C%E7%B4%A2"},
 		{name: "空のときは作品一覧", returnTo: "", wantLocation: "/db/works"},
-		{name: "Annict DB の外は作品一覧", returnTo: "/settings", wantLocation: "/db/works"},
-		{name: "外部 URL は作品一覧", returnTo: "https://example.com/", wantLocation: "/db/works"},
-		{name: "プロトコル相対 URL は作品一覧", returnTo: "//example.com/db/works", wantLocation: "/db/works"},
+		{name: "Annict DBの外は作品一覧", returnTo: "/settings", wantLocation: "/db/works"},
+		{name: "外部URLは作品一覧", returnTo: "https://example.com/", wantLocation: "/db/works"},
+		{name: "プロトコル相対URLは作品一覧", returnTo: "//example.com/db/works", wantLocation: "/db/works"},
 	}
 
 	for _, tt := range tests {
@@ -270,10 +240,10 @@ func TestDelete_ReturnsToSubmittedListing(t *testing.T) {
 			r.ServeHTTP(rr, req)
 
 			if rr.Code != http.StatusSeeOther {
-				t.Fatalf("status = %d, want %d", rr.Code, http.StatusSeeOther)
+				t.Fatalf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusSeeOther)
 			}
 			if got := rr.Header().Get("Location"); got != tt.wantLocation {
-				t.Errorf("Location = %q, want %q", got, tt.wantLocation)
+				t.Errorf("リダイレクト先 = %q、期待値 = %q", got, tt.wantLocation)
 			}
 		})
 	}

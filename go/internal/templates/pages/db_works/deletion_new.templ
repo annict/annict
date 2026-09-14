@@ -8,12 +8,8 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// DeletionNewPageData is the data the delete-confirmation page renders: the CSRF token, the
-// target work id (for the form action), its title (for the page heading and the confirmation
-// prompt) and the listing to return to (for the cancel link and the submit).
-//
-// [Ja] DeletionNewPageData は削除確認ページが描画するデータ (CSRF トークン、フォームの
-// action に使う対象 work の id、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
+// DeletionNewPageDataは削除確認ページが描画するデータ (CSRFトークン、フォームの
+// actionに使う対象workのid、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
 // 戻り先にする一覧)。
 type DeletionNewPageData struct {
 	CSRFToken string
@@ -22,23 +18,15 @@ type DeletionNewPageData struct {
 	ReturnTo  string
 }
 
-// heading returns the text of the page heading: the work title, falling back to the generic
-// page title while the title is blank. The confirmation prompt names the same value, so both
-// places on the page point at the same target.
-//
-// [Ja] heading はページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
+// headingはページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
 // 汎用のページタイトルにフォールバックする。確認文も同じ値で対象を名指しするため、ページ上の
-// 2 箇所が同じ対象を指す。
+// 2箇所が同じ対象を指す。
 func (d DeletionNewPageData) heading(ctx context.Context) string {
 	return headingOrFallback(ctx, d.Title, "db_works_deletion_new_title")
 }
 
-// The form submits to the work itself, the endpoint the delete addresses. An HTML form can
-// only send GET or POST, so the method override the other /db forms use carries the DELETE
-// through.
-//
-// [Ja] フォームは削除が対象とするエンドポイントである作品自身へ送信する。HTML のフォームは
-// GET と POST しか送れないため、他の /db のフォームと同じメソッドオーバーライドで DELETE を
+// フォームは削除が対象とするエンドポイントである作品自身へ送信する。HTMLのフォームは
+// GETとPOSTしか送れないため、他の /dbのフォームと同じメソッドオーバーライドでDELETEを
 // 運ぶ。
 templ DeletionNew(data DeletionNewPageData) {
 	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">

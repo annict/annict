@@ -37,9 +37,7 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 		name      string
 		input     UpdateStripeSubscriberInput
 		wantError bool
-		// asserts the error is ErrStripeSubscriberNotFound.
-		//
-		// [Ja] ErrStripeSubscriberNotFound であることを検証する
+		// ErrStripeSubscriberNotFoundであることを検証する
 		wantNotFound bool
 	}{
 		{
@@ -121,7 +119,7 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 					return
 				}
 				if tt.wantNotFound && !errors.Is(err, ErrStripeSubscriberNotFound) {
-					t.Errorf("ErrStripeSubscriberNotFound が期待されましたが、別のエラーが返されました: %v", err)
+					t.Errorf("ErrStripeSubscriberNotFoundが期待されましたが、別のエラーが返されました: %v", err)
 				}
 				return
 			}
@@ -133,10 +131,10 @@ func TestUpdateStripeSubscriberUsecase_Execute(t *testing.T) {
 
 			// 更新後の値を確認
 			if result.StripeSubscriber.StripePriceID != tt.input.StripePriceID {
-				t.Errorf("StripePriceID: got %s, want %s", result.StripeSubscriber.StripePriceID, tt.input.StripePriceID)
+				t.Errorf("StripePriceID = %s、期待値 = %s", result.StripeSubscriber.StripePriceID, tt.input.StripePriceID)
 			}
 			if result.StripeSubscriber.StripeStatus != tt.input.StripeStatus {
-				t.Errorf("StripeStatus: got %s, want %s", result.StripeSubscriber.StripeStatus, tt.input.StripeStatus)
+				t.Errorf("StripeStatus = %s、期待値 = %s", result.StripeSubscriber.StripeStatus, tt.input.StripeStatus)
 			}
 		})
 	}

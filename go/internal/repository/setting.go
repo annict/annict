@@ -1,4 +1,4 @@
-// Package repository はデータアクセス層を提供します
+// Package repositoryはデータアクセス層を提供します
 package repository
 
 import (
@@ -9,22 +9,22 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// SettingRepository はSetting関連のデータアクセスを担当します
+// SettingRepositoryはSetting関連のデータアクセスを担当します
 type SettingRepository struct {
 	queries *query.Queries
 }
 
-// NewSettingRepository はSettingRepositoryを作成します
+// NewSettingRepositoryはSettingRepositoryを作成します
 func NewSettingRepository(queries *query.Queries) *SettingRepository {
 	return &SettingRepository{queries: queries}
 }
 
-// WithTx はトランザクションを使用する新しいRepositoryを返します
+// WithTxはトランザクションを使用する新しいRepositoryを返します
 func (r *SettingRepository) WithTx(tx *sql.Tx) *SettingRepository {
 	return &SettingRepository{queries: r.queries.WithTx(tx)}
 }
 
-// Create は設定を作成します
+// Createは設定を作成します
 func (r *SettingRepository) Create(ctx context.Context, userID model.UserID) (*model.Setting, error) {
 	row, err := r.queries.CreateSetting(ctx, int64(userID))
 	if err != nil {

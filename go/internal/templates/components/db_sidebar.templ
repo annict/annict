@@ -6,9 +6,7 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// DBSidebar renders the sidebar component for the Annict DB admin UI.
-//
-// [Ja] DBSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
+// DBSidebarはAnnict DB管理画面用のサイドバーコンポーネントを描画する。
 templ DBSidebar() {
 	<aside
 		id="db-sidebar"
@@ -53,11 +51,8 @@ templ DBSidebar() {
 			</header>
 
 			<section class="scrollbar gap-4 py-4">
-				// Basecoat indents the menu group and the footer by p-2, so the search box takes the
-				// same px-2 and the horizontal padding is uniform across the sidebar.
-				//
-				// [Ja] Basecoat はメニューのグループと footer を p-2 で字下げするため、検索欄も
-				// 同じ px-2 にしてサイドバー内の横方向の余白を揃える。
+				// Basecoatはメニューのグループとfooterをp-2で字下げするため、検索欄も
+				// 同じpx-2にしてサイドバー内の横方向の余白を揃える。
 				<div class="px-2">
 					<form method="get" action="/db/search" autocomplete="off">
 						<input
@@ -83,12 +78,8 @@ templ DBSidebar() {
 				</div>
 			</section>
 
-			// Basecoat gives only the section its own scrolling area (flex-1 overflow-y-auto), so
-			// the back link placed in the footer stays at the bottom edge of the sidebar even when
-			// the menu grows tall enough to scroll.
-			//
-			// [Ja] Basecoat は section だけを自身でスクロールする領域にする (flex-1
-			// overflow-y-auto) ため、footer に置いた戻るリンクはメニューがスクロールするほど
+			// Basecoatはsectionだけを自身でスクロールする領域にする (flex-1
+			// overflow-y-auto) ため、footerに置いた戻るリンクはメニューがスクロールするほど
 			// 伸びてもサイドバーの下端に残る。
 			<footer class="border-t border-sidebar-border">
 				<a
@@ -106,17 +97,10 @@ templ DBSidebar() {
 	</aside>
 }
 
-// dbSidebarMenuItem renders a single sidebar entry, marking it as the current page (via
-// aria-current) while the request path is the entry itself or one of its sub-resources, so
-// editing a work keeps the works entry marked. The filled treatment of the current entry is
-// driven by that same attribute, so the marker assistive technology reads and the one
-// sighted users see cannot drift apart. Hovering another entry tints it with
-// bg-sidebar-accent, which the filled current entry stays distinct from.
-//
-// [Ja] dbSidebarMenuItem はサイドバーの項目を 1 つ描画し、リクエストパスが項目自身かその
+// dbSidebarMenuItemはサイドバーの項目を1つ描画し、リクエストパスが項目自身かその
 // サブリソースである間、現在ページとして印を付ける (aria-current)。作品を編集している間も
 // 作品の項目に印が残る。現在ページの塗りつぶしも同じ属性で切り替えるため、支援技術が読む印と
-// 目に見える印がずれることがない。他の項目を hover すると bg-sidebar-accent で淡く色が付くが、
+// 目に見える印がずれることがない。他の項目をhoverするとbg-sidebar-accentで淡く色が付くが、
 // 塗りつぶされた現在ページとは区別が付く。
 templ dbSidebarMenuItem(path string, labelKey string) {
 	<li>

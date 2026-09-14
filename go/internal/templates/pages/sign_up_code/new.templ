@@ -6,14 +6,14 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// NewPageData は新規登録確認コード入力ページに渡すデータ構造体です
+// NewPageDataは新規登録確認コード入力ページに渡すデータ構造体です
 type NewPageData struct {
 	CSRFToken  string
 	FormErrors *viewmodel.FormErrors
 	Email      string
 }
 
-// New は新規登録確認コード入力ページのコンテンツを表示します
+// Newは新規登録確認コード入力ページのコンテンツを表示します
 templ New(data NewPageData) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">

@@ -8,22 +8,15 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// formatNotificationCount converts the notification count to a string.
-//
-// [Ja] 通知数を文字列に変換する。
+// 通知数を文字列に変換する。
 func formatNotificationCount(count int32) string {
 	return strconv.FormatInt(int64(count), 10)
 }
 
-// Sidebar renders the sidebar component.
+// サイドバーコンポーネントをレンダリングする。
 //
-// user is the signed-in user (viewmodel.User); nil means the user is not
-// signed in. seasons holds the previous, current, and next season info.
-//
-// [Ja] サイドバーコンポーネントをレンダリングする。
-//
-// user はログインユーザー情報 ( viewmodel.User )。nil の場合は未ログイン状態。
-// seasons は季節情報 ( 前・現在・次 )。
+// userはログインユーザー情報 ( viewmodel.User )。nilの場合は未ログイン状態。
+// seasonsは季節情報 ( 前・現在・次 )。
 templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) {
 	<aside id="sidebar" class="sidebar" data-side="left" aria-hidden="false">
 		<nav aria-label="Sidebar navigation">
@@ -63,11 +56,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					}
 				</div>
 
-				<!--
-				Search form
-
-				[Ja] 検索フォーム
-				-->
+				<!-- 検索フォーム -->
 				<div class="px-4">
 					<form method="get" action="/search" autocomplete="off">
 						<input
@@ -79,11 +68,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</form>
 				</div>
 
-				<!--
-				Main menu
-
-				[Ja] メインメニュー
-				-->
+				<!-- メインメニュー -->
 				<div role="group" class="py-0">
 					<ul class="space-y-1">
 						@sidebarMenuItem(ctx, "/", "sidebar_home", "house-regular")
@@ -97,11 +82,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!--
-				Library
-
-				[Ja] ライブラリ
-				-->
+				<!-- ライブラリ -->
 				<div role="group" aria-labelledby="sidebar-library" class="py-0">
 					<h3
 						id="sidebar-library"
@@ -127,11 +108,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!--
-				Explore
-
-				[Ja] 見つける
-				-->
+				<!-- 見つける -->
 				<div role="group" aria-labelledby="sidebar-explore" class="py-0">
 					<h3
 					  id="sidebar-explore"
@@ -149,11 +126,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!--
-				Misc
-
-				[Ja] その他
-				-->
+				<!-- その他 -->
 				<div role="group" aria-labelledby="sidebar-misc" class="py-0">
 					<h3
 					  id="sidebar-misc"
@@ -171,11 +144,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!--
-				Services
-
-				[Ja] サービス
-				-->
+				<!-- サービス -->
 				<div role="group" aria-labelledby="sidebar-services" class="py-0">
 					<h3
 					  id="sidebar-services"
@@ -192,11 +161,7 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 					</ul>
 				</div>
 
-				<!--
-				Sign out
-
-				[Ja] ログアウト
-				-->
+				<!-- ログアウト -->
 				if user != nil {
 					<div class="px-2 mb-4 border-t border-border pt-4">
 						<form method="POST" action="/sign_out">
@@ -220,25 +185,16 @@ templ Sidebar(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seaso
 	</aside>
 }
 
-// libraryPath builds the path to a library page.
-//
-// [Ja] ライブラリページのパスを生成する。
+// ライブラリページのパスを生成する。
 func libraryPath(user *viewmodel.User, statusKind string) string {
 	return "/@" + user.Username + "/" + statusKind
 }
 
-// sidebarMenuItem renders a sidebar menu item.
+// サイドバーのメニュー項目をレンダリングする。
 //
-// A link matching the current page is given aria-current="page", which tells assistive
-// technology which entry is the current page. Basecoat's own sidebar styles tint that entry
-// with bg-sidebar-accent and give it a medium font weight. Hovering any entry applies the
-// same tint, so its weight is what tells the current entry apart from a hovered one.
-//
-// [Ja] サイドバーのメニュー項目をレンダリングする。
-//
-// 現在ページと一致するリンクには aria-current="page" を付与し、支援技術へどの項目が現在
-// ページかを伝える。Basecoat のサイドバーのスタイルがその項目を bg-sidebar-accent で淡く
-// 塗り、太字を medium にする。hover でも同じ塗りが当たるため、現在ページと hover 中の項目を
+// 現在ページと一致するリンクにはaria-current="page" を付与し、支援技術へどの項目が現在
+// ページかを伝える。Basecoatのサイドバーのスタイルがその項目をbg-sidebar-accentで淡く
+// 塗り、太字をmediumにする。hoverでも同じ塗りが当たるため、現在ページとhover中の項目を
 // 見分けるのは太字だけになる。
 templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconName string) {
 	<li>
@@ -258,10 +214,7 @@ templ sidebarMenuItem(ctx context.Context, path string, labelKey string, iconNam
 	</li>
 }
 
-// sidebarNotificationMenuItem renders the notification menu item with an
-// unread badge.
-//
-// [Ja] 通知メニュー項目をレンダリングする ( 未読バッジ付き )。
+// 通知メニュー項目をレンダリングする ( 未読バッジ付き )。
 templ sidebarNotificationMenuItem(ctx context.Context, user *viewmodel.User) {
 	<li>
 		<a

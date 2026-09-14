@@ -9,7 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/config"
 )
 
-// テスト用のダミーハンドラー（200 OK を返す）
+// テスト用のダミーハンドラー (200 OKを返す)
 func testHandler() http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -35,10 +35,10 @@ func TestMaintenanceMiddleware_DisabledMode(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("メンテナンスモードOFF時: ステータスコード = %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("メンテナンスモードOFF時: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 	if rr.Body.String() != "OK" {
-		t.Errorf("メンテナンスモードOFF時: レスポンスボディ = %q, want %q", rr.Body.String(), "OK")
+		t.Errorf("メンテナンスモードOFF時: レスポンスボディ = %q、期待値 = %q", rr.Body.String(), "OK")
 	}
 }
 
@@ -61,7 +61,7 @@ func TestMaintenanceMiddleware_EnabledMode_AdminIP(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("メンテナンスモードON+管理者IP: ステータスコード = %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("メンテナンスモードON+管理者IP: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 }
 
@@ -84,25 +84,22 @@ func TestMaintenanceMiddleware_EnabledMode_NonAdminIP(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusServiceUnavailable {
-		t.Errorf("メンテナンスモードON+一般IP: ステータスコード = %d, want %d", rr.Code, http.StatusServiceUnavailable)
+		t.Errorf("メンテナンスモードON+一般IP: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusServiceUnavailable)
 	}
 
 	// Content-Typeヘッダーの確認
 	contentType := rr.Header().Get("Content-Type")
 	if contentType != "text/html; charset=utf-8" {
-		t.Errorf("Content-Type = %q, want %q", contentType, "text/html; charset=utf-8")
+		t.Errorf("Content-Type = %q、期待値 = %q", contentType, "text/html; charset=utf-8")
 	}
 
 	// Retry-Afterヘッダーの確認
 	retryAfter := rr.Header().Get("Retry-After")
 	if retryAfter != "3600" {
-		t.Errorf("Retry-After = %q, want %q", retryAfter, "3600")
+		t.Errorf("Retry-After = %q、期待値 = %q", retryAfter, "3600")
 	}
 
-	// The maintenance page is served ahead of the reverse proxy, out of the SecurityHeaders
-	// middleware's reach, so it sets the headers itself.
-	//
-	// [Ja] メンテナンスページはリバースプロキシより前で配信され、SecurityHeaders ミドルウェアの
+	// メンテナンスページはリバースプロキシより前で配信され、SecurityHeadersミドルウェアの
 	// 及ばない位置にあるため、自身でヘッダーを設定する。
 	assertSecurityHeaders(t, rr.Header())
 
@@ -113,15 +110,9 @@ func TestMaintenanceMiddleware_EnabledMode_NonAdminIP(t *testing.T) {
 	}
 }
 
-// TestMaintenanceMiddleware_HTMXRequest fixes that an HTMX request is told to reload while
-// maintenance is on. The DB lists issue hx-delete without hx-target and htmx swaps every
-// response except 204 and 304, so the maintenance document would otherwise be placed inside the
-// button that was pressed. Reloading is enough because every path answers with this page during
-// maintenance; a plain request receives what it did before.
-//
-// [Ja] TestMaintenanceMiddleware_HTMXRequest は、メンテナンス中の HTMX リクエストにリロードが
-// 指示されることを固定する。DB 一覧は hx-target を指定していない hx-delete を発行し、htmx は
-// 204 と 304 以外のレスポンスをスワップするため、そのままではメンテナンスの文書が押したボタンの
+// TestMaintenanceMiddleware_HTMXRequestは、メンテナンス中のHTMXリクエストにリロードが
+// 指示されることを固定する。DB一覧はhx-targetを指定していないhx-deleteを発行し、htmxは
+// 204と304以外のレスポンスをスワップするため、そのままではメンテナンスの文書が押したボタンの
 // 中へ挿入される。メンテナンス中はどのパスもこのページを返すためリロードで足り、通常の
 // リクエストが受け取るものは変わらない。
 func TestMaintenanceMiddleware_HTMXRequest(t *testing.T) {
@@ -153,10 +144,10 @@ func TestMaintenanceMiddleware_HTMXRequest(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			if rr.Code != http.StatusServiceUnavailable {
-				t.Errorf("ステータスコード = %d, want %d", rr.Code, http.StatusServiceUnavailable)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusServiceUnavailable)
 			}
 			if got := rr.Header().Get("HX-Refresh"); got != tt.wantHXRefresh {
-				t.Errorf("HX-Refresh = %q, want %q", got, tt.wantHXRefresh)
+				t.Errorf("HX-Refresh = %q、期待値 = %q", got, tt.wantHXRefresh)
 			}
 			if !strings.Contains(rr.Body.String(), "メンテナンス") {
 				t.Error("レスポンスボディにメンテナンスページの内容が含まれていません")
@@ -165,16 +156,10 @@ func TestMaintenanceMiddleware_HTMXRequest(t *testing.T) {
 	}
 }
 
-// TestMaintenanceMiddleware_Noindex fixes that the maintenance page tells crawlers not to index
-// it. While maintenance is on, every path answers with this page, including URLs a crawler
-// already knows, so a crawl that lands mid-maintenance receives a document with none of the
-// site's content. The 503 status keeps it out of a search index already, and this is the
-// declaration in the page that says the same.
-//
-// [Ja] TestMaintenanceMiddleware_Noindex は、メンテナンスページがクローラーに索引しないよう
-// 伝えることを固定する。メンテナンス中はクローラーが既に知っている URL を含むすべてのパスが
+// TestMaintenanceMiddleware_Noindexは、メンテナンスページがクローラーに索引しないよう
+// 伝えることを固定する。メンテナンス中はクローラーが既に知っているURLを含むすべてのパスが
 // このページを返すため、その最中のクロールはサイトの中身を持たない文書を受け取る。索引から
-// 外れること自体は 503 のステータスで既に満たされており、本宣言はそれをページ側でも述べるもの。
+// 外れること自体は503のステータスで既に満たされており、本宣言はそれをページ側でも述べるもの。
 func TestMaintenanceMiddleware_Noindex(t *testing.T) {
 	t.Parallel()
 
@@ -188,7 +173,7 @@ func TestMaintenanceMiddleware_Noindex(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if !strings.Contains(rr.Body.String(), `<meta content="noindex" name="robots">`) {
-		t.Error("noindex の宣言が含まれていません")
+		t.Error("noindexの宣言が含まれていません")
 	}
 }
 
@@ -224,7 +209,7 @@ func TestMaintenanceMiddleware_MultipleAdminIPs(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			if rr.Code != tc.wantCode {
-				t.Errorf("%s: ステータスコード = %d, want %d", tc.name, rr.Code, tc.wantCode)
+				t.Errorf("%s: ステータスコード = %d、期待値 = %d", tc.name, rr.Code, tc.wantCode)
 			}
 		})
 	}
@@ -233,7 +218,7 @@ func TestMaintenanceMiddleware_MultipleAdminIPs(t *testing.T) {
 func TestMaintenanceMiddleware_XForwardedFor(t *testing.T) {
 	t.Parallel()
 
-	// X-Forwarded-Forヘッダーからの IP取得
+	// X-Forwarded-ForヘッダーからのIP取得
 	cfg := &config.Config{
 		MaintenanceMode: true,
 		AdminIPs:        []string{"203.0.113.50"},
@@ -264,14 +249,14 @@ func TestMaintenanceMiddleware_XForwardedFor(t *testing.T) {
 			description: "X-Forwarded-Forが管理者IP以外の場合は503",
 		},
 		{
-			name:        "XFFが複数IP（最初が管理者IP）",
+			name:        "XFFが複数IP (最初が管理者IP)",
 			xff:         "203.0.113.50, 10.0.0.1, 172.16.0.1",
 			remoteAddr:  "192.168.1.1:12345",
 			wantCode:    http.StatusOK,
 			description: "X-Forwarded-Forの最初のIPが管理者IPの場合は通常処理",
 		},
 		{
-			name:        "XFFが複数IP（最初が一般IP）",
+			name:        "XFFが複数IP (最初が一般IP)",
 			xff:         "8.8.8.8, 203.0.113.50, 10.0.0.1",
 			remoteAddr:  "192.168.1.1:12345",
 			wantCode:    http.StatusServiceUnavailable,
@@ -289,7 +274,7 @@ func TestMaintenanceMiddleware_XForwardedFor(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			if rr.Code != tc.wantCode {
-				t.Errorf("%s: ステータスコード = %d, want %d (%s)", tc.name, rr.Code, tc.wantCode, tc.description)
+				t.Errorf("%s: ステータスコード = %d、期待値 = %d (%s)", tc.name, rr.Code, tc.wantCode, tc.description)
 			}
 		})
 	}
@@ -298,7 +283,7 @@ func TestMaintenanceMiddleware_XForwardedFor(t *testing.T) {
 func TestMaintenanceMiddleware_CFConnectingIP(t *testing.T) {
 	t.Parallel()
 
-	// CF-Connecting-IPヘッダー（Cloudflare経由）からのIP取得
+	// CF-Connecting-IPヘッダー (Cloudflare経由) からのIP取得
 	cfg := &config.Config{
 		MaintenanceMode: true,
 		AdminIPs:        []string{"203.0.113.100"},
@@ -341,7 +326,7 @@ func TestMaintenanceMiddleware_CFConnectingIP(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			if rr.Code != tc.wantCode {
-				t.Errorf("%s: ステータスコード = %d, want %d", tc.name, rr.Code, tc.wantCode)
+				t.Errorf("%s: ステータスコード = %d、期待値 = %d", tc.name, rr.Code, tc.wantCode)
 			}
 		})
 	}
@@ -350,7 +335,7 @@ func TestMaintenanceMiddleware_CFConnectingIP(t *testing.T) {
 func TestMaintenanceMiddleware_EmptyAdminIPs(t *testing.T) {
 	t.Parallel()
 
-	// 管理者IPが設定されていない場合（空のスライス）
+	// 管理者IPが設定されていない場合 (空のスライス)
 	cfg := &config.Config{
 		MaintenanceMode: true,
 		AdminIPs:        []string{},
@@ -367,7 +352,7 @@ func TestMaintenanceMiddleware_EmptyAdminIPs(t *testing.T) {
 
 	// 管理者IPが設定されていない場合は全てのアクセスで503
 	if rr.Code != http.StatusServiceUnavailable {
-		t.Errorf("管理者IP未設定時: ステータスコード = %d, want %d", rr.Code, http.StatusServiceUnavailable)
+		t.Errorf("管理者IP未設定時: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusServiceUnavailable)
 	}
 }
 
@@ -391,7 +376,7 @@ func TestMaintenanceMiddleware_NilAdminIPs(t *testing.T) {
 
 	// 管理者IPがnilの場合も全てのアクセスで503
 	if rr.Code != http.StatusServiceUnavailable {
-		t.Errorf("管理者IPがnil時: ステータスコード = %d, want %d", rr.Code, http.StatusServiceUnavailable)
+		t.Errorf("管理者IPがnil時: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusServiceUnavailable)
 	}
 }
 
@@ -437,7 +422,7 @@ func TestMaintenanceMiddleware_XRealIP(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			if rr.Code != tc.wantCode {
-				t.Errorf("%s: ステータスコード = %d, want %d", tc.name, rr.Code, tc.wantCode)
+				t.Errorf("%s: ステータスコード = %d、期待値 = %d", tc.name, rr.Code, tc.wantCode)
 			}
 		})
 	}

@@ -12,11 +12,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// newUnarchiveEpisodeUsecase wires the re-publish usecase against the shared test DB, on the
-// pool rather than on a test transaction for the reason newArchiveEpisodeUsecase states.
-//
-// [Ja] newUnarchiveEpisodeUsecase は共有テスト DB に対してエピソード再公開 UseCase を組み立てる。
-// newArchiveEpisodeUsecase が述べる理由により、テスト用トランザクションではなくプールに対して
+// newUnarchiveEpisodeUsecaseは共有テストDBに対してエピソード再公開UseCaseを組み立てる。
+// newArchiveEpisodeUsecaseが述べる理由により、テスト用トランザクションではなくプールに対して
 // 組み立てる。
 func newUnarchiveEpisodeUsecase(db *sql.DB) *UnarchiveEpisodeUsecase {
 	queries := query.New(db)
@@ -27,11 +24,7 @@ func newUnarchiveEpisodeUsecase(db *sql.DB) *UnarchiveEpisodeUsecase {
 	)
 }
 
-// archiveFixtureEpisode puts an inserted episode into the state a re-publish starts from. The
-// episodes fixtures are created published, matching how the bulk create leaves them, so the
-// tests of the opposite direction unpublish them first.
-//
-// [Ja] archiveFixtureEpisode は挿入したエピソードを、再公開が起点とする状態にする。エピソードの
+// archiveFixtureEpisodeは挿入したエピソードを、再公開が起点とする状態にする。エピソードの
 // フィクスチャは一括作成が残す形と同じく公開状態で作られるため、逆方向のテストでは先に非公開に
 // する。
 func archiveFixtureEpisode(t *testing.T, db *sql.DB, episodeID model.EpisodeID) {
@@ -42,17 +35,11 @@ func archiveFixtureEpisode(t *testing.T, db *sql.DB, episodeID model.EpisodeID) 
 	}
 }
 
-// TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeAndAnime verifies re-publishing a mapped,
-// archived episode clears episodes.unpublished_at (the state source of truth) and dual-writes
-// the derived anime.status = published, and that a phase 2 sync right after reports Unchanged
-// (the re-publish and the reconciliation derive the same status from unpublished_at, so the sync
-// does not clobber the published anime back to archived).
-//
-// [Ja] TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeAndAnime は、マッピング済みで非公開
-// のエピソードを再公開すると episodes.unpublished_at (状態の正本) がクリアされ、導出された
-// anime.status = published が両書きされること、および直後のフェーズ 2 同期が Unchanged を報告
-// することを検証する (再公開とリコンシリエーションが unpublished_at から同じ status を導出する
-// ため、同期は公開済み anime を archived に戻さない)。
+// TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeAndAnimeは、マッピング済みで非公開
+// のエピソードを再公開するとepisodes.unpublished_at (状態の正本) がクリアされ、導出された
+// anime.status = publishedが両書きされること、および直後のフェーズ2同期がUnchangedを報告
+// することを検証する (再公開とリコンシリエーションがunpublished_atから同じstatusを導出する
+// ため、同期は公開済みanimeをarchivedに戻さない)。
 func TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeAndAnime(t *testing.T) {
 	t.Parallel()
 
@@ -73,55 +60,48 @@ func TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeAndAnime(t *testing.T)
 		WHERE id = $1`,
 		int64(episodeAnimeID),
 	); err != nil {
-		t.Fatalf("非公開済み anime の準備に失敗: %v", err)
+		t.Fatalf("非公開済みanimeの準備に失敗: %v", err)
 	}
 
 	output, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if output.EpisodeID != episodeID || output.WorkID != workID {
-		t.Errorf("output = %+v, want {EpisodeID:%d WorkID:%d}", output, int64(episodeID), int64(workID))
+		t.Errorf("output = %+v、期待値 = {EpisodeID:%d WorkID:%d}", output, int64(episodeID), int64(workID))
 	}
 
 	if unpublishedAt := readArchivedEpisodeState(t, db, episodeID); unpublishedAt.Valid {
-		t.Errorf("episodes.unpublished_at = %v, want NULL", unpublishedAt.Time)
+		t.Errorf("episodes.unpublished_at = %v、期待値 = NULL", unpublishedAt.Time)
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(context.Background(), episodeAnimeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Status != model.AnimeStatusPublished {
-		t.Errorf("anime.Status = %q, want %q", anime.Status, model.AnimeStatusPublished)
+		t.Errorf("anime.Status = %q、期待値 = %q", anime.Status, model.AnimeStatusPublished)
 	}
-	// The re-publish maps status alone, so anime-owned content stays byte-for-byte unchanged,
-	// including the message the archive left behind.
-	//
-	// [Ja] 再公開が写像するのは status だけなので、非公開時のメッセージを含め anime 固有の内容は
+	// 再公開が写像するのはstatusだけなので、非公開時のメッセージを含めanime固有の内容は
 	// そのまま保持される。
 	if anime.ArchiveMessage.String != "非公開時のメッセージ" {
-		t.Errorf("anime.ArchiveMessage = %q, want %q", anime.ArchiveMessage.String, "非公開時のメッセージ")
+		t.Errorf("anime.ArchiveMessage = %q、期待値 = %q", anime.ArchiveMessage.String, "非公開時のメッセージ")
 	}
 
 	syncUC := newSyncEpisodesUsecase(db)
 	result, err := syncUC.Execute(context.Background(), SyncEpisodesToAnimesInput{EpisodeIDs: []model.EpisodeID{episodeID}})
 	if err != nil {
-		t.Fatalf("sync Execute() error = %v", err)
+		t.Fatalf("同期のExecute()のエラー = %v", err)
 	}
 	if result.Processed != 1 || result.Created != 0 || result.Updated != 0 || result.Unchanged != 1 {
-		t.Fatalf("sync result = %+v, want {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
+		t.Fatalf("同期の結果 = %+v、期待値 = {Processed:1 Created:0 Updated:0 Unchanged:1}", result)
 	}
 }
 
-// TestUnarchiveEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode covers an episode with no
-// anime yet: only the episodes row is written, and the phase 2 sync creates the anime later with
-// the status the re-published episode now derives.
-//
-// [Ja] TestUnarchiveEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode は、まだ anime を持たない
-// エピソードを検証する。書かれるのは episodes の行だけで、anime は後でフェーズ 2 の同期が、
-// 再公開されたエピソードが導出する status で作成する。
+// TestUnarchiveEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisodeは、まだanimeを持たない
+// エピソードを検証する。書かれるのはepisodesの行だけで、animeは後でフェーズ2の同期が、
+// 再公開されたエピソードが導出するstatusで作成する。
 func TestUnarchiveEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing.T) {
 	t.Parallel()
 
@@ -133,30 +113,25 @@ func TestUnarchiveEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing
 	archiveFixtureEpisode(t, db, episodeID)
 
 	if _, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()}); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	if unpublishedAt := readArchivedEpisodeState(t, db, episodeID); unpublishedAt.Valid {
-		t.Errorf("episodes.unpublished_at = %v, want NULL", unpublishedAt.Time)
+		t.Errorf("episodes.unpublished_at = %v、期待値 = NULL", unpublishedAt.Time)
 	}
 
 	var animeID sql.NullInt64
 	if err := db.QueryRow(`SELECT anime_id FROM episodes WHERE id = $1`, int64(episodeID)).Scan(&animeID); err != nil {
-		t.Fatalf("episodes.anime_id の読み込みに失敗: %v", err)
+		t.Fatalf("episodes.anime_idの読み込みに失敗: %v", err)
 	}
 	if animeID.Valid {
-		t.Errorf("episodes.anime_id = %d, want NULL のまま", animeID.Int64)
+		t.Errorf("episodes.anime_id = %d、期待値 = NULLのまま", animeID.Int64)
 	}
 }
 
-// TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeWithUnmappedParent covers an episode that
-// carries an anime while its parent work no longer does. Re-publishing maps the status alone,
-// which needs no parent_anime_id, so the anime follows the episode instead of waiting for the
-// parent to be mapped again.
-//
-// [Ja] TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeWithUnmappedParent は、エピソード
-// 自身は anime を持つが親作品が持たなくなった場合を検証する。再公開が写像するのは status だけで
-// parent_anime_id を必要としないため、anime は親が再びマッピングされるのを待たずエピソードに
+// TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeWithUnmappedParentは、エピソード
+// 自身はanimeを持つが親作品が持たなくなった場合を検証する。再公開が写像するのはstatusだけで
+// parent_anime_idを必要としないため、animeは親が再びマッピングされるのを待たずエピソードに
 // 追従する。
 func TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeWithUnmappedParent(t *testing.T) {
 	t.Parallel()
@@ -168,32 +143,28 @@ func TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeWithUnmappedParent(t *
 	episodeID, episodeAnimeID := insertMappedUpdateTargetEpisode(t, db, workID, parentAnimeID, 100)
 	archiveFixtureEpisode(t, db, episodeID)
 	if _, err := db.Exec(`UPDATE animes SET status = 'archived' WHERE id = $1`, int64(episodeAnimeID)); err != nil {
-		t.Fatalf("非公開済み anime の準備に失敗: %v", err)
+		t.Fatalf("非公開済みanimeの準備に失敗: %v", err)
 	}
 	if _, err := db.Exec(`UPDATE works SET anime_id = NULL WHERE id = $1`, int64(workID)); err != nil {
 		t.Fatalf("親作品の写像の解除に失敗: %v", err)
 	}
 
 	if _, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()}); err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(context.Background(), episodeAnimeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Status != model.AnimeStatusPublished {
-		t.Errorf("anime.Status = %q, want %q", anime.Status, model.AnimeStatusPublished)
+		t.Errorf("anime.Status = %q、期待値 = %q", anime.Status, model.AnimeStatusPublished)
 	}
 }
 
-// TestUnarchiveEpisodeUsecase_Execute_RequiresCommitter verifies authorization belongs to the
-// write usecase as well as the HTTP boundary. Rejected callers cannot re-publish the episode;
-// an editor can.
-//
-// [Ja] TestUnarchiveEpisodeUsecase_Execute_RequiresCommitter は認可が HTTP 境界だけでなく書き込み
-// UseCase にも属することを検証する。拒否された呼び出し元はエピソードを再公開できず、編集者は
+// TestUnarchiveEpisodeUsecase_Execute_RequiresCommitterは認可がHTTP境界だけでなく書き込み
+// UseCaseにも属することを検証する。拒否された呼び出し元はエピソードを再公開できず、編集者は
 // 実行できる。
 func TestUnarchiveEpisodeUsecase_Execute_RequiresCommitter(t *testing.T) {
 	t.Parallel()
@@ -223,29 +194,23 @@ func TestUnarchiveEpisodeUsecase_Execute_RequiresCommitter(t *testing.T) {
 			if tt.wantForbidden {
 				appErr := model.AsAppError(err)
 				if appErr == nil || appErr.Code != model.AppErrCodeForbidden {
-					t.Fatalf("Execute() error = %v, want AppErrCodeForbidden", err)
+					t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeForbidden", err)
 				}
 				if unpublishedAt := readArchivedEpisodeState(t, db, episodeID); !unpublishedAt.Valid {
-					t.Error("拒否された送信が episodes.unpublished_at をクリアしました")
+					t.Error("拒否された送信がepisodes.unpublished_atをクリアしました")
 				}
 				return
 			}
 			if err != nil {
-				t.Fatalf("Execute() error = %v", err)
+				t.Fatalf("Execute()のエラー = %v", err)
 			}
 		})
 	}
 }
 
-// TestUnarchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWriteWaits
-// fixes the interleaving between the confirmation projection and the re-publish write. The
-// re-publish waits on a locked episode after its pre-read, while the locking transaction deletes
-// the parent work. The work guard must make the write report not found, and the usecase rollback
-// must preserve the archived episode, counter, and anime status.
-//
-// [Ja] このテストは確認用の射影と再公開の書き込みの間の実行順を固定する。事前読み取り後の
-// 再公開がロック済みの episode を待つ間に、ロック元のトランザクションが親作品を削除する。作品の
-// ガードにより not found を返し、UseCase のロールバックにより非公開の episode、カウンター、anime
+// このテストは確認用の射影と再公開の書き込みの間の実行順を固定する。事前読み取り後の
+// 再公開がロック済みのepisodeを待つ間に、ロック元のトランザクションが親作品を削除する。作品の
+// ガードによりnot foundを返し、UseCaseのロールバックにより非公開のepisode、カウンター、anime
 // の状態を保持しなければならない。
 func TestUnarchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWriteWaits(t *testing.T) {
 	t.Parallel()
@@ -260,7 +225,7 @@ func TestUnarchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisod
 		model.AnimeStatusArchived,
 		int64(episodeAnimeID),
 	); err != nil {
-		t.Fatalf("非公開済み anime の準備に失敗: %v", err)
+		t.Fatalf("非公開済みanimeの準備に失敗: %v", err)
 	}
 
 	var episodesCountBefore int32
@@ -276,20 +241,20 @@ func TestUnarchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisod
 
 	blockerTx, err := db.BeginTx(ctx, nil)
 	if err != nil {
-		t.Fatalf("blocker transaction BeginTx() error = %v", err)
+		t.Fatalf("ブロッカー用トランザクションのBeginTx()のエラー = %v", err)
 	}
 	defer func() { _ = blockerTx.Rollback() }()
 
 	var blockerPID int
 	if err := blockerTx.QueryRowContext(ctx, `SELECT pg_backend_pid()`).Scan(&blockerPID); err != nil {
-		t.Fatalf("blocker backend PID の取得に失敗: %v", err)
+		t.Fatalf("ブロッカーのbackend PIDの取得に失敗: %v", err)
 	}
 	if _, err := blockerTx.ExecContext(
 		ctx,
 		`SELECT id FROM episodes WHERE id = $1 FOR UPDATE`,
 		int64(episodeID),
 	); err != nil {
-		t.Fatalf("episode のロック取得に失敗: %v", err)
+		t.Fatalf("episodeのロック取得に失敗: %v", err)
 	}
 
 	type unarchiveResult struct {
@@ -305,10 +270,7 @@ func TestUnarchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisod
 		resultCh <- unarchiveResult{output: output, err: err}
 	}()
 
-	// Observe the re-publish waiting on blockerTx before deleting the work. This proves the
-	// pre-read completed and the guarded write started without relying on a sleep or test hook.
-	//
-	// [Ja] 作品を削除する前に、再公開が blockerTx を待っていることを観測する。sleep やテスト用
+	// 作品を削除する前に、再公開がblockerTxを待っていることを観測する。sleepやテスト用
 	// フックに依存せず、事前読み取りが完了してガード付きの書き込みが始まったことを証明する。
 	awaitBlockedByBackend(t, ctx, db, blockerPID, resultCh)
 
@@ -320,25 +282,25 @@ func TestUnarchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisod
 		t.Fatalf("親作品の削除に失敗: %v", err)
 	}
 	if err := blockerTx.Commit(); err != nil {
-		t.Fatalf("blocker transaction Commit() error = %v", err)
+		t.Fatalf("ブロッカー用トランザクションのCommit()のエラー = %v", err)
 	}
 
 	var result unarchiveResult
 	select {
 	case result = <-resultCh:
 	case <-ctx.Done():
-		t.Fatalf("Execute() did not finish after blocker committed: %v", ctx.Err())
+		t.Fatalf("ブロッカーのコミット後にExecute()を待つcontextのエラー = %v、期待値 = nil (Execute()が完了すること)", ctx.Err())
 	}
 	if result.output != nil {
-		t.Fatalf("Execute() output = %+v, want nil", result.output)
+		t.Fatalf("Execute()のoutput = %+v、期待値 = nil", result.output)
 	}
 	appErr := model.AsAppError(result.err)
 	if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
-		t.Fatalf("Execute() error = %v, want AppErrCodeResourceNotFound", result.err)
+		t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", result.err)
 	}
 
 	if unpublishedAt := readArchivedEpisodeState(t, db, episodeID); !unpublishedAt.Valid {
-		t.Error("episodes.unpublished_at = NULL, want 非公開の時刻のまま")
+		t.Error("episodes.unpublished_at = NULL、期待値 = 非公開の時刻のまま")
 	}
 	var episodesCountAfter int32
 	if err := db.QueryRow(
@@ -348,27 +310,22 @@ func TestUnarchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisod
 		t.Fatalf("作品のカウンターの読み込みに失敗: %v", err)
 	}
 	if episodesCountAfter != episodesCountBefore {
-		t.Errorf("works.episodes_count = %d, want %d", episodesCountAfter, episodesCountBefore)
+		t.Errorf("works.episodes_count = %d、期待値 = %d", episodesCountAfter, episodesCountBefore)
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
 	anime, err := animeRepo.GetByID(ctx, episodeAnimeID)
 	if err != nil || anime == nil {
-		t.Fatalf("GetByID() anime=%v err=%v", anime, err)
+		t.Fatalf("GetByID()のanime = %v、エラー = %v", anime, err)
 	}
 	if anime.Status != model.AnimeStatusArchived {
-		t.Errorf("anime.Status = %q, want %q", anime.Status, model.AnimeStatusArchived)
+		t.Errorf("anime.Status = %q、期待値 = %q", anime.Status, model.AnimeStatusArchived)
 	}
 }
 
-// TestUnarchiveEpisodeUsecase_Execute_NotFound covers the submits the episode list cannot offer
-// the re-publish action for: an episode that never existed, one already published, a deleted
-// one, and one whose work was deleted. All four are reported as not found, which the handler
-// turns into a 404.
-//
-// [Ja] TestUnarchiveEpisodeUsecase_Execute_NotFound は、エピソード一覧が再公開の操作を出せない
+// TestUnarchiveEpisodeUsecase_Execute_NotFoundは、エピソード一覧が再公開の操作を出せない
 // 送信を検証する。存在しなかったエピソード、すでに公開中のエピソード、削除済みのエピソード、
-// 作品が削除されたエピソードの 4 つ。いずれも not found として報告され、Handler はそれを 404 に
+// 作品が削除されたエピソードの4つ。いずれもnot foundとして報告され、Handlerはそれを404に
 // 変換する。
 func TestUnarchiveEpisodeUsecase_Execute_NotFound(t *testing.T) {
 	t.Parallel()
@@ -402,7 +359,7 @@ func TestUnarchiveEpisodeUsecase_Execute_NotFound(t *testing.T) {
 			_, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()})
 			appErr := model.AsAppError(err)
 			if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
-				t.Fatalf("Execute() error = %v, want AppErrCodeResourceNotFound", err)
+				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", err)
 			}
 		})
 	}

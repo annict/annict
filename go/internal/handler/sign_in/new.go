@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New はメールアドレス入力フォームを表示します (GET /sign_in)
+// Newはメールアドレス入力フォームを表示します (GET /sign_in)
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -31,8 +31,8 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNewForm(w, r, http.StatusOK, nil, "", backURL)
 }
 
-// renderNewForm はメールアドレス入力フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormはメールアドレス入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string, backURL string) {
 	ctx := r.Context()
 

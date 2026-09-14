@@ -17,7 +17,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// TestShow_UserNotFound ユーザーが見つからない場合は404を返すテスト
+// TestShow_UserNotFoundユーザーが見つからない場合は404を返すテスト
 func TestShow_UserNotFound(t *testing.T) {
 	t.Parallel()
 
@@ -43,7 +43,7 @@ func TestShow_UserNotFound(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusNotFound {
-		t.Errorf("存在しないユーザーの場合: expected %d, got %d", http.StatusNotFound, rr.Code)
+		t.Errorf("存在しないユーザーの場合のステータスコードの期待値 = %d、実測値 = %d", http.StatusNotFound, rr.Code)
 	}
 }
 
@@ -62,18 +62,18 @@ func TestShow_EmptyUsername(t *testing.T) {
 	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
 	handler := NewHandler(cfg, getUserCalendarUC)
 
-	// /ics エンドポイントでusernameパラメータなしでリクエスト
+	// /icsエンドポイントでusernameパラメータなしでリクエスト
 	req := httptest.NewRequest("GET", "/ics", nil)
 	rr := httptest.NewRecorder()
 
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusNotFound {
-		t.Errorf("usernameが空の場合: expected %d, got %d", http.StatusNotFound, rr.Code)
+		t.Errorf("usernameが空の場合のステータスコードの期待値 = %d、実測値 = %d", http.StatusNotFound, rr.Code)
 	}
 }
 
-// TestShow_QueryParam クエリパラメータでusernameを指定するテスト
+// TestShow_QueryParamクエリパラメータでusernameを指定するテスト
 func TestShow_QueryParam(t *testing.T) {
 	t.Parallel()
 
@@ -88,18 +88,18 @@ func TestShow_QueryParam(t *testing.T) {
 	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
 	handler := NewHandler(cfg, getUserCalendarUC)
 
-	// /ics?username=nonexistent でリクエスト（存在しないユーザー）
+	// /ics?username=nonexistentでリクエスト (存在しないユーザー)
 	req := httptest.NewRequest("GET", "/ics?username=nonexistent_user", nil)
 	rr := httptest.NewRecorder()
 
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusNotFound {
-		t.Errorf("クエリパラメータで存在しないユーザーの場合: expected %d, got %d", http.StatusNotFound, rr.Code)
+		t.Errorf("クエリパラメータで存在しないユーザーの場合のステータスコードの期待値 = %d、実測値 = %d", http.StatusNotFound, rr.Code)
 	}
 }
 
-// TestShow_Success 正常系のテスト（ユーザーが存在する場合）
+// TestShow_Success正常系のテスト (ユーザーが存在する場合)
 func TestShow_Success(t *testing.T) {
 	t.Parallel()
 
@@ -131,19 +131,19 @@ func TestShow_Success(t *testing.T) {
 
 	// ステータスコードの確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("正常系のステータスコード: expected %d, got %d", http.StatusOK, rr.Code)
+		t.Errorf("正常系のステータスコードの期待値 = %d、実測値 = %d", http.StatusOK, rr.Code)
 	}
 
 	// Content-Typeの確認
 	contentType := rr.Header().Get("Content-Type")
 	if contentType != "text/calendar; charset=utf-8" {
-		t.Errorf("Content-Type: expected %q, got %q", "text/calendar; charset=utf-8", contentType)
+		t.Errorf("Content-Typeの期待値 = %q、実測値 = %q", "text/calendar; charset=utf-8", contentType)
 	}
 
 	// Content-Dispositionの確認
 	contentDisposition := rr.Header().Get("Content-Disposition")
 	if contentDisposition != `attachment; filename="annict.ics"` {
-		t.Errorf("Content-Disposition: expected %q, got %q", `attachment; filename="annict.ics"`, contentDisposition)
+		t.Errorf("Content-Dispositionの期待値 = %q、実測値 = %q", `attachment; filename="annict.ics"`, contentDisposition)
 	}
 
 	// レスポンスボディにiCalendarヘッダーが含まれていることを確認
@@ -159,7 +159,7 @@ func TestShow_Success(t *testing.T) {
 	}
 }
 
-// TestShow_QueryParamSuccess クエリパラメータでユーザーが存在する場合のテスト
+// TestShow_QueryParamSuccessクエリパラメータでユーザーが存在する場合のテスト
 func TestShow_QueryParamSuccess(t *testing.T) {
 	t.Parallel()
 
@@ -180,7 +180,7 @@ func TestShow_QueryParamSuccess(t *testing.T) {
 	getUserCalendarUC := usecase.NewGetUserCalendarUsecase(userCalendarRepo)
 	handler := NewHandler(cfg, getUserCalendarUC)
 
-	// chiルーターを作成（/icsエンドポイント用）
+	// chiルーターを作成 (/icsエンドポイント用)
 	r := chi.NewRouter()
 	r.Get("/ics", handler.Show)
 
@@ -191,17 +191,17 @@ func TestShow_QueryParamSuccess(t *testing.T) {
 
 	// ステータスコードの確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("クエリパラメータ正常系のステータスコード: expected %d, got %d", http.StatusOK, rr.Code)
+		t.Errorf("クエリパラメータの正常系のステータスコードの期待値 = %d、実測値 = %d", http.StatusOK, rr.Code)
 	}
 
 	// Content-Typeの確認
 	contentType := rr.Header().Get("Content-Type")
 	if contentType != "text/calendar; charset=utf-8" {
-		t.Errorf("Content-Type: expected %q, got %q", "text/calendar; charset=utf-8", contentType)
+		t.Errorf("Content-Typeの期待値 = %q、実測値 = %q", "text/calendar; charset=utf-8", contentType)
 	}
 }
 
-// TestShow_EpisodeNumberFormatting エピソード番号がそのまま出力されるテスト
+// TestShow_EpisodeNumberFormattingエピソード番号がそのまま出力されるテスト
 func TestShow_EpisodeNumberFormatting(t *testing.T) {
 	t.Parallel()
 
@@ -219,7 +219,7 @@ func TestShow_EpisodeNumberFormatting(t *testing.T) {
 		WithTitle("テストアニメ").
 		Build()
 
-	// チャンネルを作成（チャンネルグループは自動作成）
+	// チャンネルを作成 (チャンネルグループは自動作成)
 	channelID := testutil.NewChannelBuilder(t, tx).
 		WithName("TOKYO MX").
 		Build()
@@ -230,13 +230,13 @@ func TestShow_EpisodeNumberFormatting(t *testing.T) {
 		WithWorkID(workID).
 		Build()
 
-	// エピソードを作成（#付きの番号）
+	// エピソードを作成 (#付きの番号)
 	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).
 		WithNumber("#4").
 		WithTitle("サブタイトル").
 		Build()
 
-	// 放送枠を作成（現在時刻から1時間後に放送開始）
+	// 放送枠を作成 (現在時刻から1時間後に放送開始)
 	slotStartTime := time.Now().Add(1 * time.Hour)
 	testutil.NewSlotBuilder(t, tx).
 		WithWorkID(workID).
@@ -246,7 +246,7 @@ func TestShow_EpisodeNumberFormatting(t *testing.T) {
 		WithStartedAt(slotStartTime).
 		Build()
 
-	// ライブラリエントリを作成（視聴中）
+	// ライブラリエントリを作成 (視聴中)
 	testutil.NewLibraryEntryBuilder(t, tx).
 		WithUserID(userID).
 		WithWorkID(workID).
@@ -273,7 +273,7 @@ func TestShow_EpisodeNumberFormatting(t *testing.T) {
 
 	// ステータスコードの確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("ステータスコード: expected %d, got %d", http.StatusOK, rr.Code)
+		t.Errorf("ステータスコードの期待値 = %d、実測値 = %d", http.StatusOK, rr.Code)
 	}
 
 	body := rr.Body.String()
@@ -283,13 +283,13 @@ func TestShow_EpisodeNumberFormatting(t *testing.T) {
 		t.Error("レスポンスにエピソード番号(#4)が含まれていない")
 	}
 
-	// ##4（二重ハッシュ）が含まれていないことを確認
+	// ##4 (二重ハッシュ) が含まれていないことを確認
 	if strings.Contains(body, "##4") {
 		t.Error("レスポンスに二重ハッシュ(##4)が含まれている")
 	}
 }
 
-// TestShow_DeletedUser 削除されたユーザーの場合は404を返すテスト
+// TestShow_DeletedUser削除されたユーザーの場合は404を返すテスト
 func TestShow_DeletedUser(t *testing.T) {
 	t.Parallel()
 
@@ -302,7 +302,7 @@ func TestShow_DeletedUser(t *testing.T) {
 		WithEmail("ics_deleted@example.com").
 		Build()
 
-	// ユーザーを削除（deleted_atを設定）
+	// ユーザーを削除 (deleted_atを設定)
 	_, err := tx.Exec(`UPDATE users SET deleted_at = NOW() WHERE id = $1`, userID)
 	if err != nil {
 		t.Fatalf("ユーザーの削除に失敗しました: %v", err)
@@ -326,18 +326,18 @@ func TestShow_DeletedUser(t *testing.T) {
 	r.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusNotFound {
-		t.Errorf("削除されたユーザーの場合: expected %d, got %d", http.StatusNotFound, rr.Code)
+		t.Errorf("削除されたユーザーの場合のステータスコードの期待値 = %d、実測値 = %d", http.StatusNotFound, rr.Code)
 	}
 }
 
-// TestShow_EmptyCalendar 視聴リストが空の場合は空のカレンダーを返すテスト
+// TestShow_EmptyCalendar視聴リストが空の場合は空のカレンダーを返すテスト
 func TestShow_EmptyCalendar(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
-	// ユーザーを作成（ライブラリエントリなし）
+	// ユーザーを作成 (ライブラリエントリなし)
 	testutil.NewUserBuilder(t, tx).
 		WithUsername("ics_empty_user").
 		WithEmail("ics_empty@example.com").
@@ -362,7 +362,7 @@ func TestShow_EmptyCalendar(t *testing.T) {
 
 	// ステータスコードの確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("空のカレンダーの場合: expected %d, got %d", http.StatusOK, rr.Code)
+		t.Errorf("空のカレンダーの場合のステータスコードの期待値 = %d、実測値 = %d", http.StatusOK, rr.Code)
 	}
 
 	body := rr.Body.String()
@@ -381,7 +381,7 @@ func TestShow_EmptyCalendar(t *testing.T) {
 	}
 }
 
-// TestShow_WorkStartedOnEvent 開始日が設定された作品がイベントとして含まれるテスト
+// TestShow_WorkStartedOnEvent開始日が設定された作品がイベントとして含まれるテスト
 func TestShow_WorkStartedOnEvent(t *testing.T) {
 	t.Parallel()
 
@@ -398,10 +398,10 @@ func TestShow_WorkStartedOnEvent(t *testing.T) {
 	startedOn := time.Date(2025, 4, 1, 0, 0, 0, 0, time.UTC)
 	workID := createWorkWithStartedOn(t, tx, "開始日テストアニメ", startedOn)
 
-	// ステータスを作成（kind=2: watching）
+	// ステータスを作成 (kind=2: watching)
 	statusID := createStatus(t, tx, userID, workID, 2)
 
-	// ライブラリエントリを作成（program_idなし）
+	// ライブラリエントリを作成 (program_idなし)
 	_, err := tx.Exec(`
 		INSERT INTO library_entries (user_id, work_id, status_id, program_id, watched_episode_ids, created_at, updated_at)
 		VALUES ($1, $2, $3, NULL, '{}', NOW(), NOW())
@@ -429,7 +429,7 @@ func TestShow_WorkStartedOnEvent(t *testing.T) {
 
 	// ステータスコードの確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("ステータスコード: expected %d, got %d", http.StatusOK, rr.Code)
+		t.Errorf("ステータスコードの期待値 = %d、実測値 = %d", http.StatusOK, rr.Code)
 	}
 
 	body := rr.Body.String()
@@ -441,9 +441,9 @@ func TestShow_WorkStartedOnEvent(t *testing.T) {
 	if !strings.Contains(body, "開始日テストアニメ") {
 		t.Error("レスポンスに作品タイトルが含まれていない")
 	}
-	// 終日イベント（VALUE=DATE）であることを確認
+	// 終日イベント (VALUE=DATE) であることを確認
 	if !strings.Contains(body, "VALUE=DATE") {
-		t.Error("レスポンスにVALUE=DATE（終日イベント）が含まれていない")
+		t.Error("レスポンスにVALUE=DATE (終日イベント) が含まれていない")
 	}
 }
 
@@ -482,7 +482,7 @@ func TestShow_WannaWatchStatus(t *testing.T) {
 		WithTitle("第1話").
 		Build()
 
-	// 放送枠を作成（現在時刻から1時間後に放送開始）
+	// 放送枠を作成 (現在時刻から1時間後に放送開始)
 	slotStartTime := time.Now().Add(1 * time.Hour)
 	testutil.NewSlotBuilder(t, tx).
 		WithWorkID(workID).
@@ -492,7 +492,7 @@ func TestShow_WannaWatchStatus(t *testing.T) {
 		WithStartedAt(slotStartTime).
 		Build()
 
-	// ライブラリエントリを作成（wanna_watch = 見たい）
+	// ライブラリエントリを作成 (wanna_watch = 見たい)
 	testutil.NewLibraryEntryBuilder(t, tx).
 		WithUserID(userID).
 		WithWorkID(workID).
@@ -519,7 +519,7 @@ func TestShow_WannaWatchStatus(t *testing.T) {
 
 	// ステータスコードの確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("ステータスコード: expected %d, got %d", http.StatusOK, rr.Code)
+		t.Errorf("ステータスコードの期待値 = %d、実測値 = %d", http.StatusOK, rr.Code)
 	}
 
 	body := rr.Body.String()
@@ -533,7 +533,7 @@ func TestShow_WannaWatchStatus(t *testing.T) {
 	}
 }
 
-// createWorkWithStartedOn はstarted_onを設定した作品を作成するヘルパー
+// createWorkWithStartedOnはstarted_onを設定した作品を作成するヘルパー
 func createWorkWithStartedOn(t *testing.T, tx *sql.Tx, title string, startedOn time.Time) model.WorkID {
 	t.Helper()
 
@@ -557,7 +557,7 @@ func createWorkWithStartedOn(t *testing.T, tx *sql.Tx, title string, startedOn t
 	return model.WorkID(id)
 }
 
-// createStatus はテスト用ステータスを作成するヘルパー
+// createStatusはテスト用ステータスを作成するヘルパー
 func createStatus(t *testing.T, tx *sql.Tx, userID model.UserID, workID model.WorkID, kind int) int64 {
 	t.Helper()
 

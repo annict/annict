@@ -10,8 +10,8 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
-// Page はメンテナンスページを表示するテンプレートです
-// 503 Service Unavailable と共に表示されます
+// Pageはメンテナンスページを表示するテンプレートです
+// 503 Service Unavailableと共に表示されます
 func Page() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

@@ -1,2053 +1,2047 @@
-# English translation file
-# English messages for Annict Go project
+# 英語翻訳ファイル
+# Annict Goプロジェクトの英語メッセージ定義
 
-# Default meta information
+# デフォルトのメタ情報
 [default_title]
-description = "Default page title"
+description = "デフォルトのページタイトル"
 other = "Annict"
 
 [default_description]
-description = "Default page description"
+description = "デフォルトのページ説明文"
 other = "Track what you watch, share what you love. Annict helps you manage your anime journey and connect with fellow fans."
 
-# Page titles
+# ページタイトル
 [popular_anime]
-description = "Page title for popular anime"
+description = "人気アニメページのタイトル"
 other = "Popular Anime"
 
-# Work related
+# 作品関連
 [title_undetermined]
-description = "Placeholder text for works without a title"
+description = "タイトルが設定されていない作品のプレースホルダー"
 other = "Title TBD"
 
 [cast_label]
-description = "Cast label"
+description = "キャストのラベル"
 other = "Cast"
 
 [staff_label]
-description = "Staff label"
+description = "スタッフのラベル"
 other = "Staff"
 
-# Watchers count (plural support)
+# 視聴者数 (複数形対応)
 [watchers_count]
-description = "Number of watchers for an anime"
+description = "アニメの視聴者数"
 one = "{{.Count}} watcher"
 other = "{{.Count}} watchers"
 
-# Season names
+# シーズン名
 [season_winter]
-description = "Winter season"
+description = "冬シーズン"
 other = "Winter"
 
 [season_spring]
-description = "Spring season"
+description = "春シーズン"
 other = "Spring"
 
 [season_summer]
-description = "Summer season"
+description = "夏シーズン"
 other = "Summer"
 
 [season_autumn]
-description = "Autumn/Fall season"
+description = "秋シーズン"
 other = "Fall"
 
-# Year and season format
+# 年とシーズンのフォーマット
 [year_season]
-description = "Year and season format"
+description = "年とシーズンの表示形式"
 other = "{{.Season}} {{.Year}}"
 
 [year_no_season]
-description = "Year-only format used when the season is unregistered"
+description = "季節が未登録のときの年のみの表示形式"
 other = "{{.Year}} (No Season)"
 
-# Sign in related
+# ログイン関連
 [sign_in_title]
-description = "Sign in page title"
+description = "ログインページのタイトル"
 other = "Sign In"
 
 [sign_in_description]
-description = "Sign in page description"
+description = "ログインページの説明文"
 other = "Sign in to Annict to manage your anime watching history."
 
 [sign_in_heading]
-description = "Sign in page heading"
+description = "ログインページの見出し"
 other = "Sign in to Annict"
 
 [sign_in_no_account]
-description = "No account message"
+description = "アカウント未所持の案内"
 other = "Don't have an account?"
 
 [sign_in_sign_up]
-description = "Sign up link"
+description = "新規登録リンク"
 other = "Sign up"
 
 [sign_in_email_label]
-description = "Email label"
+description = "メールアドレスのラベル"
 other = "Email"
 
 [sign_in_password_label]
-description = "Password label"
+description = "パスワードのラベル"
 other = "Password"
 
 [sign_in_next_button]
-description = "Next button"
+description = "次へボタン"
 other = "Next"
 
 [sign_in_remember_me]
-description = "Remember me checkbox"
+description = "ログイン状態を保持するチェックボックス"
 other = "Remember me"
 
 [sign_in_forgot_password]
-description = "Forgot password link"
+description = "パスワード忘れリンク"
 other = "Forgot your password?"
 
 [sign_in_submit]
-description = "Sign in button"
+description = "ログインボタン"
 other = "Sign In"
 
 [sign_in_password_login_as]
-description = "Email display on password login page"
+description = "パスワードログインページでのメールアドレス表示"
 other = "Sign in as {{.Email}}"
 
 [sign_in_password_switch_account]
-description = "Link to sign in with a different account"
+description = "別のアカウントでログインするリンク"
 other = "Sign in with a different account"
 
-# Sign in error messages
+# ログインエラーメッセージ
 [sign_in_error_parse_form]
-description = "Form parse error"
+description = "フォームパースエラー"
 other = "Failed to process the request"
 
 [sign_in_error_email_required]
-description = "Email required error"
+description = "メールアドレス必須エラー"
 other = "Please enter your email address"
 
 [sign_in_user_not_found]
-description = "User not found error"
+description = "ユーザーが見つからないエラー"
 other = "This email address is not registered"
 
 [sign_in_error_password_required]
-description = "Password required error"
+description = "パスワード必須エラー"
 other = "Please enter your password"
 
 [sign_in_error_invalid_credentials]
-description = "Invalid credentials error"
+description = "認証失敗エラー"
 other = "Invalid email/username or password"
 
 [sign_in_error_server]
-description = "Server error"
+description = "サーバーエラー"
 other = "A server error occurred. Please try again later"
 
 [sign_in_error_create_session]
-description = "Session creation error"
+description = "セッション作成エラー"
 other = "Failed to sign in"
 
 [sign_in_success]
-description = "Sign in success message"
+description = "ログイン成功メッセージ"
 other = "You have successfully signed in"
 
-# 6-digit code input related
+# 6桁コード入力関連
 [sign_in_code_title]
-description = "6-digit code input page title"
+description = "6桁コード入力ページのタイトル"
 other = "Enter Code"
 
 [sign_in_code_description]
-description = "6-digit code input page description"
+description = "6桁コード入力ページの説明文"
 other = "Enter the 6-digit code to sign in."
 
 [sign_in_code_heading]
-description = "6-digit code input page heading"
+description = "6桁コード入力ページの見出し"
 other = "Sign in to Annict"
 
 [sign_in_code_instruction]
-description = "6-digit code input instruction"
+description = "6桁コード入力の説明"
 other = "Please enter the 6-digit sign-in verification code sent to your email"
 
 [sign_in_code_sent_to]
-description = "Code sent to email address"
+description = "コード送信先メールアドレスの表示"
 other = "We sent a code to {{.Email}}."
 
 [sign_in_code_label]
-description = "6-digit code label"
+description = "6桁コードのラベル"
 other = "Sign-In Verification Code"
 
 [sign_in_code_submit]
-description = "6-digit code submit button"
+description = "6桁コード送信ボタン"
 other = "Sign In"
 
 [sign_in_code_not_received]
-description = "Code not received message"
+description = "コードが届かない場合の案内"
 other = "If you don't receive the code:"
 
 [sign_in_code_resend]
-description = "Resend code button"
+description = "コードを再送信ボタン"
 other = "Resend Code"
 
 [sign_in_code_resend_success]
-description = "Code resend success message"
+description = "コード再送信成功メッセージ"
 other = "Code has been resent. Please check your email."
 
 [sign_in_code_back]
-description = "Back link"
+description = "戻るリンク"
 other = "Back to Sign In"
 
-# Sign up code input related
+# 新規登録確認コード入力関連
 [sign_up_code_title]
-description = "Sign up code input page title"
+description = "新規登録確認コード入力ページのタイトル"
 other = "Enter Verification Code"
 
 [sign_up_code_description]
-description = "Sign up code input page description"
+description = "新規登録確認コード入力ページの説明文"
 other = "Enter the 6-digit code to complete your registration."
 
 [sign_up_code_heading]
-description = "Sign up code input page heading"
+description = "新規登録確認コード入力ページの見出し"
 other = "Sign Up for Annict"
 
 [sign_up_code_instruction]
-description = "Sign up code input instruction"
+description = "新規登録確認コード入力の説明"
 other = "Please enter the 6-digit verification code sent to your email"
 
 [sign_up_code_label]
-description = "Sign up code label"
+description = "新規登録確認コードのラベル"
 other = "Verification Code"
 
 [sign_up_code_submit]
-description = "Sign up code submit button"
+description = "新規登録確認コード送信ボタン"
 other = "Next"
 
 [sign_up_code_not_received]
-description = "Code not received message"
+description = "コードが届かない場合の案内"
 other = "If you don't receive the code:"
 
 [sign_up_code_resend]
-description = "Resend code button"
+description = "コードを再送信ボタン"
 other = "Resend Code"
 
 [sign_up_code_resend_success]
-description = "Code resend success message"
+description = "コード再送信成功メッセージ"
 other = "Code has been resent. Please check your email."
 
 [sign_up_code_back]
-description = "Back link"
+description = "戻るリンク"
 other = "Back to Sign Up"
 
-# Navigation related
+# ナビゲーション関連
 [nav_sign_out]
-description = "Sign out link"
+description = "ログアウトリンク"
 other = "Sign Out"
 
 [nav_sign_out_confirm]
-description = "Sign out confirmation dialog"
+description = "ログアウト確認ダイアログ"
 other = "Are you sure you want to sign out?"
 
 [nav_sign_in]
-description = "Sign in link"
+description = "ログインリンク"
 other = "Sign In"
 
-# Password reset related
-# Reset request form
+# パスワードリセット関連
+# リセット申請フォーム
 [password_reset_title]
-description = "Password reset page title"
+description = "パスワードリセットページのタイトル"
 other = "Password Reset"
 
 [password_reset_heading]
-description = "Password reset page heading"
+description = "パスワードリセットページの見出し"
 other = "Password Reset"
 
 [password_reset_description]
-description = "Password reset page description"
+description = "パスワードリセットページの説明"
 other = "Enter your registered email address.<br>We will send you a link to reset your password."
 
 [password_reset_errors_heading]
-description = "Errors heading"
+description = "エラーがある場合の見出し"
 other = "There are errors"
 
 [password_reset_email_label]
-description = "Email address label"
+description = "メールアドレスのラベル"
 other = "Email Address"
 
 [password_reset_submit]
-description = "Password reset request button"
+description = "パスワードリセット申請ボタン"
 other = "Send"
 
 [password_reset_back_to_sign_in]
-description = "Back to sign in link"
+description = "ログインページに戻るリンク"
 other = "Back to Sign In"
 
-# Email sent page
+# メール送信完了ページ
 [password_reset_sent_title]
-description = "Email sent page title"
+description = "メール送信完了ページのタイトル"
 other = "Password Reset Email Sent"
 
 [password_reset_sent_heading]
-description = "Email sent page heading"
+description = "メール送信完了ページの見出し"
 other = "Email Sent"
 
 [password_reset_sent_message]
-description = "Email sent message"
+description = "メール送信完了メッセージ"
 other = "Please check your email."
 
 [password_reset_sent_instructions]
-description = "Password reset instructions"
+description = "パスワードリセットの手順"
 other = "We have sent you a password reset link. Please click the link in the email to set a new password.<br>This link is valid for 1 hour."
 
 [password_reset_email_not_received_heading]
-description = "Email not received heading"
+description = "メールが届かない場合の見出し"
 other = "If you don't receive the email"
 
 [password_reset_email_not_received_help]
-description = "Email not received help"
+description = "メールが届かない場合のヘルプ"
 other = "Please check your spam folder.<br>If you still don't receive the email after a few minutes, please <a href=\"/password/reset\" class=\"underline hover:text-blue-800\">try again</a>."
 
-# New password form
+# 新しいパスワード入力フォーム
 [password_edit_title]
-description = "New password page title"
+description = "新しいパスワード入力ページのタイトル"
 other = "Set New Password"
 
 [password_edit_heading]
-description = "New password page heading"
+description = "新しいパスワード入力ページの見出し"
 other = "Set New Password"
 
 [password_edit_description]
-description = "New password page description"
+description = "新しいパスワード入力ページの説明"
 other = "Please set a strong password to protect your account."
 
 [password_edit_password_label]
-description = "New password label"
+description = "新しいパスワードのラベル"
 other = "New Password"
 
 [password_edit_password_confirmation_label]
-description = "New password confirmation label"
+description = "新しいパスワード (確認) のラベル"
 other = "Confirm New Password"
 
 [password_edit_password_requirements]
-description = "Password requirements"
+description = "パスワードの要件"
 other = "Must be at least 8 characters and no more than 128 characters. We recommend using a password manager."
 
 [password_edit_submit]
-description = "Change password button"
+description = "パスワード変更ボタン"
 other = "Change Password"
 
-# Password reset - Validation errors
+# パスワードリセット - バリデーションエラー
 [password_reset_email_required]
-description = "Password reset - Email required error"
+description = "パスワードリセット - メールアドレス必須エラー"
 other = "Please enter your email address"
 
 [password_reset_token_invalid]
-description = "Password reset - Token invalid error (page title)"
+description = "パスワードリセット - トークン無効エラー (ページタイトル)"
 other = "Invalid Link"
 
 [password_reset_token_invalid_message]
-description = "Password reset - Token invalid error detailed message"
+description = "パスワードリセット - トークン無効エラーの詳細メッセージ"
 other = "This link is invalid. It may have expired or been already used."
 
 [password_reset_password_required]
-description = "Password reset - Password required error"
+description = "パスワードリセット - パスワード必須エラー"
 other = "Please enter your new password"
 
 [password_reset_password_confirmation_required]
-description = "Password reset - Password confirmation required error"
+description = "パスワードリセット - パスワード確認必須エラー"
 other = "Please confirm your new password"
 
 [password_reset_password_mismatch]
-description = "Password reset - Password mismatch error"
+description = "パスワードリセット - パスワード不一致エラー"
 other = "Passwords do not match"
 
-# Password strength validation (NIST SP 800-63B-4 compliant)
+# パスワード強度バリデーション (NIST SP 800-63B-4準拠)
 [password_strength_min_length]
-description = "Password strength - Minimum length error"
+description = "パスワード強度 - 最小文字数エラー"
 other = "Password must be at least {{.MinLength}} characters long"
 
 [password_strength_max_length]
-description = "Password strength - Maximum length error"
+description = "パスワード強度 - 最大文字数エラー"
 other = "Password must be no more than {{.MaxLength}} characters long"
 
 [password_strength_invalid_chars]
-description = "Password strength - Invalid characters error"
+description = "パスワード強度 - 無効な文字エラー"
 other = "Password can only use alphanumeric characters and symbols"
 
 # Rate Limiting
 [rate_limit_exceeded]
-description = "Rate Limiting - Too many requests error"
+description = "Rate Limiting - リクエスト超過エラー"
 other = "Too many requests. Please try again later."
 
-# Password reset email
+# パスワードリセットメール
 [password_reset_email_subject]
-description = "Password reset email subject"
+description = "パスワードリセットメールの件名"
 other = "Annict - Password Reset Request"
 
-# Sign in code email
+# ログインコードメール
 [sign_in_code_email_subject]
-description = "Sign in code email subject"
+description = "ログインコードメールの件名"
 other = "Annict - Your Login Code"
 
-# Sign up related
+# 新規登録関連
 [sign_up_title]
-description = "Sign up page title"
+description = "新規登録ページのタイトル"
 other = "Sign Up"
 
 [sign_up_description]
-description = "Sign up page description"
+description = "新規登録ページの説明文"
 other = "Sign up for Annict to start tracking your anime watching history."
 
 [sign_up_heading]
-description = "Sign up page heading"
+description = "新規登録ページの見出し"
 other = "Sign up for Annict"
 
 [sign_up_email_instruction]
-description = "Sign up form email instruction"
+description = "新規登録フォームのメール送信説明"
 other = "We will send a verification code\nto the email address you enter"
 
 [sign_up_have_account]
-description = "Have account message"
+description = "アカウント所持の案内"
 other = "Already have an account?"
 
 [sign_up_sign_in]
-description = "Sign in link"
+description = "ログインリンク"
 other = "Sign in"
 
 [sign_up_email_label]
-description = "Email label"
+description = "メールアドレスのラベル"
 other = "Email"
 
 [sign_up_next_button]
-description = "Send button"
+description = "送信ボタン"
 other = "Send"
 
 [sign_up_terms_agreement_notice]
-description = "Terms agreement notice (Sign-in-wrap style)"
+description = "利用規約同意メッセージ (Sign-in-wrap方式)"
 other = "By signing up, you agree to our <a href=\"/terms\" class=\"link\" target=\"_blank\">Terms of Service</a> and <a href=\"/privacy\" class=\"link\" target=\"_blank\">Privacy Policy</a>."
 
 [sign_up_error_email_required]
-description = "Email required error"
+description = "メールアドレス必須エラー"
 other = "Please enter your email address"
 
 [sign_up_error_email_invalid]
-description = "Email format error"
+description = "メールアドレス形式エラー"
 other = "Please enter a valid email address"
 
 [sign_up_error_email_already_exists]
-description = "Email already exists error"
+description = "メールアドレス重複エラー"
 other = "This email address is not available"
 
 [sign_up_error_server]
-description = "Server error"
+description = "サーバーエラー"
 other = "A server error occurred. Please try again later"
 
 [sign_up_code_sent_to]
-description = "Code sent success message"
+description = "確認コード送信完了メッセージ"
 other = "We sent a verification code to {{.Email}}."
 
-# Sign up verification code email
+# 新規登録確認コードメール
 [sign_up_code_email_subject]
-description = "Sign up verification code email subject"
+description = "新規登録確認コードメールの件名"
 other = "Annict - Sign-Up Verification Code"
 
-# Password reset success message
+# パスワードリセット成功メッセージ
 [password_reset_success]
-description = "Password reset success message"
+description = "パスワードリセット成功メッセージ"
 other = "Your password has been reset successfully.\nPlease sign in with your new password."
 
-# Flash messages related
+# フラッシュメッセージ関連
 [flash_dismiss]
-description = "Dismiss flash message button"
+description = "フラッシュメッセージを閉じるボタン"
 other = "Dismiss"
 
-# 6-digit code verification
+# 6桁コード検証関連
 [sign_in_code_error_parse_form]
-description = "Form parse error"
+description = "フォームパースエラー"
 other = "Failed to parse the form. Please try again."
 
 [sign_in_code_error_server]
-description = "Server error"
+description = "サーバーエラー"
 other = "A server error occurred. Please try again."
 
 [sign_in_code_error_session_expired]
-description = "Session expired"
+description = "セッション有効期限切れ"
 other = "Your session has expired. Please start over."
 
 [sign_in_code_error_code_required]
-description = "Code is required"
+description = "コードが必須"
 other = "Please enter the code"
 
 [sign_in_code_error_code_invalid_format]
-description = "Invalid code format"
+description = "コードの形式が不正"
 other = "Please enter a 6-digit code"
 
 [sign_in_code_error_code_not_found]
-description = "Code not found or expired"
+description = "コードが見つからない、または有効期限切れ"
 other = "Code not found or has expired"
 
 [sign_in_code_error_code_invalid]
-description = "Invalid code"
+description = "コードが正しくない"
 other = "The code is incorrect"
 
 [sign_in_code_error_attempts_exceeded]
-description = "Attempts exceeded"
+description = "試行回数が上限に達した"
 other = "You have exceeded the maximum number of attempts. Please request a new code."
 
 [sign_in_code_error_user_not_found]
-description = "User not found"
+description = "ユーザーが見つからない"
 other = "User not found"
 
 [sign_in_code_error_create_session]
-description = "Session creation error"
+description = "セッション作成エラー"
 other = "Failed to create session. Please try again."
 
-# Sign up code verification related
+# 新規登録確認コード検証関連
 [sign_up_code_error_parse_form]
-description = "Form parse error"
+description = "フォームパースエラー"
 other = "Failed to parse the form. Please try again."
 
 [sign_up_code_error_server]
-description = "Server error"
+description = "サーバーエラー"
 other = "A server error occurred. Please try again."
 
 [sign_up_code_error_session_expired]
-description = "Session expired"
+description = "セッション有効期限切れ"
 other = "Your session has expired. Please start over."
 
 [sign_up_code_error_code_required]
-description = "Code is required"
+description = "コードが必須"
 other = "Please enter the code"
 
 [sign_up_code_error_code_invalid_format]
-description = "Invalid code format"
+description = "コードの形式が不正"
 other = "Please enter a 6-digit code"
 
 [sign_up_code_error_code_not_found]
-description = "Code not found or expired"
+description = "コードが見つからない、または有効期限切れ"
 other = "Code not found or has expired"
 
 [sign_up_code_error_code_invalid]
-description = "Invalid code"
+description = "コードが正しくない"
 other = "The code is incorrect"
 
 [sign_up_code_error_attempts_exceeded]
-description = "Attempts exceeded"
+description = "試行回数が上限に達した"
 other = "You have exceeded the maximum number of attempts. Please request a new code."
 
 [sign_up_code_error_invalid]
-description = "Code verification failed (unified message to prevent information leakage)"
+description = "コード検証失敗 (情報漏洩対策のため詳細を明かさない統一メッセージ)"
 other = "Invalid code"
 
-# Turnstile (Bot protection) related
+# Turnstile (Bot対策) 関連
 [turnstile_verification_failed]
-description = "Turnstile verification failed error"
+description = "Turnstile検証失敗エラー"
 other = "Bot verification failed. Please try again."
 
-# Username setup related
+# ユーザー名設定関連
 [sign_up_username_heading]
-description = "Username setup page title"
+description = "ユーザー名設定ページのタイトル"
 other = "Set Username"
 
 [sign_up_username_email_label]
-description = "Email label"
+description = "メールアドレスのラベル"
 other = "Email"
 
 [sign_up_username_description]
-description = "Username setup page description"
+description = "ユーザー名設定ページの説明"
 other = "Please set your username for Annict."
 
 [sign_up_username_username_label]
-description = "Username label"
+description = "ユーザー名のラベル"
 other = "Username"
 
 [sign_up_username_username_help]
-description = "Username input help"
+description = "ユーザー名の入力ヘルプ"
 other = "Up to 20 characters, alphanumeric and underscores only"
 
 [sign_up_username_submit]
-description = "Sign up button"
+description = "登録ボタン"
 other = "Sign Up"
 
 [sign_up_username_error_parse_form]
-description = "Form parse error"
+description = "フォームパースエラー"
 other = "Failed to parse the form. Please try again."
 
 [sign_up_username_error_server]
-description = "Server error"
+description = "サーバーエラー"
 other = "A server error occurred. Please try again."
 
 [sign_up_username_error_token_missing]
-description = "Token is missing"
+description = "トークンが指定されていない"
 other = "Token is missing. Please start over."
 
 [sign_up_username_error_token_invalid]
-description = "Token is invalid or expired"
+description = "トークンが無効または期限切れ"
 other = "Token is invalid or has expired. Please start over."
 
 [sign_up_username_error_username_required]
-description = "Username is required"
+description = "ユーザー名が必須"
 other = "Please enter your username"
 
 [sign_up_username_error_username_format]
-description = "Invalid username format"
+description = "ユーザー名の形式が不正"
 other = "Username must be up to 20 characters, alphanumeric and underscores only"
 
 [sign_up_username_error_username_taken]
-description = "Username is already taken"
+description = "ユーザー名が既に使用されている"
 other = "This username is not available"
 
 [sign_up_username_success]
-description = "User registration success message"
+description = "ユーザー登録成功メッセージ"
 other = "Your account has been created successfully. Welcome to Annict!"
 
-# Supporters related
+# サポーター関連
 [supporters_title]
-description = "Supporters page title"
+description = "サポーターページのタイトル"
 other = "Annict Supporters"
 
 [supporters_heading]
-description = "Supporters page heading"
+description = "サポーターページの見出し"
 other = "Annict Supporters"
 
 [supporters_success_message]
-description = "Checkout completed message"
+description = "Checkout完了メッセージ"
 other = "Your payment has been completed"
 
 [supporters_canceled_message]
-description = "Checkout canceled message"
+description = "Checkoutキャンセルメッセージ"
 other = "Payment was canceled"
 
 [supporters_what_is_title]
-description = "What is supporter title"
+description = "サポーターとは何かのタイトル"
 other = "What is Annict Supporter?"
 
 [supporters_what_is_desc_1]
-description = "What is supporter description 1"
+description = "サポーターとは何かの説明1"
 other = "\"Annict Supporters\" is a paid subscription plan for Annict fans"
 
 [supporters_what_is_desc_2]
-description = "What is supporter description 2"
+description = "サポーターとは何かの説明2"
 other = "By paying monthly or yearly, you can support the operation of Annict"
 
 [supporters_what_is_desc_3]
-description = "What is supporter description 3"
+description = "サポーターとは何かの説明3"
 other = "(Used for server costs and other expenses required for operation)"
 
 [supporters_what_is_desc_4]
-description = "What is supporter description 4"
+description = "サポーターとは何かの説明4"
 other = "Supporters receive the following benefits."
 
 [supporters_benefits_title]
-description = "Benefits section title"
+description = "特典セクションタイトル"
 other = "Supporter Benefits"
 
 [supporters_benefit_1_title]
-description = "Benefit 1 title"
+description = "特典1タイトル"
 other = "Ad-free Experience"
 
 [supporters_benefit_1_desc]
-description = "Benefit 1 description"
+description = "特典1説明"
 other = "Enjoy Annict without any ads for a smoother experience"
 
 [supporters_benefit_2_title]
-description = "Benefit 2 title"
+description = "特典2タイトル"
 other = "Supporter Badge"
 
 [supporters_benefit_2_desc]
-description = "Benefit 2 description"
+description = "特典2説明"
 other = "A supporter badge will be displayed on your profile. You can optionally hide it."
 
 [supporters_benefit_3_title]
-description = "Benefit 3 title"
+description = "特典3タイトル"
 other = "Watch Date Input"
 
 [supporters_benefit_3_desc]
-description = "Benefit 3 description"
+description = "特典3説明"
 other = "Specify detailed watch dates and times when recording. For example, when recording anime you watched in the past, you can enter the exact date to keep more accurate records."
 
 [supporters_login_prompt_title]
-description = "Login prompt title"
+description = "ログイン促進タイトル"
 other = "Sign in to become a supporter"
 
 [supporters_login_prompt_desc]
-description = "Login prompt description"
+description = "ログイン促進説明"
 other = "Sign in to become an Annict supporter"
 
 [supporters_login_button]
-description = "Login button"
+description = "ログインボタン"
 other = "Sign In"
 
 [supporters_checkout_title]
-description = "Checkout section title"
+description = "Checkoutセクションタイトル"
 other = "Choose a Plan"
 
 [supporters_plan_monthly]
-description = "Monthly plan name"
+description = "月額プラン名"
 other = "Monthly Plan"
 
 [supporters_plan_yearly]
-description = "Yearly plan name"
+description = "年額プラン名"
 other = "Yearly Plan"
 
 [supporters_month]
-description = "Month"
+description = "月"
 other = "month"
 
 [supporters_year]
-description = "Year"
+description = "年"
 other = "year"
 
 [supporters_yearly_savings]
-description = "Yearly plan savings"
+description = "年額プランの節約額"
 other = "Save 2 months!"
 
 [supporters_subscribe_button]
-description = "Subscribe button"
+description = "登録ボタン"
 other = "Subscribe"
 
 [supporters_payment_method]
-description = "Payment method description"
+description = "支払い方法説明"
 other = "Pay with credit card (powered by Stripe)"
 
 [supporters_gumroad_title]
-description = "Gumroad supporter section title"
+description = "Gumroadサポーターセクションタイトル"
 other = "Registered via Gumroad"
 
 [supporters_gumroad_message_1]
-description = "Gumroad migration message 1 - Thanks"
+description = "Gumroad移行案内メッセージ1 - 感謝"
 other = "Thank you for joining the supporter program!"
 
 [supporters_gumroad_message_2]
-description = "Gumroad migration message 2 - Current registration status"
+description = "Gumroad移行案内メッセージ2 - 現在の登録状況"
 other = "Your current registration is through Gumroad"
 
 [supporters_gumroad_message_3]
-description = "Gumroad migration message 3 - Stripe transition"
+description = "Gumroad移行案内メッセージ3 - Stripeへの移行説明"
 other = "New registrations via Gumroad have ended, and we have transitioned to Stripe (payment service) for new subscriptions"
 
 [supporters_gumroad_message_4]
-description = "Gumroad migration message 4 - Subscription period and continuation"
+description = "Gumroad移行案内メッセージ4 - 契約期間と継続方法"
 other = "You can continue to enjoy supporter benefits during your current subscription period. If you wish to continue after your subscription ends, please register with Stripe from this page after your Gumroad subscription ends"
 
 [supporters_gumroad_message_5]
-description = "Gumroad migration message 5 - Stripe button note"
+description = "Gumroad移行案内メッセージ5 - Stripeボタン表示の補足"
 other = "(After your Gumroad subscription ends, a button to register with Stripe will appear on this page)"
 
 [supporters_registered_date]
-description = "Registration date label"
+description = "登録日ラベル"
 other = "Joined"
 
 [supporters_end_date]
-description = "End date label"
+description = "終了日ラベル"
 other = "Subscription End"
 
 [supporters_active_title]
-description = "Active supporter section title"
+description = "アクティブサポーターセクションタイトル"
 other = "Active Supporter"
 
 [supporters_active_message_1]
-description = "Active supporter message 1"
+description = "アクティブサポーターメッセージ1"
 other = "Thank you for joining the supporter program!"
 
 [supporters_active_message_2]
-description = "Active supporter message 2"
+description = "アクティブサポーターメッセージ2"
 other = "You are currently logged in to Annict as a supporter."
 
 [supporters_customer_id]
-description = "Customer ID label"
+description = "カスタマーIDラベル"
 other = "Customer ID"
 
 [supporters_status]
-description = "Status label"
+description = "ステータスラベル"
 other = "Status"
 
 [supporters_status_active]
-description = "Active status"
+description = "アクティブステータス"
 other = "Active"
 
 [supporters_status_past_due]
-description = "Past due status"
+description = "支払い遅延ステータス"
 other = "Past Due"
 
 [supporters_next_billing_date]
-description = "Next billing date label"
+description = "次回請求日ラベル"
 other = "Next Billing Date"
 
 [supporters_cancel_at]
-description = "Cancel at label"
+description = "キャンセル予定日ラベル"
 other = "Cancellation Date"
 
 [supporters_manage_button]
-description = "Manage button"
+description = "管理ボタン"
 other = "Manage Subscription"
 
 [supporters_customer_id_help]
-description = "Customer ID help text"
+description = "カスタマーIDの用途説明"
 other = "Please provide your Customer ID when contacting support."
 
-# Supporter Checkout
+# サポーターCheckout関連
 [supporters_checkout_invalid_plan]
-description = "Invalid plan selection error"
+description = "無効なプラン選択エラー"
 other = "Invalid plan selected"
 
 [supporters_checkout_already_active]
-description = "Already active subscription error"
+description = "既にアクティブなサブスクリプションが存在するエラー"
 other = "You are already a supporter"
 
 [supporters_checkout_error]
-description = "Checkout processing error"
+description = "Checkout処理エラー"
 other = "An error occurred during checkout. Please try again later."
 
-# Supporter portal related
+# サポーターポータル関連
 [supporters_portal_error]
-description = "Portal session creation error"
+description = "ポータルセッション作成エラー"
 other = "Failed to access the portal. Please try again later."
 
 [supporters_portal_not_supporter]
-description = "Non-supporter user tried to access the portal"
+description = "サポーターでないユーザーがポータルにアクセスしようとした"
 other = "Only active supporters can access this page"
 
-# Bottom navigation related
+# ボトムナビゲーション関連
 [bottom_nav_menu]
-description = "Bottom navigation - Menu"
+description = "ボトムナビゲーション - メニュー"
 other = "Menu"
 
 [bottom_nav_home]
-description = "Bottom navigation - Home"
+description = "ボトムナビゲーション - ホーム"
 other = "Home"
 
 [bottom_nav_track]
-description = "Bottom navigation - Track"
+description = "ボトムナビゲーション - 記録する"
 other = "Track"
 
 [bottom_nav_current_season]
-description = "Bottom navigation - Current Season"
+description = "ボトムナビゲーション - 今期アニメ"
 other = "Airing"
 
 [bottom_nav_library]
-description = "Bottom navigation - Library"
+description = "ボトムナビゲーション - ライブラリ"
 other = "Library"
 
 [bottom_nav_sign_up]
-description = "Bottom navigation - Sign Up"
+description = "ボトムナビゲーション - ユーザ登録"
 other = "Sign Up"
 
 [bottom_nav_sign_in]
-description = "Bottom navigation - Sign In"
+description = "ボトムナビゲーション - ログイン"
 other = "Sign In"
 
-# Layout common
-#
-# [Ja] レイアウト共通
+# レイアウト共通
 [skip_to_main_content]
-description = "Layout common - Skip link to the main content"
+description = "レイアウト共通 - 本文へのスキップリンク"
 other = "Skip to main content"
 
-# Sidebar related
+# サイドバー関連
 [sidebar_home]
-description = "Sidebar - Home"
+description = "サイドバー - ホーム"
 other = "Home"
 
 [sidebar_profile]
-description = "Sidebar - Profile"
+description = "サイドバー - プロフィール"
 other = "Profile"
 
 [sidebar_notifications]
-description = "Sidebar - Notifications"
+description = "サイドバー - 通知"
 other = "Notifications"
 
 [sidebar_track]
-description = "Sidebar - Track"
+description = "サイドバー - 記録する"
 other = "Track"
 
 [sidebar_library]
-description = "Sidebar - Library"
+description = "サイドバー - ライブラリ"
 other = "Library"
 
 [sidebar_watching]
-description = "Sidebar - Watching"
+description = "サイドバー - 視聴中"
 other = "Watching"
 
 [sidebar_plan_to_watch]
-description = "Sidebar - Plan to Watch"
+description = "サイドバー - 見たい"
 other = "Plan to Watch"
 
 [sidebar_completed]
-description = "Sidebar - Completed"
+description = "サイドバー - 見た"
 other = "Completed"
 
 [sidebar_on_hold]
-description = "Sidebar - On Hold"
+description = "サイドバー - 保留中"
 other = "On Hold"
 
 [sidebar_dropped]
-description = "Sidebar - Dropped"
+description = "サイドバー - 中止"
 other = "Dropped"
 
 [sidebar_explore]
-description = "Sidebar - Explore"
+description = "サイドバー - 探索"
 other = "Explore"
 
 [sidebar_current_season]
-description = "Sidebar - Current Season"
+description = "サイドバー - 今期"
 other = "Current Season"
 
 [sidebar_next_season]
-description = "Sidebar - Next Season"
+description = "サイドバー - 来期"
 other = "Next Season"
 
 [sidebar_previous_season]
-description = "Sidebar - Previous Season"
+description = "サイドバー - 前期"
 other = "Previous Season"
 
 [sidebar_popular]
-description = "Sidebar - Popular"
+description = "サイドバー - 人気"
 other = "Popular"
 
 [sidebar_newest]
-description = "Sidebar - Newest"
+description = "サイドバー - 新着"
 other = "Newest"
 
 [sidebar_misc]
-description = "Sidebar - Misc"
+description = "サイドバー - その他"
 other = "Misc"
 
 [sidebar_channels]
-description = "Sidebar - Channels"
+description = "サイドバー - チャンネル"
 other = "Channels"
 
 [sidebar_settings]
-description = "Sidebar - Settings"
+description = "サイドバー - 設定"
 other = "Settings"
 
 [sidebar_faq]
-description = "Sidebar - FAQ"
+description = "サイドバー - FAQ"
 other = "FAQ"
 
 [sidebar_community]
-description = "Sidebar - Community"
+description = "サイドバー - コミュニティ"
 other = "Community"
 
 [sidebar_developer_help]
-description = "Sidebar - Developer Help"
+description = "サイドバー - 開発者向けヘルプ"
 other = "Developer Help"
 
 [sidebar_services]
-description = "Sidebar - Services"
+description = "サイドバー - サービス"
 other = "Services"
 
 [sidebar_userland]
-description = "Sidebar - Userland"
+description = "サイドバー - Userland"
 other = "Annict Userland"
 
 [sidebar_forum]
-description = "Sidebar - Forum"
+description = "サイドバー - Forum"
 other = "Annict Forum"
 
 [sidebar_db]
-description = "Sidebar - DB"
+description = "サイドバー - DB"
 other = "Annict DB"
 
 [sidebar_supporters]
-description = "Sidebar - Supporters"
+description = "サイドバー - Supporters"
 other = "Annict Supporters"
 
 [sidebar_search_placeholder]
-description = "Sidebar - Search placeholder"
+description = "サイドバー - 検索プレースホルダー"
 other = "Search by anime title..."
 
-# DB Sidebar related
+# DBサイドバー関連
 [db_sidebar_search_placeholder]
-description = "DB Sidebar - Search placeholder"
+description = "DBサイドバー - 検索プレースホルダー"
 other = "Search by title, person name..."
 
 [db_sidebar_activities]
-description = "DB Sidebar - Activities"
+description = "DBサイドバー - アクティビティ"
 other = "Activities"
 
 [db_sidebar_series]
-description = "DB Sidebar - Series"
+description = "DBサイドバー - シリーズ"
 other = "Series"
 
 [db_sidebar_works]
-description = "DB Sidebar - Works"
+description = "DBサイドバー - 作品"
 other = "Works"
 
 [db_sidebar_people]
-description = "DB Sidebar - People"
+description = "DBサイドバー - 人物"
 other = "People"
 
 [db_sidebar_organizations]
-description = "DB Sidebar - Organizations"
+description = "DBサイドバー - 団体"
 other = "Organizations"
 
 [db_sidebar_characters]
-description = "DB Sidebar - Characters"
+description = "DBサイドバー - キャラクター"
 other = "Characters"
 
 [db_sidebar_channel_groups]
-description = "DB Sidebar - Channel Groups"
+description = "DBサイドバー - チャンネルグループ"
 other = "Channel Groups"
 
 [db_sidebar_channels]
-description = "DB Sidebar - Channels"
+description = "DBサイドバー - チャンネル"
 other = "Channels"
 
 [db_sidebar_back_to_annict]
-description = "DB Sidebar - Back to Annict"
+description = "DBサイドバー - Annictに戻る"
 other = "Back to Annict"
 
 [db_sidebar_toggle_label]
-description = "DB Sidebar - toggle button aria-label"
+description = "DBサイドバー - 開閉トグルボタンのaria-label"
 other = "Toggle sidebar"
 
 [db_sidebar_close_label]
-description = "DB Sidebar - close button"
+description = "DBサイドバー - 閉じるボタン"
 other = "Close"
 
-# DB work subnav related
+# DB作品サブナビ関連
 [db_work_subnav_label]
-description = "DB work subnav - navigation aria-label"
+description = "DB作品サブナビ - ナビゲーションのaria-label"
 other = "Work navigation"
 
 [db_work_subnav_work]
-description = "DB work subnav - work"
+description = "DB作品サブナビ - 作品"
 other = "Work"
 
 [db_work_subnav_episodes]
-description = "DB work subnav - episodes"
+description = "DB作品サブナビ - エピソード"
 other = "Episodes"
 
 [db_work_subnav_programs]
-description = "DB work subnav - programs"
+description = "DB作品サブナビ - 番組情報"
 other = "Programs"
 
 [db_work_subnav_slots]
-description = "DB work subnav - slots"
+description = "DB作品サブナビ - 放送予定"
 other = "Slots"
 
 [db_work_subnav_casts]
-description = "DB work subnav - casts"
+description = "DB作品サブナビ - キャスト"
 other = "Casts"
 
 [db_work_subnav_staffs]
-description = "DB work subnav - staffs"
+description = "DB作品サブナビ - スタッフ"
 other = "Staffs"
 
 [db_work_subnav_work_image]
-description = "DB work subnav - work image"
+description = "DB作品サブナビ - 作品画像"
 other = "Work image"
 
 [db_work_subnav_pv]
-description = "DB work subnav - PV"
+description = "DB作品サブナビ - PV"
 other = "PV"
 
-# Pagination related
+# ページネーション関連
 [pagination_label]
-description = "Pagination - aria-label"
+description = "ページネーション - aria-label"
 other = "Pagination"
 
 [pagination_prev]
-description = "Pagination - Previous"
+description = "ページネーション - 前へ"
 other = "Previous"
 
 [pagination_next]
-description = "Pagination - Next"
+description = "ページネーション - 次へ"
 other = "Next"
 
-# Form common
-#
-# [Ja] フォーム共通
+# フォーム共通
 [form_required_label]
-description = "Marker shown in a form label for a required field"
+description = "必須フィールドのラベルに表示する印"
 other = "Required"
 
 [form_error_summary_heading]
-description = "Heading of the error summary shown at the top of a form"
+description = "フォーム冒頭に表示するエラー要約の見出し"
 other = "There is a problem with your input"
 
 [form_error_summary_item]
-description = "One entry of the error summary (a field label and its message)"
+description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
 other = "{{.Label}}: {{.Message}}"
 
-# Guideline link
-#
-# [Ja] ガイドラインリンク
+# ガイドラインリンク
 [guideline_link_aria_label]
-description = "Aria label for a link to a guideline help page that opens in a new tab"
+description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) のaria-label"
 other = "Open {{.Label}} in a new tab"
 
-# Status label related
+# 公開状態ラベル関連
 [status_published]
-description = "Status - Published"
+description = "公開状態 - 公開"
 other = "Published"
 
 [status_archived]
-description = "Status - Archived"
+description = "公開状態 - アーカイブ"
 other = "Archived"
 
 [status_deleted]
-description = "Status - Deleted"
+description = "公開状態 - 削除"
 other = "Deleted"
 
-# DB works index page
+# DB作品一覧ページ
 [db_works_index_title]
-description = "DB works index page title"
+description = "DB作品一覧ページのタイトル"
 other = "Works"
 
 [db_works_index_table_caption]
-description = "Caption and scroll-region aria-label for the DB works table"
+description = "DB作品一覧表のキャプションとスクロール領域のaria-label"
 other = "DB works list"
 
 [db_works_index_new_link]
-description = "Link from works index to new work page"
+description = "作品一覧から新規作成ページへのリンク"
 other = "New"
 
 [db_works_index_season_slugs_label]
-description = "Label for the release multi-select filter"
+description = "リリース時期の複数選択フィルタのラベル"
 other = "Release"
 
 [db_works_index_season_slugs_placeholder]
-description = "Search placeholder for the release-season combobox"
+description = "リリース時期comboboxの検索プレースホルダ"
 other = "Filter by year or season..."
 
 [db_works_index_season_slugs_empty]
-description = "Message shown when the release-season combobox search has no results"
+description = "リリース時期comboboxの検索結果が空のときのメッセージ"
 other = "No release seasons found"
 
 [db_works_index_season_slugs_remove_label]
-description = "Accessible label for removing a selected release-season chip"
+description = "選択済みリリース時期チップを解除するボタンのアクセシブルラベル"
 other = "Remove {{.Label}}"
 
 [db_works_index_filter_no_episodes_label]
-description = "Label for the no-episodes filter"
+description = "エピソード未登録フィルタのラベル"
 other = "No Episodes"
 
 [db_works_index_filter_no_image_label]
-description = "Label for the no-image filter"
+description = "画像未登録フィルタのラベル"
 other = "No Image"
 
 [db_works_index_filter_no_season_label]
-description = "Label for the no-season filter"
+description = "リリース時期未登録フィルタのラベル"
 other = "No Season"
 
 [db_works_index_filter_no_slots_label]
-description = "Label for the no-slots filter"
+description = "放送予定未登録フィルタのラベル"
 other = "No Slots"
 
 [db_works_index_submit]
-description = "Submit button on the DB works index page (filter search)"
+description = "DB作品一覧ページの送信ボタン (フィルタ検索)"
 other = "Search"
 
 [db_works_index_table_id_label]
-description = "Table header - ID"
+description = "テーブルヘッダー - ID"
 other = "ID"
 
 [db_works_index_table_title_label]
-description = "Table header - Title"
+description = "テーブルヘッダー - タイトル"
 other = "Title"
 
 [db_works_index_table_info_label]
-description = "Table header - Info (every work attribute other than the title, combined into one column)"
+description = "テーブルヘッダー - 情報 (タイトル以外の作品属性をまとめた列)"
 other = "Info"
 
 [db_works_index_table_media_label]
-description = "Table header - Media"
+description = "テーブルヘッダー - メディア"
 other = "Media"
 
 [db_works_index_table_season_label]
-description = "Table header - Release"
+description = "テーブルヘッダー - リリース時期"
 other = "Release"
 
 [db_works_index_syobocal_label]
-description = "Info column - Syoboi Calendar label"
+description = "情報列 - しょぼいカレンダーのラベル"
 other = "Syoboi Calendar"
 
 [db_works_index_mal_label]
-description = "Info column - MyAnimeList label"
+description = "情報列 - MyAnimeListのラベル"
 other = "MyAnimeList"
 
 [db_works_index_table_watchers_label]
-description = "Table header - Watchers"
+description = "テーブルヘッダー - ウォッチ数"
 other = "Watchers"
 
 [db_works_index_table_status_label]
-description = "Table header - Status"
+description = "テーブルヘッダー - ステータス"
 other = "Status"
 
 [db_works_index_table_image_label]
-description = "Table header - Image"
+description = "テーブルヘッダー - 画像"
 other = "Image"
 
 [db_works_index_table_actions_label]
-description = "Table header - Actions"
+description = "テーブルヘッダー - 操作"
 other = "Actions"
 
 [db_works_index_id_link_aria_label]
-description = "Aria label for the work ID link that opens the public page in a new tab"
+description = "作品IDリンク (公開ページを新しいタブで開く) のaria-label"
 other = "Open work {{.ID}} in a new tab"
 
 [db_works_index_external_service_link_aria_label]
-description = "Aria label for an external service link that opens in a new tab"
+description = "外部サービスリンク (新しいタブで開く) のaria-label"
 other = "Open {{.Label}} in a new tab"
 
 [db_works_index_action_target_label]
-description = "Work an action link or button on the work list acts on, added to its accessible name and not shown on screen"
+description = "作品一覧の操作リンク・ボタンのアクセシブルネームに足す対象作品 (画面には表示しない)"
 other = "work {{.ID}}"
 
 [db_works_index_edit_link]
-description = "Link from work list to edit form"
+description = "作品一覧から編集フォームへのリンク"
 other = "Edit"
 
 [db_works_index_archive_link]
-description = "Link from work list to the archive-confirmation screen (shown for published works)"
+description = "作品一覧から非公開確認画面へのリンク (公開中の作品に表示)"
 other = "Unpublish"
 
 [db_works_index_publish_button]
-description = "Re-publish button on the work list (shown for archived works)"
+description = "作品一覧の再公開ボタン (非公開の作品に表示)"
 other = "Publish"
 
 [db_works_index_publish_confirm]
-description = "Confirmation dialog for the re-publish button on the work list"
+description = "作品一覧の再公開ボタンの確認ダイアログ"
 other = "Publish work {{.ID}}?"
 
 [db_works_index_delete_button]
-description = "Delete button on the work list (shown to admins)"
+description = "作品一覧の削除ボタン (管理者に表示)"
 other = "Delete"
 
 [db_works_index_delete_confirm]
-description = "Confirmation dialog for the delete button on the work list"
+description = "作品一覧の削除ボタンの確認ダイアログ"
 other = "Delete work {{.ID}}?"
 
 [db_works_index_empty]
-description = "Works list empty-state heading"
+description = "作品一覧の空表示の見出し"
 other = "No works found"
 
 [db_episodes_index_title]
-description = "Episode list page title for a work"
+description = "作品のエピソード一覧ページのタイトル"
 other = "Episodes"
 
 [db_episodes_index_title_paginated]
-description = "Generic episode list document title after the first page"
+description = "2ページ目以降の汎用エピソード一覧文書タイトル"
 other = "Episodes (Page {{.Page}})"
 
 [db_episodes_index_document_title]
-description = "Work-specific episode list document title"
+description = "作品を識別できるエピソード一覧文書タイトル"
 other = "Episodes | {{.WorkTitle}}"
 
 [db_episodes_index_document_title_paginated]
-description = "Work-specific episode list document title after the first page"
+description = "2ページ目以降の作品を識別できるエピソード一覧文書タイトル"
 other = "Episodes (Page {{.Page}}) | {{.WorkTitle}}"
 
 [db_episodes_index_table_caption]
-description = "Caption and scroll-region aria-label for the DB episodes table"
+description = "DBエピソード一覧テーブルのcaptionとスクロール領域のaria-label"
 other = "DB episodes list"
 
 [db_episodes_index_table_id_label]
-description = "Table header - ID"
+description = "テーブルヘッダー - ID"
 other = "ID"
 
 [db_episodes_index_table_number_label]
-description = "Table header - Number (display and numeric)"
+description = "テーブルヘッダー - 話数 (表示用と数値)"
 other = "Number"
 
 [db_episodes_index_number_display_label]
-description = "Screen-reader label for an episode's display number"
+description = "エピソードの表示用話数に付けるスクリーンリーダー向けラベル"
 other = "Display number"
 
 [db_episodes_index_number_raw_label]
-description = "Screen-reader label for an episode's numeric number"
+description = "エピソードの数値話数に付けるスクリーンリーダー向けラベル"
 other = "Numeric number"
 
 [db_episodes_index_table_title_label]
-description = "Table header - Title (Japanese and English)"
+description = "テーブルヘッダー - タイトル (日本語と英語)"
 other = "Title"
 
 [db_episodes_index_title_ja_label]
-description = "Screen-reader label for an episode's Japanese title"
+description = "エピソードの日本語タイトルに付けるスクリーンリーダー向けラベル"
 other = "Japanese title"
 
 [db_episodes_index_title_en_label]
-description = "Screen-reader label for an episode's English title"
+description = "エピソードの英語タイトルに付けるスクリーンリーダー向けラベル"
 other = "English title"
 
 [db_episodes_index_table_prev_episode_label]
-description = "Table header - Previous episode"
+description = "テーブルヘッダー - 前のエピソード"
 other = "Previous episode"
 
 [db_episodes_index_table_sort_number_label]
-description = "Table header - Sort number"
+description = "テーブルヘッダー - ソート番号"
 other = "Sort number"
 
 [db_episodes_index_table_records_count_label]
-description = "Table header - Record count"
+description = "テーブルヘッダー - 記録数"
 other = "Record count"
 
 [db_episodes_index_table_status_label]
-description = "Table header - Status"
+description = "テーブルヘッダー - 状態"
 other = "Status"
 
 [db_episodes_index_id_link_aria_label]
-description = "Aria label for the episode ID link that opens the public page in a new tab"
+description = "エピソードIDリンク (公開ページを新しいタブで開く) のaria-label"
 other = "Open episode {{.ID}} in a new tab"
 
 [db_episodes_index_empty]
-description = "Episodes list empty-state heading"
+description = "エピソード一覧の空表示の見出し"
 other = "No episodes"
 
 [db_episodes_index_generation_planned_label]
-description = "Auto-generation notice - label for the work's expected total episode count"
+description = "自動生成の案内 - 作品の予定総話数のラベル"
 other = "Expected episodes"
 
 [db_episodes_index_generation_published_label]
-description = "Auto-generation notice - label for the number of published episodes"
+description = "自動生成の案内 - 公開中のエピソード数のラベル"
 other = "Published episodes"
 
 [db_episodes_index_generation_generatable_label]
-description = "Auto-generation notice - label for the number of episodes auto-generation produces"
+description = "自動生成の案内 - 自動生成されるエピソード数のラベル"
 other = "Auto-generated episodes"
 
 [db_episodes_index_generation_unknown]
-description = "Auto-generation notice - value shown when the work records no expected episode count"
+description = "自動生成の案内 - 予定総話数が未登録のときに表示する値"
 other = "Unknown"
 
 [db_episodes_index_new_link]
-description = "Link from the episode list to the bulk-create form"
+description = "エピソード一覧から一括作成フォームへのリンク"
 other = "New"
 
 [db_episodes_index_table_actions_label]
-description = "Table header - Actions"
+description = "テーブルヘッダー - 操作"
 other = "Actions"
 
 [db_episodes_index_action_target_label]
-description = "Episode an action link or button on the episode list acts on, added to its accessible name and not shown on screen"
+description = "エピソード一覧の操作リンク・ボタンのアクセシブルネームに足す対象エピソード (画面には表示しない)"
 other = "episode {{.ID}}"
 
 [db_episodes_index_edit_link]
-description = "Link from the episode list to the edit form"
+description = "エピソード一覧から編集フォームへのリンク"
 other = "Edit"
 
 [db_episodes_index_archive_link]
-description = "Link from the episode list to the archive-confirmation screen (shown for published episodes)"
+description = "エピソード一覧から非公開確認画面へのリンク (公開中のエピソードに表示)"
 other = "Unpublish"
 
 [db_episodes_index_publish_button]
-description = "Re-publish button on the episode list (shown for archived episodes)"
+description = "エピソード一覧の再公開ボタン (非公開のエピソードに表示)"
 other = "Publish"
 
 [db_episodes_index_publish_confirm]
-description = "Confirmation dialog for the re-publish button on the episode list"
+description = "エピソード一覧の再公開ボタンの確認ダイアログ"
 other = "Publish episode {{.ID}}?"
 
 [db_episodes_index_delete_button]
-description = "Delete button on the episode list (shown to admins)"
+description = "エピソード一覧の削除ボタン (管理者に表示)"
 other = "Delete"
 
 [db_episodes_index_delete_confirm]
-description = "Confirmation dialog for the delete button on the episode list"
+description = "エピソード一覧の削除ボタンの確認ダイアログ"
 other = "Delete episode {{.ID}}?"
 
 [db_episodes_new_title]
-description = "Episode bulk-create page title"
+description = "エピソード一括作成ページのタイトル"
 other = "Add Episodes"
 
 [db_episodes_new_document_title]
-description = "Work-specific episode bulk-create document title"
+description = "作品を識別できるエピソード一括作成の文書タイトル"
 other = "Add Episodes | {{.WorkTitle}}"
 
 [db_episodes_new_back_to_list_link]
-description = "Link from the bulk-create page back to the episode list"
+description = "一括作成ページからエピソード一覧へのリンク"
 other = "Back to List"
 
 [db_episodes_new_guideline_link]
-description = "Link from the episode bulk-create page to the bulk episode registration help page"
+description = "エピソード一括作成ページからエピソードの一括登録のヘルプページへのリンク"
 other = "Bulk episode registration guidelines"
 
 [db_episodes_new_rows_label]
-description = "Label of the bulk-create input, which takes one episode per line"
+description = "一括作成ページの入力欄 (1行1エピソード) のラベル"
 other = "Episodes"
 
 [db_episodes_new_submit]
-description = "Submit button on the episode bulk-create page"
+description = "エピソード一括作成ページの送信ボタン"
 other = "Register"
 
 [db_episodes_new_restriction_title]
-description = "Heading of the warning shown when episodes should not be registered manually"
+description = "エピソードを手動登録できないときに表示する警告の見出し"
 other = "Manual registration unavailable"
 
 [db_episodes_new_restriction_admin_title]
-description = "Heading of the warning shown to administrators when episodes should not be registered manually"
+description = "管理者にエピソードの手動登録を勧めないときに表示する警告の見出し"
 other = "Manual registration is normally unavailable"
 
 [db_episodes_new_restricted_episodes_filled]
-description = "Warning shown when the work already has its expected number of episodes"
+description = "作品の予定話数までエピソードが登録済みのときに表示する警告"
 other = "Episodes cannot be registered because the expected number of episodes has already been reached."
 
 [db_episodes_new_restricted_admin_episodes_filled]
-description = "Warning shown to administrators when the work already has its expected number of episodes"
+description = "作品の予定話数までエピソードが登録済みのときに管理者へ表示する警告"
 other = "The expected number of episodes has already been registered. Administrators can register more by hand, but doing so goes beyond the expected episode count."
 
 [db_episodes_new_restricted_slots_exist]
-description = "Warning shown when broadcast slots will generate episodes automatically"
+description = "放送予定からエピソードが自動生成されるときに表示する警告"
 other = "Episodes cannot be registered manually because broadcast schedules exist. Episodes are generated automatically from the schedule information."
 
 [db_episodes_new_restricted_admin_slots_exist]
-description = "Warning shown to administrators when broadcast slots will generate episodes automatically"
+description = "放送予定からエピソードが自動生成されるときに管理者へ表示する警告"
 other = "Broadcast schedules exist, so episodes are generated automatically from the schedule information. Administrators can register episodes by hand, but check that they do not duplicate the generated ones."
 
 [db_episodes_edit_title]
-description = "Episode edit page title"
+description = "エピソード編集ページのタイトル"
 other = "Edit Episode"
 
 [db_episodes_edit_document_title]
-description = "Episode-specific edit document title for a named work"
+description = "表示名のある作品に属するエピソードを識別できる編集ページの文書タイトル"
 other = "Edit Episode | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_edit_document_title_without_work]
-description = "Episode-specific edit document title for a work without a display name"
+description = "作品に表示名が無くてもエピソードを識別できる編集ページの文書タイトル"
 other = "Edit Episode | {{.EpisodeIdentifier}}"
 
 [db_episodes_identifier_without_number]
-description = "Label identifying an episode without a display number in a document title"
+description = "表示用話数が無いエピソードを文書タイトルで識別するラベル"
 other = "ID: {{.EpisodeID}}"
 
 [db_episodes_name]
-description = "How an episode with both a display number and a title is named in running text"
+description = "表示用話数とタイトルの両方があるエピソードを文章の中で名指しする表記"
 other = "{{.Number}} “{{.Title}}”"
 
 [db_episodes_name_title_only]
-description = "How an episode with a title but no display number is named in running text"
+description = "表示用話数が無くタイトルだけがあるエピソードを文章の中で名指しする表記"
 other = "“{{.Title}}”"
 
 [db_episodes_name_without_number_and_title]
-description = "How an episode with neither a display number nor a title is named in running text"
+description = "表示用話数もタイトルも無いエピソードを文章の中で名指しする表記"
 other = "episode ID: {{.EpisodeID}}"
 
 [db_episodes_edit_back_to_list_link]
-description = "Link from the episode edit page back to the episode list"
+description = "エピソード編集ページからエピソード一覧へのリンク"
 other = "Back to List"
 
 [db_episodes_edit_guideline_link]
-description = "Link from the episode edit page to the episode editing guideline help page"
+description = "エピソード編集ページからエピソードの編集ガイドラインのヘルプページへのリンク"
 other = "Episode editing guidelines"
 
 [db_episodes_edit_number_label]
-description = "Form label - Display number"
+description = "フォームラベル - 表示用話数"
 other = "Display number"
 
 [db_episodes_edit_raw_number_label]
-description = "Form label - Numeric number"
+description = "フォームラベル - 数値話数"
 other = "Numeric number"
 
 [db_episodes_edit_sort_number_label]
-description = "Form label - Sort number"
+description = "フォームラベル - ソート番号"
 other = "Sort number"
 
 [db_episodes_edit_title_label]
-description = "Form label - Title"
+description = "フォームラベル - タイトル"
 other = "Title"
 
 [db_episodes_edit_title_en_label]
-description = "Form label - Title (English)"
+description = "フォームラベル - タイトル (英語)"
 other = "Title (English)"
 
 [db_episodes_edit_submit]
-description = "Submit button on the episode edit page"
+description = "エピソード編集ページの送信ボタン"
 other = "Update"
 
 [db_episodes_edit_conflict_heading]
-description = "Heading of the stored values shown on a conflict on the episode edit page"
+description = "エピソード編集ページで、競合時に表示する保存済みの内容の見出し"
 other = "Currently stored values"
 
 [db_episodes_edit_conflict_help]
-description = "Explanation of the available options on a conflict on the episode edit page"
+description = "エピソード編集ページで、競合時に取りうる対処を述べる説明"
 other = "Your input is kept in the form below. Compare it with the currently stored values and, if your input is the one to keep, update again. To keep the stored values instead, return to the list without updating."
 
-# DB episode archive-confirmation page
+# DBエピソード非公開確認ページ
 [db_episodes_archive_new_title]
-description = "Title of the episode archive-confirmation page"
+description = "エピソード非公開確認ページのタイトル"
 other = "Archive Episode"
 
 [db_episodes_archive_new_document_title]
-description = "Episode-specific archive-confirmation document title for a named work"
+description = "表示名のある作品に属するエピソードを識別できる非公開確認ページの文書タイトル"
 other = "Archive Episode | {{.EpisodeIdentifier}} | {{.WorkTitle}}"
 
 [db_episodes_archive_new_document_title_without_work]
-description = "Episode-specific archive-confirmation document title for a work without a display name"
+description = "作品に表示名が無くてもエピソードを識別できる非公開確認ページの文書タイトル"
 other = "Archive Episode | {{.EpisodeIdentifier}}"
 
 [db_episodes_archive_new_confirm_message]
-description = "Confirmation message on the episode archive-confirmation page"
+description = "エピソード非公開確認ページの確認メッセージ"
 other = "Archive {{.Episode}}?"
 
 [db_episodes_archive_new_help]
-description = "Explanation of what archiving an episode does, on the episode archive-confirmation page"
+description = "エピソード非公開確認ページで、非公開にすると何が起きるかを述べる説明"
 other = "An archived episode no longer appears on the public pages. You can restore it later with “Publish” on the episode list."
 
 [db_episodes_archive_new_submit]
-description = "Execute button on the episode archive-confirmation page"
+description = "エピソード非公開確認ページの実行ボタン"
 other = "Archive"
 
 [db_episodes_archive_new_cancel_link]
-description = "Cancel link on the episode archive-confirmation page"
+description = "エピソード非公開確認ページのキャンセルリンク"
 other = "Cancel"
 
-# DB works form shared (used by new and edit)
+# DB作品フォーム共通 (新規・編集で共有)
 [db_works_form_external_link_label]
-description = "Accessible name for the external-link icon shown beside a form label (shared by new and edit). Field is the field name"
+description = "フォームのラベル横に表示する外部リンクアイコンのアクセシブルネーム (新規・編集共通)。Fieldはフィールド名"
 other = "Open {{.Field}} in a new tab"
 
-# DB works new page
+# DB作品新規作成ページ
 [db_works_new_title]
-description = "DB works new page title"
+description = "作品新規作成ページのタイトル"
 other = "Add Work"
 
 [db_works_new_back_to_list_link]
-description = "Link from new work page back to the works index"
+description = "新規作成ページから一覧ページへのリンク"
 other = "Back to List"
 
 [db_works_new_guideline_link]
-description = "Link from the new work page to the work editing guideline help page"
+description = "作品新規作成ページから作品の編集ガイドラインのヘルプページへのリンク"
 other = "Work editing guidelines"
 
 [db_works_new_title_label]
-description = "Form label - Title"
+description = "フォームラベル - タイトル"
 other = "Title"
 
 [db_works_new_title_kana_label]
-description = "Form label - Title (Kana)"
+description = "フォームラベル - タイトル (かな)"
 other = "Title (Kana)"
 
 [db_works_new_title_alter_label]
-description = "Form label - Title (Alternate)"
+description = "フォームラベル - タイトル (別名)"
 other = "Title (Alternate)"
 
 [db_works_new_title_en_label]
-description = "Form label - Title (English)"
+description = "フォームラベル - タイトル (英語)"
 other = "Title (English)"
 
 [db_works_new_title_alter_en_label]
-description = "Form label - Title (English Alternate)"
+description = "フォームラベル - タイトル (英語別名)"
 other = "Title (English Alternate)"
 
 [db_works_new_media_label]
-description = "Form label - Media"
+description = "フォームラベル - メディア"
 other = "Media"
 
 [db_works_new_season_year_label]
-description = "Form label - Release (Year)"
+description = "フォームラベル - リリース時期 (年)"
 other = "Release (Year)"
 
 [db_works_new_season_name_label]
-description = "Form label - Release (Season)"
+description = "フォームラベル - リリース時期 (季節)"
 other = "Release (Season)"
 
 [db_works_new_started_on_label]
-description = "Form label - Start Date"
+description = "フォームラベル - 開始日"
 other = "Start Date"
 
 [db_works_new_ended_on_label]
-description = "Form label - End Date"
+description = "フォームラベル - 終了日"
 other = "End Date"
 
 [db_works_new_official_site_url_label]
-description = "Form label - Official Site URL"
+description = "フォームラベル - 公式サイトURL"
 other = "Official Site URL"
 
 [db_works_new_official_site_url_en_label]
-description = "Form label - Official Site URL (English)"
+description = "フォームラベル - 公式サイトURL (英語)"
 other = "Official Site URL (English)"
 
 [db_works_new_wikipedia_url_label]
-description = "Form label - Wikipedia URL"
+description = "フォームラベル - Wikipedia URL"
 other = "Wikipedia URL"
 
 [db_works_new_wikipedia_url_en_label]
-description = "Form label - Wikipedia URL (English)"
+description = "フォームラベル - Wikipedia URL (英語)"
 other = "Wikipedia URL (English)"
 
 [db_works_new_twitter_username_label]
-description = "Form label - X Username"
+description = "フォームラベル - Xユーザー名"
 other = "X Username"
 
 [db_works_new_twitter_hashtag_label]
-description = "Form label - Hashtag"
+description = "フォームラベル - ハッシュタグ"
 other = "Hashtag"
 
 [db_works_new_sc_tid_label]
-description = "Form label - Syobocal TID"
+description = "フォームラベル - しょぼいカレンダーTID"
 other = "Syobocal TID"
 
 [db_works_new_mal_anime_id_label]
-description = "Form label - MAL Anime ID"
+description = "フォームラベル - MAL Anime ID"
 other = "MAL Anime ID"
 
 [db_works_new_synopsis_label]
-description = "Form label - Synopsis"
+description = "フォームラベル - あらすじ"
 other = "Synopsis"
 
 [db_works_new_synopsis_source_label]
-description = "Form label - Synopsis Source"
+description = "フォームラベル - あらすじの引用元"
 other = "Synopsis Source"
 
 [db_works_new_synopsis_en_label]
-description = "Form label - Synopsis (English)"
+description = "フォームラベル - あらすじ (英語)"
 other = "Synopsis (English)"
 
 [db_works_new_synopsis_source_en_label]
-description = "Form label - Synopsis Source (English)"
+description = "フォームラベル - あらすじの引用元 (英語)"
 other = "Synopsis Source (English)"
 
 [db_works_new_manual_episodes_count_label]
-description = "Form label - Expected Episodes"
+description = "フォームラベル - 予定総話数"
 other = "Expected Episodes"
 
 [db_works_new_start_episode_raw_number_label]
-description = "Form label - Start Episode Raw Number"
+description = "フォームラベル - 開始エピソード番号"
 other = "Start Episode Raw Number"
 
 [db_works_new_number_format_label]
-description = "Form label - Episode Number Format"
+description = "フォームラベル - 話数フォーマット"
 other = "Episode Number Format"
 
 [db_works_new_no_episodes_label]
-description = "Form label - No Episodes"
+description = "フォームラベル - エピソードなし"
 other = "No Episodes"
 
 [db_works_new_submit]
-description = "Submit button on the new work page"
+description = "作品新規作成ページの送信ボタン"
 other = "Register"
 
 [db_works_edit_title]
-description = "DB works edit page title"
+description = "作品編集ページのタイトル"
 other = "Edit Work"
 
 [db_works_edit_document_title]
-description = "Work-specific edit document title"
+description = "作品を識別できる編集ページの文書タイトル"
 other = "Edit Work | {{.WorkTitle}}"
 
 [db_works_edit_work_page_link]
-description = "Link from the edit work page to the work page on the public site"
+description = "編集ページから公開サイトの作品ページへのリンク"
 other = "Work page"
 
 [db_works_edit_work_page_link_aria_label]
-description = "Aria label for the link that opens the work page on the public site in a new tab"
+description = "編集ページから公開サイトの作品ページへのリンク (新しいタブで開く) のaria-label"
 other = "Open the work page in a new tab"
 
 [db_works_edit_guideline_link]
-description = "Link from the edit work page to the work editing guideline help page"
+description = "作品編集ページから作品の編集ガイドラインのヘルプページへのリンク"
 other = "Work editing guidelines"
 
 [db_works_edit_title_label]
-description = "Form label - Title"
+description = "フォームラベル - タイトル"
 other = "Title"
 
 [db_works_edit_title_kana_label]
-description = "Form label - Title (Kana)"
+description = "フォームラベル - タイトル (かな)"
 other = "Title (Kana)"
 
 [db_works_edit_title_alter_label]
-description = "Form label - Title (Alternate)"
+description = "フォームラベル - タイトル (別名)"
 other = "Title (Alternate)"
 
 [db_works_edit_title_en_label]
-description = "Form label - Title (English)"
+description = "フォームラベル - タイトル (英語)"
 other = "Title (English)"
 
 [db_works_edit_title_alter_en_label]
-description = "Form label - Title (English Alternate)"
+description = "フォームラベル - タイトル (英語別名)"
 other = "Title (English Alternate)"
 
 [db_works_edit_media_label]
-description = "Form label - Media"
+description = "フォームラベル - メディア"
 other = "Media"
 
 [db_works_edit_season_year_label]
-description = "Form label - Release (Year)"
+description = "フォームラベル - リリース時期 (年)"
 other = "Release (Year)"
 
 [db_works_edit_season_name_label]
-description = "Form label - Release (Season)"
+description = "フォームラベル - リリース時期 (季節)"
 other = "Release (Season)"
 
 [db_works_edit_started_on_label]
-description = "Form label - Start Date"
+description = "フォームラベル - 開始日"
 other = "Start Date"
 
 [db_works_edit_ended_on_label]
-description = "Form label - End Date"
+description = "フォームラベル - 終了日"
 other = "End Date"
 
 [db_works_edit_official_site_url_label]
-description = "Form label - Official Site URL"
+description = "フォームラベル - 公式サイトURL"
 other = "Official Site URL"
 
 [db_works_edit_official_site_url_en_label]
-description = "Form label - Official Site URL (English)"
+description = "フォームラベル - 公式サイトURL (英語)"
 other = "Official Site URL (English)"
 
 [db_works_edit_wikipedia_url_label]
-description = "Form label - Wikipedia URL"
+description = "フォームラベル - Wikipedia URL"
 other = "Wikipedia URL"
 
 [db_works_edit_wikipedia_url_en_label]
-description = "Form label - Wikipedia URL (English)"
+description = "フォームラベル - Wikipedia URL (英語)"
 other = "Wikipedia URL (English)"
 
 [db_works_edit_twitter_username_label]
-description = "Form label - X Username"
+description = "フォームラベル - Xユーザー名"
 other = "X Username"
 
 [db_works_edit_twitter_hashtag_label]
-description = "Form label - Hashtag"
+description = "フォームラベル - ハッシュタグ"
 other = "Hashtag"
 
 [db_works_edit_sc_tid_label]
-description = "Form label - Syobocal TID"
+description = "フォームラベル - しょぼいカレンダーTID"
 other = "Syobocal TID"
 
 [db_works_edit_mal_anime_id_label]
-description = "Form label - MAL Anime ID"
+description = "フォームラベル - MAL Anime ID"
 other = "MAL Anime ID"
 
 [db_works_edit_synopsis_label]
-description = "Form label - Synopsis"
+description = "フォームラベル - あらすじ"
 other = "Synopsis"
 
 [db_works_edit_synopsis_source_label]
-description = "Form label - Synopsis Source"
+description = "フォームラベル - あらすじの引用元"
 other = "Synopsis Source"
 
 [db_works_edit_synopsis_en_label]
-description = "Form label - Synopsis (English)"
+description = "フォームラベル - あらすじ (英語)"
 other = "Synopsis (English)"
 
 [db_works_edit_synopsis_source_en_label]
-description = "Form label - Synopsis Source (English)"
+description = "フォームラベル - あらすじの引用元 (英語)"
 other = "Synopsis Source (English)"
 
 [db_works_edit_manual_episodes_count_label]
-description = "Form label - Expected Episodes"
+description = "フォームラベル - 予定総話数"
 other = "Expected Episodes"
 
 [db_works_edit_start_episode_raw_number_label]
-description = "Form label - Start Episode Raw Number"
+description = "フォームラベル - 開始エピソード番号"
 other = "Start Episode Raw Number"
 
 [db_works_edit_number_format_label]
-description = "Form label - Episode Number Format"
+description = "フォームラベル - 話数フォーマット"
 other = "Episode Number Format"
 
 [db_works_edit_no_episodes_label]
-description = "Form label - No Episodes"
+description = "フォームラベル - エピソードなし"
 other = "No Episodes"
 
 [db_works_edit_conflict_heading]
-description = "Heading of the stored values shown on a conflict on the work edit page"
+description = "作品編集ページで、競合時に表示する保存済みの内容の見出し"
 other = "Currently stored values"
 
 [db_works_edit_conflict_no_field_changes]
-description = "Explanation shown on a conflict where no field of this form differs"
+description = "作品編集ページで、競合したが本フォームの項目には違いが無かったときの説明"
 other = "No field of this form differs. Something outside the form, such as the publishing state, may have been changed."
 
 [db_works_edit_conflict_help]
-description = "Explanation of the available options on a conflict on the work edit page"
+description = "作品編集ページで、競合時に取りうる対処を述べる説明"
 other = "Your input is kept in the form below. Compare it with the currently stored values and, if your input is the one to keep, update again. To keep the stored values instead, leave the page without updating."
 
 [db_works_edit_conflict_checked]
-description = "Value shown for a checked checkbox in the conflict notice on the work edit page"
+description = "作品編集ページの競合の案内で、チェックボックスが入っている状態を表す値"
 other = "On"
 
 [db_works_edit_conflict_unchecked]
-description = "Value shown for an unchecked checkbox in the conflict notice on the work edit page"
+description = "作品編集ページの競合の案内で、チェックボックスが入っていない状態を表す値"
 other = "Off"
 
 [db_works_edit_submit]
-description = "Submit button on the edit work page"
+description = "作品編集ページの送信ボタン"
 other = "Update"
 
 [db_works_archive_new_title]
-description = "Title of the archive-confirmation page"
+description = "作品非公開確認ページのタイトル"
 other = "Archive Work"
 
 [db_works_archive_new_document_title]
-description = "Work-specific archive-confirmation document title"
+description = "作品を識別できる非公開確認ページの文書タイトル"
 other = "Archive Work | {{.WorkTitle}}"
 
 [db_works_archive_new_confirm_message]
-description = "Confirmation message on the archive-confirmation page"
+description = "非公開確認ページの確認メッセージ"
 other = "Archive “{{.Title}}”?"
 
 [db_works_archive_new_help]
-description = "Explanation of what archiving a work does, on the archive-confirmation page"
+description = "作品非公開確認ページで、非公開にすると何が起きるかを述べる説明"
 other = "An archived work no longer appears on the public pages. You can restore it later with “Publish” on the work list."
 
 [db_works_archive_new_submit]
-description = "Execute button on the archive-confirmation page"
+description = "非公開確認ページの実行ボタン"
 other = "Archive"
 
 [db_works_archive_new_cancel_link]
-description = "Cancel link on the archive-confirmation page"
+description = "非公開確認ページのキャンセルリンク"
 other = "Cancel"
 
 [db_works_unarchive_new_title]
-description = "Title of the publish-confirmation page"
+description = "作品公開確認ページのタイトル"
 other = "Publish Work"
 
 [db_works_unarchive_new_document_title]
-description = "Work-specific publish-confirmation document title"
+description = "作品を識別できる公開確認ページの文書タイトル"
 other = "Publish Work | {{.WorkTitle}}"
 
 [db_works_unarchive_new_confirm_message]
-description = "Confirmation message on the publish-confirmation page"
+description = "公開確認ページの確認メッセージ"
 other = "Publish “{{.Title}}”?"
 
 [db_works_unarchive_new_submit]
-description = "Execute button on the publish-confirmation page"
+description = "公開確認ページの実行ボタン"
 other = "Publish"
 
 [db_works_unarchive_new_cancel_link]
-description = "Cancel link on the publish-confirmation page"
+description = "公開確認ページのキャンセルリンク"
 other = "Cancel"
 
 [db_works_deletion_new_title]
-description = "Title of the delete-confirmation page"
+description = "作品削除確認ページのタイトル"
 other = "Delete Work"
 
 [db_works_deletion_new_document_title]
-description = "Work-specific delete-confirmation document title"
+description = "作品を識別できる削除確認ページの文書タイトル"
 other = "Delete Work | {{.WorkTitle}}"
 
 [db_works_deletion_new_confirm_message]
-description = "Confirmation message on the delete-confirmation page"
+description = "削除確認ページの確認メッセージ"
 other = "Delete “{{.Title}}”?"
 
 [db_works_deletion_new_submit]
-description = "Execute button on the delete-confirmation page"
+description = "削除確認ページの実行ボタン"
 other = "Delete"
 
 [db_works_deletion_new_cancel_link]
-description = "Cancel link on the delete-confirmation page"
+description = "削除確認ページのキャンセルリンク"
 other = "Cancel"
 
-# Flash messages - DB works related
+# フラッシュメッセージ - DB作品関連
 [flash_db_work_created]
-description = "Work creation success message"
+description = "作品作成成功メッセージ"
 other = "Work has been created successfully"
 
 [flash_db_work_updated]
-description = "Work update success message"
+description = "作品更新成功メッセージ"
 other = "Work has been updated successfully"
 
 [flash_db_work_archived]
-description = "Work archive success message"
+description = "作品非公開成功メッセージ"
 other = "Work has been archived successfully"
 
 [flash_db_work_published]
-description = "Work re-publish success message"
+description = "作品再公開成功メッセージ"
 other = "Work has been published successfully"
 
 [flash_db_work_deleted]
-description = "Work deletion success message"
+description = "作品削除成功メッセージ"
 other = "Work has been deleted successfully"
 
 [flash_db_episodes_created]
-description = "Episode bulk creation success message"
+description = "エピソード一括作成成功メッセージ"
 other = "Episodes have been created successfully"
 
 [flash_db_episode_updated]
-description = "Episode update success message"
+description = "エピソード更新成功メッセージ"
 other = "Episode has been updated successfully"
 
 [flash_db_episode_archived]
-description = "Episode archive success message"
+description = "エピソード非公開成功メッセージ"
 other = "Episode has been archived successfully"
 
 [flash_db_episode_published]
-description = "Episode re-publish success message"
+description = "エピソード再公開成功メッセージ"
 other = "Episode has been published successfully"
 
 [flash_db_episode_deleted]
-description = "Episode deletion success message"
+description = "エピソード削除成功メッセージ"
 other = "Episode has been deleted successfully"
 
-# Validation common messages
+# バリデーション共通メッセージ
 [validation_required]
-description = "Required field validation error"
+description = "必須フィールドのバリデーションエラー"
 other = "Please enter a value"
 
 [validation_media_invalid]
-description = "Media value is invalid"
+description = "メディア種別の値が不正"
 other = "Invalid media type"
 
 [validation_url_invalid]
-description = "URL format is invalid"
+description = "URL形式が不正"
 other = "URL format is invalid"
 
 [validation_integer_invalid]
-description = "Value is not a valid integer"
+description = "整数値ではない"
 other = "Please enter an integer"
 
 [validation_synopsis_source_required]
-description = "Synopsis source is required when synopsis is provided"
+description = "あらすじを入力した場合は出典も必須"
 other = "Please enter a source when synopsis is provided"
 
 [validation_synopsis_source_en_required]
-description = "English synopsis source is required when English synopsis is provided"
+description = "英語のあらすじを入力した場合は出典も必須"
 other = "Please enter a source when English synopsis is provided"
 
 [validation_number_invalid]
-description = "Value is not a valid number"
+description = "数値ではない"
 other = "Please enter a number"
 
 [validation_date_invalid]
-description = "Date format is invalid"
+description = "日付形式が不正"
 other = "Please enter a valid date"
 
 [validation_season_name_invalid]
-description = "Release season is outside the allowed values"
+description = "リリース時期の季節が許可値の範囲外"
 other = "Please select a valid season"
 
 [validation_number_format_invalid]
-description = "Episode number format is not registered"
+description = "話数フォーマットが登録されていない"
 other = "Please select a valid episode number format"
 
 [validation_too_long]
-description = "Value exceeds the maximum length"
+description = "文字数の上限を超えている"
 other = "Please enter no more than {{.MaxLength}} characters"
 
 [validation_version_missing]
-description = "The submit did not carry the version the form holds"
+description = "フォームが持ち回る版が送信に含まれていない"
 other = "The record being edited could not be identified. Please open the edit page again and retry"
 
 [validation_version_conflict]
-description = "Another editor updated the same record after the form was opened"
+description = "フォームを開いた後に他の編集者が同じデータを更新していた"
 other = "Another editor has updated this record, so your input was not saved. Review the currently stored values and decide which of the two to keep"
 
 [validation_record_busy]
-description = "The submit overlapped another write and could not be saved (the stored values are unchanged)"
+description = "他の書き込みと重なって保存できなかった (保存済みの内容は変わっていない)"
 other = "Your input was not saved because it overlapped with another update. The stored values have not changed, so please submit it again as it is"
 
 [validation_work_title_already_taken]
-description = "A work with the same title is already registered"
+description = "同じタイトルの作品が既に登録されている"
 other = "A work with this title is already registered"
 
 [validation_episode_row_error]
-description = "Format that prefixes an episode row error with its line number"
+description = "エピソードの行入力のエラーに行番号を添える書式"
 other = "Line {{.Line}}: {{.Message}}"
 
 [validation_episode_rows_too_many]
-description = "The episode bulk-create form contains more rows than one submit accepts"
+description = "エピソード一括作成フォームの行数が1回の上限を超えている"
 other = "Please enter no more than {{.MaxRows}} episodes at a time"
 
 [validation_episode_manual_creation_episodes_filled]
-description = "A submit targets a work that already has its expected number of episodes"
+description = "予定話数までエピソードが登録済みの作品にエピソードを登録しようとした"
 other = "Episodes cannot be registered because the expected number of episodes has already been reached"
 
 [validation_episode_manual_creation_slots_exist]
-description = "A submit targets a work whose episodes are generated from its broadcast schedules"
+description = "放送予定からエピソードが自動生成される作品にエピソードを手動で登録しようとした"
 other = "Episodes cannot be registered manually because broadcast schedules exist"
 
 [validation_episode_row_number_or_title_required]
-description = "An episode row carries neither a display number nor a title"
+description = "エピソードの行に表示用話数もタイトルも入力されていない"
 other = "Please enter a display number or a title"
 
 [validation_episode_row_number_too_long]
-description = "The display number of an episode row exceeds the maximum length"
+description = "エピソードの行の表示用話数が文字数の上限を超えている"
 other = "Please enter a display number of no more than {{.MaxLength}} characters"
 
 [validation_episode_row_title_too_long]
-description = "The title of an episode row exceeds the maximum length"
+description = "エピソードの行のタイトルが文字数の上限を超えている"
 other = "Please enter a title of no more than {{.MaxLength}} characters"
 
 [validation_episode_row_raw_number_invalid]
-description = "The numeric number of an episode row is not a number"
+description = "エピソードの行の数値話数が数値ではない"
 other = "Please enter a number for the numeric number"
 
 [media_tv]
-description = "Media type - TV"
+description = "メディア種別 - TV"
 other = "TV"
 
 [media_ova]
-description = "Media type - OVA"
+description = "メディア種別 - OVA"
 other = "OVA"
 
 [media_movie]
-description = "Media type - Movie"
+description = "メディア種別 - 映画"
 other = "Movie"
 
 [media_web]
-description = "Media type - Web"
+description = "メディア種別 - Web"
 other = "Web"
 
 [media_other]
-description = "Media type - Other"
+description = "メディア種別 - その他"
 other = "Other"
 
-# Footer related
+# フッター関連
 [footer_terms]
-description = "Footer - Terms"
+description = "フッター - 利用規約"
 other = "Terms of Service"
 
 [footer_privacy]
-description = "Footer - Privacy"
+description = "フッター - プライバシーポリシー"
 other = "Privacy Policy"
 
 [footer_legal]
-description = "Footer - Legal"
+description = "フッター - 特商法表記"
 other = "Legal Notice"
 
-# Common error messages
+# エラー共通メッセージ
 [error_forbidden]
-description = "Message shown when the user may not perform the operation"
+description = "操作する権限が無い場合のエラーメッセージ"
 other = "You do not have permission to perform this operation"
 
 [error_user_not_found]
-description = "Message shown when a user is not found"
+description = "ユーザーが見つからない場合のエラーメッセージ"
 other = "User not found"
 
 [error_work_not_found]
-description = "Message shown when a work is not found"
+description = "作品が見つからない場合のエラーメッセージ"
 other = "Work not found"
 
 [error_episode_not_found]
-description = "Message shown when an episode is not found"
+description = "エピソードが見つからない場合のエラーメッセージ"
 other = "Episode not found"
 
 [error_not_found_title]
-description = "Title of the generic 404 error page"
+description = "汎用404エラーページのタイトル"
 other = "Page not found"
 
 [error_not_found_message]
-description = "Explanation on the generic 404 error page"
+description = "汎用404エラーページの説明"
 other = "The page may have been moved or deleted."
 
 [error_forbidden_title]
-description = "Title of the generic 403 error page"
+description = "汎用403エラーページのタイトル"
 other = "Access denied"
 
 [error_forbidden_message]
-description = "Explanation on the generic 403 error page"
+description = "汎用403エラーページの説明"
 other = "You do not have permission to perform this operation."
 
 [error_bad_gateway_title]
-description = "Title of the generic 502 error page"
+description = "汎用502エラーページのタイトル"
 other = "Cannot connect to the service"
 
 [error_bad_gateway_message]
-description = "Explanation on the generic 502 error page"
+description = "汎用502エラーページの説明"
 other = "Please try again later."
 
 [error_internal_server_title]
-description = "Title of the generic 500 error page"
+description = "汎用500エラーページのタイトル"
 other = "Something went wrong"
 
 [error_internal_server_message]
-description = "Explanation on the generic 500 error page"
+description = "汎用500エラーページの説明"
 other = "Please try again later."
 
 [error_invalid_csrf_token_title]
-description = "Title of the error page shown when CSRF verification fails"
+description = "CSRF検証に失敗したときのエラーページのタイトル"
 other = "Could not submit the form"
 
 [error_invalid_csrf_token_message]
-description = "Explanation on the error page shown when CSRF verification fails"
+description = "CSRF検証に失敗したときのエラーページの説明"
 other = "The page may have been left open too long, or you may have signed in again in another tab. Please reopen the page and submit again."
 
 [error_back_to_home]
-description = "Link from a generic error page to the home page"
+description = "汎用エラーページからホームへ戻るリンク"
 other = "Back to Home"

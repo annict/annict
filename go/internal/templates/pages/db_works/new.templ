@@ -19,25 +19,16 @@ func (d NewPageData) hasFieldError(field string) bool {
 	return d.FormErrors != nil && d.FormErrors.HasFieldError(field)
 }
 
-// hasErrors reports whether the submit failed. It decides where the page starts out
-// focused: on a fresh form the title gets the caret, and after a failed submit the error
-// summary takes it instead, so the two never claim autofocus at the same time.
-//
-// [Ja] hasErrors は送信が失敗したかどうかを返す。ページの初期フォーカス位置の判断に使う。
+// hasErrorsは送信が失敗したかどうかを返す。ページの初期フォーカス位置の判断に使う。
 // 新しいフォームではタイトル欄が、送信が失敗した後はエラー要約がフォーカスを受け取り、
-// 両者が同時に autofocus を主張しないようにする。
+// 両者が同時にautofocusを主張しないようにする。
 func (d NewPageData) hasErrors() bool {
 	return d.FormErrors.HasErrors()
 }
 
-// newSummaryFields lists the fields the error summary can name, in the order this form shows
-// them, paired with the labels it displays. The labels are looked up with literal keys rather
-// than keys assembled from the field name, so every translation key stays greppable from the
-// place that uses it.
-//
-// [Ja] newSummaryFields はエラー要約が名指しできるフィールドを、本フォームが表示する順で、
+// newSummaryFieldsはエラー要約が名指しできるフィールドを、本フォームが表示する順で、
 // 表示中のラベルと対にして並べる。ラベルはフィールド名から組み立てたキーではなく直書きの
-// キーで引く。翻訳キーを使用箇所から grep で追える状態に保つため。
+// キーで引く。翻訳キーを使用箇所からgrepで追える状態に保つため。
 func newSummaryFields(ctx context.Context) []components.FormErrorField {
 	return []components.FormErrorField{
 		{Name: "title", Label: templates.T(ctx, "db_works_new_title_label")},
@@ -469,10 +460,7 @@ templ New(data NewPageData) {
 								value={ data.FormInput.Val("twitter_username") }
 							/>
 
-							// templ reads a bare @ as the start of a component call, so the prefix is
-							// written as a string expression.
-							//
-							// [Ja] templ は素の @ をコンポーネント呼び出しの開始として読むため、接頭辞は
+							// templは素の @ をコンポーネント呼び出しの開始として読むため、接頭辞は
 							// 文字列式として書く。
 							<span id="twitter_username-prefix" data-align="start">{ "@" }</span>
 						</div>
@@ -531,12 +519,7 @@ templ New(data NewPageData) {
 							</label>
 							@formLabelExternalLink(templates.T(ctx, "db_works_new_sc_tid_label"), data.FormInput.LabelLinkURL("sc_tid"))
 						</div>
-						// The numeric fields of this form stay text and ask the touch keyboard for a
-						// keypad. A rejected submit is re-rendered with whatever was typed, and
-						// type="number" would show that value as an empty field whenever the browser
-						// cannot parse it, taking away the input the editor has to correct.
-						//
-						// [Ja] 本フォームの数値の欄は text の入力欄のままタッチキーボードにキーパッドを
+						// 本フォームの数値の欄はtextの入力欄のままタッチキーボードにキーパッドを
 						// 要求する。却下された送信は入力された内容のまま再描画するが、type="number" は
 						// ブラウザーがパースできない値を空の欄として表示するため、編集者が直すべき入力が
 						// 失われてしまう。
@@ -795,11 +778,7 @@ templ New(data NewPageData) {
 	</div>
 }
 
-// newBackToListLink renders the action shown beside the new form's heading: a link back to
-// the work list. The new page has no work yet to link out to, so returning to the list is
-// the action that belongs in the title row.
-//
-// [Ja] newBackToListLink は新規フォームの見出しの横に表示する操作を描画する。作品一覧へ戻る
+// newBackToListLinkは新規フォームの見出しの横に表示する操作を描画する。作品一覧へ戻る
 // リンクで、新規画面にはまだリンク先となる作品が無いため、タイトル行に置く操作は一覧へ戻る
 // ことになる。
 templ newBackToListLink() {

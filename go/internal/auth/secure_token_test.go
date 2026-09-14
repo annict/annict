@@ -25,7 +25,7 @@ func TestGenerateSecureToken(t *testing.T) {
 		// 24バイトのランダムデータをBase64 URL-safeエンコードすると32文字になる
 		expectedLen := 32
 		if len(token) != expectedLen {
-			t.Errorf("トークンの長さが正しくありません: got %d want %d", len(token), expectedLen)
+			t.Errorf("トークンの長さ = %d、期待値 = %d", len(token), expectedLen)
 		}
 	})
 
@@ -35,7 +35,7 @@ func TestGenerateSecureToken(t *testing.T) {
 			t.Fatalf("予期しないエラー: %v", err)
 		}
 
-		// Base64 URL-safe デコードが成功することを確認
+		// Base64 URL-safeデコードが成功することを確認
 		decoded, err := base64.RawURLEncoding.DecodeString(token)
 		if err != nil {
 			t.Errorf("Base64デコードに失敗しました: %v", err)
@@ -43,7 +43,7 @@ func TestGenerateSecureToken(t *testing.T) {
 
 		// デコード後のバイト数が24バイトであることを確認
 		if len(decoded) != 24 {
-			t.Errorf("デコード後のバイト数が正しくありません: got %d want 24", len(decoded))
+			t.Errorf("デコード後のバイト数 = %d、期待値 = 24", len(decoded))
 		}
 	})
 
@@ -59,7 +59,7 @@ func TestGenerateSecureToken(t *testing.T) {
 		}
 
 		if token1 == token2 {
-			t.Error("同じトークンが生成されました（ランダム性が失われています）")
+			t.Error("同じトークンが生成されました (ランダム性が失われています)")
 		}
 	})
 
@@ -80,7 +80,7 @@ func TestGenerateSecureToken(t *testing.T) {
 		}
 
 		if len(tokens) != iterations {
-			t.Errorf("生成されたユニークなトークン数が正しくありません: got %d want %d", len(tokens), iterations)
+			t.Errorf("生成されたユニークなトークン数 = %d、期待値 = %d", len(tokens), iterations)
 		}
 	})
 }

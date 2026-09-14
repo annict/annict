@@ -26,7 +26,7 @@ const (
 	EventInvoicePaymentFailed        = "invoice.payment_failed"
 )
 
-// ProcessStripeWebhookUsecase はStripe Webhookイベントを処理するユースケースです
+// ProcessStripeWebhookUsecaseはStripe Webhookイベントを処理するユースケースです
 type ProcessStripeWebhookUsecase struct {
 	stripeWebhookEventRepo   *repository.StripeWebhookEventRepository
 	createStripeSubscriberUC *CreateStripeSubscriberUsecase
@@ -34,7 +34,7 @@ type ProcessStripeWebhookUsecase struct {
 	deleteStripeSubscriberUC *DeleteStripeSubscriberUsecase
 }
 
-// NewProcessStripeWebhookUsecase は新しいProcessStripeWebhookUsecaseを作成します
+// NewProcessStripeWebhookUsecaseは新しいProcessStripeWebhookUsecaseを作成します
 func NewProcessStripeWebhookUsecase(
 	stripeWebhookEventRepo *repository.StripeWebhookEventRepository,
 	createStripeSubscriberUC *CreateStripeSubscriberUsecase,
@@ -49,21 +49,21 @@ func NewProcessStripeWebhookUsecase(
 	}
 }
 
-// ProcessStripeWebhookInput はユースケースの入力です
+// ProcessStripeWebhookInputはユースケースの入力です
 type ProcessStripeWebhookInput struct {
 	Event *stripe.Event
 }
 
-// ProcessStripeWebhookOutput はユースケースの出力です
+// ProcessStripeWebhookOutputはユースケースの出力です
 type ProcessStripeWebhookOutput struct {
 	Skipped bool // 冪等性チェックによりスキップされた場合true
 }
 
-// Execute はStripe Webhookイベントを処理します
+// ExecuteはStripe Webhookイベントを処理します
 //
 // 処理フロー:
-// 1. 冪等性チェック（既に処理済みのイベントはスキップ）
-// 2. 新規イベントをDBに保存（status=pending）
+// 1. 冪等性チェック (既に処理済みのイベントはスキップ)
+// 2. 新規イベントをDBに保存 (status=pending)
 // 3. イベントタイプに応じた処理を実行
 // 4. 処理結果に応じてステータスを更新
 func (uc *ProcessStripeWebhookUsecase) Execute(ctx context.Context, input ProcessStripeWebhookInput) (*ProcessStripeWebhookOutput, error) {
@@ -85,7 +85,7 @@ func (uc *ProcessStripeWebhookUsecase) Execute(ctx context.Context, input Proces
 		// 既存のイベントが見つかった場合
 		status := model.WebhookEventStatus(existingEvent.Status)
 
-		// processed または skipped の場合はスキップ
+		// processedまたはskippedの場合はスキップ
 		if status == model.WebhookEventStatusProcessed || status == model.WebhookEventStatusSkipped {
 			slog.InfoContext(ctx, "既に処理済みのイベントのためスキップ",
 				"stripe_event_id", event.ID,
@@ -94,14 +94,14 @@ func (uc *ProcessStripeWebhookUsecase) Execute(ctx context.Context, input Proces
 			return &ProcessStripeWebhookOutput{Skipped: true}, nil
 		}
 
-		// pending または failed の場合は再処理を試みる
+		// pendingまたはfailedの場合は再処理を試みる
 		slog.InfoContext(ctx, "未完了のイベントを再処理します",
 			"stripe_event_id", event.ID,
 			"status", existingEvent.Status,
 		)
 		webhookEventID = model.StripeWebhookEventID(existingEvent.ID)
 	} else {
-		// 新規イベントの場合はDBに保存（status=pending）
+		// 新規イベントの場合はDBに保存 (status=pending)
 		payloadJSON, err := json.Marshal(event)
 		if err != nil {
 			slog.ErrorContext(ctx, "イベントペイロードのJSON変換に失敗",
@@ -152,7 +152,7 @@ func (uc *ProcessStripeWebhookUsecase) Execute(ctx context.Context, input Proces
 	return &ProcessStripeWebhookOutput{}, nil
 }
 
-// processEvent はイベントタイプに応じた処理を実行します
+// processEventはイベントタイプに応じた処理を実行します
 func (uc *ProcessStripeWebhookUsecase) processEvent(ctx context.Context, event *stripe.Event, webhookEventID model.StripeWebhookEventID) error {
 	switch event.Type {
 	case EventCheckoutSessionCompleted:
@@ -195,7 +195,7 @@ func (uc *ProcessStripeWebhookUsecase) processEvent(ctx context.Context, event *
 	}
 }
 
-// handleCheckoutSessionCompleted はcheckout.session.completedイベントを処理します
+// handleCheckoutSessionCompletedはcheckout.session.completedイベントを処理します
 func (uc *ProcessStripeWebhookUsecase) handleCheckoutSessionCompleted(ctx context.Context, event *stripe.Event, webhookEventID model.StripeWebhookEventID) error {
 	slog.InfoContext(ctx, "checkout.session.completedイベントを受信",
 		"stripe_event_id", event.ID,
@@ -206,7 +206,7 @@ func (uc *ProcessStripeWebhookUsecase) handleCheckoutSessionCompleted(ctx contex
 		return fmt.Errorf("チェックアウトセッションのパースに失敗: %w", err)
 	}
 
-	// サブスクリプションIDがない場合はスキップ（一回限りの支払いなど）
+	// サブスクリプションIDがない場合はスキップ (一回限りの支払いなど)
 	if session.Subscription == nil {
 		slog.InfoContext(ctx, "サブスクリプションIDがないためスキップ",
 			"stripe_event_id", event.ID,
@@ -217,13 +217,9 @@ func (uc *ProcessStripeWebhookUsecase) handleCheckoutSessionCompleted(ctx contex
 		return nil
 	}
 
-	// Stripe may omit customer on a session, so guard before dereferencing
-	// session.Customer.ID below. A missing customer means we cannot link the
-	// subscription to a user, so skip the event safely instead of panicking.
-	//
-	// [Ja] Stripe はセッションで customer を欠落させて送ることがあるため、後段の
-	// session.Customer.ID 参照より前にガードする。customer が無いとサブスクリプションを
-	// ユーザーに紐付けられないため、panic させずイベントを安全にスキップする。
+	// Stripeはセッションでcustomerを欠落させて送ることがあるため、後段の
+	// session.Customer.ID参照より前にガードする。customerが無いとサブスクリプションを
+	// ユーザーに紐付けられないため、panicさせずイベントを安全にスキップする。
 	if session.Customer == nil {
 		slog.InfoContext(ctx, "顧客IDがないためスキップ",
 			"stripe_event_id", event.ID,
@@ -263,7 +259,7 @@ func (uc *ProcessStripeWebhookUsecase) handleCheckoutSessionCompleted(ctx contex
 	return nil
 }
 
-// handleCustomerSubscriptionUpdated はcustomer.subscription.updatedイベントを処理します
+// handleCustomerSubscriptionUpdatedはcustomer.subscription.updatedイベントを処理します
 func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionUpdated(ctx context.Context, event *stripe.Event, webhookEventID model.StripeWebhookEventID) error {
 	slog.InfoContext(ctx, "customer.subscription.updatedイベントを受信",
 		"stripe_event_id", event.ID,
@@ -300,11 +296,8 @@ func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionUpdated(ctx con
 
 	result, err := uc.updateStripeSubscriberUC.Execute(ctx, input)
 	if err != nil {
-		// The update usecase wraps repository errors, so the not-found case must be
-		// detected via errors.Is on the sentinel rather than == sql.ErrNoRows.
-		//
-		// [Ja] update ユースケースはリポジトリのエラーをラップするため、未存在判定は
-		// == sql.ErrNoRows ではなく sentinel に対する errors.Is で行う。
+		// updateユースケースはリポジトリのエラーをラップするため、未存在判定は
+		// == sql.ErrNoRowsではなくsentinelに対するerrors.Isで行う。
 		if errors.Is(err, ErrStripeSubscriberNotFound) {
 			slog.WarnContext(ctx, "対応するStripeSubscriberが見つからないためスキップ",
 				"stripe_event_id", event.ID,
@@ -331,7 +324,7 @@ func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionUpdated(ctx con
 	return nil
 }
 
-// handleCustomerSubscriptionDeleted はcustomer.subscription.deletedイベントを処理します
+// handleCustomerSubscriptionDeletedはcustomer.subscription.deletedイベントを処理します
 func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionDeleted(ctx context.Context, event *stripe.Event, webhookEventID model.StripeWebhookEventID) error {
 	slog.InfoContext(ctx, "customer.subscription.deletedイベントを受信",
 		"stripe_event_id", event.ID,
@@ -349,11 +342,8 @@ func (uc *ProcessStripeWebhookUsecase) handleCustomerSubscriptionDeleted(ctx con
 
 	result, err := uc.deleteStripeSubscriberUC.Execute(ctx, input)
 	if err != nil {
-		// The delete usecase wraps repository errors, so the not-found case must be
-		// detected via errors.Is on the sentinel rather than == sql.ErrNoRows.
-		//
-		// [Ja] delete ユースケースはリポジトリのエラーをラップするため、未存在判定は
-		// == sql.ErrNoRows ではなく sentinel に対する errors.Is で行う。
+		// deleteユースケースはリポジトリのエラーをラップするため、未存在判定は
+		// == sql.ErrNoRowsではなくsentinelに対するerrors.Isで行う。
 		if errors.Is(err, ErrStripeSubscriberNotFound) {
 			slog.WarnContext(ctx, "対応するStripeSubscriberが見つからないためスキップ",
 				"stripe_event_id", event.ID,

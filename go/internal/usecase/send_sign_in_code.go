@@ -16,7 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// SendSignInCodeUsecase はサインインの入力検証・ユーザー検索・ログインコード送信を担当するユースケースです
+// SendSignInCodeUsecaseはサインインの入力検証・ユーザー検索・ログインコード送信を担当するユースケースです
 type SendSignInCodeUsecase struct {
 	db             *sql.DB
 	signInCodeRepo *repository.SignInCodeRepository
@@ -25,7 +25,7 @@ type SendSignInCodeUsecase struct {
 	validator      *validator.SignInCreateValidator
 }
 
-// NewSendSignInCodeUsecase は新しいSendSignInCodeUsecaseを作成します
+// NewSendSignInCodeUsecaseは新しいSendSignInCodeUsecaseを作成します
 func NewSendSignInCodeUsecase(
 	db *sql.DB,
 	signInCodeRepo *repository.SignInCodeRepository,
@@ -42,20 +42,20 @@ func NewSendSignInCodeUsecase(
 	}
 }
 
-// SendSignInCodeInput はユースケースの入力パラメータです
+// SendSignInCodeInputはユースケースの入力パラメータです
 type SendSignInCodeInput struct {
 	Email string
 }
 
-// SendSignInCodeOutput はユースケースの結果を表します
+// SendSignInCodeOutputはユースケースの結果を表します
 type SendSignInCodeOutput struct {
 	UserID      model.UserID // ユーザーID
 	Email       string       // メールアドレス
 	HasPassword bool         // パスワードログインを使用するかどうか
-	Code        string       // 平文コード（テスト用、コードログインの場合のみ）
+	Code        string       // 平文コード (テスト用、コードログインの場合のみ)
 }
 
-// Execute はサインインの入力検証・ユーザー検索を行い、パスワードなしユーザーの場合はコードを生成・送信します
+// Executeはサインインの入力検証・ユーザー検索を行い、パスワードなしユーザーの場合はコードを生成・送信します
 func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCodeInput) (*SendSignInCodeOutput, error) {
 	// 1. バリデーション
 	if err := uc.validator.Validate(ctx, validator.SignInCreateValidatorInput{
@@ -107,7 +107,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 	}, nil
 }
 
-// generateAndSendCode は6桁のログインコードを生成し、メール送信ジョブをエンキューします
+// generateAndSendCodeは6桁のログインコードを生成し、メール送信ジョブをエンキューします
 func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID model.UserID, email string) (string, error) {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -135,7 +135,7 @@ func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID
 		return "", fmt.Errorf("コードのハッシュ化に失敗: %w", err)
 	}
 
-	// コードをデータベースに保存（有効期限: 15分）
+	// コードをデータベースに保存 (有効期限: 15分)
 	if _, err := signInCodeRepoTx.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: codeDigest,
@@ -174,7 +174,7 @@ func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID
 			}
 		}
 	} else {
-		slog.WarnContext(ctx, "Dispatcher が設定されていないため、メール送信ジョブをエンキューできませんでした",
+		slog.WarnContext(ctx, "Dispatcherが設定されていないため、メール送信ジョブをエンキューできませんでした",
 			"user_id", userID,
 		)
 	}

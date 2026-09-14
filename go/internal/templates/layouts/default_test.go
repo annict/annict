@@ -69,11 +69,7 @@ func TestDefault_Rendering(t *testing.T) {
 	}
 }
 
-// TestDefault_FullHeightFollowsVisibleViewport verifies the content column is sized by the
-// visible viewport height, so a mobile toolbar cannot push the footer below the visible area
-// on short pages.
-//
-// [Ja] TestDefault_FullHeightFollowsVisibleViewport は本文の段組みの高さが可視ビューポートに
+// TestDefault_FullHeightFollowsVisibleViewportは本文の段組みの高さが可視ビューポートに
 // 追随することを検証する。内容が短いページで、モバイルのツールバー表示時にフッターが可視領域の
 // 下へ押し出されることを防ぐ。
 func TestDefault_FullHeightFollowsVisibleViewport(t *testing.T) {
@@ -103,15 +99,13 @@ func TestDefault_FullHeightFollowsVisibleViewport(t *testing.T) {
 
 	html := buf.String()
 
-	// The whole class attribute is pinned, so a switch back to the static unit fails here.
-	//
-	// [Ja] class 属性全体を固定するため、静的な単位へ戻せばここで落ちる。
+	// class属性全体を固定するため、静的な単位へ戻せばここで落ちる。
 	if !strings.Contains(html, `<div class="flex-1 flex flex-col min-h-dvh">`) {
-		t.Error("本文の段組みのフルハイト指定が min-h-dvh になっていません")
+		t.Error("本文の段組みのフルハイト指定がmin-h-dvhになっていません")
 	}
 }
 
-// TestDefault_WithUser ユーザー情報が正しく表示されることを確認
+// TestDefault_WithUserユーザー情報が正しく表示されることを確認
 func TestDefault_WithUser(t *testing.T) {
 	t.Parallel()
 
@@ -127,7 +121,7 @@ func TestDefault_WithUser(t *testing.T) {
 
 	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
-	// テストユーザー（viewmodel.User）
+	// テストユーザー (viewmodel.User)
 	user := &viewmodel.User{
 		ID:       1,
 		Username: "testuser",
@@ -162,7 +156,7 @@ func TestDefault_WithUser(t *testing.T) {
 	}
 }
 
-// TestDefault_WithoutUser 未ログイン時の表示を確認
+// TestDefault_WithoutUser未ログイン時の表示を確認
 func TestDefault_WithoutUser(t *testing.T) {
 	t.Parallel()
 
@@ -202,7 +196,7 @@ func TestDefault_WithoutUser(t *testing.T) {
 	}
 }
 
-// TestDefault_WithFlash フラッシュメッセージが表示されることを確認
+// TestDefault_WithFlashフラッシュメッセージが表示されることを確認
 func TestDefault_WithFlash(t *testing.T) {
 	t.Parallel()
 
@@ -239,7 +233,7 @@ func TestDefault_WithFlash(t *testing.T) {
 	}
 }
 
-// TestDefault_I18n 国際化対応が正しく動作することを確認
+// TestDefault_I18n国際化対応が正しく動作することを確認
 func TestDefault_I18n(t *testing.T) {
 	t.Parallel()
 

@@ -13,14 +13,9 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// newCreateEpisodesUsecase wires the bulk-create usecase against the shared test DB. The
-// usecase opens its own transaction, so its tests use GetTestDB (not SetupTx) so the
-// committed rows are visible to the usecase's inner transaction and to the follow-up sync
-// invariant check.
-//
-// [Ja] newCreateEpisodesUsecase は共有テスト DB に対して一括作成 UseCase を組み立てる。
-// 本 UseCase は内部で自前のトランザクションを開くため、テストは SetupTx ではなく GetTestDB を
-// 使い、コミット済みの行が UseCase の内側トランザクションと後続の同期不変条件チェックから
+// newCreateEpisodesUsecaseは共有テストDBに対して一括作成UseCaseを組み立てる。
+// 本UseCaseは内部で自前のトランザクションを開くため、テストはSetupTxではなくGetTestDBを
+// 使い、コミット済みの行がUseCaseの内側トランザクションと後続の同期不変条件チェックから
 // 見えるようにする。
 func newCreateEpisodesUsecase(db *sql.DB) *CreateEpisodesUsecase {
 	queries := query.New(db)
@@ -34,21 +29,13 @@ func newCreateEpisodesUsecase(db *sql.DB) *CreateEpisodesUsecase {
 	)
 }
 
-// createEpisodesSeasonYear keeps the works these tests commit out of the "no season" bucket
-// the work list counts globally. The rows are committed to the shared test DB and outlive the
-// test, so they are visible to the sibling packages running at the same time; a work with no
-// season would be counted by the list's no-season filter there.
-//
-// [Ja] createEpisodesSeasonYear は、本テスト群がコミットする作品を、作品一覧が全体に対して
-// 数える「シーズン未設定」の集合から外すためのもの。行は共有テスト DB にコミットされテストの
+// createEpisodesSeasonYearは、本テスト群がコミットする作品を、作品一覧が全体に対して
+// 数える「シーズン未設定」の集合から外すためのもの。行は共有テストDBにコミットされテストの
 // 寿命を超えて残るため、同時に走る他パッケージからも見える。シーズンの無い作品は、そちらの
 // 一覧のシーズン未設定フィルタに数えられてしまう。
 const createEpisodesSeasonYear = 1903
 
-// insertCreateActor inserts the user a bulk-create test submits as, committed to the shared
-// pool so the use case's own transaction can attribute its rows to it.
-//
-// [Ja] insertCreateActor は一括作成テストの送信者となるユーザーを、UseCase 自身の
+// insertCreateActorは一括作成テストの送信者となるユーザーを、UseCase自身の
 // トランザクションから行を帰属させられるよう共有プールにコミットして挿入する。
 func insertCreateActor(t *testing.T, db *sql.DB, role int32) *model.User {
 	t.Helper()
@@ -67,40 +54,27 @@ func insertCreateActor(t *testing.T, db *sql.DB, role int32) *model.User {
 	return &model.User{ID: userID, Role: role}
 }
 
-// unsavedCreateActor returns an editor for submits that are refused before anything is
-// written, so the tests covering those paths do not have to commit a user to the shared DB.
-//
-// [Ja] unsavedCreateActor は、何も書かれる前に却下される送信のための編集者を返す。その経路を
-// 検証するテストが共有 DB にユーザーをコミットせずに済むようにする。
+// unsavedCreateActorは、何も書かれる前に却下される送信のための編集者を返す。その経路を
+// 検証するテストが共有DBにユーザーをコミットせずに済むようにする。
 func unsavedCreateActor() *model.User {
 	return &model.User{ID: 1, Role: model.RoleEditor}
 }
 
-// deleteCreateActor removes a user inserted by insertCreateActor. The activities the submits
-// recorded reference the user, so they go first; the rest of the user's rows are removed by
-// the builder's own teardown.
-//
-// [Ja] deleteCreateActor は insertCreateActor が挿入したユーザーを削除する。送信が記録した
-// 活動履歴がユーザーを参照するため先に消し、残りのユーザーの行は builder 側の後始末に任せる。
+// deleteCreateActorはinsertCreateActorが挿入したユーザーを削除する。送信が記録した
+// 活動履歴がユーザーを参照するため先に消し、残りのユーザーの行はbuilder側の後始末に任せる。
 func deleteCreateActor(t *testing.T, db *sql.DB, userID model.UserID) {
 	t.Helper()
 
 	if _, err := db.Exec(`DELETE FROM db_activities WHERE user_id = $1`, int64(userID)); err != nil {
-		t.Errorf("DB 活動履歴の後始末に失敗: %v", err)
+		t.Errorf("DB活動履歴の後始末に失敗: %v", err)
 	}
 	testutil.DeleteUser(t, db, userID)
 }
 
-// insertCreateTargetWork inserts the parent work a bulk-create test submits rows under and
-// attempts to remove it and its episodes when the test ends. If another package has committed
-// references to those episodes, the failed cleanup is logged and the rows remain until the next
-// test DB reset. animeID is the works.anime_id mapping column; pass an invalid NullInt64 for a
-// work that is not mapped yet.
-//
-// [Ja] insertCreateTargetWork は一括作成テストが行を送信する親作品を挿入し、テスト終了時に
+// insertCreateTargetWorkは一括作成テストが行を送信する親作品を挿入し、テスト終了時に
 // その作品とエピソードの削除を試みる。他パッケージがエピソードへの参照をコミット済みの場合は、
-// 失敗をログに残し、行は次回のテスト DB リセットまで残す。animeID は works.anime_id の
-// マッピングカラムで、まだマッピングされていない作品には無効な NullInt64 を渡す。
+// 失敗をログに残し、行は次回のテストDBリセットまで残す。animeIDはworks.anime_idの
+// マッピングカラムで、まだマッピングされていない作品には無効なNullInt64を渡す。
 func insertCreateTargetWork(t *testing.T, db *sql.DB, animeID sql.NullInt64) model.WorkID {
 	t.Helper()
 
@@ -110,7 +84,7 @@ func insertCreateTargetWork(t *testing.T, db *sql.DB, animeID sql.NullInt64) mod
 		VALUES ($1, $2, 1.0, $3, 1, $4, NOW(), NOW() - INTERVAL '1 day')
 		RETURNING id
 	`, "一括作成テストアニメ_"+t.Name(), workMediaTV, createEpisodesSeasonYear, animeID).Scan(&id); err != nil {
-		t.Fatalf("works の挿入に失敗: %v", err)
+		t.Fatalf("worksの挿入に失敗: %v", err)
 	}
 
 	t.Cleanup(func() { deleteCreateTargetWork(t, db, id) })
@@ -118,19 +92,11 @@ func insertCreateTargetWork(t *testing.T, db *sql.DB, animeID sql.NullInt64) mod
 	return model.WorkID(id)
 }
 
-// deleteCreateTargetWork attempts to remove a work inserted by insertCreateTargetWork together
-// with rows created by submissions targeting it. A failed statement is logged instead of
-// failing the test:
-// internal/usecase/seed picks episodes at random across the whole database and commits
-// episode_records / activities that reference them, so while the two packages run side by side
-// this delete can legitimately lose to those foreign keys. Logging makes an incomplete cleanup
-// observable without turning ordinary concurrency into a flaky failure.
-//
-// [Ja] deleteCreateTargetWork は insertCreateTargetWork が挿入した作品と、その作品への送信が
-// 作った行の削除を試みる。失敗した文はテストを落とさずログに残す。internal/usecase/seed は
-// DB 全体からエピソードをランダムに選び、それを参照する episode_records / activities を
+// deleteCreateTargetWorkはinsertCreateTargetWorkが挿入した作品と、その作品への送信が
+// 作った行の削除を試みる。失敗した文はテストを落とさずログに残す。internal/usecase/seedは
+// DB全体からエピソードをランダムに選び、それを参照するepisode_records / activitiesを
 // コミットするため、両パッケージが並行して走る間はこの削除が外部キーに阻まれることが正当に
-// 起こりうる。ログに残すことで、完了できなかった後始末を、通常の並行実行を flaky な失敗に
+// 起こりうる。ログに残すことで、完了できなかった後始末を、通常の並行実行をflakyな失敗に
 // 変えずに観測できる。
 func deleteCreateTargetWork(t *testing.T, db *sql.DB, workID int64) {
 	t.Helper()
@@ -147,10 +113,7 @@ func deleteCreateTargetWork(t *testing.T, db *sql.DB, workID int64) {
 	}
 }
 
-// insertMappedCreateTargetWork inserts a parent work already mapped to a fresh anime, so the
-// episodes created under it can be dual-written into the reference model.
-//
-// [Ja] insertMappedCreateTargetWork は新規 anime にマッピング済みの親作品を挿入し、その配下に
+// insertMappedCreateTargetWorkは新規animeにマッピング済みの親作品を挿入し、その配下に
 // 作られるエピソードを参照モデルへ両書きできるようにする。
 func insertMappedCreateTargetWork(t *testing.T, db *sql.DB) (model.WorkID, model.AnimeID) {
 	t.Helper()
@@ -161,11 +124,8 @@ func insertMappedCreateTargetWork(t *testing.T, db *sql.DB) (model.WorkID, model
 	return workID, parentAnimeID
 }
 
-// createdEpisodeRow is what the assertions read back about a created episode: the columns the
-// form fills in, plus the two mapping / navigation columns the create also writes.
-//
-// [Ja] createdEpisodeRow は作成されたエピソードについてアサーションが読み戻す内容。フォームが
-// 入力するカラムと、作成が併せて書く 2 つのマッピング / 導線のカラム。
+// createdEpisodeRowは作成されたエピソードについてアサーションが読み戻す内容。フォームが
+// 入力するカラムと、作成が併せて書く2つのマッピング / 導線のカラム。
 type createdEpisodeRow struct {
 	number        sql.NullString
 	rawNumber     sql.NullFloat64
@@ -189,13 +149,8 @@ func readCreatedEpisode(t *testing.T, db *sql.DB, id model.EpisodeID) createdEpi
 	return row
 }
 
-// TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification covers the create
-// path of a work that is already mapped to an anime: every submitted line becomes an episode
-// plus its own anime and kind='episode' classification, and the numbering starts past the
-// episodes the work already has.
-//
-// [Ja] TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification は、既に anime に
-// マッピング済みの作品での作成経路を検証する。送信された各行がエピソードと、その anime および
+// TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassificationは、既にanimeに
+// マッピング済みの作品での作成経路を検証する。送信された各行がエピソードと、そのanimeおよび
 // kind='episode' の分類になり、採番は作品が既に持つエピソードの先から始まる。
 func TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification(t *testing.T) {
 	t.Parallel()
@@ -213,74 +168,65 @@ func TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification(t *
 		Rows:   "#2,2,もう、お婿にいけません\n#3,3.5,まずいよ☆先生",
 	})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if len(output.EpisodeIDs) != 2 {
-		t.Fatalf("len(EpisodeIDs) = %d, want 2", len(output.EpisodeIDs))
+		t.Fatalf("len(EpisodeIDs) = %d、期待値 = 2", len(output.EpisodeIDs))
 	}
 
 	first := readCreatedEpisode(t, db, output.EpisodeIDs[0])
 	if first.number.String != "#2" || first.title.String != "もう、お婿にいけません" {
-		t.Errorf("1 行目 = (%q, %q), want (\"#2\", \"もう、お婿にいけません\")", first.number.String, first.title.String)
+		t.Errorf("1行目 = (%q, %q)、期待値 = (\"#2\", \"もう、お婿にいけません\")", first.number.String, first.title.String)
 	}
 	if first.rawNumber.Float64 != 2 {
-		t.Errorf("1 行目の raw_number = %v, want 2", first.rawNumber)
+		t.Errorf("1行目のraw_number = %v、期待値 = 2", first.rawNumber)
 	}
-	// The work already holds one episode, so the first created row lands on 200 and the
-	// second one step further.
-	//
-	// [Ja] 作品は既に 1 件のエピソードを持つため、最初に作られる行は 200 に、2 件目はその
-	// 1 ステップ先に着地する。
+	// 作品は既に1件のエピソードを持つため、最初に作られる行は200に、2件目はその
+	// 1ステップ先に着地する。
 	if first.sortNumber != 200 {
-		t.Errorf("1 行目の sort_number = %d, want 200", first.sortNumber)
+		t.Errorf("1行目のsort_number = %d、期待値 = 200", first.sortNumber)
 	}
-	// The first created row names the work's existing episode as its preceding one, and the
-	// second names the first.
-	//
-	// [Ja] 最初に作られる行は作品の既存エピソードを直前のエピソードとして名指しし、2 件目は
-	// 1 件目を名指しする。
+	// 最初に作られる行は作品の既存エピソードを直前のエピソードとして名指しし、2件目は
+	// 1件目を名指しする。
 	if first.prevEpisodeID.Int64 != int64(existingID) {
-		t.Errorf("1 行目の prev_episode_id = %+v, want %d", first.prevEpisodeID, int64(existingID))
+		t.Errorf("1行目のprev_episode_id = %+v、期待値 = %d", first.prevEpisodeID, int64(existingID))
 	}
 
 	second := readCreatedEpisode(t, db, output.EpisodeIDs[1])
 	if second.sortNumber != 300 {
-		t.Errorf("2 行目の sort_number = %d, want 300", second.sortNumber)
+		t.Errorf("2行目のsort_number = %d、期待値 = 300", second.sortNumber)
 	}
 	if second.rawNumber.Float64 != 3.5 {
-		t.Errorf("2 行目の raw_number = %v, want 3.5", second.rawNumber)
+		t.Errorf("2行目のraw_number = %v、期待値 = 3.5", second.rawNumber)
 	}
 	if second.prevEpisodeID.Int64 != int64(output.EpisodeIDs[0]) {
-		t.Errorf("2 行目の prev_episode_id = %+v, want %d", second.prevEpisodeID, int64(output.EpisodeIDs[0]))
+		t.Errorf("2行目のprev_episode_id = %+v、期待値 = %d", second.prevEpisodeID, int64(output.EpisodeIDs[0]))
 	}
 
-	// Each row is mapped to an anime of its own, whose classification hangs under the parent
-	// work's anime.
-	//
-	// [Ja] 各行はそれぞれ固有の anime にマッピングされ、その分類は親作品の anime の下に付く。
+	// 各行はそれぞれ固有のanimeにマッピングされ、その分類は親作品のanimeの下に付く。
 	if !second.animeID.Valid {
-		t.Fatal("episodes.anime_id が書かれていません")
+		t.Fatal("episodes.anime_idが書かれていません")
 	}
 	if second.animeID.Int64 == first.animeID.Int64 {
-		t.Error("行ごとに別の anime が作られるべきです")
+		t.Error("行ごとに別のanimeが作られるべきです")
 	}
 
 	classRepo := repository.NewAnimeClassificationRepository(query.New(db))
 	classification, err := classRepo.GetByAnimeID(context.Background(), model.AnimeID(second.animeID.Int64))
 	if err != nil || classification == nil {
-		t.Fatalf("GetByAnimeID() classification=%v err=%v", classification, err)
+		t.Fatalf("GetByAnimeID()のclassification = %v、エラー = %v", classification, err)
 	}
 	if classification.Kind != model.AnimeClassificationKindEpisode {
-		t.Errorf("classification.Kind = %q, want episode", classification.Kind)
+		t.Errorf("classification.Kind = %q、期待値 = episode", classification.Kind)
 	}
 	if classification.ParentAnimeID == nil || *classification.ParentAnimeID != parentAnimeID {
-		t.Errorf("classification.ParentAnimeID = %v, want %d", classification.ParentAnimeID, int64(parentAnimeID))
+		t.Errorf("classification.ParentAnimeID = %v、期待値 = %d", classification.ParentAnimeID, int64(parentAnimeID))
 	}
 	if !classification.SortNumber.Valid || classification.SortNumber.Int32 != 300 {
-		t.Errorf("classification.SortNumber = %+v, want {300 true}", classification.SortNumber)
+		t.Errorf("classification.SortNumber = %+v、期待値 = {300 true}", classification.SortNumber)
 	}
 	if classification.NumberText.String != "#3" {
-		t.Errorf("classification.NumberText = %q, want #3", classification.NumberText.String)
+		t.Errorf("classification.NumberText = %q、期待値 = #3", classification.NumberText.String)
 	}
 
 	var (
@@ -295,10 +241,10 @@ func TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification(t *
 		t.Fatalf("作品の保存副作用の読み込みに失敗: %v", err)
 	}
 	if episodesCount != 2 {
-		t.Errorf("works.episodes_count = %d, want 2", episodesCount)
+		t.Errorf("works.episodes_count = %d、期待値 = 2", episodesCount)
 	}
 	if !workTouched {
-		t.Error("works.updated_at が更新されていません")
+		t.Error("works.updated_atが更新されていません")
 	}
 
 	var activityCount int
@@ -311,20 +257,16 @@ func TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification(t *
 			AND trackable_type = 'Episode'
 			AND action = 'episodes.create'
 	`, int64(user.ID), int64(workID)).Scan(&activityCount); err != nil {
-		t.Fatalf("DB 活動履歴件数の読み込みに失敗: %v", err)
+		t.Fatalf("DB活動履歴件数の読み込みに失敗: %v", err)
 	}
 	if activityCount != 2 {
-		t.Errorf("DB 活動履歴 = %d 件, want 2", activityCount)
+		t.Errorf("DB活動履歴 = %d件、期待値 = 2", activityCount)
 	}
 }
 
-// TestCreateEpisodesUsecase_Execute_SkipsAnimeForUnmappedWork covers a parent work that has no
-// anime yet: an episode classification requires the parent's anime, so only the episodes rows
-// are written and the phase 2 sync creates their animes once the work is synced.
-//
-// [Ja] TestCreateEpisodesUsecase_Execute_SkipsAnimeForUnmappedWork は、まだ anime を持たない
-// 親作品を検証する。エピソードの分類は親の anime を要するため episodes の行だけを書き、その
-// anime は作品が同期された後にフェーズ 2 の同期が作る。
+// TestCreateEpisodesUsecase_Execute_SkipsAnimeForUnmappedWorkは、まだanimeを持たない
+// 親作品を検証する。エピソードの分類は親のanimeを要するためepisodesの行だけを書き、その
+// animeは作品が同期された後にフェーズ2の同期が作る。
 func TestCreateEpisodesUsecase_Execute_SkipsAnimeForUnmappedWork(t *testing.T) {
 	t.Parallel()
 
@@ -340,37 +282,29 @@ func TestCreateEpisodesUsecase_Execute_SkipsAnimeForUnmappedWork(t *testing.T) {
 		Rows:   "#1,1,はじまり",
 	})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if len(output.EpisodeIDs) != 1 {
-		t.Fatalf("len(EpisodeIDs) = %d, want 1", len(output.EpisodeIDs))
+		t.Fatalf("len(EpisodeIDs) = %d、期待値 = 1", len(output.EpisodeIDs))
 	}
 
 	created := readCreatedEpisode(t, db, output.EpisodeIDs[0])
 	if created.animeID.Valid {
-		t.Errorf("episodes.anime_id = %+v, want NULL (親作品が未マッピング)", created.animeID)
+		t.Errorf("episodes.anime_id = %+v、期待値 = NULL (親作品が未マッピング)", created.animeID)
 	}
-	// The work has no episodes yet, so the numbering starts at the first step and there is no
-	// preceding episode to name.
-	//
-	// [Ja] 作品はまだエピソードを持たないため、採番は最初のステップから始まり、直前の
+	// 作品はまだエピソードを持たないため、採番は最初のステップから始まり、直前の
 	// エピソードとして名指しする相手もいない。
 	if created.sortNumber != 100 {
-		t.Errorf("sort_number = %d, want 100", created.sortNumber)
+		t.Errorf("sort_number = %d、期待値 = 100", created.sortNumber)
 	}
 	if created.prevEpisodeID.Valid {
-		t.Errorf("prev_episode_id = %+v, want NULL", created.prevEpisodeID)
+		t.Errorf("prev_episode_id = %+v、期待値 = NULL", created.prevEpisodeID)
 	}
 }
 
-// TestCreateEpisodesUsecase_Execute_ProducesSyncConsistentMapping is the invariant that
-// justifies reusing the sync mapping helpers: a sync run right after a create must detect no
-// diff (Unchanged), proving create and sync derive the same anime / classification from the
-// episode and the create path never inflates the diff metric.
-//
-// [Ja] TestCreateEpisodesUsecase_Execute_ProducesSyncConsistentMapping は同期の写像ヘルパー
+// TestCreateEpisodesUsecase_Execute_ProducesSyncConsistentMappingは同期の写像ヘルパー
 // 再利用を正当化する不変条件。作成直後の同期実行は差分なし (Unchanged) を検出しなければ
-// ならず、create と同期が同じ anime / 分類をエピソードから導出していること、create 経路が
+// ならず、createと同期が同じanime / 分類をエピソードから導出していること、create経路が
 // 差分メトリクスを水増ししないことを示す。
 func TestCreateEpisodesUsecase_Execute_ProducesSyncConsistentMapping(t *testing.T) {
 	t.Parallel()
@@ -387,16 +321,16 @@ func TestCreateEpisodesUsecase_Execute_ProducesSyncConsistentMapping(t *testing.
 		Rows:   "#1,1,はじまり\n,,タイトルだけの話\n#3,,数値話数なし",
 	})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	syncUC := newSyncEpisodesUsecase(db)
 	result, err := syncUC.Execute(context.Background(), SyncEpisodesToAnimesInput{EpisodeIDs: output.EpisodeIDs})
 	if err != nil {
-		t.Fatalf("sync Execute() error = %v", err)
+		t.Fatalf("同期のExecute()のエラー = %v", err)
 	}
 	if result.Processed != 3 || result.Created != 0 || result.Updated != 0 || result.Unchanged != 3 {
-		t.Fatalf("sync result = %+v, want {Processed:3 Created:0 Updated:0 Unchanged:3}", result)
+		t.Fatalf("同期の結果 = %+v、期待値 = {Processed:3 Created:0 Updated:0 Unchanged:3}", result)
 	}
 }
 
@@ -431,7 +365,7 @@ func TestCreateEpisodesUsecase_Execute_SerializesConcurrentCreates(t *testing.T)
 
 	for err := range errs {
 		if err != nil {
-			t.Fatalf("concurrent Execute() error = %v", err)
+			t.Fatalf("並行実行したExecute()のエラー = %v", err)
 		}
 	}
 
@@ -460,15 +394,15 @@ func TestCreateEpisodesUsecase_Execute_SerializesConcurrentCreates(t *testing.T)
 			t.Fatalf("作成されたエピソードの走査に失敗: %v", err)
 		}
 
-		wantSortNumber := int32(index+1) * episodeSortNumberStep // #nosec G115 -- index is bounded by createCount.
+		wantSortNumber := int32(index+1) * episodeSortNumberStep // #nosec G115 -- indexはcreateCountで上限が決まる
 		if sortNumber != wantSortNumber {
-			t.Errorf("%d 件目の sort_number = %d, want %d", index+1, sortNumber, wantSortNumber)
+			t.Errorf("%d件目のsort_number = %d、期待値 = %d", index+1, sortNumber, wantSortNumber)
 		}
 		if index == 0 && prevEpisodeID.Valid {
-			t.Errorf("先頭の prev_episode_id = %+v, want NULL", prevEpisodeID)
+			t.Errorf("先頭のprev_episode_id = %+v、期待値 = NULL", prevEpisodeID)
 		}
 		if index > 0 && (!prevEpisodeID.Valid || prevEpisodeID.Int64 != previousID) {
-			t.Errorf("%d 件目の prev_episode_id = %+v, want %d", index+1, prevEpisodeID, previousID)
+			t.Errorf("%d件目のprev_episode_id = %+v、期待値 = %d", index+1, prevEpisodeID, previousID)
 		}
 		previousID = id
 		index++
@@ -477,7 +411,7 @@ func TestCreateEpisodesUsecase_Execute_SerializesConcurrentCreates(t *testing.T)
 		t.Fatalf("作成されたエピソードの走査に失敗: %v", err)
 	}
 	if index != createCount {
-		t.Errorf("作成されたエピソード = %d 件, want %d", index, createCount)
+		t.Errorf("作成されたエピソード = %d件、期待値 = %d", index, createCount)
 	}
 }
 
@@ -498,31 +432,25 @@ func TestCreateEpisodesUsecase_Execute_EnforcesManualCreationRestriction(t *test
 	_, err := uc.Execute(context.Background(), input)
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("editor Execute() error = %v, want *model.ValidationError", err)
+		t.Fatalf("編集者のExecute()のエラー = %v、期待値 = *model.ValidationError", err)
 	}
-	// The restriction is a condition of the work, not of the submitted lines, so it is
-	// reported for the form as a whole.
-	//
-	// [Ja] 制限は送信された行ではなく作品の状態に由来するため、フォーム全体に対して報告する。
+	// 制限は送信された行ではなく作品の状態に由来するため、フォーム全体に対して報告する。
 	if len(ve.Global) != 1 || len(ve.GetFieldErrors("rows")) != 0 {
-		t.Errorf("editor のエラー = Global:%v Fields:%v, want グローバルに 1 件のみ", ve.Global, ve.GetFieldErrors("rows"))
+		t.Errorf("editorのエラー = Global:%v Fields:%v、期待値 = グローバルに1件のみ", ve.Global, ve.GetFieldErrors("rows"))
 	}
 
 	input.User = admin
 	output, err := uc.Execute(context.Background(), input)
 	if err != nil {
-		t.Fatalf("admin Execute() error = %v", err)
+		t.Fatalf("管理者のExecute()のエラー = %v", err)
 	}
 	if len(output.EpisodeIDs) != 1 {
-		t.Errorf("admin len(EpisodeIDs) = %d, want 1", len(output.EpisodeIDs))
+		t.Errorf("管理者のlen(EpisodeIDs) = %d、期待値 = 1", len(output.EpisodeIDs))
 	}
 }
 
-// TestCreateEpisodesUsecase_Execute_ValidationError covers a submit with a bad line: the whole
-// submit fails, so not even the valid lines reach the database.
-//
-// [Ja] TestCreateEpisodesUsecase_Execute_ValidationError は不正な行を含む送信を検証する。送信
-// 全体が失敗するため、正常な行も DB に届かない。
+// TestCreateEpisodesUsecase_Execute_ValidationErrorは不正な行を含む送信を検証する。送信
+// 全体が失敗するため、正常な行もDBに届かない。
 func TestCreateEpisodesUsecase_Execute_ValidationError(t *testing.T) {
 	t.Parallel()
 
@@ -537,14 +465,14 @@ func TestCreateEpisodesUsecase_Execute_ValidationError(t *testing.T) {
 		Rows:   "#1,1,はじまり\n#2,いち,つづき",
 	})
 	if output != nil {
-		t.Errorf("output = %+v, want nil", output)
+		t.Errorf("output = %+v、期待値 = nil", output)
 	}
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("err = %v, want *model.ValidationError", err)
+		t.Fatalf("err = %v、期待値 = *model.ValidationError", err)
 	}
 	if len(ve.GetFieldErrors("rows")) != 1 {
-		t.Errorf("rows のエラー = %v, want 1 件", ve.GetFieldErrors("rows"))
+		t.Errorf("rowsのエラー = %v、期待値 = 1件", ve.GetFieldErrors("rows"))
 	}
 
 	var count int
@@ -552,16 +480,12 @@ func TestCreateEpisodesUsecase_Execute_ValidationError(t *testing.T) {
 		t.Fatalf("エピソード件数の取得に失敗: %v", err)
 	}
 	if count != 0 {
-		t.Errorf("作成されたエピソード = %d 件, want 0 (送信全体が失敗するため)", count)
+		t.Errorf("作成されたエピソード = %d件、期待値 = 0 (送信全体が失敗するため)", count)
 	}
 }
 
-// TestCreateEpisodesUsecase_Execute_WorkNotFound covers submits against a work the form may
-// not be shown for: an unknown id and a deleted work both fail as not found, before the lines
-// are even parsed.
-//
-// [Ja] TestCreateEpisodesUsecase_Execute_WorkNotFound はフォームを出せない作品への送信を検証
-// する。存在しない id と削除済みの作品はいずれも、行のパースにも進まず未存在として失敗する。
+// TestCreateEpisodesUsecase_Execute_WorkNotFoundはフォームを出せない作品への送信を検証
+// する。存在しないidと削除済みの作品はいずれも、行のパースにも進まず未存在として失敗する。
 func TestCreateEpisodesUsecase_Execute_WorkNotFound(t *testing.T) {
 	t.Parallel()
 
@@ -591,21 +515,17 @@ func TestCreateEpisodesUsecase_Execute_WorkNotFound(t *testing.T) {
 
 			ae := model.AsAppError(err)
 			if ae == nil {
-				t.Fatalf("err = %v, want *model.AppError", err)
+				t.Fatalf("err = %v、期待値 = *model.AppError", err)
 			}
 			if ae.Code != model.AppErrCodeResourceNotFound {
-				t.Errorf("ae.Code = %v, want %v", ae.Code, model.AppErrCodeResourceNotFound)
+				t.Errorf("ae.Code = %v、期待値 = %v", ae.Code, model.AppErrCodeResourceNotFound)
 			}
 		})
 	}
 }
 
-// TestCreateEpisodesUsecase_Execute_RequiresCommitter covers unauthenticated and ordinary-user
-// submits. Episode creation belongs to committers, and keeping that check in the usecase stops
-// another entry point from bypassing the web middleware.
-//
-// [Ja] TestCreateEpisodesUsecase_Execute_RequiresCommitter は未認証と一般ユーザーの送信を検証
-// する。エピソード作成は committer に限られ、この確認を UseCase に置くことで別の入口が web
+// TestCreateEpisodesUsecase_Execute_RequiresCommitterは未認証と一般ユーザーの送信を検証
+// する。エピソード作成はcommitterに限られ、この確認をUseCaseに置くことで別の入口がweb
 // ミドルウェアを迂回できないようにする。
 func TestCreateEpisodesUsecase_Execute_RequiresCommitter(t *testing.T) {
 	t.Parallel()
@@ -632,23 +552,18 @@ func TestCreateEpisodesUsecase_Execute_RequiresCommitter(t *testing.T) {
 
 			ae := model.AsAppError(err)
 			if ae == nil {
-				t.Fatalf("err = %v, want *model.AppError", err)
+				t.Fatalf("err = %v、期待値 = *model.AppError", err)
 			}
 			if ae.Code != model.AppErrCodeForbidden {
-				t.Errorf("ae.Code = %v, want %v", ae.Code, model.AppErrCodeForbidden)
+				t.Errorf("ae.Code = %v、期待値 = %v", ae.Code, model.AppErrCodeForbidden)
 			}
 		})
 	}
 }
 
-// TestNextSortAnchor covers which episode the next created row names as its preceding one.
-// The numbering starts from the work's episode count rather than from its greatest
-// sort_number, so a work whose existing episodes were spaced further apart keeps naming that
-// episode, as the Rails callback does.
-//
-// [Ja] TestNextSortAnchor は、次に作る行がどのエピソードを直前のエピソードとして名指しするか
-// を検証する。採番の起点が作品の最大 sort_number ではなくエピソード数であるため、既存の
-// エピソードがより広い間隔で並んでいる作品ではそのエピソードが名指しされ続ける (Rails の
+// TestNextSortAnchorは、次に作る行がどのエピソードを直前のエピソードとして名指しするか
+// を検証する。採番の起点が作品の最大sort_numberではなくエピソード数であるため、既存の
+// エピソードがより広い間隔で並んでいる作品ではそのエピソードが名指しされ続ける (Railsの
 // コールバックと同じ)。
 func TestNextSortAnchor(t *testing.T) {
 	t.Parallel()
@@ -696,7 +611,7 @@ func TestNextSortAnchor(t *testing.T) {
 
 			got := nextSortAnchor(tt.previous, tt.episodeID, tt.sortNumber)
 			if *got != tt.want {
-				t.Errorf("nextSortAnchor() = %+v, want %+v", *got, tt.want)
+				t.Errorf("nextSortAnchor() = %+v、期待値 = %+v", *got, tt.want)
 			}
 		})
 	}

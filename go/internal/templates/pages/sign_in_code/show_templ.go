@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// ShowPageData は6桁コード入力ページに渡すデータ構造体です
+// ShowPageDataは6桁コード入力ページに渡すデータ構造体です
 type ShowPageData struct {
 	CSRFToken  string
 	FormErrors *viewmodel.FormErrors
@@ -21,7 +21,7 @@ type ShowPageData struct {
 	BackURL    string
 }
 
-// Show は6桁コード入力ページのコンテンツを表示します
+// Showは6桁コード入力ページのコンテンツを表示します
 func Show(data ShowPageData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

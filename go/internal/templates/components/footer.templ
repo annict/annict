@@ -6,7 +6,7 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// Footer はページフッターを表示します
+// Footerはページフッターを表示します
 // 法的情報と著作権表示のみを含む最小限のフッター
 templ Footer(ctx context.Context) {
 	<footer
@@ -26,7 +26,7 @@ templ Footer(ctx context.Context) {
 	</footer>
 }
 
-// footerLink はフッターのリンク項目を生成します
+// footerLinkはフッターのリンク項目を生成します
 templ footerLink(ctx context.Context, path string, labelKey string) {
 	<li>
 		<a class="link-muted text-sm" href={ templ.SafeURL(path) }>

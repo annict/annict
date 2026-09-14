@@ -21,7 +21,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// setupTestHandler はテスト用のハンドラーをセットアップします
+// setupTestHandlerはテスト用のハンドラーをセットアップします
 func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 	t.Helper()
 
@@ -37,16 +37,16 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	gumroadSubscriberRepo := repository.NewGumroadSubscriberRepository(queries)
 
-	// テスト用のStripe設定（テストではStripe APIを呼び出さないため空でOK）
+	// テスト用のStripe設定 (テストではStripe APIを呼び出さないため空でOK)
 	stripeCfg := &annictStripe.Config{}
 
 	getSupporterStatusUC := usecase.NewGetSupporterStatusUsecase(stripeSubscriberRepo, gumroadSubscriberRepo)
 
-	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
+	// テスト用にはnilを渡す (テストではStripe APIを呼び出さない)
 	return NewHandler(cfg, sessionManager, imageHelper, getSupporterStatusUC, stripeCfg, nil)
 }
 
-// createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します
+// createUserWithStripeSubscriberはStripeサブスクライバーを持つユーザーを作成します
 func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (model.UserID, model.StripeSubscriberID) {
 	t.Helper()
 
@@ -64,7 +64,7 @@ func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus strin
 	return userID, subscriberID
 }
 
-// createUserWithGumroadSubscriber はGumroadサブスクライバーを持つユーザーを作成します
+// createUserWithGumroadSubscriberはGumroadサブスクライバーを持つユーザーを作成します
 func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (model.UserID, model.GumroadSubscriberID) {
 	t.Helper()
 
@@ -72,7 +72,7 @@ func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (mode
 
 	builder := testutil.NewGumroadSubscriberBuilder(t, tx)
 	if ended {
-		// 過去の日時を設定（終了済み）
+		// 過去の日時を設定 (終了済み)
 		builder = builder.WithGumroadEndedAt(time.Now().AddDate(-1, 0, 0))
 	}
 	subscriberID := builder.Build()
@@ -86,7 +86,7 @@ func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (mode
 	return userID, subscriberID
 }
 
-// getUserByID はユーザーIDからユーザー情報を取得します（テスト用）
+// getUserByIDはユーザーIDからユーザー情報を取得します (テスト用)
 func getUserByID(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	t.Helper()
 
@@ -118,7 +118,7 @@ func getUserByID(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	return &user
 }
 
-// TestShow_NotLoggedIn は未ログインユーザーの場合のテスト
+// TestShow_NotLoggedInは未ログインユーザーの場合のテスト
 func TestShow_NotLoggedIn(t *testing.T) {
 	t.Parallel()
 
@@ -132,7 +132,7 @@ func TestShow_NotLoggedIn(t *testing.T) {
 
 	// ステータスコードを確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
@@ -141,33 +141,31 @@ func TestShow_NotLoggedIn(t *testing.T) {
 	expectedContents := []string{
 		"サポーター", // ページタイトル
 		"ログイン",  // ログインボタン
-		// The canonical URL points at the page itself, and og:url declares the same URL.
-		//
-		// [Ja] canonical はページ自身を指し、og:url も同じ URL を宣言する。
+		// canonicalはページ自身を指し、og:urlも同じURLを宣言する。
 		`<link rel="canonical" href="https://test.annict.com/supporters">`,
 		`<meta property="og:url" content="https://test.annict.com/supporters">`,
 	}
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("response doesn't contain expected string: %q", expected)
+			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
 		}
 	}
 
 	// Content-Typeを確認
 	if ct := rr.Header().Get("Content-Type"); ct != "text/html; charset=utf-8" {
-		t.Errorf("wrong content-type: got %v want %v", ct, "text/html; charset=utf-8")
+		t.Errorf("Content-Type = %v、期待値 = %v", ct, "text/html; charset=utf-8")
 	}
 }
 
-// TestShow_LoggedIn_NotSupporter はログイン済み・非サポーターユーザーの場合のテスト
+// TestShow_LoggedIn_NotSupporterはログイン済み・非サポーターユーザーの場合のテスト
 func TestShow_LoggedIn_NotSupporter(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
-	// ユーザーを作成（サブスクリプションなし）
+	// ユーザーを作成 (サブスクリプションなし)
 	userID := testutil.NewUserBuilder(t, tx).Build()
 	user := getUserByID(t, tx, userID)
 
@@ -179,12 +177,12 @@ func TestShow_LoggedIn_NotSupporter(t *testing.T) {
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
-	// Checkout セクションが表示されることを確認（非サポーター向け）
+	// Checkoutセクションが表示されることを確認 (非サポーター向け)
 	expectedContents := []string{
 		"サポーター",                           // ページタイトル
 		"¥290",                            // 月額プラン
@@ -194,12 +192,12 @@ func TestShow_LoggedIn_NotSupporter(t *testing.T) {
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("response doesn't contain expected string: %q", expected)
+			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
 		}
 	}
 }
 
-// TestShow_StripeSupporter はStripeサポーターの場合のテスト
+// TestShow_StripeSupporterはStripeサポーターの場合のテスト
 func TestShow_StripeSupporter(t *testing.T) {
 	t.Parallel()
 
@@ -218,7 +216,7 @@ func TestShow_StripeSupporter(t *testing.T) {
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
@@ -231,17 +229,17 @@ func TestShow_StripeSupporter(t *testing.T) {
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("response doesn't contain expected string: %q", expected)
+			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
 		}
 	}
 
 	// 非サポーター向けのCheckoutセクションが表示されないことを確認
 	if strings.Contains(body, "action=\"/supporters/checkout\"") {
-		t.Error("response contains checkout form when it shouldn't for Stripe supporter")
+		t.Error("Stripeのサポーターに対してレスポンスが決済フォームを含んでいる")
 	}
 }
 
-// TestShow_GumroadSupporter はGumroadサポーターの場合のテスト
+// TestShow_GumroadSupporterはGumroadサポーターの場合のテスト
 func TestShow_GumroadSupporter(t *testing.T) {
 	t.Parallel()
 
@@ -260,24 +258,24 @@ func TestShow_GumroadSupporter(t *testing.T) {
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
 	// Gumroadサポーターセクションが表示されることを確認
-	// （移行案内メッセージが含まれる緑のセクション）
+	// (移行案内メッセージが含まれる緑のセクション)
 	if !strings.Contains(body, "bg-green-50") {
-		t.Error("response doesn't contain Gumroad supporter section (green background)")
+		t.Error("レスポンスにGumroadのサポーター向けセクションが含まれていない (緑の背景)")
 	}
 
 	// 非サポーター向けのCheckoutセクションが表示されないことを確認
 	if strings.Contains(body, "action=\"/supporters/checkout\"") {
-		t.Error("response contains checkout form when it shouldn't for Gumroad supporter")
+		t.Error("Gumroadのサポーターに対してレスポンスが決済フォームを含んでいる")
 	}
 }
 
-// TestShow_BothActive は両方アクティブな場合のテスト
+// TestShow_BothActiveは両方アクティブな場合のテスト
 func TestShow_BothActive(t *testing.T) {
 	t.Parallel()
 
@@ -309,7 +307,7 @@ func TestShow_BothActive(t *testing.T) {
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
@@ -321,12 +319,12 @@ func TestShow_BothActive(t *testing.T) {
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("response doesn't contain expected string: %q", expected)
+			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
 		}
 	}
 }
 
-// TestShow_SuccessQueryParam はsuccessクエリパラメータがある場合のテスト
+// TestShow_SuccessQueryParamはsuccessクエリパラメータがある場合のテスト
 func TestShow_SuccessQueryParam(t *testing.T) {
 	t.Parallel()
 
@@ -339,18 +337,18 @@ func TestShow_SuccessQueryParam(t *testing.T) {
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
 	// 成功メッセージが表示されることを確認
 	if !strings.Contains(body, `<div class="alert" data-variant="success">`) {
-		t.Error("response doesn't contain success message (success alert variant)")
+		t.Error("レスポンスに成功メッセージが含まれていない (successのalert)")
 	}
 }
 
-// TestShow_CanceledQueryParam はcanceledクエリパラメータがある場合のテスト
+// TestShow_CanceledQueryParamはcanceledクエリパラメータがある場合のテスト
 func TestShow_CanceledQueryParam(t *testing.T) {
 	t.Parallel()
 
@@ -363,18 +361,18 @@ func TestShow_CanceledQueryParam(t *testing.T) {
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
 	// キャンセルメッセージが表示されることを確認
 	if !strings.Contains(body, `<div class="alert" data-variant="warning">`) {
-		t.Error("response doesn't contain canceled message (warning alert variant)")
+		t.Error("レスポンスに決済キャンセルのメッセージが含まれていない (warningのalert)")
 	}
 }
 
-// TestShow_InactiveStripeSubscription は非アクティブなStripeサブスクリプションの場合のテスト
+// TestShow_InactiveStripeSubscriptionは非アクティブなStripeサブスクリプションの場合のテスト
 func TestShow_InactiveStripeSubscription(t *testing.T) {
 	t.Parallel()
 
@@ -393,18 +391,18 @@ func TestShow_InactiveStripeSubscription(t *testing.T) {
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
 	// 非アクティブなので、Checkoutセクションが表示される
 	if !strings.Contains(body, "action=\"/supporters/checkout\"") {
-		t.Error("response doesn't contain checkout form for inactive subscription")
+		t.Error("無効なサブスクリプションでレスポンスに決済フォームが含まれていない")
 	}
 }
 
-// TestShow_EndedGumroadSubscription は終了したGumroadサブスクリプションの場合のテスト
+// TestShow_EndedGumroadSubscriptionは終了したGumroadサブスクリプションの場合のテスト
 func TestShow_EndedGumroadSubscription(t *testing.T) {
 	t.Parallel()
 
@@ -423,13 +421,13 @@ func TestShow_EndedGumroadSubscription(t *testing.T) {
 	handler.Show(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	body := rr.Body.String()
 
 	// 終了済みなので、Checkoutセクションが表示される
 	if !strings.Contains(body, "action=\"/supporters/checkout\"") {
-		t.Error("response doesn't contain checkout form for ended subscription")
+		t.Error("終了済みのサブスクリプションでレスポンスに決済フォームが含まれていない")
 	}
 }

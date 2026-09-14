@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestStripeWebhookEventRepository_Create は新しいWebhookイベントを作成できることをテスト
+// TestStripeWebhookEventRepository_Createは新しいWebhookイベントを作成できることをテスト
 func TestStripeWebhookEventRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -39,17 +39,17 @@ func TestStripeWebhookEventRepository_Create(t *testing.T) {
 		t.Error("IDが設定されていません")
 	}
 	if event.StripeEventID != params.StripeEventID {
-		t.Errorf("StripeEventIDが一致しません: got %s, want %s", event.StripeEventID, params.StripeEventID)
+		t.Errorf("StripeEventID = %s、期待値 = %s", event.StripeEventID, params.StripeEventID)
 	}
 	if event.StripeEventType != params.StripeEventType {
-		t.Errorf("StripeEventTypeが一致しません: got %s, want %s", event.StripeEventType, params.StripeEventType)
+		t.Errorf("StripeEventType = %s、期待値 = %s", event.StripeEventType, params.StripeEventType)
 	}
 	if event.Status != model.WebhookEventStatusPending.String() {
-		t.Errorf("Statusが一致しません: got %s, want %s", event.Status, model.WebhookEventStatusPending.String())
+		t.Errorf("Status = %s、期待値 = %s", event.Status, model.WebhookEventStatusPending.String())
 	}
 }
 
-// TestStripeWebhookEventRepository_GetByStripeEventID はStripeイベントIDで取得できることをテスト
+// TestStripeWebhookEventRepository_GetByStripeEventIDはStripeイベントIDで取得できることをテスト
 func TestStripeWebhookEventRepository_GetByStripeEventID(t *testing.T) {
 	t.Parallel()
 
@@ -69,11 +69,11 @@ func TestStripeWebhookEventRepository_GetByStripeEventID(t *testing.T) {
 	}
 
 	if event.StripeEventID != "evt_unique_event" {
-		t.Errorf("StripeEventIDが一致しません: got %s, want %s", event.StripeEventID, "evt_unique_event")
+		t.Errorf("StripeEventID = %s、期待値 = %s", event.StripeEventID, "evt_unique_event")
 	}
 }
 
-// TestStripeWebhookEventRepository_GetByStripeEventID_NotFound は存在しないイベントIDの場合エラーが返ることをテスト
+// TestStripeWebhookEventRepository_GetByStripeEventID_NotFoundは存在しないイベントIDの場合エラーが返ることをテスト
 func TestStripeWebhookEventRepository_GetByStripeEventID_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -86,11 +86,11 @@ func TestStripeWebhookEventRepository_GetByStripeEventID_NotFound(t *testing.T) 
 		t.Error("存在しないイベントIDでエラーが返されるべきです")
 	}
 	if err != sql.ErrNoRows {
-		t.Errorf("予期しないエラー: got %v, want %v", err, sql.ErrNoRows)
+		t.Errorf("予期しないエラー = %v、期待値 = %v", err, sql.ErrNoRows)
 	}
 }
 
-// TestStripeWebhookEventRepository_UpdateStatus はステータスを更新できることをテスト
+// TestStripeWebhookEventRepository_UpdateStatusはステータスを更新できることをテスト
 func TestStripeWebhookEventRepository_UpdateStatus(t *testing.T) {
 	t.Parallel()
 
@@ -123,14 +123,14 @@ func TestStripeWebhookEventRepository_UpdateStatus(t *testing.T) {
 	}
 
 	if event.Status != model.WebhookEventStatusProcessed.String() {
-		t.Errorf("Statusが更新されていません: got %s, want %s", event.Status, model.WebhookEventStatusProcessed.String())
+		t.Errorf("Status = %s、期待値 = %s", event.Status, model.WebhookEventStatusProcessed.String())
 	}
 	if !event.ProcessedAt.Valid {
 		t.Error("ProcessedAtが設定されていません")
 	}
 }
 
-// TestStripeWebhookEventRepository_MarkAsProcessed は処理完了としてマークできることをテスト
+// TestStripeWebhookEventRepository_MarkAsProcessedは処理完了としてマークできることをテスト
 func TestStripeWebhookEventRepository_MarkAsProcessed(t *testing.T) {
 	t.Parallel()
 
@@ -156,14 +156,14 @@ func TestStripeWebhookEventRepository_MarkAsProcessed(t *testing.T) {
 	}
 
 	if event.Status != model.WebhookEventStatusProcessed.String() {
-		t.Errorf("Statusが更新されていません: got %s, want %s", event.Status, model.WebhookEventStatusProcessed.String())
+		t.Errorf("Status = %s、期待値 = %s", event.Status, model.WebhookEventStatusProcessed.String())
 	}
 	if !event.ProcessedAt.Valid {
 		t.Error("ProcessedAtが設定されていません")
 	}
 }
 
-// TestStripeWebhookEventRepository_MarkAsFailed は処理失敗としてマークできることをテスト
+// TestStripeWebhookEventRepository_MarkAsFailedは処理失敗としてマークできることをテスト
 func TestStripeWebhookEventRepository_MarkAsFailed(t *testing.T) {
 	t.Parallel()
 
@@ -190,20 +190,20 @@ func TestStripeWebhookEventRepository_MarkAsFailed(t *testing.T) {
 	}
 
 	if event.Status != model.WebhookEventStatusFailed.String() {
-		t.Errorf("Statusが更新されていません: got %s, want %s", event.Status, model.WebhookEventStatusFailed.String())
+		t.Errorf("Status = %s、期待値 = %s", event.Status, model.WebhookEventStatusFailed.String())
 	}
 	if !event.ErrorMessage.Valid {
 		t.Error("ErrorMessageが設定されていません")
 	}
 	if event.ErrorMessage.String != errorMsg {
-		t.Errorf("ErrorMessageが一致しません: got %s, want %s", event.ErrorMessage.String, errorMsg)
+		t.Errorf("ErrorMessage = %s、期待値 = %s", event.ErrorMessage.String, errorMsg)
 	}
 	if !event.ProcessedAt.Valid {
 		t.Error("ProcessedAtが設定されていません")
 	}
 }
 
-// TestStripeWebhookEventRepository_MarkAsSkipped は処理スキップとしてマークできることをテスト
+// TestStripeWebhookEventRepository_MarkAsSkippedは処理スキップとしてマークできることをテスト
 func TestStripeWebhookEventRepository_MarkAsSkipped(t *testing.T) {
 	t.Parallel()
 
@@ -229,14 +229,14 @@ func TestStripeWebhookEventRepository_MarkAsSkipped(t *testing.T) {
 	}
 
 	if event.Status != model.WebhookEventStatusSkipped.String() {
-		t.Errorf("Statusが更新されていません: got %s, want %s", event.Status, model.WebhookEventStatusSkipped.String())
+		t.Errorf("Status = %s、期待値 = %s", event.Status, model.WebhookEventStatusSkipped.String())
 	}
 	if !event.ProcessedAt.Valid {
 		t.Error("ProcessedAtが設定されていません")
 	}
 }
 
-// TestStripeWebhookEventRepository_Exists はイベントの存在確認ができることをテスト
+// TestStripeWebhookEventRepository_Existsはイベントの存在確認ができることをテスト
 func TestStripeWebhookEventRepository_Exists(t *testing.T) {
 	t.Parallel()
 
@@ -273,7 +273,7 @@ func TestStripeWebhookEventRepository_Exists(t *testing.T) {
 				t.Fatalf("Exists()でエラーが発生: %v", err)
 			}
 			if exists != tc.expected {
-				t.Errorf("Exists() = %v, want %v", exists, tc.expected)
+				t.Errorf("Exists() = %v、期待値 = %v", exists, tc.expected)
 			}
 		})
 	}

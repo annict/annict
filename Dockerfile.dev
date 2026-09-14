@@ -6,21 +6,15 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USERNAME=developer
 
-# --- BuildKit apt cache configuration ---
-# [Ja] BuildKit の apt キャッシュ設定
+# --- BuildKitのaptキャッシュ設定 ---
 #
-# Disable apt's automatic cleanup so the .debs downloaded into the
-# BuildKit cache mount (/var/cache/apt + /var/lib/apt) survive across
-# layers and rebuilds, keeping the apt cache hot.
-#
-# [Ja] apt の自動クリーンを無効化し、/var/cache/apt と /var/lib/apt のキャッシュマウントに
-# 入った .deb がレイヤーや再ビルドをまたいで残るようにして、apt キャッシュを温存する。
+# aptの自動クリーンを無効化し、/var/cache/aptと /var/lib/aptのキャッシュマウントに
+# 入った .debがレイヤーや再ビルドをまたいで残るようにして、aptキャッシュを温存する。
 RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
     echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
       > /etc/apt/apt.conf.d/keep-cache
 
-# --- System packages ---
-# [Ja] システムパッケージ
+# --- システムパッケージ ---
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     <<EOF
@@ -30,48 +24,48 @@ apt dist-upgrade -yq
 
 PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   build-essential
-  bubblewrap                # Required by Codex for Linux sandboxing [Ja] Codex の Linux sandbox に必要
-  ca-certificates           # Required for HTTPS connections [Ja] HTTPS 接続に必要
+  bubblewrap                # CodexのLinux sandboxに必要
+  ca-certificates           # HTTPS接続に必要
   curl
-  file                      # Required by Shrine for image uploads (Rails) [Ja] Shrine による画像アップロードに必要 (Rails)
-  fonts-noto-cjk            # Japanese (CJK) font for headless chromium screenshots [Ja] headless chromium のスクショ用の日本語 (CJK) フォント
-  fzf                       # Used by Claude Code [Ja] Claude Code で使用
+  file                      # Shrineによる画像アップロードに必要 (Rails)
+  fonts-noto-cjk            # headless chromiumのスクショ用の日本語 (CJK) フォント
+  fzf                       # Claude Codeで使用
   git
-  gnupg                     # Required to dearmor the PostgreSQL/Redis/Stripe GPG keys [Ja] PostgreSQL/Redis/Stripe の GPG キーの dearmor に必要
-  imagemagick               # Required by Shrine for image uploads (Rails) [Ja] Shrine による画像アップロードに必要 (Rails)
-  jq                        # Used by Claude Code [Ja] Claude Code で使用
-  libasound2                # Playwright: ALSA audio library [Ja] Playwright: ALSA 音声ライブラリ
-  libatk-bridge2.0-0        # Playwright: ATK bridge [Ja] Playwright: ATK ブリッジ
-  libatk1.0-0               # Playwright: ATK [Ja] Playwright: ATK
-  libcairo2                 # Playwright: 2D graphics [Ja] Playwright: 2D グラフィックス
-  libcups2                  # Playwright: printing system [Ja] Playwright: 印刷システム
-  libdrm2                   # Playwright: Direct Rendering Manager [Ja] Playwright: Direct Rendering Manager
-  libffi-dev                # Required to build Ruby extensions [Ja] Ruby 拡張のビルドに必要
-  libgbm1                   # Playwright: Generic Buffer Management [Ja] Playwright: Generic Buffer Management
-  libglib2.0-0              # libvips dependency (Rails) [Ja] libvips の依存パッケージ (Rails)
-  libnspr4                  # Playwright: Netscape Portable Runtime [Ja] Playwright: Netscape Portable Runtime
-  libnss3                   # Playwright: Network Security Services [Ja] Playwright: Network Security Services
-  libpango-1.0-0            # Playwright: text rendering [Ja] Playwright: テキストレンダリング
-  libreadline-dev           # Required by the Ruby readline extension [Ja] Ruby の readline 拡張に必要
-  libssl-dev                # Required for SSL-related builds [Ja] SSL 関連のビルドに必要
-  libvips42                 # Image processing library (Rails) [Ja] 画像処理ライブラリ (Rails)
-  libxcomposite1            # Playwright: X11 Composite extension [Ja] Playwright: X11 Composite 拡張
-  libxdamage1               # Playwright: X11 Damage extension [Ja] Playwright: X11 Damage 拡張
-  libxfixes3                # Playwright: X11 Fixes extension [Ja] Playwright: X11 Fixes 拡張
-  libxkbcommon0             # Playwright: XKB keyboard handling [Ja] Playwright: XKB キーボード処理
-  libxrandr2                # Playwright: X11 RandR extension [Ja] Playwright: X11 RandR 拡張
-  libyaml-dev               # Required by the psych gem (Rails) [Ja] psych gem のインストールに必要 (Rails)
-  lsb-release               # Required to configure the PostgreSQL/Redis apt repositories [Ja] PostgreSQL/Redis の apt リポジトリ設定に必要
-  nano                      # Used by Claude Code [Ja] Claude Code で使用
-  net-tools                 # Used by Claude Code for netstat (network debugging) [Ja] Claude Code で使用 netstat (ネットワークデバッグ用)
-  procps                    # Provides ps for playwright-cli kill-all [Ja] playwright-cli kill-all 用の ps を提供
-  psmisc                    # Used by Claude Code for fuser (process identification) [Ja] Claude Code で使用 fuser (プロセス特定用)
-  ripgrep                   # Used by Claude Code [Ja] Claude Code で使用
+  gnupg                     # PostgreSQL/Redis/StripeのGPGキーのdearmorに必要
+  imagemagick               # Shrineによる画像アップロードに必要 (Rails)
+  jq                        # Claude Codeで使用
+  libasound2                # Playwright: ALSA音声ライブラリ
+  libatk-bridge2.0-0        # Playwright: ATKブリッジ
+  libatk1.0-0               # Playwright: ATK
+  libcairo2                 # Playwright: 2Dグラフィックス
+  libcups2                  # Playwright: 印刷システム
+  libdrm2                   # Playwright: Direct Rendering Manager
+  libffi-dev                # Ruby拡張のビルドに必要
+  libgbm1                   # Playwright: Generic Buffer Management
+  libglib2.0-0              # libvipsの依存パッケージ (Rails)
+  libnspr4                  # Playwright: Netscape Portable Runtime
+  libnss3                   # Playwright: Network Security Services
+  libpango-1.0-0            # Playwright: テキストレンダリング
+  libreadline-dev           # Rubyのreadline拡張に必要
+  libssl-dev                # SSL関連のビルドに必要
+  libvips42                 # 画像処理ライブラリ (Rails)
+  libxcomposite1            # Playwright: X11 Composite拡張
+  libxdamage1               # Playwright: X11 Damage拡張
+  libxfixes3                # Playwright: X11 Fixes拡張
+  libxkbcommon0             # Playwright: XKBキーボード処理
+  libxrandr2                # Playwright: X11 RandR拡張
+  libyaml-dev               # psych gemのインストールに必要 (Rails)
+  lsb-release               # PostgreSQL/Redisのaptリポジトリ設定に必要
+  nano                      # Claude Codeで使用
+  net-tools                 # Claude Codeで使用netstat (ネットワークデバッグ用)
+  procps                    # playwright-cli kill-all用のpsを提供
+  psmisc                    # Claude Codeで使用fuser (プロセス特定用)
+  ripgrep                   # Claude Codeで使用
   sudo
-  tree                      # Used by Claude Code [Ja] Claude Code で使用
+  tree                      # Claude Codeで使用
   unzip
-  vim                       # Used by Claude Code [Ja] Claude Code で使用
-  zlib1g-dev                # Required by the Ruby zlib extension [Ja] Ruby の zlib 拡張に必要
+  vim                       # Claude Codeで使用
+  zlib1g-dev                # Rubyのzlib拡張に必要
   zsh
 PKGLIST
 )
@@ -79,7 +73,7 @@ PKGLIST
 apt install -y --no-install-recommends $PACKAGES
 EOF
 
-# --- PostgreSQL client ---
+# --- PostgreSQLクライアント ---
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     install -d -m 0755 /etc/apt/keyrings && \
@@ -91,7 +85,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt update && \
     apt install -y --no-install-recommends libpq-dev postgresql-client-17
 
-# --- Redis Tools ---
+# --- Redisツール ---
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     install -d -m 0755 /etc/apt/keyrings && \
@@ -115,13 +109,9 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt update && \
     apt install -y --no-install-recommends stripe
 
-# --- mise (development tool version manager) ---
-# [Ja] mise (開発ツールバージョンマネージャー)
+# --- mise (開発ツールバージョンマネージャー) ---
 #
-# Use the shims approach recommended for Docker (PATH includes
-# /mise/shims).
-#
-# [Ja] Docker 向けの推奨設定として shims 方式を使用する (PATH に /mise/shims を含める)。
+# Docker向けの推奨設定としてshims方式を使用する (PATHに /mise/shimsを含める)。
 ENV MISE_DATA_DIR="/mise"
 ENV MISE_CONFIG_DIR="/mise"
 ENV MISE_CACHE_DIR="/mise/cache"
@@ -129,8 +119,7 @@ ENV MISE_INSTALL_PATH="/usr/local/bin/mise"
 ENV PATH="/mise/shims:${PATH}"
 RUN curl -fsSL https://mise.run | sh
 
-# Install Go, Ruby, Node.js, pnpm, and Yarn via mise.
-# [Ja] Go、Ruby、Node.js、pnpm、Yarn を mise 経由でインストールする。
+# Go、Ruby、Node.js、pnpm、Yarnをmise経由でインストールする。
 RUN mise install go@1.26.2 && \
     mise install ruby@3.3.10 && \
     mise install node@22.20.0 && \
@@ -138,8 +127,7 @@ RUN mise install go@1.26.2 && \
     mise install pnpm@10.17.1 && \
     mise install yarn@1.22.22
 
-# Set global defaults.
-# [Ja] グローバルデフォルトを設定する。
+# グローバルデフォルトを設定する。
 RUN mise use --global go@1.26.2 && \
     mise use --global ruby@3.3.10 && \
     mise use --global node@22.20.0 && \
@@ -196,27 +184,20 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt update && \
     apt install -y --no-install-recommends gh
 
-# --- Create the developer user ---
-# [Ja] 開発者ユーザーを作成する
+# --- 開発者ユーザーを作成する ---
 RUN groupadd -g ${GROUP_ID} ${USERNAME} && \
     useradd -u ${USER_ID} -g ${GROUP_ID} -m -s /bin/zsh ${USERNAME} && \
     echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# --- Go cache directories ---
-# [Ja] Go キャッシュディレクトリ
+# --- Goキャッシュディレクトリ ---
 RUN mkdir -p /go/.cache/go-build /go/pkg && \
     chown -R ${USER_ID}:${GROUP_ID} /go
 
-# --- mise data directory permissions ---
-# [Ja] mise のデータディレクトリの権限設定
+# --- miseのデータディレクトリの権限設定 ---
 RUN chown -R ${USER_ID}:${GROUP_ID} /mise
 
-# --- 1Password CLI config directory ---
-# The op-config named volume is mounted here. Docker copies ownership from the
-# image only when the volume is created empty, so the directory has to exist
-# with the developer user's ownership beforehand for `op` to write its config.
-#
-# [Ja] 名前付きボリューム op-config をここにマウントする。Docker がイメージ側の
+# --- 1Password CLIの設定ディレクトリ ---
+# 名前付きボリュームop-configをここにマウントする。Dockerがイメージ側の
 # 所有権を引き継ぐのはボリュームが空で新規作成されたときだけのため、`op` が設定を
 # 書き込めるよう開発者ユーザー所有のディレクトリを事前に用意しておく。
 RUN install -d -o ${USER_ID} -g ${GROUP_ID} /home/${USERNAME}/.config && \
@@ -225,16 +206,10 @@ RUN install -d -o ${USER_ID} -g ${GROUP_ID} /home/${USERNAME}/.config && \
 WORKDIR /workspace
 USER ${USERNAME}
 
-# --- mise shell setup ---
-# [Ja] mise のシェル設定
+# --- miseのシェル設定 ---
 #
-# In Docker we use the shims approach (PATH already includes
-# /mise/shims). `mise activate` would bypass the shims and insert direct
-# paths for the global defaults, which disables per-directory version
-# switching, so we do not activate it here.
-#
-# [Ja] Docker 環境では shims 方式を使用する (PATH に /mise/shims を含めている)。
-# mise activate は shims をバイパスしてグローバルデフォルトの直接パスを PATH に
+# Docker環境ではshims方式を使用する (PATHに /mise/shimsを含めている)。
+# mise activateはshimsをバイパスしてグローバルデフォルトの直接パスをPATHに
 # 追加してしまい、ディレクトリごとのバージョン切り替えが効かなくなるため、
 # ここでは実行しない。
 RUN mise reshim
@@ -253,34 +228,27 @@ RUN npm install -g @playwright/cli@0.1.15 && \
     mise reshim && \
     playwright-cli install-browser chromium
 
-# --- Go tools ---
+# --- Goツール ---
 ENV GOCACHE=/go/.cache/go-build
 ENV GOMODCACHE=/go/pkg/mod
 ENV GOPATH=/go
 ENV PATH="${GOPATH}/bin:${PATH}"
-# Pin tool versions (never `@latest`) so that image rebuilds are
-# reproducible. Unlike the curl-downloaded binaries above, no SHA256 ARG
-# is needed: the Go module checksum database verifies the downloads.
-#
-# [Ja] イメージの再ビルドを再現可能にするため、ツールのバージョンを固定する
-# (`@latest` は使わない)。curl で取得する上記のバイナリと異なり SHA256 の ARG は
-# 不要 (ダウンロードの改ざん検証は Go module checksum DB が担保するため)。
+# イメージの再ビルドを再現可能にするため、ツールのバージョンを固定する
+# (`@latest` は使わない)。curlで取得する上記のバイナリと異なりSHA256のARGは
+# 不要 (ダウンロードの改ざん検証はGo module checksum DBが担保するため)。
 RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.30.0 && \
     go install github.com/air-verse/air@v1.65.3
 
-# --- Ruby tools ---
-# [Ja] Ruby ツール
+# --- Rubyツール ---
 RUN gem install bundler -v 2.3.12
 
-# --- Shell setup ---
-# [Ja] シェル設定
+# --- シェル設定 ---
 SHELL ["/bin/zsh", "-c"]
 ENV SHELL=/bin/zsh
 
 RUN touch /home/${USERNAME}/.zshrc
 
-# --- Git configuration ---
-# [Ja] Git 設定
+# --- Git設定 ---
 RUN git config --global user.email "me@shimba.co" && \
     git config --global user.name "Koji Shimba"
 

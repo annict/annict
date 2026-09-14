@@ -14,40 +14,22 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// WorkPictureData is the input for WorkPicture.
-//
-// [Ja] WorkPictureData は WorkPicture の入力。
+// WorkPictureDataはWorkPictureの入力。
 type WorkPictureData struct {
-	// Image resolves the thumbnail URLs, including the fallback for works with no image.
-	//
-	// [Ja] Image はサムネイル URL を解決する。画像が無い作品のフォールバックも含む。
+	// ImageはサムネイルURLを解決する。画像が無い作品のフォールバックも含む。
 	Image viewmodel.WorkImage
-	// Width is the display width in CSS pixels; the height follows the work-image ratio.
-	//
-	// [Ja] Width は CSS ピクセルでの表示幅。高さは作品画像の比率に従う。
+	// WidthはCSSピクセルでの表示幅。高さは作品画像の比率に従う。
 	Width int
-	// Alt describes the work for assistive technology. It is dropped for the placeholder,
-	// which carries no information about the work and would otherwise be announced as if
-	// it depicted one.
-	//
-	// [Ja] Alt は支援技術向けに作品を説明する。プレースホルダーでは作品の情報を何も持たず、
+	// Altは支援技術向けに作品を説明する。プレースホルダーでは作品の情報を何も持たず、
 	// 付けると作品を写した画像であるかのように読み上げられるため落とす。
 	Alt string
-	// Class is appended to the <img> classes (borders, rounding, etc.).
-	//
-	// [Ja] Class は <img> のクラスに追加される (枠線や角丸など)。
+	// Classは <img> のクラスに追加される (枠線や角丸など)。
 	Class string
 }
 
-// WorkPicture renders a work thumbnail as a <picture> offering webp and jpeg sources at
-// 1x/2x, falling back to a static placeholder for works with no registered image. Every
-// work occupies the same 3:4 slot whatever the ratio of its image, and images that differ
-// from 3:4 are fitted inside that slot rather than cropped to fill it, so the image column
-// stays even without any work losing part of its artwork.
-//
-// [Ja] WorkPicture は作品サムネイルを、webp と jpeg のソースを 1x/2x で提供する <picture>
+// WorkPictureは作品サムネイルを、webpとjpegのソースを1x/2xで提供する <picture>
 // として描画する。画像が登録されていない作品では静的なプレースホルダーにフォールバックする。
-// 画像の比率にかかわらずどの作品も同じ 3:4 の枠を占め、3:4 でない画像は枠を埋めるよう切り抜く
+// 画像の比率にかかわらずどの作品も同じ3:4の枠を占め、3:4でない画像は枠を埋めるよう切り抜く
 // のではなく枠内に収めるため、絵柄の一部を失うことなく画像列の高さが揃う。
 func WorkPicture(data WorkPictureData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -82,7 +64,7 @@ func WorkPicture(data WorkPictureData) templ.Component {
 			var templ_7745c5c3_Var2 string
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.Image.SrcSet(data.Width, "webp"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 48, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 30, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 			if templ_7745c5c3_Err != nil {
@@ -95,7 +77,7 @@ func WorkPicture(data WorkPictureData) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.Image.SrcSet(data.Width, "jpg"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 49, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 31, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {
@@ -118,7 +100,7 @@ func WorkPicture(data WorkPictureData) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.Image.URL(data.Width, "jpg"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 52, Col: 42}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 34, Col: 42}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var5)
 		if templ_7745c5c3_Err != nil {
@@ -131,7 +113,7 @@ func WorkPicture(data WorkPictureData) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(workPictureAlt(data))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 53, Col: 29}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 35, Col: 29}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 		if templ_7745c5c3_Err != nil {
@@ -144,7 +126,7 @@ func WorkPicture(data WorkPictureData) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.ResolveAttributeValue(strconv.Itoa(data.Width))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 54, Col: 35}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 36, Col: 35}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var7)
 		if templ_7745c5c3_Err != nil {
@@ -157,7 +139,7 @@ func WorkPicture(data WorkPictureData) templ.Component {
 		var templ_7745c5c3_Var8 string
 		templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(strconv.Itoa(data.Image.Height(data.Width)))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 55, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 37, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 		if templ_7745c5c3_Err != nil {
@@ -170,7 +152,7 @@ func WorkPicture(data WorkPictureData) templ.Component {
 		var templ_7745c5c3_Var9 string
 		templ_7745c5c3_Var9, templ_7745c5c3_Err = templruntime.SanitizeStyleAttributeValues(workPictureBoxStyle(data))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 56, Col: 36}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/work_picture.templ`, Line: 38, Col: 36}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 		if templ_7745c5c3_Err != nil {
@@ -197,24 +179,15 @@ func WorkPicture(data WorkPictureData) templ.Component {
 	})
 }
 
-// workPictureBoxStyle pins the box to the work-image size. The width / height attributes
-// alone do not hold it: the CSS reset sets img { height: auto }, which wins over the
-// attribute, so any source whose own ratio differs even slightly renders at its own height
-// and leaves the image column ragged. The size is per-call, so it goes in a style attribute
-// rather than a utility class, which Tailwind could only generate for a fixed width.
-//
-// [Ja] workPictureBoxStyle は枠を作品画像のサイズに固定する。width / height 属性だけでは
-// 保てない。CSS リセットの img { height: auto } が属性に優先するため、比率がわずかでも異なる
+// workPictureBoxStyleは枠を作品画像のサイズに固定する。width / height属性だけでは
+// 保てない。CSSリセットのimg { height: auto } が属性に優先するため、比率がわずかでも異なる
 // 画像は自身の高さで描画され、画像列の高さが揃わなくなる。サイズは呼び出しごとに変わるので、
-// 固定幅でしか生成できないユーティリティクラスではなく style 属性で指定する。
+// 固定幅でしか生成できないユーティリティクラスではなくstyle属性で指定する。
 func workPictureBoxStyle(data WorkPictureData) string {
 	return fmt.Sprintf("width:%dpx;height:%dpx", data.Width, data.Image.Height(data.Width))
 }
 
-// workPictureAlt returns the alt text: the caller's description for a real thumbnail,
-// and "" for the placeholder so it is treated as decorative.
-//
-// [Ja] workPictureAlt は alt を返す。実サムネイルでは呼び出し側の説明を、
+// workPictureAltはaltを返す。実サムネイルでは呼び出し側の説明を、
 // プレースホルダーでは装飾として扱われるよう "" を返す。
 func workPictureAlt(data WorkPictureData) string {
 	if !data.Image.Exists() {
@@ -224,14 +197,9 @@ func workPictureAlt(data WorkPictureData) string {
 	return data.Alt
 }
 
-// workPictureImageClass returns the <img> classes. object-contain keeps the whole image
-// visible inside the fixed 3:4 slot: registered work images come in any ratio, and a
-// landscape one would be cropped top and bottom by object-cover. A 3:4 source still fills
-// the slot exactly, so this only affects images that differ from it.
-//
-// [Ja] workPictureImageClass は <img> のクラスを返す。object-contain により、固定の 3:4 の枠内で
-// 画像全体が見える状態を保つ。登録される作品画像の比率はさまざまで、横長の画像は object-cover
-// では上下が切れてしまう。3:4 の画像は変わらず枠ぴったりに収まるため、影響を受けるのは
+// workPictureImageClassは <img> のクラスを返す。object-containにより、固定の3:4の枠内で
+// 画像全体が見える状態を保つ。登録される作品画像の比率はさまざまで、横長の画像はobject-cover
+// では上下が切れてしまう。3:4の画像は変わらず枠ぴったりに収まるため、影響を受けるのは
 // 比率が異なる画像だけ。
 func workPictureImageClass(data WorkPictureData) string {
 	if data.Class == "" {

@@ -8,34 +8,25 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// GetDBWorksUsecase is the use case for retrieving the work list on the DB admin screen.
-//
-// [Ja] DB 管理画面の作品一覧を取得するユースケース。
+// GetDBWorksUsecaseはDB管理画面の作品一覧を取得するユースケース。
 type GetDBWorksUsecase struct {
 	workRepo *repository.WorkRepository
 }
 
-// NewGetDBWorksUsecase creates a new GetDBWorksUsecase.
-//
-// [Ja] 新しい GetDBWorksUsecase を作成する。
+// NewGetDBWorksUsecaseは新しいGetDBWorksUsecaseを作成する。
 func NewGetDBWorksUsecase(workRepo *repository.WorkRepository) *GetDBWorksUsecase {
 	return &GetDBWorksUsecase{
 		workRepo: workRepo,
 	}
 }
 
-// GetDBWorksInput is the input for the use case.
-//
-// [Ja] ユースケースの入力。
+// GetDBWorksInputはユースケースの入力。
 type GetDBWorksInput struct {
 	FilterNoEpisodes bool
 	FilterNoImage    bool
 	FilterNoSeason   bool
 	FilterNoSlots    bool
-	// SeasonYears / SeasonNames are the parallel (year, name) pairs for the
-	// release-season multi-select filter (empty disables it).
-	//
-	// [Ja] SeasonYears / SeasonNames はリリース時期の複数選択フィルタの並列 (年, 季節)
+	// SeasonYears / SeasonNamesはリリース時期の複数選択フィルタの並列 (年, 季節)
 	// ペア (空でフィルタ無効)。
 	SeasonYears []int32
 	SeasonNames []int32
@@ -43,17 +34,13 @@ type GetDBWorksInput struct {
 	PerPage     int32
 }
 
-// GetDBWorksOutput is the output of the use case.
-//
-// [Ja] ユースケースの出力。
+// GetDBWorksOutputはユースケースの出力。
 type GetDBWorksOutput struct {
 	Works      []*model.Work
 	TotalCount int64
 }
 
-// Execute retrieves the work list and total count for the DB admin screen.
-//
-// [Ja] DB 管理画面の作品一覧と総数を取得する。
+// ExecuteはDB管理画面の作品一覧と総数を取得する。
 func (uc *GetDBWorksUsecase) Execute(ctx context.Context, input GetDBWorksInput) (*GetDBWorksOutput, error) {
 	params := repository.DBWorkListParams{
 		FilterNoEpisodes: input.FilterNoEpisodes,

@@ -78,7 +78,7 @@ func TestSimple_Rendering(t *testing.T) {
 	}
 }
 
-// TestSimple_WithFlash フラッシュメッセージが表示されることを確認
+// TestSimple_WithFlashフラッシュメッセージが表示されることを確認
 func TestSimple_WithFlash(t *testing.T) {
 	t.Parallel()
 
@@ -120,7 +120,7 @@ func TestSimple_WithFlash(t *testing.T) {
 	}
 }
 
-// TestSimple_WithoutFlash フラッシュメッセージがnilの場合の表示を確認
+// TestSimple_WithoutFlashフラッシュメッセージがnilの場合の表示を確認
 func TestSimple_WithoutFlash(t *testing.T) {
 	t.Parallel()
 
@@ -155,12 +155,8 @@ func TestSimple_WithoutFlash(t *testing.T) {
 	}
 }
 
-// TestSimple_FullHeightFollowsVisibleViewport verifies the body is sized by the visible
-// viewport height, so a mobile toolbar cannot make it taller than the screen and push the
-// centered content off-centre.
-//
-// [Ja] TestSimple_FullHeightFollowsVisibleViewport は body の高さが可視ビューポートに
-// 追随することを検証する。モバイルのツールバー表示時に body が画面より高くなり、中央寄せの
+// TestSimple_FullHeightFollowsVisibleViewportはbodyの高さが可視ビューポートに
+// 追随することを検証する。モバイルのツールバー表示時にbodyが画面より高くなり、中央寄せの
 // コンテンツがずれることを防ぐ。
 func TestSimple_FullHeightFollowsVisibleViewport(t *testing.T) {
 	t.Parallel()
@@ -189,15 +185,13 @@ func TestSimple_FullHeightFollowsVisibleViewport(t *testing.T) {
 
 	html := buf.String()
 
-	// The whole class attribute is pinned, so a switch back to the static unit fails here.
-	//
-	// [Ja] class 属性全体を固定するため、静的な単位へ戻せばここで落ちる。
+	// class属性全体を固定するため、静的な単位へ戻せばここで落ちる。
 	if !strings.Contains(html, `<body class="min-h-dvh flex items-center justify-center">`) {
-		t.Error("body のフルハイト指定が min-h-dvh になっていません")
+		t.Error("bodyのフルハイト指定がmin-h-dvhになっていません")
 	}
 }
 
-// TestSimple_I18n 国際化対応が正しく動作することを確認
+// TestSimple_I18n国際化対応が正しく動作することを確認
 func TestSimple_I18n(t *testing.T) {
 	t.Parallel()
 
@@ -245,7 +239,7 @@ func TestSimple_I18n(t *testing.T) {
 	}
 }
 
-// TestSimple_AssetVersion アセットバージョンが正しく設定されることを確認
+// TestSimple_AssetVersionアセットバージョンが正しく設定されることを確認
 func TestSimple_AssetVersion(t *testing.T) {
 	t.Parallel()
 

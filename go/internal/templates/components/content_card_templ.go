@@ -10,14 +10,9 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
-// ContentCard renders a card container for page content. The optional class is appended to
-// the card's class list (only when non-empty); pass overflow-visible when the card hosts an
-// overlay (such as a combobox popover) that must escape the card's default overflow-hidden
-// clipping.
-//
-// [Ja] ContentCard はページコンテンツ用のカードコンテナを描画する。任意の class は (空でない
-// ときだけ) カードのクラスへ追記される。カードが既定の overflow-hidden で切られると困る
-// オーバーレイ (combobox の popover など) を内包するときは overflow-visible を渡す。
+// ContentCardはページコンテンツ用のカードコンテナを描画する。任意のclassは (空でない
+// ときだけ) カードのクラスへ追記される。カードが既定のoverflow-hiddenで切られると困る
+// オーバーレイ (comboboxのpopoverなど) を内包するときはoverflow-visibleを渡す。
 func ContentCard(class string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

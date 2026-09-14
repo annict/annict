@@ -12,18 +12,12 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// dbWorksNewPath is the representative GET path of the new-work form. New serves the page at
-// this path and Create re-renders the same page from POST /db/works, so both take their
-// canonical URL from here rather than from the request path.
-//
-// [Ja] dbWorksNewPath は作品新規作成フォームの代表 GET パス。New はこのパスでページを配信し、
-// Create は同じページを POST /db/works から再描画するため、双方ともリクエストパスではなく
-// ここから canonical URL を取る。
+// dbWorksNewPathは作品新規作成フォームの代表GETパス。Newはこのパスでページを配信し、
+// Createは同じページをPOST /db/worksから再描画するため、双方ともリクエストパスではなく
+// ここからcanonical URLを取る。
 const dbWorksNewPath = "/db/works/new"
 
-// New renders the new-work form page in the Annict DB admin UI (GET /db/works/new).
-//
-// [Ja] Annict DB 管理画面の作品新規作成フォームページ (GET /db/works/new) を描画する。
+// NewはAnnict DB管理画面の作品新規作成フォームページ (GET /db/works/new) を描画する。
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

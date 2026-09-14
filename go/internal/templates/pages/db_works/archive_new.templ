@@ -8,12 +8,8 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// ArchiveNewPageData is the data the archive-confirmation page renders: the CSRF token, the
-// target work id (for the form action), its title (for the page heading and the confirmation
-// prompt) and the listing to return to (for the cancel link and the submit).
-//
-// [Ja] ArchiveNewPageData は非公開確認ページが描画するデータ (CSRF トークン、フォームの
-// action に使う対象 work の id、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
+// ArchiveNewPageDataは非公開確認ページが描画するデータ (CSRFトークン、フォームの
+// actionに使う対象workのid、ページ見出しと確認文に使うタイトル、キャンセルリンクと送信の
 // 戻り先にする一覧)。
 type ArchiveNewPageData struct {
 	CSRFToken string
@@ -22,13 +18,9 @@ type ArchiveNewPageData struct {
 	ReturnTo  string
 }
 
-// heading returns the text of the page heading: the work title, falling back to the generic
-// page title while the title is blank. The confirmation prompt names the same value, so both
-// places on the page point at the same target.
-//
-// [Ja] heading はページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
+// headingはページ見出しのテキストとして作品タイトルを返す。タイトルが空のあいだは
 // 汎用のページタイトルにフォールバックする。確認文も同じ値で対象を名指しするため、ページ上の
-// 2 箇所が同じ対象を指す。
+// 2箇所が同じ対象を指す。
 func (d ArchiveNewPageData) heading(ctx context.Context) string {
 	return headingOrFallback(ctx, d.Title, "db_works_archive_new_title")
 }

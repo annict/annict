@@ -61,21 +61,14 @@ import (
 	"github.com/annict/annict/go/internal/worker"
 )
 
-// dailyAt2AMSchedule runs a job once a day at 2 AM local time.
-//
-// [Ja] dailyAt2AMSchedule は毎日深夜 2 時にジョブを実行するスケジュール。
+// dailyAt2AMScheduleは毎日深夜2時にジョブを実行するスケジュール。
 type dailyAt2AMSchedule struct{}
 
-// Next returns the next scheduled 2 AM, rolling over to the following day from 1:59 onward.
-//
-// [Ja] Next は次の実行対象となる深夜 2 時を返し、1 時 59 分以降は翌日に繰り越す。
+// Nextは次の実行対象となる深夜2時を返し、1時59分以降は翌日に繰り越す。
 func (s dailyAt2AMSchedule) Next(current time.Time) time.Time {
 	next := time.Date(current.Year(), current.Month(), current.Day(), 2, 0, 0, 0, current.Location())
 
-	// Roll over to the next day once the current time is within a minute of, or
-	// past, today's 2 AM.
-	//
-	// [Ja] 現在時刻が今日の 2 時の 1 分前以降になっていれば、翌日の 2 時にする。
+	// 現在時刻が今日の2時の1分前以降になっていれば、翌日の2時にする。
 	if current.Hour() >= 2 || (current.Hour() == 1 && current.Minute() >= 59) {
 		next = next.Add(24 * time.Hour)
 	}
@@ -83,25 +76,17 @@ func (s dailyAt2AMSchedule) Next(current time.Time) time.Time {
 	return next
 }
 
-// hourlySchedule runs a job once an hour, on the hour.
-//
-// [Ja] hourlySchedule は 1 時間ごと、毎時 0 分にジョブを実行する。
+// hourlyScheduleは1時間ごと、毎時0分にジョブを実行する。
 type hourlySchedule struct{}
 
-// Next returns the next top-of-the-hour after current.
-//
-// [Ja] Next は current の次の毎時 0 分を返す。
+// Nextはcurrentの次の毎時0分を返す。
 func (s hourlySchedule) Next(current time.Time) time.Time {
 	return time.Date(current.Year(), current.Month(), current.Day(), current.Hour(), 0, 0, 0, current.Location()).
 		Add(time.Hour)
 }
 
-// runServe starts the HTTP server: it loads config, wires dependencies, registers
-// routes and periodic jobs, and blocks on ListenAndServe until shutdown. It is the
-// body of the `serve` subcommand.
-//
-// [Ja] runServe は HTTP サーバーを起動する。設定の読み込み・依存の組み立て・ルートと
-// 定期ジョブの登録を行い、シャットダウンまで ListenAndServe でブロックする。
+// runServeはHTTPサーバーを起動する。設定の読み込み・依存の組み立て・ルートと
+// 定期ジョブの登録を行い、シャットダウンまでListenAndServeでブロックする。
 // `serve` サブコマンドの本体。
 func runServe() {
 	// 設定を読み込む
@@ -112,10 +97,7 @@ func runServe() {
 	}
 	slog.Info("サーバーを起動します", "env", cfg.Env)
 
-	// Initialize Sentry. Release reuses AssetVersion (short Git commit hash) so
-	// that events can be distinguished per deploy.
-	//
-	// [Ja] Sentry の初期化。Release には AssetVersion (Git コミットハッシュ短縮版)
+	// Sentryの初期化。ReleaseにはAssetVersion (Gitコミットハッシュ短縮版)
 	// を流用し、デプロイごとにイベントを区別できるようにする。
 	err = annictSentry.Init(annictSentry.Config{
 		DSN:              cfg.SentryDSN,
@@ -130,16 +112,10 @@ func runServe() {
 	}
 	defer annictSentry.Flush(2 * time.Second)
 
-	// Route slog through Sentry: Error-level records become Sentry events while
-	// every level still reaches stderr through the underlying text handler.
-	// SetDefault must happen before any code path that can call slog.Error
-	// (DB connection, river client, etc.) so the Sentry handler covers
-	// startup failures too.
-	//
-	// [Ja] slog のデフォルトロガーを Sentry 連携付きハンドラーに差し替える。
-	// Error レベル以上は Sentry イベント化され、全レベルは引き続き標準エラー
-	// 出力にも届く。slog.Error を呼ぶ可能性のある処理 (DB 接続、river 起動など)
-	// より前に呼ぶことで、起動時のエラーも Sentry に届くようにする。
+	// slogのデフォルトロガーをSentry連携付きハンドラーに差し替える。
+	// Errorレベル以上はSentryイベント化され、全レベルは引き続き標準エラー
+	// 出力にも届く。slog.Errorを呼ぶ可能性のある処理 (DB接続、river起動など)
+	// より前に呼ぶことで、起動時のエラーもSentryに届くようにする。
 	slog.SetDefault(slog.New(annictSentry.NewSlogHandler(annictSentry.NewBaseHandler())))
 
 	// データベース接続
@@ -179,13 +155,13 @@ func runServe() {
 	// sqlcのクエリーインスタンスを作成
 	queries := query.New(db)
 
-	// Redisクライアントの初期化（Rate Limiting用とデータストア用）
+	// Redisクライアントの初期化 (Rate Limiting用とデータストア用)
 	var limiter *ratelimit.Limiter
 	var redisClient *redis.Client
 	if cfg.RedisURL != "" {
 		opt, err := redis.ParseURL(cfg.RedisURL)
 		if err != nil {
-			slog.Error("Redis URL のパースに失敗しました", "error", err)
+			slog.Error("Redis URLのパースに失敗しました", "error", err)
 			os.Exit(1)
 		}
 
@@ -197,38 +173,29 @@ func runServe() {
 		redisClient = redis.NewClient(opt)
 		// Redis接続確認
 		if err := redisClient.Ping(context.Background()).Err(); err != nil {
-			slog.Warn("Redis への接続に失敗しました（Rate Limiting は無効化されます）", "error", err)
+			slog.Warn("Redisへの接続に失敗しました (Rate Limitingは無効化されます)", "error", err)
 			redisClient = nil
 		} else {
-			slog.Info("Redis に正常に接続しました")
+			slog.Info("Redisに正常に接続しました")
 			limiter = ratelimit.NewLimiter(redisClient)
 		}
 	} else {
-		slog.Warn("Redis URL が設定されていません（Rate Limiting は無効化されます）")
+		slog.Warn("Redis URLが設定されていません (Rate Limitingは無効化されます)")
 	}
 
-	// Wire the cleanup usecases used by the periodic jobs registered below. Each one is
-	// built through the helper its `task cleanup-*` subcommand also uses, so the scheduled
-	// run and the manual run share the same wiring.
-	//
-	// [Ja] 下で登録する定期ジョブが使うクリーンアップ UseCase を組み立てる。いずれも対応する
+	// 下で登録する定期ジョブが使うクリーンアップUseCaseを組み立てる。いずれも対応する
 	// `task cleanup-*` サブコマンドと同じヘルパー経由で組み立てるため、定期実行と手動実行で
 	// 配線を共有できる。
 	cleanupExpiredTokensUC := newCleanupExpiredTokensUsecase(queries)
 	cleanupExpiredSignInCodesUC := newCleanupExpiredSignInCodesUsecase(queries)
 	cleanupExpiredSessionsUC := newCleanupExpiredSessionsUsecase(queries)
 
-	// Wire the phase 2 full-reconciliation batch usecase (for the Worker). It is
-	// invoked by the periodic job below to sync works / episodes into animes /
-	// anime_classifications. The wiring is shared with the `task sync-animes` subcommand
-	// via newSyncAnimesUsecase.
-	//
-	// [Ja] フェーズ 2 のフル・リコンシリエーションバッチ UseCase を組み立てる (Worker 用)。
-	// works / episodes を animes / anime_classifications へ同期する下の定期ジョブから
-	// 呼ばれる。配線は newSyncAnimesUsecase 経由で `task sync-animes` サブコマンドと共有する。
+	// フェーズ2のフル・リコンシリエーションバッチUseCaseを組み立てる (Worker用)。
+	// works / episodesをanimes / anime_classificationsへ同期する下の定期ジョブから
+	// 呼ばれる。配線はnewSyncAnimesUsecase経由で `task sync-animes` サブコマンドと共有する。
 	syncAnimesUC := newSyncAnimesUsecase(db, queries)
 
-	// River クライアントの初期化
+	// Riverクライアントの初期化
 	ctx := context.Background()
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
 		CleanupExpiredTokens:      cleanupExpiredTokensUC,
@@ -237,26 +204,24 @@ func runServe() {
 		SyncAnimes:                syncAnimesUC,
 	}, cfg)
 	if err != nil {
-		slog.Error("River クライアントの初期化に失敗しました", "error", err)
+		slog.Error("Riverクライアントの初期化に失敗しました", "error", err)
 		os.Exit(1)
 	}
 	defer func() {
 		shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 		defer cancel()
 		if err := riverClient.Stop(shutdownCtx); err != nil {
-			slog.Warn("River クライアントの停止に失敗しました", "error", err)
+			slog.Warn("Riverクライアントの停止に失敗しました", "error", err)
 		}
 	}()
 
-	// River クライアントを起動
+	// Riverクライアントを起動
 	if err := riverClient.Start(ctx); err != nil {
-		slog.Error("River クライアントの起動に失敗しました", "error", err)
+		slog.Error("Riverクライアントの起動に失敗しました", "error", err)
 		os.Exit(1)
 	}
 
-	// Register the token cleanup as a periodic job running daily at 2 AM.
-	//
-	// [Ja] トークンクリーンアップを毎日深夜 2 時の定期実行ジョブとして登録する。
+	// トークンクリーンアップを毎日深夜2時の定期実行ジョブとして登録する。
 	periodicJobTokenCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
@@ -268,9 +233,7 @@ func runServe() {
 	riverClient.Client().PeriodicJobs().Add(periodicJobTokenCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "トークンクリーンアップ", "schedule", "毎日深夜2時")
 
-	// Register the sign-in code cleanup as a periodic job running daily at 2 AM.
-	//
-	// [Ja] ログインコードクリーンアップを毎日深夜 2 時の定期実行ジョブとして登録する。
+	// ログインコードクリーンアップを毎日深夜2時の定期実行ジョブとして登録する。
 	periodicJobSignInCodeCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
@@ -282,9 +245,7 @@ func runServe() {
 	riverClient.Client().PeriodicJobs().Add(periodicJobSignInCodeCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "ログインコードクリーンアップ", "schedule", "毎日深夜2時")
 
-	// Register the session cleanup as a periodic job running daily at 2 AM.
-	//
-	// [Ja] セッションクリーンアップを毎日深夜 2 時の定期実行ジョブとして登録する。
+	// セッションクリーンアップを毎日深夜2時の定期実行ジョブとして登録する。
 	periodicJobSessionCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
@@ -296,13 +257,8 @@ func runServe() {
 	riverClient.Client().PeriodicJobs().Add(periodicJobSessionCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "セッションクリーンアップ", "schedule", "毎日深夜2時")
 
-	// Register the hourly animes reconciliation. During phase 2 there is no
-	// dual-write yet, so this batch is the only path that updates animes; running
-	// it hourly favors freshness and the cadence of the diff metric. The
-	// reconciliation is idempotent and converges to near-zero diffs in steady state.
-	//
-	// [Ja] animes リコンサイルを毎時登録する。フェーズ 2 ではまだ両書きが無く、本バッチが
-	// animes を更新する唯一の経路のため、毎時実行で鮮度と差分メトリクスの取得頻度を優先する。
+	// animesリコンサイルを毎時登録する。フェーズ2ではまだ両書きが無く、本バッチが
+	// animesを更新する唯一の経路のため、毎時実行で鮮度と差分メトリクスの取得頻度を優先する。
 	// リコンサイルは冪等で、定常状態ではほぼ差分なしに収束する。
 	periodicJobSyncAnimes := river.NewPeriodicJob(
 		hourlySchedule{},
@@ -313,7 +269,7 @@ func runServe() {
 	)
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobSyncAnimes)
-	slog.Info("定期実行ジョブを登録しました", "job", "animes 同期バッチ", "schedule", "毎時")
+	slog.Info("定期実行ジョブを登録しました", "job", "animes同期バッチ", "schedule", "毎時")
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)
@@ -347,17 +303,13 @@ func runServe() {
 	r.Use(middleware.Logger)
 	r.Use(middleware.RequestID)
 
-	// リクエストボディサイズ制限（10MB）
+	// リクエストボディサイズ制限 (10MB)
 	requestBodyLimitMW := authMiddleware.NewRequestBodyLimitMiddleware(10 * 1024 * 1024)
 	r.Use(requestBodyLimitMW.Middleware)
 
-	// Maintenance middleware. It resolves the client IP via clientip.GetClientIP,
-	// which reads the proxy headers itself, so the order relative to other
-	// middleware does not affect IP resolution.
-	//
-	// [Ja] メンテナンスミドルウェア。クライアント IP は clientip.GetClientIP で
+	// メンテナンスミドルウェア。クライアントIPはclientip.GetClientIPで
 	// 取得し、同関数がプロキシヘッダを自前で読むため、他のミドルウェアとの
-	// 登録順は IP 取得に影響しない。
+	// 登録順はIP取得に影響しない。
 	maintenanceMW := authMiddleware.NewMaintenanceMiddleware(cfg)
 	r.Use(maintenanceMW.Middleware)
 
@@ -365,94 +317,65 @@ func runServe() {
 	// Go版で処理するかRails版にプロキシするかを判定
 	// Rails版にプロキシする場合は後続のミドルウェアをスキップ
 	//
-	// Also inject the router so the middleware can fall back to Rails for paths Go and
-	// Rails share (e.g. /db/*) that match no Go route, proxying at this layer — before
-	// the Sentry / CSRF chain below.
-	//
-	// [Ja] あわせてルーターを注入し、Go 版と Rails 版が分け合っているパス (例: /db/*) が
-	// どの Go ルートにもマッチしない場合に、ミドルウェアがこのレイヤー (下の Sentry /
-	// CSRF チェーンより前) で Rails へフォールバックできるようにする。
+	// あわせてルーターを注入し、Go版とRails版が分け合っているパス (例: /db/*) が
+	// どのGoルートにもマッチしない場合に、ミドルウェアがこのレイヤー (下のSentry /
+	// CSRFチェーンより前) でRailsへフォールバックできるようにする。
 	if reverseProxyMW != nil {
 		reverseProxyMW.SetRouter(r)
 		r.Use(reverseProxyMW.Middleware)
 	}
 
-	// The middleware below applies only to requests handled by the Go app.
-	// Registering the Sentry chain inside the reverse proxy keeps requests
-	// proxied to the Rails app out of the Go app's Sentry transactions.
-	//
-	// [Ja] 以下は Go 版で処理する場合のみ適用されるミドルウェア。Sentry の
-	// チェーンをリバースプロキシの内側に置くことで、Rails 版へプロキシされる
-	// リクエストが Go 版の Sentry トランザクションに乗らないようにする。
+	// 以下はGo版で処理する場合のみ適用されるミドルウェア。Sentryの
+	// チェーンをリバースプロキシの内側に置くことで、Rails版へプロキシされる
+	// リクエストがGo版のSentryトランザクションに乗らないようにする。
 
-	// SecurityHeaders comes first in this section so that it covers every response the Go app
-	// renders, including the static files and the responses the middleware below produce
-	// (Recoverer's 500, the CSRF 403). It cannot move outside the reverse proxy: Rails already
-	// sends the same headers, and httputil.ReverseProxy would append rather than replace them.
-	//
-	// [Ja] SecurityHeaders は本セクションの先頭に置き、Go が描画する全レスポンス (静的ファイルの
-	// 配信と、以下のミドルウェアが返す Recoverer の 500 や CSRF の 403 を含む) を覆う。
-	// リバースプロキシの外側へは動かせない。Rails は同じヘッダーを既に送っており、
-	// httputil.ReverseProxy はそれを上書きではなく追記するため。
+	// SecurityHeadersは本セクションの先頭に置き、Goが描画する全レスポンス (静的ファイルの
+	// 配信と、以下のミドルウェアが返すRecovererの500やCSRFの403を含む) を覆う。
+	// リバースプロキシの外側へは動かせない。Railsは同じヘッダーを既に送っており、
+	// httputil.ReverseProxyはそれを上書きではなく追記するため。
 	r.Use(authMiddleware.SecurityHeaders)
 
-	// Recoverer must be registered before sentryhttp (= outer in the chain) so
-	// that the re-panic from sentryhttp (Repanic: true) is caught here and a
-	// 500 response is returned. The official sentryhttp README also says to
-	// place the recovery middleware on the outside of sentryhttp.
-	//
-	// [Ja] Recoverer は sentryhttp より前 (= 外側) に登録する。sentryhttp が
-	// Repanic: true で再 panic したものをここで握り潰して 500 を返すため。
-	// Sentry SDK 公式 README も「recovery middleware は sentryhttp より外側に
+	// Recovererはsentryhttpより前 (= 外側) に登録する。sentryhttpが
+	// Repanic: trueで再panicしたものをここで握り潰して500を返すため。
+	// Sentry SDK公式READMEも「recovery middlewareはsentryhttpより外側に
 	// 置く」と指示している。
 	r.Use(middleware.Recoverer)
 
-	// sentryhttp captures panics, sets a per-request Hub on the context, and
-	// starts a Sentry transaction per request. Repanic: true re-throws after
-	// capture so that Recoverer (outer) returns 500 to the client.
-	//
-	// [Ja] sentryhttp はリクエスト単位の Hub を context に積み、panic を捕捉して
-	// Sentry に送信し、リクエストごとの Sentry トランザクションを開始する。
-	// Repanic: true により捕捉後に再 panic することで、外側の Recoverer が
-	// クライアントに 500 を返せる。
+	// sentryhttpはリクエスト単位のHubをcontextに積み、panicを捕捉して
+	// Sentryに送信し、リクエストごとのSentryトランザクションを開始する。
+	// Repanic: trueにより捕捉後に再panicすることで、外側のRecovererが
+	// クライアントに500を返せる。
 	sentryHandler := sentryhttp.New(sentryhttp.Options{Repanic: true})
 	r.Use(sentryHandler.Handle)
 
-	// SentryTransaction rewrites the transaction name with chi's route pattern.
-	// It must be registered after sentryhttp (= inside the wrapper) so that the
-	// LIFO defer order guarantees the rewrite happens before sentryhttp's
-	// transaction.Finish() / recoverWithSentry run.
-	//
-	// [Ja] SentryTransaction はトランザクション名を chi のルートパターンに
-	// 上書きするミドルウェア。sentryhttp の後 (= 内側) に登録することで、LIFO の
-	// defer 順序により sentryhttp の transaction.Finish() や recoverWithSentry
+	// SentryTransactionはトランザクション名をchiのルートパターンに
+	// 上書きするミドルウェア。sentryhttpの後 (= 内側) に登録することで、LIFOの
+	// defer順序によりsentryhttpのtransaction.Finish() やrecoverWithSentry
 	// より先に書き換えが走ることを保証する。
 	r.Use(authMiddleware.SentryTransaction)
 
-	r.Use(authMiddleware.MethodOverride) // Method Overrideミドルウェアを追加（HTMLフォームからPUT/PATCH/DELETEを使用可能に）
-	r.Use(authMW.Middleware)             // 認証ミドルウェアを追加（ユーザー情報をコンテキストに設定）
+	r.Use(authMiddleware.MethodOverride) // Method Overrideミドルウェアを追加 (HTMLフォームからPUT/PATCH/DELETEを使用可能に)
+	r.Use(authMW.Middleware)             // 認証ミドルウェアを追加 (ユーザー情報をコンテキストに設定)
 
-	// Sentryユーザーコンテキストミドルウェアを追加（認証済みユーザーのIDをSentryに設定）
+	// Sentryユーザーコンテキストミドルウェアを追加 (認証済みユーザーのIDをSentryに設定)
 	sentryUserContextMW := authMiddleware.NewSentryUserContextMiddleware()
 	r.Use(sentryUserContextMW.Middleware)
 
-	r.Use(authMiddleware.I18n) // I18nミドルウェアを追加（ユーザーのlocaleを考慮）
+	r.Use(authMiddleware.I18n) // I18nミドルウェアを追加 (ユーザーのlocaleを考慮)
 
-	// 現在パスミドルウェアを追加（サイドバーの現在ページハイライト用に aria-current を付与）
+	// 現在パスミドルウェアを追加 (サイドバーの現在ページハイライト用にaria-currentを付与)
 	r.Use(templates.CurrentPathMiddleware)
 
-	// Store the Annict DB sidebar Cookie preference for server-rendered initial state.
-	//
-	// [Ja] Annict DB サイドバーの Cookie 設定を SSR の初期状態用に保存する。
+	// Annict DBサイドバーのCookie設定をSSRの初期状態用に保存する。
 	r.Use(templates.DBSidebarStateMiddleware)
 
 	// CSRF保護ミドルウェアを追加
 	csrfMiddleware := authMiddleware.NewCSRFMiddleware(sessionManager)
 	r.Use(csrfMiddleware.Middleware)
 
-	// フラッシュミドルウェアは CSRF 検証後・全ハンドラー前に配置する。
-	// CSRF が失敗するリクエストでは flash Cookie を読み取らない（=クリアしない）ため、
-	// 次回リクエストでも flash が失われない。
+	// フラッシュミドルウェアはCSRF検証後・全ハンドラー前に配置する。
+	// CSRFが失敗するリクエストではflash Cookieを読み取らない (=クリアしない) ため、
+	// 次回リクエストでもflashが失われない。
 	r.Use(flashMgr.Middleware)
 
 	// リポジトリの初期化
@@ -480,9 +403,7 @@ func runServe() {
 	// ユーザーリポジトリの初期化
 	userRepo := repository.NewUserRepository(queries)
 
-	// Initialize the tracking heatmap fragment handler.
-	//
-	// [Ja] 視聴記録ヒートマップフラグメントハンドラーの初期化。
+	// 視聴記録ヒートマップフラグメントハンドラーの初期化。
 	recordRepo := repository.NewRecordRepository(queries)
 	getTrackingHeatmapUC := usecase.NewGetTrackingHeatmapUsecase(userRepo, recordRepo)
 	trackingHeatmapHandler := tracking_heatmap.NewHandler(getTrackingHeatmapUC)
@@ -490,7 +411,7 @@ func runServe() {
 	// サインインコードリポジトリの初期化
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 
-	// Dispatcher の初期化
+	// Dispatcherの初期化
 	d := dispatcher.NewDispatcher(riverClient.Client())
 
 	// 6桁コード送信ユースケースの初期化
@@ -567,11 +488,8 @@ func runServe() {
 		PriceYearlyID:  cfg.StripePriceYearlyID,
 	}
 	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
-	// Wrap the stripe-go client in an adapter that implements the per-UseCase
-	// interfaces, so the UseCases depend on the seam rather than *stripe.Client.
-	//
-	// [Ja] stripe-go クライアントを、UseCase ごとの interface を実装する adapter で
-	// ラップする。これにより各 UseCase は *stripe.Client ではなく seam に依存する。
+	// stripe-goクライアントを、UseCaseごとのinterfaceを実装するadapterで
+	// ラップする。これにより各UseCaseは *stripe.Clientではなくseamに依存する。
 	stripeAdapter := annictStripe.NewAdapter(stripeClient)
 	getSupporterStatusUC := usecase.NewGetSupporterStatusUsecase(stripeSubscriberRepo, gumroadSubscriberRepo)
 	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, getSupporterStatusUC, annictStripeCfg, stripeClient)
@@ -593,7 +511,7 @@ func runServe() {
 	processStripeWebhookUC := usecase.NewProcessStripeWebhookUsecase(stripeWebhookEventRepo, createStripeSubscriberUC, updateStripeSubscriberUC, deleteStripeSubscriberUC)
 	stripeWebhookHandler := stripewebhook.NewHandler(cfg, processStripeWebhookUC)
 
-	// 静的ファイルの配信 (Tailwind CLI + esbuild のビルド結果)
+	// 静的ファイルの配信 (Tailwind CLI + esbuildのビルド結果)
 	fileServer := http.FileServer(http.Dir("./static"))
 	r.Handle("/static/*", http.StripPrefix("/static", fileServer))
 
@@ -646,12 +564,8 @@ func runServe() {
 	getDBWorksUC := usecase.NewGetDBWorksUsecase(workRepo)
 	getDBWorkFormOptionsUC := usecase.NewGetDBWorkFormOptionsUsecase(numberFormatRepo)
 	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
-	// The work create / update usecases dual-write the six satellite tables the work
-	// sources, so they take the same bundle of satellite repositories the phase 2 sync
-	// batch uses.
-	//
-	// [Ja] 作品 作成 / 更新 UseCase は work が source とする 6 つの別表を両書きするため、
-	// フェーズ 2 の同期バッチと同じ別表リポジトリの束を受け取る。
+	// 作品 作成 / 更新UseCaseはworkがsourceとする6つの別表を両書きするため、
+	// フェーズ2の同期バッチと同じ別表リポジトリの束を受け取る。
 	satelliteRepos := usecase.WorkSatelliteRepos{
 		ExternalID:      repository.NewAnimeExternalIDRepository(queries),
 		Link:            repository.NewAnimeLinkRepository(queries),
@@ -672,21 +586,12 @@ func runServe() {
 	dbWorkUnarchiveHandler := db_work_unarchive.NewHandler(cfg, sessionManager, getDBWorkUnarchiveNewUC)
 	getDBWorkDeletionNewUC := usecase.NewGetDBWorkDeletionNewUsecase(workRepo)
 	dbWorkDeletionHandler := db_work_deletion.NewHandler(cfg, sessionManager, getDBWorkDeletionNewUC)
-	// The work index is public (anyone, including signed-out visitors, may browse it;
-	// the template hides committer-only action buttons). Creating, editing, archiving and
-	// re-publishing works require the committer role, so New / Create / Edit / Update, the
-	// archive confirmation / archive / un-archive endpoints and the publish confirmation are
-	// grouped behind RequireCommitter. Deleting a work is admin-only (ADR 0009 splits
-	// archived=committer / deleted=admin), so the delete and its confirmation are gated
-	// separately behind RequireAdmin: a confirmation screen is only reachable by whoever may
-	// submit it.
-	//
-	// [Ja] 作品一覧は公開 (未ログインを含め誰でも閲覧可。committer 限定の操作ボタンは
-	// テンプレートで出し分ける)。作品の作成・編集・非公開・再公開は committer ロールを要する
-	// ため、New / Create / Edit / Update と非公開の確認 / 実行 / 再公開エンドポイント、および
-	// 公開の確認を RequireCommitter でまとめてゲートする。作品の削除は admin 専用のため
-	// (ADR 0009 で archived=committer / deleted=admin に権限分離)、削除とその確認画面は
-	// RequireAdmin で別途ゲートする (確認画面には、それを送信できる者だけが到達する)。
+	// 作品一覧は公開 (未ログインを含め誰でも閲覧可。committer限定の操作ボタンは
+	// テンプレートで出し分ける)。作品の作成・編集・非公開・再公開はcommitterロールを要する
+	// ため、New / Create / Edit / Updateと非公開の確認 / 実行 / 再公開エンドポイント、および
+	// 公開の確認をRequireCommitterでまとめてゲートする。作品の削除はadmin専用のため
+	// (ADR 0009でarchived=committer / deleted=adminに権限分離)、削除とその確認画面は
+	// RequireAdminで別途ゲートする (確認画面には、それを送信できる者だけが到達する)。
 	r.Get("/db/works", dbWorkHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
@@ -705,20 +610,12 @@ func runServe() {
 		r.Delete("/db/works/{id}", dbWorkHandler.Delete)
 	})
 
-	// A work's episode list is public, matching the Rails Db::EpisodesController#index,
-	// which is the one action there without authenticate_user!. Creating, editing, archiving
-	// and re-publishing episodes requires the committer role, so the bulk-create form, its
-	// submit, the edit form with its submit and the archive confirmation with its submit and
-	// the re-publish are grouped behind RequireCommitter. Deleting an episode is admin-only
-	// (ADR 0009 splits archived=committer / deleted=admin, which is also the split the Rails
-	// EpisodePolicy makes), so it is gated separately behind RequireAdmin.
-	//
-	// [Ja] 作品のエピソード一覧は公開。Rails の Db::EpisodesController#index が同コントローラ
-	// で唯一 authenticate_user! を持たないアクションであることに合わせている。エピソードの作成・
-	// 編集・非公開・再公開は committer ロールを要するため、一括作成フォームとその送信、編集
-	// フォームとその送信、および非公開の確認とその送信・再公開は RequireCommitter でまとめて
-	// ゲートする。エピソードの削除は admin 専用のため (ADR 0009 で archived=committer /
-	// deleted=admin に権限分離。Rails の EpisodePolicy が行う分割とも同じ)、RequireAdmin で
+	// 作品のエピソード一覧は公開。RailsのDb::EpisodesController#indexが同コントローラ
+	// で唯一authenticate_user! を持たないアクションであることに合わせている。エピソードの作成・
+	// 編集・非公開・再公開はcommitterロールを要するため、一括作成フォームとその送信、編集
+	// フォームとその送信、および非公開の確認とその送信・再公開はRequireCommitterでまとめて
+	// ゲートする。エピソードの削除はadmin専用のため (ADR 0009でarchived=committer /
+	// deleted=adminに権限分離。RailsのEpisodePolicyが行う分割とも同じ)、RequireAdminで
 	// 別途ゲートする。
 	episodeRepo := repository.NewEpisodeRepository(queries)
 	getDBEpisodesUC := usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo)
@@ -750,11 +647,9 @@ func runServe() {
 
 	// iCalendar配信
 	r.Get("/@{username}/ics", icsHandler.Show) // メインのエンドポイント
-	r.Get("/ics", icsHandler.Show)             // Apple カレンダー互換の代替パス（クエリパラメータで username を指定）
+	r.Get("/ics", icsHandler.Show)             // Appleカレンダー互換の代替パス (クエリパラメータでusernameを指定)
 
-	// Tracking heatmap fragment.
-	//
-	// [Ja] 視聴記録ヒートマップフラグメント。
+	// 視聴記録ヒートマップフラグメント。
 	r.Get("/fragment/@{username}/tracking_heatmap", trackingHeatmapHandler.Show)
 
 	// サーバー起動
@@ -773,7 +668,7 @@ func runServe() {
 		MaxHeaderBytes: 1 << 20,
 	}
 
-	// Graceful shutdown のためのシグナルハンドリング
+	// Graceful shutdownのためのシグナルハンドリング
 	go func() {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint, os.Interrupt, syscall.SIGTERM)

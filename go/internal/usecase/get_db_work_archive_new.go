@@ -9,15 +9,10 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// GetDBWorkArchiveNewUsecase loads the data the Annict DB admin archive-confirmation
-// screen needs: the work whose archiving is being confirmed. Only a currently published
-// work is archivable, matching the Rails scope Work.without_deleted.published, so an
-// already-archived or deleted work is reported as not found.
-//
-// [Ja] GetDBWorkArchiveNewUsecase は Annict DB 管理画面の非公開確認画面に必要なデータ
-// (非公開を確認する対象の work) を取得するユースケース。アーカイブできるのは現在公開中の
-// work だけで、これは Rails の scope Work.without_deleted.published に一致する。すでに
-// アーカイブ済み・削除済みの work は not found として扱う。
+// GetDBWorkArchiveNewUsecaseはAnnict DB管理画面の非公開確認画面に必要なデータ
+// (非公開を確認する対象のwork) を取得するユースケース。アーカイブできるのは現在公開中の
+// workだけで、これはRailsのscope Work.without_deleted.publishedに一致する。すでに
+// アーカイブ済み・削除済みのworkはnot foundとして扱う。
 type GetDBWorkArchiveNewUsecase struct {
 	workRepo *repository.WorkRepository
 }
@@ -35,12 +30,8 @@ type GetDBWorkArchiveNewOutput struct {
 	Work *model.Work
 }
 
-// Execute first authorizes a committer before looking up the work. It returns a
-// *model.AppError with AppErrCodeResourceNotFound when the work does not exist or is not
-// currently published; the handler converts that to 404.
-//
-// [Ja] Execute は work を取得する前にコミッターを認可する。work が存在しない、または現在
-// 公開中でない場合は AppErrCodeResourceNotFound の *model.AppError を返し、Handler 側で 404 に
+// Executeはworkを取得する前にコミッターを認可する。workが存在しない、または現在
+// 公開中でない場合はAppErrCodeResourceNotFoundの *model.AppErrorを返し、Handler側で404に
 // 変換する。
 func (uc *GetDBWorkArchiveNewUsecase) Execute(ctx context.Context, input GetDBWorkArchiveNewInput) (*GetDBWorkArchiveNewOutput, error) {
 	if input.User == nil || !input.User.IsCommitter() {

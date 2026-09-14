@@ -21,42 +21,42 @@ func TestStatusLabel(t *testing.T) {
 		wantAttr string
 	}{
 		{
-			name:     "公開状態（日本語）",
+			name:     "公開状態 (日本語)",
 			status:   viewmodel.PublishingStatusPublished,
 			locale:   "ja",
 			wantText: "公開",
 			wantAttr: `class="badge" data-variant="success"`,
 		},
 		{
-			name:     "非公開状態（日本語）",
+			name:     "非公開状態 (日本語)",
 			status:   viewmodel.PublishingStatusArchived,
 			locale:   "ja",
 			wantText: "非公開",
 			wantAttr: `class="badge" data-variant="warning"`,
 		},
 		{
-			name:     "削除状態（日本語）",
+			name:     "削除状態 (日本語)",
 			status:   viewmodel.PublishingStatusDeleted,
 			locale:   "ja",
 			wantText: "削除",
 			wantAttr: `class="badge" data-variant="destructive"`,
 		},
 		{
-			name:     "公開状態（英語）",
+			name:     "公開状態 (英語)",
 			status:   viewmodel.PublishingStatusPublished,
 			locale:   "en",
 			wantText: "Published",
 			wantAttr: `class="badge" data-variant="success"`,
 		},
 		{
-			name:     "アーカイブ状態（英語）",
+			name:     "アーカイブ状態 (英語)",
 			status:   viewmodel.PublishingStatusArchived,
 			locale:   "en",
 			wantText: "Archived",
 			wantAttr: `class="badge" data-variant="warning"`,
 		},
 		{
-			name:     "削除状態（英語）",
+			name:     "削除状態 (英語)",
 			status:   viewmodel.PublishingStatusDeleted,
 			locale:   "en",
 			wantText: "Deleted",
@@ -74,15 +74,15 @@ func TestStatusLabel(t *testing.T) {
 			var buf bytes.Buffer
 			err := StatusLabel(tt.status).Render(ctx, &buf)
 			if err != nil {
-				t.Fatalf("Render() error = %v", err)
+				t.Fatalf("Render()のエラー = %v", err)
 			}
 
 			html := buf.String()
 			if !strings.Contains(html, tt.wantText) {
-				t.Errorf("出力に %q が含まれていません: %s", tt.wantText, html)
+				t.Errorf("出力に%qが含まれていません: %s", tt.wantText, html)
 			}
 			if !strings.Contains(html, tt.wantAttr) {
-				t.Errorf("出力に %q が含まれていません: %s", tt.wantAttr, html)
+				t.Errorf("出力に%qが含まれていません: %s", tt.wantAttr, html)
 			}
 		})
 	}
@@ -97,11 +97,11 @@ func TestStatusLabel_UnknownStatus(t *testing.T) {
 	var buf bytes.Buffer
 	err := StatusLabel(viewmodel.PublishingStatus("unknown")).Render(ctx, &buf)
 	if err != nil {
-		t.Fatalf("Render() error = %v", err)
+		t.Fatalf("Render()のエラー = %v", err)
 	}
 
 	html := buf.String()
 	if html != "" {
-		t.Errorf("不明なステータスの場合は空出力を期待, got: %s", html)
+		t.Errorf("不明なステータスの場合の出力 = %s、期待値 = 空", html)
 	}
 }

@@ -24,13 +24,13 @@ var (
 	testDBOnce sync.Once
 )
 
-// setupTestDB テスト用のDBとトランザクションをセットアップ
+// setupTestDBテスト用のDBとトランザクションをセットアップ
 func setupTestDB(t *testing.T) (*sql.DB, *sql.Tx, *repository.SessionRepository) {
 	t.Helper()
 
 	// テスト用データベース接続の初期化
 	testDBOnce.Do(func() {
-		// テスト用データベースの接続情報（デフォルト値を使用）
+		// テスト用データベースの接続情報 (デフォルト値を使用)
 		dsn := getEnv("DATABASE_URL", "postgres://postgres@postgresql:5432/annict_test?sslmode=disable")
 
 		// データベース接続の確立
@@ -71,7 +71,7 @@ func setupTestDB(t *testing.T) (*sql.DB, *sql.Tx, *repository.SessionRepository)
 	return testDB, tx, sessionRepo
 }
 
-// getEnv は環境変数を取得し、存在しない場合はデフォルト値を返します
+// getEnvは環境変数を取得し、存在しない場合はデフォルト値を返します
 func getEnv(key, defaultValue string) string {
 	if value := os.Getenv(key); value != "" {
 		return value
@@ -79,7 +79,7 @@ func getEnv(key, defaultValue string) string {
 	return defaultValue
 }
 
-// TestSetValue_GetValue セッション値の保存と取得のテスト
+// TestSetValue_GetValueセッション値の保存と取得のテスト
 func TestSetValue_GetValue(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, _, sessionRepo := setupTestDB(t)
@@ -127,7 +127,7 @@ func TestSetValue_GetValue(t *testing.T) {
 
 			// 値を保存
 			if err := manager.SetValue(ctx, w, req, tt.key, tt.value); err != nil {
-				t.Fatalf("SetValue() error = %v", err)
+				t.Fatalf("SetValue()のエラー = %v", err)
 			}
 
 			// Cookieを取得して新しいリクエストに設定
@@ -144,17 +144,17 @@ func TestSetValue_GetValue(t *testing.T) {
 			// 値を取得
 			got, err := manager.GetValue(ctx, req2, tt.key)
 			if err != nil {
-				t.Fatalf("GetValue() error = %v", err)
+				t.Fatalf("GetValue()のエラー = %v", err)
 			}
 
 			if got != tt.value {
-				t.Errorf("GetValue() = %v, want %v", got, tt.value)
+				t.Errorf("GetValue() = %v、期待値 = %v", got, tt.value)
 			}
 		})
 	}
 }
 
-// TestDeleteValue セッション値の削除のテスト
+// TestDeleteValueセッション値の削除のテスト
 func TestDeleteValue(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, _, sessionRepo := setupTestDB(t)
@@ -179,7 +179,7 @@ func TestDeleteValue(t *testing.T) {
 	key := "test_key"
 	value := "test_value"
 	if err := manager.SetValue(ctx, w, req, key, value); err != nil {
-		t.Fatalf("SetValue() error = %v", err)
+		t.Fatalf("SetValue()のエラー = %v", err)
 	}
 
 	// Cookieを取得して新しいリクエストに設定
@@ -196,28 +196,28 @@ func TestDeleteValue(t *testing.T) {
 	// 値が存在することを確認
 	got, err := manager.GetValue(ctx, req2, key)
 	if err != nil {
-		t.Fatalf("GetValue() error = %v", err)
+		t.Fatalf("GetValue()のエラー = %v", err)
 	}
 	if got != value {
-		t.Errorf("GetValue() = %v, want %v", got, value)
+		t.Errorf("GetValue() = %v、期待値 = %v", got, value)
 	}
 
 	// 値を削除
 	if err := manager.DeleteValue(ctx, req2, key); err != nil {
-		t.Fatalf("DeleteValue() error = %v", err)
+		t.Fatalf("DeleteValue()のエラー = %v", err)
 	}
 
 	// 値が削除されたことを確認
 	got, err = manager.GetValue(ctx, req2, key)
 	if err != nil {
-		t.Fatalf("GetValue() error = %v", err)
+		t.Fatalf("GetValue()のエラー = %v", err)
 	}
 	if got != "" {
-		t.Errorf("GetValue() = %v, want empty string", got)
+		t.Errorf("GetValue() = %v、期待値 = 空文字列", got)
 	}
 }
 
-// TestGetValue_NonExistentKey 存在しないキーを取得するテスト
+// TestGetValue_NonExistentKey存在しないキーを取得するテスト
 func TestGetValue_NonExistentKey(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, _, sessionRepo := setupTestDB(t)
@@ -240,7 +240,7 @@ func TestGetValue_NonExistentKey(t *testing.T) {
 
 	// 値を保存
 	if err := manager.SetValue(ctx, w, req, "existing_key", "value"); err != nil {
-		t.Fatalf("SetValue() error = %v", err)
+		t.Fatalf("SetValue()のエラー = %v", err)
 	}
 
 	// Cookieを取得して新しいリクエストに設定
@@ -253,14 +253,14 @@ func TestGetValue_NonExistentKey(t *testing.T) {
 	// 存在しないキーを取得
 	got, err := manager.GetValue(ctx, req2, "nonexistent_key")
 	if err != nil {
-		t.Fatalf("GetValue() error = %v", err)
+		t.Fatalf("GetValue()のエラー = %v", err)
 	}
 	if got != "" {
-		t.Errorf("GetValue() = %v, want empty string", got)
+		t.Errorf("GetValue() = %v、期待値 = 空文字列", got)
 	}
 }
 
-// TestSetValue_MultipleValues 複数の値を保存・取得するテスト
+// TestSetValue_MultipleValues複数の値を保存・取得するテスト
 func TestSetValue_MultipleValues(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, _, sessionRepo := setupTestDB(t)
@@ -281,7 +281,7 @@ func TestSetValue_MultipleValues(t *testing.T) {
 	req := httptest.NewRequest("GET", "/test", nil)
 	w := httptest.NewRecorder()
 
-	// 複数の値を保存（順番を保証するためにスライスを使用）
+	// 複数の値を保存 (順番を保証するためにスライスを使用)
 	values := []struct {
 		key   string
 		value string
@@ -293,7 +293,7 @@ func TestSetValue_MultipleValues(t *testing.T) {
 
 	// 最初の値を保存
 	if err := manager.SetValue(ctx, w, req, values[0].key, values[0].value); err != nil {
-		t.Fatalf("SetValue() error = %v", err)
+		t.Fatalf("SetValue()のエラー = %v", err)
 	}
 
 	// Cookieを取得
@@ -302,7 +302,7 @@ func TestSetValue_MultipleValues(t *testing.T) {
 		t.Fatal("セッションクッキーが設定されていません")
 	}
 
-	// 2つ目以降の値を保存（Cookieを引き継ぐ）
+	// 2つ目以降の値を保存 (Cookieを引き継ぐ)
 	for i := 1; i < len(values); i++ {
 		reqNext := httptest.NewRequest("GET", "/test", nil)
 		for _, cookie := range cookies {
@@ -311,10 +311,10 @@ func TestSetValue_MultipleValues(t *testing.T) {
 		wNext := httptest.NewRecorder()
 
 		if err := manager.SetValue(ctx, wNext, reqNext, values[i].key, values[i].value); err != nil {
-			t.Fatalf("SetValue() error = %v", err)
+			t.Fatalf("SetValue()のエラー = %v", err)
 		}
 
-		// Cookieを更新（念のため、新しいCookieがあれば使用）
+		// Cookieを更新 (念のため、新しいCookieがあれば使用)
 		newCookies := wNext.Result().Cookies()
 		if len(newCookies) > 0 {
 			cookies = newCookies
@@ -330,15 +330,15 @@ func TestSetValue_MultipleValues(t *testing.T) {
 	for _, kv := range values {
 		got, err := manager.GetValue(ctx, req2, kv.key)
 		if err != nil {
-			t.Fatalf("GetValue() error = %v", err)
+			t.Fatalf("GetValue()のエラー = %v", err)
 		}
 		if got != kv.value {
-			t.Errorf("GetValue(%v) = %v, want %v", kv.key, got, kv.value)
+			t.Errorf("GetValue(%v) = %v、期待値 = %v", kv.key, got, kv.value)
 		}
 	}
 }
 
-// TestDeleteValue_NonExistentSession 存在しないセッションに対する削除のテスト
+// TestDeleteValue_NonExistentSession存在しないセッションに対する削除のテスト
 func TestDeleteValue_NonExistentSession(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, _, sessionRepo := setupTestDB(t)
@@ -360,7 +360,7 @@ func TestDeleteValue_NonExistentSession(t *testing.T) {
 
 	// 削除はエラーなく成功するべき
 	if err := manager.DeleteValue(ctx, req, "any_key"); err != nil {
-		t.Fatalf("DeleteValue() error = %v, want nil", err)
+		t.Fatalf("DeleteValue()のエラー = %v、期待値 = nil", err)
 	}
 }
 
@@ -398,7 +398,7 @@ func TestCreateSession(t *testing.T) {
 
 	// CreateSessionを実行
 	if err := manager.CreateSession(ctx, w, r, model.UserID(userID)); err != nil {
-		t.Fatalf("CreateSession() error = %v", err)
+		t.Fatalf("CreateSession()のエラー = %v", err)
 	}
 
 	// Cookieが設定されていることを確認
@@ -469,7 +469,7 @@ func TestCreateSession(t *testing.T) {
 	}
 
 	if int64(storedUserID) != userID {
-		t.Errorf("ユーザーIDが一致しません: got %d, want %d", int64(storedUserID), userID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", int64(storedUserID), userID)
 	}
 
 	// Cookieの属性を確認
@@ -479,19 +479,19 @@ func TestCreateSession(t *testing.T) {
 		expectedDomain = expectedDomain[1:]
 	}
 	if sessionCookie.Domain != expectedDomain {
-		t.Errorf("Cookie domain = %s, want %s", sessionCookie.Domain, expectedDomain)
+		t.Errorf("Cookie domain = %s、期待値 = %s", sessionCookie.Domain, expectedDomain)
 	}
 	if !sessionCookie.HttpOnly {
 		t.Error("CookieがHttpOnlyではありません")
 	}
 	if sessionCookie.SameSite != http.SameSiteLaxMode {
-		t.Errorf("Cookie SameSite = %v, want %v", sessionCookie.SameSite, http.SameSiteLaxMode)
+		t.Errorf("Cookie SameSite = %v、期待値 = %v", sessionCookie.SameSite, http.SameSiteLaxMode)
 	}
 	if sessionCookie.MaxAge != 30*24*60*60 {
-		t.Errorf("Cookie MaxAge = %d, want %d", sessionCookie.MaxAge, 30*24*60*60)
+		t.Errorf("Cookie MaxAge = %d、期待値 = %d", sessionCookie.MaxAge, 30*24*60*60)
 	}
 
-	// テスト終了時にユーザーを削除（ロールバックで自動削除されるが明示的に記載）
+	// テスト終了時にユーザーを削除 (ロールバックで自動削除されるが明示的に記載)
 	_, _ = tx.Exec("DELETE FROM users WHERE id = $1", userID)
 }
 
@@ -512,13 +512,13 @@ func TestSetValue_NewSession_CSRFToken(t *testing.T) {
 
 	ctx := context.Background()
 
-	// ResponseRecorderとRequestを作成（セッションクッキーなし）
+	// ResponseRecorderとRequestを作成 (セッションクッキーなし)
 	w := httptest.NewRecorder()
 	req := httptest.NewRequest("GET", "/test", nil)
 
-	// SetValueを実行（新規セッション作成）
+	// SetValueを実行 (新規セッション作成)
 	if err := manager.SetValue(ctx, w, req, "test_key", "test_value"); err != nil {
-		t.Fatalf("SetValue() error = %v", err)
+		t.Fatalf("SetValue()のエラー = %v", err)
 	}
 
 	// Cookieが設定されていることを確認
@@ -572,7 +572,7 @@ func TestSetValue_NewSession_CSRFToken(t *testing.T) {
 		t.Fatal("test_keyがセッションに保存されていません")
 	}
 	if testValue != "test_value" {
-		t.Errorf("test_value = %s, want test_value", testValue)
+		t.Errorf("test_value = %s、期待値 = test_value", testValue)
 	}
 }
 
@@ -593,13 +593,13 @@ func TestSetValue_ExistingSession_CSRFToken(t *testing.T) {
 
 	ctx := context.Background()
 
-	// ResponseRecorderとRequestを作成（セッションクッキーなし）
+	// ResponseRecorderとRequestを作成 (セッションクッキーなし)
 	w1 := httptest.NewRecorder()
 	req1 := httptest.NewRequest("GET", "/test", nil)
 
 	// 最初のSetValueで新規セッション作成
 	if err := manager.SetValue(ctx, w1, req1, "key1", "value1"); err != nil {
-		t.Fatalf("最初のSetValue() error = %v", err)
+		t.Fatalf("最初のSetValue()のエラー = %v", err)
 	}
 
 	// セッションIDを取得
@@ -624,13 +624,13 @@ func TestSetValue_ExistingSession_CSRFToken(t *testing.T) {
 	}
 	originalCSRFToken, _ := sessionData1["_csrf_token"].(string)
 
-	// 2回目のSetValueで既存セッション更新（セッションクッキーを含める）
+	// 2回目のSetValueで既存セッション更新 (セッションクッキーを含める)
 	w2 := httptest.NewRecorder()
 	req2 := httptest.NewRequest("GET", "/test", nil)
 	req2.AddCookie(sessionCookie)
 
 	if err := manager.SetValue(ctx, w2, req2, "key2", "value2"); err != nil {
-		t.Fatalf("2回目のSetValue() error = %v", err)
+		t.Fatalf("2回目のSetValue()のエラー = %v", err)
 	}
 
 	// セッションデータを再取得
@@ -649,7 +649,7 @@ func TestSetValue_ExistingSession_CSRFToken(t *testing.T) {
 		t.Fatal("CSRFトークンがセッションに保存されていません")
 	}
 	if csrfToken != originalCSRFToken {
-		t.Errorf("CSRFトークンが変更されました: got %s, want %s", csrfToken, originalCSRFToken)
+		t.Errorf("CSRFトークン = %s、期待値 = %s", csrfToken, originalCSRFToken)
 	}
 
 	// 両方の値が保存されていることを確認
@@ -695,7 +695,7 @@ func TestGetSession_WithCSRFToken(t *testing.T) {
 	w := httptest.NewRecorder()
 	r := httptest.NewRequest("POST", "/test", nil)
 	if err := manager.CreateSession(ctx, w, r, model.UserID(userID)); err != nil {
-		t.Fatalf("CreateSession() error = %v", err)
+		t.Fatalf("CreateSession()のエラー = %v", err)
 	}
 
 	// セッションIDを取得
@@ -712,7 +712,7 @@ func TestGetSession_WithCSRFToken(t *testing.T) {
 	// GetSessionでセッションデータを取得
 	sessionData, err := manager.GetSession(ctx, sessionID)
 	if err != nil {
-		t.Fatalf("GetSession() error = %v", err)
+		t.Fatalf("GetSession()のエラー = %v", err)
 	}
 
 	// CSRFトークンが取得できることを確認
@@ -725,14 +725,14 @@ func TestGetSession_WithCSRFToken(t *testing.T) {
 		t.Fatal("ユーザーIDがnilです")
 	}
 	if int64(*sessionData.UserID) != userID {
-		t.Errorf("ユーザーID = %d, want %d", *sessionData.UserID, userID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", *sessionData.UserID, userID)
 	}
 
-	// テスト終了時にユーザーを削除（ロールバックで自動削除されるが明示的に記載）
+	// テスト終了時にユーザーを削除 (ロールバックで自動削除されるが明示的に記載)
 	_, _ = tx.Exec("DELETE FROM users WHERE id = $1", userID)
 }
 
-// TestSetSessionCookie_SecureAttribute はsetSessionCookieのSecure属性の判定をテストする
+// TestSetSessionCookie_SecureAttributeはsetSessionCookieのSecure属性の判定をテストする
 func TestSetSessionCookie_SecureAttribute(t *testing.T) {
 	t.Parallel()
 
@@ -743,31 +743,31 @@ func TestSetSessionCookie_SecureAttribute(t *testing.T) {
 		expectedSecure  bool
 	}{
 		{
-			name:            "SessionSecure=true、X-Forwarded-Protoなし",
+			name:            "SessionSecureがtrueでX-Forwarded-Protoが無ければtrue",
 			sessionSecure:   "true",
 			xForwardedProto: "",
 			expectedSecure:  true,
 		},
 		{
-			name:            "SessionSecure=false、X-Forwarded-Protoなし",
+			name:            "SessionSecureがfalseでX-Forwarded-Protoが無ければfalse",
 			sessionSecure:   "false",
 			xForwardedProto: "",
 			expectedSecure:  false,
 		},
 		{
-			name:            "SessionSecure=false、X-Forwarded-Proto=https",
+			name:            "SessionSecureがfalseでX-Forwarded-Protoがhttpsならtrue",
 			sessionSecure:   "false",
 			xForwardedProto: "https",
 			expectedSecure:  true,
 		},
 		{
-			name:            "SessionSecure=false、X-Forwarded-Proto=http",
+			name:            "SessionSecureがfalseでX-Forwarded-Protoがhttpならfalse",
 			sessionSecure:   "false",
 			xForwardedProto: "http",
 			expectedSecure:  false,
 		},
 		{
-			name:            "SessionSecure=true、X-Forwarded-Proto=http",
+			name:            "SessionSecureがtrueならX-Forwarded-Protoがhttpでもtrue",
 			sessionSecure:   "true",
 			xForwardedProto: "http",
 			expectedSecure:  true,
@@ -815,13 +815,13 @@ func TestSetSessionCookie_SecureAttribute(t *testing.T) {
 			}
 
 			if sessionCookie.Secure != tt.expectedSecure {
-				t.Errorf("Secure = %v, want %v", sessionCookie.Secure, tt.expectedSecure)
+				t.Errorf("Secure = %v、期待値 = %v", sessionCookie.Secure, tt.expectedSecure)
 			}
 		})
 	}
 }
 
-// TestSetSessionCookie_CookieAttributes はsetSessionCookieのCookie属性をテストする
+// TestSetSessionCookie_CookieAttributesはsetSessionCookieのCookie属性をテストする
 func TestSetSessionCookie_CookieAttributes(t *testing.T) {
 	t.Parallel()
 
@@ -860,43 +860,43 @@ func TestSetSessionCookie_CookieAttributes(t *testing.T) {
 
 	// Cookie名の確認
 	if sessionCookie.Name != SessionKey {
-		t.Errorf("Cookie名 = %v, want %v", sessionCookie.Name, SessionKey)
+		t.Errorf("Cookie名 = %v、期待値 = %v", sessionCookie.Name, SessionKey)
 	}
 
 	// 値の確認
 	if sessionCookie.Value != publicID {
-		t.Errorf("Cookie値 = %v, want %v", sessionCookie.Value, publicID)
+		t.Errorf("Cookie値 = %v、期待値 = %v", sessionCookie.Value, publicID)
 	}
 
 	// Pathの確認
 	if sessionCookie.Path != "/" {
-		t.Errorf("Path = %v, want /", sessionCookie.Path)
+		t.Errorf("Path = %v、期待値 = /", sessionCookie.Path)
 	}
 
-	// Domainの確認（http.SetCookieは先頭のドットを除去する）
+	// Domainの確認 (http.SetCookieは先頭のドットを除去する)
 	expectedDomain := "test.example.com"
 	if sessionCookie.Domain != expectedDomain {
-		t.Errorf("Domain = %v, want %v", sessionCookie.Domain, expectedDomain)
+		t.Errorf("Domain = %v、期待値 = %v", sessionCookie.Domain, expectedDomain)
 	}
 
 	// HttpOnlyの確認
 	if !sessionCookie.HttpOnly {
-		t.Error("HttpOnly = false, want true")
+		t.Error("HttpOnly = false、期待値 = true")
 	}
 
 	// SameSiteの確認
 	if sessionCookie.SameSite != http.SameSiteLaxMode {
-		t.Errorf("SameSite = %v, want %v", sessionCookie.SameSite, http.SameSiteLaxMode)
+		t.Errorf("SameSite = %v、期待値 = %v", sessionCookie.SameSite, http.SameSiteLaxMode)
 	}
 
-	// MaxAgeの確認（30日 = 30 * 24 * 60 * 60 = 2592000秒）
+	// MaxAgeの確認 (30日 = 30 * 24 * 60 * 60 = 2592000秒)
 	expectedMaxAge := 30 * 24 * 60 * 60
 	if sessionCookie.MaxAge != expectedMaxAge {
-		t.Errorf("MaxAge = %v, want %v", sessionCookie.MaxAge, expectedMaxAge)
+		t.Errorf("MaxAge = %v、期待値 = %v", sessionCookie.MaxAge, expectedMaxAge)
 	}
 }
 
-// TestSetSessionCookie_HttpOnlyFalse はHttpOnly=falseの場合をテストする
+// TestSetSessionCookie_HttpOnlyFalseはHttpOnly=falseの場合をテストする
 func TestSetSessionCookie_HttpOnlyFalse(t *testing.T) {
 	t.Parallel()
 
@@ -930,11 +930,11 @@ func TestSetSessionCookie_HttpOnlyFalse(t *testing.T) {
 	}
 
 	if sessionCookie.HttpOnly {
-		t.Error("HttpOnly = true, want false")
+		t.Error("HttpOnly = true、期待値 = false")
 	}
 }
 
-// TestSetSessionCookieByPublicID_SetsCookie はSetSessionCookieByPublicIDがCookieを正しく設定することをテストする
+// TestSetSessionCookieByPublicID_SetsCookieはSetSessionCookieByPublicIDがCookieを正しく設定することをテストする
 func TestSetSessionCookieByPublicID_SetsCookie(t *testing.T) {
 	t.Parallel()
 
@@ -973,34 +973,34 @@ func TestSetSessionCookieByPublicID_SetsCookie(t *testing.T) {
 
 	// 値が正しく設定されていることを確認
 	if sessionCookie.Value != publicID {
-		t.Errorf("Cookie値 = %v, want %v", sessionCookie.Value, publicID)
+		t.Errorf("Cookie値 = %v、期待値 = %v", sessionCookie.Value, publicID)
 	}
 
 	// Cookie属性が正しく設定されていることを確認
 	expectedDomain := "test.example.com"
 	if sessionCookie.Domain != expectedDomain {
-		t.Errorf("Domain = %v, want %v", sessionCookie.Domain, expectedDomain)
+		t.Errorf("Domain = %v、期待値 = %v", sessionCookie.Domain, expectedDomain)
 	}
 
 	if !sessionCookie.Secure {
-		t.Error("Secure = false, want true")
+		t.Error("Secure = false、期待値 = true")
 	}
 
 	if !sessionCookie.HttpOnly {
-		t.Error("HttpOnly = false, want true")
+		t.Error("HttpOnly = false、期待値 = true")
 	}
 
 	if sessionCookie.SameSite != http.SameSiteLaxMode {
-		t.Errorf("SameSite = %v, want %v", sessionCookie.SameSite, http.SameSiteLaxMode)
+		t.Errorf("SameSite = %v、期待値 = %v", sessionCookie.SameSite, http.SameSiteLaxMode)
 	}
 
 	expectedMaxAge := 30 * 24 * 60 * 60
 	if sessionCookie.MaxAge != expectedMaxAge {
-		t.Errorf("MaxAge = %v, want %v", sessionCookie.MaxAge, expectedMaxAge)
+		t.Errorf("MaxAge = %v、期待値 = %v", sessionCookie.MaxAge, expectedMaxAge)
 	}
 }
 
-// TestSetSessionCookieByPublicID_WithXForwardedProto はX-Forwarded-Protoヘッダーが考慮されることをテストする
+// TestSetSessionCookieByPublicID_WithXForwardedProtoはX-Forwarded-Protoヘッダーが考慮されることをテストする
 func TestSetSessionCookieByPublicID_WithXForwardedProto(t *testing.T) {
 	t.Parallel()
 
@@ -1036,11 +1036,11 @@ func TestSetSessionCookieByPublicID_WithXForwardedProto(t *testing.T) {
 
 	// X-Forwarded-Proto=httpsの場合、Secure=trueになる
 	if !sessionCookie.Secure {
-		t.Error("Secure = false, want true (X-Forwarded-Proto=httpsなので)")
+		t.Error("Secure = false、期待値 = true (X-Forwarded-Proto=httpsなので)")
 	}
 }
 
-// TestEnsureCSRFToken_NewSession セッションがない場合に新規作成してCSRFトークンを返すテスト
+// TestEnsureCSRFToken_NewSessionセッションがない場合に新規作成してCSRFトークンを返すテスト
 func TestEnsureCSRFToken_NewSession(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, _, sessionRepo := setupTestDB(t)
@@ -1064,7 +1064,7 @@ func TestEnsureCSRFToken_NewSession(t *testing.T) {
 	// EnsureCSRFTokenを実行
 	csrfToken, err := manager.EnsureCSRFToken(ctx, w, r)
 	if err != nil {
-		t.Fatalf("EnsureCSRFToken() error = %v", err)
+		t.Fatalf("EnsureCSRFToken()のエラー = %v", err)
 	}
 
 	// CSRFトークンが返されることを確認
@@ -1113,11 +1113,11 @@ func TestEnsureCSRFToken_NewSession(t *testing.T) {
 
 	// _csrf_initializedダミーキーが存在しないことを確認
 	if _, exists := sessionData["_csrf_initialized"]; exists {
-		t.Error("_csrf_initializedダミーキーが存在します（廃止されるべき）")
+		t.Error("_csrf_initializedダミーキーが存在します (廃止されるべき)")
 	}
 }
 
-// TestEnsureCSRFToken_ExistingSession 既存セッションがある場合は既存のCSRFトークンを返すテスト
+// TestEnsureCSRFToken_ExistingSession既存セッションがある場合は既存のCSRFトークンを返すテスト
 func TestEnsureCSRFToken_ExistingSession(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, tx, sessionRepo := setupTestDB(t)
@@ -1149,7 +1149,7 @@ func TestEnsureCSRFToken_ExistingSession(t *testing.T) {
 	w1 := httptest.NewRecorder()
 	r1 := httptest.NewRequest("POST", "/test", nil)
 	if err := manager.CreateSession(ctx, w1, r1, model.UserID(userID)); err != nil {
-		t.Fatalf("CreateSession() error = %v", err)
+		t.Fatalf("CreateSession()のエラー = %v", err)
 	}
 
 	// セッションCookieを取得
@@ -1168,7 +1168,7 @@ func TestEnsureCSRFToken_ExistingSession(t *testing.T) {
 	// 既存セッションのCSRFトークンを取得
 	sessionData, err := manager.GetSession(ctx, sessionCookie.Value)
 	if err != nil {
-		t.Fatalf("GetSession() error = %v", err)
+		t.Fatalf("GetSession()のエラー = %v", err)
 	}
 	originalCSRFToken := sessionData.CSRFToken
 
@@ -1179,15 +1179,15 @@ func TestEnsureCSRFToken_ExistingSession(t *testing.T) {
 
 	csrfToken, err := manager.EnsureCSRFToken(ctx, w2, r2)
 	if err != nil {
-		t.Fatalf("EnsureCSRFToken() error = %v", err)
+		t.Fatalf("EnsureCSRFToken()のエラー = %v", err)
 	}
 
 	// 既存のCSRFトークンが返されることを確認
 	if csrfToken != originalCSRFToken {
-		t.Errorf("CSRFトークンが変更されました: got %v, want %v", csrfToken, originalCSRFToken)
+		t.Errorf("CSRFトークン = %v、期待値 = %v", csrfToken, originalCSRFToken)
 	}
 
-	// 新しいCookieが設定されていないことを確認（既存セッションを使用）
+	// 新しいCookieが設定されていないことを確認 (既存セッションを使用)
 	newCookies := w2.Result().Cookies()
 	if len(newCookies) > 0 {
 		for _, c := range newCookies {
@@ -1198,7 +1198,7 @@ func TestEnsureCSRFToken_ExistingSession(t *testing.T) {
 	}
 }
 
-// TestEnsureCSRFToken_CookieAttributes 新規セッション作成時のCookie属性テスト
+// TestEnsureCSRFToken_CookieAttributes新規セッション作成時のCookie属性テスト
 func TestEnsureCSRFToken_CookieAttributes(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, _, sessionRepo := setupTestDB(t)
@@ -1220,7 +1220,7 @@ func TestEnsureCSRFToken_CookieAttributes(t *testing.T) {
 
 	_, err := manager.EnsureCSRFToken(ctx, w, r)
 	if err != nil {
-		t.Fatalf("EnsureCSRFToken() error = %v", err)
+		t.Fatalf("EnsureCSRFToken()のエラー = %v", err)
 	}
 
 	cookies := w.Result().Cookies()
@@ -1239,28 +1239,28 @@ func TestEnsureCSRFToken_CookieAttributes(t *testing.T) {
 	// Cookie属性の確認
 	expectedDomain := "test.example.com"
 	if sessionCookie.Domain != expectedDomain {
-		t.Errorf("Domain = %v, want %v", sessionCookie.Domain, expectedDomain)
+		t.Errorf("Domain = %v、期待値 = %v", sessionCookie.Domain, expectedDomain)
 	}
 
 	if !sessionCookie.Secure {
-		t.Error("Secure = false, want true")
+		t.Error("Secure = false、期待値 = true")
 	}
 
 	if !sessionCookie.HttpOnly {
-		t.Error("HttpOnly = false, want true")
+		t.Error("HttpOnly = false、期待値 = true")
 	}
 
 	if sessionCookie.SameSite != http.SameSiteLaxMode {
-		t.Errorf("SameSite = %v, want %v", sessionCookie.SameSite, http.SameSiteLaxMode)
+		t.Errorf("SameSite = %v、期待値 = %v", sessionCookie.SameSite, http.SameSiteLaxMode)
 	}
 
 	expectedMaxAge := 30 * 24 * 60 * 60
 	if sessionCookie.MaxAge != expectedMaxAge {
-		t.Errorf("MaxAge = %v, want %v", sessionCookie.MaxAge, expectedMaxAge)
+		t.Errorf("MaxAge = %v、期待値 = %v", sessionCookie.MaxAge, expectedMaxAge)
 	}
 }
 
-// TestDestroySession セッションを正常に削除できることをテスト
+// TestDestroySessionセッションを正常に削除できることをテスト
 func TestDestroySession(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, tx, sessionRepo := setupTestDB(t)
@@ -1292,7 +1292,7 @@ func TestDestroySession(t *testing.T) {
 	w1 := httptest.NewRecorder()
 	r1 := httptest.NewRequest("POST", "/sign_in", nil)
 	if err := manager.CreateSession(ctx, w1, r1, model.UserID(userID)); err != nil {
-		t.Fatalf("CreateSession() error = %v", err)
+		t.Fatalf("CreateSession()のエラー = %v", err)
 	}
 
 	// セッションCookieを取得
@@ -1321,7 +1321,7 @@ func TestDestroySession(t *testing.T) {
 	r2.AddCookie(sessionCookie)
 
 	if err := manager.DestroySession(ctx, w2, r2); err != nil {
-		t.Fatalf("DestroySession() error = %v", err)
+		t.Fatalf("DestroySession()のエラー = %v", err)
 	}
 
 	// DBからセッションが削除されたことを確認
@@ -1346,16 +1346,16 @@ func TestDestroySession(t *testing.T) {
 
 	// MaxAge=-1で削除されることを確認
 	if deleteCookie.MaxAge != -1 {
-		t.Errorf("Cookie MaxAge = %d, want -1", deleteCookie.MaxAge)
+		t.Errorf("Cookie MaxAge = %d、期待値 = -1", deleteCookie.MaxAge)
 	}
 
 	// Cookie値が空であることを確認
 	if deleteCookie.Value != "" {
-		t.Errorf("Cookie Value = %v, want empty string", deleteCookie.Value)
+		t.Errorf("Cookie Value = %v、期待値 = 空文字列", deleteCookie.Value)
 	}
 }
 
-// TestDestroySession_NoSession セッションがない場合はエラーなく終了することをテスト
+// TestDestroySession_NoSessionセッションがない場合はエラーなく終了することをテスト
 func TestDestroySession_NoSession(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	_, _, sessionRepo := setupTestDB(t)
@@ -1378,7 +1378,7 @@ func TestDestroySession_NoSession(t *testing.T) {
 
 	// エラーなく終了するべき
 	if err := manager.DestroySession(ctx, w, r); err != nil {
-		t.Fatalf("DestroySession() error = %v, want nil", err)
+		t.Fatalf("DestroySession()のエラー = %v、期待値 = nil", err)
 	}
 
 	// Cookieが設定されていないことを確認
@@ -1428,36 +1428,36 @@ func TestDeleteSessionCookie_CookieAttributes(t *testing.T) {
 
 	// Cookie属性の確認
 	if sessionCookie.Value != "" {
-		t.Errorf("Cookie Value = %v, want empty string", sessionCookie.Value)
+		t.Errorf("Cookie Value = %v、期待値 = 空文字列", sessionCookie.Value)
 	}
 
 	if sessionCookie.MaxAge != -1 {
-		t.Errorf("MaxAge = %d, want -1", sessionCookie.MaxAge)
+		t.Errorf("MaxAge = %d、期待値 = -1", sessionCookie.MaxAge)
 	}
 
 	if sessionCookie.Path != "/" {
-		t.Errorf("Path = %v, want /", sessionCookie.Path)
+		t.Errorf("Path = %v、期待値 = /", sessionCookie.Path)
 	}
 
 	expectedDomain := "test.example.com"
 	if sessionCookie.Domain != expectedDomain {
-		t.Errorf("Domain = %v, want %v", sessionCookie.Domain, expectedDomain)
+		t.Errorf("Domain = %v、期待値 = %v", sessionCookie.Domain, expectedDomain)
 	}
 
 	if !sessionCookie.Secure {
-		t.Error("Secure = false, want true")
+		t.Error("Secure = false、期待値 = true")
 	}
 
 	if !sessionCookie.HttpOnly {
-		t.Error("HttpOnly = false, want true")
+		t.Error("HttpOnly = false、期待値 = true")
 	}
 
 	if sessionCookie.SameSite != http.SameSiteLaxMode {
-		t.Errorf("SameSite = %v, want %v", sessionCookie.SameSite, http.SameSiteLaxMode)
+		t.Errorf("SameSite = %v、期待値 = %v", sessionCookie.SameSite, http.SameSiteLaxMode)
 	}
 }
 
-// TestDeleteSessionCookie_SecureAttribute はdeleteSessionCookieのSecure属性の判定をテストする
+// TestDeleteSessionCookie_SecureAttributeはdeleteSessionCookieのSecure属性の判定をテストする
 func TestDeleteSessionCookie_SecureAttribute(t *testing.T) {
 	t.Parallel()
 
@@ -1468,25 +1468,25 @@ func TestDeleteSessionCookie_SecureAttribute(t *testing.T) {
 		expectedSecure  bool
 	}{
 		{
-			name:            "SessionSecure=true、X-Forwarded-Protoなし",
+			name:            "SessionSecureがtrueでX-Forwarded-Protoが無ければtrue",
 			sessionSecure:   "true",
 			xForwardedProto: "",
 			expectedSecure:  true,
 		},
 		{
-			name:            "SessionSecure=false、X-Forwarded-Protoなし",
+			name:            "SessionSecureがfalseでX-Forwarded-Protoが無ければfalse",
 			sessionSecure:   "false",
 			xForwardedProto: "",
 			expectedSecure:  false,
 		},
 		{
-			name:            "SessionSecure=false、X-Forwarded-Proto=https",
+			name:            "SessionSecureがfalseでX-Forwarded-Protoがhttpsならtrue",
 			sessionSecure:   "false",
 			xForwardedProto: "https",
 			expectedSecure:  true,
 		},
 		{
-			name:            "SessionSecure=false、X-Forwarded-Proto=http",
+			name:            "SessionSecureがfalseでX-Forwarded-Protoがhttpならfalse",
 			sessionSecure:   "false",
 			xForwardedProto: "http",
 			expectedSecure:  false,
@@ -1533,7 +1533,7 @@ func TestDeleteSessionCookie_SecureAttribute(t *testing.T) {
 			}
 
 			if sessionCookie.Secure != tt.expectedSecure {
-				t.Errorf("Secure = %v, want %v", sessionCookie.Secure, tt.expectedSecure)
+				t.Errorf("Secure = %v、期待値 = %v", sessionCookie.Secure, tt.expectedSecure)
 			}
 		})
 	}

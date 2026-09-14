@@ -15,9 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Create processes the work creation request in the Annict DB admin UI (POST /db/works).
-//
-// [Ja] Annict DB 管理画面の作品作成リクエスト (POST /db/works) を処理する。
+// CreateはAnnict DB管理画面の作品作成リクエスト (POST /db/works) を処理する。
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -36,19 +34,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_created"))
 
-	// Redirect to the just-created work's edit page, matching the Rails create action
-	// (db_edit_work_path) and the Update handler, so the editor lands on the new work to
-	// keep filling in its details.
-	//
-	// [Ja] 作成直後の作品の編集ページへリダイレクトする。Rails の create アクション
-	// (db_edit_work_path) や Update ハンドラーと同じ遷移で、作成した作品で編集者がそのまま
+	// 作成直後の作品の編集ページへリダイレクトする。Railsのcreateアクション
+	// (db_edit_work_path) やUpdateハンドラーと同じ遷移で、作成した作品で編集者がそのまま
 	// 詳細を入力し続けられるようにする。
 	http.Redirect(w, r, dbWorkEditPath(output.WorkID), http.StatusSeeOther)
 }
 
-// renderNewWithErrors re-renders the new-work form with validation errors and the previously submitted values.
-//
-// [Ja] バリデーションエラーと送信済みの入力値を保持したまま新規作成フォームを再描画する。
+// バリデーションエラーと送信済みの入力値を保持したまま新規作成フォームを再描画する。
 func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, input usecase.CreateWorkInput, formErrors *model.ValidationError) {
 	ctx := r.Context()
 

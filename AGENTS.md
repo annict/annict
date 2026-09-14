@@ -1,90 +1,87 @@
----
-last_synced: 2026-07-10
----
+# Annict開発ガイドライン
 
-# Annict Development Guide
+このファイルは、コーディングエージェントがこのリポジトリで作業する際のガイダンスを提供します。
 
-> English | [日本語](./AGENTS.ja.md)
+## 概要
 
-This file provides guidance to coding agents when working in this repository.
+Annictはアニメ視聴記録サービスです。
+ユーザーは自分が見たアニメに対して「見てる」や「見たい」といったステータスを設定したり、見たアニメの感想を書いてあとから振り返ることができます。
 
-## Overview
+## プロジェクト構造
 
-Annict is an anime watch-tracking service.
-Users can set statuses such as "watching" or "want to watch" on the anime they have seen, and write reviews on watched anime to look back on later.
-
-## Project Structure
-
-This repository manages two subprojects—the Go version and the Rails version—as a monorepo.
+このリポジトリは、Go版とRails版の2つのサブプロジェクトをモノレポとして管理しています。
 
 ```
 /workspace/
-├── go/                  # Go version implementation (features being migrated gradually)
-├── rails/               # Rails version implementation (existing production system)
-├── caddy/               # Reverse proxy configuration (Caddy)
-├── imgproxy/            # imgproxy configuration
-├── .github/             # Shared CI/CD configuration
-├── Dockerfile.dev       # Dockerfile for the integrated development container
-├── docker-compose.yml   # Docker Compose configuration
-├── Makefile             # Entry point for development tasks
-├── Procfile.dev         # Development server process definitions for hivemind
-├── mise.toml            # Development tool version management
-├── AGENTS.md            # This file (project-wide guide)
-└── CLAUDE.md            # Pointer to AGENTS.md (for Claude Code)
+├── go/                  # Go版の実装 (段階的に機能を移行中)
+├── rails/               # Rails版の実装 (既存の本番システム)
+├── caddy/               # リバースプロキシ設定 (Caddy)
+├── imgproxy/            # imgproxy設定
+├── .github/             # 共通のCI/CD設定
+├── Dockerfile.dev       # 統合開発コンテナのDockerfile
+├── docker-compose.yml   # Docker Compose設定
+├── Makefile             # 開発タスクのエントリポイント
+├── Procfile.dev         # hivemindによる開発サーバープロセス定義
+├── mise.toml            # 開発ツールバージョン管理
+├── AGENTS.md            # このファイル (プロジェクト全体のガイド)
+└── CLAUDE.md            # AGENTS.md へのポインタ (Claude Code用)
 ```
 
-## Rails to Go Migration
+## RailsからGoへの移行について
 
-A project to gradually reimplement the existing Rails Annict in Go is currently underway.
+現在、既存のRails実装のAnnictをGoで段階的に再実装するプロジェクトが進行中です。
 
-### Migration Strategy
+### 移行の基本方針
 
-- **Use the existing DB as-is**: Share the PostgreSQL database managed on the Rails side
-- **Gradual migration**: Rails and Go share the same DB and session store, and features are migrated incrementally
-- **Data migration is executed on the Go side**: Use the migration mechanism (dbmate) prepared on the Go side
-- **Continued use of shared infrastructure**: Shared infrastructure such as PostgreSQL continues to be used after the Go version takes over
-- **Do not modify the Rails source code**: When a feature needs to be added or changed, migrate it to Go first rather than touching the Rails side
-  - The following cases fall outside this principle, and a minimal-diff fix on the Rails side is acceptable:
-    - Minimal maintenance changes required to follow up on a dependency's security fix (e.g., adapting to breaking changes from a gem major upgrade)
-    - When deleting Rails-side processing that has become unused after migrating the feature to Go
-    - Minimal fixes made in response to an error reported by production error monitoring (Sentry) (e.g., suppressing a 500 caused by an unhandled exception)
+- **既存DBをそのまま使用**: Rails側で管理されているPostgreSQLデータベースを共有
+- **段階的移行**: RailsとGoが同一のDBとセッションストアを共有し、段階的に機能を移行
+- **データマイグレーションはGo側で実行**: Go側に用意しているマイグレーション機構 (dbmate) を使用
+- **共通インフラの継続利用**: PostgreSQLなどの共通インフラはGo版移行後も継続して使用
+- **Rails側のソースコードは変更しない**: 機能の追加・変更が必要なときは、Rails側をいじらずまずGoに移行する
+  - ただし、以下の場合はこの原則の対象外とし、Rails側で最小差分の修正を行って良い
+    - 依存パッケージのセキュリティ修正に追随するための最小限の保守変更 (例: gemのメジャーアップに伴う破壊的変更への対応)
+    - Go移行に伴って不要になったRails側の処理を削除するとき
+    - 本番のエラー監視 (Sentry) で通知されたエラーへの対応として行う最小限の修正 (例: 未処理例外による500の抑止)
 
-When implementing the Go version, refer to the Rails code to understand the existing specifications.
+Go版を実装する際は、Rails版のコードを参考にすることで既存の仕様を理解できます。
 
-## Feature Flag-Based Development
+## フィーチャーフラグによる開発
 
-Annict uses **feature flags** rather than feature branches to control feature visibility. Pre-release features are developed with the flag off, and the flag is flipped to release them once they are ready for production.
+Annictではフィーチャーブランチではなく **フィーチャーフラグ** を使って機能の公開を制御しています。
+リリース前の機能はフラグでオフのまま開発し、本番投入の準備が整ってからフラグを切り替えて公開します。
 
-## Development Workflow
+## 開発ワークフロー
 
-### Implementation Guidelines
+### 実装時のガイドライン
 
-**Consistency with existing code**:
+**既存コードとの一貫性**:
 
-Before implementing, check whether similar processing already exists in the codebase.
-If similar processing exists, follow that pattern to keep the codebase consistent as a whole.
+実装を行う前に、コードベース内に類似の処理がないか確認してください。
+類似処理が存在する場合は、そのパターンに従って実装することで、コードベース全体の一貫性を保ちます。
 
-### Checks After Implementation
+### 実装後のチェック
 
-Before reporting that work is complete, always verify the following:
+実装を終え作業の完了を伝える前に、必ず以下を確認してください:
 
-- Code formatting
-- Lint
-- Tests
+- コードフォーマット
+- リント
+- テスト
 
-The commands to run are managed in `Makefile`.
-See [Makefile](./Makefile), [go/Makefile](./go/Makefile), and [rails/Makefile](./rails/Makefile).
+実行するコマンドは `Makefile` で管理しています。
+[Makefile](./Makefile), [go/Makefile](./go/Makefile), [rails/Makefile](./rails/Makefile) を参照してください。
 
-## Language and Writing Conventions
+## 言語・文章ルール
 
-- **Canonical version is English; authoring workflow is Japanese-first**: The English version is the official authoritative source. Author by writing Japanese first, then translate to English (the coding agent assists). After translation, also review the English version to catch meaning drift and unnatural wording. When a discrepancy arises, the English version takes precedence
-- **Code comments**: English block first, then a `[Ja]`-prefixed Japanese block (the English block carries no marker). Doc comments on exported types, functions, and methods begin with the symbol name per Go convention. Put one blank comment line between the English block and the Japanese block (for both single- and multi-line comments). Do not mix Japanese into the English block (the basis for mechanical malformation checks). Inline (end-of-line) bilingual comments are not used — write the two blocks on their own lines above the code. See `.claude/rules/korylus-lang.md` §2.1
-- **Markdown documents**: Maintain `xxx.md` (English, canonical) and `xxx.ja.md` (Japanese translation) in parallel. Both files carry a `last_synced: YYYY-MM-DD` field in the YAML frontmatter; keep the dates aligned
-- **Commit messages**: English title, then a blank line, then the body — an English block, a blank line, then a `[Ja]`-prefixed Japanese block. Do not preserve a Japanese title (prioritize English scannability of `git log --oneline`)
-- **Identifiers**: Type, function, and variable names are English only
-- **Update both sides in the same commit**: Prevents translation drift
-- **Existing code**: Apply this rule to new writing. Migrate existing monolingual code to bilingual when editing it (no bulk migration required)
+このリポジトリの開発言語は日本語です。
+コードコメント・ドキュメント・コミットメッセージ・プルリクエスト・Issueは、すべて日本語のみで書きます。
 
-## Coding Conventions
+英語を使うのは次の2つだけです。
 
-- For environment variables defined by Annict, always prefix them with `ANNICT_` (except those required by external libraries)
+- **技術的慣習として英語であるもの**: 識別子 (型名・関数名・変数名)、APIのフィールド名、ログのフィールドキー、エラーコード、環境変数名
+- **リポジトリの入口に置く案内板**: `README.md` / `CONTRIBUTING.md` / `SECURITY.md` の3ファイルに英語版 (`xxx.en.md`) を併置する
+
+日本語テキストのスタイル (半角丸括弧の使用、英数字と日本語の間にスペースを入れないことなど) を含む詳細は、`.claude/rules/korylus-lang.md` を参照してください。
+
+## コーディング規約
+
+- Annictで定義する環境変数には、外部ライブラリなどが指定してくるものを除き、必ず `ANNICT_` プレフィックスを付けること

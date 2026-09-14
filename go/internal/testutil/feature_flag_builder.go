@@ -7,7 +7,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// FeatureFlagBuilder はフィーチャーフラグのテストデータビルダー
+// FeatureFlagBuilderはフィーチャーフラグのテストデータビルダー
 type FeatureFlagBuilder struct {
 	t           *testing.T
 	tx          *sql.Tx
@@ -16,7 +16,7 @@ type FeatureFlagBuilder struct {
 	name        string
 }
 
-// NewFeatureFlagBuilder は新しいFeatureFlagBuilderを作成
+// NewFeatureFlagBuilderは新しいFeatureFlagBuilderを作成
 func NewFeatureFlagBuilder(t *testing.T, tx *sql.Tx) *FeatureFlagBuilder {
 	return &FeatureFlagBuilder{
 		t:    t,
@@ -25,25 +25,25 @@ func NewFeatureFlagBuilder(t *testing.T, tx *sql.Tx) *FeatureFlagBuilder {
 	}
 }
 
-// WithDeviceToken はデバイストークンを設定
+// WithDeviceTokenはデバイストークンを設定
 func (b *FeatureFlagBuilder) WithDeviceToken(token string) *FeatureFlagBuilder {
 	b.deviceToken = &token
 	return b
 }
 
-// WithUserID はユーザーIDを設定
+// WithUserIDはユーザーIDを設定
 func (b *FeatureFlagBuilder) WithUserID(userID model.UserID) *FeatureFlagBuilder {
 	b.userID = &userID
 	return b
 }
 
-// WithName はフラグ名を設定
+// WithNameはフラグ名を設定
 func (b *FeatureFlagBuilder) WithName(name string) *FeatureFlagBuilder {
 	b.name = name
 	return b
 }
 
-// Build はテスト用のフィーチャーフラグデータをデータベースに作成し、IDを返す
+// Buildはテスト用のフィーチャーフラグデータをデータベースに作成し、IDを返す
 func (b *FeatureFlagBuilder) Build() model.FeatureFlagID {
 	b.t.Helper()
 

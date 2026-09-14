@@ -261,11 +261,7 @@ type UpdateAnimeStatusParams struct {
 	Status AnimeStatus `db:"status"`
 }
 
-// Update only the lifecycle state derived from the source row. Archive paths use this instead
-// of replaying an entire anime snapshot, so an unrelated content edit committed after their
-// pre-read is preserved.
-//
-// [Ja] 正本の行から導出したライフサイクル状態だけを更新する。非公開の経路は anime 全体の
+// 正本の行から導出したライフサイクル状態だけを更新する。非公開の経路はanime全体の
 // スナップショットを書き戻さず本クエリを使うことで、事前読み取り後にコミットされた無関係な
 // 内容編集を保持する。
 func (q *Queries) UpdateAnimeStatus(ctx context.Context, arg UpdateAnimeStatusParams) error {

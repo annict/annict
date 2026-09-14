@@ -12,9 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestStripeSubscriberRepository_Create verifies that a new StripeSubscriber can be created.
-//
-// [Ja] 新しい StripeSubscriber を作成できることをテストする。
+// 新しいStripeSubscriberを作成できることをテストする。
 func TestStripeSubscriberRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -43,16 +41,14 @@ func TestStripeSubscriberRepository_Create(t *testing.T) {
 		t.Error("IDが設定されていません")
 	}
 	if subscriber.StripeCustomerID != params.StripeCustomerID {
-		t.Errorf("StripeCustomerIDが一致しません: got %s, want %s", subscriber.StripeCustomerID, params.StripeCustomerID)
+		t.Errorf("StripeCustomerID = %s、期待値 = %s", subscriber.StripeCustomerID, params.StripeCustomerID)
 	}
 	if subscriber.StripeStatus != "active" {
-		t.Errorf("StripeStatusが一致しません: got %s, want %s", subscriber.StripeStatus, "active")
+		t.Errorf("StripeStatus = %s、期待値 = %s", subscriber.StripeStatus, "active")
 	}
 }
 
-// TestStripeSubscriberRepository_GetByID verifies that a StripeSubscriber can be fetched by ID.
-//
-// [Ja] ID で StripeSubscriber を取得できることをテストする。
+// IDでStripeSubscriberを取得できることをテストする。
 func TestStripeSubscriberRepository_GetByID(t *testing.T) {
 	t.Parallel()
 
@@ -60,17 +56,13 @@ func TestStripeSubscriberRepository_GetByID(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
-	// Create test data.
-	//
-	// [Ja] テストデータを作成する。
+	// テストデータを作成する。
 	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeCustomerID("cus_test_getbyid").
 		WithStripeStatus("active").
 		Build()
 
-	// Fetch by ID.
-	//
-	// [Ja] ID で取得する。
+	// IDで取得する。
 	subscriber, err := repo.GetByID(context.Background(), subscriberID)
 	if err != nil {
 		t.Fatalf("Stripeサブスクライバーの取得に失敗: %v", err)
@@ -80,16 +72,14 @@ func TestStripeSubscriberRepository_GetByID(t *testing.T) {
 		t.Fatal("サブスクライバーが見つかりませんでした")
 	}
 	if subscriber.ID != subscriberID {
-		t.Errorf("IDが一致しません: got %d, want %d", subscriber.ID, subscriberID)
+		t.Errorf("ID = %d、期待値 = %d", subscriber.ID, subscriberID)
 	}
 	if subscriber.StripeCustomerID != "cus_test_getbyid" {
-		t.Errorf("StripeCustomerIDが一致しません: got %s, want %s", subscriber.StripeCustomerID, "cus_test_getbyid")
+		t.Errorf("StripeCustomerID = %s、期待値 = %s", subscriber.StripeCustomerID, "cus_test_getbyid")
 	}
 }
 
-// TestStripeSubscriberRepository_GetByID_NotFound verifies that (nil, nil) is returned for a nonexistent ID.
-//
-// [Ja] 存在しない ID の場合に (nil, nil) が返ることをテストする。
+// 存在しないIDの場合に (nil, nil) が返ることをテストする。
 func TestStripeSubscriberRepository_GetByID_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -102,13 +92,11 @@ func TestStripeSubscriberRepository_GetByID_NotFound(t *testing.T) {
 		t.Fatalf("未存在時はエラーではなく (nil, nil) が期待されます: %v", err)
 	}
 	if subscriber != nil {
-		t.Errorf("未存在時は nil が期待されますが、値が返されました: %+v", subscriber)
+		t.Errorf("未存在時はnilが期待されますが、値が返されました: %+v", subscriber)
 	}
 }
 
-// TestStripeSubscriberRepository_GetByStripeCustomerID verifies that a StripeSubscriber can be fetched by Stripe customer ID.
-//
-// [Ja] Stripe 顧客 ID で StripeSubscriber を取得できることをテストする。
+// Stripe顧客IDでStripeSubscriberを取得できることをテストする。
 func TestStripeSubscriberRepository_GetByStripeCustomerID(t *testing.T) {
 	t.Parallel()
 
@@ -116,16 +104,12 @@ func TestStripeSubscriberRepository_GetByStripeCustomerID(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
-	// Create test data.
-	//
-	// [Ja] テストデータを作成する。
+	// テストデータを作成する。
 	testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeCustomerID("cus_unique_customer").
 		Build()
 
-	// Fetch by Stripe customer ID.
-	//
-	// [Ja] Stripe 顧客 ID で取得する。
+	// Stripe顧客IDで取得する。
 	subscriber, err := repo.GetByStripeCustomerID(context.Background(), "cus_unique_customer")
 	if err != nil {
 		t.Fatalf("Stripeサブスクライバーの取得に失敗: %v", err)
@@ -135,13 +119,11 @@ func TestStripeSubscriberRepository_GetByStripeCustomerID(t *testing.T) {
 		t.Fatal("サブスクライバーが見つかりませんでした")
 	}
 	if subscriber.StripeCustomerID != "cus_unique_customer" {
-		t.Errorf("StripeCustomerIDが一致しません: got %s, want %s", subscriber.StripeCustomerID, "cus_unique_customer")
+		t.Errorf("StripeCustomerID = %s、期待値 = %s", subscriber.StripeCustomerID, "cus_unique_customer")
 	}
 }
 
-// TestStripeSubscriberRepository_GetByStripeCustomerID_NotFound verifies that (nil, nil) is returned for a nonexistent customer ID.
-//
-// [Ja] 存在しない顧客 ID の場合に (nil, nil) が返ることをテストする。
+// 存在しない顧客IDの場合に (nil, nil) が返ることをテストする。
 func TestStripeSubscriberRepository_GetByStripeCustomerID_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -154,13 +136,11 @@ func TestStripeSubscriberRepository_GetByStripeCustomerID_NotFound(t *testing.T)
 		t.Fatalf("未存在時はエラーではなく (nil, nil) が期待されます: %v", err)
 	}
 	if subscriber != nil {
-		t.Errorf("未存在時は nil が期待されますが、値が返されました: %+v", subscriber)
+		t.Errorf("未存在時はnilが期待されますが、値が返されました: %+v", subscriber)
 	}
 }
 
-// TestStripeSubscriberRepository_GetByStripeSubscriptionID verifies that a StripeSubscriber can be fetched by Stripe subscription ID.
-//
-// [Ja] Stripe サブスクリプション ID で StripeSubscriber を取得できることをテストする。
+// StripeサブスクリプションIDでStripeSubscriberを取得できることをテストする。
 func TestStripeSubscriberRepository_GetByStripeSubscriptionID(t *testing.T) {
 	t.Parallel()
 
@@ -168,16 +148,12 @@ func TestStripeSubscriberRepository_GetByStripeSubscriptionID(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
-	// Create test data.
-	//
-	// [Ja] テストデータを作成する。
+	// テストデータを作成する。
 	testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeSubscriptionID("sub_unique_subscription").
 		Build()
 
-	// Fetch by Stripe subscription ID.
-	//
-	// [Ja] Stripe サブスクリプション ID で取得する。
+	// StripeサブスクリプションIDで取得する。
 	subscriber, err := repo.GetByStripeSubscriptionID(context.Background(), "sub_unique_subscription")
 	if err != nil {
 		t.Fatalf("Stripeサブスクライバーの取得に失敗: %v", err)
@@ -187,13 +163,11 @@ func TestStripeSubscriberRepository_GetByStripeSubscriptionID(t *testing.T) {
 		t.Fatal("サブスクライバーが見つかりませんでした")
 	}
 	if subscriber.StripeSubscriptionID != "sub_unique_subscription" {
-		t.Errorf("StripeSubscriptionIDが一致しません: got %s, want %s", subscriber.StripeSubscriptionID, "sub_unique_subscription")
+		t.Errorf("StripeSubscriptionID = %s、期待値 = %s", subscriber.StripeSubscriptionID, "sub_unique_subscription")
 	}
 }
 
-// TestStripeSubscriberRepository_GetByStripeSubscriptionID_NotFound verifies that (nil, nil) is returned for a nonexistent subscription ID.
-//
-// [Ja] 存在しないサブスクリプション ID の場合に (nil, nil) が返ることをテストする。
+// 存在しないサブスクリプションIDの場合に (nil, nil) が返ることをテストする。
 func TestStripeSubscriberRepository_GetByStripeSubscriptionID_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -206,13 +180,11 @@ func TestStripeSubscriberRepository_GetByStripeSubscriptionID_NotFound(t *testin
 		t.Fatalf("未存在時はエラーではなく (nil, nil) が期待されます: %v", err)
 	}
 	if subscriber != nil {
-		t.Errorf("未存在時は nil が期待されますが、値が返されました: %+v", subscriber)
+		t.Errorf("未存在時はnilが期待されますが、値が返されました: %+v", subscriber)
 	}
 }
 
-// TestStripeSubscriberRepository_Update verifies that subscriber information can be updated.
-//
-// [Ja] サブスクライバー情報を更新できることをテストする。
+// サブスクライバー情報を更新できることをテストする。
 func TestStripeSubscriberRepository_Update(t *testing.T) {
 	t.Parallel()
 
@@ -220,17 +192,13 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
-	// Create test data.
-	//
-	// [Ja] テストデータを作成する。
+	// テストデータを作成する。
 	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeStatus("active").
 		WithStripePriceID("price_monthly").
 		Build()
 
-	// Update.
-	//
-	// [Ja] 更新する。
+	// 更新する。
 	now := time.Now()
 	newPeriodEnd := now.AddDate(1, 0, 0)
 	err := repo.Update(context.Background(), query.UpdateStripeSubscriberParams{
@@ -246,9 +214,7 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 		t.Fatalf("Stripeサブスクライバーの更新に失敗: %v", err)
 	}
 
-	// Verify the data after the update.
-	//
-	// [Ja] 更新後のデータを確認する。
+	// 更新後のデータを確認する。
 	subscriber, err := repo.GetByID(context.Background(), subscriberID)
 	if err != nil {
 		t.Fatalf("更新後のStripeサブスクライバーの取得に失敗: %v", err)
@@ -258,13 +224,11 @@ func TestStripeSubscriberRepository_Update(t *testing.T) {
 		t.Fatal("サブスクライバーが見つかりませんでした")
 	}
 	if subscriber.StripePriceID != "price_yearly" {
-		t.Errorf("StripePriceIDが更新されていません: got %s, want %s", subscriber.StripePriceID, "price_yearly")
+		t.Errorf("StripePriceID = %s、期待値 = %s", subscriber.StripePriceID, "price_yearly")
 	}
 }
 
-// TestStripeSubscriberRepository_UpdateStatus verifies that only the status can be updated.
-//
-// [Ja] ステータスのみを更新できることをテストする。
+// ステータスのみを更新できることをテストする。
 func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 	t.Parallel()
 
@@ -272,16 +236,12 @@ func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewStripeSubscriberRepository(queries)
 
-	// Create test data.
-	//
-	// [Ja] テストデータを作成する。
+	// テストデータを作成する。
 	subscriberID := testutil.NewStripeSubscriberBuilder(t, tx).
 		WithStripeStatus("active").
 		Build()
 
-	// Update the status.
-	//
-	// [Ja] ステータスを更新する。
+	// ステータスを更新する。
 	err := repo.UpdateStatus(context.Background(), query.UpdateStripeSubscriberStatusParams{
 		ID:           int64(subscriberID),
 		StripeStatus: "canceled",
@@ -290,9 +250,7 @@ func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 		t.Fatalf("Stripeサブスクライバーのステータス更新に失敗: %v", err)
 	}
 
-	// Verify the data after the update.
-	//
-	// [Ja] 更新後のデータを確認する。
+	// 更新後のデータを確認する。
 	subscriber, err := repo.GetByID(context.Background(), subscriberID)
 	if err != nil {
 		t.Fatalf("更新後のStripeサブスクライバーの取得に失敗: %v", err)
@@ -302,13 +260,11 @@ func TestStripeSubscriberRepository_UpdateStatus(t *testing.T) {
 		t.Fatal("サブスクライバーが見つかりませんでした")
 	}
 	if subscriber.StripeStatus != "canceled" {
-		t.Errorf("StripeStatusが更新されていません: got %s, want %s", subscriber.StripeStatus, "canceled")
+		t.Errorf("StripeStatus = %s、期待値 = %s", subscriber.StripeStatus, "canceled")
 	}
 }
 
-// TestStripeSubscriberRepository_IsActive verifies that the active check works correctly.
-//
-// [Ja] アクティブ判定が正しく動作することをテストする。
+// アクティブ判定が正しく動作することをテストする。
 func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 	t.Parallel()
 
@@ -325,7 +281,7 @@ func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 			expected: true,
 		},
 		{
-			name:     "past_due状態はアクティブ（猶予期間）",
+			name:     "past_due状態はアクティブ (猶予期間)",
 			status:   model.StripeSubscriptionStatusPastDue,
 			expected: true,
 		},
@@ -358,7 +314,7 @@ func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 			}
 			result := repo.IsActive(subscriber)
 			if result != tc.expected {
-				t.Errorf("IsActive() = %v, want %v (status: %s)", result, tc.expected, tc.status)
+				t.Errorf("IsActive() = %v、期待値 = %v (status: %s)", result, tc.expected, tc.status)
 			}
 		})
 	}

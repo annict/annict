@@ -13,7 +13,7 @@ import (
 // templ用ヘルパー関数のテスト
 // ========================================
 
-// TestT は翻訳関数Tが正しく動作することを確認
+// TestTは翻訳関数Tが正しく動作することを確認
 func TestT(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -50,13 +50,13 @@ func TestT(t *testing.T) {
 			result := T(ctx, tt.messageID, tt.data...)
 
 			if !strings.Contains(result, tt.want) {
-				t.Errorf("T() = %q, want to contain %q", result, tt.want)
+				t.Errorf("T() = %q、期待値 = %qを含むこと", result, tt.want)
 			}
 		})
 	}
 }
 
-// TestLocale はLocale関数が正しくロケールを返すことを確認
+// TestLocaleはLocale関数が正しくロケールを返すことを確認
 func TestLocale(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -92,27 +92,27 @@ func TestLocale(t *testing.T) {
 			result := Locale(ctx)
 
 			if result != tt.want {
-				t.Errorf("Locale() = %q, want %q", result, tt.want)
+				t.Errorf("Locale() = %q、期待値 = %q", result, tt.want)
 			}
 		})
 	}
 }
 
-// TestDeref はDeref関数がポインタを正しく参照外しすることを確認
+// TestDerefはDeref関数がポインタを正しく参照外しすることを確認
 func TestDeref(t *testing.T) {
 	t.Run("int32ポインタ", func(t *testing.T) {
 		value := int32(2024)
 		result := Deref(&value)
 		if result != 2024 {
-			t.Errorf("Deref() = %d, want 2024", result)
+			t.Errorf("Deref() = %d、期待値 = 2024", result)
 		}
 	})
 
-	t.Run("nilポインタ（int32）", func(t *testing.T) {
+	t.Run("nilポインタ (int32)", func(t *testing.T) {
 		var ptr *int32
 		result := Deref(ptr)
 		if result != 0 {
-			t.Errorf("Deref() = %d, want 0", result)
+			t.Errorf("Deref() = %d、期待値 = 0", result)
 		}
 	})
 
@@ -120,15 +120,15 @@ func TestDeref(t *testing.T) {
 		value := "test"
 		result := Deref(&value)
 		if result != "test" {
-			t.Errorf("Deref() = %q, want \"test\"", result)
+			t.Errorf("Deref() = %q、期待値 = \"test\"", result)
 		}
 	})
 
-	t.Run("nilポインタ（string）", func(t *testing.T) {
+	t.Run("nilポインタ (string)", func(t *testing.T) {
 		var ptr *string
 		result := Deref(ptr)
 		if result != "" {
-			t.Errorf("Deref() = %q, want empty string", result)
+			t.Errorf("Deref() = %q、期待値 = 空文字列", result)
 		}
 	})
 
@@ -136,20 +136,20 @@ func TestDeref(t *testing.T) {
 		value := true
 		result := Deref(&value)
 		if result != true {
-			t.Errorf("Deref() = %t, want true", result)
+			t.Errorf("Deref() = %t、期待値 = true", result)
 		}
 	})
 
-	t.Run("nilポインタ（bool）", func(t *testing.T) {
+	t.Run("nilポインタ (bool)", func(t *testing.T) {
 		var ptr *bool
 		result := Deref(ptr)
 		if result != false {
-			t.Errorf("Deref() = %t, want false", result)
+			t.Errorf("Deref() = %t、期待値 = false", result)
 		}
 	})
 }
 
-// TestIcon はIcon関数が正しいSVGを返すことを確認（templ.Component版）
+// TestIconはIcon関数が正しいSVGを返すことを確認 (templ.Component版)
 func TestIcon(t *testing.T) {
 	tests := []struct {
 		name    string
@@ -183,7 +183,7 @@ func TestIcon(t *testing.T) {
 			wantSVG: `M141.66,133.66`,
 		},
 		{
-			name:    "未知のアイコン（infoにフォールバック）",
+			name:    "未知のアイコン (infoにフォールバック)",
 			icon:    "unknown",
 			wantSVG: `M128,24A104,104`,
 		},
@@ -198,29 +198,29 @@ func TestIcon(t *testing.T) {
 			component := Icon(tt.icon, tt.class...)
 			err := component.Render(ctx, buf)
 			if err != nil {
-				t.Fatalf("Icon().Render() error = %v", err)
+				t.Fatalf("Icon().Render()のエラー = %v", err)
 			}
 
 			result := buf.String()
 
 			if !strings.Contains(result, tt.wantSVG) {
-				t.Errorf("Icon() does not contain expected SVG fragment %q", tt.wantSVG)
+				t.Errorf("Icon()に含まれていないSVGの断片 = %q", tt.wantSVG)
 			}
 
 			// SVGタグが含まれることを確認
 			if !strings.Contains(result, "<svg") {
-				t.Errorf("Icon() does not contain <svg tag")
+				t.Errorf("Icon()の結果に<svgタグが含まれていない")
 			}
 
 			// fill="currentColor"を確認
 			if !strings.Contains(result, `fill="currentColor"`) {
-				t.Errorf("Icon() does not contain fill=\"currentColor\"")
+				t.Errorf("Icon()の結果にfill=\"currentColor\"が含まれていない")
 			}
 		})
 	}
 }
 
-// TestIconWithClass はIcon関数のクラス指定機能をテスト
+// TestIconWithClassはIcon関数のクラス指定機能をテスト
 func TestIconWithClass(t *testing.T) {
 	tests := []struct {
 		name      string
@@ -256,7 +256,7 @@ func TestIconWithClass(t *testing.T) {
 			component := Icon(tt.icon, tt.class...)
 			err := component.Render(ctx, buf)
 			if err != nil {
-				t.Fatalf("Icon().Render() error = %v", err)
+				t.Fatalf("Icon().Render()のエラー = %v", err)
 			}
 
 			result := buf.String()
@@ -264,29 +264,26 @@ func TestIconWithClass(t *testing.T) {
 			if tt.wantClass == "" {
 				// クラス属性が存在しないことを確認
 				if strings.Contains(result, `class=`) {
-					t.Errorf("Icon() should not contain class attribute, got: %s", result)
+					t.Errorf("Icon()の出力 = %s、期待値 = class属性を含まないこと", result)
 				}
 			} else {
 				// 指定したクラス属性が含まれることを確認
 				if !strings.Contains(result, tt.wantClass) {
-					t.Errorf("Icon() does not contain expected class attribute %q, got: %s", tt.wantClass, result)
+					t.Errorf("Icon()に含まれていないclass属性 = %q、出力 = %s", tt.wantClass, result)
 				}
 			}
 		})
 	}
 }
 
-// TestLabeledIcon verifies that a meaningful SVG has image semantics, a safely escaped
-// accessible label, and no place in the legacy SVG focus order.
-//
-// [Ja] TestLabeledIcon は意味を持つ SVG に画像のセマンティクスと安全にエスケープされた
-// アクセシブルネームが付き、従来の SVG フォーカス順序から除外されることを検証する。
+// TestLabeledIconは意味を持つSVGに画像のセマンティクスと安全にエスケープされた
+// アクセシブルネームが付き、従来のSVGフォーカス順序から除外されることを検証する。
 func TestLabeledIcon(t *testing.T) {
 	t.Parallel()
 
 	var buf bytes.Buffer
 	if err := LabeledIcon("info", `Episode "1" & details`, "size-4").Render(context.Background(), &buf); err != nil {
-		t.Fatalf("LabeledIcon().Render() error = %v", err)
+		t.Fatalf("LabeledIcon().Render()のエラー = %v", err)
 	}
 
 	result := buf.String()
@@ -296,26 +293,23 @@ func TestLabeledIcon(t *testing.T) {
 	}
 	for _, expected := range expectedFragments {
 		if !strings.Contains(result, expected) {
-			t.Errorf("LabeledIcon() does not contain expected fragment %q, got: %s", expected, result)
+			t.Errorf("LabeledIcon()に含まれていない断片 = %q、出力 = %s", expected, result)
 		}
 	}
 
 	if strings.Contains(result, `aria-hidden="true"`) {
-		t.Errorf("LabeledIcon() should remain exposed to assistive technology, got: %s", result)
+		t.Errorf("LabeledIcon()の出力 = %s、期待値 = aria-hidden=\"true\"を含まないこと", result)
 	}
 }
 
-// TestDecorativeIcon verifies that a decorative SVG is hidden from assistive technology and
-// excluded from the legacy SVG focus order while retaining the requested presentation class.
-//
-// [Ja] TestDecorativeIcon は装飾 SVG が支援技術から隠れ、従来の SVG フォーカス順序から
-// 除外されつつ、指定した表示用 class を保つことを検証する。
+// TestDecorativeIconは装飾SVGが支援技術から隠れ、従来のSVGフォーカス順序から
+// 除外されつつ、指定した表示用classを保つことを検証する。
 func TestDecorativeIcon(t *testing.T) {
 	t.Parallel()
 
 	var buf bytes.Buffer
 	if err := DecorativeIcon("plus-regular", "size-4").Render(context.Background(), &buf); err != nil {
-		t.Fatalf("DecorativeIcon().Render() error = %v", err)
+		t.Fatalf("DecorativeIcon().Render()のエラー = %v", err)
 	}
 
 	result := buf.String()
@@ -325,22 +319,18 @@ func TestDecorativeIcon(t *testing.T) {
 	}
 	for _, expected := range expectedFragments {
 		if !strings.Contains(result, expected) {
-			t.Errorf("DecorativeIcon() does not contain expected fragment %q, got: %s", expected, result)
+			t.Errorf("DecorativeIcon()に含まれていない断片 = %q、出力 = %s", expected, result)
 		}
 	}
 
 	if strings.Contains(result, "<span") {
-		t.Errorf("DecorativeIcon() should apply attributes directly to the SVG, got: %s", result)
+		t.Errorf("DecorativeIcon()の出力 = %s、期待値 = <spanを含まないこと (属性はSVGへ直接付けること)", result)
 	}
 }
 
-// TestDecorativeInlineIcon verifies the two positions Basecoat documents and rejects any
-// other value instead of copying an unchecked data-icon attribute into the SVG. Every case
-// remains decorative and outside the legacy SVG focus order.
-//
-// [Ja] TestDecorativeInlineIcon は Basecoat が文書化する 2 つの位置を検証し、それ以外の値を
-// 未検証の data-icon 属性として SVG にコピーせず拒否することを確認する。どのケースも装飾の
-// ままで、従来の SVG フォーカス順序から除外される。
+// TestDecorativeInlineIconはBasecoatが文書化する2つの位置を検証し、それ以外の値を
+// 未検証のdata-icon属性としてSVGにコピーせず拒否することを確認する。どのケースも装飾の
+// ままで、従来のSVGフォーカス順序から除外される。
 func TestDecorativeInlineIcon(t *testing.T) {
 	t.Parallel()
 
@@ -360,61 +350,50 @@ func TestDecorativeInlineIcon(t *testing.T) {
 
 			var buf bytes.Buffer
 			if err := DecorativeInlineIcon("plus-regular", tt.position, "size-4").Render(context.Background(), &buf); err != nil {
-				t.Fatalf("DecorativeInlineIcon().Render() error = %v", err)
+				t.Fatalf("DecorativeInlineIcon().Render()のエラー = %v", err)
 			}
 
 			result := buf.String()
 			for _, expected := range []string{`aria-hidden="true"`, `focusable="false"`, `class="size-4"`, `M224,128`} {
 				if !strings.Contains(result, expected) {
-					t.Errorf("DecorativeInlineIcon() does not contain expected fragment %q, got: %s", expected, result)
+					t.Errorf("DecorativeInlineIcon()に含まれていない断片 = %q、出力 = %s", expected, result)
 				}
 			}
 
 			if tt.wantAttribute == "" {
 				if strings.Contains(result, "data-icon=") {
-					t.Errorf("DecorativeInlineIcon() should omit an unknown position, got: %s", result)
+					t.Errorf("DecorativeInlineIcon()の出力 = %s、期待値 = data-icon=を含まないこと", result)
 				}
 			} else if !strings.Contains(result, tt.wantAttribute) {
-				t.Errorf("DecorativeInlineIcon() does not contain expected position %q, got: %s", tt.wantAttribute, result)
+				t.Errorf("DecorativeInlineIcon()に含まれていないposition = %q、出力 = %s", tt.wantAttribute, result)
 			}
 		})
 	}
 }
 
-// TestPhosphorIconsStartWithSVGTag holds the invariant iconSVG relies on when it adds
-// attributes: every stored icon begins with the literal "<svg " that the helpers replace.
-// An icon added in any other shape would render broken markup rather than fail, so the
-// assertion covers the whole map instead of the icons that happen to be used today.
-//
-// [Ja] TestPhosphorIconsStartWithSVGTag は、iconSVG が属性を足すときに前提としている不変条件
+// TestPhosphorIconsStartWithSVGTagは、iconSVGが属性を足すときに前提としている不変条件
 // (保持している各アイコンが、ヘルパーの置き換え対象である "<svg " のリテラルで始まること) を
 // 担保する。別の形で追加されたアイコンは失敗せず壊れたマークアップを描画するため、現に使われて
-// いるアイコンだけでなく map 全体を対象にする。
+// いるアイコンだけでなくmap全体を対象にする。
 func TestPhosphorIconsStartWithSVGTag(t *testing.T) {
 	t.Parallel()
 
 	for name, svg := range phosphorIcons {
 		if !strings.HasPrefix(svg, "<svg ") {
-			t.Errorf("phosphorIcons[%q] should start with %q, got: %.20s", name, "<svg ", svg)
+			t.Errorf("phosphorIcons[%q]の期待値 = %qで始まること、実測値の先頭 = %.20s", name, "<svg ", svg)
 		}
 	}
 }
 
-// TestPhosphorIconsHoldFallbackIcon holds the other invariant iconSVG relies on: the map has
-// an entry for the name unknown icons fall back to. Without it the fallback resolves to an
-// empty string, and taking the leading "<svg " off it panics instead of rendering a
-// placeholder. Icon reached that path only when a class was passed, but DecorativeIcon and
-// LabeledIcon take it on every call.
-//
-// [Ja] TestPhosphorIconsHoldFallbackIcon は iconSVG が前提とするもう 1 つの不変条件
-// (未知のアイコンがフォールバックする名前のエントリを map が持つこと) を担保する。無いと
-// フォールバックが空文字列に解決し、先頭の "<svg " を取り除く処理が代替を描画せず panic する。
-// Icon はこの経路を class を渡したときにしか通らなかったが、DecorativeIcon と LabeledIcon は
+// TestPhosphorIconsHoldFallbackIconはiconSVGが前提とするもう1つの不変条件
+// (未知のアイコンがフォールバックする名前のエントリをmapが持つこと) を担保する。無いと
+// フォールバックが空文字列に解決し、先頭の "<svg " を取り除く処理が代替を描画せずpanicする。
+// Iconはこの経路をclassを渡したときにしか通らなかったが、DecorativeIconとLabeledIconは
 // 毎回通る。
 func TestPhosphorIconsHoldFallbackIcon(t *testing.T) {
 	t.Parallel()
 
 	if _, ok := phosphorIcons[fallbackIconName]; !ok {
-		t.Fatalf("phosphorIcons はフォールバック先の %q を持つ必要があります", fallbackIconName)
+		t.Fatalf("phosphorIconsはフォールバック先の%qを持つ必要があります", fallbackIconName)
 	}
 }

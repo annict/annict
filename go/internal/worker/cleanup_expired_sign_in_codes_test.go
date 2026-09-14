@@ -45,7 +45,7 @@ func TestCleanupExpiredSignInCodesWorker(t *testing.T) {
 
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 
-	// コード1: 48時間前に期限切れ（削除対象）
+	// コード1: 48時間前に期限切れ (削除対象)
 	if _, err := signInCodeRepo.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: string(code1Digest),
@@ -54,7 +54,7 @@ func TestCleanupExpiredSignInCodesWorker(t *testing.T) {
 		t.Fatalf("コード1の作成に失敗: %v", err)
 	}
 
-	// コード2: 30時間前に使用済み（削除対象）
+	// コード2: 30時間前に使用済み (削除対象)
 	code2Row, err := signInCodeRepo.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: string(code2Digest),
@@ -63,13 +63,13 @@ func TestCleanupExpiredSignInCodesWorker(t *testing.T) {
 	if err != nil {
 		t.Fatalf("コード2の作成に失敗: %v", err)
 	}
-	// コードを使用済みにする（30時間前）
+	// コードを使用済みにする (30時間前)
 	if _, err := tx.ExecContext(ctx, "UPDATE sign_in_codes SET used_at = $1 WHERE id = $2",
 		time.Now().Add(-30*time.Hour), int64(code2Row.ID)); err != nil {
 		t.Fatalf("コード2の使用済み設定に失敗: %v", err)
 	}
 
-	// コード3: 有効なコード（削除対象外）
+	// コード3: 有効なコード (削除対象外)
 	if _, err := signInCodeRepo.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: string(code3Digest),
@@ -78,7 +78,7 @@ func TestCleanupExpiredSignInCodesWorker(t *testing.T) {
 		t.Fatalf("コード3の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成（UseCase 経由）
+	// ワーカーを作成 (UseCase経由)
 	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
 	// ジョブを実行
@@ -100,7 +100,7 @@ func TestCleanupExpiredSignInCodesWorker(t *testing.T) {
 	}
 
 	if count != 1 {
-		t.Errorf("コード数が正しくありません: got %d, want 1", count)
+		t.Errorf("コード数 = %d、期待値 = 1", count)
 	}
 
 	// 残っているコードがコード3であることを確認
@@ -123,10 +123,10 @@ func TestCleanupExpiredSignInCodesWorker_NoCodes(t *testing.T) {
 
 	ctx := context.Background()
 
-	// ワーカーを作成（UseCase 経由）
+	// ワーカーを作成 (UseCase経由)
 	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
-	// ジョブを実行（コードが存在しない状態）
+	// ジョブを実行 (コードが存在しない状態)
 	job := &river.Job[worker.CleanupExpiredSignInCodesArgs]{
 		Args: worker.CleanupExpiredSignInCodesArgs{},
 	}
@@ -160,7 +160,7 @@ func TestCleanupExpiredSignInCodesWorker_RecentlyExpired(t *testing.T) {
 
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 
-	// コード1: 12時間前に期限切れ（削除対象外: 24時間以内）
+	// コード1: 12時間前に期限切れ (削除対象外: 24時間以内)
 	if _, err := signInCodeRepo.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: string(code1Digest),
@@ -169,7 +169,7 @@ func TestCleanupExpiredSignInCodesWorker_RecentlyExpired(t *testing.T) {
 		t.Fatalf("コード1の作成に失敗: %v", err)
 	}
 
-	// コード2: 30時間前に期限切れ（削除対象）
+	// コード2: 30時間前に期限切れ (削除対象)
 	if _, err := signInCodeRepo.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: string(code2Digest),
@@ -178,7 +178,7 @@ func TestCleanupExpiredSignInCodesWorker_RecentlyExpired(t *testing.T) {
 		t.Fatalf("コード2の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成（UseCase 経由）
+	// ワーカーを作成 (UseCase経由)
 	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
 	// ジョブを実行
@@ -199,7 +199,7 @@ func TestCleanupExpiredSignInCodesWorker_RecentlyExpired(t *testing.T) {
 	}
 
 	if count != 1 {
-		t.Errorf("コード数が正しくありません: got %d, want 1", count)
+		t.Errorf("コード数 = %d、期待値 = 1", count)
 	}
 
 	// 残っているコードがコード1であることを確認

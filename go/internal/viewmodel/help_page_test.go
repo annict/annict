@@ -2,11 +2,7 @@ package viewmodel
 
 import "testing"
 
-// TestHelpPageURLs verifies every help URL points at the Annict space on Wikino and carries
-// the id or number of the page or topic it names. The sidebar and the DB forms embed these
-// strings verbatim, so a wrong path silently sends readers to a page that does not exist.
-//
-// [Ja] TestHelpPageURLsは各ヘルプURLがWikinoのAnnictスペースを指し、その名前が示すページID・
+// TestHelpPageURLsは各ヘルプURLがWikinoのAnnictスペースを指し、その名前が示すページID・
 // トピック番号を含むことを検証する。サイドバーとDBのフォームはこれらの文字列をそのまま埋め込む
 // ため、パスを誤ると読者を存在しないページへ黙って送ってしまう。
 func TestHelpPageURLs(t *testing.T) {
@@ -44,7 +40,7 @@ func TestHelpPageURLs(t *testing.T) {
 			t.Parallel()
 
 			if tt.got != tt.want {
-				t.Errorf("URL = %q, want %q", tt.got, tt.want)
+				t.Errorf("URL = %q、期待値 = %q", tt.got, tt.want)
 			}
 		})
 	}

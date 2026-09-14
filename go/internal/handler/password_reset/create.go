@@ -15,7 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Create はパスワードリセット申請を処理します (POST /password/reset)
+// Createはパスワードリセット申請を処理します (POST /password/reset)
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -49,17 +49,17 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	slog.InfoContext(ctx, "Turnstile検証成功")
 
-	// Rate Limiting: IPアドレス単位の制限（5回/時間）
+	// Rate Limiting: IPアドレス単位の制限 (5回/時間)
 	if h.handleRateLimit(w, r, email, fmt.Sprintf("password_reset:ip:%s", clientip.GetClientIP(r)), "ip", 5) {
 		return
 	}
 
-	// Rate Limiting: メールアドレス単位の制限（3回/時間）
+	// Rate Limiting: メールアドレス単位の制限 (3回/時間)
 	if h.handleRateLimit(w, r, email, fmt.Sprintf("password_reset:email:%s", email), "email", 3) {
 		return
 	}
 
-	// UseCaseを呼び出し（バリデーション + ユーザー検索 + トークン生成）
+	// UseCaseを呼び出し (バリデーション + ユーザー検索 + トークン生成)
 	output, err := h.createTokenUseCase.Execute(ctx, usecase.CreatePasswordResetTokenInput{
 		Email: email,
 	})
@@ -80,7 +80,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		)
 	}
 
-	// 常に成功ページを表示（ユーザーの存在を明かさない）
+	// 常に成功ページを表示 (ユーザーの存在を明かさない)
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "password_reset_sent_title")
 
@@ -93,8 +93,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// handleRateLimit は Rate Limit を判定し、超過時は 422 + フォーム再描画を行う。
-// 戻り値が true の場合、呼び出し側は処理を中断する。
+// handleRateLimitはRate Limitを判定し、超過時は422 + フォーム再描画を行う。
+// 戻り値がtrueの場合、呼び出し側は処理を中断する。
 func (h *Handler) handleRateLimit(w http.ResponseWriter, r *http.Request, email, key, scope string, limit int) bool {
 	if h.limiter == nil || h.cfg.DisableRateLimit {
 		return false

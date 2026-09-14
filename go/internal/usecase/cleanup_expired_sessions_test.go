@@ -13,13 +13,9 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// insertSessions inserts count session rows sharing the given session_id prefix and
-// updated_at. It inserts them in a single statement because one of the tests needs
-// more rows than the cleanup batch size, which is too many for row-by-row inserts.
-//
-// [Ja] insertSessions は session_id の接頭辞と updated_at を共有するセッション行を count 件
-// 挿入する。1 文でまとめて挿入するのは、クリーンアップのバッチサイズを超える件数を必要と
-// するテストがあり、1 行ずつの挿入では件数が多すぎるため。
+// insertSessionsはsession_idの接頭辞とupdated_atを共有するセッション行をcount件
+// 挿入する。1文でまとめて挿入するのは、クリーンアップのバッチサイズを超える件数を必要と
+// するテストがあり、1行ずつの挿入では件数が多すぎるため。
 func insertSessions(t *testing.T, tx *sql.Tx, prefix string, updatedAt time.Time, count int) {
 	t.Helper()
 
@@ -33,9 +29,7 @@ func insertSessions(t *testing.T, tx *sql.Tx, prefix string, updatedAt time.Time
 	}
 }
 
-// countSessions returns how many session rows share the given session_id prefix.
-//
-// [Ja] countSessions は session_id が指定した接頭辞を持つセッション行の件数を返す。
+// countSessionsはsession_idが指定した接頭辞を持つセッション行の件数を返す。
 func countSessions(t *testing.T, tx *sql.Tx, prefix string) int {
 	t.Helper()
 
@@ -64,10 +58,10 @@ func TestCleanupExpiredSessionsUsecase_Execute(t *testing.T) {
 		}
 
 		if got := countSessions(t, tx, "cleanup-sessions-old-"); got != 0 {
-			t.Errorf("期限切れセッションが残っています: got %d, want 0", got)
+			t.Errorf("期限切れセッションの件数 = %d、期待値 = 0", got)
 		}
 		if got := countSessions(t, tx, "cleanup-sessions-fresh-"); got != 2 {
-			t.Errorf("有効なセッションが削除されています: got %d, want 2", got)
+			t.Errorf("有効なセッションの件数 = %d、期待値 = 2", got)
 		}
 	})
 
@@ -84,7 +78,7 @@ func TestCleanupExpiredSessionsUsecase_Execute(t *testing.T) {
 		}
 
 		if got := countSessions(t, tx, "cleanup-sessions-batch-"); got != 0 {
-			t.Errorf("期限切れセッションが残っています: got %d, want 0", got)
+			t.Errorf("期限切れセッションの件数 = %d、期待値 = 0", got)
 		}
 	})
 
@@ -98,10 +92,10 @@ func TestCleanupExpiredSessionsUsecase_Execute(t *testing.T) {
 
 		err := uc.Execute(ctx)
 		if err == nil {
-			t.Fatal("Execute() error = nil, want non-nil")
+			t.Fatal("Execute()のエラー = nil、期待値 = エラーあり")
 		}
 		if !errors.Is(err, context.Canceled) {
-			t.Errorf("Execute() error = %v, want context.Canceled", err)
+			t.Errorf("Execute()のエラー = %v、期待値 = context.Canceled", err)
 		}
 	})
 }

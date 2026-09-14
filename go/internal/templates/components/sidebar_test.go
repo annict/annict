@@ -9,10 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// TestSidebar_RendersDeveloperHelpInMiscGroup verifies the sidebar renders the Developer Help
-// link once in the miscellaneous group with the exact published URL and localized label.
-//
-// [Ja] TestSidebar_RendersDeveloperHelpInMiscGroupは、サイドバーが開発者向けヘルプのリンクを
+// TestSidebar_RendersDeveloperHelpInMiscGroupは、サイドバーが開発者向けヘルプのリンクを
 // 公開済みの完全なURLとローカライズ済みの表示名で「その他」グループに1つだけ描画することを
 // 検証する。
 func TestSidebar_RendersDeveloperHelpInMiscGroup(t *testing.T) {
@@ -53,13 +50,13 @@ func TestSidebar_RendersDeveloperHelpInMiscGroup(t *testing.T) {
 			html := buf.String()
 
 			if count := strings.Count(html, `href="`+developerHelpURL+`"`); count != 1 {
-				t.Errorf("開発者向けヘルプのリンク数 = %d, want 1", count)
+				t.Errorf("開発者向けヘルプのリンク数 = %d、期待値 = 1", count)
 			}
 
 			miscGroup := sidebarGroupHTML(t, html, "sidebar-misc")
 			developerHelpLink := menuItemHTML(t, miscGroup, developerHelpURL)
 			if !strings.Contains(developerHelpLink, tt.wantLabel) {
-				t.Errorf("開発者向けヘルプのリンクに表示名 %q が含まれていません", tt.wantLabel)
+				t.Errorf("開発者向けヘルプのリンクに表示名%qが含まれていません", tt.wantLabel)
 			}
 
 			servicesGroup := sidebarGroupHTML(t, html, "sidebar-services")

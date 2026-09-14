@@ -12,7 +12,7 @@ func TestCalendar_ToICS(t *testing.T) {
 	// Asia/Tokyoタイムゾーン
 	jst, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
-		t.Fatalf("failed to load timezone: %v", err)
+		t.Fatalf("タイムゾーンの読み込みエラー = %v", err)
 	}
 
 	tests := []struct {
@@ -39,7 +39,7 @@ func TestCalendar_ToICS(t *testing.T) {
 			},
 		},
 		{
-			name: "時刻指定イベント（放送枠）",
+			name: "時刻指定イベント (放送枠)",
 			calendar: Calendar{
 				TimeZone: "Asia/Tokyo",
 				CalName:  "Annict@testuser",
@@ -65,7 +65,7 @@ func TestCalendar_ToICS(t *testing.T) {
 			},
 		},
 		{
-			name: "終日イベント（作品放送開始日）",
+			name: "終日イベント (作品放送開始日)",
 			calendar: Calendar{
 				TimeZone: "Asia/Tokyo",
 				CalName:  "Annict@testuser",
@@ -129,7 +129,7 @@ func TestCalendar_ToICS(t *testing.T) {
 
 			for _, want := range tt.contains {
 				if !strings.Contains(got, want) {
-					t.Errorf("ToICS() does not contain %q\nGot:\n%s", want, got)
+					t.Errorf("ToICS()に含まれていない文字列 = %q\n出力:\n%s", want, got)
 				}
 			}
 		})
@@ -191,7 +191,7 @@ func TestCalendar_ToICS_VTimezone(t *testing.T) {
 
 			for _, want := range tt.contains {
 				if !strings.Contains(got, want) {
-					t.Errorf("ToICS() does not contain %q\nGot:\n%s", want, got)
+					t.Errorf("ToICS()に含まれていない文字列 = %q\n出力:\n%s", want, got)
 				}
 			}
 		})
@@ -259,7 +259,7 @@ func TestEscapeText(t *testing.T) {
 
 			got := escapeText(tt.input)
 			if got != tt.want {
-				t.Errorf("escapeText(%q) = %q, want %q", tt.input, got, tt.want)
+				t.Errorf("escapeText(%q) = %q、期待値 = %q", tt.input, got, tt.want)
 			}
 		})
 	}
@@ -306,7 +306,7 @@ func TestFormatTimezoneOffset(t *testing.T) {
 
 			got := formatTimezoneOffset(tt.offsetSeconds)
 			if got != tt.want {
-				t.Errorf("formatTimezoneOffset(%d) = %q, want %q", tt.offsetSeconds, got, tt.want)
+				t.Errorf("formatTimezoneOffset(%d) = %q、期待値 = %q", tt.offsetSeconds, got, tt.want)
 			}
 		})
 	}
@@ -343,7 +343,7 @@ func TestFormatDate(t *testing.T) {
 
 			got := formatDate(tt.time)
 			if got != tt.want {
-				t.Errorf("formatDate() = %q, want %q", got, tt.want)
+				t.Errorf("formatDate() = %q、期待値 = %q", got, tt.want)
 			}
 		})
 	}
@@ -385,7 +385,7 @@ func TestFormatDateTime(t *testing.T) {
 
 			got := formatDateTime(tt.time)
 			if got != tt.want {
-				t.Errorf("formatDateTime() = %q, want %q", got, tt.want)
+				t.Errorf("formatDateTime() = %q、期待値 = %q", got, tt.want)
 			}
 		})
 	}
@@ -396,7 +396,7 @@ func TestCalendar_ToICS_CompleteOutput(t *testing.T) {
 
 	jst, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
-		t.Fatalf("failed to load timezone: %v", err)
+		t.Fatalf("タイムゾーンの読み込みエラー = %v", err)
 	}
 
 	cal := Calendar{
@@ -426,21 +426,21 @@ func TestCalendar_ToICS_CompleteOutput(t *testing.T) {
 
 	// 出力がBEGIN:VCALENDARで始まりEND:VCALENDARで終わることを確認
 	if !strings.HasPrefix(got, "BEGIN:VCALENDAR\r\n") {
-		t.Error("ToICS() should start with BEGIN:VCALENDAR")
+		t.Error("ToICS()の結果がBEGIN:VCALENDARで始まっていない")
 	}
 	if !strings.HasSuffix(got, "END:VCALENDAR\r\n") {
-		t.Error("ToICS() should end with END:VCALENDAR")
+		t.Error("ToICS()の結果がEND:VCALENDARで終わっていない")
 	}
 
 	// VTIMEZONEが含まれることを確認
 	if !strings.Contains(got, "BEGIN:VTIMEZONE") {
-		t.Error("ToICS() should contain VTIMEZONE")
+		t.Error("ToICS()の結果にVTIMEZONEが含まれていない")
 	}
 
 	// 2つのVEVENTが含まれることを確認
 	eventCount := strings.Count(got, "BEGIN:VEVENT")
 	if eventCount != 2 {
-		t.Errorf("ToICS() should contain 2 VEVENTs, got %d", eventCount)
+		t.Errorf("ToICS()のVEVENTの件数 = %d、期待値 = 2", eventCount)
 	}
 }
 
@@ -457,10 +457,10 @@ func TestCalendar_ToICS_EmptyEvents(t *testing.T) {
 
 	// イベントがなくてもカレンダーは有効
 	if !strings.Contains(got, "BEGIN:VCALENDAR") {
-		t.Error("ToICS() should contain BEGIN:VCALENDAR even with no events")
+		t.Error("イベントが無くてもToICS()はBEGIN:VCALENDARを含むべきだが、含まれていない")
 	}
 	if strings.Contains(got, "BEGIN:VEVENT") {
-		t.Error("ToICS() should not contain VEVENT when no events")
+		t.Error("イベントが無いときのToICS()の結果にVEVENTが含まれている")
 	}
 }
 
@@ -477,7 +477,7 @@ func TestCalendar_ToICS_UTCToTimezoneConversion(t *testing.T) {
 		wantEndTime   string
 	}{
 		{
-			name:     "UTC時刻がAsia/Tokyoに変換される（時刻指定イベント）",
+			name:     "UTC時刻がAsia/Tokyoに変換される (時刻指定イベント)",
 			timezone: "Asia/Tokyo",
 			// UTC 2025-01-20 15:30 = JST 2025-01-21 00:30
 			startUTC:      time.Date(2025, 1, 20, 15, 30, 0, 0, time.UTC),
@@ -487,9 +487,9 @@ func TestCalendar_ToICS_UTCToTimezoneConversion(t *testing.T) {
 			wantEndTime:   "DTEND;TZID=Asia/Tokyo:20250121T010000\r\n",
 		},
 		{
-			name:     "UTC時刻がAsia/Tokyoに変換される（深夜帯）",
+			name:     "UTC時刻がAsia/Tokyoに変換される (深夜帯)",
 			timezone: "Asia/Tokyo",
-			// UTC 2025-01-20 16:00 = JST 2025-01-21 01:00（深夜帯）
+			// UTC 2025-01-20 16:00 = JST 2025-01-21 01:00 (深夜帯)
 			startUTC:      time.Date(2025, 1, 20, 16, 0, 0, 0, time.UTC),
 			endUTC:        time.Date(2025, 1, 20, 16, 30, 0, 0, time.UTC),
 			allDay:        false,
@@ -539,10 +539,10 @@ func TestCalendar_ToICS_UTCToTimezoneConversion(t *testing.T) {
 			got := cal.ToICS()
 
 			if !strings.Contains(got, tt.wantStartTime) {
-				t.Errorf("ToICS() does not contain expected start time\nwant: %q\ngot:\n%s", tt.wantStartTime, got)
+				t.Errorf("ToICS()に開始時刻が含まれていない\n期待値: %q\n実測値:\n%s", tt.wantStartTime, got)
 			}
 			if !strings.Contains(got, tt.wantEndTime) {
-				t.Errorf("ToICS() does not contain expected end time\nwant: %q\ngot:\n%s", tt.wantEndTime, got)
+				t.Errorf("ToICS()に終了時刻が含まれていない\n期待値: %q\n実測値:\n%s", tt.wantEndTime, got)
 			}
 		})
 	}
@@ -554,10 +554,10 @@ func TestCalendar_ToICS_AlreadyInTargetTimezone(t *testing.T) {
 	// 既にJSTで渡された時刻が二重変換されないことを確認
 	jst, err := time.LoadLocation("Asia/Tokyo")
 	if err != nil {
-		t.Fatalf("failed to load timezone: %v", err)
+		t.Fatalf("タイムゾーンの読み込みエラー = %v", err)
 	}
 
-	// JST 2025-01-21 00:30 として作成
+	// JST 2025-01-21 00:30として作成
 	startJST := time.Date(2025, 1, 21, 0, 30, 0, 0, jst)
 	endJST := time.Date(2025, 1, 21, 1, 0, 0, 0, jst)
 
@@ -582,9 +582,9 @@ func TestCalendar_ToICS_AlreadyInTargetTimezone(t *testing.T) {
 	wantEnd := "DTEND;TZID=Asia/Tokyo:20250121T010000\r\n"
 
 	if !strings.Contains(got, wantStart) {
-		t.Errorf("ToICS() does not contain expected start time\nwant: %q\ngot:\n%s", wantStart, got)
+		t.Errorf("ToICS()に開始時刻が含まれていない\n期待値: %q\n実測値:\n%s", wantStart, got)
 	}
 	if !strings.Contains(got, wantEnd) {
-		t.Errorf("ToICS() does not contain expected end time\nwant: %q\ngot:\n%s", wantEnd, got)
+		t.Errorf("ToICS()に終了時刻が含まれていない\n期待値: %q\n実測値:\n%s", wantEnd, got)
 	}
 }

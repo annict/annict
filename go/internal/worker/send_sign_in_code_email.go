@@ -9,18 +9,18 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// SendSignInCodeEmailWorker はログインコードメール送信ワーカーです
+// SendSignInCodeEmailWorkerはログインコードメール送信ワーカーです
 type SendSignInCodeEmailWorker struct {
 	river.WorkerDefaults[dispatcher.SendSignInCodeEmailArgs]
 	uc *usecase.SendSignInCodeEmailUsecase
 }
 
-// NewSendSignInCodeEmailWorker は新しい SendSignInCodeEmailWorker を作成します
+// NewSendSignInCodeEmailWorkerは新しいSendSignInCodeEmailWorkerを作成します
 func NewSendSignInCodeEmailWorker(uc *usecase.SendSignInCodeEmailUsecase) *SendSignInCodeEmailWorker {
 	return &SendSignInCodeEmailWorker{uc: uc}
 }
 
-// Work はログインコードメールを送信します
+// Workはログインコードメールを送信します
 func (w *SendSignInCodeEmailWorker) Work(ctx context.Context, job *river.Job[dispatcher.SendSignInCodeEmailArgs]) error {
 	return w.uc.Execute(ctx, usecase.SendSignInCodeEmailInput{
 		Email:  job.Args.Email,

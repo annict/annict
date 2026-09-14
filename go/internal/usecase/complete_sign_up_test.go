@@ -45,7 +45,7 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 				tokenKey := fmt.Sprintf("sign_up_token:%s", token)
 				err := rdb.Set(ctx, tokenKey, "test@example.com", 15*time.Minute).Err()
 				if err != nil {
-					t.Fatalf("failed to set token in redis: %v", err)
+					t.Fatalf("Redisへのトークン保存エラー = %v", err)
 				}
 				return token
 			},
@@ -64,11 +64,11 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			checkErr: func(t *testing.T, err error) {
 				ve := model.AsValidationError(err)
 				if ve == nil {
-					t.Errorf("expected *model.ValidationError, got %v", err)
+					t.Errorf("エラーの型 = %v、期待値 = *model.ValidationError", err)
 					return
 				}
 				if !ve.HasFieldError("token") {
-					t.Errorf("expected token field error, got %+v", ve)
+					t.Errorf("tokenフィールドのエラー = %+v、期待値 = バリデーションエラー", ve)
 				}
 			},
 		},
@@ -89,7 +89,7 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 				tokenKey := fmt.Sprintf("sign_up_token:%s", token)
 				err := rdb.Set(ctx, tokenKey, "new@example.com", 15*time.Minute).Err()
 				if err != nil {
-					t.Fatalf("failed to set token in redis: %v", err)
+					t.Fatalf("Redisへのトークン保存エラー = %v", err)
 				}
 				return token
 			},
@@ -97,11 +97,11 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 			checkErr: func(t *testing.T, err error) {
 				ve := model.AsValidationError(err)
 				if ve == nil {
-					t.Errorf("expected *model.ValidationError, got %v", err)
+					t.Errorf("エラーの型 = %v、期待値 = *model.ValidationError", err)
 					return
 				}
 				if !ve.HasFieldError("username") {
-					t.Errorf("expected username field error, got %+v", ve)
+					t.Errorf("usernameフィールドのエラー = %+v、期待値 = バリデーションエラー", ve)
 				}
 			},
 		},
@@ -126,7 +126,7 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Execute() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Execute()のエラー = %v、期待値 = %v", err, tt.wantErr)
 				return
 			}
 
@@ -139,58 +139,58 @@ func TestCompleteSignUpUsecase_Execute(t *testing.T) {
 
 			// 正常系の検証
 			if result == nil {
-				t.Fatal("result should not be nil")
+				t.Fatal("resultがnilだった")
 			}
 
 			// ユーザー情報の検証
 			if result.User.Username != tt.username {
-				t.Errorf("User.Username = %v, want %v", result.User.Username, tt.username)
+				t.Errorf("User.Username = %v、期待値 = %v", result.User.Username, tt.username)
 			}
 
 			if result.User.Locale != tt.locale {
-				t.Errorf("User.Locale = %v, want %v", result.User.Locale, tt.locale)
+				t.Errorf("User.Locale = %v、期待値 = %v", result.User.Locale, tt.locale)
 			}
 
 			// セッションIDの検証
 			if result.SessionPublicID == "" {
-				t.Error("SessionPublicID should not be empty")
+				t.Error("SessionPublicIDが空だった")
 			}
 
 			// プロフィールが作成されているか確認
 			profile, err := queries.GetProfileByUserID(ctx, int64(result.User.ID))
 			if err != nil {
-				t.Fatalf("failed to get profile: %v", err)
+				t.Fatalf("プロフィールの取得エラー = %v", err)
 			}
 			if profile.Name != tt.username {
-				t.Errorf("Profile.Name = %v, want %v", profile.Name, tt.username)
+				t.Errorf("Profile.Name = %v、期待値 = %v", profile.Name, tt.username)
 			}
 			if profile.Description != "" {
-				t.Errorf("Profile.Description = %v, want empty string", profile.Description)
+				t.Errorf("Profile.Description = %v、期待値 = 空文字列", profile.Description)
 			}
 
 			// 設定が作成されているか確認
 			setting, err := queries.GetSettingByUserID(ctx, int64(result.User.ID))
 			if err != nil {
-				t.Fatalf("failed to get setting: %v", err)
+				t.Fatalf("設定の取得エラー = %v", err)
 			}
 			if !setting.PrivacyPolicyAgreed {
-				t.Error("Setting.PrivacyPolicyAgreed should be true")
+				t.Error("Setting.PrivacyPolicyAgreed = false、期待値 = true")
 			}
 
 			// メール通知設定が作成されているか確認
 			emailNotification, err := queries.GetEmailNotificationByUserID(ctx, int64(result.User.ID))
 			if err != nil {
-				t.Fatalf("failed to get email notification: %v", err)
+				t.Fatalf("メール通知設定の取得エラー = %v", err)
 			}
 			if emailNotification.UnsubscriptionKey == "" {
-				t.Error("EmailNotification.UnsubscriptionKey should not be empty")
+				t.Error("EmailNotification.UnsubscriptionKeyが空だった")
 			}
 
 			// トークンが削除されているか確認
 			tokenKey := fmt.Sprintf("sign_up_token:%s", tt.token)
 			_, err = rdb.Get(ctx, tokenKey).Result()
 			if err == nil {
-				t.Error("token should be deleted from redis")
+				t.Error("Redisからトークンが削除されなかった")
 			}
 		})
 	}
@@ -214,10 +214,10 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 	tokenKey := fmt.Sprintf("sign_up_token:%s", token)
 	err := rdb.Set(ctx, tokenKey, "noredis@example.com", 15*time.Minute).Err()
 	if err != nil {
-		t.Fatalf("failed to set token in redis: %v", err)
+		t.Fatalf("Redisへのトークン保存エラー = %v", err)
 	}
 
-	// ユースケースを作成（Redisあり）
+	// ユースケースを作成 (Redisあり)
 	v := validator.NewSignUpUsernameCreateValidator()
 	uc := NewCompleteSignUpUsecase(db, userRepo, profileRepo, settingRepo, emailNotificationRepo, repository.NewSessionRepository(queries), rdb, v)
 
@@ -228,42 +228,42 @@ func TestCompleteSignUpUsecase_Execute_Integration(t *testing.T) {
 		Locale:   "ja",
 	})
 	if err != nil {
-		t.Fatalf("Execute() error = %v", err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
 	// ユーザー情報の検証
 	if result.User.Username != "testuser_noredis" {
-		t.Errorf("User.Username = %v, want testuser_noredis", result.User.Username)
+		t.Errorf("User.Username = %v、期待値 = testuser_noredis", result.User.Username)
 	}
 
 	if result.User.Email != "noredis@example.com" {
-		t.Errorf("User.Email = %v, want noredis@example.com", result.User.Email)
+		t.Errorf("User.Email = %v、期待値 = noredis@example.com", result.User.Email)
 	}
 
 	// プロフィールが作成されているか確認
 	profile, err := queries.GetProfileByUserID(ctx, int64(result.User.ID))
 	if err != nil {
-		t.Fatalf("failed to get profile: %v", err)
+		t.Fatalf("プロフィールの取得エラー = %v", err)
 	}
 	if profile.Name != "testuser_noredis" {
-		t.Errorf("Profile.Name = %v, want testuser_noredis", profile.Name)
+		t.Errorf("Profile.Name = %v、期待値 = testuser_noredis", profile.Name)
 	}
 
 	// 設定が作成されているか確認
 	setting, err := queries.GetSettingByUserID(ctx, int64(result.User.ID))
 	if err != nil {
-		t.Fatalf("failed to get setting: %v", err)
+		t.Fatalf("設定の取得エラー = %v", err)
 	}
 	if !setting.PrivacyPolicyAgreed {
-		t.Error("Setting.PrivacyPolicyAgreed should be true")
+		t.Error("Setting.PrivacyPolicyAgreed = false、期待値 = true")
 	}
 
 	// メール通知設定が作成されているか確認
 	emailNotification, err := queries.GetEmailNotificationByUserID(ctx, int64(result.User.ID))
 	if err != nil {
-		t.Fatalf("failed to get email notification: %v", err)
+		t.Fatalf("メール通知設定の取得エラー = %v", err)
 	}
 	if emailNotification.UnsubscriptionKey == "" {
-		t.Error("EmailNotification.UnsubscriptionKey should not be empty")
+		t.Error("EmailNotification.UnsubscriptionKeyが空だった")
 	}
 }

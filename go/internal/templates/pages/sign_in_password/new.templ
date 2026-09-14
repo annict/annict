@@ -6,7 +6,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// NewPageData はパスワードログインページに渡すデータ構造体です
+// NewPageDataはパスワードログインページに渡すデータ構造体です
 type NewPageData struct {
 	CSRFToken  string
 	FormErrors *viewmodel.FormErrors
@@ -14,7 +14,7 @@ type NewPageData struct {
 	BackURL    string
 }
 
-// New はパスワードログインページのコンテンツを表示します
+// Newはパスワードログインページのコンテンツを表示します
 templ New(data NewPageData) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">

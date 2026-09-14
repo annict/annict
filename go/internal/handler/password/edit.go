@@ -17,16 +17,12 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// passwordEditPath is the representative GET path of the new-password form. Edit serves the
-// page at this path and Update re-renders it from PATCH /password, so both take their
-// canonical URL from here rather than from the request path.
-//
-// [Ja] passwordEditPath は新しいパスワード入力フォームの代表 GET パス。Edit はこのパスで
-// ページを配信し、Update は同じページを PATCH /password から再描画するため、双方とも
-// リクエストパスではなくここから canonical URL を取る。
+// passwordEditPathは新しいパスワード入力フォームの代表GETパス。Editはこのパスで
+// ページを配信し、Updateは同じページをPATCH /passwordから再描画するため、双方とも
+// リクエストパスではなくここからcanonical URLを取る。
 const passwordEditPath = "/password/edit"
 
-// Edit は新しいパスワード入力フォームを表示します (GET /password/edit)
+// Editは新しいパスワード入力フォームを表示します (GET /password/edit)
 func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	token := r.URL.Query().Get("token")
@@ -36,7 +32,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Rate Limiting: トークン検証の制限（10回/時間/IP）
+	// Rate Limiting: トークン検証の制限 (10回/時間/IP)
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		ip := clientip.GetClientIP(r)
 		tokenVerifyKey := fmt.Sprintf("password_reset:token_verify:ip:%s", ip)
@@ -73,8 +69,8 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	h.renderEditForm(w, r, http.StatusOK, nil, token)
 }
 
-// renderEditForm は新しいパスワード入力フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderEditFormは新しいパスワード入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, token string) {
 	ctx := r.Context()
 
@@ -98,7 +94,7 @@ func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status 
 	}
 }
 
-// renderInvalidTokenError は無効なトークンエラーを表示します
+// renderInvalidTokenErrorは無効なトークンエラーを表示します
 func (h *Handler) renderInvalidTokenError(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 

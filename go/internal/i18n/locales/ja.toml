@@ -1,5 +1,5 @@
 # 日本語翻訳ファイル
-# Annict Go プロジェクトの日本語メッセージ定義
+# Annict Goプロジェクトの日本語メッセージ定義
 
 # デフォルトのメタ情報
 [default_title]
@@ -28,7 +28,7 @@ other = "キャスト"
 description = "スタッフのラベル"
 other = "スタッフ"
 
-# 視聴者数（複数形対応）
+# 視聴者数 (複数形対応)
 [watchers_count]
 description = "アニメの視聴者数"
 other = "{{.Count}}人"
@@ -317,8 +317,8 @@ description = "新しいパスワードのラベル"
 other = "新しいパスワード"
 
 [password_edit_password_confirmation_label]
-description = "新しいパスワード（確認）のラベル"
-other = "新しいパスワード（確認）"
+description = "新しいパスワード (確認) のラベル"
+other = "新しいパスワード (確認)"
 
 [password_edit_password_requirements]
 description = "パスワードの要件"
@@ -334,7 +334,7 @@ description = "パスワードリセット - メールアドレス必須エラ�
 other = "メールアドレスを入力してください"
 
 [password_reset_token_invalid]
-description = "パスワードリセット - トークン無効エラー（ページタイトル）"
+description = "パスワードリセット - トークン無効エラー (ページタイトル)"
 other = "無効なリンクです"
 
 [password_reset_token_invalid_message]
@@ -347,13 +347,13 @@ other = "新しいパスワードを入力してください"
 
 [password_reset_password_confirmation_required]
 description = "パスワードリセット - パスワード確認必須エラー"
-other = "新しいパスワード（確認）を入力してください"
+other = "新しいパスワード (確認) を入力してください"
 
 [password_reset_password_mismatch]
 description = "パスワードリセット - パスワード不一致エラー"
 other = "パスワードが一致しません"
 
-# パスワード強度バリデーション（NIST SP 800-63B-4 準拠）
+# パスワード強度バリデーション (NIST SP 800-63B-4準拠)
 [password_strength_min_length]
 description = "パスワード強度 - 最小文字数エラー"
 other = "パスワードは{{.MinLength}}文字以上である必要があります"
@@ -415,7 +415,7 @@ description = "送信ボタン"
 other = "送信する"
 
 [sign_up_terms_agreement_notice]
-description = "利用規約同意メッセージ（Sign-in-wrap方式）"
+description = "利用規約同意メッセージ (Sign-in-wrap方式)"
 other = "登録することで、<a href=\"/terms\" class=\"link\" target=\"_blank\">利用規約</a>と<a href=\"/privacy\" class=\"link\" target=\"_blank\">プライバシーポリシー</a>に同意したものとみなされます"
 
 [sign_up_error_email_required]
@@ -528,10 +528,10 @@ description = "試行回数が上限に達した"
 other = "試行回数が上限に達しました。新しいコードを送信してください。"
 
 [sign_up_code_error_invalid]
-description = "コード検証失敗（情報漏洩対策のため詳細を明かさない統一メッセージ）"
+description = "コード検証失敗 (情報漏洩対策のため詳細を明かさない統一メッセージ)"
 other = "無効なコードです"
 
-# Turnstile（Bot対策）関連
+# Turnstile (Bot対策) 関連
 [turnstile_verification_failed]
 description = "Turnstile検証失敗エラー"
 other = "Bot対策の検証に失敗しました。もう一度お試しください。"
@@ -829,9 +829,7 @@ other = "登録"
 description = "ボトムナビゲーション - ログイン"
 other = "ログイン"
 
-# Layout common
-#
-# [Ja] レイアウト共通
+# レイアウト共通
 [skip_to_main_content]
 description = "レイアウト共通 - 本文へのスキップリンク"
 other = "メインコンテンツへスキップ"
@@ -949,90 +947,90 @@ other = "Annict Supporters"
 description = "サイドバー - 検索プレースホルダー"
 other = "作品名や人物名などで検索..."
 
-# DB サイドバー関連
+# DBサイドバー関連
 [db_sidebar_search_placeholder]
-description = "DB サイドバー - 検索プレースホルダー"
+description = "DBサイドバー - 検索プレースホルダー"
 other = "作品名や人物名などで検索..."
 
 [db_sidebar_activities]
-description = "DB サイドバー - アクティビティ"
+description = "DBサイドバー - アクティビティ"
 other = "アクティビティ"
 
 [db_sidebar_series]
-description = "DB サイドバー - シリーズ"
+description = "DBサイドバー - シリーズ"
 other = "シリーズ"
 
 [db_sidebar_works]
-description = "DB サイドバー - 作品"
+description = "DBサイドバー - 作品"
 other = "作品"
 
 [db_sidebar_people]
-description = "DB サイドバー - 人物"
+description = "DBサイドバー - 人物"
 other = "人物"
 
 [db_sidebar_organizations]
-description = "DB サイドバー - 団体"
+description = "DBサイドバー - 団体"
 other = "団体"
 
 [db_sidebar_characters]
-description = "DB サイドバー - キャラクター"
+description = "DBサイドバー - キャラクター"
 other = "キャラクター"
 
 [db_sidebar_channel_groups]
-description = "DB サイドバー - チャンネルグループ"
+description = "DBサイドバー - チャンネルグループ"
 other = "チャンネルグループ"
 
 [db_sidebar_channels]
-description = "DB サイドバー - チャンネル"
+description = "DBサイドバー - チャンネル"
 other = "チャンネル"
 
 [db_sidebar_back_to_annict]
-description = "DB サイドバー - Annictに戻る"
+description = "DBサイドバー - Annictに戻る"
 other = "Annictに戻る"
 
 [db_sidebar_toggle_label]
-description = "DB サイドバー - 開閉トグルボタンの aria-label"
+description = "DBサイドバー - 開閉トグルボタンのaria-label"
 other = "サイドバーの開閉"
 
 [db_sidebar_close_label]
-description = "DB サイドバー - 閉じるボタン"
+description = "DBサイドバー - 閉じるボタン"
 other = "閉じる"
 
-# DB 作品サブナビ関連
+# DB作品サブナビ関連
 [db_work_subnav_label]
-description = "DB 作品サブナビ - ナビゲーションの aria-label"
+description = "DB作品サブナビ - ナビゲーションのaria-label"
 other = "作品ナビゲーション"
 
 [db_work_subnav_work]
-description = "DB 作品サブナビ - 作品"
+description = "DB作品サブナビ - 作品"
 other = "作品"
 
 [db_work_subnav_episodes]
-description = "DB 作品サブナビ - エピソード"
+description = "DB作品サブナビ - エピソード"
 other = "エピソード"
 
 [db_work_subnav_programs]
-description = "DB 作品サブナビ - 番組情報"
+description = "DB作品サブナビ - 番組情報"
 other = "番組情報"
 
 [db_work_subnav_slots]
-description = "DB 作品サブナビ - 放送予定"
+description = "DB作品サブナビ - 放送予定"
 other = "放送予定"
 
 [db_work_subnav_casts]
-description = "DB 作品サブナビ - キャスト"
+description = "DB作品サブナビ - キャスト"
 other = "キャスト"
 
 [db_work_subnav_staffs]
-description = "DB 作品サブナビ - スタッフ"
+description = "DB作品サブナビ - スタッフ"
 other = "スタッフ"
 
 [db_work_subnav_work_image]
-description = "DB 作品サブナビ - 作品画像"
+description = "DB作品サブナビ - 作品画像"
 other = "作品画像"
 
 [db_work_subnav_pv]
-description = "DB 作品サブナビ - PV"
+description = "DB作品サブナビ - PV"
 other = "PV"
 
 # ページネーション関連
@@ -1048,9 +1046,7 @@ other = "前へ"
 description = "ページネーション - 次へ"
 other = "次へ"
 
-# Form common
-#
-# [Ja] フォーム共通
+# フォーム共通
 [form_required_label]
 description = "必須フィールドのラベルに表示する印"
 other = "必須"
@@ -1063,11 +1059,9 @@ other = "入力内容にエラーがあります"
 description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
 other = "{{.Label}}: {{.Message}}"
 
-# Guideline link
-#
-# [Ja] ガイドラインリンク
+# ガイドラインリンク
 [guideline_link_aria_label]
-description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) の aria-label"
+description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) のaria-label"
 other = "{{.Label}} を新しいタブで開く"
 
 # 公開状態ラベル関連
@@ -1089,7 +1083,7 @@ description = "DB作品一覧ページのタイトル"
 other = "作品"
 
 [db_works_index_table_caption]
-description = "DB作品一覧表のキャプションとスクロール領域の aria-label"
+description = "DB作品一覧表のキャプションとスクロール領域のaria-label"
 other = "DB作品一覧"
 
 [db_works_index_new_link]
@@ -1101,11 +1095,11 @@ description = "リリース時期の複数選択フィルタのラベル"
 other = "リリース時期"
 
 [db_works_index_season_slugs_placeholder]
-description = "リリース時期 combobox の検索プレースホルダ"
+description = "リリース時期comboboxの検索プレースホルダ"
 other = "年・季節で絞り込む..."
 
 [db_works_index_season_slugs_empty]
-description = "リリース時期 combobox の検索結果が空のときのメッセージ"
+description = "リリース時期comboboxの検索結果が空のときのメッセージ"
 other = "一致するリリース時期がありません"
 
 [db_works_index_season_slugs_remove_label]
@@ -1157,7 +1151,7 @@ description = "情報列 - しょぼいカレンダーのラベル"
 other = "しょぼかる"
 
 [db_works_index_mal_label]
-description = "情報列 - MyAnimeList のラベル"
+description = "情報列 - MyAnimeListのラベル"
 other = "MyAnimeList"
 
 [db_works_index_table_watchers_label]
@@ -1177,11 +1171,11 @@ description = "テーブルヘッダー - 操作"
 other = "操作"
 
 [db_works_index_id_link_aria_label]
-description = "作品 ID リンク (公開ページを新しいタブで開く) の aria-label"
+description = "作品IDリンク (公開ページを新しいタブで開く) のaria-label"
 other = "作品 {{.ID}} を新しいタブで開く"
 
 [db_works_index_external_service_link_aria_label]
-description = "外部サービスリンク (新しいタブで開く) の aria-label"
+description = "外部サービスリンク (新しいタブで開く) のaria-label"
 other = "{{.Label}} を新しいタブで開く"
 
 [db_works_index_action_target_label]
@@ -1233,7 +1227,7 @@ description = "2ページ目以降の作品を識別できるエピソード一�
 other = "エピソード ({{.Page}}ページ目) | {{.WorkTitle}}"
 
 [db_episodes_index_table_caption]
-description = "DB エピソード一覧テーブルの caption とスクロール領域の aria-label"
+description = "DBエピソード一覧テーブルのcaptionとスクロール領域のaria-label"
 other = "DBエピソード一覧"
 
 [db_episodes_index_table_id_label]
@@ -1281,7 +1275,7 @@ description = "テーブルヘッダー - 状態"
 other = "状態"
 
 [db_episodes_index_id_link_aria_label]
-description = "エピソード ID リンク (公開ページを新しいタブで開く) の aria-label"
+description = "エピソードIDリンク (公開ページを新しいタブで開く) のaria-label"
 other = "エピソード {{.ID}} を新しいタブで開く"
 
 [db_episodes_index_empty]
@@ -1357,7 +1351,7 @@ description = "エピソード一括作成ページからエピソードの一�
 other = "エピソードの一括登録ガイドライン"
 
 [db_episodes_new_rows_label]
-description = "一括作成ページの入力欄 (1 行 1 エピソード) のラベル"
+description = "一括作成ページの入力欄 (1行1エピソード) のラベル"
 other = "エピソード"
 
 [db_episodes_new_submit]
@@ -1487,7 +1481,7 @@ other = "キャンセル"
 
 # DB作品フォーム共通 (新規・編集で共有)
 [db_works_form_external_link_label]
-description = "フォームのラベル横に表示する外部リンクアイコンのアクセシブルネーム (新規・編集共通)。Field はフィールド名"
+description = "フォームのラベル横に表示する外部リンクアイコンのアクセシブルネーム (新規・編集共通)。Fieldはフィールド名"
 other = "{{.Field}} を新しいタブで開く"
 
 # DB作品新規作成ページ
@@ -1624,7 +1618,7 @@ description = "編集ページから公開サイトの作品ページへのリ�
 other = "作品ページ"
 
 [db_works_edit_work_page_link_aria_label]
-description = "編集ページから公開サイトの作品ページへのリンク (新しいタブで開く) の aria-label"
+description = "編集ページから公開サイトの作品ページへのリンク (新しいタブで開く) のaria-label"
 other = "作品ページを新しいタブで開く"
 
 [db_works_edit_guideline_link]

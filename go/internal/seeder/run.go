@@ -1,10 +1,6 @@
-// Package seeder generates the development seed data by driving the seed usecases in
-// order. It sits above internal/usecase/seed, so it cannot live in internal/seed:
-// those usecases import internal/seed for their random titles and images.
-//
-// [Ja] seeder パッケージはシードの UseCase を順に駆動して開発用のシードデータを生成する。
-// internal/usecase/seed の上に位置するため internal/seed には置けない。それらの UseCase が
-// ランダムなタイトル・画像の生成のために internal/seed を import しているためである。
+// Package seederはシードのUseCaseを順に駆動して開発用のシードデータを生成する。
+// internal/usecase/seedの上に位置するためinternal/seedには置けない。それらのUseCaseが
+// ランダムなタイトル・画像の生成のためにinternal/seedをimportしているためである。
 package seeder
 
 import (
@@ -27,26 +23,15 @@ import (
 	seedusecase "github.com/annict/annict/go/internal/usecase/seed"
 )
 
-// seedableEnvs lists the environments seed data generation is allowed to run in. The
-// check is an allow list rather than a denial of "prod": generation empties every table
-// it then fills, so an APP_ENV value nobody anticipated has to be rejected instead of
-// falling through as "not production".
-//
-// [Ja] seedableEnvs はシードデータ生成の実行を許可する環境の一覧。判定は「prod を拒否する」
+// seedableEnvsはシードデータ生成の実行を許可する環境の一覧。判定は「prodを拒否する」
 // 否定リストではなく許可リストとする。生成は対象のテーブルをすべて空にしてから詰め直すため、
-// 想定していない APP_ENV の値は「本番ではない」として通さず拒否する必要がある。
+// 想定していないAPP_ENVの値は「本番ではない」として通さず拒否する必要がある。
 var seedableEnvs = []string{"dev", "test"}
 
-// Run empties the tables it seeds and regenerates the development data in phase order.
+// Runはシード対象のテーブルを空にし、開発用データをフェーズ順に生成し直す。
 //
-// The environment guard runs before anything reaches db, so a rejected environment
-// leaves the database unchanged: Run issues no statement of its own until the guard
-// has passed.
-//
-// [Ja] Run はシード対象のテーブルを空にし、開発用データをフェーズ順に生成し直す。
-//
-// 環境ガードは db に触れるどの処理よりも先に実行されるため、環境が拒否された場合にデータ
-// ベースの中身は変わらない。ガードを通過するまで Run 自身の文は 1 つも発行されない。
+// 環境ガードはdbに触れるどの処理よりも先に実行されるため、環境が拒否された場合にデータ
+// ベースの中身は変わらない。ガードを通過するまでRun自身の文は1つも発行されない。
 func Run(ctx context.Context, cfg *config.Config, db *sql.DB) error {
 	if err := EnsureSeedableEnv(cfg); err != nil {
 		return err
@@ -74,7 +59,7 @@ func Run(ctx context.Context, cfg *config.Config, db *sql.DB) error {
 	slog.Info("=== シードデータ生成を開始します ===")
 	fmt.Println()
 
-	// 乱数生成器の初期化（再現性のためにシード値を固定）
+	// 乱数生成器の初期化 (再現性のためにシード値を固定)
 	// テストデータ生成用のため、暗号学的に安全な乱数は不要
 	rnd := rand.New(rand.NewSource(42)) // #nosec G404
 	gofakeit.SetGlobalFaker(gofakeit.New(42))
@@ -85,7 +70,7 @@ func Run(ctx context.Context, cfg *config.Config, db *sql.DB) error {
 		return err
 	}
 
-	// フェーズ1-1: プロフィール画像クリーンアップ（S3バケット内の孤立した画像を削除）
+	// フェーズ1-1: プロフィール画像クリーンアップ (S3バケット内の孤立した画像を削除)
 	if err := cleanupProfileImages(ctx, cfg); err != nil {
 		return err
 	}
@@ -112,7 +97,7 @@ func Run(ctx context.Context, cfg *config.Config, db *sql.DB) error {
 		return err
 	}
 
-	// フェーズ5-1: 作品画像クリーンアップ（S3バケット内の孤立した画像を削除）
+	// フェーズ5-1: 作品画像クリーンアップ (S3バケット内の孤立した画像を削除)
 	if err := cleanupWorkImages(ctx, cfg); err != nil {
 		return err
 	}
@@ -147,18 +132,16 @@ func Run(ctx context.Context, cfg *config.Config, db *sql.DB) error {
 	return nil
 }
 
-// EnsureSeedableEnv reports whether the configured environment may be seeded.
-//
-// [Ja] EnsureSeedableEnv は設定された環境でシードデータを生成してよいかを判定する。
+// EnsureSeedableEnvは設定された環境でシードデータを生成してよいかを判定する。
 func EnsureSeedableEnv(cfg *config.Config) error {
 	if slices.Contains(seedableEnvs, cfg.Env) {
 		return nil
 	}
 
-	return fmt.Errorf("シードデータの生成は %s 環境でのみ実行できます: APP_ENV=%q", strings.Join(seedableEnvs, " / "), cfg.Env)
+	return fmt.Errorf("シードデータの生成は %s環境でのみ実行できます: APP_ENV=%q", strings.Join(seedableEnvs, " / "), cfg.Env)
 }
 
-// cleanupExistingData は既存データを削除します
+// cleanupExistingDataは既存データを削除します
 func cleanupExistingData(ctx context.Context, db *sql.DB) error {
 	// シードデータ生成対象のテーブル一覧
 	// 外部キー制約があるため、外部キー制約を一時的に無効化してから削除する
@@ -187,7 +170,7 @@ func cleanupExistingData(ctx context.Context, db *sql.DB) error {
 		_ = tx.Rollback()
 	}()
 
-	// 外部キー制約を一時的に無効化（レプリケーションロールを使用）
+	// 外部キー制約を一時的に無効化 (レプリケーションロールを使用)
 	// session_replication_role = 'replica' に設定すると、トリガーと外部キー制約が無効化される
 	if _, err := tx.ExecContext(ctx, "SET session_replication_role = 'replica'"); err != nil {
 		return fmt.Errorf("外部キー制約の無効化に失敗: %w", err)
@@ -212,7 +195,7 @@ func cleanupExistingData(ctx context.Context, db *sql.DB) error {
 		// テーブル名は固定リストから取得しているため安全
 		query := fmt.Sprintf("DELETE FROM %s", table) // #nosec G201
 		if _, err := tx.ExecContext(ctx, query); err != nil {
-			return fmt.Errorf("テーブル %s のクリーンアップに失敗: %w", table, err)
+			return fmt.Errorf("テーブル %sのクリーンアップに失敗: %w", table, err)
 		}
 		_ = bar.Add(1) // 進捗表示のエラーは無視
 	}
@@ -232,7 +215,7 @@ func cleanupExistingData(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-// generateUsers はユーザーを生成します
+// generateUsersはユーザーを生成します
 func generateUsers(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) ([]model.UserID, error) {
 	slog.Info("フェーズ1: ユーザー生成", "count", count)
 
@@ -282,7 +265,7 @@ func generateUsers(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) (
 	return userIDs, nil
 }
 
-// generateWorks は作品を生成します
+// generateWorksは作品を生成します
 func generateWorks(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) ([]model.WorkID, error) {
 	slog.Info("フェーズ2: 作品生成", "count", count)
 
@@ -326,7 +309,7 @@ func generateWorks(ctx context.Context, db *sql.DB, rnd *rand.Rand, count int) (
 	return workIDs, nil
 }
 
-// generateEpisodes はエピソードを生成します（作品あたり平均12話）
+// generateEpisodesはエピソードを生成します (作品あたり平均12話)
 func generateEpisodes(ctx context.Context, db *sql.DB, rnd *rand.Rand, workIDs []model.WorkID) (map[model.WorkID][]model.EpisodeID, error) {
 	slog.Info("フェーズ3: エピソード生成", "workCount", len(workIDs), "avgEpisodes", 12)
 
@@ -335,7 +318,7 @@ func generateEpisodes(ctx context.Context, db *sql.DB, rnd *rand.Rand, workIDs [
 	// 各作品に対してエピソードを生成
 	allEpisodes := []seedusecase.CreateEpisodeParams{}
 	for _, workID := range workIDs {
-		// ランダムに1〜24話（平均12話）
+		// ランダムに1〜24話 (平均12話)
 		episodeCount := rnd.Intn(24) + 1
 		episodes := seedusecase.GenerateEpisodeParamsForWork(rnd, workID, episodeCount)
 		allEpisodes = append(allEpisodes, episodes...)
@@ -366,7 +349,7 @@ func generateEpisodes(ctx context.Context, db *sql.DB, rnd *rand.Rand, workIDs [
 	fmt.Println() // プログレスバーの後に改行
 	slog.Info("エピソード生成完了", "count", len(results))
 
-	// Work ID -> Episode IDs のマップを作成
+	// Work ID -> Episode IDsのマップを作成
 	episodesByWork := make(map[model.WorkID][]model.EpisodeID)
 	for i, result := range results {
 		workID := allEpisodes[i].WorkID
@@ -376,7 +359,7 @@ func generateEpisodes(ctx context.Context, db *sql.DB, rnd *rand.Rand, workIDs [
 	return episodesByWork, nil
 }
 
-// generateEpisodeRecords は視聴記録を生成します
+// generateEpisodeRecordsは視聴記録を生成します
 func generateEpisodeRecords(ctx context.Context, db *sql.DB, rnd *rand.Rand, userIDs []model.UserID, episodesByWork map[model.WorkID][]model.EpisodeID, workIDs []model.WorkID, count int) error {
 	slog.Info("フェーズ4: 視聴記録生成", "count", count)
 
@@ -398,7 +381,7 @@ func generateEpisodeRecords(ctx context.Context, db *sql.DB, rnd *rand.Rand, use
 		}
 		episodeID := episodes[rnd.Intn(len(episodes))]
 
-		// 評価とコメント（確率的に設定）
+		// 評価とコメント (確率的に設定)
 		var rating *float64
 		if rnd.Float64() < 0.7 { // 70%の確率で評価をつける
 			r := float64(rnd.Intn(50))/10.0 + 1.0 // 1.0〜5.0
@@ -411,7 +394,7 @@ func generateEpisodeRecords(ctx context.Context, db *sql.DB, rnd *rand.Rand, use
 			body = &b
 		}
 
-		// 視聴日時（過去1年間のランダムな日時）
+		// 視聴日時 (過去1年間のランダムな日時)
 		watchedAt := time.Now().AddDate(0, 0, -rnd.Intn(365))
 
 		records[i] = seedusecase.CreateEpisodeRecordParams{
@@ -450,7 +433,7 @@ func generateEpisodeRecords(ctx context.Context, db *sql.DB, rnd *rand.Rand, use
 	return nil
 }
 
-// cleanupWorkImages はCloudflare R2上の作品画像を削除します
+// cleanupWorkImagesはCloudflare R2上の作品画像を削除します
 func cleanupWorkImages(ctx context.Context, cfg *config.Config) error {
 	slog.Info("フェーズ5-1: 作品画像クリーンアップ")
 
@@ -471,7 +454,7 @@ func cleanupWorkImages(ctx context.Context, cfg *config.Config) error {
 	return nil
 }
 
-// generateWorkImages は作品画像を生成します
+// generateWorkImagesは作品画像を生成します
 func generateWorkImages(ctx context.Context, db *sql.DB, cfg *config.Config, workIDs []model.WorkID, userIDs []model.UserID, rnd *rand.Rand) error {
 	slog.Info("フェーズ5-2: 作品画像生成", "count", len(workIDs))
 
@@ -486,10 +469,10 @@ func generateWorkImages(ctx context.Context, db *sql.DB, cfg *config.Config, wor
 		cfg.S3BucketName,
 	)
 
-	// 作品画像パラメータを生成（全作品に画像を付与）
+	// 作品画像パラメータを生成 (全作品に画像を付与)
 	params := make([]seedusecase.CreateWorkImageParams, len(workIDs))
 	for i, workID := range workIDs {
-		// ランダムなユーザーを選択（作成者として）
+		// ランダムなユーザーを選択 (作成者として)
 		userID := userIDs[rnd.Intn(len(userIDs))]
 		params[i] = seedusecase.CreateWorkImageParams{
 			WorkID: workID,
@@ -523,13 +506,13 @@ func generateWorkImages(ctx context.Context, db *sql.DB, cfg *config.Config, wor
 	return nil
 }
 
-// generateFollows はフォロー関係を生成します
+// generateFollowsはフォロー関係を生成します
 func generateFollows(ctx context.Context, db *sql.DB, rnd *rand.Rand, userIDs []model.UserID, count int) error {
 	slog.Info("フェーズ6: フォロー関係生成", "count", count)
 
 	uc := seedusecase.NewCreateFollowUsecase(db)
 
-	// フォロー関係パラメータを生成（重複チェック用のマップ）
+	// フォロー関係パラメータを生成 (重複チェック用のマップ)
 	follows := make([]seedusecase.CreateFollowParams, 0, count)
 	followMap := make(map[string]bool) // "follower_id:following_id" をキーとする
 
@@ -581,7 +564,7 @@ func generateFollows(ctx context.Context, db *sql.DB, rnd *rand.Rand, userIDs []
 	return nil
 }
 
-// generateOAuthTokens はOAuthトークンを生成します
+// generateOAuthTokensはOAuthトークンを生成します
 func generateOAuthTokens(ctx context.Context, db *sql.DB, userIDs []model.UserID, count int) error {
 	slog.Info("フェーズ7: OAuthトークン生成", "count", count)
 
@@ -603,7 +586,7 @@ func generateOAuthTokens(ctx context.Context, db *sql.DB, userIDs []model.UserID
 		UserIDs:         selectedUserIDs,
 	}
 
-	// 進捗バー（アプリケーション作成 + トークン数）
+	// 進捗バー (アプリケーション作成 + トークン数)
 	bar := progressbar.NewOptions(count+1,
 		progressbar.OptionSetDescription("OAuthトークン生成"),
 		progressbar.OptionSetWidth(50),
@@ -629,7 +612,7 @@ func generateOAuthTokens(ctx context.Context, db *sql.DB, userIDs []model.UserID
 	return nil
 }
 
-// generateHeavyUser はヘビーユーザーを生成します
+// generateHeavyUserはヘビーユーザーを生成します
 func generateHeavyUser(ctx context.Context, db *sql.DB) error {
 	slog.Info("フェーズ8: ヘビーユーザー生成")
 
@@ -661,7 +644,7 @@ func generateHeavyUser(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-// cleanupProfileImages はCloudflare R2上のプロフィール画像を削除します
+// cleanupProfileImagesはCloudflare R2上のプロフィール画像を削除します
 func cleanupProfileImages(ctx context.Context, cfg *config.Config) error {
 	slog.Info("プロフィール画像クリーンアップ")
 
@@ -682,7 +665,7 @@ func cleanupProfileImages(ctx context.Context, cfg *config.Config) error {
 	return nil
 }
 
-// generateProfileImages はプロフィール画像を生成します
+// generateProfileImagesはプロフィール画像を生成します
 func generateProfileImages(ctx context.Context, db *sql.DB, cfg *config.Config, userIDs []model.UserID) error {
 	slog.Info("プロフィール画像生成", "count", len(userIDs))
 
@@ -706,7 +689,7 @@ func generateProfileImages(ctx context.Context, db *sql.DB, cfg *config.Config, 
 		cfg.S3BucketName,
 	)
 
-	// プロフィール画像パラメータを生成（全プロフィールに画像を付与）
+	// プロフィール画像パラメータを生成 (全プロフィールに画像を付与)
 	params := make([]seedusecase.CreateProfileImageParams, len(profiles))
 	for i, profile := range profiles {
 		params[i] = seedusecase.CreateProfileImageParams{

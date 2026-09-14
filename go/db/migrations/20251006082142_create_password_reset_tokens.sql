@@ -2,7 +2,7 @@
 CREATE TABLE password_reset_tokens (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    token_digest VARCHAR(64) NOT NULL,  -- SHA-256ハッシュ（hex表現で64文字）
+    token_digest VARCHAR(64) NOT NULL,  -- SHA-256ハッシュ (hex表現で64文字)
     expires_at TIMESTAMP WITH TIME ZONE NOT NULL,
     used_at TIMESTAMP WITH TIME ZONE,   -- NULL = 未使用
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),

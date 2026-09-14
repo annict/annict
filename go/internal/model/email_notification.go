@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-// EmailNotification はユーザーのメール通知設定のドメインエンティティ
+// EmailNotificationはユーザーのメール通知設定のドメインエンティティ
 type EmailNotification struct {
 	ID                      EmailNotificationID
 	UserID                  UserID

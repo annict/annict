@@ -14,7 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestTouchSession_Success はセッションのupdated_atが更新されることをテスト
+// TestTouchSession_Successはセッションのupdated_atが更新されることをテスト
 func TestTouchSession_Success(t *testing.T) {
 	t.Parallel()
 
@@ -56,7 +56,7 @@ func TestTouchSession_Success(t *testing.T) {
 	}
 }
 
-// TestTouchSession_NonExistentSession は存在しないセッションIDでもエラーが発生しないことをテスト
+// TestTouchSession_NonExistentSessionは存在しないセッションIDでもエラーが発生しないことをテスト
 func TestTouchSession_NonExistentSession(t *testing.T) {
 	t.Parallel()
 
@@ -67,13 +67,13 @@ func TestTouchSession_NonExistentSession(t *testing.T) {
 	// 存在しないセッションIDでTouchSessionを実行
 	err := repo.TouchSession(context.Background(), "non_existent_session_id")
 
-	// エラーが発生しないことを確認（UPDATEは0行更新でもエラーにならない）
+	// エラーが発生しないことを確認 (UPDATEは0行更新でもエラーにならない)
 	if err != nil {
 		t.Errorf("存在しないセッションIDでエラーが発生しました: %v", err)
 	}
 }
 
-// TestGeneratePrivateID はprivate IDが正しいフォーマットで生成されることをテスト
+// TestGeneratePrivateIDはprivate IDが正しいフォーマットで生成されることをテスト
 func TestGeneratePrivateID(t *testing.T) {
 	t.Parallel()
 
@@ -103,13 +103,13 @@ func TestGeneratePrivateID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := generatePrivateID(tt.publicID)
 			if got != tt.want {
-				t.Errorf("generatePrivateID() = %v, want %v", got, tt.want)
+				t.Errorf("generatePrivateID() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
 }
 
-// TestGeneratePrivateID_Format はprivate IDが "2::" で始まることをテスト
+// TestGeneratePrivateID_Formatはprivate IDが "2::" で始まることをテスト
 func TestGeneratePrivateID_Format(t *testing.T) {
 	t.Parallel()
 
@@ -128,28 +128,28 @@ func TestGeneratePrivateID_Format(t *testing.T) {
 				t.Errorf("private IDが '2::' で始まっていません: %s", privateID)
 			}
 
-			// SHA256ハッシュの長さを確認（"2::" + 64文字のhex = 67文字）
+			// SHA256ハッシュの長さを確認 ("2::" + 64文字のhex = 67文字)
 			expectedLength := 3 + 64
 			if len(privateID) != expectedLength {
-				t.Errorf("private IDの長さが正しくありません: got %d, want %d", len(privateID), expectedLength)
+				t.Errorf("private IDの長さ = %d、期待値 = %d", len(privateID), expectedLength)
 			}
 		})
 	}
 }
 
-// hashString はテスト用のSHA256ハッシュ関数
+// hashStringはテスト用のSHA256ハッシュ関数
 func hashString(s string) string {
 	hash := sha256.Sum256([]byte(s))
 	return hex.EncodeToString(hash[:])
 }
 
-// generatePrivateID はテスト用のprivate ID生成関数（Repositoryの実装と同じロジック）
+// generatePrivateIDはテスト用のprivate ID生成関数 (Repositoryの実装と同じロジック)
 func generatePrivateID(publicID string) string {
 	hash := sha256.Sum256([]byte(publicID))
 	return fmt.Sprintf("2::%s", hex.EncodeToString(hash[:]))
 }
 
-// TestGetSessionByID_Success はセッションを正常に取得し、Modelとして返却されることをテスト
+// TestGetSessionByID_Successはセッションを正常に取得し、Modelとして返却されることをテスト
 func TestGetSessionByID_Success(t *testing.T) {
 	t.Parallel()
 
@@ -176,7 +176,7 @@ func TestGetSessionByID_Success(t *testing.T) {
 	// private IDが正しいことを確認
 	expectedPrivateID := generatePrivateID(publicID)
 	if session.SessionID != expectedPrivateID {
-		t.Errorf("セッションIDが一致しません: got %v, want %v", session.SessionID, expectedPrivateID)
+		t.Errorf("セッションID = %v、期待値 = %v", session.SessionID, expectedPrivateID)
 	}
 	if session.ID == 0 {
 		t.Error("IDがゼロ値です")
@@ -189,7 +189,7 @@ func TestGetSessionByID_Success(t *testing.T) {
 	}
 }
 
-// TestGetSessionByID_NonExistent は存在しないセッションIDでエラーが返ることをテスト
+// TestGetSessionByID_NonExistentは存在しないセッションIDでエラーが返ることをテスト
 func TestGetSessionByID_NonExistent(t *testing.T) {
 	t.Parallel()
 
@@ -211,7 +211,7 @@ func TestGetSessionByID_NonExistent(t *testing.T) {
 	}
 }
 
-// TestGetUserByID_Success はユーザーを正常に取得できることをテスト
+// TestGetUserByID_Successはユーザーを正常に取得できることをテスト
 func TestGetUserByID_Success(t *testing.T) {
 	t.Parallel()
 
@@ -238,11 +238,11 @@ func TestGetUserByID_Success(t *testing.T) {
 
 	// ユーザーIDが一致することを確認
 	if user.ID != userID {
-		t.Errorf("ユーザーIDが一致しません: got %v, want %v", user.ID, userID)
+		t.Errorf("ユーザーID = %v、期待値 = %v", user.ID, userID)
 	}
 }
 
-// TestGetUserByID_NonExistent は存在しないユーザーIDでエラーが返ることをテスト
+// TestGetUserByID_NonExistentは存在しないユーザーIDでエラーが返ることをテスト
 func TestGetUserByID_NonExistent(t *testing.T) {
 	t.Parallel()
 
@@ -264,7 +264,7 @@ func TestGetUserByID_NonExistent(t *testing.T) {
 	}
 }
 
-// TestUpdateSession_Success はセッションを正常に更新できることをテスト
+// TestUpdateSession_Successはセッションを正常に更新できることをテスト
 func TestUpdateSession_Success(t *testing.T) {
 	t.Parallel()
 
@@ -285,7 +285,7 @@ func TestUpdateSession_Success(t *testing.T) {
 		t.Fatalf("UpdateSessionに失敗: %v", err)
 	}
 
-	// セッションが更新されたことを確認（DB に永続化されたかを Repository 経由で確認）
+	// セッションが更新されたことを確認 (DBに永続化されたかをRepository経由で確認)
 	session, err := repo.GetSessionByID(context.Background(), publicID)
 	if err != nil {
 		t.Fatalf("更新後のセッション取得に失敗: %v", err)
@@ -293,11 +293,11 @@ func TestUpdateSession_Success(t *testing.T) {
 
 	// データが更新されていることを確認
 	if string(session.Data) != string(newData) {
-		t.Errorf("セッションデータが更新されていません: got %v, want %v", string(session.Data), string(newData))
+		t.Errorf("セッションデータ = %v、期待値 = %v", string(session.Data), string(newData))
 	}
 }
 
-// TestCreateSession_Success はセッションを正常に作成し、Modelとして返却されることをテスト
+// TestCreateSession_Successはセッションを正常に作成し、Modelとして返却されることをテスト
 func TestCreateSession_Success(t *testing.T) {
 	t.Parallel()
 
@@ -321,7 +321,7 @@ func TestCreateSession_Success(t *testing.T) {
 	// セッションが作成されたことを確認
 	expectedPrivateID := generatePrivateID(publicID)
 	if session.SessionID != expectedPrivateID {
-		t.Errorf("セッションIDが一致しません: got %v, want %v", session.SessionID, expectedPrivateID)
+		t.Errorf("セッションID = %v、期待値 = %v", session.SessionID, expectedPrivateID)
 	}
 	if session.ID == 0 {
 		t.Error("IDがゼロ値です")
@@ -329,7 +329,7 @@ func TestCreateSession_Success(t *testing.T) {
 
 	// データが正しいことを確認
 	if string(session.Data) != string(sessionData) {
-		t.Errorf("セッションデータが一致しません: got %v, want %v", string(session.Data), string(sessionData))
+		t.Errorf("セッションデータ = %v、期待値 = %v", string(session.Data), string(sessionData))
 	}
 
 	if session.CreatedAt.IsZero() {
@@ -340,7 +340,7 @@ func TestCreateSession_Success(t *testing.T) {
 	}
 }
 
-// TestDeleteSession_Success はセッションを正常に削除できることをテスト
+// TestDeleteSession_Successはセッションを正常に削除できることをテスト
 func TestDeleteSession_Success(t *testing.T) {
 	t.Parallel()
 
@@ -373,7 +373,7 @@ func TestDeleteSession_Success(t *testing.T) {
 	}
 }
 
-// TestSessionRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestSessionRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestSessionRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -395,7 +395,7 @@ func TestSessionRepository_WithTx(t *testing.T) {
 	// セッションが作成されたことを確認
 	expectedPrivateID := generatePrivateID(publicID)
 	if session.SessionID != expectedPrivateID {
-		t.Errorf("セッションIDが一致しません: got %v, want %v", session.SessionID, expectedPrivateID)
+		t.Errorf("セッションID = %v、期待値 = %v", session.SessionID, expectedPrivateID)
 	}
 
 	// WithTxで取得したRepositoryからセッションを取得できることを確認
@@ -405,11 +405,11 @@ func TestSessionRepository_WithTx(t *testing.T) {
 	}
 
 	if fetchedSession.SessionID != expectedPrivateID {
-		t.Errorf("取得したセッションIDが一致しません: got %v, want %v", fetchedSession.SessionID, expectedPrivateID)
+		t.Errorf("取得したセッションID = %v、期待値 = %v", fetchedSession.SessionID, expectedPrivateID)
 	}
 }
 
-// TestDeleteSession_NonExistent は存在しないセッションIDでもエラーが発生しないことをテスト
+// TestDeleteSession_NonExistentは存在しないセッションIDでもエラーが発生しないことをテスト
 func TestDeleteSession_NonExistent(t *testing.T) {
 	t.Parallel()
 
@@ -420,18 +420,14 @@ func TestDeleteSession_NonExistent(t *testing.T) {
 	// 存在しないセッションIDでDeleteSessionを実行
 	err := repo.DeleteSession(context.Background(), "non_existent_session_id")
 
-	// エラーが発生しないことを確認（DELETEは0行削除でもエラーにならない）
+	// エラーが発生しないことを確認 (DELETEは0行削除でもエラーにならない)
 	if err != nil {
 		t.Errorf("存在しないセッションIDでエラーが発生しました: %v", err)
 	}
 }
 
-// insertSessionWithUpdatedAt inserts one session row with the given private ID and an
-// explicit updated_at. DeleteExpired selects rows by updated_at, so the tests need to
-// place rows on either side of a cutoff, which the session builder cannot express.
-//
-// [Ja] insertSessionWithUpdatedAt は private ID と updated_at を明示したセッション行を
-// 1 件挿入する。DeleteExpired は updated_at で行を選ぶため、テストではカットオフの前後に
+// insertSessionWithUpdatedAtはprivate IDとupdated_atを明示したセッション行を
+// 1件挿入する。DeleteExpiredはupdated_atで行を選ぶため、テストではカットオフの前後に
 // 行を配置する必要があるが、セッションビルダーではそれを表現できない。
 func insertSessionWithUpdatedAt(t *testing.T, tx *sql.Tx, sessionID string, updatedAt time.Time) {
 	t.Helper()
@@ -445,9 +441,7 @@ func insertSessionWithUpdatedAt(t *testing.T, tx *sql.Tx, sessionID string, upda
 	}
 }
 
-// sessionExists reports whether a session row with the given private ID is present.
-//
-// [Ja] sessionExists は指定した private ID のセッション行が存在するかを返す。
+// sessionExistsは指定したprivate IDのセッション行が存在するかを返す。
 func sessionExists(t *testing.T, tx *sql.Tx, sessionID string) bool {
 	t.Helper()
 
@@ -459,7 +453,7 @@ func sessionExists(t *testing.T, tx *sql.Tx, sessionID string) bool {
 	return exists
 }
 
-// TestDeleteExpired_OnlyOlderThanCutoff はカットオフより古いセッションだけが削除されることをテスト
+// TestDeleteExpired_OnlyOlderThanCutoffはカットオフより古いセッションだけが削除されることをテスト
 func TestDeleteExpired_OnlyOlderThanCutoff(t *testing.T) {
 	t.Parallel()
 
@@ -482,7 +476,7 @@ func TestDeleteExpired_OnlyOlderThanCutoff(t *testing.T) {
 	}
 
 	if deleted != 1 {
-		t.Errorf("削除件数が一致しません: got %d, want 1", deleted)
+		t.Errorf("削除件数 = %d、期待値 = 1", deleted)
 	}
 	if sessionExists(t, tx, oldID) {
 		t.Error("カットオフより古いセッションが削除されていません")
@@ -492,7 +486,7 @@ func TestDeleteExpired_OnlyOlderThanCutoff(t *testing.T) {
 	}
 }
 
-// TestDeleteExpired_RespectsLimit は削除件数が limit で頭打ちになることをテスト
+// TestDeleteExpired_RespectsLimitは削除件数がlimitで頭打ちになることをテスト
 func TestDeleteExpired_RespectsLimit(t *testing.T) {
 	t.Parallel()
 
@@ -511,19 +505,19 @@ func TestDeleteExpired_RespectsLimit(t *testing.T) {
 	}
 
 	if deleted != 2 {
-		t.Errorf("削除件数が limit を超えています: got %d, want 2", deleted)
+		t.Errorf("削除件数 = %d、期待値 = 2", deleted)
 	}
 
 	remaining, err := repo.DeleteExpired(context.Background(), cutoff, 2)
 	if err != nil {
-		t.Fatalf("2 回目の DeleteExpiredに失敗: %v", err)
+		t.Fatalf("2回目のDeleteExpiredに失敗: %v", err)
 	}
 	if remaining != 1 {
-		t.Errorf("残りの削除件数が一致しません: got %d, want 1", remaining)
+		t.Errorf("残りの削除件数 = %d、期待値 = 1", remaining)
 	}
 }
 
-// TestDeleteExpired_NoTarget は対象が無い場合に0件を返すことをテスト
+// TestDeleteExpired_NoTargetは対象が無い場合に0件を返すことをテスト
 func TestDeleteExpired_NoTarget(t *testing.T) {
 	t.Parallel()
 
@@ -542,7 +536,7 @@ func TestDeleteExpired_NoTarget(t *testing.T) {
 	}
 
 	if deleted != 0 {
-		t.Errorf("削除件数が一致しません: got %d, want 0", deleted)
+		t.Errorf("削除件数 = %d、期待値 = 0", deleted)
 	}
 	if !sessionExists(t, tx, freshID) {
 		t.Error("対象外のセッションが削除されています")

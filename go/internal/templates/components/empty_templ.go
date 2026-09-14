@@ -10,12 +10,7 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
-// Empty renders the empty state of a list, taking the title that names the missing content
-// and an optional description. The title is an <h2> because the empty state replaces the
-// list under the page heading, so callers must place it inside a page whose heading is the
-// <h1>.
-//
-// [Ja] Empty は一覧の空表示を描画する。何が無いのかを述べる見出しと、任意の説明を受け取る。
+// Emptyは一覧の空表示を描画する。何が無いのかを述べる見出しと、任意の説明を受け取る。
 // 空表示はページ見出しの下で一覧を置き換える位置に立つため、見出しは <h2> とする。呼び出し側は
 // ページ見出しが <h1> である画面の中に置くこと。
 func Empty(title string, description string) templ.Component {
@@ -46,7 +41,7 @@ func Empty(title string, description string) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(title)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/empty.templ`, Line: 14, Col: 14}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/empty.templ`, Line: 9, Col: 14}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -64,7 +59,7 @@ func Empty(title string, description string) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(description)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/empty.templ`, Line: 16, Col: 20}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/empty.templ`, Line: 11, Col: 20}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 			if templ_7745c5c3_Err != nil {

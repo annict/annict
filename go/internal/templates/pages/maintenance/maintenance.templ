@@ -1,7 +1,7 @@
 package maintenance
 
-// Page はメンテナンスページを表示するテンプレートです
-// 503 Service Unavailable と共に表示されます
+// Pageはメンテナンスページを表示するテンプレートです
+// 503 Service Unavailableと共に表示されます
 templ Page() {
 	<!DOCTYPE html>
 	<html lang="ja">
@@ -9,14 +9,9 @@ templ Page() {
 			<title>メンテナンス中です | Annict</title>
 			<meta charset="utf-8"/>
 			<meta content="width=device-width, initial-scale=1.0 user-scalable=no" name="viewport"/>
-			// While maintenance is on, every path answers with this page, including URLs a
-			// crawler already knows, so a crawl that lands mid-maintenance receives a document
-			// with none of the site's content. The 503 status keeps it out of a search index
-			// already, and this says the same thing in the page.
-			//
-			// [Ja] メンテナンス中はクローラーが既に知っている URL を含むすべてのパスがこの
+			// メンテナンス中はクローラーが既に知っているURLを含むすべてのパスがこの
 			// ページを返すため、その最中のクロールはサイトの中身を持たない文書を受け取る。
-			// 索引から外れること自体は 503 のステータスで既に満たされており、本宣言はそれを
+			// 索引から外れること自体は503のステータスで既に満たされており、本宣言はそれを
 			// ページ側でも述べる。
 			<meta content="noindex" name="robots"/>
 			<link href="https://fonts.googleapis.com/css?family=Titillium+Web" rel="stylesheet" type="text/css"/>

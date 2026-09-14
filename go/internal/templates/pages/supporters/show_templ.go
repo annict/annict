@@ -15,7 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Show はサポーターページのコンテンツを表示します
+// Showはサポーターページのコンテンツを表示します
 func Show(ctx context.Context, data viewmodel.SupporterPageData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -247,7 +247,7 @@ func Show(ctx context.Context, data viewmodel.SupporterPageData) templ.Component
 	})
 }
 
-// notLoggedInSection は未ログインユーザー向けセクション
+// notLoggedInSectionは未ログインユーザー向けセクション
 func notLoggedInSection(ctx context.Context) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -320,7 +320,7 @@ func notLoggedInSection(ctx context.Context) templ.Component {
 	})
 }
 
-// checkoutSection は非サポーター向けのStripe決済セクション
+// checkoutSectionは非サポーター向けのStripe決済セクション
 func checkoutSection(ctx context.Context, csrfToken string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -493,7 +493,7 @@ func checkoutSection(ctx context.Context, csrfToken string) templ.Component {
 	})
 }
 
-// gumroadSection はGumroadサポーター向けセクション
+// gumroadSectionはGumroadサポーター向けセクション
 func gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscriberView, loc *time.Location) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -694,7 +694,7 @@ func gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscriber
 	})
 }
 
-// stripeSection はStripeサポーター向けセクション
+// stripeSectionはStripeサポーター向けセクション
 func stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberView, csrfToken string, loc *time.Location) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -961,7 +961,7 @@ func stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberVi
 	})
 }
 
-// benefitItem はサポーター特典のアイテムを表示するコンポーネント
+// benefitItemはサポーター特典のアイテムを表示するコンポーネント
 func benefitItem(ctx context.Context, emoji string, titleKey string, descKey string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -1030,7 +1030,7 @@ func benefitItem(ctx context.Context, emoji string, titleKey string, descKey str
 	})
 }
 
-// formatDate は日付をユーザーのタイムゾーンでフォーマットします
+// formatDateは日付をユーザーのタイムゾーンでフォーマットします
 func formatDate(t time.Time, loc *time.Location) string {
 	if loc == nil {
 		loc = time.FixedZone("Asia/Tokyo", 9*60*60)

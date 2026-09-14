@@ -1,32 +1,17 @@
 -- migrate:up
 
--- Advance River (the background job queue) to schema migration version 7,
--- released in River v0.40.0. dbmate stays the single source of truth: this
--- migration vendors the clean SQL from `river migrate-get --line main --version
--- 7 --up/--down` (run with the CLI pinned to the go.mod River version), and the
--- closing INSERT into river_migration records that version 7 is applied so
--- River's Go API (rivermigrate) sees the schema as current. River owns these
--- tables at runtime via riverpgxv5; the application never queries them through
--- sqlc.
---
--- Version 7 adds the river_notification outbox table (with two indexes), drops
--- the unused river_client and river_client_queue tables, and adds column
--- defaults to river_job.max_attempts (25) and river_queue.updated_at
--- (CURRENT_TIMESTAMP). The dropped tables are never referenced by application
--- code, so removing them is safe.
---
--- [Ja] River (バックグラウンドジョブキュー) を River v0.40.0 で追加されたスキーマ
--- マイグレーションバージョン 7 に追随させる。dbmate を単一の正本に保つため、本
+-- River (バックグラウンドジョブキュー) をRiver v0.40.0で追加されたスキーマ
+-- マイグレーションバージョン7に追随させる。dbmateを単一の正本に保つため、本
 -- マイグレーションは `river migrate-get --line main --version 7 --up/--down`
--- (go.mod の River バージョンに固定した CLI で実行) が出力する clean SQL を取り込み、
--- 末尾の river_migration への INSERT でバージョン 7 が適用済みであることを記録して、
--- River の Go API (rivermigrate) がスキーマを最新と認識できるようにする。これらの
--- テーブルは実行時に riverpgxv5 経由で River が所有し、アプリケーションが sqlc を
+-- (go.modのRiverバージョンに固定したCLIで実行) が出力するSQL本体を取り込み、
+-- 末尾のriver_migrationへのINSERTでバージョン7が適用済みであることを記録して、
+-- RiverのGo API (rivermigrate) がスキーマを最新と認識できるようにする。これらの
+-- テーブルは実行時にriverpgxv5経由でRiverが所有し、アプリケーションがsqlcを
 -- 通じてクエリすることはない。
 --
--- バージョン 7 は通知アウトボックス river_notification テーブル (+ インデックス 2 つ)
--- を追加し、未使用の river_client / river_client_queue テーブルを削除し、
--- river_job.max_attempts (25) と river_queue.updated_at (CURRENT_TIMESTAMP) に
+-- バージョン7は通知アウトボックスriver_notificationテーブル (+ インデックス2つ)
+-- を追加し、未使用のriver_client / river_client_queueテーブルを削除し、
+-- river_job.max_attempts (25) とriver_queue.updated_at (CURRENT_TIMESTAMP) に
 -- カラムデフォルトを追加する。削除するテーブルはアプリケーションコードから参照されて
 -- いないため、削除は安全。
 

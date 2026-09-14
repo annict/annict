@@ -11,10 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/worker"
 )
 
-// fakeAnimesSyncer is a stub AnimesSyncer for the worker adapter test. It records
-// the call and returns the configured result / error.
-//
-// [Ja] fakeAnimesSyncer はワーカーアダプタのテスト用の AnimesSyncer スタブ。呼び出しを
+// fakeAnimesSyncerはワーカーアダプタのテスト用のAnimesSyncerスタブ。呼び出しを
 // 記録し、設定された結果 / エラーを返す。
 type fakeAnimesSyncer struct {
 	called bool
@@ -35,10 +32,10 @@ func TestSyncAnimesWorker_Work_CallsSyncer(t *testing.T) {
 
 	job := &river.Job[worker.SyncAnimesArgs]{Args: worker.SyncAnimesArgs{}}
 	if err := w.Work(context.Background(), job); err != nil {
-		t.Fatalf("Work() error = %v", err)
+		t.Fatalf("Work()のエラー = %v", err)
 	}
 	if !syncer.called {
-		t.Error("syncer.Execute was not called")
+		t.Error("syncer.Execute()が呼ばれなかった")
 	}
 }
 
@@ -51,19 +48,16 @@ func TestSyncAnimesWorker_Work_PropagatesError(t *testing.T) {
 
 	job := &river.Job[worker.SyncAnimesArgs]{Args: worker.SyncAnimesArgs{}}
 	if err := w.Work(context.Background(), job); !errors.Is(err, wantErr) {
-		t.Fatalf("Work() error = %v, want %v", err, wantErr)
+		t.Fatalf("Work()のエラー = %v、期待値 = %v", err, wantErr)
 	}
 }
 
 func TestSyncAnimesArgs_Kind(t *testing.T) {
 	t.Parallel()
 
-	// The kind string is the persisted job identifier; pin it so a rename that
-	// would orphan scheduled jobs is caught.
-	//
-	// [Ja] kind 文字列は永続化されるジョブ識別子。リネームで予定済みジョブが孤立する
+	// kind文字列は永続化されるジョブ識別子。リネームで予定済みジョブが孤立する
 	// のを検出できるよう固定する。
 	if got := (worker.SyncAnimesArgs{}).Kind(); got != "sync_animes" {
-		t.Errorf("Kind() = %q, want sync_animes", got)
+		t.Errorf("Kind() = %q、期待値 = sync_animes", got)
 	}
 }

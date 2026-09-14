@@ -30,20 +30,20 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background(), GetSupporterStatusInput{User: user})
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("想定外のエラー = %v", err)
 		}
 
 		if result.IsStripeActive {
-			t.Error("expected IsStripeActive to be false")
+			t.Error("IsStripeActive = true、期待値 = false")
 		}
 		if result.IsGumroadActive {
-			t.Error("expected IsGumroadActive to be false")
+			t.Error("IsGumroadActive = true、期待値 = false")
 		}
 		if result.StripeSubscriber != nil {
-			t.Error("expected StripeSubscriber to be nil")
+			t.Error("StripeSubscriberがnilでなかった")
 		}
 		if result.GumroadSubscriber != nil {
-			t.Error("expected GumroadSubscriber to be nil")
+			t.Error("GumroadSubscriberがnilでなかった")
 		}
 	})
 
@@ -70,14 +70,14 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background(), GetSupporterStatusInput{User: user})
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("想定外のエラー = %v", err)
 		}
 
 		if !result.IsStripeActive {
-			t.Error("expected IsStripeActive to be true")
+			t.Error("IsStripeActive = false、期待値 = true")
 		}
 		if result.StripeSubscriber == nil {
-			t.Error("expected StripeSubscriber to be non-nil")
+			t.Error("StripeSubscriberがnilだった")
 		}
 	})
 
@@ -102,14 +102,14 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background(), GetSupporterStatusInput{User: user})
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("想定外のエラー = %v", err)
 		}
 
 		if !result.IsGumroadActive {
-			t.Error("expected IsGumroadActive to be true")
+			t.Error("IsGumroadActive = false、期待値 = true")
 		}
 		if result.GumroadSubscriber == nil {
-			t.Error("expected GumroadSubscriber to be non-nil")
+			t.Error("GumroadSubscriberがnilだった")
 		}
 	})
 
@@ -138,20 +138,20 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background(), GetSupporterStatusInput{User: user})
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("想定外のエラー = %v", err)
 		}
 
 		if !result.IsStripeActive {
-			t.Error("expected IsStripeActive to be true")
+			t.Error("IsStripeActive = false、期待値 = true")
 		}
 		if !result.IsGumroadActive {
-			t.Error("expected IsGumroadActive to be true")
+			t.Error("IsGumroadActive = false、期待値 = true")
 		}
 		if result.StripeSubscriber == nil {
-			t.Error("expected StripeSubscriber to be non-nil")
+			t.Error("StripeSubscriberがnilだった")
 		}
 		if result.GumroadSubscriber == nil {
-			t.Error("expected GumroadSubscriber to be non-nil")
+			t.Error("GumroadSubscriberがnilだった")
 		}
 	})
 
@@ -178,14 +178,14 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background(), GetSupporterStatusInput{User: user})
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("想定外のエラー = %v", err)
 		}
 
 		if result.IsStripeActive {
-			t.Error("expected IsStripeActive to be false for canceled subscription")
+			t.Error("解約済みのサブスクリプションでIsStripeActive = true、期待値 = false")
 		}
 		if result.StripeSubscriber != nil {
-			t.Error("expected StripeSubscriber to be nil for canceled subscription")
+			t.Error("解約済みのサブスクリプションでStripeSubscriberがnilでなかった")
 		}
 	})
 
@@ -212,14 +212,14 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background(), GetSupporterStatusInput{User: user})
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("想定外のエラー = %v", err)
 		}
 
 		if result.IsGumroadActive {
-			t.Error("expected IsGumroadActive to be false for ended subscription")
+			t.Error("終了済みのサブスクリプションでIsGumroadActive = true、期待値 = false")
 		}
 		if result.GumroadSubscriber != nil {
-			t.Error("expected GumroadSubscriber to be nil for ended subscription")
+			t.Error("終了済みのサブスクリプションでGumroadSubscriberがnilでなかった")
 		}
 	})
 
@@ -235,12 +235,12 @@ func TestGetSupporterStatusUsecase_Execute(t *testing.T) {
 
 		_, err := uc.Execute(context.Background(), GetSupporterStatusInput{User: nil})
 		if err == nil {
-			t.Error("expected error for nil user, got nil")
+			t.Error("ユーザーがnilのときにエラーを期待したが、nilだった")
 		}
 	})
 }
 
-// getUserByIDForTest はユーザーIDからユーザー情報を取得します（テスト用）
+// getUserByIDForTestはユーザーIDからユーザー情報を取得します (テスト用)
 func getUserByIDForTest(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	t.Helper()
 

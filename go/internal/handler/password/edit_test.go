@@ -84,12 +84,12 @@ func TestEdit_ValidToken(t *testing.T) {
 
 	// ステータスコードを確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 
 	// Content-Typeを確認
 	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
-		t.Errorf("Content-Typeが正しくありません: got=%s, want=text/html; charset=utf-8", contentType)
+		t.Errorf("Content-Type = %s、期待値 = text/html; charset=utf-8", contentType)
 	}
 
 	assertPasswordEditCanonicalURL(t, rr.Body.String())
@@ -133,9 +133,9 @@ func TestEdit_InvalidToken(t *testing.T) {
 	// I18nミドルウェアを適用
 	testutil.ApplyI18nMiddleware(t, handler.Edit)(rr, req)
 
-	// ステータスコードを確認（BadRequest）
+	// ステータスコードを確認 (BadRequest)
 	if rr.Code != http.StatusBadRequest {
-		t.Errorf("ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusBadRequest)
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusBadRequest)
 	}
 }
 
@@ -204,13 +204,13 @@ func TestEdit_ExpiredToken(t *testing.T) {
 	// I18nミドルウェアを適用
 	testutil.ApplyI18nMiddleware(t, handler.Edit)(rr, req)
 
-	// ステータスコードを確認（BadRequest）
+	// ステータスコードを確認 (BadRequest)
 	if rr.Code != http.StatusBadRequest {
-		t.Errorf("ステータスコードが正しくありません: got=%d, want=%d", rr.Code, http.StatusBadRequest)
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusBadRequest)
 	}
 }
 
-// createTestToken はテスト用のトークンを生成します
+// createTestTokenはテスト用のトークンを生成します
 func createTestToken() (plainToken string, tokenDigest string, err error) {
 	plainToken, err = password_reset.GenerateToken()
 	if err != nil {

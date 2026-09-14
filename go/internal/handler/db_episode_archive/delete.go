@@ -11,11 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Delete re-publishes (un-archives) an episode in the Annict DB admin UI
-// (DELETE /db/episodes/:id/archive). Unlike the archive it takes no confirmation page: the
-// episode list submits it directly, as the work list does for its work counterpart.
-//
-// [Ja] Annict DB 管理画面でエピソードを再公開 (アーカイブ解除) にする
+// DeleteはAnnict DB管理画面でエピソードを再公開 (アーカイブ解除) にする
 // (DELETE /db/episodes/:id/archive)。非公開と違い確認ページは挟まず、作品一覧が作品側で行うのと
 // 同じくエピソード一覧から直接送信する。
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
@@ -51,16 +47,10 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_episode_published"))
 
-	// htmx follows fetch redirects transparently, so a 303 would swap the list page into the
-	// clicked button instead of navigating. For htmx requests (the episode list's publish
-	// button) return HX-Redirect so htmx does a full navigation to the list; the flash set above
-	// is shown on the followed GET. Non-htmx clients keep the plain 303 redirect. This mirrors
-	// the work list's publish button, which the episode list's action column follows.
-	//
-	// [Ja] htmx は fetch のリダイレクトを透過的に追うため、303 だと一覧ページが押したボタンに
-	// スワップされ遷移しない。htmx リクエスト (エピソード一覧の公開ボタン) には HX-Redirect を
-	// 返して一覧へフル遷移させる。上で設定した flash は遷移後の GET で表示される。非 htmx
-	// クライアントには従来どおり 303 を返す。エピソード一覧の操作列が踏襲する作品一覧の公開ボタン
+	// htmxはfetchのリダイレクトを透過的に追うため、303だと一覧ページが押したボタンに
+	// スワップされ遷移しない。htmxリクエスト (エピソード一覧の公開ボタン) にはHX-Redirectを
+	// 返して一覧へフル遷移させる。上で設定したflashは遷移後のGETで表示される。非htmx
+	// クライアントには従来どおり303を返す。エピソード一覧の操作列が踏襲する作品一覧の公開ボタン
 	// と同じ形である。
 	listPath := episodesPath(output.WorkID)
 	if r.Header.Get("HX-Request") == "true" {

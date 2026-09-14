@@ -21,7 +21,7 @@ func TestInit_EmptyDSN(t *testing.T) {
 
 	err := Init(cfg)
 	if err != nil {
-		t.Errorf("Init() with empty DSN should return nil, got %v", err)
+		t.Errorf("DSNが空のときのInit() = %v、期待値 = nil", err)
 	}
 }
 
@@ -36,18 +36,14 @@ func TestInit_InvalidDSN(t *testing.T) {
 
 	err := Init(cfg)
 	if err == nil {
-		t.Error("Init() with invalid DSN should return error")
+		t.Error("不正なDSNでInit()がエラーを返さなかった")
 	}
 }
 
 func TestInit_SetsReleaseAndTracingOptions(t *testing.T) {
-	// Init must propagate Release to the client options and enable tracing
-	// (without EnableTracing, TracesSampleRate alone sends no traces).
-	// This test swaps the global Hub client, so it must not run in parallel.
-	//
-	// [Ja] Init が Release をクライアントオプションに伝搬し、トレースを有効化する
-	// ことを検証する (EnableTracing 無しでは TracesSampleRate を渡してもトレースが
-	// 送られない)。グローバル Hub のクライアントを差し替えるため並行実行しない。
+	// InitがReleaseをクライアントオプションに伝搬し、トレースを有効化する
+	// ことを検証する (EnableTracing無しではTracesSampleRateを渡してもトレースが
+	// 送られない)。グローバルHubのクライアントを差し替えるため並行実行しない。
 	cfg := Config{
 		DSN:              "https://public@o0.ingest.sentry.io/1",
 		Environment:      "test",
@@ -56,33 +52,30 @@ func TestInit_SetsReleaseAndTracingOptions(t *testing.T) {
 		Debug:            false,
 	}
 
-	// Restore the clientless global Hub after the test so that subsequent
-	// tests do not capture events against the live client.
-	//
-	// [Ja] テスト後にグローバル Hub をクライアント無しの状態へ戻し、後続テストが
-	// live クライアントにイベントを送らないようにする。
+	// テスト後にグローバルHubをクライアント無しの状態へ戻し、後続テストが
+	// liveクライアントにイベントを送らないようにする。
 	t.Cleanup(func() {
 		sentry.CurrentHub().BindClient(nil)
 	})
 
 	if err := Init(cfg); err != nil {
-		t.Fatalf("Init() error = %v", err)
+		t.Fatalf("Init()のエラー = %v", err)
 	}
 
 	client := sentry.CurrentHub().Client()
 	if client == nil {
-		t.Fatal("Init() 後はクライアントが設定されているべき")
+		t.Fatal("Init()後はクライアントが設定されているべき")
 	}
 
 	opts := client.Options()
 	if opts.Release != "abc1234" {
-		t.Errorf("Release = %q, want %q", opts.Release, "abc1234")
+		t.Errorf("Release = %q、期待値 = %q", opts.Release, "abc1234")
 	}
 	if !opts.EnableTracing {
-		t.Error("EnableTracing は true であるべき")
+		t.Error("EnableTracingはtrueであるべき")
 	}
 	if len(opts.IgnoreErrors) == 0 {
-		t.Error("IgnoreErrors が設定されているべき")
+		t.Error("IgnoreErrorsが設定されているべき")
 	}
 }
 
@@ -184,7 +177,7 @@ func TestBeforeSend_FiltersRequestHeaders(t *testing.T) {
 
 			for key, expectedValue := range tt.expected {
 				if result.Request.Headers[key] != expectedValue {
-					t.Errorf("ヘッダー %s: got %q, want %q", key, result.Request.Headers[key], expectedValue)
+					t.Errorf("ヘッダー%s = %q、期待値 = %q", key, result.Request.Headers[key], expectedValue)
 				}
 			}
 		})
@@ -249,7 +242,7 @@ func TestBeforeSend_FiltersRequestData(t *testing.T) {
 			result := beforeSend(event, nil)
 
 			if result.Request.Data != tt.expected {
-				t.Errorf("Data: got %q, want %q", result.Request.Data, tt.expected)
+				t.Errorf("Data = %q、期待値 = %q", result.Request.Data, tt.expected)
 			}
 		})
 	}
@@ -308,7 +301,7 @@ func TestBeforeSend_FiltersQueryString(t *testing.T) {
 			result := beforeSend(event, nil)
 
 			if result.Request.QueryString != tt.expected {
-				t.Errorf("QueryString: got %q, want %q", result.Request.QueryString, tt.expected)
+				t.Errorf("QueryString = %q、期待値 = %q", result.Request.QueryString, tt.expected)
 			}
 		})
 	}
@@ -317,12 +310,8 @@ func TestBeforeSend_FiltersQueryString(t *testing.T) {
 func TestBeforeSend_FiltersTags(t *testing.T) {
 	t.Parallel()
 
-	// Tags are populated from slog attributes by the application event handler,
-	// so PII logged as a structured attribute (e.g. "email") must be masked
-	// here.
-	//
-	// [Ja] アプリケーションのイベントハンドラーが slog 属性をタグへ載せるため、
-	// 構造化属性としてログに載った PII (例: "email") がここでマスクされることを
+	// アプリケーションのイベントハンドラーがslog属性をタグへ載せるため、
+	// 構造化属性としてログに載ったPII (例: "email") がここでマスクされることを
 	// 検証する。
 	tests := []struct {
 		name     string
@@ -394,7 +383,7 @@ func TestBeforeSend_FiltersTags(t *testing.T) {
 
 			for key, expectedValue := range tt.expected {
 				if result.Tags[key] != expectedValue {
-					t.Errorf("タグ %s: got %q, want %q", key, result.Tags[key], expectedValue)
+					t.Errorf("タグ%s = %q、期待値 = %q", key, result.Tags[key], expectedValue)
 				}
 			}
 		})
@@ -437,18 +426,15 @@ func TestBeforeSend_HandlesInvalidData(t *testing.T) {
 	result := beforeSend(event, nil)
 
 	if result.Request.Data != "[FILTERED]" {
-		t.Errorf("無効なデータは[FILTERED]であるべき: got %q", result.Request.Data)
+		t.Errorf("無効なデータの表示 = %q、期待値 = [FILTERED]", result.Request.Data)
 	}
 }
 
 func TestBeforeSend_DropsIgnorableErrors(t *testing.T) {
 	t.Parallel()
 
-	// Events whose original exception is a client-disconnect or runtime-abort
-	// error must be dropped (beforeSend returns nil).
-	//
-	// [Ja] クライアント切断・runtime 中断由来のエラーを持つイベントは破棄される
-	// (beforeSend が nil を返す) ことを検証する。
+	// クライアント切断・runtime中断由来のエラーを持つイベントは破棄される
+	// (beforeSendがnilを返す) ことを検証する。
 	tests := []struct {
 		name string
 		err  error
@@ -481,7 +467,7 @@ func TestBeforeSend_DropsIgnorableErrors(t *testing.T) {
 			hint := &sentry.EventHint{OriginalException: tt.err}
 
 			if result := beforeSend(event, hint); result != nil {
-				t.Errorf("無視対象のエラーはイベントを nil にすべき: got %+v", result)
+				t.Errorf("無視対象のエラーのイベント = %+v、期待値 = nil", result)
 			}
 		})
 	}
@@ -490,9 +476,7 @@ func TestBeforeSend_DropsIgnorableErrors(t *testing.T) {
 func TestBeforeSend_KeepsNonIgnorableErrors(t *testing.T) {
 	t.Parallel()
 
-	// Ordinary errors must still reach Sentry.
-	//
-	// [Ja] 通常のエラーは引き続き Sentry に届くことを検証する。
+	// 通常のエラーは引き続きSentryに届くことを検証する。
 	event := &sentry.Event{
 		Request: &sentry.Request{},
 	}
@@ -514,7 +498,7 @@ func TestShouldDropError(t *testing.T) {
 		{name: "nilは破棄しない", err: nil, want: false},
 		{name: "context.Canceledは破棄", err: context.Canceled, want: true},
 		{name: "http.ErrAbortHandlerは破棄", err: http.ErrAbortHandler, want: true},
-		{name: "ラップされたcontext.Canceledは破棄", err: fmt.Errorf("wrap: %w", context.Canceled), want: true},
+		{name: "ラップされたcontext.Canceledは破棄", err: fmt.Errorf("ラップ元のエラー = %w", context.Canceled), want: true},
 		{name: "通常のエラーは破棄しない", err: errors.New("通常のエラー"), want: false},
 		{name: "context.DeadlineExceededは破棄しない", err: context.DeadlineExceeded, want: false},
 	}
@@ -524,7 +508,7 @@ func TestShouldDropError(t *testing.T) {
 			t.Parallel()
 
 			if got := shouldDropError(tt.err); got != tt.want {
-				t.Errorf("shouldDropError(%v) = %v, want %v", tt.err, got, tt.want)
+				t.Errorf("shouldDropError(%v) = %v、期待値 = %v", tt.err, got, tt.want)
 			}
 		})
 	}

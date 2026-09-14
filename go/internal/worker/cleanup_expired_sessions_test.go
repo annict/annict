@@ -24,7 +24,7 @@ func TestCleanupExpiredSessionsArgs_Kind(t *testing.T) {
 	t.Parallel()
 
 	if got, want := (worker.CleanupExpiredSessionsArgs{}).Kind(), "cleanup_expired_sessions"; got != want {
-		t.Errorf("Kind() = %q, want %q", got, want)
+		t.Errorf("Kind() = %q、期待値 = %q", got, want)
 	}
 }
 
@@ -36,8 +36,8 @@ func TestCleanupExpiredSessionsWorker_Work(t *testing.T) {
 		name    string
 		wantErr error
 	}{
-		{name: "正常系: cleaner の成功をそのまま返す"},
-		{name: "異常系: cleaner のエラーをそのまま返す", wantErr: wantErr},
+		{name: "正常系: cleanerの成功をそのまま返す"},
+		{name: "異常系: cleanerのエラーをそのまま返す", wantErr: wantErr},
 	}
 
 	for _, tt := range tests {
@@ -50,10 +50,10 @@ func TestCleanupExpiredSessionsWorker_Work(t *testing.T) {
 
 			err := w.Work(context.Background(), job)
 			if !cleaner.called {
-				t.Error("Execute() が呼ばれていません")
+				t.Error("Execute()が呼ばれていません")
 			}
 			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("Work() error = %v, want %v", err, tt.wantErr)
+				t.Errorf("Work()のエラー = %v、期待値 = %v", err, tt.wantErr)
 			}
 		})
 	}

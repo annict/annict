@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New は新規登録確認コード入力フォームを表示します (GET /sign_up/code)
+// Newは新規登録確認コード入力フォームを表示します (GET /sign_up/code)
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -24,7 +24,7 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// メールアドレスがセッションにない場合は /sign_up にリダイレクト
+	// メールアドレスがセッションにない場合は /sign_upにリダイレクト
 	if email == "" {
 		http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 		return
@@ -33,8 +33,8 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNewForm(w, r, http.StatusOK, nil, email)
 }
 
-// renderNewForm は新規登録確認コード入力フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormは新規登録確認コード入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string) {
 	ctx := r.Context()
 
