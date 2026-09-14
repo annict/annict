@@ -52,20 +52,12 @@ jobs:
       - run: pnpm install
       - run: pnpm fmt:check
 
-  # Lint Markdown semantic line breaks with koryluslint's `md` subcommand.
-  # koryluslint is pinned via the `tool` directive in go/go.mod and fetched from
-  # the public module github.com/korylus/tools.
+  # koryluslintの `md` サブコマンドでMarkdownの句点改行を検査する。
+  # koryluslintはgo/go.modのtoolディレクティブで固定し、公開モジュール
+  # github.com/korylus/toolsから取得する。
   #
-  # The check is limited to the lines changed against the PR base (`-base`), so
-  # untouched legacy Markdown is never flagged; it therefore runs on pull
-  # requests only. fetch-depth: 0 makes the base branch available for the diff.
-  #
-  # [Ja] koryluslint の `md` サブコマンドで Markdown の句点改行を検査する。
-  # koryluslint は go/go.mod の tool ディレクティブで固定し、公開モジュール
-  # github.com/korylus/tools から取得する。
-  #
-  # 検査は PR のベースとの差分行 (`-base`) に限定するため、触っていない既存 Markdown は
-  # 指摘されない。したがって pull request 時のみ実行し、fetch-depth: 0 で差分に必要な
+  # 検査はPRのベースとの差分行 (`-base`) に限定するため、触っていない既存Markdownは
+  # 指摘されない。したがってpull request時のみ実行し、fetch-depth: 0で差分に必要な
   # ベースブランチを取得する。
   prose:
     name: Markdown prose
@@ -78,13 +70,8 @@ jobs:
       - uses: actions/setup-go@v7
         with:
           go-version: ${{ env.GO_VERSION }}
-      # Run md via the root Makefile's lint-md-base target so it builds the
-      # pinned koryluslint and scans the repository-root Markdown against the PR
-      # base. See the root Makefile for why md needs a built binary instead of
-      # `go tool`.
-      #
-      # [Ja] ルート Makefile の lint-md-base ターゲット経由で md を実行し、固定版
-      # koryluslint をビルドしてリポジトリルートの Markdown を PR のベースとの差分で
-      # 走査する。md が go tool ではなくビルド済みバイナリを要する理由はルート Makefile を参照。
+      # ルートMakefileのlint-md-baseターゲット経由でmdを実行し、固定版
+      # koryluslintをビルドしてリポジトリルートのMarkdownをPRのベースとの差分で
+      # 走査する。mdがgo toolではなくビルド済みバイナリを要する理由はルートMakefileを参照。
       - name: Run koryluslint md (changed lines)
         run: make lint-md-base BASE=origin/${{ github.base_ref }}
