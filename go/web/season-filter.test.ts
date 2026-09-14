@@ -24,13 +24,9 @@ function basecoatRuntime(): BasecoatRuntime {
   return window.basecoat;
 }
 
-// Builds the server-rendered progressive-enhancement DOM. The native select is initially
-// visible and named; the Basecoat combobox is hidden until both Basecoat and the bridge are
-// ready. selected seeds the same initial choice used by the server.
-//
-// [Ja] サーバー描画されるプログレッシブエンハンスメント用 DOM を組み立てる。ネイティブ
-// select は初期状態で表示され name を持ち、Basecoat とブリッジの両方が準備できるまで
-// combobox は非表示にする。selected はサーバーが渡す初期選択を設定する。
+// サーバー描画されるプログレッシブエンハンスメント用DOMを組み立てる。ネイティブ
+// selectは初期状態で表示されnameを持ち、Basecoatとブリッジの両方が準備できるまで
+// comboboxは非表示にする。selectedはサーバーが渡す初期選択を設定する。
 function setupDom(
   selected: string[] = [],
   basecoatInitialized = true,
@@ -114,7 +110,7 @@ describe("initializeSeasonFilter", () => {
     document.body.innerHTML = "";
   });
 
-  it("reveals the initialized combobox and keeps the named native select as the submit control", () => {
+  it("初期化済みのcomboboxを表示し、name付きのネイティブselectを送信に使う", () => {
     const { combobox, input, label, select } = setupDom(["2024-spring"]);
     initializeSeasonFilter();
 
@@ -126,7 +122,7 @@ describe("initializeSeasonFilter", () => {
     expect(selectedSlugs(select)).toEqual(["2024-spring"]);
   });
 
-  it("mirrors a multiple combobox selection into repeated season_slugs values", () => {
+  it("comboboxの複数選択をselectの複数のseason_slugs値に反映する", () => {
     const { combobox, select } = setupDom();
     initializeSeasonFilter();
 
@@ -135,7 +131,7 @@ describe("initializeSeasonFilter", () => {
     expect(selectedSlugs(select)).toEqual(["2024-spring", "2024-summer"]);
   });
 
-  it("clears the select when the combobox selection becomes empty", () => {
+  it("comboboxの選択が空になるとselectの選択を解除する", () => {
     const { combobox, select } = setupDom(["2024-spring"]);
     initializeSeasonFilter();
 
@@ -144,14 +140,14 @@ describe("initializeSeasonFilter", () => {
     expect(selectedSlugs(select)).toEqual([]);
   });
 
-  it("leaves the server-rendered initial select selection untouched until a change", () => {
+  it("選択が変更されるまでサーバー描画時のselectの初期選択を維持する", () => {
     const { select } = setupDom(["2024-spring", "2024-summer"]);
     initializeSeasonFilter();
 
     expect(selectedSlugs(select)).toEqual(["2024-spring", "2024-summer"]);
   });
 
-  it("ignores native change events bubbling from the inner input", () => {
+  it("内部の入力欄から伝播するネイティブのchangeイベントを無視する", () => {
     const { input, select } = setupDom(["2024-spring"]);
     initializeSeasonFilter();
 
@@ -160,7 +156,7 @@ describe("initializeSeasonFilter", () => {
     expect(selectedSlugs(select)).toEqual(["2024-spring"]);
   });
 
-  it("keeps the native select visible until Basecoat initializes", () => {
+  it("Basecoatが初期化されるまでネイティブselectを表示する", () => {
     const { combobox, label, select } = setupDom(["2024-spring"], false);
     initializeSeasonFilter();
 
@@ -178,7 +174,7 @@ describe("initializeSeasonFilter", () => {
     expect(select.hidden).toBe(true);
   });
 
-  it("preserves the first search character when a closed Basecoat combobox reopens", async () => {
+  it("閉じたBasecoatのcomboboxを再度開くときに入力した検索文字の先頭を保持する", async () => {
     const { combobox, input } = setupDom([], false);
     initializeSeasonFilter();
     basecoatRuntime().init("combobox");
@@ -198,7 +194,7 @@ describe("initializeSeasonFilter", () => {
     expect(combobox.querySelector('[data-value="2024-winter"]')?.getAttribute("aria-hidden")).toBe("true");
   });
 
-  it("localizes remove labels on Basecoat chips rendered from initial selections", () => {
+  it("初期選択から描画したBasecoatのチップの選択解除ラベルをローカライズする", () => {
     const { combobox } = setupDom(["2024-spring"], false, "{label}の選択を解除");
     initializeSeasonFilter();
     basecoatRuntime().init("combobox");
@@ -206,7 +202,7 @@ describe("initializeSeasonFilter", () => {
     expect(combobox.querySelector(".combobox-chip-remove")?.getAttribute("aria-label")).toBe("2024年春の選択を解除");
   });
 
-  it("localizes remove labels after Basecoat changes the selection", () => {
+  it("Basecoatで選択を変更したあとに選択解除ラベルをローカライズする", () => {
     const { combobox, input, select } = setupDom([], false, "{label}の選択を解除");
     initializeSeasonFilter();
     basecoatRuntime().init("combobox");
@@ -220,7 +216,7 @@ describe("initializeSeasonFilter", () => {
     expect(combobox.querySelector(".combobox-chip-remove")?.getAttribute("aria-label")).toBe("2024年夏の選択を解除");
   });
 
-  it("keeps remove labels localized when Basecoat refreshes on reopen", async () => {
+  it("再度開く際にBasecoatが再描画しても選択解除ラベルのローカライズを維持する", async () => {
     const { combobox, input } = setupDom(["2024-spring"], false, "{label}の選択を解除");
     initializeSeasonFilter();
     basecoatRuntime().init("combobox");

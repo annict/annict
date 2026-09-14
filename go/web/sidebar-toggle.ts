@@ -1,26 +1,13 @@
-// Generic toggle wiring for the Basecoat sidebar component. A trigger marked with
-// data-sidebar-toggle="<id>" toggles the matching <aside class="sidebar" id="<id>"> and keeps all
-// matching triggers in sync with the sidebar's state. Event delegation and DOM observation mean
-// any number of triggers (and triggers added to the DOM later) work without re-binding.
-//
-// Basecoat's sidebar runtime owns the open/closed state as aria-hidden (and inert) on the <aside>
-// and exposes imperative open(), close(), and toggle() methods (basecoat-css >= 1.0). It emits no
-// per-toggle event and does not manage aria-expanded, focus, Escape-key closing, background
-// inertness, or persisted desktop state for an external trigger. This module observes aria-hidden so
-// every Basecoat close path remains synchronized. It also persists the desktop preference in a
-// Cookie and manages focus, Escape-key closing, and the inert state of the sidebar's siblings for
-// the mobile overlay.
-//
-// [Ja] Basecoat サイドバーコンポーネント用の汎用トグル結線。data-sidebar-toggle="<id>" を持つ
+// Basecoatサイドバーコンポーネント用の汎用トグル結線。data-sidebar-toggle="<id>" を持つ
 // トリガーが、対応する <aside class="sidebar" id="<id>"> をトグルし、同じサイドバーを参照する
-// 全トリガーを状態に同期させる。document へのイベント委譲と DOM 監視を使うため、トリガーが
-// 何個あっても (後から DOM に追加されても) 再バインド不要で動作する。
+// 全トリガーを状態に同期させる。documentへのイベント委譲とDOM監視を使うため、トリガーが
+// 何個あっても (後からDOMに追加されても) 再バインド不要で動作する。
 //
-// Basecoat のサイドバーランタイムは開閉状態を <aside> の aria-hidden (と inert) として管理し、
-// 命令的な open()・close()・toggle() メソッドを公開する (basecoat-css >= 1.0)。外部トリガーの
-// aria-expanded・フォーカス・Escape キーによる閉鎖・背面の inert・デスクトップの開閉設定保存は
-// 管理しないため、本モジュールが aria-hidden を監視して Basecoat のどの閉鎖経路にも同期し、
-// Cookie へのデスクトップ設定保存、モバイルオーバーレイのフォーカス・Escape 閉鎖・背面の inert
+// Basecoatのサイドバーランタイムは開閉状態を <aside> のaria-hidden (とinert) として管理し、
+// 命令的なopen()・close()・toggle() メソッドを公開する (basecoat-css >= 1.0)。外部トリガーの
+// aria-expanded・フォーカス・Escapeキーによる閉鎖・背面のinert・デスクトップの開閉設定保存は
+// 管理しないため、本モジュールがaria-hiddenを監視してBasecoatのどの閉鎖経路にも同期し、
+// Cookieへのデスクトップ設定保存、モバイルオーバーレイのフォーカス・Escape閉鎖・背面のinert
 // も管理する。
 
 interface SidebarElement extends HTMLElement {
@@ -53,14 +40,9 @@ export function initializeSidebarToggle(): void {
     subtree: true,
   });
 
-  // Basecoat initializes sidebars on DOMContentLoaded, before this runs (main.js imports
-  // basecoat-css first), so the sidebar's aria-hidden already reflects the initial open state
-  // here. Sync once so aria-expanded and the page content state are correct even when a sidebar
-  // starts collapsed (e.g. mobile).
-  //
-  // [Ja] Basecoat はサイドバーを DOMContentLoaded で、この処理より前に初期化する (main.js が
-  // basecoat-css を先に import するため)。よってこの時点でサイドバーの aria-hidden は初期の開閉
-  // 状態を反映済み。サイドバーが畳んだ状態で始まる場合 (例: モバイル) でも aria-expanded と
+  // BasecoatはサイドバーをDOMContentLoadedで、この処理より前に初期化する (main.jsが
+  // basecoat-cssを先にimportするため)。よってこの時点でサイドバーのaria-hiddenは初期の開閉
+  // 状態を反映済み。サイドバーが畳んだ状態で始まる場合 (例: モバイル) でもaria-expandedと
   // ページコンテンツの状態を正しく保つため、一度同期する。
   syncAllSidebars();
 }
@@ -170,14 +152,9 @@ function syncSidebar(sidebar: SidebarElement): void {
   restoreFocusAfterClose(open, wasOpen, sidebar);
 }
 
-// getBackgroundElements returns every sibling of the sidebar. While the mobile overlay is open
-// all of them sit behind it, so they are the region to make inert. Taking every sibling rather
-// than only the next one also covers elements placed before the sidebar in the DOM, such as the
-// skip link, which would otherwise stay reachable behind the overlay.
-//
-// [Ja] getBackgroundElements はサイドバーの兄弟をすべて返す。モバイルオーバーレイ表示中は
-// それらすべてが背面に位置するため、inert にする対象になる。直後の兄弟だけでなく全兄弟を
-// 取ることで、DOM 上でサイドバーより前に置かれた要素 (スキップリンクなど) も対象に含まれ、
+// getBackgroundElementsはサイドバーの兄弟をすべて返す。モバイルオーバーレイ表示中は
+// それらすべてが背面に位置するため、inertにする対象になる。直後の兄弟だけでなく全兄弟を
+// 取ることで、DOM上でサイドバーより前に置かれた要素 (スキップリンクなど) も対象に含まれ、
 // オーバーレイ背面で操作可能なまま残らない。
 function getBackgroundElements(sidebar: SidebarElement): HTMLElement[] {
   const siblings = sidebar.parentElement?.children ?? [];
@@ -194,13 +171,8 @@ function setInert(elements: HTMLElement[], inert: boolean): void {
 
 function restoreFocusAfterClose(open: boolean, wasOpen: boolean, sidebar: SidebarElement): void {
   const lastTrigger = lastTriggerBySidebar.get(sidebar);
-  // Return focus to the toggle only on the open -> closed transition, not on every
-  // re-sync that happens while the sidebar is already closed. syncAllSidebars() also
-  // runs on window resize and on any node added under <body>, so without this guard an
-  // unrelated re-sync would steal focus back to the toggle from wherever the user moved it.
-  //
-  // [Ja] トグルへフォーカスを戻すのは開 -> 閉の遷移時だけにする。閉じたままで起きる
-  // 再同期では戻さない。syncAllSidebars() は window の resize や <body> 配下へのノード
+  // トグルへフォーカスを戻すのは開 -> 閉の遷移時だけにする。閉じたままで起きる
+  // 再同期では戻さない。syncAllSidebars() はwindowのresizeや <body> 配下へのノード
   // 追加でも走るため、このガードが無いと無関係な再同期が、利用者の移したフォーカスを
   // トグルへ奪い返してしまう。
   if (!open && wasOpen && lastTrigger && document.activeElement !== lastTrigger) {

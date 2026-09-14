@@ -2,14 +2,9 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { initializeSidebarToggle } from "./sidebar-toggle";
 
-// Build the minimal DOM the toggle wiring expects: a trigger that references the
-// sidebar by id (data-sidebar-toggle), and a sidebar exposing a spy-able
-// toggle() — Basecoat's imperative open/close API. aria-hidden seeds the
-// sidebar's initial open state.
-//
-// [Ja] トグル結線が前提とする最小の DOM を組み立てる。id で sidebar を参照する
-// トリガー (data-sidebar-toggle) と、スパイ可能な toggle() を持つ sidebar
-// (Basecoat の命令的な開閉 API)。aria-hidden で sidebar の初期の開閉状態を仕込む。
+// トグル結線が前提とする最小のDOMを組み立てる。idでsidebarを参照する
+// トリガー (data-sidebar-toggle) と、スパイ可能なtoggle() を持つsidebar
+// (Basecoatの命令的な開閉API)。aria-hiddenでsidebarの初期の開閉状態を仕込む。
 function setupDom(
   ariaHidden: "true" | "false",
   desktopOpen: "true" | "false" = ariaHidden === "false" ? "true" : "false",
@@ -32,18 +27,11 @@ function setupDom(
   return { trigger, sidebar };
 }
 
-// Build the db.templ layout shape the mobile-overlay logic depends on: the skip
-// link before the sidebar, a sidebar with a focusable child, the content wrapper
-// as its next sibling (holding the trigger, mirroring how the toggle now lives in
-// each page's title row), and a spy-able toggle(). aria-hidden seeds the open
-// state; width seeds the viewport so isMobileSidebar() resolves against the 768px
-// default breakpoint.
-//
-// [Ja] モバイルオーバーレイのロジックが依存する db.templ のレイアウト構造を組み立てる。
-// sidebar より前のスキップリンク、フォーカス可能な子を持つ sidebar、その次の兄弟である
-// content ラッパー (トグルが各ページのタイトル行へ移った現状に合わせ、トリガーを内包する)、
-// スパイ可能な toggle()。aria-hidden で開閉状態を、width でビューポートを仕込み、
-// isMobileSidebar() を既定の 768px ブレークポイントに対して解決させる。
+// モバイルオーバーレイのロジックが依存するdb.templのレイアウト構造を組み立てる。
+// sidebarより前のスキップリンク、フォーカス可能な子を持つsidebar、その次の兄弟である
+// contentラッパー (トグルが各ページのタイトル行へ移った現状に合わせ、トリガーを内包する)、
+// スパイ可能なtoggle()。aria-hiddenで開閉状態を、widthでビューポートを仕込み、
+// isMobileSidebar() を既定の768pxブレークポイントに対して解決させる。
 function setupLayout(options: { ariaHidden: "true" | "false"; desktopOpen?: "true" | "false"; width: number }) {
   setViewportWidth(options.width);
   document.body.innerHTML = `
@@ -78,21 +66,15 @@ function setupLayout(options: { ariaHidden: "true" | "false"; desktopOpen?: "tru
   return { trigger, sidebar, content, skipLink, closeButton, sidebarLink, contentInput };
 }
 
-// window.innerWidth is read-only in the DOM lib types, so cast to assign the
-// simulated viewport width that isMobileSidebar() reads.
-//
-// [Ja] window.innerWidth は DOM lib の型では読み取り専用のため、isMobileSidebar()
+// window.innerWidthはDOM libの型では読み取り専用のため、isMobileSidebar()
 // が読むビューポート幅を差し込むにはキャストして代入する。
 function setViewportWidth(width: number): void {
   (window as unknown as { innerWidth: number }).innerWidth = width;
 }
 
-// Let queued MutationObserver callbacks run: happy-dom (like browsers) delivers
-// them on a microtask, so awaiting a resolved promise flushes them.
-//
-// [Ja] キューされた MutationObserver コールバックを実行させる。happy-dom は
-// (ブラウザと同様) それらを microtask で配送するため、解決済み Promise を await
-// すれば flush できる。
+// キューされたMutationObserverコールバックを実行させる。happy-domは
+// (ブラウザと同様) それらをmicrotaskで配送するため、解決済みPromiseをawait
+// すればflushできる。
 const flushObservers = () => Promise.resolve();
 
 describe("initializeSidebarToggle", () => {
@@ -103,7 +85,7 @@ describe("initializeSidebarToggle", () => {
     setViewportWidth(1024);
   });
 
-  it("syncs a trigger's aria-expanded from the sidebar's aria-hidden on init", () => {
+  it("初期化時にサイドバーのaria-hiddenをもとにトリガーのaria-expandedを同期する", () => {
     setViewportWidth(500);
     const { trigger } = setupDom("true");
 
@@ -112,7 +94,7 @@ describe("initializeSidebarToggle", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("calls the sidebar's toggle() when a trigger is clicked", () => {
+  it("トリガーをクリックするとサイドバーのtoggle()を呼び出す", () => {
     const { trigger, sidebar } = setupDom("false");
 
     initializeSidebarToggle();
@@ -121,24 +103,21 @@ describe("initializeSidebarToggle", () => {
     expect(sidebar.toggle).toHaveBeenCalledTimes(1);
   });
 
-  it("syncs aria-expanded when the sidebar closes via a non-trigger path", async () => {
+  it("トリガー以外の経路でサイドバーが閉じたときもaria-expandedを同期する", async () => {
     const { trigger, sidebar } = setupLayout({ ariaHidden: "false", width: 1024 });
 
     initializeSidebarToggle();
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
 
-    // Basecoat closes the sidebar itself (e.g. overlay click) by flipping
-    // aria-hidden; the observer must catch that path too.
-    //
-    // [Ja] Basecoat はオーバーレイクリックなどでサイドバー自身を閉じる際に
-    // aria-hidden を切り替える。observer はその経路も捕捉しなければならない。
+    // Basecoatはオーバーレイクリックなどでサイドバー自身を閉じる際に
+    // aria-hiddenを切り替える。observerはその経路も捕捉しなければならない。
     sidebar.setAttribute("aria-hidden", "true");
     await flushObservers();
 
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("makes the background inert and moves focus into the sidebar when opened on mobile", async () => {
+  it("モバイルで開くと背面をinertにし、サイドバー内へフォーカスを移す", async () => {
     const { trigger, sidebar, content, closeButton } = setupLayout({
       ariaHidden: "true",
       width: 500,
@@ -155,17 +134,14 @@ describe("initializeSidebarToggle", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("true");
   });
 
-  it("makes elements before the sidebar inert too while the mobile overlay is open", async () => {
+  it("モバイルのオーバーレイ表示中はサイドバーより前の要素もinertにする", async () => {
     const { sidebar, skipLink } = setupLayout({ ariaHidden: "true", width: 500 });
 
     initializeSidebarToggle();
     expect(skipLink.inert).toBe(false);
 
-    // The skip link sits before the sidebar in the DOM, so it is not covered by the
-    // content wrapper's inert state; it has to be inerted as part of the background.
-    //
-    // [Ja] スキップリンクは DOM 上でサイドバーより前にあるため content ラッパーの inert
-    // では覆われない。背面の一部として inert にする必要がある。
+    // スキップリンクはDOM上でサイドバーより前にあるためcontentラッパーのinert
+    // では覆われない。背面の一部としてinertにする必要がある。
     sidebar.setAttribute("aria-hidden", "false");
     await flushObservers();
     expect(skipLink.inert).toBe(true);
@@ -175,7 +151,7 @@ describe("initializeSidebarToggle", () => {
     expect(skipLink.inert).toBe(false);
   });
 
-  it("keeps elements before the sidebar interactive on desktop", () => {
+  it("デスクトップではサイドバーより前の要素を操作可能なままにする", () => {
     const { skipLink } = setupLayout({ ariaHidden: "false", width: 1024 });
 
     initializeSidebarToggle();
@@ -183,16 +159,13 @@ describe("initializeSidebarToggle", () => {
     expect(skipLink.inert).toBe(false);
   });
 
-  it("clears inert and returns focus to the toggle when closed on mobile", async () => {
+  it("モバイルで閉じるとinertを解除し、トグルへフォーカスを戻す", async () => {
     const { trigger, sidebar, content } = setupLayout({ ariaHidden: "true", width: 500 });
 
     initializeSidebarToggle();
 
-    // Click records the toggle as the return target before the overlay opens, so
-    // it is captured while the trigger is still interactive (not yet inert).
-    //
-    // [Ja] クリックはオーバーレイが開く前にトグルを復帰先として記録する。トリガーが
-    // まだ操作可能 (inert 化前) のうちに捕捉するため。
+    // クリックはオーバーレイが開く前にトグルを復帰先として記録する。トリガーが
+    // まだ操作可能 (inert化前) のうちに捕捉するため。
     trigger.click();
 
     sidebar.setAttribute("aria-hidden", "false");
@@ -207,7 +180,7 @@ describe("initializeSidebarToggle", () => {
     expect(trigger.getAttribute("aria-expanded")).toBe("false");
   });
 
-  it("closes the mobile sidebar with Escape and restores the page state", async () => {
+  it("Escapeキーでモバイルのサイドバーを閉じ、ページの状態を復元する", async () => {
     const { trigger, sidebar, content, closeButton } = setupLayout({
       ariaHidden: "true",
       width: 500,
@@ -231,7 +204,7 @@ describe("initializeSidebarToggle", () => {
     expect(document.activeElement).toBe(trigger);
   });
 
-  it("does not close the mobile sidebar when Escape was already handled", async () => {
+  it("Escapeキーが処理済みの場合はモバイルのサイドバーを閉じない", async () => {
     const { trigger, sidebar, sidebarLink } = setupLayout({ ariaHidden: "true", width: 500 });
 
     initializeSidebarToggle();
@@ -251,7 +224,7 @@ describe("initializeSidebarToggle", () => {
     expect(sidebar.getAttribute("aria-hidden")).toBe("false");
   });
 
-  it("uses the server-rendered desktop state and persists changes in a Cookie", async () => {
+  it("サーバー描画時のデスクトップの開閉状態を使い、変更をCookieに保存する", async () => {
     const { trigger, sidebar, closeButton } = setupLayout({
       ariaHidden: "true",
       desktopOpen: "false",
@@ -276,7 +249,7 @@ describe("initializeSidebarToggle", () => {
     expect(document.activeElement).toBe(trigger);
   });
 
-  it("keeps the mobile sidebar closed even when the desktop preference is open", () => {
+  it("デスクトップの設定が開いた状態でもモバイルではサイドバーを閉じたままにする", () => {
     const { sidebar } = setupLayout({ ariaHidden: "true", desktopOpen: "true", width: 500 });
 
     initializeSidebarToggle();
@@ -285,7 +258,7 @@ describe("initializeSidebarToggle", () => {
     expect(sidebar.getAttribute("aria-hidden")).toBe("true");
   });
 
-  it("restores the desktop preference after crossing the breakpoint", () => {
+  it("ブレークポイントをまたぐとデスクトップの開閉設定を復元する", () => {
     const { sidebar } = setupLayout({ ariaHidden: "true", desktopOpen: "true", width: 500 });
 
     initializeSidebarToggle();
@@ -296,7 +269,7 @@ describe("initializeSidebarToggle", () => {
     expect(sidebar.getAttribute("aria-hidden")).toBe("false");
   });
 
-  it("closes the desktop sidebar when crossing into mobile", () => {
+  it("デスクトップからモバイルの幅に変わるとサイドバーを閉じる", () => {
     const { sidebar } = setupLayout({ ariaHidden: "false", width: 1024 });
 
     initializeSidebarToggle();
@@ -307,7 +280,7 @@ describe("initializeSidebarToggle", () => {
     expect(sidebar.getAttribute("aria-hidden")).toBe("true");
   });
 
-  it("does not change an open sidebar during a resize within the mobile breakpoint", () => {
+  it("モバイルの幅の範囲内でリサイズしても開いているサイドバーの状態を変えない", () => {
     const { sidebar } = setupLayout({ ariaHidden: "false", width: 500 });
 
     initializeSidebarToggle();
@@ -318,7 +291,7 @@ describe("initializeSidebarToggle", () => {
     expect(sidebar.getAttribute("aria-hidden")).toBe("false");
   });
 
-  it("keeps the background interactive on desktop even while the sidebar is open", () => {
+  it("デスクトップではサイドバーが開いていても背面を操作可能にする", () => {
     const { sidebar, content } = setupLayout({ ariaHidden: "false", width: 1024 });
 
     initializeSidebarToggle();
@@ -327,7 +300,7 @@ describe("initializeSidebarToggle", () => {
     expect(sidebar.contains(document.activeElement)).toBe(false);
   });
 
-  it("clears the mobile inert state when the viewport widens to desktop", () => {
+  it("ビューポートがデスクトップの幅に広がるとモバイルで設定したinertを解除する", () => {
     const { content } = setupLayout({ ariaHidden: "false", width: 500 });
 
     initializeSidebarToggle();
@@ -339,11 +312,7 @@ describe("initializeSidebarToggle", () => {
     expect(content.inert).toBe(false);
   });
 
-  // Open then close once on mobile so a trigger is recorded and focus has already
-  // returned to it, then move focus into the (now interactive) content. This is the
-  // starting state for the "no focus steal on re-sync" cases below.
-  //
-  // [Ja] モバイルで一度開いてから閉じ、トグルが記録されフォーカスがそこへ戻った状態に
+  // モバイルで一度開いてから閉じ、トグルが記録されフォーカスがそこへ戻った状態に
   // してから、(操作可能になった) コンテンツへフォーカスを移す。下の「再同期でフォーカスを
   // 奪わない」ケースの初期状態。
   async function focusContentAfterMobileClose() {
@@ -362,7 +331,7 @@ describe("initializeSidebarToggle", () => {
     return layout;
   }
 
-  it("does not steal focus back to the toggle on a mobile-width resize while closed", async () => {
+  it("閉じた状態でモバイルの幅の範囲内でリサイズしてもトグルへフォーカスを戻さない", async () => {
     const { contentInput } = await focusContentAfterMobileClose();
 
     setViewportWidth(600);
@@ -371,12 +340,10 @@ describe("initializeSidebarToggle", () => {
     expect(document.activeElement).toBe(contentInput);
   });
 
-  it("does not steal focus back to the toggle when a node is added to the body while closed", async () => {
+  it("閉じた状態でbodyにノードが追加されてもトグルへフォーカスを戻さない", async () => {
     const { contentInput } = await focusContentAfterMobileClose();
 
-    // A node inserted anywhere under <body> (e.g. a flash toast) triggers a full re-sync.
-    //
-    // [Ja] <body> 配下のどこかへノードが追加される (例: flash トースト) と全体が再同期される。
+    // <body> 配下のどこかへノードが追加される (例: flashトースト) と全体が再同期される。
     document.body.append(document.createElement("div"));
     await flushObservers();
 
