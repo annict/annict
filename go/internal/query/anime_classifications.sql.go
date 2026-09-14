@@ -235,12 +235,8 @@ type UpsertAnimeClassificationParams struct {
 	ExpectedEpisodesCount sql.NullInt32           `db:"expected_episodes_count"`
 }
 
-// Recreate a missing classification or update the existing row atomically. Episode editing
-// uses this instead of a preceding existence check so a concurrent delete cannot leave the
-// dual-written anime without its classification.
-//
-// [Ja] 欠損した分類の再作成と既存行の更新をアトミックに行う。エピソード編集では事前の
-// 存在確認をせずこのクエリを使い、並行削除によって両書き先の anime だけが分類なしで残るのを
+// 欠損した分類の再作成と既存行の更新をアトミックに行う。エピソード編集では事前の
+// 存在確認をせずこのクエリを使い、並行削除によって両書き先のanimeだけが分類なしで残るのを
 // 防ぐ。
 func (q *Queries) UpsertAnimeClassification(ctx context.Context, arg UpsertAnimeClassificationParams) error {
 	_, err := q.db.ExecContext(ctx, upsertAnimeClassification,
