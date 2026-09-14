@@ -11,18 +11,11 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// formLabelExternalLink renders a new-tab external-link icon next to a work-form label
-// when the field has a resolvable URL, mirroring the Rails work form (which shows an
-// external-link icon beside the URL / X / Syoboi Calendar / MyAnimeList labels once the
-// value is filled in). It is shared by the new and edit forms and renders nothing when url
-// is empty. The icon is decorative, so it is hidden from assistive tech and the link
-// carries an aria-label instead.
-//
-// [Ja] formLabelExternalLink は作品フォームのラベル横に、フィールドにリンク先 URL があるとき
-// 新しいタブで開く外部リンクアイコンを描画する。Rails の作品フォーム (URL / X / しょぼかる /
-// MyAnimeList のラベル横に、値が入っていれば外部リンクアイコンを出す) に合わせている。新規・編集
-// フォームで共有し、url が空のときは何も描画しない。アイコンは装飾なので支援技術から隠し、リンク側に
-// aria-label を付ける。
+// formLabelExternalLinkは作品フォームのラベル横に、フィールドにリンク先URLがあるとき
+// 新しいタブで開く外部リンクアイコンを描画する。Railsの作品フォーム (URL / X / しょぼかる /
+// MyAnimeListのラベル横に、値が入っていれば外部リンクアイコンを出す) に合わせている。新規・編集
+// フォームで共有し、urlが空のときは何も描画しない。アイコンは装飾なので支援技術から隠し、リンク側に
+// aria-labelを付ける。
 func formLabelExternalLink(label string, url string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -52,7 +45,7 @@ func formLabelExternalLink(label string, url string) templ.Component {
 			var templ_7745c5c3_Var2 templ.SafeURL
 			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(url))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/form.templ`, Line: 24, Col: 24}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/form.templ`, Line: 17, Col: 24}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 			if templ_7745c5c3_Err != nil {
@@ -65,7 +58,7 @@ func formLabelExternalLink(label string, url string) templ.Component {
 			var templ_7745c5c3_Var3 string
 			templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "db_works_form_external_link_label", map[string]any{"Field": label}))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/form.templ`, Line: 27, Col: 101}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_works/form.templ`, Line: 20, Col: 101}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 			if templ_7745c5c3_Err != nil {

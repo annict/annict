@@ -8,7 +8,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Show はサポーターページのコンテンツを表示します
+// Showはサポーターページのコンテンツを表示します
 templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 	<div class="flex flex-col gap-4 py-4">
 		<h1 class="text-2xl font-bold antialiased px-4">
@@ -85,7 +85,7 @@ templ Show(ctx context.Context, data viewmodel.SupporterPageData) {
 	</div>
 }
 
-// notLoggedInSection は未ログインユーザー向けセクション
+// notLoggedInSectionは未ログインユーザー向けセクション
 templ notLoggedInSection(ctx context.Context) {
 	<div class="card px-4">
 		<h2 class="text-xl font-bold antialiased">
@@ -103,7 +103,7 @@ templ notLoggedInSection(ctx context.Context) {
 	</div>
 }
 
-// checkoutSection は非サポーター向けのStripe決済セクション
+// checkoutSectionは非サポーター向けのStripe決済セクション
 templ checkoutSection(ctx context.Context, csrfToken string) {
 	<div class="card px-4">
 		<h2 class="text-xl font-bold antialiased">
@@ -175,7 +175,7 @@ templ checkoutSection(ctx context.Context, csrfToken string) {
 	</div>
 }
 
-// gumroadSection はGumroadサポーター向けセクション
+// gumroadSectionはGumroadサポーター向けセクション
 templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscriberView, loc *time.Location) {
 	<div class="card bg-green-50 dark:bg-green-950 px-4">
 		<div class="flex items-center gap-2">
@@ -240,7 +240,7 @@ templ gumroadSection(ctx context.Context, subscriber *viewmodel.GumroadSubscribe
 	</div>
 }
 
-// stripeSection はStripeサポーター向けセクション
+// stripeSectionはStripeサポーター向けセクション
 templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberView, csrfToken string, loc *time.Location) {
 	<div class="card bg-green-50 dark:bg-green-950 px-4">
 		<div class="flex items-center gap-2">
@@ -334,7 +334,7 @@ templ stripeSection(ctx context.Context, subscriber *viewmodel.StripeSubscriberV
 	</div>
 }
 
-// benefitItem はサポーター特典のアイテムを表示するコンポーネント
+// benefitItemはサポーター特典のアイテムを表示するコンポーネント
 templ benefitItem(ctx context.Context, emoji string, titleKey string, descKey string) {
 	<li class="flex items-start gap-3">
 		<span class="text-2xl">
@@ -353,7 +353,7 @@ templ benefitItem(ctx context.Context, emoji string, titleKey string, descKey st
 	</li>
 }
 
-// formatDate は日付をユーザーのタイムゾーンでフォーマットします
+// formatDateは日付をユーザーのタイムゾーンでフォーマットします
 func formatDate(t time.Time, loc *time.Location) string {
 	if loc == nil {
 		loc = time.FixedZone("Asia/Tokyo", 9*60*60)

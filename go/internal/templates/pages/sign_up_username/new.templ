@@ -6,7 +6,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// NewPageData はユーザー名設定ページに渡すデータ構造体です
+// NewPageDataはユーザー名設定ページに渡すデータ構造体です
 type NewPageData struct {
 	CSRFToken  string
 	FormErrors *viewmodel.FormErrors
@@ -15,7 +15,7 @@ type NewPageData struct {
 	Username   string
 }
 
-// New ユーザー名設定フォーム
+// Newユーザー名設定フォーム
 templ New(data NewPageData) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">

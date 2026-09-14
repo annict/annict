@@ -16,57 +16,33 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// IndexPageData is the data a work's episode list page renders: the parent work (its id and
-// name for the heading, subnav and links) and one page of its episodes.
-//
-// [Ja] IndexPageData はある作品のエピソード一覧ページが描画するデータ (見出し・サブナビ・
-// リンクに使う親作品の id と名前、およびエピソード 1 ページ分)。
+// IndexPageDataはある作品のエピソード一覧ページが描画するデータ (見出し・サブナビ・
+// リンクに使う親作品のidと名前、およびエピソード1ページ分)。
 type IndexPageData struct {
 	WorkID viewmodel.WorkID
-	// WorkName is the work's display name as viewmodel.DBEpisodeListWorkName resolved it, so
-	// it is empty exactly when the document title falls back to the generic page name too.
-	//
-	// [Ja] WorkName は viewmodel.DBEpisodeListWorkName が解決した作品の表示名。空になるのは
+	// WorkNameはviewmodel.DBEpisodeListWorkNameが解決した作品の表示名。空になるのは
 	// 文書タイトルが汎用のページ名へフォールバックするときと同じ条件。
 	WorkName string
-	// NoEpisodes carries the work's no_episodes flag through to the shared subnav, which
-	// drops its episode-derived entries for such a work.
-	//
-	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。サブナビはその作品では
+	// NoEpisodesは作品のno_episodesフラグを共有サブナビへ渡す。サブナビはその作品では
 	// エピソード由来の項目を落とす。
 	NoEpisodes bool
-	// Generation is the auto-generation notice, shown whether or not the work has episodes
-	// yet: a work with none is exactly where the notice's three values tell the editor what
-	// to expect.
-	//
-	// [Ja] Generation は自動生成の案内。作品がまだエピソードを持たなくても表示する。
-	// エピソードが無い作品でこそ、案内の 3 つの値が編集者に見通しを与えるため。
+	// Generationは自動生成の案内。作品がまだエピソードを持たなくても表示する。
+	// エピソードが無い作品でこそ、案内の3つの値が編集者に見通しを与えるため。
 	Generation viewmodel.DBEpisodeGenerationSummary
 	Episodes   []viewmodel.DBEpisodeListItem
 	Pagination viewmodel.Pagination
-	// IsCommitter gates the link to the bulk-create form and the row actions a committer
-	// (admin or editor) may take: the list is public, but only committers may create, edit,
-	// unpublish and re-publish episodes, so a visitor who cannot is not offered the way in.
-	// IsAdmin additionally gates the delete action.
-	//
-	// [Ja] IsCommitter は一括作成フォームへのリンクと、committer (管理者または編集者) が
+	// IsCommitterは一括作成フォームへのリンクと、committer (管理者または編集者) が
 	// 行える行ごとの操作の出し分けに使う。一覧は公開だが、エピソードを作成・編集・非公開・
-	// 再公開できるのは committer だけのため、それができない閲覧者には導線を出さない。
-	// IsAdmin はさらに削除の操作を出し分ける。
+	// 再公開できるのはcommitterだけのため、それができない閲覧者には導線を出さない。
+	// IsAdminはさらに削除の操作を出し分ける。
 	IsCommitter bool
 	IsAdmin     bool
-	// CSRFToken is sent via the X-CSRF-Token header on the htmx-issued DELETE requests
-	// (publish / delete), so those requests pass the CSRF middleware.
-	//
-	// [Ja] CSRFToken は htmx が発行する DELETE リクエスト (公開 / 削除) の X-CSRF-Token
-	// ヘッダーで送られ、それらのリクエストが CSRF ミドルウェアを通るようにする。
+	// CSRFTokenはhtmxが発行するDELETEリクエスト (公開 / 削除) のX-CSRF-Token
+	// ヘッダーで送られ、それらのリクエストがCSRFミドルウェアを通るようにする。
 	CSRFToken string
 }
 
-// heading returns the text of the page heading: the work's name, falling back to the generic
-// page title while the work has none, so the page never renders an empty <h1>.
-//
-// [Ja] heading はページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// headingはページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
 // ページタイトルにフォールバックし、空の <h1> を描画しないようにする。
 func (d IndexPageData) heading(ctx context.Context) string {
 	if d.WorkName != "" {
@@ -76,13 +52,8 @@ func (d IndexPageData) heading(ctx context.Context) string {
 	return templates.T(ctx, "db_episodes_index_title")
 }
 
-// newEpisodesAction returns the action shown beside the heading, and nil for a viewer who is
-// not offered one. The nil is what keeps MainTitle from rendering its actions container: a
-// component that renders nothing is still a component, so returning one would leave an empty
-// container on the page for every visitor who cannot create episodes.
-//
-// [Ja] newEpisodesAction は見出しの横に表示する操作を返し、操作を出さない閲覧者には nil を
-// 返す。MainTitle が操作のコンテナを描画しないのはこの nil による。何も描画しない
+// newEpisodesActionは見出しの横に表示する操作を返し、操作を出さない閲覧者にはnilを
+// 返す。MainTitleが操作のコンテナを描画しないのはこのnilによる。何も描画しない
 // コンポーネントもコンポーネントであるため、それを返すとエピソードを作成できない訪問者すべてに
 // 空のコンテナが残る。
 func (d IndexPageData) newEpisodesAction() templ.Component {
@@ -93,26 +64,15 @@ func (d IndexPageData) newEpisodesAction() templ.Component {
 	return indexNewEpisodesLink(d)
 }
 
-// hasRowActions reports whether the viewer may take any per-row action, deciding whether the
-// action column is rendered at all. A viewer with none is not given a column of empty cells:
-// the table already needs horizontal scrolling at mobile widths, and a header announcing a
-// column that holds nothing is read out on every row. This is the same reason
-// newEpisodesAction withholds the heading's actions container.
-//
-// [Ja] hasRowActions は閲覧者が行ごとの操作を 1 つでも行えるかを返し、操作列そのものを
+// hasRowActionsは閲覧者が行ごとの操作を1つでも行えるかを返し、操作列そのものを
 // 描画するかを決める。操作を持たない閲覧者に空のセルだけの列は出さない。このテーブルは
 // モバイル幅では既に横スクロールを要し、何も入らない列の見出しが行ごとに読み上げられて
-// しまうため。newEpisodesAction が見出しの操作コンテナを出さないのと同じ理由である。
+// しまうため。newEpisodesActionが見出しの操作コンテナを出さないのと同じ理由である。
 func (d IndexPageData) hasRowActions() bool {
 	return d.IsCommitter || d.IsAdmin
 }
 
-// tableMinWidthClass returns the width the table keeps before its container starts scrolling
-// horizontally. The action column adds its fixed width (w-24) to that floor, so the title
-// column — the only one without a width, and therefore the one that absorbs the slack — keeps
-// the same room for a viewer who sees the actions as for one who does not.
-//
-// [Ja] tableMinWidthClass はコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
+// tableMinWidthClassはコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
 // 操作列はその下限に自身の固定幅 (w-24) を上乗せする。これにより、幅指定の無い唯一の列で
 // あり余白を吸収するタイトル列が、操作を見る閲覧者にも見ない閲覧者にも同じ幅を保てる。
 func (d IndexPageData) tableMinWidthClass() string {
@@ -181,7 +141,7 @@ func Index(data IndexPageData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_generation_planned_label"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 145, Col: 74}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 105, Col: 74}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -194,7 +154,7 @@ func Index(data IndexPageData) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(plannedCountText(ctx, data.Generation.PlannedCount))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 146, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 106, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
@@ -207,7 +167,7 @@ func Index(data IndexPageData) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_generation_published_label"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 149, Col: 76}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 109, Col: 76}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -220,7 +180,7 @@ func Index(data IndexPageData) templ.Component {
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.Generation.PublishedEpisodeCount))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 150, Col: 97}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 110, Col: 97}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {
@@ -233,7 +193,7 @@ func Index(data IndexPageData) templ.Component {
 		var templ_7745c5c3_Var6 string
 		templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_generation_generatable_label"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 153, Col: 78}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 113, Col: 78}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 		if templ_7745c5c3_Err != nil {
@@ -246,7 +206,7 @@ func Index(data IndexPageData) templ.Component {
 		var templ_7745c5c3_Var7 string
 		templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", data.Generation.MaxGeneratableEpisodeNumber))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 154, Col: 103}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 114, Col: 103}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 		if templ_7745c5c3_Err != nil {
@@ -281,7 +241,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var9 string
 				templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "db_episodes_index_table_caption"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 168, Col: 70}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 128, Col: 70}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var9)
 				if templ_7745c5c3_Err != nil {
@@ -316,7 +276,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var12 string
 				templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_caption"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 173, Col: 61}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 133, Col: 61}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 				if templ_7745c5c3_Err != nil {
@@ -339,7 +299,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var13 string
 				templ_7745c5c3_Var13, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_id_label"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 197, Col: 97}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 152, Col: 97}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var13))
 				if templ_7745c5c3_Err != nil {
@@ -352,7 +312,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var14 string
 				templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_number_label"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 198, Col: 101}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 153, Col: 101}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 				if templ_7745c5c3_Err != nil {
@@ -365,7 +325,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var15 string
 				templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_title_label"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 199, Col: 100}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 154, Col: 100}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 				if templ_7745c5c3_Err != nil {
@@ -378,7 +338,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var16 string
 				templ_7745c5c3_Var16, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_prev_episode_label"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 200, Col: 107}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 155, Col: 107}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var16))
 				if templ_7745c5c3_Err != nil {
@@ -391,7 +351,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var17 string
 				templ_7745c5c3_Var17, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_sort_number_label"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 201, Col: 106}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 156, Col: 106}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var17))
 				if templ_7745c5c3_Err != nil {
@@ -404,7 +364,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var18 string
 				templ_7745c5c3_Var18, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_records_count_label"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 202, Col: 108}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 157, Col: 108}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var18))
 				if templ_7745c5c3_Err != nil {
@@ -417,7 +377,7 @@ func Index(data IndexPageData) templ.Component {
 				var templ_7745c5c3_Var19 string
 				templ_7745c5c3_Var19, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_status_label"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 203, Col: 101}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 158, Col: 101}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var19))
 				if templ_7745c5c3_Err != nil {
@@ -435,7 +395,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var20 string
 					templ_7745c5c3_Var20, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_table_actions_label"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 205, Col: 105}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 160, Col: 105}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var20))
 					if templ_7745c5c3_Err != nil {
@@ -458,7 +418,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var21 templ.SafeURL
 					templ_7745c5c3_Var21, templ_7745c5c3_Err = templ.JoinURLErrs(templates.EpisodePath(episode.WorkID, episode.ID).SafeURL())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 214, Col: 78}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 169, Col: 78}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var21))
 					if templ_7745c5c3_Err != nil {
@@ -471,7 +431,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var22 string
 					templ_7745c5c3_Var22, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "db_episodes_index_id_link_aria_label", map[string]any{"ID": episode.ID.String()}))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 217, Col: 124}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 172, Col: 124}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var22)
 					if templ_7745c5c3_Err != nil {
@@ -484,7 +444,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var23 string
 					templ_7745c5c3_Var23, templ_7745c5c3_Err = templ.JoinStringErrs(episode.ID.String())
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 220, Col: 33}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 175, Col: 33}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var23))
 					if templ_7745c5c3_Err != nil {
@@ -501,7 +461,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var24 string
 					templ_7745c5c3_Var24, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_number_display_label"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 233, Col: 94}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 184, Col: 94}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var24))
 					if templ_7745c5c3_Err != nil {
@@ -514,7 +474,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var25 string
 					templ_7745c5c3_Var25, templ_7745c5c3_Err = templ.JoinStringErrs(valueOrDash(episode.Number))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 234, Col: 41}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 185, Col: 41}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var25))
 					if templ_7745c5c3_Err != nil {
@@ -527,7 +487,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var26 string
 					templ_7745c5c3_Var26, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_number_raw_label"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 237, Col: 90}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 188, Col: 90}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var26))
 					if templ_7745c5c3_Err != nil {
@@ -540,7 +500,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var27 string
 					templ_7745c5c3_Var27, templ_7745c5c3_Err = templ.JoinStringErrs(valueOrDash(episode.RawNumber))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 238, Col: 44}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 189, Col: 44}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var27))
 					if templ_7745c5c3_Err != nil {
@@ -553,7 +513,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var28 string
 					templ_7745c5c3_Var28, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_title_ja_label"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 243, Col: 88}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 194, Col: 88}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var28))
 					if templ_7745c5c3_Err != nil {
@@ -571,7 +531,7 @@ func Index(data IndexPageData) templ.Component {
 						var templ_7745c5c3_Var29 string
 						templ_7745c5c3_Var29, templ_7745c5c3_Err = templ.JoinStringErrs(episode.Title)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 245, Col: 44}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 196, Col: 44}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var29))
 						if templ_7745c5c3_Err != nil {
@@ -585,7 +545,7 @@ func Index(data IndexPageData) templ.Component {
 						var templ_7745c5c3_Var30 string
 						templ_7745c5c3_Var30, templ_7745c5c3_Err = templ.JoinStringErrs(missingValuePlaceholder)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 247, Col: 38}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 198, Col: 38}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var30))
 						if templ_7745c5c3_Err != nil {
@@ -599,7 +559,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var31 string
 					templ_7745c5c3_Var31, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_title_en_label"))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 251, Col: 88}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 202, Col: 88}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var31))
 					if templ_7745c5c3_Err != nil {
@@ -617,7 +577,7 @@ func Index(data IndexPageData) templ.Component {
 						var templ_7745c5c3_Var32 string
 						templ_7745c5c3_Var32, templ_7745c5c3_Err = templ.JoinStringErrs(episode.TitleEn)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 253, Col: 46}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 204, Col: 46}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var32))
 						if templ_7745c5c3_Err != nil {
@@ -631,7 +591,7 @@ func Index(data IndexPageData) templ.Component {
 						var templ_7745c5c3_Var33 string
 						templ_7745c5c3_Var33, templ_7745c5c3_Err = templ.JoinStringErrs(missingValuePlaceholder)
 						if templ_7745c5c3_Err != nil {
-							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 255, Col: 38}
+							return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 206, Col: 38}
 						}
 						_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var33))
 						if templ_7745c5c3_Err != nil {
@@ -645,7 +605,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var34 string
 					templ_7745c5c3_Var34, templ_7745c5c3_Err = templ.JoinStringErrs(valueOrDash(episode.PrevNumber))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 259, Col: 98}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 210, Col: 98}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var34))
 					if templ_7745c5c3_Err != nil {
@@ -658,7 +618,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var35 string
 					templ_7745c5c3_Var35, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", episode.SortNumber))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 260, Col: 53}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 211, Col: 53}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var35))
 					if templ_7745c5c3_Err != nil {
@@ -671,7 +631,7 @@ func Index(data IndexPageData) templ.Component {
 					var templ_7745c5c3_Var36 string
 					templ_7745c5c3_Var36, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("%d", episode.EpisodeRecordsCount))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 261, Col: 62}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 212, Col: 62}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var36))
 					if templ_7745c5c3_Err != nil {
@@ -735,13 +695,8 @@ func Index(data IndexPageData) templ.Component {
 	})
 }
 
-// indexNewEpisodesLink renders the action shown beside the list heading: the way into the
-// bulk-create form, as on the Rails episode list. Whether it is rendered at all is decided by
-// newEpisodesAction, so that a visitor who may not create episodes is offered neither the link
-// nor the container around it.
-//
-// [Ja] indexNewEpisodesLink は一覧の見出しの横に表示する操作を描画する。Rails のエピソード
-// 一覧と同じく一括作成フォームへの導線。そもそも描画するかどうかは newEpisodesAction が決める。
+// indexNewEpisodesLinkは一覧の見出しの横に表示する操作を描画する。Railsのエピソード
+// 一覧と同じく一括作成フォームへの導線。そもそも描画するかどうかはnewEpisodesActionが決める。
 // エピソードを作成できない閲覧者には、リンクもそれを囲むコンテナも出さないようにするため。
 func indexNewEpisodesLink(data IndexPageData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -771,7 +726,7 @@ func indexNewEpisodesLink(data IndexPageData) templ.Component {
 		var templ_7745c5c3_Var38 templ.SafeURL
 		templ_7745c5c3_Var38, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBWorkEpisodesNewPath(data.WorkID).SafeURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 293, Col: 63}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 239, Col: 63}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var38))
 		if templ_7745c5c3_Err != nil {
@@ -788,7 +743,7 @@ func indexNewEpisodesLink(data IndexPageData) templ.Component {
 		var templ_7745c5c3_Var39 string
 		templ_7745c5c3_Var39, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_new_link"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 299, Col: 50}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 245, Col: 50}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var39))
 		if templ_7745c5c3_Err != nil {
@@ -802,34 +757,18 @@ func indexNewEpisodesLink(data IndexPageData) templ.Component {
 	})
 }
 
-// indexActionButtons renders one row's action column: the edit link and the unpublish
-// (published rows) or publish (archived rows) action for committers, plus the delete action
-// for admins. Publish and delete are htmx DELETE buttons guarded by a confirmation dialog,
-// with the CSRF token carried in the X-CSRF-Token header; both handlers answer an htmx request
-// with HX-Redirect so htmx navigates back to the list. Unpublish is a plain link to the
-// confirmation screen. This follows the work list's action column, so the two lists offer the
-// same operations in the same shape.
-//
-// Every control names the episode it acts on in its accessible name; publish and delete also
-// name it in their confirmation. A page of up to a hundred rows therefore does not present a
-// hundred controls that all read "Edit" when a screen reader lists them out of their row. The
-// name is extended with visually hidden text rather than replaced by an aria-label, keeping the
-// visible label at the start of the accessible name (what voice control matches on). The id is
-// what names the episode, as in the row's id link: an episode's number and title are neither
-// guaranteed to be set nor unique within a work.
-//
-// [Ja] indexActionButtons は 1 行分の操作列を描画する。committer には編集リンクと非公開
+// indexActionButtonsは1行分の操作列を描画する。committerには編集リンクと非公開
 // (公開中の行) または公開 (非公開の行) の操作を、管理者にはさらに削除の操作を出す。公開・削除は
-// 確認ダイアログ付きの htmx DELETE ボタンで、CSRF トークンは X-CSRF-Token ヘッダーで送り、
-// どちらのハンドラーも htmx リクエストには HX-Redirect を返して htmx が一覧へ遷移する。
-// 非公開は確認画面への素のリンク。作品一覧の操作列を踏襲し、2 つの一覧が同じ操作を同じ形で
+// 確認ダイアログ付きのhtmx DELETEボタンで、CSRFトークンはX-CSRF-Tokenヘッダーで送り、
+// どちらのハンドラーもhtmxリクエストにはHX-Redirectを返してhtmxが一覧へ遷移する。
+// 非公開は確認画面への素のリンク。作品一覧の操作列を踏襲し、2つの一覧が同じ操作を同じ形で
 // 提供するようにする。
 //
 // 各コントロールはアクセシブルネームで対象のエピソードを名指しし、公開・削除では確認文でも
-// 名指しする。スクリーンリーダーが行から切り離してコントロールを列挙したときに、最大 100 行の
-// ページで「編集」とだけ読めるコントロールが 100 個並ばないようにするため。aria-label で
+// 名指しする。スクリーンリーダーが行から切り離してコントロールを列挙したときに、最大100行の
+// ページで「編集」とだけ読めるコントロールが100個並ばないようにするため。aria-labelで
 // 置き換えず視覚的に隠したテキストで補うのは、可視ラベルをアクセシブルネームの先頭に残すため
-// (音声操作が照合するのはこの可視ラベル)。名指しに ID を使うのは行の ID リンクと同じ理由で、
+// (音声操作が照合するのはこの可視ラベル)。名指しにIDを使うのは行のIDリンクと同じ理由で、
 // エピソードの話数もタイトルも設定されている保証が無く、作品内で一意である保証も無いため。
 func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -864,7 +803,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 			var templ_7745c5c3_Var41 templ.SafeURL
 			templ_7745c5c3_Var41, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBEpisodeEditPath(episode.ID).SafeURL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 336, Col: 60}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 266, Col: 60}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var41))
 			if templ_7745c5c3_Err != nil {
@@ -877,7 +816,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 			var templ_7745c5c3_Var42 string
 			templ_7745c5c3_Var42, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_edit_link"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 341, Col: 53}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 271, Col: 53}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var42))
 			if templ_7745c5c3_Err != nil {
@@ -900,7 +839,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 				var templ_7745c5c3_Var43 templ.SafeURL
 				templ_7745c5c3_Var43, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBEpisodeArchiveNewPath(episode.ID).SafeURL())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 347, Col: 68}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 277, Col: 68}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var43))
 				if templ_7745c5c3_Err != nil {
@@ -913,7 +852,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 				var templ_7745c5c3_Var44 string
 				templ_7745c5c3_Var44, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_archive_link"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 352, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 282, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var44))
 				if templ_7745c5c3_Err != nil {
@@ -935,7 +874,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 				var templ_7745c5c3_Var45 string
 				templ_7745c5c3_Var45, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.DBEpisodeArchivePath(episode.ID).String())
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 361, Col: 69}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 291, Col: 69}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var45)
 				if templ_7745c5c3_Err != nil {
@@ -948,7 +887,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 				var templ_7745c5c3_Var46 string
 				templ_7745c5c3_Var46, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.HXCSRFHeaders(data.CSRFToken))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 362, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 292, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var46)
 				if templ_7745c5c3_Err != nil {
@@ -961,7 +900,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 				var templ_7745c5c3_Var47 string
 				templ_7745c5c3_Var47, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "db_episodes_index_publish_confirm", map[string]any{"ID": episode.ID.String()}))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 363, Col: 115}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 293, Col: 115}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var47)
 				if templ_7745c5c3_Err != nil {
@@ -974,7 +913,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 				var templ_7745c5c3_Var48 string
 				templ_7745c5c3_Var48, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_publish_button"))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 365, Col: 60}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 295, Col: 60}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var48))
 				if templ_7745c5c3_Err != nil {
@@ -998,7 +937,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 			var templ_7745c5c3_Var49 string
 			templ_7745c5c3_Var49, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.DBEpisodePath(episode.ID).String())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 376, Col: 60}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 306, Col: 60}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var49)
 			if templ_7745c5c3_Err != nil {
@@ -1011,7 +950,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 			var templ_7745c5c3_Var50 string
 			templ_7745c5c3_Var50, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.HXCSRFHeaders(data.CSRFToken))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 377, Col: 56}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 307, Col: 56}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var50)
 			if templ_7745c5c3_Err != nil {
@@ -1024,7 +963,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 			var templ_7745c5c3_Var51 string
 			templ_7745c5c3_Var51, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "db_episodes_index_delete_confirm", map[string]any{"ID": episode.ID.String()}))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 378, Col: 112}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 308, Col: 112}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var51)
 			if templ_7745c5c3_Err != nil {
@@ -1037,7 +976,7 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 			var templ_7745c5c3_Var52 string
 			templ_7745c5c3_Var52, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_index_delete_button"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 380, Col: 57}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 310, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var52))
 			if templ_7745c5c3_Err != nil {
@@ -1060,13 +999,8 @@ func indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem)
 	})
 }
 
-// indexActionTarget renders the episode an action control acts on, for assistive technology
-// only: the column is read in the context of its row on screen, so the id would be repeated
-// noise if shown. Being positioned out of flow, it adds nothing to the control's box either,
-// so the buttons stay the size the column is laid out for.
-//
-// [Ja] indexActionTarget は操作コントロールの対象エピソードを、支援技術にのみ向けて描画する。
-// 画面上では列は行の文脈の中で読めるため、ID を表示すると繰り返しのノイズになる。この要素は
+// indexActionTargetは操作コントロールの対象エピソードを、支援技術にのみ向けて描画する。
+// 画面上では列は行の文脈の中で読めるため、IDを表示すると繰り返しのノイズになる。この要素は
 // 通常フローから外れて配置されるため、コントロールの箱にも何も足さず、ボタンは列の想定どおりの
 // 大きさのままになる。
 func indexActionTarget(episode viewmodel.DBEpisodeListItem) templ.Component {
@@ -1097,7 +1031,7 @@ func indexActionTarget(episode viewmodel.DBEpisodeListItem) templ.Component {
 		var templ_7745c5c3_Var54 string
 		templ_7745c5c3_Var54, templ_7745c5c3_Err = templ.JoinStringErrs(actionTargetLabel(ctx, episode))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 397, Col: 56}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/index.templ`, Line: 322, Col: 56}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var54))
 		if templ_7745c5c3_Err != nil {
@@ -1111,33 +1045,20 @@ func indexActionTarget(episode viewmodel.DBEpisodeListItem) templ.Component {
 	})
 }
 
-// actionTargetLabel returns the hidden half of an action control's accessible name, led by a
-// space. templ writes the control's visible label and this span with nothing between them, and
-// whether a browser inserts a word boundary there depends on the span being taken out of flow
-// by CSS. The space belongs to the text so the two halves stay separate words even when the
-// stylesheet does not arrive.
-//
-// [Ja] actionTargetLabel は操作コントロールのアクセシブルネームのうち隠された側を、先頭に
-// スペースを付けて返す。templ はコントロールの可視ラベルとこの span を隙間なく書き出すため、
-// ブラウザがそこに語の区切りを入れるかどうかは、この span が CSS によって通常フローから
+// actionTargetLabelは操作コントロールのアクセシブルネームのうち隠された側を、先頭に
+// スペースを付けて返す。templはコントロールの可視ラベルとこのspanを隙間なく書き出すため、
+// ブラウザがそこに語の区切りを入れるかどうかは、このspanがCSSによって通常フローから
 // 外れていることに依存する。スペースをテキスト側に持たせることで、スタイルシートが届かない
-// ときも 2 つの半分が別の語として保たれる。
+// ときも2つの半分が別の語として保たれる。
 func actionTargetLabel(ctx context.Context, episode viewmodel.DBEpisodeListItem) string {
 	return " " + templates.T(ctx, "db_episodes_index_action_target_label", map[string]any{"ID": episode.ID.String()})
 }
 
-// missingValuePlaceholder is shown wherever an episode attribute is unset, so an empty value
-// reads as "nothing recorded" instead of looking like a rendering gap.
-//
-// [Ja] missingValuePlaceholder はエピソードの属性が未設定のときに表示する。空の値が描画漏れに
+// missingValuePlaceholderはエピソードの属性が未設定のときに表示する。空の値が描画漏れに
 // 見えず「未登録」と読めるようにするため。
 const missingValuePlaceholder = "-"
 
-// valueOrDash returns value, or the placeholder when it is empty. The view models leave unset
-// attributes as "" so the template decides how to render the gap; every attribute in the list
-// renders it the same way.
-//
-// [Ja] valueOrDash は value を、空のときはプレースホルダーを返す。ビューモデルは未設定の属性を
+// valueOrDashはvalueを、空のときはプレースホルダーを返す。ビューモデルは未設定の属性を
 // "" のままにしてテンプレートに欠落の描画方法を委ねており、一覧の各属性はいずれも同じ形で
 // 描画する。
 func valueOrDash(value string) string {
@@ -1148,12 +1069,8 @@ func valueOrDash(value string) string {
 	return value
 }
 
-// plannedCountText renders the work's expected total episode count, reading the empty view
-// model value as "the work records none" and saying so in words. The notice states three
-// values side by side, so a placeholder here would read as a count of its own.
-//
-// [Ja] plannedCountText は作品の予定総話数を描画する。ビューモデルの空の値は「作品が記録して
-// いない」ことを表すため、その旨を言葉で示す。案内は 3 つの値を並べて述べるので、ここに
+// plannedCountTextは作品の予定総話数を描画する。ビューモデルの空の値は「作品が記録して
+// いない」ことを表すため、その旨を言葉で示す。案内は3つの値を並べて述べるので、ここに
 // プレースホルダーを置くとそれ自体が件数のように読めてしまう。
 func plannedCountText(ctx context.Context, plannedCount string) string {
 	if plannedCount == "" {

@@ -19,31 +19,18 @@ type IndexPageData struct {
 	FilterNoSeason      bool
 	FilterNoSlots       bool
 	SeasonFilterOptions []viewmodel.SeasonFilterOption
-	// IsCommitter and IsAdmin gate the action column: committers (admins or editors) see the
-	// edit and unpublish / publish actions, and admins additionally see the delete action.
-	// The work list itself is public, so both are false for signed-out or regular visitors,
-	// and the column is then left out of the table entirely.
-	//
-	// [Ja] IsCommitter と IsAdmin は操作列の出し分けに使う。committer (管理者または編集者) は
+	// IsCommitterとIsAdminは操作列の出し分けに使う。committer (管理者または編集者) は
 	// 編集・非公開 / 公開の操作を、管理者はさらに削除の操作を見る。作品一覧自体は公開のため、
-	// 未ログインや一般ユーザーではどちらも false になり、そのときは操作列自体をテーブルから
+	// 未ログインや一般ユーザーではどちらもfalseになり、そのときは操作列自体をテーブルから
 	// 落とす。
 	IsCommitter bool
 	IsAdmin     bool
-	// CSRFToken is sent via the X-CSRF-Token header on the htmx-issued DELETE requests
-	// (publish / delete), so those requests pass the CSRF middleware.
-	//
-	// [Ja] CSRFToken は htmx が発行する DELETE リクエスト (公開 / 削除) の X-CSRF-Token
-	// ヘッダーで送られ、それらのリクエストが CSRF ミドルウェアを通るようにする。
+	// CSRFTokenはhtmxが発行するDELETEリクエスト (公開 / 削除) のX-CSRF-Token
+	// ヘッダーで送られ、それらのリクエストがCSRFミドルウェアを通るようにする。
 	CSRFToken string
 }
 
-// hasRowActions reports whether the viewer may take any per-row action, deciding whether the
-// action column is rendered at all. A viewer with none is not given a column of empty cells:
-// the table already needs horizontal scrolling at mobile widths, and a header announcing a
-// column that holds nothing is read out on every row.
-//
-// [Ja] hasRowActions は閲覧者が行ごとの操作を 1 つでも行えるかを返し、操作列そのものを
+// hasRowActionsは閲覧者が行ごとの操作を1つでも行えるかを返し、操作列そのものを
 // 描画するかを決める。操作を持たない閲覧者に空のセルだけの列は出さない。このテーブルは
 // モバイル幅では既に横スクロールを要し、何も入らない列の見出しが行ごとに読み上げられて
 // しまうため。
@@ -51,12 +38,7 @@ func (d IndexPageData) hasRowActions() bool {
 	return d.IsCommitter || d.IsAdmin
 }
 
-// tableMinWidthClass returns the width the table keeps before its container starts scrolling
-// horizontally. The action column adds its fixed width (w-24) to that floor, so the title
-// column — the only one without a width, and therefore the one that absorbs the slack — keeps
-// the same room for a viewer who sees the actions as for one who does not.
-//
-// [Ja] tableMinWidthClass はコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
+// tableMinWidthClassはコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
 // 操作列はその下限に自身の固定幅 (w-24) を上乗せする。これにより、幅指定の無い唯一の列で
 // あり余白を吸収するタイトル列が、操作を見る閲覧者にも見ない閲覧者にも同じ幅を保てる。
 func (d IndexPageData) tableMinWidthClass() string {
@@ -176,15 +158,9 @@ templ Index(data IndexPageData) {
 							<caption class="sr-only">
 								{ templates.T(ctx, "db_works_index_table_caption") }
 							</caption>
-							// Fixed column widths keep the table within its container and let the title
-							// column (the only one without a width) absorb the remaining space; auto layout
-							// spreads slack across every column instead, so the title stays narrow there. The
-							// tightened cell padding ([&_th]/[&_td] px-1, overriding the .table px-2 default)
-							// gives the title even more room.
-							//
-							// [Ja] 固定列幅でテーブルをコンテナ内に収め、幅指定の無いタイトル列だけが残り幅を
-							// 吸収するようにする (auto レイアウトでは余白が全列へ分散し、タイトルが狭いまま)。
-							// セル padding を詰める ([&_th]/[&_td] px-1 で .table 既定の px-2 を上書き) ことで
+							// 固定列幅でテーブルをコンテナ内に収め、幅指定の無いタイトル列だけが残り幅を
+							// 吸収するようにする (autoレイアウトでは余白が全列へ分散し、タイトルが狭いまま)。
+							// セルpaddingを詰める ([&_th]/[&_td] px-1で .table既定のpx-2を上書き) ことで
 							// タイトルにさらに幅を回す。
 							<colgroup>
 								<col class="w-20"/>
@@ -234,21 +210,12 @@ templ Index(data IndexPageData) {
 											<div class="text-muted-foreground">{ valueOrDash(work.TitleKana) }</div>
 											<div class="text-muted-foreground">{ valueOrDash(work.TitleEn) }</div>
 										</td>
-										// Every per-work attribute other than the title shares one "info" column.
-										// Each value is short, so stacking them as label / value pairs costs far
-										// less width than one column per attribute (each carrying its own header
-										// width and padding), leaving the rest of the table width to the title.
-										//
-										// The pairs are laid out three per line: stacking all six in a single line
-										// makes each row twelve lines tall, which cuts the number of works visible
-										// on screen to two or three.
-										//
-										// [Ja] タイトル以外の作品属性は 1 つの「情報」列にまとめる。いずれも短い値のため、
-										// ラベル / 値の組で縦に積むほうが、属性ごとに列を分ける (各列が見出し幅と padding
+										// タイトル以外の作品属性は1つの「情報」列にまとめる。いずれも短い値のため、
+										// ラベル / 値の組で縦に積むほうが、属性ごとに列を分ける (各列が見出し幅とpadding
 										// を持つ) より必要な幅がずっと小さく、残りの幅をタイトル列に回せる。
 										//
-										// 組は 1 行あたり 3 つずつ並べる。6 組すべてを 1 列に積むと 1 行が 12 行分の
-										// 高さになり、画面に収まる作品が 2〜3 件まで減ってしまうため。
+										// 組は1行あたり3つずつ並べる。6組すべてを1列に積むと1行が12行分の
+										// 高さになり、画面に収まる作品が2〜3件まで減ってしまうため。
 										<td>
 											<dl class="grid grid-cols-3 gap-x-3 gap-y-1 text-sm">
 												<div>
@@ -295,18 +262,11 @@ templ Index(data IndexPageData) {
 	</div>
 }
 
-// missingValuePlaceholder is shown wherever a work attribute is unset, so an empty value
-// reads as "nothing recorded" instead of looking like a rendering gap.
-//
-// [Ja] missingValuePlaceholder は作品の属性が未設定のときに表示する。空の値が描画漏れに
+// missingValuePlaceholderは作品の属性が未設定のときに表示する。空の値が描画漏れに
 // 見えず「未登録」と読めるようにするため。
 const missingValuePlaceholder = "-"
 
-// valueOrDash returns value, or the placeholder when it is empty. The view models leave
-// unset attributes as "" so the template decides how to render the gap; every attribute in
-// the info column renders it the same way.
-//
-// [Ja] valueOrDash は value を、空のときはプレースホルダーを返す。ビューモデルは未設定の
+// valueOrDashはvalueを、空のときはプレースホルダーを返す。ビューモデルは未設定の
 // 属性を "" のままにしてテンプレートに欠落の描画方法を委ねており、情報列の各属性は
 // いずれも同じ形で描画する。
 func valueOrDash(value string) string {
@@ -317,12 +277,8 @@ func valueOrDash(value string) string {
 	return value
 }
 
-// externalServiceLink renders one external-service value: a new-tab link to the
-// service (with rel="noopener" for tabnabbing protection) when the work has an id
-// for that service, or a "-" placeholder otherwise.
-//
-// [Ja] externalServiceLink は情報列内の外部サービス値を描画する。作品にその外部 ID があれば
-// サービスへの新規タブリンク (tabnabbing 対策の rel="noopener" 付き) を、無ければ "-" の
+// externalServiceLinkは情報列内の外部サービス値を描画する。作品にその外部IDがあれば
+// サービスへの新規タブリンク (tabnabbing対策のrel="noopener" 付き) を、無ければ "-" の
 // プレースホルダーを表示する。
 templ externalServiceLink(link viewmodel.ExternalServiceLink) {
 	if link.URL != "" {
@@ -341,32 +297,17 @@ templ externalServiceLink(link viewmodel.ExternalServiceLink) {
 	}
 }
 
-// actionButtons renders the per-row action column of the work list: the edit link and the
-// unpublish (published rows) or publish (archived rows) action for committers, plus the
-// delete action for admins. Publish and delete are htmx DELETE buttons guarded by a
-// confirmation dialog, with the CSRF token carried in the X-CSRF-Token header; the delete
-// and publish handlers respond with HX-Redirect so htmx navigates back to the list. Unpublish
-// is a plain link to the confirmation screen.
-//
-// Every control names the work it acts on in its accessible name; publish and delete also name
-// it in their confirmation. A page of rows therefore does not present controls that all read
-// "Edit" when a screen reader lists them out of their row, and the dialog states which row the
-// press came from. The name is extended with visually hidden text rather than replaced by an
-// aria-label, keeping the visible label at the start of the accessible name (what voice control
-// matches on). The id is what names the work, as in the row's id link: titles are always set but
-// not unique across works.
-//
-// [Ja] actionButtons は作品一覧の行ごとの操作列を描画する。committer には編集リンクと
+// actionButtonsは作品一覧の行ごとの操作列を描画する。committerには編集リンクと
 // 非公開 (公開中の行) または公開 (非公開の行) の操作を、管理者にはさらに削除の操作を出す。
-// 公開・削除は確認ダイアログ付きの htmx DELETE ボタンで、CSRF トークンは X-CSRF-Token
-// ヘッダーで送り、削除・公開ハンドラーが HX-Redirect を返して htmx が一覧へ遷移する。
+// 公開・削除は確認ダイアログ付きのhtmx DELETEボタンで、CSRFトークンはX-CSRF-Token
+// ヘッダーで送り、削除・公開ハンドラーがHX-Redirectを返してhtmxが一覧へ遷移する。
 // 非公開は確認画面への素のリンク。
 //
 // 各コントロールはアクセシブルネームで対象の作品を名指しし、公開・削除では確認文でも名指しする。
 // スクリーンリーダーが行から切り離してコントロールを列挙したときに「編集」とだけ読める
 // コントロールが並ばず、確認ダイアログもどの行から押されたかを述べるようにするため。
-// aria-label で置き換えず視覚的に隠したテキストで補うのは、可視ラベルをアクセシブルネームの
-// 先頭に残すため (音声操作が照合するのはこの可視ラベル)。名指しに ID を使うのは行の ID リンクと
+// aria-labelで置き換えず視覚的に隠したテキストで補うのは、可視ラベルをアクセシブルネームの
+// 先頭に残すため (音声操作が照合するのはこの可視ラベル)。名指しにIDを使うのは行のIDリンクと
 // 同じで、タイトルは必ず設定されるが作品間で一意である保証が無いため。
 templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 	<div class="flex flex-col items-stretch gap-1.5">
@@ -423,30 +364,19 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 	</div>
 }
 
-// actionTarget renders the work an action control acts on, for assistive technology only: the
-// column is read in the context of its row on screen, so the id would be repeated noise if
-// shown. Being positioned out of flow, it adds nothing to the control's box either, so the
-// buttons stay the size the column is laid out for.
-//
-// [Ja] actionTarget は操作コントロールの対象作品を、支援技術にのみ向けて描画する。画面上では
-// 列は行の文脈の中で読めるため、ID を表示すると繰り返しのノイズになる。この要素は通常フローから
+// actionTargetは操作コントロールの対象作品を、支援技術にのみ向けて描画する。画面上では
+// 列は行の文脈の中で読めるため、IDを表示すると繰り返しのノイズになる。この要素は通常フローから
 // 外れて配置されるため、コントロールの箱にも何も足さず、ボタンは列の想定どおりの大きさのままに
 // なる。
 templ actionTarget(work viewmodel.DBWorkListItem) {
 	<span class="sr-only">{ actionTargetLabel(ctx, work) }</span>
 }
 
-// actionTargetLabel returns the hidden half of an action control's accessible name, led by a
-// space. templ writes the control's visible label and this span with nothing between them, and
-// whether a browser inserts a word boundary there depends on the span being taken out of flow
-// by CSS. The space belongs to the text so the two halves stay separate words even when the
-// stylesheet does not arrive.
-//
-// [Ja] actionTargetLabel は操作コントロールのアクセシブルネームのうち隠された側を、先頭に
-// スペースを付けて返す。templ はコントロールの可視ラベルとこの span を隙間なく書き出すため、
-// ブラウザがそこに語の区切りを入れるかどうかは、この span が CSS によって通常フローから
+// actionTargetLabelは操作コントロールのアクセシブルネームのうち隠された側を、先頭に
+// スペースを付けて返す。templはコントロールの可視ラベルとこのspanを隙間なく書き出すため、
+// ブラウザがそこに語の区切りを入れるかどうかは、このspanがCSSによって通常フローから
 // 外れていることに依存する。スペースをテキスト側に持たせることで、スタイルシートが届かない
-// ときも 2 つの半分が別の語として保たれる。
+// ときも2つの半分が別の語として保たれる。
 func actionTargetLabel(ctx context.Context, work viewmodel.DBWorkListItem) string {
 	return " " + templates.T(ctx, "db_works_index_action_target_label", map[string]any{"ID": work.ID.String()})
 }
@@ -461,16 +391,10 @@ templ indexNewButton() {
 	</a>
 }
 
-// seasonSlugsFilter renders a native multiple select as the durable release-season filter,
-// plus a hidden Basecoat multiple combobox that progressively enhances it. The select owns
-// the season_slugs name, so it submits repeated query parameters without JavaScript.
-// web/season-filter.ts reveals the combobox only after Basecoat initializes, then mirrors
-// its selection to the select. Both controls receive the server-rendered initial selection.
-//
-// [Ja] seasonSlugsFilter は常に使えるリリース時期フィルタとしてネイティブの複数選択 select を
-// 描画し、プログレッシブエンハンスメント用に非表示の Basecoat 複数選択 combobox も描画する。
-// season_slugs の name は select が持つため、JavaScript 無しでも繰り返しクエリを送信できる。
-// web/season-filter.ts は Basecoat の初期化後にだけ combobox を表示し、その選択を select へ
+// seasonSlugsFilterは常に使えるリリース時期フィルタとしてネイティブの複数選択selectを
+// 描画し、プログレッシブエンハンスメント用に非表示のBasecoat複数選択comboboxも描画する。
+// season_slugsのnameはselectが持つため、JavaScript無しでも繰り返しクエリを送信できる。
+// web/season-filter.tsはBasecoatの初期化後にだけcomboboxを表示し、その選択をselectへ
 // 同期する。サーバー描画時の初期選択は両方のコントロールへ反映する。
 templ seasonSlugsFilter(options []viewmodel.SeasonFilterOption) {
 	<div data-season-slugs-filter>

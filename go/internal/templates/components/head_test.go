@@ -51,17 +51,14 @@ func TestHead(t *testing.T) {
 				`<link rel="stylesheet" href="/static/css/style.css?v=v1.0.0">`,
 				`<script type="module" src="/static/js/main.js?v=v1.0.0"></script>`,
 			},
-			// A page that declares no origin gets no resource hint. Most public pages request
-			// nothing from a third party, so warming up a connection for them would be a waste.
-			//
-			// [Ja] オリジンを宣言しないページにはリソースヒントを出さない。多くの公開ページは
+			// オリジンを宣言しないページにはリソースヒントを出さない。多くの公開ページは
 			// 第三者に何もリクエストしないため、接続を張っても無駄になる。
 			wantNotContains: []string{
 				`rel="preconnect"`,
 			},
 		},
 		{
-			name: "宣言したオリジンが preconnect として出力される",
+			name: "宣言したオリジンがpreconnectとして出力される",
 			meta: viewmodel.PageMeta{
 				Title:             "Annictにログイン | Annict",
 				Description:       "ログインページの説明",
@@ -124,15 +121,10 @@ func TestHead(t *testing.T) {
 	}
 }
 
-// TestDBHead verifies the DB admin <head> renders the tags shared with the public pages
-// plus the minimal Open Graph set, while dropping the rest of the tags addressing readers
-// outside the page. The PageMeta it receives still carries description / OG values, so the
-// assertions show the omission comes from DBHead rather than from empty input.
-//
-// [Ja] TestDBHead は DB 管理画面の <head> が公開ページと共通のタグと最小限の Open Graph を
+// TestDBHeadはDB管理画面の <head> が公開ページと共通のタグと最小限のOpen Graphを
 // 描画し、それ以外のページ自身の外にいる読み手へ向けたタグを落とすことを検証する。渡す
-// PageMeta は description や OG の値を持たせてあるため、出力されないのが入力の空ではなく
-// DBHead によるものだと分かる。
+// PageMetaはdescriptionやOGの値を持たせてあるため、出力されないのが入力の空ではなく
+// DBHeadによるものだと分かる。
 func TestDBHead(t *testing.T) {
 	t.Parallel()
 
@@ -171,12 +163,8 @@ func TestDBHead(t *testing.T) {
 		}
 	}
 
-	// The Open Graph properties left out are the ones a titled card does not need:
-	// description and image carry the public pages' generic copy and artwork, and locale
-	// only matters for the pages that are actually shared.
-	//
-	// [Ja] 落とす Open Graph はタイトル付きカードに要らないもの。description と image は
-	// 公開ページ向けの汎用の文言と画像であり、locale は実際に共有されるページでしか意味を
+	// 落とすOpen Graphはタイトル付きカードに要らないもの。descriptionとimageは
+	// 公開ページ向けの汎用の文言と画像であり、localeは実際に共有されるページでしか意味を
 	// 持たない。
 	wantNotContains := []string{
 		`name="description"`,
@@ -194,12 +182,8 @@ func TestDBHead(t *testing.T) {
 	}
 }
 
-// TestHead_PreconnectPosition verifies a declared origin is hinted before the document
-// starts asking for anything. The hint only buys time while the rest of the head is still
-// being parsed, so it has to precede the title and the assets rather than merely appear.
-//
-// [Ja] TestHead_PreconnectPosition は宣言したオリジンのヒントが、文書が何かを要求し始める
-// 前に出ることを検証する。ヒントは head の残りを解析している間しか時間を稼げないため、
+// TestHead_PreconnectPositionは宣言したオリジンのヒントが、文書が何かを要求し始める
+// 前に出ることを検証する。ヒントはheadの残りを解析している間しか時間を稼げないため、
 // 単に出力されるだけでなくタイトルやアセットより前にある必要がある。
 func TestHead_PreconnectPosition(t *testing.T) {
 	t.Parallel()
@@ -238,7 +222,7 @@ func TestHead_PreconnectPosition(t *testing.T) {
 			continue
 		}
 		if index < preconnectIndex {
-			t.Errorf("preconnectは %q より前に出力される必要があります\nHTML: %s", want, html)
+			t.Errorf("preconnectは%qより前に出力される必要があります\nHTML: %s", want, html)
 		}
 	}
 }

@@ -7,7 +7,7 @@ import (
 	"strconv"
 )
 
-// Popular は人気作品ページのコンテンツを表示します
+// Popularは人気作品ページのコンテンツを表示します
 templ Popular(ctx context.Context, works []viewmodel.Work) {
 	<div>
 		<h2 class="text-3xl font-bold mb-8">
@@ -79,7 +79,7 @@ templ Popular(ctx context.Context, works []viewmodel.Work) {
 	</div>
 }
 
-// getWorkTitle は現在のロケールに応じた作品タイトルを返します
+// getWorkTitleは現在のロケールに応じた作品タイトルを返します
 func getWorkTitle(ctx context.Context, work viewmodel.Work) string {
 	locale := templates.Locale(ctx)
 	if locale == "en" && work.TitleEn != "" {
@@ -91,7 +91,7 @@ func getWorkTitle(ctx context.Context, work viewmodel.Work) string {
 	return work.Title
 }
 
-// formatSeasonInfo はシーズン情報をフォーマットします
+// formatSeasonInfoはシーズン情報をフォーマットします
 func formatSeasonInfo(ctx context.Context, work viewmodel.Work) string {
 	if work.SeasonYear == nil {
 		return ""
@@ -124,7 +124,7 @@ func formatSeasonInfo(ctx context.Context, work viewmodel.Work) string {
 	})
 }
 
-// formatCasts はキャスト情報をカンマ区切りでフォーマットします
+// formatCastsはキャスト情報をカンマ区切りでフォーマットします
 func formatCasts(casts []viewmodel.Cast) string {
 	if len(casts) == 0 {
 		return ""
@@ -144,7 +144,7 @@ func formatCasts(casts []viewmodel.Cast) string {
 	return result
 }
 
-// formatStaffs はスタッフ情報をカンマ区切りでフォーマットします
+// formatStaffsはスタッフ情報をカンマ区切りでフォーマットします
 func formatStaffs(staffs []viewmodel.Staff) string {
 	if len(staffs) == 0 {
 		return ""

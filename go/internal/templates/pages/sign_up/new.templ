@@ -6,7 +6,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// NewPageData は新規登録フォームページに渡すデータ構造体です
+// NewPageDataは新規登録フォームページに渡すデータ構造体です
 type NewPageData struct {
 	CSRFToken        string
 	TurnstileSiteKey string
@@ -14,7 +14,7 @@ type NewPageData struct {
 	Email            string
 }
 
-// New は新規登録フォームのコンテンツを表示します
+// Newは新規登録フォームのコンテンツを表示します
 templ New(data NewPageData) {
 	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
 		<div class="text-center">

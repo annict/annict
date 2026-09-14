@@ -11,24 +11,12 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// RequiredBadge renders the marker shown inside a form label for a required field. It spells
-// the requirement out in words instead of an asterisk, which means nothing without a legend
-// and is announced as "asterisk" by screen readers.
-//
-// The marker uses Basecoat's outline badge rather than a red marker: being required is a normal
-// state, and the destructive color is reserved for validation errors so the two never read as
-// the same signal. The requirement is carried by the wording and outlined shape, not by color.
-//
-// Required fields also carry the `required` attribute, so assistive technology announces the
-// state twice. That redundancy is accepted: keeping the visible wording in the accessible name
-// lets voice-control users address the field by what they see.
-//
-// [Ja] RequiredBadge は必須フィールドのラベル内に表示する印を描画する。アスタリスクは凡例が
+// RequiredBadgeは必須フィールドのラベル内に表示する印を描画する。アスタリスクは凡例が
 // 無ければ意味を持たず、スクリーンリーダーでも「アスタリスク」と読まれるため、言葉で必須を
 // 示す。
 //
-// 印には赤いマーカーではなく Basecoat の outline Badge を使う。必須であることは平常の状態であり、
-// destructive の色はバリデーションエラー専用に残して両者が同じ合図に見えないようにするため。
+// 印には赤いマーカーではなくBasecoatのoutline Badgeを使う。必須であることは平常の状態であり、
+// destructiveの色はバリデーションエラー専用に残して両者が同じ合図に見えないようにするため。
 // 必須であることは色ではなく文言と枠付きの形で伝える。
 //
 // 必須フィールドには `required` 属性も付くため、支援技術は必須を二重に読み上げる。この重複は
@@ -62,7 +50,7 @@ func RequiredBadge() templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "form_required_label"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/required_badge.templ`, Line: 30, Col: 43}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/required_badge.templ`, Line: 18, Col: 43}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {

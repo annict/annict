@@ -14,41 +14,24 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// DBWorkSubnavData is the input for DBWorkSubnav.
-//
-// [Ja] DBWorkSubnavData は DBWorkSubnav の入力。
+// DBWorkSubnavDataはDBWorkSubnavの入力。
 type DBWorkSubnavData struct {
-	// WorkID is the work whose sub-resources the entries link to.
-	//
-	// [Ja] WorkID は各項目のリンク先サブリソースを持つ作品。
+	// WorkIDは各項目のリンク先サブリソースを持つ作品。
 	WorkID viewmodel.WorkID
-	// NoEpisodes drops the episode-derived entries (episodes, broadcast slots), mirroring
-	// the Rails work subnav.
-	//
-	// [Ja] NoEpisodes はエピソード由来の項目 (エピソード・放送予定) を落とす (Rails の
+	// NoEpisodesはエピソード由来の項目 (エピソード・放送予定) を落とす (Railsの
 	// 作品サブナビに合わせている)。
 	NoEpisodes bool
-	// CurrentSectionPath names the entry to mark as the current page on a page whose own
-	// URL sits outside the entry it belongs to, such as the episode edit form: it is keyed
-	// by the episode (/db/episodes/{id}/edit) yet is reached from, and belongs to, the
-	// work's episodes. Leave it empty to derive the marker from the request path, which is
-	// what the pages living under their entry do.
-	//
-	// [Ja] CurrentSectionPath は、ページ自身の URL が所属する項目の外にある場合に、現在
-	// ページとして印を付ける項目を名指しする。エピソード編集フォームがその例で、URL は
+	// CurrentSectionPathは、ページ自身のURLが所属する項目の外にある場合に、現在
+	// ページとして印を付ける項目を名指しする。エピソード編集フォームがその例で、URLは
 	// エピソード基点 (/db/episodes/{id}/edit) だが、到達元も所属先も作品のエピソードで
 	// ある。空のままにすると印はリクエストパスから導出され、これは項目配下にあるページの
 	// 挙動になる。
 	CurrentSectionPath templates.Path
 }
 
-// isCurrent reports whether the entry at path is the one to mark as the current page. A page
-// that names its section takes that answer, and every other page falls back to the request
-// path, so the two ways of deciding never both apply to one entry.
-//
-// [Ja] isCurrent は path の項目を現在ページとして印付けるかを返す。所属する項目を名指しする
-// ページはその答えを使い、それ以外のページはリクエストパスにフォールバックする。1 つの項目に
-// 2 つの決め方が同時に効くことはない。
+// isCurrentはpathの項目を現在ページとして印付けるかを返す。所属する項目を名指しする
+// ページはその答えを使い、それ以外のページはリクエストパスにフォールバックする。1つの項目に
+// 2つの決め方が同時に効くことはない。
 func (d DBWorkSubnavData) isCurrent(ctx context.Context, path templates.Path) bool {
 	if d.CurrentSectionPath != "" {
 		return d.CurrentSectionPath == path
@@ -57,26 +40,15 @@ func (d DBWorkSubnavData) isCurrent(ctx context.Context, path templates.Path) bo
 	return templates.IsCurrentPathPrefix(ctx, path.String())
 }
 
-// DBWorkSubnav renders the navigation shown above a work's DB form, linking to the work's
-// sub-resources (episodes, programs, casts, and so on) as horizontal pills.
-//
-// The list holds up to eight entries, which do not fit on one line at small viewport
-// widths, so it scrolls horizontally on its own rather than widening the document. Its
-// links are focusable, so the keyboard reaches the entries that start out of view without
-// the scroll container needing to take focus itself.
-//
-// Every destination except the work edit page itself is still served by Rails, so the
-// flag-gated fallback routes those links to the Rails screens until they are migrated.
-//
-// [Ja] DBWorkSubnav は作品の DB フォームの上に表示するナビゲーションを描画し、作品の
+// DBWorkSubnavは作品のDBフォームの上に表示するナビゲーションを描画し、作品の
 // サブリソース (エピソード・番組情報・キャストなど) へのリンクを横並びのピルで並べる。
 //
-// 項目は最大 8 個あり小さい画面幅では 1 行に収まらないため、文書全体を広げるのではなく
+// 項目は最大8個あり小さい画面幅では1行に収まらないため、文書全体を広げるのではなく
 // リスト自身を横スクロールさせる。リンクはフォーカス可能なので、スクロール領域自体が
 // フォーカスを受け取らなくても画面外から始まる項目へキーボードで到達できる。
 //
-// 作品編集ページ自身を除くリンク先はまだ Rails が配信するため、フラグ配下のフォールバックが
-// 移行までそれらを Rails 画面へ流す。
+// 作品編集ページ自身を除くリンク先はまだRailsが配信するため、フラグ配下のフォールバックが
+// 移行までそれらをRails画面へ流す。
 func DBWorkSubnav(data DBWorkSubnavData) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -105,7 +77,7 @@ func DBWorkSubnav(data DBWorkSubnavData) templ.Component {
 		var templ_7745c5c3_Var2 string
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "db_work_subnav_label"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 74, Col: 59}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 46, Col: 59}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var2)
 		if templ_7745c5c3_Err != nil {
@@ -159,17 +131,10 @@ func DBWorkSubnav(data DBWorkSubnavData) templ.Component {
 	})
 }
 
-// dbWorkSubnavItem renders a single subnav pill, marking the entry as the current page
-// (via aria-current) while the reader is inside it: by default while the request path is
-// the entry itself or one of its sub-pages, so adding an episode keeps the episodes entry
-// marked, and otherwise as the page's CurrentSectionPath names it. The filled treatment of
-// the current entry is driven by that same attribute, so the marker assistive technology
-// reads and the one sighted users see cannot drift apart.
-//
-// [Ja] dbWorkSubnavItem はサブナビのピルを 1 つ描画し、読み手がその項目の中にいる間、現在
+// dbWorkSubnavItemはサブナビのピルを1つ描画し、読み手がその項目の中にいる間、現在
 // ページとして印を付ける (aria-current)。既定ではリクエストパスが項目自身かその配下のページ
 // である間で、エピソードを追加している間もエピソードの項目に印が残る。それ以外はページの
-// CurrentSectionPath が名指しした項目に付く。現在ページの塗りつぶしも同じ属性で切り替える
+// CurrentSectionPathが名指しした項目に付く。現在ページの塗りつぶしも同じ属性で切り替える
 // ため、支援技術が読む印と目に見える印がずれることがない。
 func dbWorkSubnavItem(data DBWorkSubnavData, path templates.Path, labelKey string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -199,7 +164,7 @@ func dbWorkSubnavItem(data DBWorkSubnavData, path templates.Path, labelKey strin
 		var templ_7745c5c3_Var4 templ.SafeURL
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinURLErrs(path.SafeURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 114, Col: 24}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 75, Col: 24}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
@@ -222,7 +187,7 @@ func dbWorkSubnavItem(data DBWorkSubnavData, path templates.Path, labelKey strin
 		var templ_7745c5c3_Var5 string
 		templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, labelKey))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 120, Col: 31}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/db_work_subnav.templ`, Line: 81, Col: 31}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 		if templ_7745c5c3_Err != nil {

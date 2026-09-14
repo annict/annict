@@ -24,10 +24,7 @@ func TestMainTitle(t *testing.T) {
 				Title: "作品一覧",
 			},
 			wantContains: []string{
-				// min-w-0 and [overflow-wrap:anywhere] keep a long, unbreakable title from
-				// widening the row, so they are part of the rendered contract.
-				//
-				// [Ja] min-w-0 と [overflow-wrap:anywhere] は、改行機会の無い長いタイトルで
+				// min-w-0と [overflow-wrap:anywhere] は、改行機会の無い長いタイトルで
 				// 行が横に広がるのを防ぐためのもので、描画結果の契約に含める。
 				`<h1 class="flex min-w-0 items-center gap-2 text-2xl font-bold antialiased [overflow-wrap:anywhere]">`,
 				`作品一覧`,
@@ -117,7 +114,7 @@ func TestMainTitle(t *testing.T) {
 	}
 }
 
-// rawComponent はテスト用に文字列をそのままレンダリングするtempl.Componentを返します
+// rawComponentはテスト用に文字列をそのままレンダリングするtempl.Componentを返します
 func rawComponent(html string) templ.Component {
 	return templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := io.WriteString(w, html)

@@ -9,11 +9,8 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// TestDBSidebarToggle verifies the toggle renders a native disclosure button wired to the
-// sidebar at every viewport size.
-//
-// [Ja] TestDBSidebarToggle はトグルが全画面幅でサイドバーに結線されるネイティブの
-// disclosure ボタンを描画することを検証する。
+// TestDBSidebarToggleはトグルが全画面幅でサイドバーに結線されるネイティブの
+// disclosureボタンを描画することを検証する。
 func TestDBSidebarToggle(t *testing.T) {
 	t.Parallel()
 
@@ -26,13 +23,9 @@ func TestDBSidebarToggle(t *testing.T) {
 	html := buf.String()
 
 	checks := []string{
-		// A native button (keyboard operable) following the disclosure ARIA pattern:
-		// aria-controls points at the sidebar and aria-expanded reflects the open state.
-		// data-sidebar-toggle wires it to the sidebar via sidebar-toggle.ts.
-		//
-		// [Ja] disclosure の ARIA パターンに従うネイティブ button (キーボード操作可)。
-		// aria-controls がサイドバーを指し、aria-expanded が開閉状態を表す。
-		// data-sidebar-toggle が sidebar-toggle.ts 経由でサイドバーに結線する。
+		// disclosureのARIAパターンに従うネイティブbutton (キーボード操作可)。
+		// aria-controlsがサイドバーを指し、aria-expandedが開閉状態を表す。
+		// data-sidebar-toggleがsidebar-toggle.ts経由でサイドバーに結線する。
 		`type="button"`,
 		`data-variant="outline"`,
 		`data-size="icon"`,
@@ -51,18 +44,11 @@ func TestDBSidebarToggle(t *testing.T) {
 	}
 }
 
-// TestDBSidebarToggle_DecorativeIconIsHidden verifies the toggle's icon stays out of the
-// accessibility tree and out of the focus order. The button already carries its meaning in
-// aria-label, so the SVG would only add a second, browser-dependent representation. It is
-// hidden on the SVG itself rather than by a wrapper element: a wrapper leaves the SVG
-// focusable on implementations that treat SVG elements as focusable by default. The icon takes
-// no Basecoat inline position because the button has no text for it to sit beside.
-//
-// [Ja] TestDBSidebarToggle_DecorativeIconIsHidden はトグルのアイコンがアクセシビリティツリー
-// とフォーカス順序から外れることを検証する。ボタンは aria-label で既に意味を伝えるため、SVG は
-// ブラウザー依存の別表現を重ねるだけになる。隠すのはラッパー要素ではなく SVG 自体で行う。
-// ラッパーでは、SVG 要素を既定でフォーカス可能とする実装で SVG がフォーカス可能なまま残るため。
-// ボタンにテキストが無く添える相手がいないので、Basecoat の inline 位置は指定しない。
+// TestDBSidebarToggle_DecorativeIconIsHiddenはトグルのアイコンがアクセシビリティツリー
+// とフォーカス順序から外れることを検証する。ボタンはaria-labelで既に意味を伝えるため、SVGは
+// ブラウザー依存の別表現を重ねるだけになる。隠すのはラッパー要素ではなくSVG自体で行う。
+// ラッパーでは、SVG要素を既定でフォーカス可能とする実装でSVGがフォーカス可能なまま残るため。
+// ボタンにテキストが無く添える相手がいないので、Basecoatのinline位置は指定しない。
 func TestDBSidebarToggle_DecorativeIconIsHidden(t *testing.T) {
 	t.Parallel()
 
@@ -80,18 +66,14 @@ func TestDBSidebarToggle_DecorativeIconIsHidden(t *testing.T) {
 	html := buf.String()
 
 	if !strings.Contains(html, iconBuf.String()) {
-		t.Error(`装飾アイコン "sidebar-regular" が aria-hidden かつ focusable="false" ではありません`)
+		t.Error(`装飾アイコン "sidebar-regular" がaria-hiddenかつfocusable="false" ではありません`)
 	}
 	if strings.Contains(html, `<span aria-hidden="true">`) {
-		t.Error("装飾アイコンはラッパー要素ではなく SVG 自体で隠すべきです")
+		t.Error("装飾アイコンはラッパー要素ではなくSVG自体で隠すべきです")
 	}
 }
 
-// TestDBSidebarCloseButton verifies the sidebar has a mobile-only (md:hidden) icon-only native
-// close button with an accessible name. On desktop the always-visible sidebar toggle already
-// closes the sidebar, so this in-sidebar button is hidden there.
-//
-// [Ja] TestDBSidebarCloseButton はサイドバー内に、アクセシブルな名前を持つモバイル専用
+// TestDBSidebarCloseButtonはサイドバー内に、アクセシブルな名前を持つモバイル専用
 // (md:hidden) のアイコンだけのネイティブな閉じるボタンがあることを検証する。デスクトップでは
 // 常時表示のサイドバートグルで既に閉じられるため、このサイドバー内ボタンは非表示になる。
 func TestDBSidebarCloseButton(t *testing.T) {
@@ -124,9 +106,7 @@ func TestDBSidebarCloseButton(t *testing.T) {
 				`aria-controls="db-sidebar"`,
 				`aria-label="` + tt.label + `"`,
 				`M205.66,194.34a8,8,0,0,1-11.32,11.32`,
-				// Mobile-only: hidden from md up, where the sidebar toggle handles closing.
-				//
-				// [Ja] モバイル専用: md 以上ではサイドバートグルが閉じるため非表示。
+				// モバイル専用: md以上ではサイドバートグルが閉じるため非表示。
 				`md:hidden`,
 			} {
 				if !strings.Contains(html, expected) {
@@ -137,10 +117,7 @@ func TestDBSidebarCloseButton(t *testing.T) {
 	}
 }
 
-// TestDBSidebarInitialState verifies the server-rendered sidebar and toggle reflect the desktop
-// preference before client JavaScript runs.
-//
-// [Ja] TestDBSidebarInitialState はクライアント JavaScript の実行前から、SSR されたサイドバーと
+// TestDBSidebarInitialStateはクライアントJavaScriptの実行前から、SSRされたサイドバーと
 // トグルへデスクトップ設定が反映されることを検証する。
 func TestDBSidebarInitialState(t *testing.T) {
 	t.Parallel()
@@ -153,14 +130,14 @@ func TestDBSidebarInitialState(t *testing.T) {
 		toggleCheck      string
 	}{
 		{
-			name:             "open",
+			name:             "開いている状態",
 			open:             true,
 			sidebarChecks:    []string{`data-desktop-open="true"`, `aria-hidden="false"`},
 			sidebarNotChecks: []string{`data-initial-open="false"`, ` inert`},
 			toggleCheck:      `aria-expanded="true"`,
 		},
 		{
-			name:          "closed",
+			name:          "閉じている状態",
 			open:          false,
 			sidebarChecks: []string{`data-desktop-open="false"`, `aria-hidden="true"`, `data-initial-open="false"`, ` inert`},
 			toggleCheck:   `aria-expanded="false"`,
@@ -178,12 +155,12 @@ func TestDBSidebarInitialState(t *testing.T) {
 			}
 			for _, expected := range tt.sidebarChecks {
 				if !strings.Contains(sidebarBuf.String(), expected) {
-					t.Errorf("サイドバー HTML に必要な初期状態が含まれていません: %q", expected)
+					t.Errorf("サイドバーHTMLに必要な初期状態が含まれていません: %q", expected)
 				}
 			}
 			for _, unexpected := range tt.sidebarNotChecks {
 				if strings.Contains(sidebarBuf.String(), unexpected) {
-					t.Errorf("サイドバー HTML に不要な初期状態が含まれています: %q", unexpected)
+					t.Errorf("サイドバーHTMLに不要な初期状態が含まれています: %q", unexpected)
 				}
 			}
 
@@ -192,15 +169,13 @@ func TestDBSidebarInitialState(t *testing.T) {
 				t.Fatalf("トグルのレンダリングエラー: %v", err)
 			}
 			if !strings.Contains(toggleBuf.String(), tt.toggleCheck) {
-				t.Errorf("トグル HTML に必要な初期状態が含まれていません: %q", tt.toggleCheck)
+				t.Errorf("トグルHTMLに必要な初期状態が含まれていません: %q", tt.toggleCheck)
 			}
 		})
 	}
 }
 
-// TestDBSidebarToggleI18n verifies the toggle's aria-label switches per locale.
-//
-// [Ja] TestDBSidebarToggleI18n はトグルの aria-label が言語ごとに切り替わることを検証する。
+// TestDBSidebarToggleI18nはトグルのaria-labelが言語ごとに切り替わることを検証する。
 func TestDBSidebarToggleI18n(t *testing.T) {
 	t.Parallel()
 
@@ -224,7 +199,7 @@ func TestDBSidebarToggleI18n(t *testing.T) {
 				t.Fatalf("レンダリングエラー: %v", err)
 			}
 			if !strings.Contains(buf.String(), tt.label) {
-				t.Errorf("トグルの aria-label が正しくありません: 期待=%s", tt.label)
+				t.Errorf("トグルのaria-labelが正しくありません: 期待=%s", tt.label)
 			}
 		})
 	}

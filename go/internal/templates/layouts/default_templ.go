@@ -16,7 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Default はデフォルトレイアウトです
+// Defaultはデフォルトレイアウトです
 // サイドバー、ヘッダー、メインコンテンツ、フッターを含みます
 func Default(ctx context.Context, meta viewmodel.PageMeta, user *viewmodel.User, seasons viewmodel.Seasons, assetVersion string, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

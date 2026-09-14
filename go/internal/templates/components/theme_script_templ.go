@@ -10,15 +10,8 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
-// ThemeScript applies the reader's preferred color scheme by putting the `dark` class on the
-// document element. It runs inline in the <head>, before the body is parsed, so the page never
-// paints in the light theme first and then flips.
-//
-// Every layout renders it, including the standalone error shell, so the theme is decided the
-// same way on every page.
-//
-// [Ja] ThemeScript は文書要素に `dark` クラスを付けることで、閲覧者が選好する配色を適用する。
-// body の解析前に <head> でインラインに実行するため、ライトテーマで一度描画してから切り替わる
+// ThemeScriptは文書要素に `dark` クラスを付けることで、閲覧者が選好する配色を適用する。
+// bodyの解析前に <head> でインラインに実行するため、ライトテーマで一度描画してから切り替わる
 // ことがない。
 //
 // 単独のエラーページ用シェルを含むすべてのレイアウトがこれを描画し、どのページでも同じ方法で

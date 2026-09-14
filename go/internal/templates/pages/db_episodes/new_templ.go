@@ -15,51 +15,31 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// rowsFieldName is the name of the textarea holding the submitted lines. The form field, the
-// error summary entry and the ids of the error messages all key off it, so they stay in step.
-//
-// [Ja] rowsFieldName は送信された行を保持する textarea の名前。フォームのフィールド、エラー
-// 要約の項目、エラーメッセージの id がいずれもこの名前から決まるため、三者がずれない。
+// rowsFieldNameは送信された行を保持するtextareaの名前。フォームのフィールド、エラー
+// 要約の項目、エラーメッセージのidがいずれもこの名前から決まるため、三者がずれない。
 const rowsFieldName = "rows"
 
-// NewPageData is the data the bulk-create page renders: the parent work (its id and name for
-// the heading, subnav and form action) and the state of the submitted form.
-//
-// [Ja] NewPageData は一括作成ページが描画するデータ (見出し・サブナビ・フォームの action に
-// 使う親作品の id と名前、および送信されたフォームの状態)。
+// NewPageDataは一括作成ページが描画するデータ (見出し・サブナビ・フォームのactionに
+// 使う親作品のidと名前、および送信されたフォームの状態)。
 type NewPageData struct {
 	WorkID viewmodel.WorkID
-	// WorkName is the work's display name as viewmodel.DBEpisodeListWorkName resolved it, so
-	// it is empty exactly when the document title falls back to the generic page name too.
-	//
-	// [Ja] WorkName は viewmodel.DBEpisodeListWorkName が解決した作品の表示名。空になるのは
+	// WorkNameはviewmodel.DBEpisodeListWorkNameが解決した作品の表示名。空になるのは
 	// 文書タイトルが汎用のページ名へフォールバックするときと同じ条件。
 	WorkName string
-	// NoEpisodes carries the work's no_episodes flag through to the shared subnav.
-	//
-	// [Ja] NoEpisodes は作品の no_episodes フラグを共有サブナビへ渡す。
+	// NoEpisodesは作品のno_episodesフラグを共有サブナビへ渡す。
 	NoEpisodes bool
 	CSRFToken  string
 	FormErrors *viewmodel.FormErrors
 	IsAdmin    bool
-	// ManualCreation is the reason the work's episodes may not be created by hand, resolved
-	// once so the warning and the disabled form agree on it.
-	//
-	// [Ja] ManualCreation は作品のエピソードを手動作成できない理由。1 度だけ解決することで、
+	// ManualCreationは作品のエピソードを手動作成できない理由。1度だけ解決することで、
 	// 警告とフォームの無効化が同じ理由を見る。
 	ManualCreation viewmodel.DBEpisodeManualCreationRestriction
-	// Rows echoes back what was submitted, so a failed submit is corrected rather than
-	// retyped.
-	//
-	// [Ja] Rows は送信された内容をそのまま返す。送信が失敗しても入力し直しではなく手直しで
+	// Rowsは送信された内容をそのまま返す。送信が失敗しても入力し直しではなく手直しで
 	// 済むようにするため。
 	Rows string
 }
 
-// heading returns the text of the page heading: the work's name, falling back to the generic
-// page title while the work has none, so the page never renders an empty <h1>.
-//
-// [Ja] heading はページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// headingはページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
 // ページタイトルにフォールバックし、空の <h1> を描画しないようにする。
 func (d NewPageData) heading(ctx context.Context) string {
 	if d.WorkName != "" {
@@ -69,19 +49,14 @@ func (d NewPageData) heading(ctx context.Context) string {
 	return templates.T(ctx, "db_episodes_new_title")
 }
 
-// hasRowsError reports whether the submitted lines were rejected.
-//
-// [Ja] hasRowsError は送信された行が受け付けられなかったかどうかを返す。
+// hasRowsErrorは送信された行が受け付けられなかったかどうかを返す。
 func (d NewPageData) hasRowsError() bool {
 	return d.FormErrors != nil && d.FormErrors.HasFieldError(rowsFieldName)
 }
 
-// hasFormErrors reports whether the submitted form has any field or global error. A rendered
-// error summary takes focus on load, so the textarea may only autofocus when this is false.
-//
-// [Ja] hasFormErrors は送信されたフォームにフィールドエラーまたはグローバルエラーがあるかを
-// 返す。描画されたエラー要約が読み込み時にフォーカスを受け取るため、これが false の場合にだけ
-// textarea が autofocus できる。
+// hasFormErrorsは送信されたフォームにフィールドエラーまたはグローバルエラーがあるかを
+// 返す。描画されたエラー要約が読み込み時にフォーカスを受け取るため、これがfalseの場合にだけ
+// textareaがautofocusできる。
 func (d NewPageData) hasFormErrors() bool {
 	return d.FormErrors != nil && d.FormErrors.HasErrors()
 }
@@ -90,12 +65,7 @@ func (d NewPageData) formDisabled() bool {
 	return !d.IsAdmin && d.ManualCreation.Restricted()
 }
 
-// autofocusRows reports whether the textarea takes focus on load. Focus on load points at the
-// field the page expects to be filled in next, so it is given up both when a rendered error
-// summary states why the submit failed and when the form is disabled: landing in a field that
-// cannot be typed into skips past the warning that says why.
-//
-// [Ja] autofocusRows は読み込み時に textarea がフォーカスを受け取るかを返す。読み込み時の
+// autofocusRowsは読み込み時にtextareaがフォーカスを受け取るかを返す。読み込み時の
 // フォーカスは「ページが次に入力されると考えている欄」を指すものであるため、描画されたエラー
 // 要約が送信の失敗理由を述べているときと、フォームが無効化されているときの双方で手放す。
 // 入力できない欄に降りると、理由を述べている警告を飛び越えてしまうため。
@@ -103,31 +73,20 @@ func (d NewPageData) autofocusRows() bool {
 	return !d.hasFormErrors() && !d.formDisabled()
 }
 
-// showRestrictionWarning reports whether the standing warning is rendered. A rejected submit
-// reports the same reason through the error summary, which takes focus on load, so the warning
-// steps aside there rather than stating it a second time.
-//
-// [Ja] showRestrictionWarning は常設の警告を描画するかを返す。却下された送信は同じ理由を
+// showRestrictionWarningは常設の警告を描画するかを返す。却下された送信は同じ理由を
 // エラー要約 (読み込み時にフォーカスを受け取る) で伝えるため、その場合は警告を出さず二重に
 // 述べないようにする。
 func (d NewPageData) showRestrictionWarning() bool {
 	return d.ManualCreation.Restricted() && !d.hasGlobalError()
 }
 
-// hasGlobalError reports whether the submit was rejected for a reason that belongs to the form
-// as a whole rather than to one of its fields.
-//
-// [Ja] hasGlobalError は、送信が個々のフィールドではなくフォーム全体に属する理由で却下された
+// hasGlobalErrorは、送信が個々のフィールドではなくフォーム全体に属する理由で却下された
 // かどうかを返す。
 func (d NewPageData) hasGlobalError() bool {
 	return d.FormErrors != nil && len(d.FormErrors.Global) > 0
 }
 
-// restrictionTitleKey names the heading of the warning. An administrator is exempt from the
-// disabled form and the rejected submit alike, so the heading says the restriction is the
-// normal state rather than stating a bar the reader does not meet.
-//
-// [Ja] restrictionTitleKey は警告の見出しを名指しする。管理者はフォームの無効化と送信の却下
+// restrictionTitleKeyは警告の見出しを名指しする。管理者はフォームの無効化と送信の却下
 // のどちらからも除かれるため、見出しは読み手に当たらない制限を述べるのではなく、制限が通常の
 // 状態であることを述べる形にする。
 func (d NewPageData) restrictionTitleKey() string {
@@ -138,14 +97,8 @@ func (d NewPageData) restrictionTitleKey() string {
 	return "db_episodes_new_restriction_title"
 }
 
-// restrictionMessageKey names the warning that states the reason. The keys are written as
-// literals here so each one stays greppable from the page that renders it; which reason wins
-// is decided once in the domain and arrives resolved. An administrator gets the wording that
-// states the reason and what registering by hand anyway would mean, since the form stays
-// usable for them.
-//
-// [Ja] restrictionMessageKey は理由を述べる警告を名指しする。キーは直書きし、描画するページ
-// から grep で追える状態に保つ。どの理由が優先されるかはドメイン側で 1 度だけ決まり、解決済み
+// restrictionMessageKeyは理由を述べる警告を名指しする。キーは直書きし、描画するページ
+// からgrepで追える状態に保つ。どの理由が優先されるかはドメイン側で1度だけ決まり、解決済み
 // の値として届く。管理者にはフォームが使えるままであるため、理由と、それでも手動で登録した
 // 場合に何が起きるかを述べる文言を渡す。
 func (d NewPageData) restrictionMessageKey() string {
@@ -164,9 +117,7 @@ func (d NewPageData) restrictionMessageKey() string {
 	return "db_episodes_new_restricted_slots_exist"
 }
 
-// rowsErrors returns the messages the submitted lines collected, one per rejected line.
-//
-// [Ja] rowsErrors は送信された行が集めたメッセージを返す (却下された行につき 1 件)。
+// rowsErrorsは送信された行が集めたメッセージを返す (却下された行につき1件)。
 func (d NewPageData) rowsErrors() []string {
 	if d.FormErrors == nil {
 		return nil
@@ -175,12 +126,8 @@ func (d NewPageData) rowsErrors() []string {
 	return d.FormErrors.GetFieldErrors(rowsFieldName)
 }
 
-// newSummaryFields names the one field the error summary can list. The summary is rendered
-// even for a single field: it takes focus on load, which is what announces a failed submit on
-// a server-rendered page.
-//
-// [Ja] newSummaryFields はエラー要約が名指しできる唯一のフィールドを並べる。フィールドが
-// 1 つでも要約を描画するのは、要約が読み込み時にフォーカスを受け取り、サーバー描画のページで
+// newSummaryFieldsはエラー要約が名指しできる唯一のフィールドを並べる。フィールドが
+// 1つでも要約を描画するのは、要約が読み込み時にフォーカスを受け取り、サーバー描画のページで
 // 送信の失敗を通知する役割を担うため。
 func newSummaryFields(ctx context.Context) []components.FormErrorField {
 	return []components.FormErrorField{
@@ -283,7 +230,7 @@ func New(data NewPageData) templ.Component {
 				var templ_7745c5c3_Var3 string
 				templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, data.restrictionTitleKey()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 215, Col: 56}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 162, Col: 56}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 				if templ_7745c5c3_Err != nil {
@@ -296,7 +243,7 @@ func New(data NewPageData) templ.Component {
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, data.restrictionMessageKey()))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 217, Col: 58}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 164, Col: 58}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
@@ -314,7 +261,7 @@ func New(data NewPageData) templ.Component {
 			var templ_7745c5c3_Var5 templ.SafeURL
 			templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBWorkEpisodesPath(data.WorkID).SafeURL())
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 223, Col: 65}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 170, Col: 65}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 			if templ_7745c5c3_Err != nil {
@@ -327,7 +274,7 @@ func New(data NewPageData) templ.Component {
 			var templ_7745c5c3_Var6 string
 			templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.ResolveAttributeValue(data.CSRFToken)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 227, Col: 66}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 174, Col: 66}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var6)
 			if templ_7745c5c3_Err != nil {
@@ -350,7 +297,7 @@ func New(data NewPageData) templ.Component {
 			var templ_7745c5c3_Var7 string
 			templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_new_rows_label"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 237, Col: 55}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 184, Col: 55}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 			if templ_7745c5c3_Err != nil {
@@ -378,7 +325,7 @@ func New(data NewPageData) templ.Component {
 				var templ_7745c5c3_Var8 string
 				templ_7745c5c3_Var8, templ_7745c5c3_Err = templ.ResolveAttributeValue(components.FieldErrorIDs(data.FormErrors, rowsFieldName))
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 251, Col: 83}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 198, Col: 83}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var8)
 				if templ_7745c5c3_Err != nil {
@@ -402,7 +349,7 @@ func New(data NewPageData) templ.Component {
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(data.Rows)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 256, Col: 18}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 203, Col: 18}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
@@ -421,7 +368,7 @@ func New(data NewPageData) templ.Component {
 					var templ_7745c5c3_Var10 string
 					templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.ResolveAttributeValue(components.FieldErrorID(rowsFieldName, i))
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 259, Col: 57}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 206, Col: 57}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var10)
 					if templ_7745c5c3_Err != nil {
@@ -434,7 +381,7 @@ func New(data NewPageData) templ.Component {
 					var templ_7745c5c3_Var11 string
 					templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(errorMsg)
 					if templ_7745c5c3_Err != nil {
-						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 259, Col: 83}
+						return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 206, Col: 83}
 					}
 					_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 					if templ_7745c5c3_Err != nil {
@@ -467,7 +414,7 @@ func New(data NewPageData) templ.Component {
 			var templ_7745c5c3_Var12 string
 			templ_7745c5c3_Var12, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_new_submit"))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 273, Col: 51}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 220, Col: 51}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var12))
 			if templ_7745c5c3_Err != nil {
@@ -491,10 +438,7 @@ func New(data NewPageData) templ.Component {
 	})
 }
 
-// newBackToListLink renders the action shown beside the heading: a link back to the work's
-// episode list, which is also where a successful submit lands.
-//
-// [Ja] newBackToListLink は見出しの横に表示する操作を描画する。作品のエピソード一覧へ戻る
+// newBackToListLinkは見出しの横に表示する操作を描画する。作品のエピソード一覧へ戻る
 // リンクで、送信が成功したときの着地点でもある。
 func newBackToListLink(workID viewmodel.WorkID) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -524,7 +468,7 @@ func newBackToListLink(workID viewmodel.WorkID) templ.Component {
 		var templ_7745c5c3_Var14 templ.SafeURL
 		templ_7745c5c3_Var14, templ_7745c5c3_Err = templ.JoinURLErrs(templates.DBWorkEpisodesPath(workID).SafeURL())
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 289, Col: 55}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 233, Col: 55}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var14))
 		if templ_7745c5c3_Err != nil {
@@ -541,7 +485,7 @@ func newBackToListLink(workID viewmodel.WorkID) templ.Component {
 		var templ_7745c5c3_Var15 string
 		templ_7745c5c3_Var15, templ_7745c5c3_Err = templ.JoinStringErrs(templates.T(ctx, "db_episodes_new_back_to_list_link"))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 295, Col: 57}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/pages/db_episodes/new.templ`, Line: 239, Col: 57}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var15))
 		if templ_7745c5c3_Err != nil {

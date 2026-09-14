@@ -14,14 +14,9 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// errorTestContext returns a context carrying the locale the i18n middleware would have
-// resolved from acceptLanguage. The middleware itself lives in internal/middleware, which
-// depends on this package through internal/httperror, so the resolution is reproduced here
-// rather than imported.
-//
-// [Ja] errorTestContext は i18n ミドルウェアが acceptLanguage から解決したはずのロケールを
-// 持つコンテキストを返す。ミドルウェア自体は internal/middleware にあり、同パッケージは
-// internal/httperror 経由で本パッケージに依存するため、import せずに解決処理を再現している。
+// errorTestContextはi18nミドルウェアがacceptLanguageから解決したはずのロケールを
+// 持つコンテキストを返す。ミドルウェア自体はinternal/middlewareにあり、同パッケージは
+// internal/httperror経由で本パッケージに依存するため、importせずに解決処理を再現している。
 func errorTestContext(acceptLanguage string) context.Context {
 	req := httptest.NewRequest("GET", "/missing", nil)
 	req.Header.Set("Accept-Language", acceptLanguage)
@@ -36,12 +31,8 @@ func errorTestContent() templ.Component {
 	})
 }
 
-// TestError_Rendering verifies the document shell: the title carries the site suffix, the
-// content is placed in the centered main region, and the styles the body relies on are
-// inlined.
-//
-// [Ja] TestError_Rendering は文書の枠を検証する。タイトルにサイトのサフィックスが付くこと、
-// 本文が中央寄せの main 領域へ入ること、本文が頼るスタイルがインラインで出ることを確認する。
+// TestError_Renderingは文書の枠を検証する。タイトルにサイトのサフィックスが付くこと、
+// 本文が中央寄せのmain領域へ入ること、本文が頼るスタイルがインラインで出ることを確認する。
 func TestError_Rendering(t *testing.T) {
 	t.Parallel()
 
@@ -60,15 +51,11 @@ func TestError_Rendering(t *testing.T) {
 		"<title>ページが見つかりません" + viewmodel.TitleSuffix + "</title>",
 		`<main class="error-page">`,
 		"Content",
-		// The styles the body's classes depend on ship with the document.
-		//
-		// [Ja] 本文のクラスが依存するスタイルは文書と一緒に配信される。
+		// 本文のクラスが依存するスタイルは文書と一緒に配信される。
 		"<style>",
 		".error-card {",
 		".error-link {",
-		// Both themes are covered, since the theme script only toggles the class.
-		//
-		// [Ja] テーマスクリプトはクラスを切り替えるだけなので、両テーマの定義を持つ。
+		// テーマスクリプトはクラスを切り替えるだけなので、両テーマの定義を持つ。
 		".dark {",
 	}
 
@@ -79,10 +66,7 @@ func TestError_Rendering(t *testing.T) {
 	}
 }
 
-// TestError_IsSelfContained verifies that the page requests nothing that is built or deployed
-// separately: an error page has to render while the rest of the application may be failing.
-//
-// [Ja] TestError_IsSelfContained は、別途ビルド・デプロイされるものを一切リクエストしないこと
+// TestError_IsSelfContainedは、別途ビルド・デプロイされるものを一切リクエストしないこと
 // を検証する。エラーページはアプリケーションの他の部分が失敗しているあいだも描画できる必要が
 // あるため。
 func TestError_IsSelfContained(t *testing.T) {
@@ -111,10 +95,7 @@ func TestError_IsSelfContained(t *testing.T) {
 	}
 }
 
-// TestError_ThemeScript verifies that the shared theme script runs here too, so the error page
-// follows the reader's color scheme like every other page.
-//
-// [Ja] TestError_ThemeScript は共有のテーマスクリプトがここでも実行されることを検証する。
+// TestError_ThemeScriptは共有のテーマスクリプトがここでも実行されることを検証する。
 // エラーページも他のページと同じく閲覧者の配色に追随するため。
 func TestError_ThemeScript(t *testing.T) {
 	t.Parallel()
@@ -131,11 +112,8 @@ func TestError_ThemeScript(t *testing.T) {
 	}
 }
 
-// TestError_DarkThemeLinkContrast verifies that the dark-theme link colors stay at the
-// WCAG AA contrast pair selected for normal-sized text.
-//
-// [Ja] TestError_DarkThemeLinkContrast は、ダークテーマのリンク配色が通常サイズの文字向けに
-// 選んだ WCAG AA 適合の組み合わせを維持することを検証する。
+// TestError_DarkThemeLinkContrastは、ダークテーマのリンク配色が通常サイズの文字向けに
+// 選んだWCAG AA適合の組み合わせを維持することを検証する。
 func TestError_DarkThemeLinkContrast(t *testing.T) {
 	t.Parallel()
 
@@ -162,16 +140,13 @@ func TestError_DarkThemeLinkContrast(t *testing.T) {
 		"--error-accent-fg: #ffffff;",
 	} {
 		if !strings.Contains(darkStyles, expected) {
-			t.Errorf("AA 適合のリンク配色が含まれていません: %q", expected)
+			t.Errorf("AA適合のリンク配色が含まれていません: %q", expected)
 		}
 	}
 }
 
-// TestError_ColorScheme verifies that the document declares both supported themes early for
-// browser chrome and again in CSS for native controls.
-//
-// [Ja] TestError_ColorScheme は、ブラウザ UI とネイティブ部品のために、文書が対応する両テーマを
-// head の早い位置と CSS の双方で宣言することを検証する。
+// TestError_ColorSchemeは、ブラウザUIとネイティブ部品のために、文書が対応する両テーマを
+// headの早い位置とCSSの双方で宣言することを検証する。
 func TestError_ColorScheme(t *testing.T) {
 	t.Parallel()
 
@@ -193,10 +168,7 @@ func TestError_ColorScheme(t *testing.T) {
 	}
 }
 
-// TestError_FullHeightFollowsVisibleViewport verifies that the centered region is sized by
-// the visible viewport height, with the static unit kept ahead of it as the fallback.
-//
-// [Ja] TestError_FullHeightFollowsVisibleViewport は、中央寄せの領域の高さが可視ビューポート
+// TestError_FullHeightFollowsVisibleViewportは、中央寄せの領域の高さが可視ビューポート
 // に追随し、静的な単位がその手前にフォールバックとして残ることを検証する。
 func TestError_FullHeightFollowsVisibleViewport(t *testing.T) {
 	t.Parallel()
@@ -213,19 +185,17 @@ func TestError_FullHeightFollowsVisibleViewport(t *testing.T) {
 	dynamic := strings.Index(html, "min-height: 100dvh;")
 
 	if fallback == -1 {
-		t.Error("フォールバックの min-height: 100vh が含まれていません")
+		t.Error("フォールバックのmin-height: 100vhが含まれていません")
 	}
 	if dynamic == -1 {
-		t.Error("min-height: 100dvh が含まれていません")
+		t.Error("min-height: 100dvhが含まれていません")
 	}
 	if fallback != -1 && dynamic != -1 && fallback > dynamic {
-		t.Error("フォールバックの 100vh は 100dvh より前に置く必要があります")
+		t.Error("フォールバックの100vhは100dvhより前に置く必要があります")
 	}
 }
 
-// TestError_I18n verifies that the document language follows the resolved locale.
-//
-// [Ja] TestError_I18n は文書の言語が解決済みのロケールに追随することを検証する。
+// TestError_I18nは文書の言語が解決済みのロケールに追随することを検証する。
 func TestError_I18n(t *testing.T) {
 	t.Parallel()
 

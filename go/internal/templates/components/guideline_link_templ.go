@@ -11,14 +11,9 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// GuidelineLink renders the link to an editing guideline shown under a page heading, taking
-// the text to display and the URL of the help page it points at. The help pages live outside
-// the app, so the link opens in a new tab with tabnabbing protection and announces that in
-// its accessible name; the icon only repeats it and stays decorative.
-//
-// [Ja] GuidelineLink はページ見出しの下に表示する編集ガイドラインへのリンクを描画する。表示する
-// テキストと、リンク先ヘルプページの URL を受け取る。ヘルプページはアプリの外にあるため、リンクは
-// tabnabbing 対策付きで新しいタブに開き、そのことをアクセシブルネームで伝える。アイコンはそれを
+// GuidelineLinkはページ見出しの下に表示する編集ガイドラインへのリンクを描画する。表示する
+// テキストと、リンク先ヘルプページのURLを受け取る。ヘルプページはアプリの外にあるため、リンクは
+// tabnabbing対策付きで新しいタブに開き、そのことをアクセシブルネームで伝える。アイコンはそれを
 // 繰り返すだけなので装飾のままとする。
 func GuidelineLink(label string, url string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -48,7 +43,7 @@ func GuidelineLink(label string, url string) templ.Component {
 		var templ_7745c5c3_Var2 templ.SafeURL
 		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinURLErrs(templ.URL(url))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/guideline_link.templ`, Line: 20, Col: 23}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/guideline_link.templ`, Line: 15, Col: 23}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
 		if templ_7745c5c3_Err != nil {
@@ -61,7 +56,7 @@ func GuidelineLink(label string, url string) templ.Component {
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.ResolveAttributeValue(templates.T(ctx, "guideline_link_aria_label", map[string]any{"Label": label}))
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/guideline_link.templ`, Line: 23, Col: 92}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/guideline_link.templ`, Line: 18, Col: 92}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ_7745c5c3_Var3)
 		if templ_7745c5c3_Err != nil {
@@ -74,7 +69,7 @@ func GuidelineLink(label string, url string) templ.Component {
 		var templ_7745c5c3_Var4 string
 		templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(label)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/guideline_link.templ`, Line: 26, Col: 9}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `internal/templates/components/guideline_link.templ`, Line: 21, Col: 9}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 		if templ_7745c5c3_Err != nil {
