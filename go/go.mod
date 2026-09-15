@@ -8,8 +8,8 @@ require (
 	github.com/lib/pq v1.12.3
 	github.com/nicksnyder/go-i18n/v2 v2.6.1
 	github.com/sqlc-dev/pqtype v0.3.0
-	golang.org/x/crypto v0.55.0
-	golang.org/x/text v0.41.0
+	golang.org/x/crypto v0.57.0
+	golang.org/x/text v0.42.0
 )
 
 require (
@@ -30,7 +30,7 @@ require (
 	github.com/riverqueue/river/rivertype v0.46.0
 	github.com/schollz/progressbar/v3 v3.19.1
 	github.com/stripe/stripe-go/v84 v84.4.1
-	golang.org/x/tools v0.49.0
+	golang.org/x/tools v0.50.0
 )
 
 require (
@@ -81,12 +81,12 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/yuin/goldmark v1.8.6 // indirect
 	go.uber.org/atomic v1.11.0 // indirect
-	golang.org/x/mod v0.40.0 // indirect
-	golang.org/x/net v0.58.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
-	golang.org/x/telemetry v0.0.0-20260811182544-a038080d80e5 // indirect
-	golang.org/x/term v0.45.0 // indirect
+	golang.org/x/mod v0.41.0 // indirect
+	golang.org/x/net v0.59.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
+	golang.org/x/telemetry v0.0.0-20260908163034-4bcc4b2ee518 // indirect
+	golang.org/x/term v0.46.0 // indirect
 )
 
 tool github.com/korylus/tools/cmd/koryluslint
