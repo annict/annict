@@ -60,6 +60,7 @@ PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
   net-tools                 # Claude Codeで使用netstat (ネットワークデバッグ用)
   procps                    # playwright-cli kill-all用のpsを提供
   psmisc                    # Claude Codeで使用fuser (プロセス特定用)
+  python3                   # Claude Codeのアドホックなスクリプト実行で使用
   ripgrep                   # Claude Codeで使用
   sudo
   tree                      # Claude Codeで使用
