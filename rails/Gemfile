@@ -98,15 +98,9 @@ end
 group :development do
   gem "active_record_query_trace"
   gem "bullet"
-  # Temporary comment out until graphql-docs will replace sass with sassc.
-  # The sass gem causes LoadError.
-  # https://github.com/gjtorikian/graphql-docs/issues/86
-  # gem "graphql-docs"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
-  gem "sorbet"
   gem "squasher"
-  gem "tapioca", require: false
   gem "traceroute"
 end
 
