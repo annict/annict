@@ -6,12 +6,10 @@ end
 
 [
   "bin/rails zeitwerk:check",
-  "bin/rails sorbet:update",
   "make -C /workspace fmt",
   "yarn eslint . --fix",
   "bin/erb_lint --lint-all",
   "bin/standardrb",
-  "bin/srb tc",
   "bin/rspec"
 ].each do |command|
   puts "=== `#{command}` を実行中..."

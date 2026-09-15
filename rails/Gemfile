@@ -100,9 +100,7 @@ group :development do
   gem "bullet"
   gem "i18n-tasks"
   gem "listen" # Using with `rails s` since Rails 5
-  gem "sorbet"
   gem "squasher"
-  gem "tapioca", require: false
   gem "traceroute"
 end
 
