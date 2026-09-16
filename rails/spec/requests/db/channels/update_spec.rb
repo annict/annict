@@ -3,7 +3,7 @@
 
 RSpec.describe "PATCH /db/channels/:id", type: :request do
   it "ログインしていないとき、ログインページにリダイレクトすること" do
-    channel = Channel.first
+    channel = create(:channel)
     old_channel = channel.attributes
     channel_params = {
       name: "ちゃんねる"
@@ -19,7 +19,7 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
   it "編集者権限のユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
-    channel = Channel.first
+    channel = create(:channel)
     old_channel = channel.attributes
     channel_params = {
       name: "ちゃんねる"
@@ -37,7 +37,7 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
   it "一般ユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
-    channel = Channel.first
+    channel = create(:channel)
     old_channel = channel.attributes
     channel_params = {
       name: "ちゃんねる"
@@ -55,7 +55,7 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
   it "管理者がログインしているとき、チャンネルを更新できること" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
+    channel = create(:channel)
     old_channel = channel.attributes
     channel_params = {
       name: "ちゃんねる"
@@ -75,8 +75,8 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
   it "管理者がログインしているとき、全てのパラメータを更新できること" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
-    channel_group = ChannelGroup.second
+    channel = create(:channel)
+    channel_group = create(:channel_group)
     channel_params = {
       name: "新しいチャンネル名",
       channel_group_id: channel_group.id,
@@ -99,7 +99,7 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
   it "管理者がログインしているとき、必須パラメータが不正な場合、更新に失敗すること" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
+    channel = create(:channel)
     old_channel = channel.attributes
     channel_params = {
       name: "",
@@ -130,7 +130,7 @@ RSpec.describe "PATCH /db/channels/:id", type: :request do
 
   it "管理者がログインしているとき、削除されたチャンネルは更新できないこと" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
+    channel = create(:channel)
     channel.update!(deleted_at: Time.current)
     channel_params = {
       name: "ちゃんねる"

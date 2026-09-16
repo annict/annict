@@ -58,7 +58,7 @@ RSpec.describe "GET /works/:work_id", type: :request do
 
   it "VODが追加されているとき、VODサービスへのリンクが表示されること" do
     work = create(:work)
-    channel = Channel.with_vod.first
+    channel = create(:channel, :with_vod)
     program = create(:program, work: work, channel: channel, vod_title_code: "xxx")
     vod_title_url = "https://example.com/#{program.vod_title_code}"
     allow_any_instance_of(Program).to receive(:vod_title_url).and_return(vod_title_url)

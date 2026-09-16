@@ -3,7 +3,7 @@
 
 RSpec.describe "POST /api/internal/channels/:channel_id/reception", type: :request do
   it "未ログイン時は401ステータスを返すこと" do
-    channel = Channel.first
+    channel = create(:channel)
     post "/api/internal/channels/#{channel.id}/reception"
 
     expect(response.status).to eq(401)
@@ -11,7 +11,7 @@ RSpec.describe "POST /api/internal/channels/:channel_id/reception", type: :reque
 
   it "ログイン時はチャンネルの受信を開始し201ステータスを返すこと" do
     user = create(:user)
-    channel = Channel.first
+    channel = create(:channel)
 
     expect(user.receptions.exists?(channel:)).to be(false)
 
@@ -24,7 +24,7 @@ RSpec.describe "POST /api/internal/channels/:channel_id/reception", type: :reque
 
   it "既に受信開始済みの場合でも201ステータスを返すこと" do
     user = create(:user)
-    channel = Channel.first
+    channel = create(:channel)
     user.receive(channel)
 
     expect(user.receptions.exists?(channel:)).to be(true)

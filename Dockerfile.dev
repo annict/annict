@@ -237,8 +237,7 @@ ENV PATH="${GOPATH}/bin:${PATH}"
 # イメージの再ビルドを再現可能にするため、ツールのバージョンを固定する
 # (`@latest` は使わない)。curlで取得する上記のバイナリと異なりSHA256のARGは
 # 不要 (ダウンロードの改ざん検証はGo module checksum DBが担保するため)。
-RUN go install github.com/sqlc-dev/sqlc/cmd/sqlc@v1.30.0 && \
-    go install github.com/air-verse/air@v1.65.3
+RUN go install github.com/air-verse/air@v1.65.3
 
 # --- Rubyツール ---
 RUN gem install bundler -v 2.3.12

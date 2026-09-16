@@ -57,6 +57,11 @@ var tasks = newTasks(map[string]taskDef{
 		guard: guardSeed,
 		body:  seed,
 	},
+	"seed-master": {
+		desc:  "マスターデータをCSVから投入する (dev / testでのみ実行できる)",
+		guard: guardSeed,
+		body:  seedMaster,
+	},
 	"sync-animes": {
 		desc: "works/episodes → animesのリコンサイルを1回実行する",
 		body: syncAnimes,

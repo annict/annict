@@ -63,7 +63,7 @@ RSpec.describe "GET /works/:work_id/episodes/:episode_id", type: :request do
   it "VODプログラムが存在するとき、プログラム情報が取得されること" do
     work = FactoryBot.create(:work)
     episode = FactoryBot.create(:episode, work:)
-    channel = Channel.with_vod.first
+    channel = FactoryBot.create(:channel, :with_vod)
     FactoryBot.create(:program, work:, channel:, vod_title_code: "test-vod")
 
     get "/works/#{work.id}/episodes/#{episode.id}"
