@@ -50,8 +50,6 @@ en:
         rows: Casts
       db/character_rows_form:
         rows: Characters
-      db/episode_rows_form:
-        rows: Episodes
       db/organization_rows_form:
         rows: Organizations
       db/person_rows_form:

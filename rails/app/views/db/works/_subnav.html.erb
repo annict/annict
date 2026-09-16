@@ -1,16 +1,16 @@
 <ul class="justify-content-center nav nav-pills">
   <%= active_link_to(
     t("noun.work"),
-    db_edit_work_path(work),
+    "/db/works/#{work.id}/edit",
     class: "nav-link",
     class_active: "active",
-    active: current_page?(db_edit_work_path(work))
+    active: current_page?("/db/works/#{work.id}/edit")
   ) %>
 
   <% unless work.no_episodes? %>
     <%= active_link_to(
       t("noun.episodes"),
-      db_episode_list_path(work),
+      "/db/works/#{work.id}/episodes",
       class: "nav-link",
       class_active: "active",
       active: params[:controller]  == "db/episodes"

@@ -7,9 +7,8 @@ RSpec.describe "GET /v1/me/programs", type: :request do
     user = access_token.owner
     work = create(:work, :with_current_season, watchers_count: 1)
     episode = create(:episode, work:)
-    channel = Channel.first
     status = create(:status, kind: "watching", work:, user:)
-    slot = create(:slot, work:, episode:, channel:)
+    slot = create(:slot, work:, episode:)
     create(:library_entry, user:, work:, status:, program: slot.program)
 
     data = {
@@ -25,9 +24,8 @@ RSpec.describe "GET /v1/me/programs", type: :request do
     user = access_token.owner
     work = create(:work, :with_current_season, watchers_count: 1)
     episode = create(:episode, work:)
-    channel = Channel.first
     status = create(:status, kind: "watching", work:, user:)
-    slot = create(:slot, work:, episode:, channel:)
+    slot = create(:slot, work:, episode:)
     create(:library_entry, user:, work:, status:, program: slot.program)
 
     data = {
@@ -40,8 +38,8 @@ RSpec.describe "GET /v1/me/programs", type: :request do
       "started_at" => "2017-01-28T15:00:00.000Z",
       "is_rebroadcast" => false,
       "channel" => {
-        "id" => channel.id,
-        "name" => channel.name
+        "id" => slot.channel.id,
+        "name" => slot.channel.name
       },
       "work" => {
         "id" => work.id,
@@ -99,9 +97,8 @@ RSpec.describe "GET /v1/me/programs", type: :request do
     user = access_token.owner
     work = create(:work, :with_current_season, watchers_count: 1)
     episode = create(:episode, work:)
-    channel = Channel.first
     status = create(:status, kind: "watching", work:, user:)
-    slot = create(:slot, work:, episode:, channel:)
+    slot = create(:slot, work:, episode:)
     create(:library_entry, user:, work:, status:, program: slot.program)
 
     data = {
@@ -130,9 +127,8 @@ RSpec.describe "GET /v1/me/programs", type: :request do
     user = access_token.owner
     work = create(:work, :with_current_season, watchers_count: 1)
     episode = create(:episode, work:)
-    channel = Channel.first
     status = create(:status, kind: "watched", work:, user:)
-    slot = create(:slot, work:, episode:, channel:)
+    slot = create(:slot, work:, episode:)
     create(:library_entry, user:, work:, status:, program: slot.program)
 
     data = {

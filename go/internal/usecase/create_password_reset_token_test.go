@@ -11,19 +11,19 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// TestCreatePasswordResetTokenUsecase_Execute はトークン生成が正常に動作することをテストします
+// TestCreatePasswordResetTokenUsecase_Executeはトークン生成が正常に動作することをテストします
 func TestCreatePasswordResetTokenUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 
-	// テストユーザーを作成（ユニークなユーザー名を使用）
+	// テストユーザーを作成 (ユニークなユーザー名を使用)
 	userID := testutil.NewUserBuilder(t, tx).
 		WithUsername("reset_token_test").
 		WithEmail("reset_token@example.com").
 		Build()
 
-	// トランザクションをコミット（UseCaseが新しいトランザクションを開始するため）
+	// トランザクションをコミット (UseCaseが新しいトランザクションを開始するため)
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)
 	}
@@ -36,7 +36,7 @@ func TestCreatePasswordResetTokenUsecase_Execute(t *testing.T) {
 
 	queries := query.New(db)
 
-	// UseCase を作成（dispatcher は nil で OK - ジョブエンキューはテストしない）
+	// UseCaseを作成 (dispatcherはnilでOK - ジョブエンキューはテストしない)
 	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
@@ -54,7 +54,7 @@ func TestCreatePasswordResetTokenUsecase_Execute(t *testing.T) {
 		t.Error("トークンが空です")
 	}
 	if result.UserID != userID {
-		t.Errorf("ユーザーIDが一致しません: got %d, want %d", result.UserID, userID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", result.UserID, userID)
 	}
 
 	// トークンがデータベースに保存されているか確認
@@ -68,19 +68,19 @@ func TestCreatePasswordResetTokenUsecase_Execute(t *testing.T) {
 	}
 }
 
-// TestCreatePasswordResetTokenUsecase_Execute_InvalidatesOldTokens は古いトークンが無効化されることをテストします
+// TestCreatePasswordResetTokenUsecase_Execute_InvalidatesOldTokensは古いトークンが無効化されることをテストします
 func TestCreatePasswordResetTokenUsecase_Execute_InvalidatesOldTokens(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 
-	// テストユーザーを作成（ユニークなユーザー名を使用）
+	// テストユーザーを作成 (ユニークなユーザー名を使用)
 	userID := testutil.NewUserBuilder(t, tx).
 		WithUsername("reset_token_invalidate_test").
 		WithEmail("reset_token_invalidate@example.com").
 		Build()
 
-	// トランザクションをコミット（UseCaseが新しいトランザクションを開始するため）
+	// トランザクションをコミット (UseCaseが新しいトランザクションを開始するため)
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)
 	}
@@ -93,7 +93,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_InvalidatesOldTokens(t *testing
 
 	queries := query.New(db)
 
-	// UseCase を作成
+	// UseCaseを作成
 	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
@@ -108,7 +108,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_InvalidatesOldTokens(t *testing
 		t.Fatalf("最初のトークン生成に失敗: %v", err)
 	}
 
-	// 2番目のトークンを生成（古いトークンが無効化されるはず）
+	// 2番目のトークンを生成 (古いトークンが無効化されるはず)
 	result2, err := uc.Execute(ctx, input)
 	if err != nil {
 		t.Fatalf("2番目のトークン生成に失敗: %v", err)
@@ -121,50 +121,50 @@ func TestCreatePasswordResetTokenUsecase_Execute_InvalidatesOldTokens(t *testing
 	}
 
 	if len(tokens) != 1 {
-		t.Errorf("トークン数が正しくありません: got %d, want 1", len(tokens))
+		t.Errorf("トークン数 = %d、期待値 = 1", len(tokens))
 	}
 
-	// 最新のトークンが保存されていることを確認（結果のUserIDが一致）
+	// 最新のトークンが保存されていることを確認 (結果のUserIDが一致)
 	if result2.UserID != userID {
 		t.Errorf("最新のトークンのユーザーIDが一致しません")
 	}
 }
 
-// TestCreatePasswordResetTokenUsecase_Execute_WithNonExistentUser は存在しないユーザーのメールアドレスでのトークン生成をテストします
+// TestCreatePasswordResetTokenUsecase_Execute_WithNonExistentUserは存在しないユーザーのメールアドレスでのトークン生成をテストします
 func TestCreatePasswordResetTokenUsecase_Execute_WithNonExistentUser(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 
-	// トランザクションをコミット（UseCaseが新しいトランザクションを開始するため）
+	// トランザクションをコミット (UseCaseが新しいトランザクションを開始するため)
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)
 	}
 
 	queries := query.New(db)
 
-	// UseCase を作成
+	// UseCaseを作成
 	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
-	// 存在しないメールアドレスでトークン生成を試みる（セキュリティ対策でエラーにならない）
+	// 存在しないメールアドレスでトークン生成を試みる (セキュリティ対策でエラーにならない)
 	ctx := context.Background()
 	result, err := uc.Execute(ctx, CreatePasswordResetTokenInput{
 		Email: "nonexistent@example.com",
 	})
 
-	// エラーは返されない（ユーザーの存在を明かさない）
+	// エラーは返されない (ユーザーの存在を明かさない)
 	if err != nil {
 		t.Errorf("存在しないユーザーでエラーが返されました: %v", err)
 	}
 
-	// ユーザーが存在しない場合は nil を返す
+	// ユーザーが存在しない場合はnilを返す
 	if result != nil {
-		t.Errorf("存在しないユーザーなのに result が返されました: %+v", result)
+		t.Errorf("存在しないユーザーなのにresultが返されました: %+v", result)
 	}
 }
 
-// TestCreatePasswordResetTokenUsecase_Execute_ValidationError はバリデーションエラーをテストします
+// TestCreatePasswordResetTokenUsecase_Execute_ValidationErrorはバリデーションエラーをテストします
 func TestCreatePasswordResetTokenUsecase_Execute_ValidationError(t *testing.T) {
 	t.Parallel()
 
@@ -177,7 +177,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_ValidationError(t *testing.T) {
 
 	queries := query.New(db)
 
-	// UseCase を作成
+	// UseCaseを作成
 	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
@@ -193,19 +193,19 @@ func TestCreatePasswordResetTokenUsecase_Execute_ValidationError(t *testing.T) {
 	}
 }
 
-// TestCreatePasswordResetTokenUsecase_Execute_TransactionRollback はトランザクションロールバックのテストです
+// TestCreatePasswordResetTokenUsecase_Execute_TransactionRollbackはトランザクションロールバックのテストです
 func TestCreatePasswordResetTokenUsecase_Execute_TransactionRollback(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 
-	// テストユーザーを作成（ユニークなユーザー名を使用）
+	// テストユーザーを作成 (ユニークなユーザー名を使用)
 	userID := testutil.NewUserBuilder(t, tx).
 		WithUsername("rollback_test_user").
 		WithEmail("rollback_test@example.com").
 		Build()
 
-	// トランザクションをコミット（UseCaseが新しいトランザクションを開始するため）
+	// トランザクションをコミット (UseCaseが新しいトランザクションを開始するため)
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)
 	}
@@ -218,7 +218,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_TransactionRollback(t *testing.
 
 	queries := query.New(db)
 
-	// UseCase を作成
+	// UseCaseを作成
 	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 
@@ -239,7 +239,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_TransactionRollback(t *testing.
 		t.Fatalf("トークンの取得に失敗: %v", err)
 	}
 	if len(tokens) != 1 {
-		t.Errorf("トークン数が正しくありません: got %d, want 1", len(tokens))
+		t.Errorf("トークン数 = %d、期待値 = 1", len(tokens))
 	}
 
 	// 最初のトークンが正しく保存されていることを確認
@@ -248,29 +248,29 @@ func TestCreatePasswordResetTokenUsecase_Execute_TransactionRollback(t *testing.
 	}
 }
 
-// TestCreatePasswordResetTokenUsecase_Execute_WithNullUserData はユーザーデータにNULL値がある場合のテストです
+// TestCreatePasswordResetTokenUsecase_Execute_WithNullUserDataはユーザーデータにNULL値がある場合のテストです
 func TestCreatePasswordResetTokenUsecase_Execute_WithNullUserData(t *testing.T) {
 	t.Skip("現在の実装ではユーザー情報を直接取得しないため、このテストはスキップします")
 }
 
-// TestCreatePasswordResetTokenUsecase_Execute_WithInvalidExpiresAt は無効な有効期限でのトークン生成をテストします
+// TestCreatePasswordResetTokenUsecase_Execute_WithInvalidExpiresAtは無効な有効期限でのトークン生成をテストします
 func TestCreatePasswordResetTokenUsecase_Execute_WithInvalidExpiresAt(t *testing.T) {
 	t.Skip("現在の実装では有効期限は自動的に設定されるため、このテストはスキップします")
 }
 
-// TestCreatePasswordResetTokenUsecase_Execute_ConcurrentRequests は並行リクエストのテストです
+// TestCreatePasswordResetTokenUsecase_Execute_ConcurrentRequestsは並行リクエストのテストです
 func TestCreatePasswordResetTokenUsecase_Execute_ConcurrentRequests(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 
-	// テストユーザーを作成（ユニークなユーザー名を使用）
+	// テストユーザーを作成 (ユニークなユーザー名を使用)
 	userID := testutil.NewUserBuilder(t, tx).
 		WithUsername("concurrent_test").
 		WithEmail("concurrent@example.com").
 		Build()
 
-	// トランザクションをコミット（UseCaseが新しいトランザクションを開始するため）
+	// トランザクションをコミット (UseCaseが新しいトランザクションを開始するため)
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)
 	}
@@ -283,7 +283,7 @@ func TestCreatePasswordResetTokenUsecase_Execute_ConcurrentRequests(t *testing.T
 
 	queries := query.New(db)
 
-	// UseCase を作成
+	// UseCaseを作成
 	v := validator.NewPasswordResetCreateValidator()
 	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 

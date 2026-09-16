@@ -8,19 +8,19 @@ import (
 	"github.com/annict/annict/go/internal/session"
 )
 
-// NewTestFlashManager はテスト用の FlashManager を生成する。
-// Cookie ドメイン無し・非 Secure で固定する。
+// NewTestFlashManagerはテスト用のFlashManagerを生成する。
+// Cookieドメイン無し・非Secureで固定する。
 func NewTestFlashManager() *session.FlashManager {
 	return session.NewFlashManager("", false)
 }
 
-// ContextWithFlash は Cookie 経由でフラッシュメッセージを context に積んだ context を返す。
-// production と同じ FlashManager.Middleware を経由するため、
-// テストでも本番に近い経路で flash を扱える。
+// ContextWithFlashはCookie経由でフラッシュメッセージをcontextに積んだcontextを返す。
+// productionと同じFlashManager.Middlewareを経由するため、
+// テストでも本番に近い経路でflashを扱える。
 func ContextWithFlash(ctx context.Context, flashType, message string) context.Context {
 	fm := NewTestFlashManager()
 
-	// flash を Cookie に書き込む
+	// flashをCookieに書き込む
 	preW := httptest.NewRecorder()
 	switch flashType {
 	case session.FlashSuccess:
@@ -33,7 +33,7 @@ func ContextWithFlash(ctx context.Context, flashType, message string) context.Co
 		fm.SetInfo(preW, message)
 	}
 
-	// Cookie を載せたリクエストを Middleware に通して context に flash を積む
+	// Cookieを載せたリクエストをMiddlewareに通してcontextにflashを積む
 	req := httptest.NewRequest("GET", "/", nil).WithContext(ctx)
 	for _, c := range preW.Result().Cookies() {
 		req.AddCookie(c)

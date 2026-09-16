@@ -14,47 +14,398 @@ import (
 	"github.com/sqlc-dev/pqtype"
 )
 
-type EpisodeStatus string
+type AnimeAccountService string
 
 const (
-	EpisodeStatusPublished EpisodeStatus = "published"
-	EpisodeStatusArchived  EpisodeStatus = "archived"
-	EpisodeStatusDeleted   EpisodeStatus = "deleted"
+	AnimeAccountServiceBluesky   AnimeAccountService = "bluesky"
+	AnimeAccountServiceInstagram AnimeAccountService = "instagram"
+	AnimeAccountServiceLine      AnimeAccountService = "line"
+	AnimeAccountServiceMastodon  AnimeAccountService = "mastodon"
+	AnimeAccountServiceMixi2     AnimeAccountService = "mixi2"
+	AnimeAccountServiceThreads   AnimeAccountService = "threads"
+	AnimeAccountServiceTiktok    AnimeAccountService = "tiktok"
+	AnimeAccountServiceX         AnimeAccountService = "x"
+	AnimeAccountServiceYoutube   AnimeAccountService = "youtube"
 )
 
-func (e *EpisodeStatus) Scan(src interface{}) error {
+func (e *AnimeAccountService) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = EpisodeStatus(s)
+		*e = AnimeAccountService(s)
 	case string:
-		*e = EpisodeStatus(s)
+		*e = AnimeAccountService(s)
 	default:
-		return fmt.Errorf("unsupported scan type for EpisodeStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for AnimeAccountService: %T", src)
 	}
 	return nil
 }
 
-type NullEpisodeStatus struct {
-	EpisodeStatus EpisodeStatus
-	Valid         bool // Valid is true if EpisodeStatus is not NULL
+type NullAnimeAccountService struct {
+	AnimeAccountService AnimeAccountService
+	Valid               bool // Valid is true if AnimeAccountService is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullEpisodeStatus) Scan(value interface{}) error {
+func (ns *NullAnimeAccountService) Scan(value interface{}) error {
 	if value == nil {
-		ns.EpisodeStatus, ns.Valid = "", false
+		ns.AnimeAccountService, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.EpisodeStatus.Scan(value)
+	return ns.AnimeAccountService.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullEpisodeStatus) Value() (driver.Value, error) {
+func (ns NullAnimeAccountService) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.EpisodeStatus), nil
+	return string(ns.AnimeAccountService), nil
+}
+
+type AnimeClassificationKind string
+
+const (
+	AnimeClassificationKindWork    AnimeClassificationKind = "work"
+	AnimeClassificationKindEpisode AnimeClassificationKind = "episode"
+)
+
+func (e *AnimeClassificationKind) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AnimeClassificationKind(s)
+	case string:
+		*e = AnimeClassificationKind(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AnimeClassificationKind: %T", src)
+	}
+	return nil
+}
+
+type NullAnimeClassificationKind struct {
+	AnimeClassificationKind AnimeClassificationKind
+	Valid                   bool // Valid is true if AnimeClassificationKind is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAnimeClassificationKind) Scan(value interface{}) error {
+	if value == nil {
+		ns.AnimeClassificationKind, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AnimeClassificationKind.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAnimeClassificationKind) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AnimeClassificationKind), nil
+}
+
+type AnimeEventKind string
+
+const (
+	AnimeEventKindBroadcast        AnimeEventKind = "broadcast"
+	AnimeEventKindRevivalScreening AnimeEventKind = "revival_screening"
+	AnimeEventKindOther            AnimeEventKind = "other"
+)
+
+func (e *AnimeEventKind) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AnimeEventKind(s)
+	case string:
+		*e = AnimeEventKind(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AnimeEventKind: %T", src)
+	}
+	return nil
+}
+
+type NullAnimeEventKind struct {
+	AnimeEventKind AnimeEventKind
+	Valid          bool // Valid is true if AnimeEventKind is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAnimeEventKind) Scan(value interface{}) error {
+	if value == nil {
+		ns.AnimeEventKind, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AnimeEventKind.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAnimeEventKind) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AnimeEventKind), nil
+}
+
+type AnimeExternalService string
+
+const (
+	AnimeExternalServiceSyobocal AnimeExternalService = "syobocal"
+	AnimeExternalServiceMal      AnimeExternalService = "mal"
+)
+
+func (e *AnimeExternalService) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AnimeExternalService(s)
+	case string:
+		*e = AnimeExternalService(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AnimeExternalService: %T", src)
+	}
+	return nil
+}
+
+type NullAnimeExternalService struct {
+	AnimeExternalService AnimeExternalService
+	Valid                bool // Valid is true if AnimeExternalService is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAnimeExternalService) Scan(value interface{}) error {
+	if value == nil {
+		ns.AnimeExternalService, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AnimeExternalService.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAnimeExternalService) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AnimeExternalService), nil
+}
+
+type AnimeLinkKind string
+
+const (
+	AnimeLinkKindOfficialSite AnimeLinkKind = "official_site"
+	AnimeLinkKindWikipedia    AnimeLinkKind = "wikipedia"
+	AnimeLinkKindOther        AnimeLinkKind = "other"
+)
+
+func (e *AnimeLinkKind) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AnimeLinkKind(s)
+	case string:
+		*e = AnimeLinkKind(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AnimeLinkKind: %T", src)
+	}
+	return nil
+}
+
+type NullAnimeLinkKind struct {
+	AnimeLinkKind AnimeLinkKind
+	Valid         bool // Valid is true if AnimeLinkKind is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAnimeLinkKind) Scan(value interface{}) error {
+	if value == nil {
+		ns.AnimeLinkKind, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AnimeLinkKind.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAnimeLinkKind) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AnimeLinkKind), nil
+}
+
+type AnimeMedia string
+
+const (
+	AnimeMediaTv    AnimeMedia = "tv"
+	AnimeMediaOva   AnimeMedia = "ova"
+	AnimeMediaMovie AnimeMedia = "movie"
+	AnimeMediaOna   AnimeMedia = "ona"
+	AnimeMediaOther AnimeMedia = "other"
+)
+
+func (e *AnimeMedia) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AnimeMedia(s)
+	case string:
+		*e = AnimeMedia(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AnimeMedia: %T", src)
+	}
+	return nil
+}
+
+type NullAnimeMedia struct {
+	AnimeMedia AnimeMedia
+	Valid      bool // Valid is true if AnimeMedia is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAnimeMedia) Scan(value interface{}) error {
+	if value == nil {
+		ns.AnimeMedia, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AnimeMedia.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAnimeMedia) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AnimeMedia), nil
+}
+
+type AnimeStatus string
+
+const (
+	AnimeStatusPublished AnimeStatus = "published"
+	AnimeStatusArchived  AnimeStatus = "archived"
+	AnimeStatusMerged    AnimeStatus = "merged"
+	AnimeStatusDeleted   AnimeStatus = "deleted"
+)
+
+func (e *AnimeStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = AnimeStatus(s)
+	case string:
+		*e = AnimeStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for AnimeStatus: %T", src)
+	}
+	return nil
+}
+
+type NullAnimeStatus struct {
+	AnimeStatus AnimeStatus
+	Valid       bool // Valid is true if AnimeStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullAnimeStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.AnimeStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.AnimeStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullAnimeStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.AnimeStatus), nil
+}
+
+type Language string
+
+const (
+	LanguageJa    Language = "ja"
+	LanguageEn    Language = "en"
+	LanguageOther Language = "other"
+)
+
+func (e *Language) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = Language(s)
+	case string:
+		*e = Language(s)
+	default:
+		return fmt.Errorf("unsupported scan type for Language: %T", src)
+	}
+	return nil
+}
+
+type NullLanguage struct {
+	Language Language
+	Valid    bool // Valid is true if Language is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullLanguage) Scan(value interface{}) error {
+	if value == nil {
+		ns.Language, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.Language.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullLanguage) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.Language), nil
+}
+
+type ReleaseStatus string
+
+const (
+	ReleaseStatusNotYetReleased ReleaseStatus = "not_yet_released"
+	ReleaseStatusReleased       ReleaseStatus = "released"
+	ReleaseStatusCancelled      ReleaseStatus = "cancelled"
+)
+
+func (e *ReleaseStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = ReleaseStatus(s)
+	case string:
+		*e = ReleaseStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for ReleaseStatus: %T", src)
+	}
+	return nil
+}
+
+type NullReleaseStatus struct {
+	ReleaseStatus ReleaseStatus
+	Valid         bool // Valid is true if ReleaseStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullReleaseStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.ReleaseStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.ReleaseStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullReleaseStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.ReleaseStatus), nil
 }
 
 type RiverJobState string
@@ -105,47 +456,48 @@ func (ns NullRiverJobState) Value() (driver.Value, error) {
 	return string(ns.RiverJobState), nil
 }
 
-type WorkStatus string
+type SeasonName string
 
 const (
-	WorkStatusPublished WorkStatus = "published"
-	WorkStatusArchived  WorkStatus = "archived"
-	WorkStatusDeleted   WorkStatus = "deleted"
+	SeasonNameWinter SeasonName = "winter"
+	SeasonNameSpring SeasonName = "spring"
+	SeasonNameSummer SeasonName = "summer"
+	SeasonNameFall   SeasonName = "fall"
 )
 
-func (e *WorkStatus) Scan(src interface{}) error {
+func (e *SeasonName) Scan(src interface{}) error {
 	switch s := src.(type) {
 	case []byte:
-		*e = WorkStatus(s)
+		*e = SeasonName(s)
 	case string:
-		*e = WorkStatus(s)
+		*e = SeasonName(s)
 	default:
-		return fmt.Errorf("unsupported scan type for WorkStatus: %T", src)
+		return fmt.Errorf("unsupported scan type for SeasonName: %T", src)
 	}
 	return nil
 }
 
-type NullWorkStatus struct {
-	WorkStatus WorkStatus
-	Valid      bool // Valid is true if WorkStatus is not NULL
+type NullSeasonName struct {
+	SeasonName SeasonName
+	Valid      bool // Valid is true if SeasonName is not NULL
 }
 
 // Scan implements the Scanner interface.
-func (ns *NullWorkStatus) Scan(value interface{}) error {
+func (ns *NullSeasonName) Scan(value interface{}) error {
 	if value == nil {
-		ns.WorkStatus, ns.Valid = "", false
+		ns.SeasonName, ns.Valid = "", false
 		return nil
 	}
 	ns.Valid = true
-	return ns.WorkStatus.Scan(value)
+	return ns.SeasonName.Scan(value)
 }
 
 // Value implements the driver Valuer interface.
-func (ns NullWorkStatus) Value() (driver.Value, error) {
+func (ns NullSeasonName) Value() (driver.Value, error) {
 	if !ns.Valid {
 		return nil, nil
 	}
-	return string(ns.WorkStatus), nil
+	return string(ns.SeasonName), nil
 }
 
 type Activity struct {
@@ -177,6 +529,119 @@ type ActivityGroup struct {
 	ActivitiesCount int32     `db:"activities_count"`
 	CreatedAt       time.Time `db:"created_at"`
 	UpdatedAt       time.Time `db:"updated_at"`
+}
+
+type Anime struct {
+	ID               int64             `db:"id"`
+	Title            sql.NullString    `db:"title"`
+	TitleKana        sql.NullString    `db:"title_kana"`
+	TitleRo          sql.NullString    `db:"title_ro"`
+	TitleEn          sql.NullString    `db:"title_en"`
+	TitleAlter       sql.NullString    `db:"title_alter"`
+	TitleAlterRo     sql.NullString    `db:"title_alter_ro"`
+	TitleAlterEn     sql.NullString    `db:"title_alter_en"`
+	TitleAlterOther  sql.NullString    `db:"title_alter_other"`
+	Media            NullAnimeMedia    `db:"media"`
+	ReleaseStatus    NullReleaseStatus `db:"release_status"`
+	Synopsis         sql.NullString    `db:"synopsis"`
+	SynopsisEn       sql.NullString    `db:"synopsis_en"`
+	SynopsisSource   sql.NullString    `db:"synopsis_source"`
+	SynopsisSourceEn sql.NullString    `db:"synopsis_source_en"`
+	Status           AnimeStatus       `db:"status"`
+	ArchiveMessage   sql.NullString    `db:"archive_message"`
+	CreatedAt        time.Time         `db:"created_at"`
+	UpdatedAt        time.Time         `db:"updated_at"`
+}
+
+type AnimeClassification struct {
+	ID                    int64                   `db:"id"`
+	AnimeID               int64                   `db:"anime_id"`
+	Kind                  AnimeClassificationKind `db:"kind"`
+	ParentAnimeID         sql.NullInt64           `db:"parent_anime_id"`
+	Number                sql.NullString          `db:"number"`
+	NumberText            sql.NullString          `db:"number_text"`
+	SortNumber            sql.NullInt32           `db:"sort_number"`
+	Standalone            bool                    `db:"standalone"`
+	NumberFormatID        sql.NullInt64           `db:"number_format_id"`
+	EpisodeStartNumber    sql.NullString          `db:"episode_start_number"`
+	ExpectedEpisodesCount sql.NullInt32           `db:"expected_episodes_count"`
+	CreatedAt             time.Time               `db:"created_at"`
+	UpdatedAt             time.Time               `db:"updated_at"`
+}
+
+type AnimeEvent struct {
+	ID            int64          `db:"id"`
+	AnimeID       int64          `db:"anime_id"`
+	Kind          AnimeEventKind `db:"kind"`
+	StartedOn     time.Time      `db:"started_on"`
+	EndedOn       sql.NullTime   `db:"ended_on"`
+	Title         sql.NullString `db:"title"`
+	TitleEn       sql.NullString `db:"title_en"`
+	Description   sql.NullString `db:"description"`
+	DescriptionEn sql.NullString `db:"description_en"`
+	SortNumber    int32          `db:"sort_number"`
+	CreatedAt     time.Time      `db:"created_at"`
+	UpdatedAt     time.Time      `db:"updated_at"`
+}
+
+type AnimeExternalID struct {
+	ID         int64                `db:"id"`
+	AnimeID    int64                `db:"anime_id"`
+	Service    AnimeExternalService `db:"service"`
+	ExternalID string               `db:"external_id"`
+	CreatedAt  time.Time            `db:"created_at"`
+	UpdatedAt  time.Time            `db:"updated_at"`
+}
+
+type AnimeHashtag struct {
+	ID         int64     `db:"id"`
+	AnimeID    int64     `db:"anime_id"`
+	Hashtag    string    `db:"hashtag"`
+	SortNumber int32     `db:"sort_number"`
+	CreatedAt  time.Time `db:"created_at"`
+	UpdatedAt  time.Time `db:"updated_at"`
+}
+
+type AnimeLink struct {
+	ID         int64          `db:"id"`
+	AnimeID    int64          `db:"anime_id"`
+	Kind       AnimeLinkKind  `db:"kind"`
+	Language   Language       `db:"language"`
+	Url        string         `db:"url"`
+	Label      sql.NullString `db:"label"`
+	LabelEn    sql.NullString `db:"label_en"`
+	SortNumber int32          `db:"sort_number"`
+	CreatedAt  time.Time      `db:"created_at"`
+	UpdatedAt  time.Time      `db:"updated_at"`
+}
+
+type AnimeOfficialAccount struct {
+	ID         int64               `db:"id"`
+	AnimeID    int64               `db:"anime_id"`
+	Service    AnimeAccountService `db:"service"`
+	Account    string              `db:"account"`
+	Label      sql.NullString      `db:"label"`
+	LabelEn    sql.NullString      `db:"label_en"`
+	SortNumber int32               `db:"sort_number"`
+	CreatedAt  time.Time           `db:"created_at"`
+	UpdatedAt  time.Time           `db:"updated_at"`
+}
+
+type AnimeRedirect struct {
+	OldAnimeID       int64     `db:"old_anime_id"`
+	CanonicalAnimeID int64     `db:"canonical_anime_id"`
+	CreatedAt        time.Time `db:"created_at"`
+	UpdatedAt        time.Time `db:"updated_at"`
+}
+
+type AnimeSeason struct {
+	ID        int64          `db:"id"`
+	AnimeID   int64          `db:"anime_id"`
+	Year      int32          `db:"year"`
+	Name      NullSeasonName `db:"name"`
+	IsPrimary bool           `db:"is_primary"`
+	CreatedAt time.Time      `db:"created_at"`
+	UpdatedAt time.Time      `db:"updated_at"`
 }
 
 type ArInternalMetadatum struct {
@@ -418,8 +883,7 @@ type Episode struct {
 	NumberEn                 string          `db:"number_en"`
 	DeletedAt                sql.NullTime    `db:"deleted_at"`
 	UnpublishedAt            sql.NullTime    `db:"unpublished_at"`
-	Status                   EpisodeStatus   `db:"status"`
-	ArchiveMessage           sql.NullString  `db:"archive_message"`
+	AnimeID                  sql.NullInt64   `db:"anime_id"`
 }
 
 type EpisodeRecord struct {
@@ -850,25 +1314,6 @@ type Record struct {
 	WatchedAt        time.Time    `db:"watched_at"`
 }
 
-type RiverClient struct {
-	ID        string          `db:"id"`
-	CreatedAt time.Time       `db:"created_at"`
-	Metadata  json.RawMessage `db:"metadata"`
-	PausedAt  sql.NullTime    `db:"paused_at"`
-	UpdatedAt time.Time       `db:"updated_at"`
-}
-
-type RiverClientQueue struct {
-	RiverClientID    string          `db:"river_client_id"`
-	Name             string          `db:"name"`
-	CreatedAt        time.Time       `db:"created_at"`
-	MaxWorkers       int64           `db:"max_workers"`
-	Metadata         json.RawMessage `db:"metadata"`
-	NumJobsCompleted int64           `db:"num_jobs_completed"`
-	NumJobsRunning   int64           `db:"num_jobs_running"`
-	UpdatedAt        time.Time       `db:"updated_at"`
-}
-
 type RiverJob struct {
 	ID           int64             `db:"id"`
 	State        RiverJobState     `db:"state"`
@@ -895,6 +1340,19 @@ type RiverLeader struct {
 	ExpiresAt time.Time `db:"expires_at"`
 	LeaderID  string    `db:"leader_id"`
 	Name      string    `db:"name"`
+}
+
+type RiverMigration struct {
+	Line      string    `db:"line"`
+	Version   int64     `db:"version"`
+	CreatedAt time.Time `db:"created_at"`
+}
+
+type RiverNotification struct {
+	ID        int64     `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	Payload   string    `db:"payload"`
+	Topic     string    `db:"topic"`
 }
 
 type RiverQueue struct {
@@ -1295,8 +1753,7 @@ type Work struct {
 	TitleAlter               string          `db:"title_alter"`
 	TitleAlterEn             string          `db:"title_alter_en"`
 	UnpublishedAt            sql.NullTime    `db:"unpublished_at"`
-	Status                   WorkStatus      `db:"status"`
-	ArchiveMessage           sql.NullString  `db:"archive_message"`
+	AnimeID                  sql.NullInt64   `db:"anime_id"`
 }
 
 type WorkComment struct {

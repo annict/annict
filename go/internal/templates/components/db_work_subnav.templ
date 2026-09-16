@@ -1,0 +1,84 @@
+package components
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// DBWorkSubnavDataはDBWorkSubnavの入力。
+type DBWorkSubnavData struct {
+	// WorkIDは各項目のリンク先サブリソースを持つ作品。
+	WorkID viewmodel.WorkID
+	// NoEpisodesはエピソード由来の項目 (エピソード・放送予定) を落とす (Railsの
+	// 作品サブナビに合わせている)。
+	NoEpisodes bool
+	// CurrentSectionPathは、ページ自身のURLが所属する項目の外にある場合に、現在
+	// ページとして印を付ける項目を名指しする。エピソード編集フォームがその例で、URLは
+	// エピソード基点 (/db/episodes/{id}/edit) だが、到達元も所属先も作品のエピソードで
+	// ある。空のままにすると印はリクエストパスから導出され、これは項目配下にあるページの
+	// 挙動になる。
+	CurrentSectionPath templates.Path
+}
+
+// isCurrentはpathの項目を現在ページとして印付けるかを返す。所属する項目を名指しする
+// ページはその答えを使い、それ以外のページはリクエストパスにフォールバックする。1つの項目に
+// 2つの決め方が同時に効くことはない。
+func (d DBWorkSubnavData) isCurrent(ctx context.Context, path templates.Path) bool {
+	if d.CurrentSectionPath != "" {
+		return d.CurrentSectionPath == path
+	}
+
+	return templates.IsCurrentPathPrefix(ctx, path.String())
+}
+
+// DBWorkSubnavは作品のDBフォームの上に表示するナビゲーションを描画し、作品の
+// サブリソース (エピソード・番組情報・キャストなど) へのリンクを横並びのピルで並べる。
+//
+// 項目は最大8個あり小さい画面幅では1行に収まらないため、文書全体を広げるのではなく
+// リスト自身を横スクロールさせる。リンクはフォーカス可能なので、スクロール領域自体が
+// フォーカスを受け取らなくても画面外から始まる項目へキーボードで到達できる。
+//
+// 作品編集ページ自身を除くリンク先はまだRailsが配信するため、フラグ配下のフォールバックが
+// 移行までそれらをRails画面へ流す。
+templ DBWorkSubnav(data DBWorkSubnavData) {
+	<nav aria-label={ templates.T(ctx, "db_work_subnav_label") }>
+		// paddingはフォーカスされたピルのフォーカスリングをスクロール領域内に収める
+		// ためのもの (スクロール領域は上下左右とも内容を切る)。対になる負のマージンで打ち消し、
+		// ピルは上下のコンテンツと揃ったままにする。
+		<ul class="flex flex-nowrap gap-2 overflow-x-auto p-1 -m-1">
+			@dbWorkSubnavItem(data, templates.DBWorkEditPath(data.WorkID), "db_work_subnav_work")
+			if !data.NoEpisodes {
+				@dbWorkSubnavItem(data, templates.DBWorkEpisodesPath(data.WorkID), "db_work_subnav_episodes")
+			}
+			@dbWorkSubnavItem(data, templates.DBWorkProgramsPath(data.WorkID), "db_work_subnav_programs")
+			if !data.NoEpisodes {
+				@dbWorkSubnavItem(data, templates.DBWorkSlotsPath(data.WorkID), "db_work_subnav_slots")
+			}
+			@dbWorkSubnavItem(data, templates.DBWorkCastsPath(data.WorkID), "db_work_subnav_casts")
+			@dbWorkSubnavItem(data, templates.DBWorkStaffsPath(data.WorkID), "db_work_subnav_staffs")
+			@dbWorkSubnavItem(data, templates.DBWorkImagePath(data.WorkID), "db_work_subnav_work_image")
+			@dbWorkSubnavItem(data, templates.DBWorkTrailersPath(data.WorkID), "db_work_subnav_pv")
+		</ul>
+	</nav>
+}
+
+// dbWorkSubnavItemはサブナビのピルを1つ描画し、読み手がその項目の中にいる間、現在
+// ページとして印を付ける (aria-current)。既定ではリクエストパスが項目自身かその配下のページ
+// である間で、エピソードを追加している間もエピソードの項目に印が残る。それ以外はページの
+// CurrentSectionPathが名指しした項目に付く。現在ページの塗りつぶしも同じ属性で切り替える
+// ため、支援技術が読む印と目に見える印がずれることがない。
+templ dbWorkSubnavItem(data DBWorkSubnavData, path templates.Path, labelKey string) {
+	<li class="shrink-0">
+		<a
+			href={ path.SafeURL() }
+			class="block rounded-full px-3 py-2 text-sm whitespace-nowrap transition-colors hover:bg-accent aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:hover:bg-primary"
+			if data.isCurrent(ctx, path) {
+				aria-current="page"
+			}
+		>
+			{ templates.T(ctx, labelKey) }
+		</a>
+	</li>
+}

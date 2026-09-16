@@ -7,11 +7,11 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 )
 
-// Show はWeb App Manifestを返します (GET /manifest.json)
+// ShowはWeb App Manifestを返します (GET /manifest.json)
 func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// アプリケーション名（開発環境では "(Dev)" を付ける）
+	// アプリケーション名 (開発環境では "(Dev)" を付ける)
 	appName := "Annict"
 	if h.cfg.IsDev() {
 		appName = "Annict (Dev)"

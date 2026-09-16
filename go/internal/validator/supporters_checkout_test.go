@@ -17,29 +17,29 @@ func TestSupportersCheckoutCreateValidatorValidate(t *testing.T) {
 		wantFields []string
 	}{
 		{
-			name:       "monthly plan",
+			name:       "月額プラン",
 			input:      SupportersCheckoutCreateValidatorInput{Plan: "monthly"},
 			wantErrors: false,
 		},
 		{
-			name:       "yearly plan",
+			name:       "年額プラン",
 			input:      SupportersCheckoutCreateValidatorInput{Plan: "yearly"},
 			wantErrors: false,
 		},
 		{
-			name:       "empty plan",
+			name:       "プランが空",
 			input:      SupportersCheckoutCreateValidatorInput{Plan: ""},
 			wantErrors: true,
 			wantFields: []string{"plan"},
 		},
 		{
-			name:       "invalid plan",
+			name:       "不正なプラン",
 			input:      SupportersCheckoutCreateValidatorInput{Plan: "weekly"},
 			wantErrors: true,
 			wantFields: []string{"plan"},
 		},
 		{
-			name:       "uppercase plan",
+			name:       "プランが大文字",
 			input:      SupportersCheckoutCreateValidatorInput{Plan: "MONTHLY"},
 			wantErrors: true,
 			wantFields: []string{"plan"},
@@ -64,7 +64,7 @@ func TestSupportersCheckoutCreateValidatorValidate(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if _, exists := ve.Fields[field]; !exists {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 			} else {

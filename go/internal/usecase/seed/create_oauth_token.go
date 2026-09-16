@@ -14,7 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// CreateOAuthTokenParams OAuth トークン生成のパラメータ
+// CreateOAuthTokenParams OAuthトークン生成のパラメータ
 type CreateOAuthTokenParams struct {
 	// OAuthアプリケーション情報
 	ApplicationName string
@@ -29,19 +29,19 @@ type CreateOAuthTokenParams struct {
 	UserIDs []model.UserID
 }
 
-// CreateOAuthTokenResult OAuth トークン生成の結果
+// CreateOAuthTokenResult OAuthトークン生成の結果
 type CreateOAuthTokenResult struct {
 	ApplicationID int64
 	TokenIDs      []int64
 }
 
-// CreateOAuthTokenUsecase OAuth トークン生成 Usecase（シード専用、バルクインサート対応）
+// CreateOAuthTokenUsecase OAuthトークン生成Usecase (シード専用、バルクインサート対応)
 type CreateOAuthTokenUsecase struct {
 	db      *sql.DB
 	queries *query.Queries
 }
 
-// NewCreateOAuthTokenUsecase 新しい CreateOAuthTokenUsecase を作成
+// NewCreateOAuthTokenUsecase新しいCreateOAuthTokenUsecaseを作成
 func NewCreateOAuthTokenUsecase(db *sql.DB, queries *query.Queries) *CreateOAuthTokenUsecase {
 	return &CreateOAuthTokenUsecase{
 		db:      db,
@@ -49,18 +49,18 @@ func NewCreateOAuthTokenUsecase(db *sql.DB, queries *query.Queries) *CreateOAuth
 	}
 }
 
-// Execute OAuth アプリケーションとアクセストークンを作成します
+// Execute OAuthアプリケーションとアクセストークンを作成します
 func (uc *CreateOAuthTokenUsecase) Execute(ctx context.Context, params CreateOAuthTokenParams, progressBar *progressbar.ProgressBar) (*CreateOAuthTokenResult, error) {
 	return uc.executeWithTx(ctx, nil, params, progressBar)
 }
 
-// ExecuteWithTx OAuth アプリケーションとアクセストークンを作成します（テスト用：既存トランザクションを使用）
+// ExecuteWithTx OAuthアプリケーションとアクセストークンを作成します (テスト用：既存トランザクションを使用)
 // txがnilの場合は内部でトランザクションを作成します
 func (uc *CreateOAuthTokenUsecase) ExecuteWithTx(ctx context.Context, tx *sql.Tx, params CreateOAuthTokenParams, progressBar *progressbar.ProgressBar) (*CreateOAuthTokenResult, error) {
 	return uc.executeWithTx(ctx, tx, params, progressBar)
 }
 
-// executeWithTx 内部実装：トランザクションを受け取るか新規作成する
+// executeWithTx内部実装：トランザクションを受け取るか新規作成する
 func (uc *CreateOAuthTokenUsecase) executeWithTx(ctx context.Context, existingTx *sql.Tx, params CreateOAuthTokenParams, progressBar *progressbar.ProgressBar) (*CreateOAuthTokenResult, error) {
 	// トランザクション処理
 	var tx *sql.Tx
@@ -78,24 +78,24 @@ func (uc *CreateOAuthTokenUsecase) executeWithTx(ctx context.Context, existingTx
 		shouldCommit = true
 	}
 
-	// 1. OAuth アプリケーションを作成
+	// 1. OAuthアプリケーションを作成
 	applicationID, err := uc.createOAuthApplication(ctx, tx, params)
 	if err != nil {
-		return nil, fmt.Errorf("OAuth アプリケーション作成エラー: %w", err)
+		return nil, fmt.Errorf("OAuthアプリケーション作成エラー: %w", err)
 	}
 
-	// 進捗バーを更新（アプリケーション作成完了）
+	// 進捗バーを更新 (アプリケーション作成完了)
 	if progressBar != nil {
 		progressBar.Add(1)
 	}
 
-	// 2. OAuth アクセストークンをバッチで作成
+	// 2. OAuthアクセストークンをバッチで作成
 	tokenIDs, err := uc.createOAuthAccessTokensBatch(ctx, tx, applicationID, params.UserIDs, progressBar)
 	if err != nil {
-		return nil, fmt.Errorf("OAuth アクセストークン作成エラー: %w", err)
+		return nil, fmt.Errorf("OAuthアクセストークン作成エラー: %w", err)
 	}
 
-	// トランザクションをコミット（既存トランザクションでない場合のみ）
+	// トランザクションをコミット (既存トランザクションでない場合のみ)
 	if shouldCommit {
 		if err := tx.Commit(); err != nil {
 			return nil, fmt.Errorf("トランザクションコミットエラー: %w", err)
@@ -108,10 +108,10 @@ func (uc *CreateOAuthTokenUsecase) executeWithTx(ctx context.Context, existingTx
 	}, nil
 }
 
-// createOAuthApplication OAuth アプリケーションを作成します
+// createOAuthApplication OAuthアプリケーションを作成します
 func (uc *CreateOAuthTokenUsecase) createOAuthApplication(ctx context.Context, tx *sql.Tx, params CreateOAuthTokenParams) (int64, error) {
-	// アプリケーション秘密鍵を生成（64文字のランダム文字列）
-	secret, err := generateRandomToken(32) // 32バイト = 64文字（hex）
+	// アプリケーション秘密鍵を生成 (64文字のランダム文字列)
+	secret, err := generateRandomToken(32) // 32バイト = 64文字 (hex)
 	if err != nil {
 		return 0, fmt.Errorf("秘密鍵生成エラー: %w", err)
 	}
@@ -124,8 +124,8 @@ func (uc *CreateOAuthTokenUsecase) createOAuthApplication(ctx context.Context, t
 
 	applicationUID := params.ApplicationUID
 	if applicationUID == "" {
-		// UIDを生成（20文字のランダム文字列）
-		uid, err := generateRandomToken(10) // 10バイト = 20文字（hex）
+		// UIDを生成 (20文字のランダム文字列)
+		uid, err := generateRandomToken(10) // 10バイト = 20文字 (hex)
 		if err != nil {
 			return 0, fmt.Errorf("UID生成エラー: %w", err)
 		}
@@ -134,15 +134,15 @@ func (uc *CreateOAuthTokenUsecase) createOAuthApplication(ctx context.Context, t
 
 	redirectURI := params.RedirectURI
 	if redirectURI == "" {
-		redirectURI = "urn:ietf:wg:oauth:2.0:oob" // OAuth 2.0のデフォルトリダイレクトURI（コピペ用）
+		redirectURI = "urn:ietf:wg:oauth:2.0:oob" // OAuth 2.0のデフォルトリダイレクトURI (コピペ用)
 	}
 
 	scopes := params.Scopes
 	if scopes == "" {
-		scopes = "" // デフォルトは空文字（全スコープ）
+		scopes = "" // デフォルトは空文字 (全スコープ)
 	}
 
-	// OAuth アプリケーションを作成
+	// OAuthアプリケーションを作成
 	query := `
 		INSERT INTO oauth_applications (
 			name, uid, secret, redirect_uri, scopes,
@@ -166,29 +166,29 @@ func (uc *CreateOAuthTokenUsecase) createOAuthApplication(ctx context.Context, t
 		secret,
 		redirectURI,
 		scopes,
-		"published", // aasm_state（公開状態）
+		"published", // aasm_state (公開状態)
 		time.Now(),  // created_at
 		time.Now(),  // updated_at
-		nil,         // owner_id（nullの場合は管理者用アプリケーション）
-		nil,         // owner_type（nullの場合は管理者用アプリケーション）
-		true,        // confidential（機密アプリケーション）
+		nil,         // owner_id (nullの場合は管理者用アプリケーション)
+		nil,         // owner_type (nullの場合は管理者用アプリケーション)
+		true,        // confidential (機密アプリケーション)
 		false,       // hide_social_login
 	).Scan(&applicationID)
 
 	if err != nil {
-		return 0, fmt.Errorf("oauth_applications テーブルへの挿入エラー: %w", err)
+		return 0, fmt.Errorf("oauth_applicationsテーブルへの挿入エラー: %w", err)
 	}
 
 	return applicationID, nil
 }
 
-// createOAuthAccessTokensBatch 複数の OAuth アクセストークンをバッチで作成します
+// createOAuthAccessTokensBatch複数のOAuthアクセストークンをバッチで作成します
 func (uc *CreateOAuthTokenUsecase) createOAuthAccessTokensBatch(ctx context.Context, tx *sql.Tx, applicationID int64, userIDs []model.UserID, progressBar *progressbar.ProgressBar) ([]int64, error) {
 	if len(userIDs) == 0 {
 		return []int64{}, nil
 	}
 
-	// マルチ行INSERTのチャンクサイズ（100件ずつ）
+	// マルチ行INSERTのチャンクサイズ (100件ずつ)
 	multiInsertChunkSize := 100
 	tokenIDs := make([]int64, 0, len(userIDs))
 
@@ -202,7 +202,7 @@ func (uc *CreateOAuthTokenUsecase) createOAuthAccessTokensBatch(ctx context.Cont
 		// マルチ行INSERTで作成
 		chunkTokenIDs, err := uc.createMultipleOAuthAccessTokens(ctx, tx, applicationID, chunk)
 		if err != nil {
-			return nil, fmt.Errorf("OAuth アクセストークン マルチ行INSERT エラー: %w", err)
+			return nil, fmt.Errorf("OAuthアクセストークン マルチ行INSERTエラー: %w", err)
 		}
 		tokenIDs = append(tokenIDs, chunkTokenIDs...)
 
@@ -215,7 +215,7 @@ func (uc *CreateOAuthTokenUsecase) createOAuthAccessTokensBatch(ctx context.Cont
 	return tokenIDs, nil
 }
 
-// createMultipleOAuthAccessTokens 複数の OAuth アクセストークンをマルチ行INSERTで作成します
+// createMultipleOAuthAccessTokens複数のOAuthアクセストークンをマルチ行INSERTで作成します
 func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.Context, tx *sql.Tx, applicationID int64, userIDs []model.UserID) ([]int64, error) {
 	if len(userIDs) == 0 {
 		return []int64{}, nil
@@ -224,7 +224,7 @@ func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.C
 	// 1. トークンを事前生成
 	tokens := make([]string, len(userIDs))
 	for i := range userIDs {
-		token, err := generateRandomToken(32) // 32バイト = 64文字（hex）
+		token, err := generateRandomToken(32) // 32バイト = 64文字 (hex)
 		if err != nil {
 			return nil, fmt.Errorf("トークン生成エラー: %w", err)
 		}
@@ -248,7 +248,7 @@ func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.C
 			queryBuilder += ", "
 		}
 
-		// プレースホルダーの開始位置（各行は10個のパラメータ）
+		// プレースホルダーの開始位置 (各行は10個のパラメータ)
 		offset := i * 10
 		queryBuilder += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)",
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7, offset+8, offset+9, offset+10)
@@ -258,11 +258,11 @@ func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.C
 			userID,        // resource_owner_id
 			applicationID, // application_id
 			tokens[i],     // token
-			nil,           // refresh_token（null）
-			nil,           // expires_in（null = 無期限）
-			nil,           // revoked_at（null = 有効）
+			nil,           // refresh_token (null)
+			nil,           // expires_in (null = 無期限)
+			nil,           // revoked_at (null = 有効)
 			now,           // created_at
-			"",            // scopes（空文字 = 全スコープ）
+			"",            // scopes (空文字 = 全スコープ)
 			"",            // previous_refresh_token
 			"Test Token",  // description
 		)
@@ -273,7 +273,7 @@ func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.C
 	// マルチ行INSERTを実行
 	rows, err := tx.QueryContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return nil, fmt.Errorf("oauth_access_tokens テーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("oauth_access_tokensテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 	defer rows.Close()
 
@@ -282,7 +282,7 @@ func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.C
 	for rows.Next() {
 		var tokenID int64
 		if err := rows.Scan(&tokenID); err != nil {
-			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
+			return nil, fmt.Errorf("RETURNING idのスキャンエラー: %w", err)
 		}
 		tokenIDs = append(tokenIDs, tokenID)
 	}
@@ -294,7 +294,7 @@ func (uc *CreateOAuthTokenUsecase) createMultipleOAuthAccessTokens(ctx context.C
 	return tokenIDs, nil
 }
 
-// generateRandomToken ランダムなトークンを生成します（hex文字列）
+// generateRandomTokenランダムなトークンを生成します (hex文字列)
 func generateRandomToken(byteLength int) (string, error) {
 	bytes := make([]byte, byteLength)
 	if _, err := rand.Read(bytes); err != nil {

@@ -12,7 +12,7 @@ import (
 
 const testFlagName model.FeatureFlagName = "go_test_feature"
 
-// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DeviceToken はデバイストークンでフラグが有効な場合にtrueを返すことをテスト
+// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DeviceTokenはデバイストークンでフラグが有効な場合にtrueを返すことをテスト
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DeviceToken(t *testing.T) {
 	t.Parallel()
 
@@ -36,7 +36,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DeviceToken(t *testing.T)
 	}
 }
 
-// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_UserID はユーザーIDでフラグが有効な場合にtrueを返すことをテスト
+// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_UserIDはユーザーIDでフラグが有効な場合にtrueを返すことをテスト
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_UserID(t *testing.T) {
 	t.Parallel()
 
@@ -63,7 +63,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_UserID(t *testing.T) {
 	}
 }
 
-// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_BothMatch はデバイストークンとユーザーIDの両方が一致する場合にtrueを返すことをテスト
+// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_BothMatchはデバイストークンとユーザーIDの両方が一致する場合にtrueを返すことをテスト
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_BothMatch(t *testing.T) {
 	t.Parallel()
 
@@ -74,7 +74,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_BothMatch(t *testing.T) {
 	// テスト用ユーザーを作成
 	userID := testutil.NewUserBuilder(t, tx).Build()
 
-	// デバイストークンによるフラグのみ作成（ユーザーIDのフラグはなし）
+	// デバイストークンによるフラグのみ作成 (ユーザーIDのフラグはなし)
 	testutil.NewFeatureFlagBuilder(t, tx).
 		WithDeviceToken("device_both_test").
 		WithName(string(testFlagName)).
@@ -90,7 +90,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_BothMatch(t *testing.T) {
 	}
 }
 
-// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_NotEnabled はフラグが存在しない場合にfalseを返すことをテスト
+// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_NotEnabledはフラグが存在しない場合にfalseを返すことをテスト
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_NotEnabled(t *testing.T) {
 	t.Parallel()
 
@@ -108,7 +108,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_NotEnabled(t *testing.T) 
 	}
 }
 
-// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DifferentFlag は異なるフラグ名では無効であることをテスト
+// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DifferentFlagは異なるフラグ名では無効であることをテスト
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DifferentFlag(t *testing.T) {
 	t.Parallel()
 
@@ -132,7 +132,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_DifferentFlag(t *testing.
 	}
 }
 
-// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_EmptyParams は空のパラメータでfalseを返すことをテスト
+// TestFeatureFlagRepository_IsEnabledByDeviceOrUser_EmptyParamsは空のパラメータでfalseを返すことをテスト
 func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_EmptyParams(t *testing.T) {
 	t.Parallel()
 
@@ -156,7 +156,7 @@ func TestFeatureFlagRepository_IsEnabledByDeviceOrUser_EmptyParams(t *testing.T)
 	}
 }
 
-// TestFeatureFlagRepository_IsEnabled はユーザーIDでフラグを判定できることをテスト
+// TestFeatureFlagRepository_IsEnabledはユーザーIDでフラグを判定できることをテスト
 func TestFeatureFlagRepository_IsEnabled(t *testing.T) {
 	t.Parallel()
 
@@ -192,7 +192,7 @@ func TestFeatureFlagRepository_IsEnabled(t *testing.T) {
 	}
 }
 
-// TestFeatureFlagRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestFeatureFlagRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestFeatureFlagRepository_WithTx(t *testing.T) {
 	t.Parallel()
 

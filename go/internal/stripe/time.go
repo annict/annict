@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// NullTimeFromUnix はUnixタイムスタンプからsql.NullTimeを作成します
+// NullTimeFromUnixはUnixタイムスタンプからsql.NullTimeを作成します
 // 値が0の場合はValidがfalseになります
 func NullTimeFromUnix(ts int64) sql.NullTime {
 	if ts == 0 {

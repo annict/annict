@@ -22,7 +22,7 @@ func TestAuthenticateByPasswordUsecase_Execute_Success(t *testing.T) {
 	// テストユーザーを作成してコミット
 	setupTx, err := db.Begin()
 	if err != nil {
-		t.Fatalf("Begin transaction failed: %v", err)
+		t.Fatalf("トランザクションのBeginのエラー = %v", err)
 	}
 	defer func() { _ = setupTx.Rollback() }()
 
@@ -38,7 +38,7 @@ func TestAuthenticateByPasswordUsecase_Execute_Success(t *testing.T) {
 		Build()
 
 	if err := setupTx.Commit(); err != nil {
-		t.Fatalf("Commit failed: %v", err)
+		t.Fatalf("Commit()のエラー = %v", err)
 	}
 
 	// ユースケースを作成
@@ -55,15 +55,15 @@ func TestAuthenticateByPasswordUsecase_Execute_Success(t *testing.T) {
 		Password: "password123",
 	})
 	if err != nil {
-		t.Fatalf("Execute failed: %v", err)
+		t.Fatalf("Executeのエラー = %v", err)
 	}
 
 	if result.PublicID == "" {
-		t.Error("PublicID should not be empty")
+		t.Error("PublicIDが空だった")
 	}
 
 	if result.Username != "auth_pw_success" {
-		t.Errorf("Username: got %q, want %q", result.Username, "auth_pw_success")
+		t.Errorf("Username = %q、期待値 = %q", result.Username, "auth_pw_success")
 	}
 }
 
@@ -76,7 +76,7 @@ func TestAuthenticateByPasswordUsecase_Execute_InvalidPassword(t *testing.T) {
 	// テストユーザーを作成してコミット
 	setupTx, err := db.Begin()
 	if err != nil {
-		t.Fatalf("Begin transaction failed: %v", err)
+		t.Fatalf("トランザクションのBeginのエラー = %v", err)
 	}
 	defer func() { _ = setupTx.Rollback() }()
 
@@ -92,7 +92,7 @@ func TestAuthenticateByPasswordUsecase_Execute_InvalidPassword(t *testing.T) {
 		Build()
 
 	if err := setupTx.Commit(); err != nil {
-		t.Fatalf("Commit failed: %v", err)
+		t.Fatalf("Commit()のエラー = %v", err)
 	}
 
 	userRepo := repository.NewUserRepository(queries)
@@ -109,11 +109,11 @@ func TestAuthenticateByPasswordUsecase_Execute_InvalidPassword(t *testing.T) {
 	})
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("expected validation error for invalid password, got: %v", err)
+		t.Fatalf("passwordが不正なときのエラー = %v、期待値 = バリデーションエラー", err)
 	}
 
 	if result != nil {
-		t.Error("result should be nil on failure")
+		t.Error("失敗時のresultがnilでなかった")
 	}
 }
 
@@ -137,7 +137,7 @@ func TestAuthenticateByPasswordUsecase_Execute_UserNotFound(t *testing.T) {
 	})
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("expected validation error for non-existent user, got: %v", err)
+		t.Fatalf("存在しないユーザーでのエラー = %v、期待値 = バリデーションエラー", err)
 	}
 }
 
@@ -162,11 +162,11 @@ func TestAuthenticateByPasswordUsecase_Execute_ValidationError(t *testing.T) {
 	})
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("expected validation error for empty password, got: %v", err)
+		t.Fatalf("passwordが空のときのエラー = %v、期待値 = バリデーションエラー", err)
 	}
 
 	if !ve.HasFieldError("password") {
-		t.Error("expected password field error")
+		t.Error("passwordフィールドのエラーを期待したが、無かった")
 	}
 }
 
@@ -191,10 +191,10 @@ func TestAuthenticateByPasswordUsecase_Execute_WhitespacePassword(t *testing.T) 
 	})
 	ve := model.AsValidationError(err)
 	if ve == nil {
-		t.Fatalf("expected validation error for whitespace-only password, got: %v", err)
+		t.Fatalf("passwordが空白のみのときのエラー = %v、期待値 = バリデーションエラー", err)
 	}
 
 	if !ve.HasFieldError("password") {
-		t.Error("expected password field error")
+		t.Error("passwordフィールドのエラーを期待したが、無かった")
 	}
 }

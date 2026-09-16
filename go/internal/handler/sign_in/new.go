@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New はメールアドレス入力フォームを表示します (GET /sign_in)
+// Newはメールアドレス入力フォームを表示します (GET /sign_in)
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -31,22 +31,22 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNewForm(w, r, http.StatusOK, nil, "", backURL)
 }
 
-// renderNewForm はメールアドレス入力フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormはメールアドレス入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string, backURL string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_in_title")
 	meta.Description = i18n.T(ctx, "sign_in_description")
-	meta.OGURL = h.cfg.AppURL() + "/sign_in"
+	meta.AddTurnstilePreconnect(h.cfg.TurnstileSiteKey)
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
 	data := sign_in.NewPageData{
 		CSRFToken:        csrfToken,
 		TurnstileSiteKey: h.cfg.TurnstileSiteKey,
-		FormErrors:       formErrors,
+		FormErrors:       viewmodel.NewFormErrors(formErrors),
 		Email:            email,
 		BackURL:          backURL,
 	}

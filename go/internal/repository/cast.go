@@ -8,22 +8,22 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// CastRepository はCast関連のデータアクセスを担当します
+// CastRepositoryはCast関連のデータアクセスを担当します
 type CastRepository struct {
 	queries *query.Queries
 }
 
-// NewCastRepository はCastRepositoryを作成します
+// NewCastRepositoryはCastRepositoryを作成します
 func NewCastRepository(queries *query.Queries) *CastRepository {
 	return &CastRepository{queries: queries}
 }
 
-// WithTx はトランザクションを使用する新しいRepositoryを返します
+// WithTxはトランザクションを使用する新しいRepositoryを返します
 func (r *CastRepository) WithTx(tx *sql.Tx) *CastRepository {
 	return &CastRepository{queries: r.queries.WithTx(tx)}
 }
 
-// GetByWorkIDs は作品IDのリストに紐づくキャストを取得します
+// GetByWorkIDsは作品IDのリストに紐づくキャストを取得します
 func (r *CastRepository) GetByWorkIDs(ctx context.Context, workIDs []model.WorkID) ([]*model.Cast, error) {
 	if len(workIDs) == 0 {
 		return []*model.Cast{}, nil
@@ -46,7 +46,7 @@ func (r *CastRepository) GetByWorkIDs(ctx context.Context, workIDs []model.WorkI
 	return casts, nil
 }
 
-// castFromRow は query.GetCastsByWorkIDsRow を *model.Cast に変換します
+// castFromRowはquery.GetCastsByWorkIDsRowを *model.Castに変換します
 func castFromRow(row query.GetCastsByWorkIDsRow) *model.Cast {
 	cast := &model.Cast{
 		ID:     model.CastID(row.ID),

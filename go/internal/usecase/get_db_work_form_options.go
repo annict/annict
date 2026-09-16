@@ -8,31 +8,31 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// GetDbWorkFormOptionsUsecase はDB管理画面の作品フォーム用選択肢を取得するユースケースです
-type GetDbWorkFormOptionsUsecase struct {
+// GetDBWorkFormOptionsUsecaseはDB管理画面の作品フォーム用選択肢を取得するユースケース。
+type GetDBWorkFormOptionsUsecase struct {
 	numberFormatRepo *repository.NumberFormatRepository
 }
 
-// NewGetDbWorkFormOptionsUsecase は新しいGetDbWorkFormOptionsUsecaseを作成します
-func NewGetDbWorkFormOptionsUsecase(numberFormatRepo *repository.NumberFormatRepository) *GetDbWorkFormOptionsUsecase {
-	return &GetDbWorkFormOptionsUsecase{
+// NewGetDBWorkFormOptionsUsecaseは新しいGetDBWorkFormOptionsUsecaseを作成する。
+func NewGetDBWorkFormOptionsUsecase(numberFormatRepo *repository.NumberFormatRepository) *GetDBWorkFormOptionsUsecase {
+	return &GetDBWorkFormOptionsUsecase{
 		numberFormatRepo: numberFormatRepo,
 	}
 }
 
-// GetDbWorkFormOptionsOutput はユースケースの出力です
-type GetDbWorkFormOptionsOutput struct {
+// GetDBWorkFormOptionsOutputはユースケースの出力。
+type GetDBWorkFormOptionsOutput struct {
 	NumberFormats []model.NumberFormat
 }
 
-// Execute はフォーム用の選択肢データを取得します
-func (uc *GetDbWorkFormOptionsUsecase) Execute(ctx context.Context) (*GetDbWorkFormOptionsOutput, error) {
+// Executeはフォーム用の選択肢データを取得する。
+func (uc *GetDBWorkFormOptionsUsecase) Execute(ctx context.Context) (*GetDBWorkFormOptionsOutput, error) {
 	numberFormats, err := uc.numberFormatRepo.ListAll(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("NumberFormatの取得に失敗: %w", err)
 	}
 
-	return &GetDbWorkFormOptionsOutput{
+	return &GetDBWorkFormOptionsOutput{
 		NumberFormats: numberFormats,
 	}, nil
 }

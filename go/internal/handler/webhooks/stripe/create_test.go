@@ -18,7 +18,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// generateStripeSignature はテスト用のStripe Webhook署名を生成します
+// generateStripeSignatureはテスト用のStripe Webhook署名を生成します
 func generateStripeSignature(payload []byte, secret string, timestamp int64) string {
 	signedPayload := fmt.Sprintf("%d.%s", timestamp, string(payload))
 	h := hmac.New(sha256.New, []byte(secret))
@@ -129,7 +129,7 @@ func TestCreate_SignatureValidation(t *testing.T) {
 
 			// ステータスコードを確認
 			if rr.Code != tt.wantStatusCode {
-				t.Errorf("ステータスコード: got %d, want %d", rr.Code, tt.wantStatusCode)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatusCode)
 			}
 		})
 	}
@@ -199,9 +199,9 @@ func TestCreate_Idempotency(t *testing.T) {
 	rr := httptest.NewRecorder()
 	handler.Create(rr, req)
 
-	// 200を返す（冪等性による重複スキップ）
+	// 200を返す (冪等性による重複スキップ)
 	if rr.Code != http.StatusOK {
-		t.Errorf("冪等性チェック後のステータスコード: got %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("冪等性チェック後のステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 }
 
@@ -238,7 +238,7 @@ func TestCreate_Idempotency_SkippedEvent(t *testing.T) {
 	// ハンドラーの作成
 	handler := NewHandler(cfg, processStripeWebhookUC)
 
-	// status=skipped のイベントを登録
+	// status=skippedのイベントを登録
 	existingEventID := "evt_skipped_event_123"
 	testutil.NewStripeWebhookEventBuilder(t, tx).
 		WithStripeEventID(existingEventID).
@@ -269,9 +269,9 @@ func TestCreate_Idempotency_SkippedEvent(t *testing.T) {
 	rr := httptest.NewRecorder()
 	handler.Create(rr, req)
 
-	// 200を返す（status=skipped はスキップ）
+	// 200を返す (status=skippedはスキップ)
 	if rr.Code != http.StatusOK {
-		t.Errorf("冪等性チェック後のステータスコード: got %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("冪等性チェック後のステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 }
 
@@ -308,7 +308,7 @@ func TestCreate_Idempotency_ReprocessPendingEvent(t *testing.T) {
 	// ハンドラーの作成
 	handler := NewHandler(cfg, processStripeWebhookUC)
 
-	// status=pending のイベントを登録（処理途中でクラッシュしたシナリオ）
+	// status=pendingのイベントを登録 (処理途中でクラッシュしたシナリオ)
 	existingEventID := "evt_pending_event_123"
 	testutil.NewStripeWebhookEventBuilder(t, tx).
 		WithStripeEventID(existingEventID).
@@ -316,7 +316,7 @@ func TestCreate_Idempotency_ReprocessPendingEvent(t *testing.T) {
 		WithStatus("pending").
 		Build()
 
-	// 同じイベントIDで再度リクエストを送信（Stripeからの再送）
+	// 同じイベントIDで再度リクエストを送信 (Stripeからの再送)
 	payload := fmt.Sprintf(`{
 		"id": "%s",
 		"object": "event",
@@ -339,9 +339,9 @@ func TestCreate_Idempotency_ReprocessPendingEvent(t *testing.T) {
 	rr := httptest.NewRecorder()
 	handler.Create(rr, req)
 
-	// 200を返す（再処理成功）
+	// 200を返す (再処理成功)
 	if rr.Code != http.StatusOK {
-		t.Errorf("再処理後のステータスコード: got %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("再処理後のステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 
 	// イベントのステータスがprocessedに更新されていることを確認
@@ -350,7 +350,7 @@ func TestCreate_Idempotency_ReprocessPendingEvent(t *testing.T) {
 		t.Fatalf("イベント取得に失敗: %v", err)
 	}
 	if updatedEvent.Status != "processed" {
-		t.Errorf("イベントステータス: got %s, want %s", updatedEvent.Status, "processed")
+		t.Errorf("イベントステータス = %s、期待値 = %s", updatedEvent.Status, "processed")
 	}
 }
 
@@ -387,7 +387,7 @@ func TestCreate_Idempotency_ReprocessFailedEvent(t *testing.T) {
 	// ハンドラーの作成
 	handler := NewHandler(cfg, processStripeWebhookUC)
 
-	// status=failed のイベントを登録（前回の処理が失敗したシナリオ）
+	// status=failedのイベントを登録 (前回の処理が失敗したシナリオ)
 	existingEventID := "evt_failed_event_123"
 	testutil.NewStripeWebhookEventBuilder(t, tx).
 		WithStripeEventID(existingEventID).
@@ -395,7 +395,7 @@ func TestCreate_Idempotency_ReprocessFailedEvent(t *testing.T) {
 		WithStatus("failed").
 		Build()
 
-	// 同じイベントIDで再度リクエストを送信（Stripeからの再送）
+	// 同じイベントIDで再度リクエストを送信 (Stripeからの再送)
 	payload := fmt.Sprintf(`{
 		"id": "%s",
 		"object": "event",
@@ -418,9 +418,9 @@ func TestCreate_Idempotency_ReprocessFailedEvent(t *testing.T) {
 	rr := httptest.NewRecorder()
 	handler.Create(rr, req)
 
-	// 200を返す（再処理成功）
+	// 200を返す (再処理成功)
 	if rr.Code != http.StatusOK {
-		t.Errorf("再処理後のステータスコード: got %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("再処理後のステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 
 	// イベントのステータスがprocessedに更新されていることを確認
@@ -429,7 +429,7 @@ func TestCreate_Idempotency_ReprocessFailedEvent(t *testing.T) {
 		t.Fatalf("イベント取得に失敗: %v", err)
 	}
 	if updatedEvent.Status != "processed" {
-		t.Errorf("イベントステータス: got %s, want %s", updatedEvent.Status, "processed")
+		t.Errorf("イベントステータス = %s、期待値 = %s", updatedEvent.Status, "processed")
 	}
 }
 
@@ -531,7 +531,7 @@ func TestCreate_EventProcessing(t *testing.T) {
 			handler.Create(rr, req)
 
 			if rr.Code != tt.wantStatusCode {
-				t.Errorf("ステータスコード: got %d, want %d", rr.Code, tt.wantStatusCode)
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatusCode)
 			}
 
 			// イベントがDBに保存されていることを確認
@@ -540,7 +540,7 @@ func TestCreate_EventProcessing(t *testing.T) {
 				t.Errorf("イベントがDBに保存されていません: %v", err)
 			}
 			if savedEvent.StripeEventType != tt.eventType {
-				t.Errorf("イベントタイプ: got %s, want %s", savedEvent.StripeEventType, tt.eventType)
+				t.Errorf("イベントタイプ = %s、期待値 = %s", savedEvent.StripeEventType, tt.eventType)
 			}
 		})
 	}

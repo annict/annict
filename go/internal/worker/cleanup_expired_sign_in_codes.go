@@ -6,15 +6,15 @@ import (
 	"github.com/riverqueue/river"
 )
 
-// CleanupExpiredSignInCodesArgs は期限切れログインコードのクリーンアップジョブの引数です
+// CleanupExpiredSignInCodesArgsは期限切れログインコードのクリーンアップジョブの引数。
 type CleanupExpiredSignInCodesArgs struct{}
 
-// Kind はジョブの種類を返します
+// Kindはジョブの種類を返す。
 func (CleanupExpiredSignInCodesArgs) Kind() string {
 	return "cleanup_expired_sign_in_codes"
 }
 
-// InsertOpts はジョブ挿入時のデフォルトオプションを返します
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
 func (CleanupExpiredSignInCodesArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{
 		Queue:       river.QueueDefault,
@@ -22,25 +22,25 @@ func (CleanupExpiredSignInCodesArgs) InsertOpts() river.InsertOpts {
 	}
 }
 
-// ExpiredSignInCodeCleaner は期限切れログインコードのクリーンアップを実行するインターフェースです
+// ExpiredSignInCodeCleanerは期限切れログインコードのクリーンアップを実行する。
 type ExpiredSignInCodeCleaner interface {
 	Execute(ctx context.Context) error
 }
 
-// CleanupExpiredSignInCodesWorker は期限切れログインコードのクリーンアップワーカーです
+// CleanupExpiredSignInCodesWorkerは期限切れログインコードのクリーンアップワーカー。
 type CleanupExpiredSignInCodesWorker struct {
 	river.WorkerDefaults[CleanupExpiredSignInCodesArgs]
 	cleaner ExpiredSignInCodeCleaner
 }
 
-// NewCleanupExpiredSignInCodesWorker は新しいCleanupExpiredSignInCodesWorkerを作成します
+// NewCleanupExpiredSignInCodesWorkerは新しいCleanupExpiredSignInCodesWorkerを作成する。
 func NewCleanupExpiredSignInCodesWorker(cleaner ExpiredSignInCodeCleaner) *CleanupExpiredSignInCodesWorker {
 	return &CleanupExpiredSignInCodesWorker{
 		cleaner: cleaner,
 	}
 }
 
-// Work は有効期限切れおよび使用済みのログインコードを削除します
+// Workは有効期限切れおよび使用済みのログインコードを削除する。
 func (w *CleanupExpiredSignInCodesWorker) Work(ctx context.Context, job *river.Job[CleanupExpiredSignInCodesArgs]) error {
 	return w.cleaner.Execute(ctx)
 }

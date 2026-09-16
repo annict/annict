@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestUserRepository_Create はユーザーを正常に作成できることをテスト
+// TestUserRepository_Createはユーザーを正常に作成できることをテスト
 func TestUserRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -34,20 +34,20 @@ func TestUserRepository_Create(t *testing.T) {
 		t.Error("IDが0です")
 	}
 	if user.Username != "newuser" {
-		t.Errorf("Usernameが一致しません: got %v, want %v", user.Username, "newuser")
+		t.Errorf("Username = %v、期待値 = %v", user.Username, "newuser")
 	}
 	if user.Email != "newuser@example.com" {
-		t.Errorf("Emailが一致しません: got %v, want %v", user.Email, "newuser@example.com")
+		t.Errorf("Email = %v、期待値 = %v", user.Email, "newuser@example.com")
 	}
 	if user.Locale != "ja" {
-		t.Errorf("Localeが一致しません: got %v, want %v", user.Locale, "ja")
+		t.Errorf("Locale = %v、期待値 = %v", user.Locale, "ja")
 	}
 	if user.Role != 0 {
-		t.Errorf("Roleが一致しません: got %v, want %v", user.Role, 0)
+		t.Errorf("Role = %v、期待値 = %v", user.Role, 0)
 	}
 }
 
-// TestUserRepository_GetByUsername_Exists はユーザー名が存在する場合にnilを返すことをテスト
+// TestUserRepository_GetByUsername_Existsはユーザー名が存在する場合にnilを返すことをテスト
 func TestUserRepository_GetByUsername_Exists(t *testing.T) {
 	t.Parallel()
 
@@ -66,7 +66,7 @@ func TestUserRepository_GetByUsername_Exists(t *testing.T) {
 	}
 }
 
-// TestUserRepository_GetByUsername_NotFound はユーザー名が存在しない場合にエラーを返すことをテスト
+// TestUserRepository_GetByUsername_NotFoundはユーザー名が存在しない場合にエラーを返すことをテスト
 func TestUserRepository_GetByUsername_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -79,11 +79,11 @@ func TestUserRepository_GetByUsername_NotFound(t *testing.T) {
 		t.Error("存在しないユーザー名でエラーが返されるべきです")
 	}
 	if err != sql.ErrNoRows {
-		t.Errorf("期待するエラーではありません: got %v, want %v", err, sql.ErrNoRows)
+		t.Errorf("エラー = %v、期待値 = %v", err, sql.ErrNoRows)
 	}
 }
 
-// TestUserRepository_GetByUsername_CaseInsensitive はユーザー名の大文字小文字を区別しないことをテスト
+// TestUserRepository_GetByUsername_CaseInsensitiveはユーザー名の大文字小文字を区別しないことをテスト
 func TestUserRepository_GetByUsername_CaseInsensitive(t *testing.T) {
 	t.Parallel()
 
@@ -102,7 +102,7 @@ func TestUserRepository_GetByUsername_CaseInsensitive(t *testing.T) {
 	}
 }
 
-// TestUserRepository_UpdateStripeSubscriberID_Set はStripeサブスクライバーIDを設定できることをテスト
+// TestUserRepository_UpdateStripeSubscriberID_SetはStripeサブスクライバーIDを設定できることをテスト
 func TestUserRepository_UpdateStripeSubscriberID_Set(t *testing.T) {
 	t.Parallel()
 
@@ -131,14 +131,14 @@ func TestUserRepository_UpdateStripeSubscriberID_Set(t *testing.T) {
 	}
 
 	if model.UserID(user.ID) != userID {
-		t.Errorf("ユーザーIDが一致しません: got %d, want %d", user.ID, userID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", user.ID, userID)
 	}
 	if !user.StripeSubscriberID.Valid || model.StripeSubscriberID(user.StripeSubscriberID.Int64) != subscriberID {
-		t.Errorf("StripeSubscriberIDが一致しません: got %v, want %d", user.StripeSubscriberID, subscriberID)
+		t.Errorf("StripeSubscriberID = %v、期待値 = %d", user.StripeSubscriberID, subscriberID)
 	}
 }
 
-// TestUserRepository_UpdateStripeSubscriberID_Clear はStripeサブスクライバーIDをクリアできることをテスト
+// TestUserRepository_UpdateStripeSubscriberID_ClearはStripeサブスクライバーIDをクリアできることをテスト
 func TestUserRepository_UpdateStripeSubscriberID_Clear(t *testing.T) {
 	t.Parallel()
 
@@ -165,17 +165,17 @@ func TestUserRepository_UpdateStripeSubscriberID_Clear(t *testing.T) {
 		t.Fatalf("StripeサブスクライバーIDのクリアに失敗: %v", err)
 	}
 
-	// クリアされたことを確認（GetByStripeSubscriberIDでは見つからないはず）
+	// クリアされたことを確認 (GetByStripeSubscriberIDでは見つからないはず)
 	_, err = repo.GetByStripeSubscriberID(context.Background(), subscriberID)
 	if err == nil {
 		t.Error("クリア後のユーザーが見つかるべきではありません")
 	}
 	if err != sql.ErrNoRows {
-		t.Errorf("期待するエラーではありません: got %v, want %v", err, sql.ErrNoRows)
+		t.Errorf("エラー = %v、期待値 = %v", err, sql.ErrNoRows)
 	}
 }
 
-// TestUserRepository_GetByStripeSubscriberID は正常にユーザーを取得できることをテスト
+// TestUserRepository_GetByStripeSubscriberIDは正常にユーザーを取得できることをテスト
 func TestUserRepository_GetByStripeSubscriberID(t *testing.T) {
 	t.Parallel()
 
@@ -206,17 +206,17 @@ func TestUserRepository_GetByStripeSubscriberID(t *testing.T) {
 	}
 
 	if model.UserID(user.ID) != userID {
-		t.Errorf("ユーザーIDが一致しません: got %d, want %d", user.ID, userID)
+		t.Errorf("ユーザーID = %d、期待値 = %d", user.ID, userID)
 	}
 	if user.Username != "stripe_user" {
-		t.Errorf("ユーザー名が一致しません: got %s, want %s", user.Username, "stripe_user")
+		t.Errorf("ユーザー名 = %s、期待値 = %s", user.Username, "stripe_user")
 	}
 	if user.Email != "stripe@example.com" {
-		t.Errorf("メールアドレスが一致しません: got %s, want %s", user.Email, "stripe@example.com")
+		t.Errorf("メールアドレス = %s、期待値 = %s", user.Email, "stripe@example.com")
 	}
 }
 
-// TestUserRepository_GetByStripeSubscriberID_NotFound は存在しないIDの場合エラーが返ることをテスト
+// TestUserRepository_GetByStripeSubscriberID_NotFoundは存在しないIDの場合エラーが返ることをテスト
 func TestUserRepository_GetByStripeSubscriberID_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -229,11 +229,11 @@ func TestUserRepository_GetByStripeSubscriberID_NotFound(t *testing.T) {
 		t.Error("存在しないIDでエラーが返されるべきです")
 	}
 	if err != sql.ErrNoRows {
-		t.Errorf("期待するエラーではありません: got %v, want %v", err, sql.ErrNoRows)
+		t.Errorf("エラー = %v、期待値 = %v", err, sql.ErrNoRows)
 	}
 }
 
-// TestUserRepository_IsSupporter_StripeActive はStripeサポーター（アクティブ）の場合trueを返すことをテスト
+// TestUserRepository_IsSupporter_StripeActiveはStripeサポーター (アクティブ) の場合trueを返すことをテスト
 func TestUserRepository_IsSupporter_StripeActive(t *testing.T) {
 	t.Parallel()
 
@@ -257,7 +257,7 @@ func TestUserRepository_IsSupporter_StripeActive(t *testing.T) {
 
 	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
 	if err != nil {
-		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+		t.Fatalf("IsSupporter()の実行に失敗: %v", err)
 	}
 
 	if !isSupporter {
@@ -265,7 +265,7 @@ func TestUserRepository_IsSupporter_StripeActive(t *testing.T) {
 	}
 }
 
-// TestUserRepository_IsSupporter_StripePastDue はStripeサポーター（past_due）の場合trueを返すことをテスト
+// TestUserRepository_IsSupporter_StripePastDueはStripeサポーター (past_due) の場合trueを返すことをテスト
 func TestUserRepository_IsSupporter_StripePastDue(t *testing.T) {
 	t.Parallel()
 
@@ -289,15 +289,15 @@ func TestUserRepository_IsSupporter_StripePastDue(t *testing.T) {
 
 	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
 	if err != nil {
-		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+		t.Fatalf("IsSupporter()の実行に失敗: %v", err)
 	}
 
 	if !isSupporter {
-		t.Error("past_due状態のStripeサポーターはtrueを返すべきです（猶予期間）")
+		t.Error("past_due状態のStripeサポーターはtrueを返すべきです (猶予期間)")
 	}
 }
 
-// TestUserRepository_IsSupporter_StripeCanceled はStripeサポーター（キャンセル済み）の場合falseを返すことをテスト
+// TestUserRepository_IsSupporter_StripeCanceledはStripeサポーター (キャンセル済み) の場合falseを返すことをテスト
 func TestUserRepository_IsSupporter_StripeCanceled(t *testing.T) {
 	t.Parallel()
 
@@ -321,7 +321,7 @@ func TestUserRepository_IsSupporter_StripeCanceled(t *testing.T) {
 
 	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
 	if err != nil {
-		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+		t.Fatalf("IsSupporter()の実行に失敗: %v", err)
 	}
 
 	if isSupporter {
@@ -329,7 +329,7 @@ func TestUserRepository_IsSupporter_StripeCanceled(t *testing.T) {
 	}
 }
 
-// TestUserRepository_IsSupporter_GumroadActive はGumroadサポーター（アクティブ）の場合trueを返すことをテスト
+// TestUserRepository_IsSupporter_GumroadActiveはGumroadサポーター (アクティブ) の場合trueを返すことをテスト
 func TestUserRepository_IsSupporter_GumroadActive(t *testing.T) {
 	t.Parallel()
 
@@ -342,7 +342,7 @@ func TestUserRepository_IsSupporter_GumroadActive(t *testing.T) {
 		WithStripeSubscriberRepo(stripeRepo).
 		WithGumroadSubscriberRepo(gumroadRepo)
 
-	// アクティブなGumroadサブスクライバーを作成（cancelled_atとended_atがnull）
+	// アクティブなGumroadサブスクライバーを作成 (cancelled_atとended_atがnull)
 	subscriberID := testutil.NewGumroadSubscriberBuilder(t, tx).Build()
 
 	user := &model.User{
@@ -351,7 +351,7 @@ func TestUserRepository_IsSupporter_GumroadActive(t *testing.T) {
 
 	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
 	if err != nil {
-		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+		t.Fatalf("IsSupporter()の実行に失敗: %v", err)
 	}
 
 	if !isSupporter {
@@ -359,7 +359,7 @@ func TestUserRepository_IsSupporter_GumroadActive(t *testing.T) {
 	}
 }
 
-// TestUserRepository_IsSupporter_GumroadEnded はGumroadサポーター（終了済み）の場合falseを返すことをテスト
+// TestUserRepository_IsSupporter_GumroadEndedはGumroadサポーター (終了済み) の場合falseを返すことをテスト
 func TestUserRepository_IsSupporter_GumroadEnded(t *testing.T) {
 	t.Parallel()
 
@@ -384,7 +384,7 @@ func TestUserRepository_IsSupporter_GumroadEnded(t *testing.T) {
 
 	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
 	if err != nil {
-		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+		t.Fatalf("IsSupporter()の実行に失敗: %v", err)
 	}
 
 	if isSupporter {
@@ -392,7 +392,7 @@ func TestUserRepository_IsSupporter_GumroadEnded(t *testing.T) {
 	}
 }
 
-// TestUserRepository_IsSupporter_BothActive はStripeとGumroad両方アクティブの場合trueを返すことをテスト
+// TestUserRepository_IsSupporter_BothActiveはStripeとGumroad両方アクティブの場合trueを返すことをテスト
 func TestUserRepository_IsSupporter_BothActive(t *testing.T) {
 	t.Parallel()
 
@@ -418,7 +418,7 @@ func TestUserRepository_IsSupporter_BothActive(t *testing.T) {
 
 	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
 	if err != nil {
-		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+		t.Fatalf("IsSupporter()の実行に失敗: %v", err)
 	}
 
 	if !isSupporter {
@@ -426,7 +426,7 @@ func TestUserRepository_IsSupporter_BothActive(t *testing.T) {
 	}
 }
 
-// TestUserRepository_IsSupporter_NoSubscription は非サポーターの場合falseを返すことをテスト
+// TestUserRepository_IsSupporter_NoSubscriptionは非サポーターの場合falseを返すことをテスト
 func TestUserRepository_IsSupporter_NoSubscription(t *testing.T) {
 	t.Parallel()
 
@@ -444,7 +444,7 @@ func TestUserRepository_IsSupporter_NoSubscription(t *testing.T) {
 
 	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
 	if err != nil {
-		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+		t.Fatalf("IsSupporter()の実行に失敗: %v", err)
 	}
 
 	if isSupporter {
@@ -452,7 +452,7 @@ func TestUserRepository_IsSupporter_NoSubscription(t *testing.T) {
 	}
 }
 
-// TestUserRepository_IsSupporter_NoDependencies はリポジトリ依存がない場合falseを返すことをテスト
+// TestUserRepository_IsSupporter_NoDependenciesはリポジトリ依存がない場合falseを返すことをテスト
 func TestUserRepository_IsSupporter_NoDependencies(t *testing.T) {
 	t.Parallel()
 
@@ -473,7 +473,7 @@ func TestUserRepository_IsSupporter_NoDependencies(t *testing.T) {
 
 	isSupporter, err := userRepo.IsSupporter(context.Background(), user)
 	if err != nil {
-		t.Fatalf("IsSupporterの実行に失敗: %v", err)
+		t.Fatalf("IsSupporter()の実行に失敗: %v", err)
 	}
 
 	if isSupporter {

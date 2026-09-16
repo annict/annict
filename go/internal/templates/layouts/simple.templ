@@ -8,7 +8,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Simple はシンプルなレイアウトです
+// Simpleはシンプルなレイアウトです
 // ヘッダー、フラッシュメッセージ、コンテンツのみを含みます
 templ Simple(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, content templ.Component) {
 	<!DOCTYPE html>
@@ -16,7 +16,10 @@ templ Simple(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, 
 		<head>
 			@components.Head(meta, assetVersion)
 		</head>
-		<body class="min-h-screen flex items-center justify-center">
+		// 動的ビューポート単位は実際に見えている高さに追随するため、モバイルのツールバーが
+		// 伸縮しても中央寄せのコンテンツが中央に留まる。静的な単位 (100vh) はツールバーが隠れた
+		// 状態の高さを指すため、ツールバー表示時はbodyが画面より高くなり中央寄せがずれる。
+		<body class="min-h-dvh flex items-center justify-center">
 			@components.Flash(ctx, session.FlashFromContext(ctx))
 			@content
 		</body>

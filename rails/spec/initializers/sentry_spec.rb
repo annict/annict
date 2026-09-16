@@ -33,43 +33,72 @@ RSpec.describe "config/initializers/sentry.rb" do # rubocop:disable RSpec/Descri
   end
 
   describe "environment" do
-    it "ANNICT_SENTRY_ENVIRONMENT 未指定時は Rails.env が使われること" do
-      if ENV["ANNICT_SENTRY_ENVIRONMENT"].present?
-        skip "ANNICT_SENTRY_ENVIRONMENT がセットされている環境ではこのケースを検証できない"
-      end
+    it "ANNICT_SENTRY_ENVIRONMENT未指定時はRails.envが使われること" do
+      configuration = build_configuration("ANNICT_SENTRY_ENVIRONMENT" => nil)
 
-      expect(config.environment).to eq(Rails.env)
+      expect(configuration.environment).to eq(Rails.env)
+    end
+
+    it "ANNICT_SENTRY_ENVIRONMENT指定時はその値が使われること" do
+      configuration = build_configuration("ANNICT_SENTRY_ENVIRONMENT" => "staging")
+
+      expect(configuration.environment).to eq("staging")
     end
   end
 
   describe "release" do
-    it "ANNICT_SENTRY_RELEASE 未指定時は release を設定せず SDK の自動検出に委ねること" do
-      # When ANNICT_SENTRY_RELEASE is blank the initializer never assigns
-      # config.release. The SDK's auto-detection only runs when sending is
-      # allowed, so in the test environment the value stays blank.
-      #
-      # [Ja] ANNICT_SENTRY_RELEASE が空のとき release を空文字で上書きしない
-      # という実装判断を回帰防止する。SDK の自動検出は送信が許可された環境で
-      # のみ動作するため、テスト環境では空のままになる。
-      if ENV["ANNICT_SENTRY_RELEASE"].present?
-        skip "ANNICT_SENTRY_RELEASE がセットされている環境ではこのケースを検証できない"
-      end
+    it "ANNICT_SENTRY_RELEASE未指定時はreleaseを設定せずSDKの自動検出に委ねること" do
+      # ANNICT_SENTRY_RELEASEが空のときreleaseを空文字で上書きしないという実装判断を回帰防止する。
+      # SDKの自動検出は送信が許可された環境でのみ動作するため、未設定のままにしておく必要がある。
+      configuration = build_configuration("ANNICT_SENTRY_RELEASE" => nil)
 
-      expect(config.release).to be_blank
+      expect(configuration.release).to be_nil
+    end
+
+    it "ANNICT_SENTRY_RELEASE指定時はその値がreleaseタグになること" do
+      configuration = build_configuration("ANNICT_SENTRY_RELEASE" => "2026.09.16-1")
+
+      expect(configuration.release).to eq("2026.09.16-1")
     end
   end
 
   describe "traces_sample_rate" do
-    it "0.0〜1.0 の範囲に収まること" do
-      expect(config.traces_sample_rate).to be_between(0.0, 1.0)
+    it "ANNICT_SENTRY_TRACES_SAMPLE_RATE未指定時は0.5 (既定値) になること" do
+      configuration = build_configuration("ANNICT_SENTRY_TRACES_SAMPLE_RATE" => nil)
+
+      expect(configuration.traces_sample_rate).to eq(0.5)
     end
 
-    it "ANNICT_SENTRY_TRACES_SAMPLE_RATE 未指定時は 0.5 (既定値) になること" do
-      if ENV["ANNICT_SENTRY_TRACES_SAMPLE_RATE"].present?
-        skip "ANNICT_SENTRY_TRACES_SAMPLE_RATE がセットされている環境ではこのケースを検証できない"
-      end
+    it "ANNICT_SENTRY_TRACES_SAMPLE_RATE指定時はその値が使われること" do
+      configuration = build_configuration("ANNICT_SENTRY_TRACES_SAMPLE_RATE" => "0.2")
 
-      expect(config.traces_sample_rate).to eq(0.5)
+      expect(configuration.traces_sample_rate).to eq(0.2)
+    end
+
+    it "ANNICT_SENTRY_TRACES_SAMPLE_RATEが範囲外のときは既定値へフォールバックすること" do
+      configuration = build_configuration("ANNICT_SENTRY_TRACES_SAMPLE_RATE" => "1.5")
+
+      expect(configuration.traces_sample_rate).to eq(0.5)
+    end
+  end
+
+  describe "再評価の分離" do
+    it "評価に使った環境変数がexampleの終了後に復元されること" do
+      before_value = ENV["ANNICT_SENTRY_ENVIRONMENT"]
+
+      build_configuration("ANNICT_SENTRY_ENVIRONMENT" => "staging")
+
+      expect(ENV["ANNICT_SENTRY_ENVIRONMENT"]).to eq(before_value)
+    end
+
+    it "再評価がSentryのグローバル設定を変更しないこと" do
+      before_environment = config.environment
+      before_release = config.release
+
+      build_configuration("ANNICT_SENTRY_ENVIRONMENT" => "staging", "ANNICT_SENTRY_RELEASE" => "2026.09.16-1")
+
+      expect(config.environment).to eq(before_environment)
+      expect(config.release).to eq(before_release)
     end
   end
 
@@ -193,6 +222,43 @@ RSpec.describe "config/initializers/sentry.rb" do # rubocop:disable RSpec/Descri
       event = SentrySpecEventDouble.new(request: nil, extra: nil, breadcrumbs: nil)
 
       expect { before_send.call(event, {}) }.not_to raise_error
+    end
+  end
+
+  # 環境変数に応じて変わる設定を、プロセスの環境変数に左右されずに検証するためのヘルパー。
+  # initializerが`Sentry.init`へ渡すブロックだけを取り出し、使い捨ての`Sentry::Configuration`へ適用する。
+  # `Sentry.init`は呼ばないため、起動時に構築されたグローバル設定 (`Sentry.configuration`) は変化しない。
+  def build_configuration(env_overrides)
+    initializer_block = nil
+    allow(Sentry).to receive(:init) { |&block| initializer_block = block }
+    load Rails.root.join("config/initializers/sentry.rb").to_s
+
+    raise "initializerがSentry.initを呼び出していません" if initializer_block.nil?
+
+    configuration = Sentry::Configuration.new
+    with_env(env_overrides) { initializer_block.call(configuration) }
+    configuration
+  end
+
+  def with_env(overrides)
+    previous_values = overrides.keys.index_with { |key| ENV[key] }
+
+    apply_env(overrides)
+
+    begin
+      yield
+    ensure
+      apply_env(previous_values)
+    end
+  end
+
+  def apply_env(values)
+    values.each do |key, value|
+      if value.nil?
+        ENV.delete(key)
+      else
+        ENV[key] = value
+      end
     end
   end
 

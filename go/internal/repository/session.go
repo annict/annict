@@ -1,4 +1,4 @@
-// Package repository はデータアクセス層を提供します
+// Package repositoryはデータアクセス層を提供します
 package repository
 
 import (
@@ -7,27 +7,28 @@ import (
 	"database/sql"
 	"encoding/hex"
 	"fmt"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 )
 
-// SessionRepository はSession関連のデータアクセスを担当します
+// SessionRepositoryはSession関連のデータアクセスを担当します
 type SessionRepository struct {
 	queries *query.Queries
 }
 
-// NewSessionRepository はSessionRepositoryを作成します
+// NewSessionRepositoryはSessionRepositoryを作成します
 func NewSessionRepository(queries *query.Queries) *SessionRepository {
 	return &SessionRepository{queries: queries}
 }
 
-// WithTx はトランザクションを使用する新しいRepositoryを返します
+// WithTxはトランザクションを使用する新しいRepositoryを返します
 func (r *SessionRepository) WithTx(tx *sql.Tx) *SessionRepository {
 	return &SessionRepository{queries: r.queries.WithTx(tx)}
 }
 
-// TouchSession はセッションのupdated_atを更新します
+// TouchSessionはセッションのupdated_atを更新します
 func (r *SessionRepository) TouchSession(ctx context.Context, sessionID string) error {
 	// Rails/Rackの実装と互換性のある形式でprivate IDを生成
 	privateID := r.generatePrivateID(sessionID)
@@ -36,7 +37,7 @@ func (r *SessionRepository) TouchSession(ctx context.Context, sessionID string) 
 	return r.queries.TouchSession(ctx, privateID)
 }
 
-// GetSessionByID はセッションIDからセッションを取得します
+// GetSessionByIDはセッションIDからセッションを取得します
 func (r *SessionRepository) GetSessionByID(ctx context.Context, sessionID string) (*model.Session, error) {
 	privateID := r.generatePrivateID(sessionID)
 	row, err := r.queries.GetSessionByID(ctx, privateID)
@@ -46,7 +47,7 @@ func (r *SessionRepository) GetSessionByID(ctx context.Context, sessionID string
 	return toSessionModel(row), nil
 }
 
-// GetUserByID はユーザーIDからユーザー情報を取得します
+// GetUserByIDはユーザーIDからユーザー情報を取得します
 func (r *SessionRepository) GetUserByID(ctx context.Context, userID model.UserID) (*model.User, error) {
 	row, err := r.queries.GetUserByID(ctx, int64(userID))
 	if err != nil {
@@ -79,7 +80,7 @@ func (r *SessionRepository) GetUserByID(ctx context.Context, userID model.UserID
 	}, nil
 }
 
-// UpdateSession はセッションを更新します
+// UpdateSessionはセッションを更新します
 func (r *SessionRepository) UpdateSession(ctx context.Context, sessionID string, data []byte) error {
 	privateID := r.generatePrivateID(sessionID)
 	return r.queries.UpdateSession(ctx, query.UpdateSessionParams{
@@ -88,7 +89,7 @@ func (r *SessionRepository) UpdateSession(ctx context.Context, sessionID string,
 	})
 }
 
-// CreateSession はセッションを作成します
+// CreateSessionはセッションを作成します
 func (r *SessionRepository) CreateSession(ctx context.Context, sessionID string, data []byte) (*model.Session, error) {
 	privateID := r.generatePrivateID(sessionID)
 	row, err := r.queries.CreateSession(ctx, query.CreateSessionParams{
@@ -101,20 +102,30 @@ func (r *SessionRepository) CreateSession(ctx context.Context, sessionID string,
 	return toSessionModel(row), nil
 }
 
-// DeleteSession はセッションを削除します
+// DeleteSessionはセッションを削除します
 func (r *SessionRepository) DeleteSession(ctx context.Context, sessionID string) error {
 	privateID := r.generatePrivateID(sessionID)
 	return r.queries.DeleteSession(ctx, privateID)
 }
 
-// generatePrivateID はpublic IDからprivate IDを生成
+// DeleteExpiredはupdated_atがcutoffより古いセッションを最大limit件削除し、
+// 削除した件数を返す。limitがあることで、呼び出し元は大量の滞留をテーブル全体に対する
+// 長いトランザクションを保持せずに、区切られたステップで消化できる。
+func (r *SessionRepository) DeleteExpired(ctx context.Context, cutoff time.Time, limit int32) (int64, error) {
+	return r.queries.DeleteExpiredSessions(ctx, query.DeleteExpiredSessionsParams{
+		Cutoff:    cutoff,
+		BatchSize: limit,
+	})
+}
+
+// generatePrivateIDはpublic IDからprivate IDを生成
 // Rails/Rackの実装と互換性のある形式: "2::" + SHA256(publicID)
 func (r *SessionRepository) generatePrivateID(publicID string) string {
 	hash := sha256.Sum256([]byte(publicID))
 	return fmt.Sprintf("2::%s", hex.EncodeToString(hash[:]))
 }
 
-// toSessionModel はsqlcのSessionをmodel.Sessionに変換する
+// toSessionModelはsqlcのSessionをmodel.Sessionに変換する
 func toSessionModel(row query.Session) *model.Session {
 	return &model.Session{
 		ID:        row.ID,

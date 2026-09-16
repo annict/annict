@@ -1,4 +1,4 @@
-// Package repository はデータアクセス層を提供します
+// Package repositoryはデータアクセス層を提供します
 package repository
 
 import (
@@ -9,22 +9,22 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// EmailNotificationRepository はEmailNotification関連のデータアクセスを担当します
+// EmailNotificationRepositoryはEmailNotification関連のデータアクセスを担当します
 type EmailNotificationRepository struct {
 	queries *query.Queries
 }
 
-// NewEmailNotificationRepository はEmailNotificationRepositoryを作成します
+// NewEmailNotificationRepositoryはEmailNotificationRepositoryを作成します
 func NewEmailNotificationRepository(queries *query.Queries) *EmailNotificationRepository {
 	return &EmailNotificationRepository{queries: queries}
 }
 
-// WithTx はトランザクションを使用する新しいRepositoryを返します
+// WithTxはトランザクションを使用する新しいRepositoryを返します
 func (r *EmailNotificationRepository) WithTx(tx *sql.Tx) *EmailNotificationRepository {
 	return &EmailNotificationRepository{queries: r.queries.WithTx(tx)}
 }
 
-// Create はメール通知設定を作成します
+// Createはメール通知設定を作成します
 func (r *EmailNotificationRepository) Create(ctx context.Context, userID model.UserID, unsubscriptionKey string) (*model.EmailNotification, error) {
 	row, err := r.queries.CreateEmailNotification(ctx, query.CreateEmailNotificationParams{
 		UserID:            int64(userID),

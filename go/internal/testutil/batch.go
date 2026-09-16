@@ -11,12 +11,12 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// ProgressCallback は進捗を通知するコールバック関数
+// ProgressCallbackは進捗を通知するコールバック関数
 // current: 現在の処理数、total: 総処理数
 type ProgressCallback func(current, total int)
 
-// BatchBuildWorks は複数の作品データをバッチで作成します
-// testing.T に依存しないため、seed コマンドからも使用可能です
+// BatchBuildWorksは複数の作品データをバッチで作成します
+// testing.Tに依存しないため、seedコマンドからも使用可能です
 func BatchBuildWorks(ctx context.Context, tx *sql.Tx, count int, callback ProgressCallback) ([]model.WorkID, error) {
 	ids := make([]model.WorkID, count)
 
@@ -53,7 +53,7 @@ func BatchBuildWorks(ctx context.Context, tx *sql.Tx, count int, callback Progre
 		).Scan(&id)
 
 		if err != nil {
-			return nil, fmt.Errorf("作品 %d の作成に失敗: %w", i+1, err)
+			return nil, fmt.Errorf("作品 %dの作成に失敗: %w", i+1, err)
 		}
 
 		ids[i] = model.WorkID(id)
@@ -67,8 +67,8 @@ func BatchBuildWorks(ctx context.Context, tx *sql.Tx, count int, callback Progre
 	return ids, nil
 }
 
-// BatchBuildUsers は複数のユーザーデータをバッチで作成します
-// testing.T に依存しないため、seed コマンドからも使用可能です
+// BatchBuildUsersは複数のユーザーデータをバッチで作成します
+// testing.Tに依存しないため、seedコマンドからも使用可能です
 func BatchBuildUsers(ctx context.Context, tx *sql.Tx, count int, callback ProgressCallback) ([]int64, error) {
 	ids := make([]int64, count)
 
@@ -104,7 +104,7 @@ func BatchBuildUsers(ctx context.Context, tx *sql.Tx, count int, callback Progre
 		).Scan(&id)
 
 		if err != nil {
-			return nil, fmt.Errorf("ユーザー %d の作成に失敗: %w", i+1, err)
+			return nil, fmt.Errorf("ユーザー %dの作成に失敗: %w", i+1, err)
 		}
 
 		ids[i] = id
@@ -118,8 +118,8 @@ func BatchBuildUsers(ctx context.Context, tx *sql.Tx, count int, callback Progre
 	return ids, nil
 }
 
-// BatchBuildEpisodes は複数のエピソードデータをバッチで作成します
-// testing.T に依存しないため、seed コマンドからも使用可能です
+// BatchBuildEpisodesは複数のエピソードデータをバッチで作成します
+// testing.Tに依存しないため、seedコマンドからも使用可能です
 func BatchBuildEpisodes(ctx context.Context, tx *sql.Tx, workID model.WorkID, count int, callback ProgressCallback) ([]model.EpisodeID, error) {
 	ids := make([]model.EpisodeID, count)
 
@@ -147,7 +147,7 @@ func BatchBuildEpisodes(ctx context.Context, tx *sql.Tx, workID model.WorkID, co
 		).Scan(&id)
 
 		if err != nil {
-			return nil, fmt.Errorf("エピソード %d の作成に失敗: %w", i+1, err)
+			return nil, fmt.Errorf("エピソード %dの作成に失敗: %w", i+1, err)
 		}
 
 		ids[i] = model.EpisodeID(id)

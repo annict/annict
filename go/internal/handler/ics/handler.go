@@ -1,4 +1,4 @@
-// Package ics はiCalendar形式のカレンダー配信機能を提供します
+// Package icsはiCalendar形式のカレンダー配信機能を提供します
 package ics
 
 import (
@@ -6,13 +6,13 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler はiCalendar配信関連のHTTPハンドラーです
+// HandlerはiCalendar配信関連のHTTPハンドラーです
 type Handler struct {
 	cfg               *config.Config
 	getUserCalendarUC *usecase.GetUserCalendarUsecase
 }
 
-// NewHandler は新しいHandlerを作成します
+// NewHandlerは新しいHandlerを作成します
 func NewHandler(cfg *config.Config, getUserCalendarUC *usecase.GetUserCalendarUsecase) *Handler {
 	return &Handler{
 		cfg:               cfg,

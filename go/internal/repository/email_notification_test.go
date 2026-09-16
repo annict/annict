@@ -9,7 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestEmailNotificationRepository_Create はメール通知設定を正常に作成し、Modelとして返却されることをテスト
+// TestEmailNotificationRepository_Createはメール通知設定を正常に作成し、Modelとして返却されることをテスト
 func TestEmailNotificationRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -32,16 +32,16 @@ func TestEmailNotificationRepository_Create(t *testing.T) {
 		t.Error("EmailNotificationIDがゼロ値です")
 	}
 	if notification.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", notification.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", notification.UserID, userID)
 	}
 	if notification.UnsubscriptionKey != unsubscriptionKey {
-		t.Errorf("UnsubscriptionKeyが一致しません: got %v, want %v", notification.UnsubscriptionKey, unsubscriptionKey)
+		t.Errorf("UnsubscriptionKey = %v、期待値 = %v", notification.UnsubscriptionKey, unsubscriptionKey)
 	}
-	// CreateクエリでINSERT時に明示的に true を指定している
+	// CreateクエリでINSERT時に明示的にtrueを指定している
 	if !notification.EventFollowedUser {
 		t.Error("EventFollowedUserがtrueではありません")
 	}
-	// CreateクエリでINSERT時に明示的に true を指定している
+	// CreateクエリでINSERT時に明示的にtrueを指定している
 	if !notification.EventLikedEpisodeRecord {
 		t.Error("EventLikedEpisodeRecordがtrueではありません")
 	}
@@ -53,7 +53,7 @@ func TestEmailNotificationRepository_Create(t *testing.T) {
 	}
 }
 
-// TestEmailNotificationRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestEmailNotificationRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestEmailNotificationRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -73,6 +73,6 @@ func TestEmailNotificationRepository_WithTx(t *testing.T) {
 	}
 
 	if notification.UnsubscriptionKey != unsubscriptionKey {
-		t.Errorf("UnsubscriptionKeyが一致しません: got %v, want %v", notification.UnsubscriptionKey, unsubscriptionKey)
+		t.Errorf("UnsubscriptionKey = %v、期待値 = %v", notification.UnsubscriptionKey, unsubscriptionKey)
 	}
 }

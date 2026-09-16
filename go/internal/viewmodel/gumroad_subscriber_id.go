@@ -2,9 +2,9 @@ package viewmodel
 
 import "github.com/annict/annict/go/internal/model"
 
-// GumroadSubscriberID は Presentation 層で使う Gumroad サブスクライバー ID のラッパー型
-// Templates が Model に直接依存しないために定義する
+// GumroadSubscriberIDはPresentation層で使うGumroadサブスクライバーIDのラッパー型
+// TemplatesがModelに直接依存しないために定義する
 type GumroadSubscriberID model.GumroadSubscriberID
 
-// String は文字列表現を返す
+// Stringは文字列表現を返す
 func (id GumroadSubscriberID) String() string { return model.GumroadSubscriberID(id).String() }

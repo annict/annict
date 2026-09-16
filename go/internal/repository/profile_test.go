@@ -10,7 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// createUserWithoutRelations はプロフィール等の関連レコードなしでユーザーを作成するヘルパー
+// createUserWithoutRelationsはプロフィール等の関連レコードなしでユーザーを作成するヘルパー
 func createUserWithoutRelations(t *testing.T, queries *query.Queries, email string, username string) model.UserID {
 	t.Helper()
 
@@ -27,7 +27,7 @@ func createUserWithoutRelations(t *testing.T, queries *query.Queries, email stri
 	return user.ID
 }
 
-// TestProfileRepository_Create はプロフィールを正常に作成し、Modelとして返却されることをテスト
+// TestProfileRepository_Createはプロフィールを正常に作成し、Modelとして返却されることをテスト
 func TestProfileRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -49,21 +49,21 @@ func TestProfileRepository_Create(t *testing.T) {
 		t.Error("ProfileIDがゼロ値です")
 	}
 	if profile.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", profile.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", profile.UserID, userID)
 	}
 	if profile.Name != "testuser" {
-		t.Errorf("Nameが一致しません: got %v, want %v", profile.Name, "testuser")
+		t.Errorf("Name = %v、期待値 = %v", profile.Name, "testuser")
 	}
-	// Createは description を空文字列で初期化する
+	// Createはdescriptionを空文字列で初期化する
 	if profile.Description != "" {
-		t.Errorf("Descriptionが空文字列ではありません: got %v", profile.Description)
+		t.Errorf("profile.Description = %v、期待値 = 空文字列", profile.Description)
 	}
 	if !profile.CreatedAt.Valid {
 		t.Error("CreatedAtがセットされていません")
 	}
 }
 
-// TestProfileRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestProfileRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestProfileRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -82,9 +82,9 @@ func TestProfileRepository_WithTx(t *testing.T) {
 	}
 
 	if profile.Name != "withtxuser" {
-		t.Errorf("Nameが一致しません: got %v, want %v", profile.Name, "withtxuser")
+		t.Errorf("Name = %v、期待値 = %v", profile.Name, "withtxuser")
 	}
 	if profile.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", profile.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", profile.UserID, userID)
 	}
 }

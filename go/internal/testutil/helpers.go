@@ -11,7 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 )
 
-// NewTestSessionManager はテスト用のセッションマネージャーを作成します
+// NewTestSessionManagerはテスト用のセッションマネージャーを作成します
 func NewTestSessionManager(t *testing.T) *session.Manager {
 	t.Helper()
 
@@ -34,7 +34,7 @@ func NewTestSessionManager(t *testing.T) *session.Manager {
 	return session.NewManager(sessionRepo, cfg)
 }
 
-// NewTestSessionManagerWithDB はDB接続を受け取ってセッションマネージャーを作成します
+// NewTestSessionManagerWithDBはDB接続を受け取ってセッションマネージャーを作成します
 func NewTestSessionManagerWithDB(db *sql.DB) *session.Manager {
 	queries := query.New(db)
 
@@ -51,7 +51,7 @@ func NewTestSessionManagerWithDB(db *sql.DB) *session.Manager {
 	return session.NewManager(sessionRepo, cfg)
 }
 
-// NewTestImageHelper はテスト用の画像ヘルパーを作成します
+// NewTestImageHelperはテスト用の画像ヘルパーを作成します
 func NewTestImageHelper() *image.Helper {
 	cfg := &config.Config{
 		Env:              "test",

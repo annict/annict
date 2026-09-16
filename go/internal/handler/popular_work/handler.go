@@ -1,4 +1,4 @@
-// Package popular_work は人気作品表示機能を提供します
+// Package popular_workは人気作品表示機能を提供します
 package popular_work
 
 import (
@@ -7,14 +7,14 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler は人気作品関連のHTTPハンドラーです
+// Handlerは人気作品関連のHTTPハンドラーです
 type Handler struct {
 	cfg               *config.Config
 	getPopularWorksUC *usecase.GetPopularWorksUsecase
 	imageHelper       *image.Helper
 }
 
-// NewHandler は新しいHandlerを作成します
+// NewHandlerは新しいHandlerを作成します
 func NewHandler(cfg *config.Config, getPopularWorksUC *usecase.GetPopularWorksUsecase, imageHelper *image.Helper) *Handler {
 	return &Handler{
 		cfg:               cfg,

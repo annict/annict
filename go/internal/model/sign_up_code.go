@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// SignUpCode は新規登録メール確認の 6 桁コードのドメインエンティティ
+// SignUpCodeは新規登録メール確認の6桁コードのドメインエンティティ
 type SignUpCode struct {
 	ID         SignUpCodeID
 	Email      string

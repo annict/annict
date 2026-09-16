@@ -8,20 +8,20 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// SignInCreateValidator はサインインフォームのバリデーションを行う
+// SignInCreateValidatorはサインインフォームのバリデーションを行う
 type SignInCreateValidator struct{}
 
-// NewSignInCreateValidator は SignInCreateValidator を生成する
+// NewSignInCreateValidatorはSignInCreateValidatorを生成する
 func NewSignInCreateValidator() *SignInCreateValidator {
 	return &SignInCreateValidator{}
 }
 
-// SignInCreateValidatorInput はバリデーションの入力パラメータ
+// SignInCreateValidatorInputはバリデーションの入力パラメータ
 type SignInCreateValidatorInput struct {
 	Email string
 }
 
-// Validate はフォームの形式バリデーションを行う
+// Validateはフォームの形式バリデーションを行う
 func (v *SignInCreateValidator) Validate(ctx context.Context, input SignInCreateValidatorInput) error {
 	ve := model.NewValidationError()
 

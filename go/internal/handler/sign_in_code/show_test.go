@@ -15,7 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// TestShow GET /sign_in/codeのテスト（正常系）
+// TestShow GET /sign_in/codeのテスト (正常系)
 func TestShow(t *testing.T) {
 	t.Parallel()
 
@@ -61,18 +61,18 @@ func TestShow(t *testing.T) {
 	// レスポンスレコーダーをリセット
 	rr = httptest.NewRecorder()
 
-	// I18nミドルウェアを適用（テストでもlocaleを設定）
+	// I18nミドルウェアを適用 (テストでもlocaleを設定)
 	testutil.ApplyI18nMiddleware(t, handler.Show)(rr, req)
 
 	// ステータスコードを確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	// Content-Typeを確認
 	contentType := rr.Header().Get("Content-Type")
 	if !strings.Contains(contentType, "text/html") {
-		t.Errorf("Content-Typeが正しくない: got %v", contentType)
+		t.Errorf("Content-Type = %v、期待値 = text/htmlを含むこと", contentType)
 	}
 
 	// レスポンスボディに期待される文字列が含まれているか確認
@@ -98,7 +98,7 @@ func TestShow(t *testing.T) {
 	}
 }
 
-// TestShow_NoEmailInSession セッションにメールアドレスがない場合のテスト
+// TestShow_NoEmailInSessionセッションにメールアドレスがない場合のテスト
 func TestShow_NoEmailInSession(t *testing.T) {
 	t.Parallel()
 
@@ -124,21 +124,21 @@ func TestShow_NoEmailInSession(t *testing.T) {
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
-	// リクエストを作成（セッションにメールアドレスを設定しない）
+	// リクエストを作成 (セッションにメールアドレスを設定しない)
 	req := httptest.NewRequest("GET", "/sign_in/code", nil)
 	rr := httptest.NewRecorder()
 
-	// I18nミドルウェアを適用（テストでもlocaleを設定）
+	// I18nミドルウェアを適用 (テストでもlocaleを設定)
 	testutil.ApplyI18nMiddleware(t, handler.Show)(rr, req)
 
-	// ステータスコードを確認（/sign_in にリダイレクトされる）
+	// ステータスコードを確認 (/sign_inにリダイレクトされる)
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	// リダイレクト先を確認
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("リダイレクト先が正しくない: got %v want /sign_in", location)
+		t.Errorf("リダイレクト先 = %v、期待値 = /sign_in", location)
 	}
 }

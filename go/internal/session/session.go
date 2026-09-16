@@ -1,4 +1,4 @@
-// Package session はセッション管理機能を提供します
+// Package sessionはセッション管理機能を提供します
 package session
 
 import (
@@ -16,17 +16,17 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// SessionKey はRailsのセッションクッキー名
+// SessionKeyはRailsのセッションクッキー名
 const SessionKey = "_annict_session_v201904"
 
-// Manager はセッション管理を行う
+// Managerはセッション管理を行う
 type Manager struct {
 	sessionRepo *repository.SessionRepository
 	cfg         *config.Config
 	CookieName  string
 }
 
-// NewManager は新しいManagerを作成
+// NewManagerは新しいManagerを作成
 func NewManager(sessionRepo *repository.SessionRepository, cfg *config.Config) *Manager {
 	return &Manager{
 		sessionRepo: sessionRepo,
@@ -35,14 +35,14 @@ func NewManager(sessionRepo *repository.SessionRepository, cfg *config.Config) *
 	}
 }
 
-// SessionData はセッションに保存されているデータ
+// SessionDataはセッションに保存されているデータ
 type SessionData struct {
 	UserID    *model.UserID  `json:"warden.user.user.key"`
 	CSRFToken string         `json:"_csrf_token"`
 	ExtraData map[string]any `json:"-"`
 }
 
-// GetSessionID はクッキーからセッションIDを取得
+// GetSessionIDはクッキーからセッションIDを取得
 func (m *Manager) GetSessionID(r *http.Request) (string, error) {
 	cookie, err := r.Cookie(SessionKey)
 	if err != nil {
@@ -58,7 +58,7 @@ func (m *Manager) GetSessionID(r *http.Request) (string, error) {
 	return sessionID, nil
 }
 
-// GetSession はセッションIDからセッションデータを取得
+// GetSessionはセッションIDからセッションデータを取得
 func (m *Manager) GetSession(ctx context.Context, sessionID string) (*SessionData, error) {
 	if sessionID == "" {
 		return nil, nil
@@ -106,12 +106,12 @@ func (m *Manager) GetSession(ctx context.Context, sessionID string) (*SessionDat
 	return sessionData, nil
 }
 
-// TouchSession はセッションのupdated_atを更新する
+// TouchSessionはセッションのupdated_atを更新する
 func (m *Manager) TouchSession(ctx context.Context, sessionID string) error {
 	return m.sessionRepo.TouchSession(ctx, sessionID)
 }
 
-// GetCurrentUser は現在のログインユーザーを取得
+// GetCurrentUserは現在のログインユーザーを取得
 func (m *Manager) GetCurrentUser(ctx context.Context, r *http.Request) (*model.User, error) {
 	sessionID, err := m.GetSessionID(r)
 	if err != nil {
@@ -143,7 +143,7 @@ func (m *Manager) GetCurrentUser(ctx context.Context, r *http.Request) (*model.U
 	return user, nil
 }
 
-// CreateSession は新規セッションを作成してユーザーIDとCSRFトークンを保存
+// CreateSessionは新規セッションを作成してユーザーIDとCSRFトークンを保存
 // Rails互換のセッションデータを作成し、Cookieを設定する
 func (m *Manager) CreateSession(ctx context.Context, w http.ResponseWriter, r *http.Request, userID model.UserID) error {
 	// 1. Public IDを生成
@@ -184,7 +184,7 @@ func (m *Manager) CreateSession(ctx context.Context, w http.ResponseWriter, r *h
 	return nil
 }
 
-// SetValue セッションに任意の値を保存
+// SetValueセッションに任意の値を保存
 // 新規セッション作成時は自動的にCSRFトークンを生成・保存する
 func (m *Manager) SetValue(ctx context.Context, w http.ResponseWriter, r *http.Request, key, value string) error {
 	// 既存のセッションIDを取得または新規作成
@@ -204,7 +204,7 @@ func (m *Manager) SetValue(ctx context.Context, w http.ResponseWriter, r *http.R
 		}
 
 		if err == nil {
-			// 既存のセッションデータをパース（重要: 既存データを保持）
+			// 既存のセッションデータをパース (重要: 既存データを保持)
 			if err := json.Unmarshal(session.Data, &sessionData); err != nil {
 				return fmt.Errorf("セッションデータのパースに失敗しました: %w", err)
 			}
@@ -235,7 +235,7 @@ func (m *Manager) SetValue(ctx context.Context, w http.ResponseWriter, r *http.R
 		m.setSessionCookie(w, r, publicID)
 	}
 
-	// 値を設定（既存のデータに追加）
+	// 値を設定 (既存のデータに追加)
 	sessionData[key] = value
 
 	// JSONにエンコード
@@ -244,7 +244,7 @@ func (m *Manager) SetValue(ctx context.Context, w http.ResponseWriter, r *http.R
 		return fmt.Errorf("セッションデータのJSON化に失敗しました: %w", err)
 	}
 
-	// DBに保存（UPDATE or INSERT）
+	// DBに保存 (UPDATE or INSERT)
 	if sessionExists {
 		// UPDATE
 		err = m.sessionRepo.UpdateSession(ctx, sessionID, jsonData)
@@ -260,7 +260,7 @@ func (m *Manager) SetValue(ctx context.Context, w http.ResponseWriter, r *http.R
 	return nil
 }
 
-// GetValue セッションから値を取得（削除しない）
+// GetValueセッションから値を取得 (削除しない)
 func (m *Manager) GetValue(ctx context.Context, r *http.Request, key string) (string, error) {
 	// セッションIDを取得
 	sessionID, err := m.GetSessionID(r)
@@ -297,7 +297,7 @@ func (m *Manager) GetValue(ctx context.Context, r *http.Request, key string) (st
 	return valueStr, nil
 }
 
-// DeleteValue セッションから値を削除
+// DeleteValueセッションから値を削除
 func (m *Manager) DeleteValue(ctx context.Context, r *http.Request, key string) error {
 	// セッションIDを取得
 	sessionID, err := m.GetSessionID(r)
@@ -338,13 +338,13 @@ func (m *Manager) DeleteValue(ctx context.Context, r *http.Request, key string) 
 	return nil
 }
 
-// SetSessionCookieByPublicID はセッションCookieを設定する
+// SetSessionCookieByPublicIDはセッションCookieを設定する
 // ハンドラーからusecase呼び出し後にCookieを設定するために使用
 func (m *Manager) SetSessionCookieByPublicID(w http.ResponseWriter, r *http.Request, publicID string) {
 	m.setSessionCookie(w, r, publicID)
 }
 
-// setSessionCookie はセッションCookieを設定する内部ヘルパー
+// setSessionCookieはセッションCookieを設定する内部ヘルパー
 // X-Forwarded-Protoヘッダーを考慮してSecure属性を判定する
 func (m *Manager) setSessionCookie(w http.ResponseWriter, r *http.Request, publicID string) {
 	secure := m.cfg.SessionSecure == "true"
@@ -361,12 +361,12 @@ func (m *Manager) setSessionCookie(w http.ResponseWriter, r *http.Request, publi
 		Secure:   secure,
 		HttpOnly: m.cfg.SessionHTTPOnly == "true",
 		SameSite: http.SameSiteLaxMode,
-		MaxAge:   30 * 24 * 60 * 60, // 30日
+		MaxAge:   int(model.SessionMaxAge.Seconds()),
 	}
 	http.SetCookie(w, cookie)
 }
 
-// EnsureCSRFToken はセッションが存在しない場合に新規作成し、CSRFトークンを返す
+// EnsureCSRFTokenはセッションが存在しない場合に新規作成し、CSRFトークンを返す
 // ログインフォームなど、セッションがまだ存在しない可能性があるページで使用
 func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r *http.Request) (string, error) {
 	// 既存のセッションIDを取得
@@ -421,7 +421,7 @@ func (m *Manager) EnsureCSRFToken(ctx context.Context, w http.ResponseWriter, r 
 	return csrfToken, nil
 }
 
-// DestroySession はセッションを削除します
+// DestroySessionはセッションを削除します
 // DBからセッションレコードを削除し、Cookieをクリアしてログアウトさせます
 func (m *Manager) DestroySession(ctx context.Context, w http.ResponseWriter, r *http.Request) error {
 	// セッションIDをCookieから取得
@@ -447,7 +447,7 @@ func (m *Manager) DestroySession(ctx context.Context, w http.ResponseWriter, r *
 	return nil
 }
 
-// deleteSessionCookie はセッションCookieを削除します
+// deleteSessionCookieはセッションCookieを削除します
 // MaxAge=-1を設定することでブラウザにCookieを削除させます
 func (m *Manager) deleteSessionCookie(w http.ResponseWriter, r *http.Request) {
 	secure := m.cfg.SessionSecure == "true"
@@ -469,7 +469,7 @@ func (m *Manager) deleteSessionCookie(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, cookie)
 }
 
-// generatePublicID ランダムなpublic IDを生成
+// generatePublicIDランダムなpublic IDを生成
 func generatePublicID() (string, error) {
 	// 32バイトのランダムデータを生成
 	randomBytes := make([]byte, 32)

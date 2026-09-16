@@ -6,29 +6,29 @@ import (
 	"log/slog"
 )
 
-// SignInCodeEmailSender はログインコードメールの送信を行うインターフェース
+// SignInCodeEmailSenderはログインコードメールの送信を行うインターフェース
 type SignInCodeEmailSender interface {
 	Send(ctx context.Context, to, code, locale string) error
 }
 
-// SendSignInCodeEmailUsecase はログインコードメールの送信ユースケース
+// SendSignInCodeEmailUsecaseはログインコードメールの送信ユースケース
 type SendSignInCodeEmailUsecase struct {
 	sender SignInCodeEmailSender
 }
 
-// NewSendSignInCodeEmailUsecase は SendSignInCodeEmailUsecase を生成する
+// NewSendSignInCodeEmailUsecaseはSendSignInCodeEmailUsecaseを生成する
 func NewSendSignInCodeEmailUsecase(sender SignInCodeEmailSender) *SendSignInCodeEmailUsecase {
 	return &SendSignInCodeEmailUsecase{sender: sender}
 }
 
-// SendSignInCodeEmailInput はログインコードメール送信の入力パラメータ
+// SendSignInCodeEmailInputはログインコードメール送信の入力パラメータ
 type SendSignInCodeEmailInput struct {
 	Email  string
 	Code   string
 	Locale string
 }
 
-// Execute はログインコードメールを送信する
+// Executeはログインコードメールを送信する
 func (uc *SendSignInCodeEmailUsecase) Execute(ctx context.Context, input SendSignInCodeEmailInput) error {
 	if input.Email == "" {
 		return fmt.Errorf("メールアドレスが空です")

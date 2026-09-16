@@ -28,7 +28,7 @@ func TestValidateNotNullTime(t *testing.T) {
 			wantError: false,
 		},
 		{
-			name: "異常系: NULL（Valid=false）",
+			name: "異常系: NULL (Valid=false)",
 			value: sql.NullTime{
 				Time:  time.Time{},
 				Valid: false,
@@ -86,7 +86,7 @@ func TestValidateNotNullString(t *testing.T) {
 			wantError: false,
 		},
 		{
-			name: "異常系: NULL（Valid=false）",
+			name: "異常系: NULL (Valid=false)",
 			value: sql.NullString{
 				String: "",
 				Valid:  false,
@@ -135,7 +135,7 @@ func TestValidateNotNullInt32(t *testing.T) {
 			wantError: false,
 		},
 		{
-			name: "異常系: NULL（Valid=false）",
+			name: "異常系: NULL (Valid=false)",
 			value: sql.NullInt32{
 				Int32: 0,
 				Valid: false,
@@ -184,7 +184,7 @@ func TestValidateNotNullInt64(t *testing.T) {
 			wantError: false,
 		},
 		{
-			name: "異常系: NULL（Valid=false）",
+			name: "異常系: NULL (Valid=false)",
 			value: sql.NullInt64{
 				Int64: 0,
 				Valid: false,

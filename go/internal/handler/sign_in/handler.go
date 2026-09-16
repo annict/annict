@@ -1,4 +1,4 @@
-// Package sign_in はログイン機能を提供します
+// Package sign_inはログイン機能を提供します
 package sign_in
 
 import (
@@ -8,7 +8,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler サインイン関連のHTTPハンドラーです
+// Handlerサインイン関連のHTTPハンドラーです
 type Handler struct {
 	cfg              *config.Config
 	sessionMgr       *session.Manager
@@ -17,7 +17,7 @@ type Handler struct {
 	turnstileClient  *turnstile.Client
 }
 
-// NewHandler 新しいHandlerを作成します
+// NewHandler新しいHandlerを作成します
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,

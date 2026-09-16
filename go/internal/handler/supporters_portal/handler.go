@@ -1,4 +1,4 @@
-// Package supporters_portal はサポーターCustomer Portal関連のハンドラーを提供します
+// Package supporters_portalはサポーターCustomer Portal関連のハンドラーを提供します
 package supporters_portal
 
 import (
@@ -6,13 +6,13 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler はサポーターCustomer Portal関連のHTTPハンドラーです
+// HandlerはサポーターCustomer Portal関連のHTTPハンドラーです
 type Handler struct {
 	flashMgr              *session.FlashManager
 	createPortalSessionUC *usecase.CreatePortalSessionUsecase
 }
 
-// NewHandler は新しいHandlerを作成します
+// NewHandlerは新しいHandlerを作成します
 func NewHandler(
 	flashMgr *session.FlashManager,
 	createPortalSessionUC *usecase.CreatePortalSessionUsecase,

@@ -11,48 +11,48 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// CreateFollowParams フォロー関係作成のパラメータ
+// CreateFollowParamsフォロー関係作成のパラメータ
 type CreateFollowParams struct {
-	FollowerID  model.UserID // フォローする人（user_id）
-	FollowingID model.UserID // フォローされる人（following_id）
+	FollowerID  model.UserID // フォローする人 (user_id)
+	FollowingID model.UserID // フォローされる人 (following_id)
 }
 
-// CreateFollowResult フォロー関係作成の結果
+// CreateFollowResultフォロー関係作成の結果
 type CreateFollowResult struct {
 	FollowID int64
 }
 
-// CreateFollowUsecase フォロー関係生成Usecase（シード専用、バルクインサート対応）
+// CreateFollowUsecaseフォロー関係生成Usecase (シード専用、バルクインサート対応)
 type CreateFollowUsecase struct {
 	db *sql.DB
 }
 
-// NewCreateFollowUsecase 新しいCreateFollowUsecaseを作成
+// NewCreateFollowUsecase新しいCreateFollowUsecaseを作成
 func NewCreateFollowUsecase(db *sql.DB) *CreateFollowUsecase {
 	return &CreateFollowUsecase{
 		db: db,
 	}
 }
 
-// ExecuteBatch 複数のフォロー関係をバッチで作成します
+// ExecuteBatch複数のフォロー関係をバッチで作成します
 // 1000件ごとにコミットしてパフォーマンスを最適化します
 func (uc *CreateFollowUsecase) ExecuteBatch(ctx context.Context, follows []CreateFollowParams, progressBar *progressbar.ProgressBar) ([]CreateFollowResult, error) {
 	return uc.executeBatchWithTx(ctx, nil, follows, progressBar)
 }
 
-// ExecuteBatchWithTx 複数のフォロー関係をバッチで作成します（テスト用：既存トランザクションを使用）
+// ExecuteBatchWithTx複数のフォロー関係をバッチで作成します (テスト用：既存トランザクションを使用)
 // txがnilの場合は内部でトランザクションを作成します
 func (uc *CreateFollowUsecase) ExecuteBatchWithTx(ctx context.Context, tx *sql.Tx, follows []CreateFollowParams, progressBar *progressbar.ProgressBar) ([]CreateFollowResult, error) {
 	return uc.executeBatchWithTx(ctx, tx, follows, progressBar)
 }
 
-// executeBatchWithTx 内部実装：トランザクションを受け取るか新規作成する
+// executeBatchWithTx内部実装：トランザクションを受け取るか新規作成する
 func (uc *CreateFollowUsecase) executeBatchWithTx(ctx context.Context, existingTx *sql.Tx, follows []CreateFollowParams, progressBar *progressbar.ProgressBar) ([]CreateFollowResult, error) {
 	results := make([]CreateFollowResult, 0, len(follows))
 
 	// 既存トランザクションがある場合は、バッチサイズを無視して全件処理
 	if existingTx != nil {
-		// マルチ行INSERTのチャンクサイズ（100件ずつ）
+		// マルチ行INSERTのチャンクサイズ (100件ずつ)
 		multiInsertChunkSize := 100
 		for i := 0; i < len(follows); i += multiInsertChunkSize {
 			end := i + multiInsertChunkSize
@@ -64,7 +64,7 @@ func (uc *CreateFollowUsecase) executeBatchWithTx(ctx context.Context, existingT
 			// マルチ行INSERTで作成
 			chunkResults, err := uc.createMultipleFollows(ctx, existingTx, chunk)
 			if err != nil {
-				return nil, fmt.Errorf("フォロー関係マルチ行INSERT エラー: %w", err)
+				return nil, fmt.Errorf("フォロー関係マルチ行INSERTエラー: %w", err)
 			}
 			results = append(results, chunkResults...)
 
@@ -74,7 +74,7 @@ func (uc *CreateFollowUsecase) executeBatchWithTx(ctx context.Context, existingT
 			}
 		}
 
-		// カウンター更新（既存トランザクション内）
+		// カウンター更新 (既存トランザクション内)
 		if err := uc.updateCounters(ctx, existingTx, follows); err != nil {
 			return nil, fmt.Errorf("カウンター更新エラー: %w", err)
 		}
@@ -111,7 +111,7 @@ func (uc *CreateFollowUsecase) executeBatchWithTx(ctx context.Context, existingT
 			// マルチ行INSERTで作成
 			chunkResults, err := uc.createMultipleFollows(ctx, tx, chunk)
 			if err != nil {
-				return nil, fmt.Errorf("フォロー関係マルチ行INSERT エラー: %w", err)
+				return nil, fmt.Errorf("フォロー関係マルチ行INSERTエラー: %w", err)
 			}
 			results = append(results, chunkResults...)
 
@@ -135,7 +135,7 @@ func (uc *CreateFollowUsecase) executeBatchWithTx(ctx context.Context, existingT
 	return results, nil
 }
 
-// createMultipleFollows 複数のフォロー関係をマルチ行INSERTで作成します（トランザクション内）
+// createMultipleFollows複数のフォロー関係をマルチ行INSERTで作成します (トランザクション内)
 func (uc *CreateFollowUsecase) createMultipleFollows(ctx context.Context, tx *sql.Tx, followsList []CreateFollowParams) ([]CreateFollowResult, error) {
 	if len(followsList) == 0 {
 		return []CreateFollowResult{}, nil
@@ -156,7 +156,7 @@ func (uc *CreateFollowUsecase) createMultipleFollows(ctx context.Context, tx *sq
 			queryBuilder += ", "
 		}
 
-		// プレースホルダーの開始位置（各行は4個のパラメータ）
+		// プレースホルダーの開始位置 (各行は4個のパラメータ)
 		offset := i * 4
 		queryBuilder += fmt.Sprintf("($%d, $%d, $%d, $%d)",
 			offset+1, offset+2, offset+3, offset+4)
@@ -175,7 +175,7 @@ func (uc *CreateFollowUsecase) createMultipleFollows(ctx context.Context, tx *sq
 	// マルチ行INSERTを実行
 	rows, err := tx.QueryContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return nil, fmt.Errorf("followsテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("followsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 	defer rows.Close()
 
@@ -184,7 +184,7 @@ func (uc *CreateFollowUsecase) createMultipleFollows(ctx context.Context, tx *sq
 	for rows.Next() {
 		var followID int64
 		if err := rows.Scan(&followID); err != nil {
-			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
+			return nil, fmt.Errorf("RETURNING idのスキャンエラー: %w", err)
 		}
 		followIDs = append(followIDs, CreateFollowResult{FollowID: followID})
 	}
@@ -196,7 +196,7 @@ func (uc *CreateFollowUsecase) createMultipleFollows(ctx context.Context, tx *sq
 	return followIDs, nil
 }
 
-// updateCounters users.followers_count と users.following_count を更新します
+// updateCounters users.followers_countとusers.following_countを更新します
 func (uc *CreateFollowUsecase) updateCounters(ctx context.Context, tx *sql.Tx, follows []CreateFollowParams) error {
 	// フォロワー数とフォロー数をカウント
 	followerCounts := make(map[model.UserID]int)  // following_id -> count (フォローされた回数)
@@ -207,7 +207,7 @@ func (uc *CreateFollowUsecase) updateCounters(ctx context.Context, tx *sql.Tx, f
 		followingCounts[follow.FollowerID]++
 	}
 
-	// followers_countを更新（フォローされた人）
+	// followers_countを更新 (フォローされた人)
 	for userID, count := range followerCounts {
 		query := `UPDATE users SET followers_count = followers_count + $1 WHERE id = $2`
 		if _, err := tx.ExecContext(ctx, query, count, userID); err != nil {
@@ -215,7 +215,7 @@ func (uc *CreateFollowUsecase) updateCounters(ctx context.Context, tx *sql.Tx, f
 		}
 	}
 
-	// following_countを更新（フォローした人）
+	// following_countを更新 (フォローした人)
 	for userID, count := range followingCounts {
 		query := `UPDATE users SET following_count = following_count + $1 WHERE id = $2`
 		if _, err := tx.ExecContext(ctx, query, count, userID); err != nil {

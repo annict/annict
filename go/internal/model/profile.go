@@ -2,7 +2,7 @@ package model
 
 import "database/sql"
 
-// Profile はユーザープロフィールのドメインエンティティ
+// Profileはユーザープロフィールのドメインエンティティ
 type Profile struct {
 	ID          ProfileID
 	UserID      UserID

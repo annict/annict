@@ -10,7 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCastRepository_GetByWorkIDs は作品IDのリストに紐づくキャストを取得できることをテスト
+// TestCastRepository_GetByWorkIDsは作品IDのリストに紐づくキャストを取得できることをテスト
 func TestCastRepository_GetByWorkIDs(t *testing.T) {
 	t.Parallel()
 
@@ -28,27 +28,27 @@ func TestCastRepository_GetByWorkIDs(t *testing.T) {
 
 		casts, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{workID})
 		if err != nil {
-			t.Fatalf("GetByWorkIDs() error = %v", err)
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
 		}
 
 		if len(casts) != 1 {
-			t.Fatalf("len(casts) = %d, want 1", len(casts))
+			t.Fatalf("len(casts) = %d、期待値 = 1", len(casts))
 		}
 		if casts[0].WorkID != workID {
-			t.Errorf("WorkID = %v, want %v", casts[0].WorkID, workID)
+			t.Errorf("WorkID = %v、期待値 = %v", casts[0].WorkID, workID)
 		}
 		if casts[0].CharacterName != "キャラクター1" {
-			t.Errorf("CharacterName = %q, want %q", casts[0].CharacterName, "キャラクター1")
+			t.Errorf("CharacterName = %q、期待値 = %q", casts[0].CharacterName, "キャラクター1")
 		}
 		if casts[0].PersonName != "声優1" {
-			t.Errorf("PersonName = %q, want %q", casts[0].PersonName, "声優1")
+			t.Errorf("PersonName = %q、期待値 = %q", casts[0].PersonName, "声優1")
 		}
 		if casts[0].ID == 0 {
-			t.Error("CastID がゼロ値です")
+			t.Error("CastIDがゼロ値です")
 		}
 	})
 
-	t.Run("正常系: workIDs が空の場合は空のスライスを返す", func(t *testing.T) {
+	t.Run("正常系: workIDsが空の場合は空のスライスを返す", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
@@ -56,10 +56,10 @@ func TestCastRepository_GetByWorkIDs(t *testing.T) {
 
 		casts, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{})
 		if err != nil {
-			t.Fatalf("GetByWorkIDs() error = %v", err)
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
 		}
 		if len(casts) != 0 {
-			t.Errorf("len(casts) = %d, want 0", len(casts))
+			t.Errorf("len(casts) = %d、期待値 = 0", len(casts))
 		}
 	})
 
@@ -71,15 +71,15 @@ func TestCastRepository_GetByWorkIDs(t *testing.T) {
 
 		casts, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{999999999})
 		if err != nil {
-			t.Fatalf("GetByWorkIDs() error = %v", err)
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
 		}
 		if len(casts) != 0 {
-			t.Errorf("len(casts) = %d, want 0", len(casts))
+			t.Errorf("len(casts) = %d、期待値 = 0", len(casts))
 		}
 	})
 }
 
-// TestCastRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestCastRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestCastRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -100,6 +100,6 @@ func TestCastRepository_WithTx(t *testing.T) {
 		t.Fatalf("WithTxで取得したRepositoryでGetByWorkIDsに失敗: %v", err)
 	}
 	if len(casts) != 1 {
-		t.Errorf("len(casts) = %d, want 1", len(casts))
+		t.Errorf("len(casts) = %d、期待値 = 1", len(casts))
 	}
 }

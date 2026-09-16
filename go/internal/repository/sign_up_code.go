@@ -9,29 +9,29 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// SignUpCodeRepository はサインアップコード関連のデータアクセスを担当します
+// SignUpCodeRepositoryはサインアップコード関連のデータアクセスを担当します
 type SignUpCodeRepository struct {
 	queries *query.Queries
 }
 
-// NewSignUpCodeRepository はSignUpCodeRepositoryを作成します
+// NewSignUpCodeRepositoryはSignUpCodeRepositoryを作成します
 func NewSignUpCodeRepository(queries *query.Queries) *SignUpCodeRepository {
 	return &SignUpCodeRepository{queries: queries}
 }
 
-// WithTx はトランザクションを使用する新しいRepositoryを返します
+// WithTxはトランザクションを使用する新しいRepositoryを返します
 func (r *SignUpCodeRepository) WithTx(tx *sql.Tx) *SignUpCodeRepository {
 	return &SignUpCodeRepository{queries: r.queries.WithTx(tx)}
 }
 
-// SignUpCodeCreateParams はサインアップコード作成のパラメータ
+// SignUpCodeCreateParamsはサインアップコード作成のパラメータ
 type SignUpCodeCreateParams struct {
 	Email      string
 	CodeDigest string
 	ExpiresAt  time.Time
 }
 
-// Create は新しいサインアップコードを作成します
+// Createは新しいサインアップコードを作成します
 func (r *SignUpCodeRepository) Create(ctx context.Context, params SignUpCodeCreateParams) (*model.SignUpCode, error) {
 	row, err := r.queries.CreateSignUpCode(ctx, query.CreateSignUpCodeParams{
 		Email:      params.Email,
@@ -44,12 +44,12 @@ func (r *SignUpCodeRepository) Create(ctx context.Context, params SignUpCodeCrea
 	return signUpCodeFromRow(row), nil
 }
 
-// InvalidateByEmail はメールアドレスに関連する既存の未使用コードを無効化します
+// InvalidateByEmailはメールアドレスに関連する既存の未使用コードを無効化します
 func (r *SignUpCodeRepository) InvalidateByEmail(ctx context.Context, email string) error {
 	return r.queries.InvalidateSignUpCodesByEmail(ctx, email)
 }
 
-// GetValidByEmail はメールアドレスの有効なサインアップコードを取得します
+// GetValidByEmailはメールアドレスの有効なサインアップコードを取得します
 func (r *SignUpCodeRepository) GetValidByEmail(ctx context.Context, email string) (*model.SignUpCode, error) {
 	row, err := r.queries.GetValidSignUpCode(ctx, email)
 	if err != nil {
@@ -58,12 +58,12 @@ func (r *SignUpCodeRepository) GetValidByEmail(ctx context.Context, email string
 	return signUpCodeFromRow(row), nil
 }
 
-// MarkAsUsed はサインアップコードを使用済みにマークします
+// MarkAsUsedはサインアップコードを使用済みにマークします
 func (r *SignUpCodeRepository) MarkAsUsed(ctx context.Context, id model.SignUpCodeID) error {
 	return r.queries.MarkSignUpCodeAsUsed(ctx, int64(id))
 }
 
-// IncrementAttempts はサインアップコードの試行回数をインクリメントします
+// IncrementAttemptsはサインアップコードの試行回数をインクリメントします
 func (r *SignUpCodeRepository) IncrementAttempts(ctx context.Context, id model.SignUpCodeID) error {
 	return r.queries.IncrementSignUpCodeAttempts(ctx, int64(id))
 }

@@ -6,15 +6,15 @@ import (
 	"github.com/riverqueue/river"
 )
 
-// CleanupExpiredTokensArgs はトークンクリーンアップジョブの引数です
+// CleanupExpiredTokensArgsはトークンクリーンアップジョブの引数。
 type CleanupExpiredTokensArgs struct{}
 
-// Kind はジョブの種類を返します
+// Kindはジョブの種類を返す。
 func (CleanupExpiredTokensArgs) Kind() string {
 	return "cleanup_expired_tokens"
 }
 
-// InsertOpts はジョブ挿入時のデフォルトオプションを返します
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
 func (CleanupExpiredTokensArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{
 		Queue:       river.QueueDefault,
@@ -22,25 +22,25 @@ func (CleanupExpiredTokensArgs) InsertOpts() river.InsertOpts {
 	}
 }
 
-// ExpiredTokenCleaner は期限切れトークンのクリーンアップを実行するインターフェースです
+// ExpiredTokenCleanerは期限切れトークンのクリーンアップを実行する。
 type ExpiredTokenCleaner interface {
 	Execute(ctx context.Context) error
 }
 
-// CleanupExpiredTokensWorker はトークンクリーンアップワーカーです
+// CleanupExpiredTokensWorkerはトークンクリーンアップワーカー。
 type CleanupExpiredTokensWorker struct {
 	river.WorkerDefaults[CleanupExpiredTokensArgs]
 	cleaner ExpiredTokenCleaner
 }
 
-// NewCleanupExpiredTokensWorker は新しいCleanupExpiredTokensWorkerを作成します
+// NewCleanupExpiredTokensWorkerは新しいCleanupExpiredTokensWorkerを作成する。
 func NewCleanupExpiredTokensWorker(cleaner ExpiredTokenCleaner) *CleanupExpiredTokensWorker {
 	return &CleanupExpiredTokensWorker{
 		cleaner: cleaner,
 	}
 }
 
-// Work は有効期限切れおよび使用済みトークンを削除します
+// Workは有効期限切れおよび使用済みのトークンを削除する。
 func (w *CleanupExpiredTokensWorker) Work(ctx context.Context, job *river.Job[CleanupExpiredTokensArgs]) error {
 	return w.cleaner.Execute(ctx)
 }
