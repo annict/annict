@@ -6,6 +6,17 @@ dev: ## 全サービスの開発サーバーを起動
 help: ## このヘルプを表示
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+# 依存関係のインストールを先に済ませてからデータベースを初期化する。
+# db-prepare-devは1Password CLI経由でDATABASE_URLを解決するため、解決に失敗しても
+# 「依存関係は入ったがDBだけ未初期化」という切り分けやすい状態で止まる。
+.PHONY: setup
+setup: ## 開発環境をセットアップ (依存関係のインストールとデータベースの初期化)
+	pnpm install --frozen-lockfile
+	$(MAKE) -C go setup
+	$(MAKE) -C rails setup
+	$(MAKE) -C go db-prepare-dev
+	$(MAKE) -C go seed-master
+
 .PHONY: fmt
 fmt: ## コードをフォーマット (Oxfmt)
 	pnpm fmt

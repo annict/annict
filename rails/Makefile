@@ -1,4 +1,4 @@
-.PHONY: test test-file test-setup console server lint lint-fix fmt zeitwerk graphql-dump help
+.PHONY: test test-file test-setup setup console server lint lint-fix fmt zeitwerk graphql-dump help
 
 # APP_ENVのデフォルト値を設定（外部から指定された場合はその値を使用）
 # 例: APP_ENV=test make console
@@ -7,21 +7,32 @@ APP_ENV ?= dev
 # 1Password CLI経由で環境変数を読み込んでコマンドを実行
 OP_RUN := APP_ENV=$(APP_ENV) op run --env-file=".env.local" --
 # テスト専用（常にtest環境）
+# CI環境ではopコマンドが利用できないため、環境変数はGitHub Actionsで直接設定する
+ifeq ($(CI),true)
+OP_RUN_TEST := APP_ENV=test
+# CIのランナーにはブラウザの実行に必要なOSのライブラリが無いため、ブラウザと一緒に導入する
+PLAYWRIGHT_INSTALL_FLAGS := --with-deps
+else
 OP_RUN_TEST := APP_ENV=test op run --env-file=".env.local" --
+PLAYWRIGHT_INSTALL_FLAGS :=
+endif
 
 ## テスト
-test: ## 全テストを実行
+test: test-setup ## 全テストを実行
 	$(OP_RUN_TEST) bin/rspec
 
-test-file: ## 特定のテストファイルを実行 (例: make test-file FILE=spec/models/user_spec.rb)
+test-file: test-setup ## 特定のテストファイルを実行 (例: make test-file FILE=spec/models/user_spec.rb)
 	$(OP_RUN_TEST) bin/rspec $(FILE)
 
-test-setup: ## テスト環境をセットアップ（シード投入、Playwrightインストール）
-	@echo "==> テストDBにシードデータを投入..."
-	RAILS_ENV=test bin/rails db:seed
-	@echo "==> Playwrightブラウザをインストール..."
-	yarn playwright install
-	@echo "==> テスト環境のセットアップが完了しました"
+# テストDBはGo版のテストと共有しており、Go版のテスト後は作成データが残るため、
+# 再実行のたびに作り直す。
+test-setup: ## テスト環境をセットアップ (テストDBの作り直し、アセットビルド、Playwrightブラウザの導入)
+	$(OP_RUN_TEST) bundle exec ruby spec/test_setup.rb $(PLAYWRIGHT_INSTALL_FLAGS)
+
+## セットアップ
+setup: ## 依存関係をインストールし、log・tmpを掃除
+	yarn install --frozen-lockfile
+	bin/setup
 
 ## 開発サーバー
 console: ## Railsコンソールを起動

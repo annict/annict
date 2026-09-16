@@ -11,6 +11,11 @@ endif
 help: ## ヘルプを表示
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: setup
+setup: ## 依存関係をインストール
+	go mod download
+	pnpm install --frozen-lockfile
+
 .PHONY: run
 run: ## サーバーを起動
 	$(OP_RUN_DEV) go run ./cmd/annict serve
@@ -146,27 +151,47 @@ clean: ## ビルド成果物をクリーン
 # https://github.com/amacneil/dbmate/issues/678
 STRIP_SCHEMA_RESTRICT = sed -i '/^\\restrict /d;/^\\unrestrict /d' db/schema.sql
 
+# データベースを作り直すターゲットで共有するリセットSQL。
+# publicスキーマはinitdbと同じ所有者 (pg_database_owner) で再作成し、db-dumpの出力に
+# 所有者由来の差分が入らないようにする。DROP SCHEMAが出すNOTICEは想定内のため
+# client_min_messagesで抑制する。
+DB_RESET_SCHEMA_SQL = SET client_min_messages TO warning; DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public AUTHORIZATION pg_database_owner;
+
 .PHONY: db-migrate
 db-migrate: ## データベースマイグレーションを実行
 	$(OP_RUN_DEV) dbmate up
 	@$(STRIP_SCHEMA_RESTRICT)
 
-.PHONY: db-setup-test
-db-setup-test: ## テスト用データベースのスキーマをセットアップ
-	@if [ "$$CI" = "true" ]; then \
-		echo "CI環境: テストDBをリセットしてスキーマを適用"; \
-		psql -h localhost -U postgres -d annict_test -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' > /dev/null 2>&1; \
-		psql -h localhost -U postgres -d annict_test -f db/schema.sql > /dev/null; \
-	else \
-		echo "ローカル環境: テストDBをリセットしてスキーマを適用"; \
-		psql -h postgresql -U postgres -d annict_test -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' > /dev/null 2>&1; \
-		psql -h postgresql -U postgres -d annict_test -f db/schema.sql > /dev/null; \
-	fi
+# セットアップ手順から呼ぶ非破壊の初期化。dbmate createの成否を「データベースが
+# 存在しなかったか」の判定に使い、作成できたときだけスキーマをロードする。
+# 初回のスキーマロードに失敗したときは、この実行で作成したデータベースを削除してから
+# エラーを返し、同じコマンドの再実行で最初から構築し直せるようにする。
+# マイグレーションの適用は--no-dump-schemaを付け、セットアップの実行がGit管理下の
+# db/schema.sqlを書き換えないようにする。
+.PHONY: db-prepare-dev
+db-prepare-dev: ## 開発用データベースが無ければ構築し、未適用のマイグレーションを適用
+	@$(OP_RUN_DEV) bash -c 'if dbmate create > /dev/null 2>&1; then \
+		echo "開発用データベースを作成し、スキーマを適用"; \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/schema.sql > /dev/null || { dbmate drop > /dev/null 2>&1; exit 1; }; \
+	fi; \
+	dbmate --no-dump-schema up'
 
-.PHONY: db-migrate-test
-db-migrate-test: ## テスト環境のマイグレーションを実行 (非推奨、db-setup-testを使用)
-	@echo "警告: db-migrate-testは非推奨です。代わりにdb-setup-testを使用してください。"
-	@make db-setup-test
+.PHONY: db-setup-dev
+db-setup-dev: ## 開発用データベースを作り直す (既存のデータは失われる)
+	@echo "開発用データベースをリセットしてスキーマを適用"
+	@$(OP_RUN_DEV) bash -c 'dbmate create > /dev/null 2>&1; \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -c "$(DB_RESET_SCHEMA_SQL)" > /dev/null && \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/schema.sql > /dev/null'
+
+# db-setup-devと同じ3ステップをテスト用データベースに対して行う。
+# CIのランナーにはdbmateが無く、dbmate createは失敗するだけで済むため、スキーマの適用は
+# psqlで行う。CIではデータベースをサービスコンテナが用意しているので作成は要らない。
+.PHONY: db-setup-test
+db-setup-test: ## テスト用データベースを作り直す (既存のデータは失われる)
+	@echo "テスト用データベースをリセットしてスキーマを適用"
+	@$(OP_RUN_TEST) bash -c 'dbmate create > /dev/null 2>&1; \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -c "$(DB_RESET_SCHEMA_SQL)" > /dev/null && \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/schema.sql > /dev/null'
 
 .PHONY: db-rollback
 db-rollback: ## 最後のマイグレーションをロールバック

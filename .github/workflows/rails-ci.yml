@@ -7,10 +7,12 @@ on:
       - develop
     paths:
       - "rails/**"
+      - "go/db/schema.sql"
       - ".github/workflows/rails-ci.yml"
   pull_request:
     paths:
       - "rails/**"
+      - "go/db/schema.sql"
       - ".github/workflows/rails-ci.yml"
 
 jobs:
@@ -147,25 +149,9 @@ jobs:
         run: |
           npm install --global yarn@1.22.22
 
-      - name: Run `yarn install`
-        run: |
-          yarn install
-
-      - name: Install Playwright browsers
-        run: |
-          yarn playwright install --with-deps
-
-      - name: Run `assets:precompile`
-        run: |
-          bin/rails assets:precompile
-
-      - name: Setup Database
-        run: |
-          bin/rails db:setup
-
       - name: Run tests
         run: |
-          bin/rspec
+          make test
 
       - name: Upload Capybara screenshot
         uses: actions/upload-artifact@v7
