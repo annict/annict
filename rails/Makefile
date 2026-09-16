@@ -1,7 +1,7 @@
-.PHONY: test test-file test-setup console server lint lint-fix fmt zeitwerk db-migrate db-rollback db-setup graphql-dump help
+.PHONY: test test-file test-setup console server lint lint-fix fmt zeitwerk graphql-dump help
 
 # APP_ENVのデフォルト値を設定（外部から指定された場合はその値を使用）
-# 例: APP_ENV=test make db-migrate
+# 例: APP_ENV=test make console
 APP_ENV ?= dev
 
 # 1Password CLI経由で環境変数を読み込んでコマンドを実行
@@ -45,16 +45,6 @@ fmt: lint-fix ## lint-fixのエイリアス
 ## オートロードチェック
 zeitwerk: ## Zeitwerk（オートロード）チェック
 	$(OP_RUN) bin/rails zeitwerk:check
-
-## データベース
-db-migrate: ## マイグレーションを実行 (例: APP_ENV=test make db-migrate)
-	$(OP_RUN) bin/rails db:migrate
-
-db-rollback: ## 最後のマイグレーションをロールバック (例: APP_ENV=test make db-rollback)
-	$(OP_RUN) bin/rails db:rollback
-
-db-setup: ## データベースのセットアップ (例: APP_ENV=test make db-setup)
-	$(OP_RUN) bin/rails db:setup
 
 ## GraphQL
 graphql-dump: ## GraphQL APIスキーマをダンプ
