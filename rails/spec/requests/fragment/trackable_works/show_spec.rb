@@ -23,7 +23,7 @@ RSpec.describe "GET /fragment/trackable_works/:work_id", type: :request do
   it "ログインしていて有効なライブラリエントリがあるとき、視聴可能な作品情報を表示すること" do
     user = FactoryBot.create(:registered_user)
     work = FactoryBot.create(:work)
-    channel = Channel.first
+    channel = FactoryBot.create(:channel)
     user.channels << channel
     library_entry = FactoryBot.create(:library_entry, user:, work:)
 
@@ -95,11 +95,11 @@ RSpec.describe "GET /fragment/trackable_works/:work_id", type: :request do
     FactoryBot.create(:library_entry, user:, work:)
 
     # フォローしているチャンネル
-    followed_channel = Channel.first
+    followed_channel = FactoryBot.create(:channel)
     user.channels << followed_channel
 
     # フォローしていないチャンネル
-    unfollowed_channel = Channel.second
+    unfollowed_channel = FactoryBot.create(:channel)
 
     # 番組
     FactoryBot.create(:program, work:, channel: followed_channel)
@@ -125,7 +125,7 @@ RSpec.describe "GET /fragment/trackable_works/:work_id", type: :request do
     user.channels << deleted_channel
 
     # 通常のチャンネル
-    normal_channel = Channel.first
+    normal_channel = FactoryBot.create(:channel)
     user.channels << normal_channel
 
     # 番組
@@ -145,7 +145,7 @@ RSpec.describe "GET /fragment/trackable_works/:work_id", type: :request do
     user = FactoryBot.create(:registered_user)
     work = FactoryBot.create(:work)
     FactoryBot.create(:library_entry, user:, work:)
-    channel = Channel.first
+    channel = FactoryBot.create(:channel)
     user.channels << channel
 
     # 削除された番組
@@ -167,7 +167,7 @@ RSpec.describe "GET /fragment/trackable_works/:work_id", type: :request do
     user = FactoryBot.create(:registered_user)
     work = FactoryBot.create(:work)
     FactoryBot.create(:library_entry, user:, work:)
-    channel = Channel.first
+    channel = FactoryBot.create(:channel)
     user.channels << channel
 
     # 異なる開始時刻の番組を作成

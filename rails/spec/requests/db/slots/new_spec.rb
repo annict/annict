@@ -66,12 +66,6 @@ RSpec.describe "GET /db/works/:work_id/slots/new", type: :request do
 
   it "program_idsパラメータが指定されたとき、フォームにデフォルト値が設定されること" do
     work = FactoryBot.create(:work)
-    # Channelは事前にデータベースに存在している前提のテスト
-    # Channel.firstを使用する
-    if Channel.count == 0
-      channel_group = FactoryBot.create(:channel_group)
-      Channel.create!(name: "テストチャンネル", channel_group:)
-    end
     program1 = FactoryBot.create(:program, work:, started_at: Time.current)
     program2 = FactoryBot.create(:program, work:, started_at: 1.day.from_now)
     user = FactoryBot.create(:registered_user, :with_editor_role)

@@ -3,7 +3,7 @@
 
 RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
   it "ログインしていないとき、ログインページにリダイレクトすること" do
-    channel = Channel.first
+    channel = create(:channel)
 
     delete "/db/channels/#{channel.id}/publishing"
     channel.reload
@@ -15,7 +15,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
 
   it "編集者権限を持たないユーザーがログインしているとき、アクセスを拒否すること" do
     user = create(:registered_user)
-    channel = Channel.first
+    channel = create(:channel)
     login_as(user, scope: :user)
 
     delete "/db/channels/#{channel.id}/publishing"
@@ -28,7 +28,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
 
   it "編集者権限を持つユーザーがログインしているとき、アクセスを拒否すること" do
     user = create(:registered_user, :with_editor_role)
-    channel = Channel.first
+    channel = create(:channel)
     login_as(user, scope: :user)
 
     delete "/db/channels/#{channel.id}/publishing"
@@ -41,7 +41,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
 
   it "管理者権限を持つユーザーがログインしているとき、チャンネルを非公開にできること" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
+    channel = create(:channel)
     login_as(user, scope: :user)
 
     expect(channel.published?).to eq(true)
@@ -65,7 +65,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
 
   it "既に非公開のチャンネルに対してリクエストしたとき、404エラーを返すこと" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
+    channel = create(:channel)
     channel.unpublish
     login_as(user, scope: :user)
 
@@ -76,7 +76,7 @@ RSpec.describe "DELETE /db/channels/:id/publishing", type: :request do
 
   it "削除されたチャンネルに対してリクエストしたとき、404エラーを返すこと" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
+    channel = create(:channel)
     channel_id = channel.id
     channel.destroy_in_batches
     login_as(user, scope: :user)
