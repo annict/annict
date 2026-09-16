@@ -2,6 +2,10 @@
 # frozen_string_literal: true
 
 namespace :seed do
+  # マスターデータのCSVはGo側が所有し、`annict task seed-master` が投入する。
+  # works / episodesはマスターデータではないため、出力先はdb/data/csv/のまま。
+  master_csv_dir = "../go/db/seeds"
+
   task generate_csv: :environment do
     Rake::Task["seed:generate_channel_groups_csv"].invoke
     Rake::Task["seed:generate_channels_csv"].invoke
@@ -13,7 +17,7 @@ namespace :seed do
   task generate_channel_groups_csv: :environment do
     attrs = %w[id sc_chgid name sort_number]
 
-    CSV.open("#{Dir.pwd}/db/data/csv/channel_groups.csv", "wb") do |csv|
+    CSV.open("#{Dir.pwd}/#{master_csv_dir}/channel_groups.csv", "wb") do |csv|
       csv << attrs
 
       ChannelGroup.select(attrs).find_each do |record|
@@ -26,7 +30,7 @@ namespace :seed do
   task generate_channels_csv: :environment do
     attrs = %w[id channel_group_id sc_chid name aasm_state]
 
-    CSV.open("#{Dir.pwd}/db/data/csv/channels.csv", "wb") do |csv|
+    CSV.open("#{Dir.pwd}/#{master_csv_dir}/channels.csv", "wb") do |csv|
       csv << attrs
 
       Channel.select(attrs).find_each do |record|
@@ -103,7 +107,7 @@ namespace :seed do
   task generate_number_formats_csv: :environment do
     attrs = %w[id name data sort_number format]
 
-    CSV.open("#{Dir.pwd}/db/data/csv/number_formats.csv", "wb") do |csv|
+    CSV.open("#{Dir.pwd}/#{master_csv_dir}/number_formats.csv", "wb") do |csv|
       csv << attrs
 
       NumberFormat.select(attrs).find_each do |record|
@@ -116,7 +120,7 @@ namespace :seed do
   task generate_prefectures_csv: :environment do
     attrs = %w[id name]
 
-    CSV.open("#{Dir.pwd}/db/data/csv/prefectures.csv", "wb") do |csv|
+    CSV.open("#{Dir.pwd}/#{master_csv_dir}/prefectures.csv", "wb") do |csv|
       csv << attrs
 
       Prefecture.select(attrs).find_each do |record|

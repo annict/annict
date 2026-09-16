@@ -195,6 +195,11 @@ seed: ## 開発環境用のシードデータを生成
 	@echo "シードデータを生成しています..."
 	$(OP_RUN_DEV) go run ./cmd/annict task seed
 
+.PHONY: seed-master
+seed-master: ## マスターデータを投入 (既存のデータは消さない)
+	@echo "マスターデータを投入しています..."
+	$(OP_RUN_DEV) go run ./cmd/annict task seed-master
+
 # ローカル検証用の本番スナップショット: 本番バックアップを取得し、隔離DBで
 # PIIをマスクしてマスク結果をローカルに取り込み、本番画像を開発用R2バケットへ
 # コピーする。load-snapshotは両方を実行する。
