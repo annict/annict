@@ -131,7 +131,7 @@ lint-style: ## 日本語テキストスタイルをチェック (koryluslint)
 	@go tool koryluslint comment
 
 .PHONY: lint
-lint: lint-golangci lint-style ## リントを実行 (golangci-lint + 日本語スタイル)
+lint: lint-golangci lint-style sqlc-diff ## リントを実行 (golangci-lint + 日本語スタイル + sqlc生成コードの同期)
 
 .PHONY: clean
 clean: ## ビルド成果物をクリーン
@@ -183,7 +183,12 @@ db-dump: ## データベーススキーマをdb/schema.sqlにダンプ
 
 .PHONY: sqlc-generate
 sqlc-generate: ## SQLクエリからGoコードを生成
-	sqlc generate
+	go tool sqlc generate
+
+.PHONY: sqlc-diff
+sqlc-diff: ## 生成コードがクエリ・スキーマと同期しているかをチェック (差分があればエラー)
+	@echo "🔍 sqlc生成コードの同期をチェック中..."
+	@go tool sqlc diff
 
 .PHONY: seed
 seed: ## 開発環境用のシードデータを生成

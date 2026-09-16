@@ -32,14 +32,22 @@ jobs:
         with:
           go-version: ${{ env.GO_VERSION }}
 
-      - name: Check templ generate
+      # ここから2つは作業ツリーを書き換えない検査で、ツリーを書き換えるステップより
+      # 前に置く必要がある。後続のmake templ-generateはgoimports -w .でGoファイルの
+      # ツリー全体を整形するため、あとに置くとimportのドリフトが先に修復されて
+      # 検査が空振りする。
+      - name: sqlc生成コードの同期をチェック
         run: |
-          make templ-generate
-          git diff --exit-code internal/templates/
+          make sqlc-diff
 
       - name: Check goimports
         run: |
           make goimports-check
+
+      - name: Check templ generate
+        run: |
+          make templ-generate
+          git diff --exit-code internal/templates/
 
       - name: Check go mod tidy
         run: |
