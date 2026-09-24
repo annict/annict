@@ -60,6 +60,11 @@ type Episode struct {
 	// 導出する。作品の最初のエピソードと、導出しないローダーではいずれもnilのまま残る。
 	PrevNumber    *string
 	PrevRawNumber *float64
+
+	// PublishedPositionは作品の公開中のエピソードをsort_number順 (同値はid順) に数えた
+	// 1始まりの連番。Annict DB一覧のローダー (ListForDB) が作品全体から導出する。非公開の
+	// エピソードと、導出しないローダーではnilのまま残る。
+	PublishedPosition *int64
 }
 
 // DerivedStatusはepisodeの状態の正本であるUnpublishable / SoftDeletable

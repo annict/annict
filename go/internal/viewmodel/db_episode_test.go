@@ -175,14 +175,16 @@ func TestNewDBEpisodeListItem(t *testing.T) {
 	number := "第2話"
 	rawNumber := 2.5
 	title := "エピソードタイトル"
+	publishedPosition := int64(7)
 
 	tests := []struct {
-		name          string
-		episode       *model.Episode
-		wantNumber    string
-		wantRawNumber string
-		wantTitle     string
-		wantTitleEn   string
+		name                  string
+		episode               *model.Episode
+		wantPublishedPosition string
+		wantNumber            string
+		wantRawNumber         string
+		wantTitle             string
+		wantTitleEn           string
 	}{
 		{
 			name: "全項目あり",
@@ -195,11 +197,13 @@ func TestNewDBEpisodeListItem(t *testing.T) {
 				TitleEn:             "Episode Title",
 				SortNumber:          200,
 				EpisodeRecordsCount: 42,
+				PublishedPosition:   &publishedPosition,
 			},
-			wantNumber:    "第2話",
-			wantRawNumber: "2.5",
-			wantTitle:     "エピソードタイトル",
-			wantTitleEn:   "Episode Title",
+			wantPublishedPosition: "7",
+			wantNumber:            "第2話",
+			wantRawNumber:         "2.5",
+			wantTitle:             "エピソードタイトル",
+			wantTitleEn:           "Episode Title",
 		},
 		{
 			name: "未設定の属性は空文字列のまま",
@@ -208,10 +212,11 @@ func TestNewDBEpisodeListItem(t *testing.T) {
 				WorkID:     3,
 				SortNumber: 100,
 			},
-			wantNumber:    "",
-			wantRawNumber: "",
-			wantTitle:     "",
-			wantTitleEn:   "",
+			wantPublishedPosition: "",
+			wantNumber:            "",
+			wantRawNumber:         "",
+			wantTitle:             "",
+			wantTitleEn:           "",
 		},
 	}
 
@@ -226,6 +231,9 @@ func TestNewDBEpisodeListItem(t *testing.T) {
 			}
 			if got.WorkID != WorkID(tt.episode.WorkID) {
 				t.Errorf("WorkID = %q、期待値 = %q", got.WorkID, WorkID(tt.episode.WorkID))
+			}
+			if got.PublishedPosition != tt.wantPublishedPosition {
+				t.Errorf("PublishedPosition = %q、期待値 = %q", got.PublishedPosition, tt.wantPublishedPosition)
 			}
 			if got.Number != tt.wantNumber {
 				t.Errorf("Number = %q、期待値 = %q", got.Number, tt.wantNumber)

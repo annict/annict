@@ -89,6 +89,7 @@ func (r *EpisodeRepository) CountForDB(ctx context.Context, workID model.WorkID)
 // episodeFromDBListRowはAnnict DB一覧の行を *model.Episodeに変換する。行は
 // 部分ロードで、animeマッピングカラムは選択せずゼロ値のまま残る。直前のエピソードの
 // 2系統の話数はクエリ側の隣接行の導出に由来し、作品の最初のエピソードではnilになる。
+// 作品内の連番もクエリ側で作品全体から振られ、非公開のエピソードではnilになる。
 func episodeFromDBListRow(row query.ListDBEpisodesRow) *model.Episode {
 	episode := &model.Episode{
 		ID:                  model.EpisodeID(row.ID),
@@ -125,6 +126,10 @@ func episodeFromDBListRow(row query.ListDBEpisodesRow) *model.Episode {
 	if row.PrevRawNumber.Valid {
 		prevRawNumber := row.PrevRawNumber.Float64
 		episode.PrevRawNumber = &prevRawNumber
+	}
+	if row.PublishedPosition.Valid {
+		publishedPosition := row.PublishedPosition.Int64
+		episode.PublishedPosition = &publishedPosition
 	}
 	return episode
 }

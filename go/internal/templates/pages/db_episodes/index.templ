@@ -72,10 +72,10 @@ func (d IndexPageData) hasRowActions() bool {
 // あり余白を吸収するタイトル列が、操作を見る閲覧者にも見ない閲覧者にも同じ幅を保てる。
 func (d IndexPageData) tableMinWidthClass() string {
 	if d.hasRowActions() {
-		return "min-w-[960px]"
+		return "min-w-[1008px]"
 	}
 
-	return "min-w-[860px]"
+	return "min-w-[908px]"
 }
 
 templ Index(data IndexPageData) {
@@ -107,7 +107,9 @@ templ Index(data IndexPageData) {
 					</div>
 					<div class="flex flex-wrap gap-x-2">
 						<dt>{ templates.T(ctx, "db_episodes_index_generation_published_label") }</dt>
-						<dd class="text-card-foreground">{ fmt.Sprintf("%d", data.Generation.PublishedEpisodeCount) }</dd>
+						<dd class="text-card-foreground">
+							@indexPublishedCount(data.Generation)
+						</dd>
 					</div>
 					<div class="flex flex-wrap gap-x-2">
 						<dt>{ templates.T(ctx, "db_episodes_index_generation_generatable_label") }</dt>
@@ -137,6 +139,7 @@ templ Index(data IndexPageData) {
 							// タイトルが狭いまま)。
 							<colgroup>
 								<col class="w-20"/>
+								<col class="w-12"/>
 								<col class="w-28"/>
 								<col/>
 								<col class="w-28"/>
@@ -150,6 +153,12 @@ templ Index(data IndexPageData) {
 							<thead>
 								<tr>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_id_label") }</th>
+									// 値は1〜3桁で、可視の見出しは列幅を広げない「#」にする。記号だけでは
+									// 意味が伝わらないため、支援技術には隠したテキストで列の名前を与える。
+									<th scope="col" class="text-left">
+										<span aria-hidden="true">#</span>
+										<span class="sr-only">{ templates.T(ctx, "db_episodes_index_table_published_position_label") }</span>
+									</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_number_label") }</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_title_label") }</th>
 									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_prev_episode_label") }</th>
@@ -176,6 +185,7 @@ templ Index(data IndexPageData) {
 												@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
 											</a>
 										</td>
+										<td>{ valueOrDash(episode.PublishedPosition) }</td>
 										// 表示用の話数と数値の話数はRails画面と同じく1セルに縦に
 										// 積む。どちらも短く、話数ごとに列を分けるとタイトルに必要な幅を
 										// 削ってしまうため。
@@ -320,6 +330,34 @@ templ indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem
 // 大きさのままになる。
 templ indexActionTarget(episode viewmodel.DBEpisodeListItem) {
 	<span class="sr-only">{ actionTargetLabel(ctx, episode) }</span>
+}
+
+// indexPublishedCountは公開中のエピソード数を、予定エピソード数が記録されていれば `10 / 12` の
+// 形で並べて描画する。記号の「/」は支援技術に比として伝わらないため、可視の値は読み上げから
+// 外し、同じ内容を文にしたものを視覚的に隠して添える。予定エピソード数が未登録のときは分母の
+// 無い比が進捗を述べないため、件数だけを描画する。
+templ indexPublishedCount(generation viewmodel.DBEpisodeGenerationSummary) {
+	if generation.PlannedCount == "" {
+		{ fmt.Sprintf("%d", generation.PublishedEpisodeCount) }
+	} else {
+		<span aria-hidden="true">{ publishedProgressText(generation) }</span>
+		<span class="sr-only">{ publishedProgressLabel(ctx, generation) }</span>
+	}
+}
+
+// publishedProgressTextは公開中のエピソード数を予定エピソード数と並べた可視の値を返す。
+func publishedProgressText(generation viewmodel.DBEpisodeGenerationSummary) string {
+	return fmt.Sprintf("%d / %s", generation.PublishedEpisodeCount, generation.PlannedCount)
+}
+
+// publishedProgressLabelは可視の `10 / 12` に代えて支援技術に伝える文を、先頭にスペースを
+// 付けて返す。スタイルシートが届かず隠したテキストが可視の値と並んで表示されるときも、
+// 2つが別の語として読めるようにするため (actionTargetLabelと同じ理由)。
+func publishedProgressLabel(ctx context.Context, generation viewmodel.DBEpisodeGenerationSummary) string {
+	return " " + templates.T(ctx, "db_episodes_index_generation_published_progress", map[string]any{
+		"Published": generation.PublishedEpisodeCount,
+		"Planned":   generation.PlannedCount,
+	})
 }
 
 // actionTargetLabelは操作コントロールのアクセシブルネームのうち隠された側を、先頭に

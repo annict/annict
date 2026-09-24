@@ -12,8 +12,10 @@ import (
 
 // iconWrapperMarkupは、これらのページで許容しないラッパーのマークアップを表す。
 // aria-hiddenの祖先はアイコンをアクセシビリティツリーから外すが、SVG要素を既定で
-// フォーカス可能とする実装ではSVGがフォーカス順序に残りうるため。
-const iconWrapperMarkup = `<span aria-hidden="true">`
+// フォーカス可能とする実装ではSVGがフォーカス順序に残りうるため。SVGを包む場合に
+// 限って照合するのは、一覧の「#」見出しのように、記号のテキストを読み上げから外す
+// aria-hiddenのspanは許容するため。
+const iconWrapperMarkup = `<span aria-hidden="true"><svg`
 
 func decorativeIconMarkup(
 	t *testing.T,

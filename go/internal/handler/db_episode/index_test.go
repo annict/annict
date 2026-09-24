@@ -319,7 +319,8 @@ func TestIndex_ShowsGenerationNoticeAndDerivedColumns(t *testing.T) {
 		"<dt>予定エピソード数</dt>",
 		`<dd class="text-card-foreground">12</dd>`,
 		"<dt>公開中のエピソード数</dt>",
-		`<dd class="text-card-foreground">2</dd>`,
+		// 公開中のエピソード数は予定エピソード数と並べて表示する。
+		`<span aria-hidden="true">2 / 12</span>`,
 		"<dt>自動生成されるエピソード数</dt>",
 		`<dd class="text-card-foreground">9</dd>`,
 		// 第2話は直前のエピソードとして第1話を名指しし、記録数を持つ。

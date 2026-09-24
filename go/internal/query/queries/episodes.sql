@@ -2,6 +2,10 @@
 -- 直前のエピソードはepisodes.prev_episode_idを読まず、sort_number昇順の隣接行から
 -- 導出する。ウィンドウはCTEの中で作品の一覧全体に対して評価され、LIMIT / OFFSETが
 -- 1ページに絞り込む前に確定するため、ページ末尾の行も次ページに載るエピソードを指せる。
+-- 作品内の連番 (published_position) も同じ理由でCTEの中で振る。公開中のエピソードだけを
+-- sort_number昇順 (同値はid昇順) に数えるため、非公開の行は連番を消費せず、LEFT JOINで
+-- NULLになる。母集団を案内の「公開中のエピソード数」と揃え、公開中の最大の連番がその件数と
+-- 一致するようにするため。
 WITH work_episodes AS (
     SELECT
         e.id,
@@ -19,6 +23,12 @@ WITH work_episodes AS (
     FROM episodes e
     WHERE e.work_id = sqlc.arg('work_id')
         AND e.deleted_at IS NULL
+), published_positions AS (
+    SELECT
+        we.id,
+        ROW_NUMBER() OVER (ORDER BY we.sort_number, we.id) AS published_position
+    FROM work_episodes we
+    WHERE we.unpublished_at IS NULL
 )
 SELECT
     we.id,
@@ -33,9 +43,11 @@ SELECT
     we.unpublished_at,
     we.deleted_at,
     prev.number AS prev_number,
-    prev.raw_number AS prev_raw_number
+    prev.raw_number AS prev_raw_number,
+    pp.published_position
 FROM work_episodes we
 LEFT JOIN episodes prev ON prev.id = we.prev_episode_id
+LEFT JOIN published_positions pp ON pp.id = we.id
 ORDER BY we.sort_number DESC, we.id DESC
 LIMIT sqlc.arg('per_page')
 OFFSET sqlc.arg('page_offset')::bigint;
