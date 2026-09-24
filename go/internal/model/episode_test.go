@@ -58,7 +58,7 @@ func TestManualEpisodeCreationState(t *testing.T) {
 			wantAllowed:     true,
 		},
 		{
-			name:            "予定話数まで登録済み",
+			name:            "予定エピソード数まで登録済み",
 			state:           model.ManualEpisodeCreationState{EpisodesFilled: true},
 			wantRestriction: model.ManualEpisodeCreationEpisodesFilled,
 			wantAllowed:     false,
@@ -70,7 +70,7 @@ func TestManualEpisodeCreationState(t *testing.T) {
 			wantAllowed:     false,
 		},
 		{
-			name:            "両方に当てはまるときは予定話数到達を報告する",
+			name:            "両方に当てはまるときは予定エピソード数到達を報告する",
 			state:           model.ManualEpisodeCreationState{EpisodesFilled: true, SlotsExist: true},
 			wantRestriction: model.ManualEpisodeCreationEpisodesFilled,
 			wantAllowed:     false,

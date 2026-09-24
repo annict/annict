@@ -122,7 +122,8 @@ func TestIndex_WithEpisodes(t *testing.T) {
 		// 縦積みした各値にはローカライズ済みのラベルを付け、タイトルには既知の言語を
 		// 指定して、支援技術が値を区別して正しく発音できるようにする。
 		"表示用話数:",
-		"数値話数:",
+		// 「表示用話数:」の部分一致にならないよう、話数のラベルは要素の先頭から照合する。
+		`<span class="sr-only">話数: </span>`,
 		"日本語タイトル:",
 		"英語タイトル:",
 		`lang="ja">エピソードタイトル</span>`,
@@ -167,7 +168,7 @@ func TestIndex_MissingValuesRenderPlaceholder(t *testing.T) {
 
 	html := buf.String()
 
-	// 未設定の4つの属性 (表示用話数・数値話数・日本語タイトル・英語タイトル) は
+	// 未設定の4つの属性 (表示用話数・話数・日本語タイトル・英語タイトル) は
 	// いずれも空のセルではなくプレースホルダーを描画する。
 	if got := strings.Count(html, ": </span> -</div>"); got != 4 {
 		t.Errorf("プレースホルダーの数 = %d、期待値 = 4", got)
@@ -197,7 +198,7 @@ func TestIndex_GenerationNotice(t *testing.T) {
 		{
 			name:       "日本語",
 			locale:     "ja",
-			wantLabels: []string{"予定総話数", "公開中のエピソード数", "自動生成されるエピソード数"},
+			wantLabels: []string{"予定エピソード数", "公開中のエピソード数", "自動生成されるエピソード数"},
 		},
 		{
 			name:       "英語",
@@ -249,7 +250,7 @@ func TestIndex_GenerationNotice(t *testing.T) {
 	}
 }
 
-// TestIndex_GenerationNoticeUnknownPlannedCountは、予定総話数が未登録の作品でその旨を
+// TestIndex_GenerationNoticeUnknownPlannedCountは、予定エピソード数が未登録の作品でその旨を
 // 言葉で示すことを検証する。案内は3つの値を並べて述べるため、欠落がそれ自体で件数のように
 // 読めてはならない。
 func TestIndex_GenerationNoticeUnknownPlannedCount(t *testing.T) {
@@ -274,7 +275,7 @@ func TestIndex_GenerationNoticeUnknownPlannedCount(t *testing.T) {
 	}
 
 	if !strings.Contains(buf.String(), `<dd class="text-card-foreground">不明</dd>`) {
-		t.Error("予定総話数が未登録なら「不明」と表示すべきです")
+		t.Error("予定エピソード数が未登録なら「不明」と表示すべきです")
 	}
 }
 

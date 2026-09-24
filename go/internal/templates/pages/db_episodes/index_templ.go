@@ -1069,7 +1069,7 @@ func valueOrDash(value string) string {
 	return value
 }
 
-// plannedCountTextは作品の予定総話数を描画する。ビューモデルの空の値は「作品が記録して
+// plannedCountTextは作品の予定エピソード数を描画する。ビューモデルの空の値は「作品が記録して
 // いない」ことを表すため、その旨を言葉で示す。案内は3つの値を並べて述べるので、ここに
 // プレースホルダーを置くとそれ自体が件数のように読めてしまう。
 func plannedCountText(ctx context.Context, plannedCount string) string {

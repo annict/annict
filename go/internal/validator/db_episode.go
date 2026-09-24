@@ -17,7 +17,7 @@ import (
 // 従来案内してきたカンマで、編集者がAnnictの外に持っている行をそのまま貼り付けられる。
 const episodeRowSeparator = ","
 
-// episodeRowColumnCountは1行が持つ列の数 (表示用話数・数値話数・タイトル)。タイトルは
+// episodeRowColumnCountは1行が持つ列の数 (表示用話数・話数・タイトル)。タイトルは
 // 最後に取り出して行の残り全体を受け取るため、カンマを含むタイトルも分割で欠けない。
 const episodeRowColumnCount = 3
 
@@ -164,8 +164,8 @@ func episodeRowColumn(columns []string, index int) string {
 	return strings.TrimSpace(columns[index])
 }
 
-// parseEpisodeRowRawNumberは行の数値話数を返し、数値でないものが入っている場合はfalse
-// を返す。空の列は許可してnilを返す。数字で管理されていないエピソードのために数値話数は
+// parseEpisodeRowRawNumberは行の話数を返し、数値でないものが入っている場合はfalse
+// を返す。空の列は許可してnilを返す。数字で管理されていないエピソードのために話数は
 // 任意入力であるため。
 //
 // NaNと無限大はfloatとしてパースできるが弾く。episodes.raw_numberはdouble precision
@@ -281,7 +281,7 @@ func validateEpisodeMaxLength(ctx context.Context, ve *model.ValidationError, fi
 	}
 }
 
-// parseEpisodeOptionalFloatは検証済みの数値話数を変換する。空のフィールドではnilを返し、
+// parseEpisodeOptionalFloatは検証済みの話数を変換する。空のフィールドではnilを返し、
 // カラムがNULLとして書かれるようにする。
 func parseEpisodeOptionalFloat(value string) *float64 {
 	parsed, _ := parseEpisodeRowRawNumber(value)

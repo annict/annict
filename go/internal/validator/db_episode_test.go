@@ -124,7 +124,7 @@ func TestDBEpisodeCreateValidatorValidateSuccess(t *testing.T) {
 			},
 		},
 		{
-			name:  "正常系: 小数の数値話数",
+			name:  "正常系: 小数の話数",
 			input: DBEpisodeCreateValidatorInput{Rows: "#5.5,5.5,総集編"},
 			want: []DBEpisodeRow{
 				{Number: episodeRowPtr("#5.5"), RawNumber: episodeRowPtr(5.5), Title: episodeRowPtr("総集編")},
@@ -208,19 +208,19 @@ func TestDBEpisodeCreateValidatorValidateErrors(t *testing.T) {
 			wantMessages: []string{"入力してください"},
 		},
 		{
-			name:         "異常系: 数値話数が数値ではない",
+			name:         "異常系: 話数が数値ではない",
 			input:        DBEpisodeCreateValidatorInput{Rows: "#1,いち,教えてティーチャー"},
-			wantMessages: []string{"1 行目: 数値話数は数値で入力してください"},
+			wantMessages: []string{"1 行目: 話数は数値で入力してください"},
 		},
 		{
-			name:         "異常系: 数値話数がNaN",
+			name:         "異常系: 話数がNaN",
 			input:        DBEpisodeCreateValidatorInput{Rows: "#1,NaN,教えてティーチャー"},
-			wantMessages: []string{"1 行目: 数値話数は数値で入力してください"},
+			wantMessages: []string{"1 行目: 話数は数値で入力してください"},
 		},
 		{
-			name:         "異常系: 数値話数が無限大",
+			name:         "異常系: 話数が無限大",
 			input:        DBEpisodeCreateValidatorInput{Rows: "#1,Inf,教えてティーチャー"},
-			wantMessages: []string{"1 行目: 数値話数は数値で入力してください"},
+			wantMessages: []string{"1 行目: 話数は数値で入力してください"},
 		},
 		{
 			name:         "異常系: 表示用話数もタイトルも空",
@@ -242,15 +242,15 @@ func TestDBEpisodeCreateValidatorValidateErrors(t *testing.T) {
 			input: DBEpisodeCreateValidatorInput{Rows: "#1,いち," + strings.Repeat("あ", 501)},
 			wantMessages: []string{
 				"1 行目: タイトルは500文字以内で入力してください",
-				"1 行目: 数値話数は数値で入力してください",
+				"1 行目: 話数は数値で入力してください",
 			},
 		},
 		{
 			name:  "異常系: 空行を挟んでも行番号が入力どおりになる",
 			input: DBEpisodeCreateValidatorInput{Rows: "#1,1,教えてティーチャー\n\n#3,さん,まずいよ☆先生\n#4,よん,もう、お婿にいけません"},
 			wantMessages: []string{
-				"3 行目: 数値話数は数値で入力してください",
-				"4 行目: 数値話数は数値で入力してください",
+				"3 行目: 話数は数値で入力してください",
+				"4 行目: 話数は数値で入力してください",
 			},
 		},
 	}
@@ -314,8 +314,8 @@ func TestDBEpisodeCreateValidatorValidateLocalizesMessages(t *testing.T) {
 		locale string
 		want   string
 	}{
-		{locale: "ja", want: "2 行目: 数値話数は数値で入力してください"},
-		{locale: "en", want: "Line 2: Please enter a number for the numeric number"},
+		{locale: "ja", want: "2 行目: 話数は数値で入力してください"},
+		{locale: "en", want: "Line 2: Please enter a numeric value for the number"},
 	}
 
 	v := NewDBEpisodeCreateValidator()
@@ -460,12 +460,12 @@ func TestDBEpisodeUpdateValidatorValidateErrors(t *testing.T) {
 			wantField: "sort_number",
 		},
 		{
-			name:      "異常系: 数値話数が数値でない",
+			name:      "異常系: 話数が数値でない",
 			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.RawNumber = "いち" },
 			wantField: "raw_number",
 		},
 		{
-			name:      "異常系: 数値話数がNaN",
+			name:      "異常系: 話数がNaN",
 			mutate:    func(in *DBEpisodeUpdateValidatorInput) { in.RawNumber = "NaN" },
 			wantField: "raw_number",
 		},

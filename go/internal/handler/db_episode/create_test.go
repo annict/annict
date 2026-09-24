@@ -217,7 +217,7 @@ func TestCreate_ManualCreationRestriction(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	workID := insertCreateTargetWork(t, db)
 	if _, err := db.Exec(`UPDATE works SET manual_episodes_count = 1 WHERE id = $1`, int64(workID)); err != nil {
-		t.Fatalf("予定話数の更新に失敗: %v", err)
+		t.Fatalf("予定エピソード数の更新に失敗: %v", err)
 	}
 	if _, err := db.Exec(`
 		INSERT INTO episodes (work_id, number, sort_number, created_at, updated_at)
@@ -235,7 +235,7 @@ func TestCreate_ManualCreationRestriction(t *testing.T) {
 	if editorRR.Code != http.StatusUnprocessableEntity {
 		t.Fatalf("編集者のステータスコード = %d、期待値 = 422", editorRR.Code)
 	}
-	if body := editorRR.Body.String(); !strings.Contains(body, "話数分のエピソード") ||
+	if body := editorRR.Body.String(); !strings.Contains(body, "予定エピソード数分のエピソード") ||
 		!strings.Contains(body, "readonly") || !strings.Contains(body, "disabled") {
 		t.Errorf("編集者向け制限フォームに警告・無効化属性が揃っていません")
 	}

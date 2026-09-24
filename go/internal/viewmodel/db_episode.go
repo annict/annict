@@ -102,8 +102,8 @@ func NewDBEpisodeListItem(episode *model.Episode) DBEpisodeListItem {
 }
 
 // formatPrevNumberは直前のエピソードを表示用話数で描画し、表示用話数を持たない場合は
-// 数値話数にフォールバックする。このフォールバックにより、直前のエピソードが存在するのに
-// 数値話数しか付けられていない場合でも、列が「直前のエピソードなし」と読めてしまうのを防ぐ。
+// 話数にフォールバックする。このフォールバックにより、直前のエピソードが存在するのに
+// 話数しか付けられていない場合でも、列が「直前のエピソードなし」と読めてしまうのを防ぐ。
 func formatPrevNumber(episode *model.Episode) string {
 	if number := derefString(episode.PrevNumber); number != "" {
 		return number
@@ -165,18 +165,18 @@ func NewDBEpisodeFormInputFromSubmit(input usecase.UpdateEpisodeInput) DBEpisode
 	}
 }
 
-// DBEpisodeGenerationSummaryは作品のエピソード一覧がテーブルの上に出す案内。作品が
-// 最終的に何話になる予定か、現在何話が公開されているか、しょぼいカレンダー由来の自動生成が
+// DBEpisodeGenerationSummaryは作品のエピソード一覧がテーブルの上に出す案内。作品の
+// 予定エピソード数、公開中のエピソード数、しょぼいカレンダー由来の自動生成が
 // 作品のスロットからどこまで話数を振れるかを表す。
 type DBEpisodeGenerationSummary struct {
-	// PlannedCountは作品の予定総話数を表示用に整形したもので、作品が記録していなければ
+	// PlannedCountは作品の予定エピソード数を表示用に整形したもので、作品が記録していなければ
 	// 空文字列。テンプレートはRailsの案内と同じく、その欠落に「不明」の文言を描画する。
 	PlannedCount                string
 	PublishedEpisodeCount       int64
 	MaxGeneratableEpisodeNumber int64
 }
 
-// NewDBEpisodeGenerationSummaryは、作品の予定総話数 (記録が無ければnil)、公開中の
+// NewDBEpisodeGenerationSummaryは、作品の予定エピソード数 (記録が無ければnil)、公開中の
 // エピソード数、有効なスロットから自動生成が到達できる最大話数から案内を組み立てる。
 func NewDBEpisodeGenerationSummary(
 	plannedCount *int32,
@@ -220,7 +220,7 @@ func (r DBEpisodeManualCreationRestriction) Restricted() bool {
 	return r != DBEpisodeManualCreationAllowed
 }
 
-// formatRawNumberはエピソードの数値話数を末尾の0を付けずに描画する。整数の話数は
+// formatRawNumberはエピソードの話数を末尾の0を付けずに描画する。整数の話数は
 // "2"、0.5話は小数のまま "2.5" と読める。未設定では "" を返し、テンプレート側で欠落の
 // 描画方法を決められるようにする。
 func formatRawNumber(rawNumber *float64) string {

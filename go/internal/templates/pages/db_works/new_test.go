@@ -196,7 +196,7 @@ func TestNew_RendersTitleRowAndCard(t *testing.T) {
 }
 
 // TestManualEpisodesCountLabelは、登録・編集フォームで共通のmanual_episodes_count欄を、
-// 対応する両ロケールで作品の予定総話数として名付けることを検証する。
+// 対応する両ロケールで作品の予定エピソード数として名付けることを検証する。
 func TestManualEpisodesCountLabel(t *testing.T) {
 	t.Parallel()
 
@@ -227,7 +227,7 @@ func TestManualEpisodesCountLabel(t *testing.T) {
 		code string
 		want string
 	}{
-		{code: "ja", want: "予定総話数"},
+		{code: "ja", want: "予定エピソード数"},
 		{code: "en", want: "Expected Episodes"},
 	}
 

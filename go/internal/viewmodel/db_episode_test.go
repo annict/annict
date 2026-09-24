@@ -250,7 +250,7 @@ func TestNewDBEpisodeListItem(t *testing.T) {
 }
 
 // TestNewDBEpisodeListItem_PrevNumberは直前のエピソードの名指し方を検証する。表示用
-// 話数があればそれを、無ければ数値話数を使い、直前のエピソード自体が無ければ空文字列とする
+// 話数があればそれを、無ければ話数を使い、直前のエピソード自体が無ければ空文字列とする
 // (テンプレートはこれを欠落として描画する)。
 func TestNewDBEpisodeListItem_PrevNumber(t *testing.T) {
 	t.Parallel()
@@ -272,12 +272,12 @@ func TestNewDBEpisodeListItem_PrevNumber(t *testing.T) {
 			want:          "第1話",
 		},
 		{
-			name:          "表示用話数が無ければ数値話数にフォールバックする",
+			name:          "表示用話数が無ければ話数にフォールバックする",
 			prevRawNumber: &prevRawNumber,
 			want:          "1.5",
 		},
 		{
-			name:          "表示用話数が空文字列でも数値話数にフォールバックする",
+			name:          "表示用話数が空文字列でも話数にフォールバックする",
 			prevNumber:    &emptyPrevNumber,
 			prevRawNumber: &prevRawNumber,
 			want:          "1.5",
@@ -307,7 +307,7 @@ func TestNewDBEpisodeListItem_PrevNumber(t *testing.T) {
 }
 
 // TestNewDBEpisodeGenerationSummaryは案内が公開中のエピソード数と生成可能な最大話数を
-// そのまま持ち、作品の予定総話数を整形すること、および作品が記録していない場合は空のまま
+// そのまま持ち、作品の予定エピソード数を整形すること、および作品が記録していない場合は空のまま
 // 残し、テンプレートが言葉で示せるように
 // することを検証する。記録された0は作品が述べた件数であって欠落ではないため、未登録と同一視
 // されず "0" のまま残ること。
@@ -322,9 +322,9 @@ func TestNewDBEpisodeGenerationSummary(t *testing.T) {
 		plannedCount     *int32
 		wantPlannedCount string
 	}{
-		{name: "予定総話数あり", plannedCount: &plannedCount, wantPlannedCount: "12"},
-		{name: "予定総話数0は未登録ではなく0として扱う", plannedCount: &zeroPlannedCount, wantPlannedCount: "0"},
-		{name: "予定総話数なしは空文字列", plannedCount: nil, wantPlannedCount: ""},
+		{name: "予定エピソード数あり", plannedCount: &plannedCount, wantPlannedCount: "12"},
+		{name: "予定エピソード数0は未登録ではなく0として扱う", plannedCount: &zeroPlannedCount, wantPlannedCount: "0"},
+		{name: "予定エピソード数なしは空文字列", plannedCount: nil, wantPlannedCount: ""},
 	}
 
 	for _, tt := range tests {
@@ -346,7 +346,7 @@ func TestNewDBEpisodeGenerationSummary(t *testing.T) {
 	}
 }
 
-// TestNewDBEpisodeListItem_RawNumberFormatは整数の数値話数が小数部なしで、小数の話数は
+// TestNewDBEpisodeListItem_RawNumberFormatは整数の話数が小数部なしで、小数の話数は
 // 小数部を保って描画されることを検証する。通常の話が "2.000000" ではなく "2" と表示される。
 func TestNewDBEpisodeListItem_RawNumberFormat(t *testing.T) {
 	t.Parallel()
@@ -453,7 +453,7 @@ func TestNewDBEpisodeListItems(t *testing.T) {
 }
 
 // TestNewDBEpisodeManualCreationRestrictionは、ドメインの状態がページの述べる理由へ
-// 射影されること、および2つの条件を解決する順序 (両方に当てはまる作品は予定話数到達を報告
+// 射影されること、および2つの条件を解決する順序 (両方に当てはまる作品は予定エピソード数到達を報告
 // する) を検証する。ページは値ごとに1つの警告を描画するため、射影がずれると誤った理由を
 // 述べるか、何も述べなくなる。
 func TestNewDBEpisodeManualCreationRestriction(t *testing.T) {
@@ -470,7 +470,7 @@ func TestNewDBEpisodeManualCreationRestriction(t *testing.T) {
 			want:  DBEpisodeManualCreationAllowed,
 		},
 		{
-			name:  "予定話数到達",
+			name:  "予定エピソード数到達",
 			state: model.ManualEpisodeCreationState{EpisodesFilled: true},
 			want:  DBEpisodeManualCreationEpisodesFilled,
 		},
@@ -480,7 +480,7 @@ func TestNewDBEpisodeManualCreationRestriction(t *testing.T) {
 			want:  DBEpisodeManualCreationSlotsExist,
 		},
 		{
-			name:  "両方に当てはまるときは予定話数到達",
+			name:  "両方に当てはまるときは予定エピソード数到達",
 			state: model.ManualEpisodeCreationState{EpisodesFilled: true, SlotsExist: true},
 			want:  DBEpisodeManualCreationEpisodesFilled,
 		},
@@ -502,7 +502,7 @@ func TestNewDBEpisodeManualCreationRestriction(t *testing.T) {
 }
 
 // TestNewDBEpisodeFormInputFromEpisodeは、保存済みのエピソードが編集フォームの各欄が
-// 描画する文字列として届くことを検証する。未設定の任意カラムは空の入力欄になり、数値話数は
+// 描画する文字列として届くことを検証する。未設定の任意カラムは空の入力欄になり、話数は
 // 末尾の0を増やさずに小数を保ち、フォームが運ぶ版は同一秒内の2つの書き込みを区別する
 // 秒未満の桁を保つ。NULLのupdated_atは、前提条件の欠落ではなく明示的な版で表す。
 func TestNewDBEpisodeFormInputFromEpisode(t *testing.T) {

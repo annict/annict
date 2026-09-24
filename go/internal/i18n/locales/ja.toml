@@ -1243,8 +1243,9 @@ description = "エピソードの表示用話数に付けるスクリーンリ�
 other = "表示用話数"
 
 [db_episodes_index_number_raw_label]
-description = "エピソードの数値話数に付けるスクリーンリーダー向けラベル"
-other = "数値話数"
+description = "エピソードの話数に付けるスクリーンリーダー向けラベル"
+other = "話数"
+
 
 [db_episodes_index_table_title_label]
 description = "テーブルヘッダー - タイトル (日本語と英語)"
@@ -1283,19 +1284,20 @@ description = "エピソード一覧の空表示の見出し"
 other = "エピソードはありません"
 
 [db_episodes_index_generation_planned_label]
-description = "自動生成の案内 - 作品の予定総話数のラベル"
-other = "予定総話数"
+description = "自動生成の案内 - 作品の予定エピソード数のラベル"
+other = "予定エピソード数"
 
 [db_episodes_index_generation_published_label]
 description = "自動生成の案内 - 公開中のエピソード数のラベル"
 other = "公開中のエピソード数"
+
 
 [db_episodes_index_generation_generatable_label]
 description = "自動生成の案内 - 自動生成されるエピソード数のラベル"
 other = "自動生成されるエピソード数"
 
 [db_episodes_index_generation_unknown]
-description = "自動生成の案内 - 予定総話数が未登録のときに表示する値"
+description = "自動生成の案内 - 予定エピソード数が未登録のときに表示する値"
 other = "不明"
 
 [db_episodes_index_new_link]
@@ -1367,12 +1369,12 @@ description = "管理者にエピソードの手動登録を勧めないとき�
 other = "通常は手動登録できません"
 
 [db_episodes_new_restricted_episodes_filled]
-description = "作品の予定話数までエピソードが登録済みのときに表示する警告"
-other = "話数分のエピソードがすでに登録されているため、新規登録はできません。"
+description = "作品の予定エピソード数までエピソードが登録済みのときに表示する警告"
+other = "予定エピソード数分のエピソードがすでに登録されているため、新規登録はできません。"
 
 [db_episodes_new_restricted_admin_episodes_filled]
-description = "作品の予定話数までエピソードが登録済みのときに管理者へ表示する警告"
-other = "話数分のエピソードがすでに登録されています。管理者は手動でも登録できますが、予定総話数を超えることになります。"
+description = "作品の予定エピソード数までエピソードが登録済みのときに管理者へ表示する警告"
+other = "予定エピソード数分のエピソードがすでに登録されています。管理者は手動でも登録できますが、予定エピソード数を超えることになります。"
 
 [db_episodes_new_restricted_slots_exist]
 description = "放送予定からエピソードが自動生成されるときに表示する警告"
@@ -1423,8 +1425,8 @@ description = "フォームラベル - 表示用話数"
 other = "表示用話数"
 
 [db_episodes_edit_raw_number_label]
-description = "フォームラベル - 数値話数"
-other = "数値話数"
+description = "フォームラベル - 話数"
+other = "話数"
 
 [db_episodes_edit_sort_number_label]
 description = "フォームラベル - ソート番号"
@@ -1586,12 +1588,12 @@ description = "フォームラベル - あらすじの引用元 (英語)"
 other = "あらすじの引用元 (英語)"
 
 [db_works_new_manual_episodes_count_label]
-description = "フォームラベル - 予定総話数"
-other = "予定総話数"
+description = "フォームラベル - 予定エピソード数"
+other = "予定エピソード数"
 
 [db_works_new_start_episode_raw_number_label]
-description = "フォームラベル - 開始エピソード番号"
-other = "開始エピソード番号"
+description = "フォームラベル - 開始話数"
+other = "開始話数"
 
 [db_works_new_number_format_label]
 description = "フォームラベル - 話数フォーマット"
@@ -1714,12 +1716,12 @@ description = "フォームラベル - あらすじの引用元 (英語)"
 other = "あらすじの引用元 (英語)"
 
 [db_works_edit_manual_episodes_count_label]
-description = "フォームラベル - 予定総話数"
-other = "予定総話数"
+description = "フォームラベル - 予定エピソード数"
+other = "予定エピソード数"
 
 [db_works_edit_start_episode_raw_number_label]
-description = "フォームラベル - 開始エピソード番号"
-other = "開始エピソード番号"
+description = "フォームラベル - 開始話数"
+other = "開始話数"
 
 [db_works_edit_number_format_label]
 description = "フォームラベル - 話数フォーマット"
@@ -1928,8 +1930,8 @@ description = "エピソード一括作成フォームの行数が1回の上限�
 other = "一度に登録するエピソードは{{.MaxRows}}件以内にしてください"
 
 [validation_episode_manual_creation_episodes_filled]
-description = "予定話数までエピソードが登録済みの作品にエピソードを登録しようとした"
-other = "話数分のエピソードがすでに登録されているため、エピソードを登録できません"
+description = "予定エピソード数までエピソードが登録済みの作品にエピソードを登録しようとした"
+other = "予定エピソード数分のエピソードがすでに登録されているため、エピソードを登録できません"
 
 [validation_episode_manual_creation_slots_exist]
 description = "放送予定からエピソードが自動生成される作品にエピソードを手動で登録しようとした"
@@ -1948,8 +1950,8 @@ description = "エピソードの行のタイトルが文字数の上限を超�
 other = "タイトルは{{.MaxLength}}文字以内で入力してください"
 
 [validation_episode_row_raw_number_invalid]
-description = "エピソードの行の数値話数が数値ではない"
-other = "数値話数は数値で入力してください"
+description = "エピソードの行の話数が数値ではない"
+other = "話数は数値で入力してください"
 
 [media_tv]
 description = "メディア種別 - TV"

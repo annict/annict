@@ -318,7 +318,7 @@ func TestCreateEpisodesUsecase_Execute_ProducesSyncConsistentMapping(t *testing.
 	output, err := uc.Execute(context.Background(), CreateEpisodesInput{
 		WorkID: workID,
 		User:   user,
-		Rows:   "#1,1,はじまり\n,,タイトルだけの話\n#3,,数値話数なし",
+		Rows:   "#1,1,はじまり\n,,タイトルだけの話\n#3,,話数なし",
 	})
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
@@ -424,7 +424,7 @@ func TestCreateEpisodesUsecase_Execute_EnforcesManualCreationRestriction(t *test
 	editor := insertCreateActor(t, db, model.RoleEditor)
 	admin := insertCreateActor(t, db, model.RoleAdmin)
 	if _, err := db.Exec(`UPDATE works SET manual_episodes_count = 1 WHERE id = $1`, int64(workID)); err != nil {
-		t.Fatalf("予定話数の更新に失敗: %v", err)
+		t.Fatalf("予定エピソード数の更新に失敗: %v", err)
 	}
 	insertSyncEpisode(t, db, defaultSyncEpisodeInput(workID))
 

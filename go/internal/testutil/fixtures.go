@@ -39,7 +39,7 @@ type WorkBuilder struct {
 	// 外部サービスのID (NULL許容)。nilの場合はカラムをNULLのままにする。
 	scTid      *int32
 	malAnimeID *int32
-	// manualEpisodesCountは作品の予定総話数 (works.manual_episodes_count)。
+	// manualEpisodesCountは作品の予定エピソード数 (works.manual_episodes_count)。
 	// nilの場合はカラムをNULLのままにします。
 	manualEpisodesCount *int32
 	watchersCount       int32
