@@ -1247,6 +1247,9 @@ other = "Display number"
 description = "エピソードの話数に付けるスクリーンリーダー向けラベル"
 other = "Number"
 
+[db_episodes_index_table_published_position_label]
+description = "テーブルヘッダー - 作品内の連番 (可視の「#」に代えて支援技術に伝える名前)"
+other = "Position in work"
 
 [db_episodes_index_table_title_label]
 description = "テーブルヘッダー - タイトル (日本語と英語)"
@@ -1292,6 +1295,9 @@ other = "Expected episodes"
 description = "自動生成の案内 - 公開中のエピソード数のラベル"
 other = "Published episodes"
 
+[db_episodes_index_generation_published_progress]
+description = "自動生成の案内 - 公開中のエピソード数を予定エピソード数と並べた値の、支援技術向けの文"
+other = "{{.Published}} of {{.Planned}}"
 
 [db_episodes_index_generation_generatable_label]
 description = "自動生成の案内 - 自動生成されるエピソード数のラベル"
