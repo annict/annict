@@ -70,7 +70,7 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 	workID := testutil.NewWorkBuilder(t, tx).
-		WithTitle("予定話数到達アニメ").
+		WithTitle("予定エピソード数到達アニメ").
 		WithManualEpisodesCount(1).
 		Build()
 	testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第1話").Build()
@@ -112,7 +112,7 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 			if !strings.Contains(body, "<h2>"+tt.wantTitle+"</h2>") {
 				t.Errorf("手動作成制限の警告の見出しが%qではありません", tt.wantTitle)
 			}
-			if !strings.Contains(body, "話数分のエピソード") || !strings.Contains(body, tt.wantMessage) {
+			if !strings.Contains(body, "予定エピソード数分のエピソード") || !strings.Contains(body, tt.wantMessage) {
 				t.Errorf("手動作成制限の警告に%qが含まれていません", tt.wantMessage)
 			}
 			if got := strings.Contains(body, "readonly"); got != tt.wantReadonly {

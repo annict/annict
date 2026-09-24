@@ -454,6 +454,71 @@ func TestEpisodeRepository_ListForDB(t *testing.T) {
 		}
 	})
 
+	t.Run("正常系: 作品内の連番を公開中のエピソードだけで作品全体から振る", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBListWork(t, tx)
+		// 削除済みの行は一覧に載らず、連番も消費しない。
+		insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:     workID,
+			sortNumber: 50,
+			deletedAt:  sql.NullTime{Time: time.Now(), Valid: true},
+		})
+		first := insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 100})
+		// 非公開の行は一覧に載るが連番を持たず、後続の連番も詰める。
+		unpublished := insertDBListEpisode(t, tx, dbListEpisodeRow{
+			workID:        workID,
+			sortNumber:    200,
+			unpublishedAt: sql.NullTime{Time: time.Now(), Valid: true},
+		})
+		// sort_numberが同値の2行は、先に挿入した (idが小さい) 行が先に数えられる。
+		tiedLower := insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 300})
+		tiedHigher := insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 300})
+		last := insertDBListEpisode(t, tx, dbListEpisodeRow{workID: workID, sortNumber: 400})
+
+		// 一覧はsort_number降順で1ページ2件ずつ読み、連番がページ内の位置ではなく作品全体から
+		// 振られていることを、どのページに載った行でも確かめる。
+		got := map[model.EpisodeID]*int64{}
+		for page := int32(1); page <= 3; page++ {
+			episodes, err := repo.ListForDB(context.Background(), repository.DBEpisodeListParams{
+				WorkID:  workID,
+				Page:    page,
+				PerPage: 2,
+			})
+			if err != nil {
+				t.Fatalf("ListForDB(page=%d)のエラー = %v", page, err)
+			}
+			for _, episode := range episodes {
+				got[episode.ID] = episode.PublishedPosition
+			}
+		}
+
+		if len(got) != 5 {
+			t.Fatalf("取得した行数 = %d、期待値 = 5 (削除済みを除く)", len(got))
+		}
+		if got[unpublished] != nil {
+			t.Errorf("非公開の行のPublishedPosition = %d、期待値 = nil", *got[unpublished])
+		}
+		wantPositions := []struct {
+			name string
+			id   model.EpisodeID
+			want int64
+		}{
+			{name: "最初の公開中の行 (3ページ目)", id: first, want: 1},
+			{name: "sort_number同値のidが小さい行 (2ページ目)", id: tiedLower, want: 2},
+			{name: "sort_number同値のidが大きい行 (1ページ目)", id: tiedHigher, want: 3},
+			{name: "最後の公開中の行 (1ページ目)", id: last, want: 4},
+		}
+		for _, tt := range wantPositions {
+			if got[tt.id] == nil || *got[tt.id] != tt.want {
+				t.Errorf("%sのPublishedPosition = %v、期待値 = %d", tt.name, got[tt.id], tt.want)
+			}
+		}
+	})
+
 	t.Run("正常系: エピソードが無い作品では空スライスを返す", func(t *testing.T) {
 		t.Parallel()
 

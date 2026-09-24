@@ -445,6 +445,46 @@ func TestIndex_ActionColumn_Anonymous(t *testing.T) {
 	}
 }
 
+// TestIndex_NewWorkLinkIsCommitterOnlyは見出しの「新規登録」をcommitterにだけ出すことを
+// 検証する。一覧は公開のため、登録画面に入れない閲覧者には403が返るだけのリンクを出さない。
+func TestIndex_NewWorkLinkIsCommitterOnly(t *testing.T) {
+	t.Parallel()
+
+	newLink := `href="/db/works/new"`
+	// actionsContainerは見出しが操作の周りに描画するラッパー。操作の無い閲覧者にはこれも
+	// 出さない。空のラッパーはモバイル幅では単独で全幅のflex行になり、公開されている一覧の
+	// 見出しの下に余白を足してしまうため。
+	actionsContainer := `<div class="flex w-full flex-none justify-end gap-2 md:w-auto">`
+
+	tests := []struct {
+		name        string
+		isCommitter bool
+		want        bool
+	}{
+		{name: "committerには出す", isCommitter: true, want: true},
+		{name: "committerでない閲覧者には出さない", isCommitter: false, want: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			html := renderIndex(t, IndexPageData{
+				Works:       []viewmodel.DBWorkListItem{},
+				Pagination:  viewmodel.NewPagination(1, 0, 30, "/db/works"),
+				IsCommitter: tt.isCommitter,
+			})
+
+			if got := strings.Contains(html, newLink); got != tt.want {
+				t.Errorf("登録画面へのリンクの有無 = %v、期待値 = %v", got, tt.want)
+			}
+			if got := strings.Contains(html, actionsContainer); got != tt.want {
+				t.Errorf("見出しの操作コンテナの有無 = %v、期待値 = %v", got, tt.want)
+			}
+		})
+	}
+}
+
 // TestIndex_SidebarToggleはページがタイトル行にサイドバートグルを描画する
 // ことを検証する。
 func TestIndex_SidebarToggle(t *testing.T) {

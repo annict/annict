@@ -152,7 +152,7 @@ CREATE TABLE public.anime_classifications (
     -- 話数の起点 (例: 2期で13から振るなら13)。旧works.start_episode_raw_numberを
     -- 改名。episodeは持たない。standaloneと同じwork限定の片方向。ADR 0018を参照。
     CONSTRAINT anime_classifications_episode_start_number_check CHECK (kind = 'work' OR episode_start_number IS NULL),
-    -- expected_episodes_countは編集者が宣言する作品の予定総話数 (旧
+    -- expected_episodes_countは編集者が宣言する作品の予定エピソード数 (旧
     -- works.manual_episodes_countを改名)。エピソード生成の打ち切りと全話完了の判定に
     -- 使い、episodeは持たない。standaloneと同じくwork限定で片方向の形 (workでも
     -- NULL許容)。ADR 0016を参照。

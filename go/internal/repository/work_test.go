@@ -1452,7 +1452,7 @@ func TestWorkRepository_GetForEpisodeFormByID_ManualCreationState(t *testing.T) 
 	ctx := context.Background()
 
 	filledWorkID := testutil.NewWorkBuilder(t, tx).
-		WithTitle("予定話数到達").
+		WithTitle("予定エピソード数到達").
 		WithManualEpisodesCount(2).
 		Build()
 	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("第1話").Build()
@@ -1462,13 +1462,13 @@ func TestWorkRepository_GetForEpisodeFormByID_ManualCreationState(t *testing.T) 
 
 	filledWork, err := repo.GetForEpisodeFormByID(ctx, filledWorkID)
 	if err != nil {
-		t.Fatalf("予定話数到達GetForEpisodeFormByID()のエラー = %v", err)
+		t.Fatalf("予定エピソード数到達GetForEpisodeFormByID()のエラー = %v", err)
 	}
 	if filledWork == nil || !filledWork.ManualCreationState.EpisodesFilled {
-		t.Fatalf("予定話数到達のManualCreationState = %+v、期待値 = EpisodesFilled", filledWork)
+		t.Fatalf("予定エピソード数到達のManualCreationState = %+v、期待値 = EpisodesFilled", filledWork)
 	}
 	if filledWork.ManualCreationState.Allowed() {
-		t.Error("予定話数到達作品の手動作成が許可されています")
+		t.Error("予定エピソード数到達作品の手動作成が許可されています")
 	}
 
 	slotWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("放送枠あり").Build()
@@ -1605,16 +1605,16 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 		ctx := context.Background()
 
 		filledWorkID := testutil.NewWorkBuilder(t, tx).
-			WithTitle("作成側: 予定話数到達").
+			WithTitle("作成側: 予定エピソード数到達").
 			WithManualEpisodesCount(2).
 			Build()
 		testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("第1話").Build()
 		testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithNumber("第2話").Build()
 
-		// 述語は公開中のエピソードだけを数えるため、予定話数を満たすのが非公開・削除済み
+		// 述語は公開中のエピソードだけを数えるため、予定エピソード数を満たすのが非公開・削除済み
 		// の行である作品は作成可能なままになる。
 		keptOnlyWorkID := testutil.NewWorkBuilder(t, tx).
-			WithTitle("作成側: 公開中だけでは予定話数に届かない").
+			WithTitle("作成側: 公開中だけでは予定エピソード数に届かない").
 			WithManualEpisodesCount(3).
 			Build()
 		testutil.NewEpisodeBuilder(t, tx, keptOnlyWorkID).WithNumber("第1話").Build()
@@ -1637,8 +1637,8 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 			workID          model.WorkID
 			wantRestriction model.ManualEpisodeCreationRestriction
 		}{
-			{name: "予定話数到達", workID: filledWorkID, wantRestriction: model.ManualEpisodeCreationEpisodesFilled},
-			{name: "公開中だけでは予定話数に届かない", workID: keptOnlyWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
+			{name: "予定エピソード数到達", workID: filledWorkID, wantRestriction: model.ManualEpisodeCreationEpisodesFilled},
+			{name: "公開中だけでは予定エピソード数に届かない", workID: keptOnlyWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
 			{name: "放送枠あり", workID: slotWorkID, wantRestriction: model.ManualEpisodeCreationSlotsExist},
 			{name: "制限なし", workID: plainWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
 		}

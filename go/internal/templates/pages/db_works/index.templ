@@ -19,10 +19,10 @@ type IndexPageData struct {
 	FilterNoSeason      bool
 	FilterNoSlots       bool
 	SeasonFilterOptions []viewmodel.SeasonFilterOption
-	// IsCommitterとIsAdminは操作列の出し分けに使う。committer (管理者または編集者) は
-	// 編集・非公開 / 公開の操作を、管理者はさらに削除の操作を見る。作品一覧自体は公開のため、
-	// 未ログインや一般ユーザーではどちらもfalseになり、そのときは操作列自体をテーブルから
-	// 落とす。
+	// IsCommitterとIsAdminは見出しの「新規登録」と操作列の出し分けに使う。committer
+	// (管理者または編集者) は「新規登録」と編集・非公開 / 公開の操作を、管理者はさらに
+	// 削除の操作を見る。作品一覧自体は公開のため、未ログインや一般ユーザーではどちらも
+	// falseになり、そのときは見出しの操作コンテナと操作列自体を描画しない。
 	IsCommitter bool
 	IsAdmin     bool
 	// CSRFTokenはhtmxが発行するDELETEリクエスト (公開 / 削除) のX-CSRF-Token
@@ -30,10 +30,22 @@ type IndexPageData struct {
 	CSRFToken string
 }
 
+// newWorkActionは見出しの横に表示する操作を返し、操作を出さない閲覧者にはnilを
+// 返す。MainTitleが操作のコンテナを描画しないのはこのnilによる。何も描画しない
+// コンポーネントもコンポーネントであるため、それを返すと作品を登録できない訪問者すべてに
+// 空のコンテナが残る。
+func (d IndexPageData) newWorkAction() templ.Component {
+	if !d.IsCommitter {
+		return nil
+	}
+
+	return indexNewButton()
+}
+
 // hasRowActionsは閲覧者が行ごとの操作を1つでも行えるかを返し、操作列そのものを
 // 描画するかを決める。操作を持たない閲覧者に空のセルだけの列は出さない。このテーブルは
 // モバイル幅では既に横スクロールを要し、何も入らない列の見出しが行ごとに読み上げられて
-// しまうため。
+// しまうため。newWorkActionが見出しの操作コンテナを出さないのと同じ理由である。
 func (d IndexPageData) hasRowActions() bool {
 	return d.IsCommitter || d.IsAdmin
 }
@@ -57,7 +69,7 @@ templ Index(data IndexPageData) {
 			<div class="flex-1">
 				@components.MainTitle(components.MainTitleData{
 					Title:   templates.T(ctx, "db_works_index_title"),
-					Actions: indexNewButton(),
+					Actions: data.newWorkAction(),
 				})
 			</div>
 		</div>

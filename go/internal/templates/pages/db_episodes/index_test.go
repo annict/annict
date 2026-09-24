@@ -73,6 +73,7 @@ func TestIndex_WithEpisodes(t *testing.T) {
 		Episodes: []viewmodel.DBEpisodeListItem{
 			{
 				ID:                  10,
+				PublishedPosition:   "7",
 				WorkID:              3,
 				Number:              "第2話",
 				RawNumber:           "2",
@@ -115,6 +116,10 @@ func TestIndex_WithEpisodes(t *testing.T) {
 		`target="_blank"`,
 		`rel="noopener"`,
 		`aria-label="エピソード 10 を新しいタブで開く"`,
+		// 作品内の連番の列は、可視の「#」を読み上げから外し、列の名前を支援技術に与える。
+		`<span aria-hidden="true">#</span>`,
+		`<span class="sr-only">作品内の連番</span>`,
+		"<td>7</td>",
 		// 2系統の話数と2つのタイトル。
 		"第2話",
 		"エピソードタイトル",
@@ -122,7 +127,8 @@ func TestIndex_WithEpisodes(t *testing.T) {
 		// 縦積みした各値にはローカライズ済みのラベルを付け、タイトルには既知の言語を
 		// 指定して、支援技術が値を区別して正しく発音できるようにする。
 		"表示用話数:",
-		"数値話数:",
+		// 「表示用話数:」の部分一致にならないよう、話数のラベルは要素の先頭から照合する。
+		`<span class="sr-only">話数: </span>`,
 		"日本語タイトル:",
 		"英語タイトル:",
 		`lang="ja">エピソードタイトル</span>`,
@@ -167,7 +173,7 @@ func TestIndex_MissingValuesRenderPlaceholder(t *testing.T) {
 
 	html := buf.String()
 
-	// 未設定の4つの属性 (表示用話数・数値話数・日本語タイトル・英語タイトル) は
+	// 未設定の4つの属性 (表示用話数・話数・日本語タイトル・英語タイトル) は
 	// いずれも空のセルではなくプレースホルダーを描画する。
 	if got := strings.Count(html, ": </span> -</div>"); got != 4 {
 		t.Errorf("プレースホルダーの数 = %d、期待値 = 4", got)
@@ -180,6 +186,11 @@ func TestIndex_MissingValuesRenderPlaceholder(t *testing.T) {
 	if !strings.Contains(html, `<td class="whitespace-normal [overflow-wrap:anywhere]">-</td>`) {
 		t.Error("直前のエピソードが無い行はプレースホルダーを表示すべきです")
 	}
+
+	// 連番を持たない (非公開の) 行も、作品内の連番の列にプレースホルダーを描画する。
+	if !strings.Contains(html, "<td>-</td>") {
+		t.Error("作品内の連番を持たない行はプレースホルダーを表示すべきです")
+	}
 }
 
 // TestIndex_GenerationNoticeは、対応する両ロケールでエピソード計画の案内を検証する。
@@ -190,19 +201,22 @@ func TestIndex_GenerationNotice(t *testing.T) {
 	t.Parallel()
 
 	tests := []struct {
-		name       string
-		locale     string
-		wantLabels []string
+		name              string
+		locale            string
+		wantLabels        []string
+		wantProgressLabel string
 	}{
 		{
-			name:       "日本語",
-			locale:     "ja",
-			wantLabels: []string{"予定総話数", "公開中のエピソード数", "自動生成されるエピソード数"},
+			name:              "日本語",
+			locale:            "ja",
+			wantLabels:        []string{"予定エピソード数", "公開中のエピソード数", "自動生成されるエピソード数"},
+			wantProgressLabel: "12件中5件",
 		},
 		{
-			name:       "英語",
-			locale:     "en",
-			wantLabels: []string{"Expected episodes", "Published episodes", "Auto-generated episodes"},
+			name:              "英語",
+			locale:            "en",
+			wantLabels:        []string{"Expected episodes", "Published episodes", "Auto-generated episodes"},
+			wantProgressLabel: "5 of 12",
 		},
 	}
 
@@ -235,10 +249,18 @@ func TestIndex_GenerationNotice(t *testing.T) {
 			if !strings.Contains(html, "<dl") {
 				t.Error("案内は定義リストで描画されるべきです")
 			}
-			for _, value := range []string{"12", "5", "9"} {
+			for _, value := range []string{"12", "9"} {
 				if !strings.Contains(html, `<dd class="text-card-foreground">`+value+"</dd>") {
 					t.Errorf("出力に値%qが含まれていません", value)
 				}
+			}
+			// 公開中のエピソード数は予定エピソード数と並べて `5 / 12` と見せ、記号に頼らない
+			// 文を支援技術に渡す。可視の値は文と二重に読み上げられないよう隠す。
+			if !strings.Contains(html, `<span aria-hidden="true">5 / 12</span>`) {
+				t.Error("公開中のエピソード数は予定エピソード数と並べて表示すべきです")
+			}
+			if !strings.Contains(html, `<span class="sr-only"> `+tt.wantProgressLabel+"</span>") {
+				t.Errorf("支援技術向けの文%qが含まれていません", tt.wantProgressLabel)
 			}
 			for _, label := range tt.wantLabels {
 				if !strings.Contains(html, "<dt>"+label+"</dt>") {
@@ -249,7 +271,7 @@ func TestIndex_GenerationNotice(t *testing.T) {
 	}
 }
 
-// TestIndex_GenerationNoticeUnknownPlannedCountは、予定総話数が未登録の作品でその旨を
+// TestIndex_GenerationNoticeUnknownPlannedCountは、予定エピソード数が未登録の作品でその旨を
 // 言葉で示すことを検証する。案内は3つの値を並べて述べるため、欠落がそれ自体で件数のように
 // 読めてはならない。
 func TestIndex_GenerationNoticeUnknownPlannedCount(t *testing.T) {
@@ -273,8 +295,16 @@ func TestIndex_GenerationNoticeUnknownPlannedCount(t *testing.T) {
 		t.Fatalf("レンダリングエラー: %v", err)
 	}
 
-	if !strings.Contains(buf.String(), `<dd class="text-card-foreground">不明</dd>`) {
-		t.Error("予定総話数が未登録なら「不明」と表示すべきです")
+	html := buf.String()
+	if !strings.Contains(html, `<dd class="text-card-foreground">不明</dd>`) {
+		t.Error("予定エピソード数が未登録なら「不明」と表示すべきです")
+	}
+	// 分母の無い比は進捗を述べないため、公開中のエピソード数は件数だけを出す。
+	if !strings.Contains(html, `<dd class="text-card-foreground">0</dd>`) {
+		t.Error("予定エピソード数が未登録なら公開中のエピソード数は件数だけを表示すべきです")
+	}
+	if strings.Contains(html, " / ") {
+		t.Error("予定エピソード数が未登録なら比の形で表示すべきではありません")
 	}
 }
 
@@ -358,13 +388,13 @@ func renderActionColumnIndex(t *testing.T, isCommitter, isAdmin bool) string {
 func assertActionColumnStructure(t *testing.T, html string, wantActions bool) {
 	t.Helper()
 
-	wantColumns := 7
-	wantMinWidth := "min-w-[860px]"
-	wantAbsentMinWidth := "min-w-[960px]"
+	wantColumns := 8
+	wantMinWidth := "min-w-[908px]"
+	wantAbsentMinWidth := "min-w-[1008px]"
 	if wantActions {
-		wantColumns = 8
-		wantMinWidth = "min-w-[960px]"
-		wantAbsentMinWidth = "min-w-[860px]"
+		wantColumns = 9
+		wantMinWidth = "min-w-[1008px]"
+		wantAbsentMinWidth = "min-w-[908px]"
 	}
 
 	// テーブル構造の3部分をまとめて数える。条件付きの列はcol・見出し・各行のデータ

@@ -56,10 +56,15 @@ type Episode struct {
 	EpisodeRecordsCount int32
 
 	// PrevNumberとPrevRawNumberは、sort_number順でこのエピソードの直前に来る
-	// エピソードの表示用話数と数値話数。Annict DB一覧のローダー (ListForDB) が隣接行から
+	// エピソードの表示用話数と話数。Annict DB一覧のローダー (ListForDB) が隣接行から
 	// 導出する。作品の最初のエピソードと、導出しないローダーではいずれもnilのまま残る。
 	PrevNumber    *string
 	PrevRawNumber *float64
+
+	// PublishedPositionは作品の公開中のエピソードをsort_number順 (同値はid順) に数えた
+	// 1始まりの連番。Annict DB一覧のローダー (ListForDB) が作品全体から導出する。非公開の
+	// エピソードと、導出しないローダーではnilのまま残る。
+	PublishedPosition *int64
 }
 
 // DerivedStatusはepisodeの状態の正本であるUnpublishable / SoftDeletable
@@ -90,15 +95,15 @@ const (
 )
 
 // ManualEpisodeCreationStateはRailsが管理者以外の手動エピソード作成を止める条件を
-// 保持する。作品が予定話数までエピソードを持っている (Work#episodes_filled?) か、開始時刻を
-// 持つ放送枠があってエピソードが自動生成される (Work#slots_exists?) かのいずれか。
+// 保持する。作品が予定エピソード数までエピソードを持っている (Work#episodes_filled?) か、
+// 開始時刻を持つ放送枠があってエピソードが自動生成される (Work#slots_exists?) かのいずれか。
 type ManualEpisodeCreationState struct {
 	EpisodesFilled bool
 	SlotsExist     bool
 }
 
 // Restrictionはどの理由が当てはまるかを返し、いずれも当てはまらない場合は
-// ManualEpisodeCreationAllowedを返す。両方に当てはまる作品は予定話数到達を報告する
+// ManualEpisodeCreationAllowedを返す。両方に当てはまる作品は予定エピソード数到達を報告する
 // (Railsのフォームが理由を述べる順序と同じ)。順序をここで決めることで、送信の却下と
 // ページの警告が同じ理由を名指しする。
 func (s ManualEpisodeCreationState) Restriction() ManualEpisodeCreationRestriction {

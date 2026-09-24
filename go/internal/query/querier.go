@@ -286,6 +286,10 @@ type Querier interface {
 	// 直前のエピソードはepisodes.prev_episode_idを読まず、sort_number昇順の隣接行から
 	// 導出する。ウィンドウはCTEの中で作品の一覧全体に対して評価され、LIMIT / OFFSETが
 	// 1ページに絞り込む前に確定するため、ページ末尾の行も次ページに載るエピソードを指せる。
+	// 作品内の連番 (published_position) も同じ理由でCTEの中で振る。公開中のエピソードだけを
+	// sort_number昇順 (同値はid昇順) に数えるため、非公開の行は連番を消費せず、LEFT JOINで
+	// NULLになる。母集団を案内の「公開中のエピソード数」と揃え、公開中の最大の連番がその件数と
+	// 一致するようにするため。
 	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)

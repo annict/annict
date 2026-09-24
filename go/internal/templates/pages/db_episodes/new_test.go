@@ -12,8 +12,10 @@ import (
 
 // iconWrapperMarkupは、これらのページで許容しないラッパーのマークアップを表す。
 // aria-hiddenの祖先はアイコンをアクセシビリティツリーから外すが、SVG要素を既定で
-// フォーカス可能とする実装ではSVGがフォーカス順序に残りうるため。
-const iconWrapperMarkup = `<span aria-hidden="true">`
+// フォーカス可能とする実装ではSVGがフォーカス順序に残りうるため。SVGを包む場合に
+// 限って照合するのは、一覧の「#」見出しのように、記号のテキストを読み上げから外す
+// aria-hiddenのspanは許容するため。
+const iconWrapperMarkup = `<span aria-hidden="true"><svg`
 
 func decorativeIconMarkup(
 	t *testing.T,
@@ -133,7 +135,7 @@ func TestNew_WithErrors(t *testing.T) {
 
 	formErrors := &viewmodel.FormErrors{
 		Fields: map[string][]string{"rows": {
-			"1 行目: 数値話数には数値を入力してください",
+			"1 行目: 話数には数値を入力してください",
 			"2 行目: 表示用話数かタイトルを入力してください",
 		}},
 	}
@@ -155,7 +157,7 @@ func TestNew_WithErrors(t *testing.T) {
 
 	expectedContents := []string{
 		`role="alert"`,
-		"1 行目: 数値話数には数値を入力してください",
+		"1 行目: 話数には数値を入力してください",
 		"2 行目: 表示用話数かタイトルを入力してください",
 		`aria-invalid="true"`,
 		// メッセージ要素はすべて名指しされ、読み上げから漏れるものが出ないようにする。
@@ -190,7 +192,7 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 		wantDisabled bool
 	}{
 		{
-			name: "予定話数到達の編集者",
+			name: "予定エピソード数到達の編集者",
 			data: NewPageData{
 				WorkID:         1,
 				ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
@@ -200,14 +202,14 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 			wantDisabled: true,
 		},
 		{
-			name: "予定話数到達の管理者",
+			name: "予定エピソード数到達の管理者",
 			data: NewPageData{
 				WorkID:         1,
 				IsAdmin:        true,
 				ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
 			},
 			wantTitle:    "通常は手動登録できません",
-			wantMessage:  "管理者は手動でも登録できますが、予定総話数を超える",
+			wantMessage:  "管理者は手動でも登録できますが、予定エピソード数を超える",
 			wantDisabled: false,
 		},
 		{
@@ -283,7 +285,7 @@ func TestNew_RestrictionReportedOnceAfterRejectedSubmit(t *testing.T) {
 	ctx := i18n.SetLocale(context.Background(), "ja")
 
 	formErrors := &viewmodel.FormErrors{
-		Global: []string{"話数分のエピソードがすでに登録されているため、エピソードを登録できません"},
+		Global: []string{"予定エピソード数分のエピソードがすでに登録されているため、エピソードを登録できません"},
 	}
 
 	var buf strings.Builder
@@ -302,7 +304,7 @@ func TestNew_RestrictionReportedOnceAfterRejectedSubmit(t *testing.T) {
 	if strings.Contains(html, "手動登録できません") {
 		t.Error("エラー要約が理由を述べているときに常設の警告も描画されています")
 	}
-	if count := strings.Count(html, "話数分のエピソードがすでに登録"); count != 1 {
+	if count := strings.Count(html, "予定エピソード数分のエピソードがすでに登録"); count != 1 {
 		t.Errorf("制限の理由の出現回数 = %d、期待値 = 1", count)
 	}
 	// 送信された行自体に問題は無いため、textareaは不正と印付けない。
