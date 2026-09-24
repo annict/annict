@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestGumroadSubscriberRepository_GetByID はIDでGumroadサブスクライバーを取得できることをテスト
+// TestGumroadSubscriberRepository_GetByIDはIDでGumroadサブスクライバーを取得できることをテスト
 func TestGumroadSubscriberRepository_GetByID(t *testing.T) {
 	t.Parallel()
 
@@ -32,14 +32,14 @@ func TestGumroadSubscriberRepository_GetByID(t *testing.T) {
 	}
 
 	if subscriber.ID != subscriberID {
-		t.Errorf("IDが一致しません: got %d, want %d", subscriber.ID, subscriberID)
+		t.Errorf("ID = %d、期待値 = %d", subscriber.ID, subscriberID)
 	}
 	if subscriber.GumroadID != "gum_test_getbyid" {
-		t.Errorf("GumroadIDが一致しません: got %s, want %s", subscriber.GumroadID, "gum_test_getbyid")
+		t.Errorf("GumroadID = %s、期待値 = %s", subscriber.GumroadID, "gum_test_getbyid")
 	}
 }
 
-// TestGumroadSubscriberRepository_GetByID_NotFound は存在しないIDの場合エラーが返ることをテスト
+// TestGumroadSubscriberRepository_GetByID_NotFoundは存在しないIDの場合エラーが返ることをテスト
 func TestGumroadSubscriberRepository_GetByID_NotFound(t *testing.T) {
 	t.Parallel()
 
@@ -53,7 +53,7 @@ func TestGumroadSubscriberRepository_GetByID_NotFound(t *testing.T) {
 	}
 }
 
-// TestGumroadSubscriberRepository_IsActive はアクティブ判定が正しく動作することをテスト
+// TestGumroadSubscriberRepository_IsActiveはアクティブ判定が正しく動作することをテスト
 func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 	t.Parallel()
 
@@ -129,7 +129,7 @@ func TestGumroadSubscriberRepository_IsActive(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			result := repo.IsActive(tc.subscriber)
 			if result != tc.expected {
-				t.Errorf("IsActive() = %v, want %v", result, tc.expected)
+				t.Errorf("IsActive() = %v、期待値 = %v", result, tc.expected)
 			}
 		})
 	}

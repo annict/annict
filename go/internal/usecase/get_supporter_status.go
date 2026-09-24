@@ -8,13 +8,13 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// GetSupporterStatusUsecase はユーザーのサポーターステータスを取得するユースケースです
+// GetSupporterStatusUsecaseはユーザーのサポーターステータスを取得するユースケースです
 type GetSupporterStatusUsecase struct {
 	stripeSubscriberRepo  *repository.StripeSubscriberRepository
 	gumroadSubscriberRepo *repository.GumroadSubscriberRepository
 }
 
-// NewGetSupporterStatusUsecase は新しいGetSupporterStatusUsecaseを作成します
+// NewGetSupporterStatusUsecaseは新しいGetSupporterStatusUsecaseを作成します
 func NewGetSupporterStatusUsecase(
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
 	gumroadSubscriberRepo *repository.GumroadSubscriberRepository,
@@ -25,12 +25,12 @@ func NewGetSupporterStatusUsecase(
 	}
 }
 
-// GetSupporterStatusInput はユースケースの入力です
+// GetSupporterStatusInputはユースケースの入力です
 type GetSupporterStatusInput struct {
 	User *model.User
 }
 
-// GetSupporterStatusOutput はユースケースの出力です
+// GetSupporterStatusOutputはユースケースの出力です
 type GetSupporterStatusOutput struct {
 	IsStripeActive    bool
 	IsGumroadActive   bool
@@ -38,7 +38,7 @@ type GetSupporterStatusOutput struct {
 	GumroadSubscriber *model.GumroadSubscriber
 }
 
-// Execute はユーザーのサポーターステータスを取得します
+// Executeはユーザーのサポーターステータスを取得します
 func (uc *GetSupporterStatusUsecase) Execute(ctx context.Context, input GetSupporterStatusInput) (*GetSupporterStatusOutput, error) {
 	user := input.User
 	if user == nil {

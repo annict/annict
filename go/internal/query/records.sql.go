@@ -33,21 +33,12 @@ type AggregateDailyRecordCountsByUserIDRow struct {
 	Count int64     `db:"count"`
 }
 
-// Aggregates the number of records per day for the given user, after
-// converting watched_at from UTC to the supplied time zone. The result
-// only contains days that have at least one record; callers are expected
-// to zero-fill missing days when building a contiguous range.
-//
-// watched_at is stored as a UTC timestamp (Rails convention) even though
-// the column type is `timestamp without time zone`, so it is interpreted
-// as UTC before being converted to the caller's time zone.
-//
-// [Ja] watched_at を UTC から指定タイムゾーンへ変換した上で、ユーザー単位の
+// watched_atをUTCから指定タイムゾーンへ変換した上で、ユーザー単位の
 // 日次レコード数を集計する。結果には記録のある日のみが含まれるため、連続した
-// 日付範囲を作るときは呼び出し元で 0 埋めする前提とする。
+// 日付範囲を作るときは呼び出し元で0埋めする前提とする。
 //
-// watched_at は `timestamp without time zone` 型だが Rails 規約に従って
-// UTC で保存されているため、いったん UTC として解釈してから指定タイムゾーン
+// watched_atは `timestamp without time zone` 型だがRails規約に従って
+// UTCで保存されているため、いったんUTCとして解釈してから指定タイムゾーン
 // に変換する。
 func (q *Queries) AggregateDailyRecordCountsByUserID(ctx context.Context, arg AggregateDailyRecordCountsByUserIDParams) ([]AggregateDailyRecordCountsByUserIDRow, error) {
 	rows, err := q.db.QueryContext(ctx, aggregateDailyRecordCountsByUserID, arg.TimeZone, arg.UserID, arg.DateFrom)

@@ -9,7 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateSignInCode はSignInCodeの作成をテスト
+// TestCreateSignInCodeはSignInCodeの作成をテスト
 func TestCreateSignInCode(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -30,25 +30,25 @@ func TestCreateSignInCode(t *testing.T) {
 
 	code, err := queries.CreateSignInCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign in code: %v", err)
+		t.Fatalf("サインインコードの作成エラー = %v", err)
 	}
 
 	// 基本的なアサーション
 	if code.UserID != int64(userID) {
-		t.Errorf("Expected user ID %d, got %d", userID, code.UserID)
+		t.Errorf("ユーザーIDの期待値 = %d、実測値 = %d", userID, code.UserID)
 	}
 	if code.CodeDigest != "test_digest_123" {
-		t.Errorf("Expected code digest 'test_digest_123', got %s", code.CodeDigest)
+		t.Errorf("コードのdigest = %s、期待値 = test_digest_123", code.CodeDigest)
 	}
 	if code.Attempts != 0 {
-		t.Errorf("Expected attempts 0, got %d", code.Attempts)
+		t.Errorf("attempts = %d、期待値 = 0", code.Attempts)
 	}
 	if code.UsedAt.Valid {
-		t.Error("Expected used_at to be NULL")
+		t.Error("used_atがNULLでなかった")
 	}
 }
 
-// TestGetValidSignInCode は有効なSignInCodeの取得をテスト
+// TestGetValidSignInCodeは有効なSignInCodeの取得をテスト
 func TestGetValidSignInCode(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -68,24 +68,24 @@ func TestGetValidSignInCode(t *testing.T) {
 	}
 	createdCode, err := queries.CreateSignInCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign in code: %v", err)
+		t.Fatalf("サインインコードの作成エラー = %v", err)
 	}
 
 	// 有効なコードを取得
 	code, err := queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err != nil {
-		t.Fatalf("Failed to get valid sign in code: %v", err)
+		t.Fatalf("有効なサインインコードの取得エラー = %v", err)
 	}
 
 	if code.ID != createdCode.ID {
-		t.Errorf("Expected code ID %d, got %d", createdCode.ID, code.ID)
+		t.Errorf("コードのIDの期待値 = %d、実測値 = %d", createdCode.ID, code.ID)
 	}
 	if code.CodeDigest != "valid_code_digest" {
-		t.Errorf("Expected code digest 'valid_code_digest', got %s", code.CodeDigest)
+		t.Errorf("コードのdigest = %s、期待値 = valid_code_digest", code.CodeDigest)
 	}
 }
 
-// TestGetValidSignInCode_Expired は期限切れのコードが取得されないことをテスト
+// TestGetValidSignInCode_Expiredは期限切れのコードが取得されないことをテスト
 func TestGetValidSignInCode_Expired(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -105,17 +105,17 @@ func TestGetValidSignInCode_Expired(t *testing.T) {
 	}
 	_, err := queries.CreateSignInCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign in code: %v", err)
+		t.Fatalf("サインインコードの作成エラー = %v", err)
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err == nil {
-		t.Error("Expected error for expired code, but got nil")
+		t.Error("期限切れのコードでエラーを期待したが、nilだった")
 	}
 }
 
-// TestGetValidSignInCode_Used は使用済みのコードが取得されないことをテスト
+// TestGetValidSignInCode_Usedは使用済みのコードが取得されないことをテスト
 func TestGetValidSignInCode_Used(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -135,23 +135,23 @@ func TestGetValidSignInCode_Used(t *testing.T) {
 	}
 	code, err := queries.CreateSignInCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign in code: %v", err)
+		t.Fatalf("サインインコードの作成エラー = %v", err)
 	}
 
 	// コードを使用済みにする
 	err = queries.MarkSignInCodeAsUsed(context.Background(), code.ID)
 	if err != nil {
-		t.Fatalf("Failed to mark code as used: %v", err)
+		t.Fatalf("コードを使用済みにする処理のエラー = %v", err)
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err == nil {
-		t.Error("Expected error for used code, but got nil")
+		t.Error("使用済みのコードでエラーを期待したが、nilだった")
 	}
 }
 
-// TestIncrementSignInCodeAttempts は試行回数のインクリメントをテスト
+// TestIncrementSignInCodeAttemptsは試行回数のインクリメントをテスト
 func TestIncrementSignInCodeAttempts(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -171,42 +171,42 @@ func TestIncrementSignInCodeAttempts(t *testing.T) {
 	}
 	code, err := queries.CreateSignInCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign in code: %v", err)
+		t.Fatalf("サインインコードの作成エラー = %v", err)
 	}
 
 	// 試行回数をインクリメント
 	err = queries.IncrementSignInCodeAttempts(context.Background(), code.ID)
 	if err != nil {
-		t.Fatalf("Failed to increment attempts: %v", err)
+		t.Fatalf("attemptsの加算エラー = %v", err)
 	}
 
 	// コードを再取得して確認
 	updatedCode, err := queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err != nil {
-		t.Fatalf("Failed to get code after increment: %v", err)
+		t.Fatalf("加算後のコードの取得エラー = %v", err)
 	}
 
 	if updatedCode.Attempts != 1 {
-		t.Errorf("Expected attempts 1, got %d", updatedCode.Attempts)
+		t.Errorf("attempts = %d、期待値 = 1", updatedCode.Attempts)
 	}
 
 	// さらにインクリメント
 	err = queries.IncrementSignInCodeAttempts(context.Background(), code.ID)
 	if err != nil {
-		t.Fatalf("Failed to increment attempts again: %v", err)
+		t.Fatalf("attemptsの再加算エラー = %v", err)
 	}
 
 	updatedCode, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err != nil {
-		t.Fatalf("Failed to get code after second increment: %v", err)
+		t.Fatalf("2回目の加算後のコードの取得エラー = %v", err)
 	}
 
 	if updatedCode.Attempts != 2 {
-		t.Errorf("Expected attempts 2, got %d", updatedCode.Attempts)
+		t.Errorf("attempts = %d、期待値 = 2", updatedCode.Attempts)
 	}
 }
 
-// TestMarkSignInCodeAsUsed はコードを使用済みにするテスト
+// TestMarkSignInCodeAsUsedはコードを使用済みにするテスト
 func TestMarkSignInCodeAsUsed(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -226,23 +226,23 @@ func TestMarkSignInCodeAsUsed(t *testing.T) {
 	}
 	code, err := queries.CreateSignInCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign in code: %v", err)
+		t.Fatalf("サインインコードの作成エラー = %v", err)
 	}
 
 	// コードを使用済みにする
 	err = queries.MarkSignInCodeAsUsed(context.Background(), code.ID)
 	if err != nil {
-		t.Fatalf("Failed to mark code as used: %v", err)
+		t.Fatalf("コードを使用済みにする処理のエラー = %v", err)
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err == nil {
-		t.Error("Expected error after marking code as used, but got nil")
+		t.Error("使用済みにしたコードでエラーを期待したが、nilだった")
 	}
 }
 
-// TestDeleteExpiredSignInCodes は期限切れコードの削除をテスト
+// TestDeleteExpiredSignInCodesは期限切れコードの削除をテスト
 func TestDeleteExpiredSignInCodes(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -262,7 +262,7 @@ func TestDeleteExpiredSignInCodes(t *testing.T) {
 	}
 	_, err := queries.CreateSignInCode(context.Background(), params1)
 	if err != nil {
-		t.Fatalf("Failed to create expired code: %v", err)
+		t.Fatalf("期限切れコードの作成エラー = %v", err)
 	}
 
 	// 有効なSignInCodeを作成
@@ -274,24 +274,24 @@ func TestDeleteExpiredSignInCodes(t *testing.T) {
 	}
 	_, err = queries.CreateSignInCode(context.Background(), params2)
 	if err != nil {
-		t.Fatalf("Failed to create valid code: %v", err)
+		t.Fatalf("有効なコードの作成エラー = %v", err)
 	}
 
 	// 期限切れコードを削除
 	cutoffTime := time.Now().Add(-1 * time.Hour)
 	err = queries.DeleteExpiredSignInCodes(context.Background(), cutoffTime)
 	if err != nil {
-		t.Fatalf("Failed to delete expired codes: %v", err)
+		t.Fatalf("期限切れコードの削除エラー = %v", err)
 	}
 
 	// 有効なコードが残っていることを確認
 	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err != nil {
-		t.Error("Expected valid code to still exist after deletion of expired codes")
+		t.Error("期限切れコードの削除後も有効なコードが残っているべきだが、消えていた")
 	}
 }
 
-// TestInvalidateUserSignInCodes はユーザーの全コード無効化をテスト
+// TestInvalidateUserSignInCodesはユーザーの全コード無効化をテスト
 func TestInvalidateUserSignInCodes(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -312,19 +312,19 @@ func TestInvalidateUserSignInCodes(t *testing.T) {
 		}
 		_, err := queries.CreateSignInCode(context.Background(), params)
 		if err != nil {
-			t.Fatalf("Failed to create sign in code %d: %v", i, err)
+			t.Fatalf("サインインコード[%d]の作成エラー = %v", i, err)
 		}
 	}
 
 	// ユーザーのすべてのコードを無効化
 	err := queries.InvalidateUserSignInCodes(context.Background(), int64(userID))
 	if err != nil {
-		t.Fatalf("Failed to invalidate user codes: %v", err)
+		t.Fatalf("ユーザーのコードの無効化エラー = %v", err)
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignInCode(context.Background(), int64(userID))
 	if err == nil {
-		t.Error("Expected error after invalidating all user codes, but got nil")
+		t.Error("ユーザーの全コードを無効化した後にエラーを期待したが、nilだった")
 	}
 }

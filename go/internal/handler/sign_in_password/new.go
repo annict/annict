@@ -34,33 +34,32 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// メールアドレスがない場合は /sign_in にリダイレクト
+	// メールアドレスがない場合は /sign_inにリダイレクト
 	if email == "" {
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
 		return
 	}
 
-	// backパラメータを取得（ログイン後のリダイレクト先）
+	// backパラメータを取得 (ログイン後のリダイレクト先)
 	backURL := r.URL.Query().Get("back")
 
 	h.renderNewForm(w, r, http.StatusOK, nil, email, backURL)
 }
 
-// renderNewForm はパスワードログインフォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormはパスワードログインフォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string, backURL string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_in_title")
 	meta.Description = i18n.T(ctx, "sign_in_description")
-	meta.OGURL = h.cfg.AppURL() + "/sign_in/password"
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
 	data := signInPasswordPage.NewPageData{
 		CSRFToken:  csrfToken,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 		Email:      email,
 		BackURL:    backURL,
 	}

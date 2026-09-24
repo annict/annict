@@ -1,9 +1,9 @@
 -- migrate:up
 
--- エピソードの状態を表す enum 型を作成
+-- エピソードの状態を表すenum型を作成
 CREATE TYPE public.episode_status AS ENUM ('published', 'archived', 'deleted');
 
--- episodes テーブルに status と archive_message カラムを追加
+-- episodesテーブルにstatusとarchive_messageカラムを追加
 ALTER TABLE public.episodes ADD COLUMN status public.episode_status NOT NULL DEFAULT 'published';
 ALTER TABLE public.episodes ADD COLUMN archive_message VARCHAR;
 
@@ -23,5 +23,5 @@ DROP INDEX IF EXISTS public.index_episodes_on_status;
 ALTER TABLE public.episodes DROP COLUMN IF EXISTS archive_message;
 ALTER TABLE public.episodes DROP COLUMN IF EXISTS status;
 
--- enum 型の削除
+-- enum型の削除
 DROP TYPE IF EXISTS public.episode_status;

@@ -57,7 +57,7 @@ func TestSignInCodeShow_BackURLHiddenField(t *testing.T) {
 
 			// backのhiddenフィールドが含まれていることを確認
 			if !strings.Contains(html, tt.want) {
-				t.Errorf("backのhiddenフィールドが見つかりません\nexpected to contain: %s\ngot: %s", tt.want, html)
+				t.Errorf("backのhiddenフィールドが見つかりません\n期待する文字列: %s\nHTML: %s", tt.want, html)
 			}
 		})
 	}
@@ -88,6 +88,6 @@ func TestSignInCodeShow_BackURLInResendForm(t *testing.T) {
 	// 2つのフォームがあるので、backフィールドは2回出現するはず
 	backFieldCount := strings.Count(html, `name="back"`)
 	if backFieldCount != 2 {
-		t.Errorf("backフィールドの数が期待と異なります: got %d, want 2", backFieldCount)
+		t.Errorf("backフィールドの数 = %d、期待値 = 2", backFieldCount)
 	}
 }

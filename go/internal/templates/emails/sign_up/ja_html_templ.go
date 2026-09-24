@@ -10,7 +10,7 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
-// JaHTML は日本語版の新規登録確認コード（HTML形式）です
+// JaHTMLは日本語版の新規登録確認コード (HTML形式) です
 func JaHTML(code string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -32,7 +32,7 @@ func JaHTML(code string) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"ja\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Annict 新規登録の確認コード</title></head><body style=\"font-family: sans-serif; line-height: 1.6; color: #333; padding: 20px;\"><h2>Annictへようこそ！</h2><p>アカウント登録を完了するため、以下の新規登録の確認コードを入力してください：</p><p style=\"font-size: 24px; font-weight: bold; letter-spacing: 0.1em; color: #000;\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"ja\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Annict新規登録の確認コード</title></head><body style=\"font-family: sans-serif; line-height: 1.6; color: #333; padding: 20px;\"><h2>Annictへようこそ！</h2><p>アカウント登録を完了するため、以下の新規登録の確認コードを入力してください：</p><p style=\"font-size: 24px; font-weight: bold; letter-spacing: 0.1em; color: #000;\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

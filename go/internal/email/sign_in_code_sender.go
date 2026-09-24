@@ -9,17 +9,17 @@ import (
 	"github.com/annict/annict/go/internal/templates/emails/sign_in"
 )
 
-// SignInCodeSender はログインコードメールの送信を行う
+// SignInCodeSenderはログインコードメールの送信を行う
 type SignInCodeSender struct {
 	sender Sender
 }
 
-// NewSignInCodeSender は新しい SignInCodeSender を作成する
+// NewSignInCodeSenderは新しいSignInCodeSenderを作成する
 func NewSignInCodeSender(sender Sender) *SignInCodeSender {
 	return &SignInCodeSender{sender: sender}
 }
 
-// Send はログインコードメールをレンダリングして送信する
+// Sendはログインコードメールをレンダリングして送信する
 func (s *SignInCodeSender) Send(ctx context.Context, to, code, locale string) error {
 	ctx = i18n.SetLocale(ctx, locale)
 	subject := i18n.T(ctx, "sign_in_code_email_subject")

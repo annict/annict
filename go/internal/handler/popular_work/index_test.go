@@ -14,7 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// TestIndex は人気作品ページのテスト（templ対応）
+// TestIndexは人気作品ページのテスト (templ対応)
 func TestIndex(t *testing.T) {
 	t.Parallel()
 
@@ -40,20 +40,21 @@ func TestIndex(t *testing.T) {
 		WithSeason(2023, testutil.SeasonAutumn).
 		Build()
 
-	// sqlcリポジトリを作成（トランザクションを使用）
+	// sqlcリポジトリを作成 (トランザクションを使用)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
-		Env: "test",
+		Env:    "test",
+		Domain: "test.annict.com",
 	}
 
-	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成
+	// WorkRepository, CastRepository, StaffRepositoryとUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
 	castRepo := repository.NewCastRepository(queries)
 	staffRepo := repository.NewStaffRepository(queries)
 	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo, castRepo, staffRepo)
 
-	// ハンドラーを作成（templ対応版）
+	// ハンドラーを作成 (templ対応版)
 	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper())
 
 	// HTTPリクエストとレスポンスレコーダーを作成
@@ -69,7 +70,7 @@ func TestIndex(t *testing.T) {
 
 	// ステータスコードを確認
 	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
+		t.Errorf("ステータスコード = %v、期待値 = %v",
 			status, http.StatusOK)
 	}
 
@@ -82,51 +83,55 @@ func TestIndex(t *testing.T) {
 		"人気アニメ1", // 作品タイトル1
 		"人気アニメ2", // 作品タイトル2
 		"人気アニメ3", // 作品タイトル3
-		"100人",   // デフォルトのwatchers数（デフォルトロケールは日本語）
+		"100人",   // デフォルトのwatchers数 (デフォルトロケールは日本語)
 		"2024",   // シーズン年
 		"👥",      // アイコン
 		`href="/works/` + workID1.String() + `"`,
 		`href="/works/` + workID2.String() + `"`,
 		`href="/works/` + workID3.String() + `"`,
+		// canonicalはページ自身を指し、og:urlも同じURLを宣言する。
+		`<link rel="canonical" href="https://test.annict.com/works/popular">`,
+		`<meta property="og:url" content="https://test.annict.com/works/popular">`,
 	}
 
 	for _, expected := range expectedContents {
 		if !strings.Contains(body, expected) {
-			t.Errorf("response doesn't contain expected string: %q", expected)
+			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
 		}
 	}
 
 	// Content-Typeヘッダーを確認
 	expectedContentType := "text/html; charset=utf-8"
 	if ct := rr.Header().Get("Content-Type"); ct != expectedContentType {
-		t.Errorf("handler returned wrong content-type: got %v want %v",
+		t.Errorf("Content-Type = %v、期待値 = %v",
 			ct, expectedContentType)
 	}
 }
 
-// TestIndexEmptyResult は結果が空の場合のテスト（templ対応）
+// TestIndexEmptyResultは結果が空の場合のテスト (templ対応)
 func TestIndexEmptyResult(t *testing.T) {
 	t.Parallel()
 
 	// テストDBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
 
-	// データは作成しない（空の結果をテスト）
+	// データは作成しない (空の結果をテスト)
 
-	// sqlcリポジトリを作成（トランザクションを使用）
+	// sqlcリポジトリを作成 (トランザクションを使用)
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
-		Env: "test",
+		Env:    "test",
+		Domain: "test.annict.com",
 	}
 
-	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成
+	// WorkRepository, CastRepository, StaffRepositoryとUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
 	castRepo := repository.NewCastRepository(queries)
 	staffRepo := repository.NewStaffRepository(queries)
 	getPopularWorksUC := usecase.NewGetPopularWorksUsecase(workRepo, castRepo, staffRepo)
 
-	// ハンドラーを作成（templ対応版）
+	// ハンドラーを作成 (templ対応版)
 	handler := NewHandler(cfg, getPopularWorksUC, testutil.NewTestImageHelper())
 
 	// HTTPリクエストとレスポンスレコーダーを作成
@@ -140,9 +145,9 @@ func TestIndexEmptyResult(t *testing.T) {
 	// ハンドラーを実行
 	handler.Index(rr, req)
 
-	// ステータスコードを確認（空でも200 OKを返す）
+	// ステータスコードを確認 (空でも200 OKを返す)
 	if status := rr.Code; status != http.StatusOK {
-		t.Errorf("handler returned wrong status code: got %v want %v",
+		t.Errorf("ステータスコード = %v、期待値 = %v",
 			status, http.StatusOK)
 	}
 
@@ -151,24 +156,24 @@ func TestIndexEmptyResult(t *testing.T) {
 
 	// ページタイトルは表示される
 	if !strings.Contains(body, "人気アニメ") {
-		t.Errorf("response doesn't contain page title")
+		t.Errorf("レスポンスにページタイトルが含まれていない")
 	}
 
-	// 作品が1つも表示されないことを確認（カードが表示されない）
+	// 作品が1つも表示されないことを確認 (カードが表示されない)
 	// templではループがない場合、card要素自体が出力されない
 	if strings.Contains(body, `class="card`) {
-		t.Errorf("response contains work card when it shouldn't")
+		t.Errorf("レスポンスが作品カードを含んでいる")
 	}
 
 	// Content-Typeヘッダーを確認
 	expectedContentType := "text/html; charset=utf-8"
 	if ct := rr.Header().Get("Content-Type"); ct != expectedContentType {
-		t.Errorf("handler returned wrong content-type: got %v want %v",
+		t.Errorf("Content-Type = %v、期待値 = %v",
 			ct, expectedContentType)
 	}
 }
 
-// BenchmarkIndex は人気作品ページのベンチマーク
+// BenchmarkIndexは人気作品ページのベンチマーク
 func BenchmarkIndex(b *testing.B) {
 	// ベンチマーク用のDBセットアップ
 	db, tx := testutil.SetupTx(&testing.T{})
@@ -188,10 +193,11 @@ func BenchmarkIndex(b *testing.B) {
 	queries := query.New(db).WithTx(tx)
 
 	cfg := &config.Config{
-		Env: "test",
+		Env:    "test",
+		Domain: "test.annict.com",
 	}
 
-	// WorkRepository, CastRepository, StaffRepository とUseCaseを作成
+	// WorkRepository, CastRepository, StaffRepositoryとUseCaseを作成
 	workRepo := repository.NewWorkRepository(queries)
 	castRepo := repository.NewCastRepository(queries)
 	staffRepo := repository.NewStaffRepository(queries)

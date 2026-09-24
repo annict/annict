@@ -3,6 +3,11 @@
 
 ENV["RAILS_ENV"] ||= "test"
 
+# 初期化時に環境変数を読むRailsの設定 (asset_hostやCookieのドメインなど) にも反映させるため、
+# Railsを読み込む前に適用する。
+require_relative "test_env"
+TestEnv.apply!
+
 if ENV["COVERAGE"]
   require "simplecov"
   SimpleCov.start("rails")

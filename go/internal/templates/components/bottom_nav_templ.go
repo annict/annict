@@ -14,11 +14,11 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// BottomNav はモバイル用のボトムナビゲーションコンポーネントです
-// md以上の画面サイズでは非表示になります
-// ctx: コンテキスト（I18n用）
-// user: ログインユーザー情報（nilの場合は未ログイン状態）
-// seasons: シーズン情報（前・現在・次）
+// BottomNavはモバイル用のボトムナビゲーションコンポーネントを描画する。
+// md以上の画面サイズでは非表示になる。
+//
+// userはログインユーザー情報 ( nilの場合は未ログイン状態 )。seasonsは
+// シーズン情報 ( 前・現在・次 )。
 func BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -40,7 +40,7 @@ func BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seas
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"md:hidden fixed bottom-0 left-1/2 w-full translate-x-[-50%] pb-safe z-(--z-index-button-nav) bg-bottom-nav text-bottom-nav-foreground max-h-(--bottom-nav-max-height) border-bottom-nav-border border-t-1\"><ul class=\"flex items-center justify-between gap-2 p-2\"><li class=\"basis-1/5\"><button class=\"flex flex-col items-center justify-center gap-1 cursor-pointer w-full\" type=\"button\" onclick=\"document.dispatchEvent(new CustomEvent('basecoat:sidebar'));\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"md:hidden fixed bottom-0 left-1/2 w-full translate-x-[-50%] pb-safe z-(--z-index-button-nav) bg-bottom-nav text-bottom-nav-foreground max-h-(--bottom-nav-max-height) border-bottom-nav-border border-t-1\"><ul class=\"flex items-center justify-between gap-2 p-2\"><li class=\"basis-1/5\"><button class=\"flex flex-col items-center justify-center gap-1 cursor-pointer w-full\" type=\"button\" onclick=\"document.getElementById('sidebar')?.toggle?.();\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -120,7 +120,7 @@ func BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seas
 	})
 }
 
-// bottomNavLink はボトムナビゲーションのリンクアイテムを生成します
+// bottomNavLinkはボトムナビゲーションのリンクアイテムを描画する。
 func bottomNavLink(ctx context.Context, href string, labelKey string, iconName string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

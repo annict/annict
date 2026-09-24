@@ -1,8 +1,12 @@
 package components
 
-// ContentCard はコンテンツ表示用のカードUIです
-templ ContentCard() {
-	<div class="card py-4 rounded-none md:rounded-xl mx-0 md:mx-4">
+import "github.com/a-h/templ"
+
+// ContentCardはページコンテンツ用のカードコンテナを描画する。任意のclassは (空でない
+// ときだけ) カードのクラスへ追記される。カードが既定のoverflow-hiddenで切られると困る
+// オーバーレイ (comboboxのpopoverなど) を内包するときはoverflow-visibleを渡す。
+templ ContentCard(class string) {
+	<div class={ "card py-4 rounded-none md:rounded-xl mx-0 md:mx-4", templ.KV(class, class != "") }>
 		<section class="px-4">
 			{ children... }
 		</section>

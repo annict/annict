@@ -1,9 +1,9 @@
-// Package model はドメインモデルを定義します
+// Package modelはドメインモデルを定義します
 package model
 
 import "time"
 
-// UserCalendar はユーザーのカレンダーデータを表します
+// UserCalendarはユーザーのカレンダーデータを表します
 type UserCalendar struct {
 	Username string
 	TimeZone string
@@ -12,7 +12,7 @@ type UserCalendar struct {
 	Works    []CalendarWork
 }
 
-// CalendarSlot はカレンダーに表示する放送枠を表します
+// CalendarSlotはカレンダーに表示する放送枠を表します
 type CalendarSlot struct {
 	ID            SlotID
 	StartedAt     time.Time
@@ -25,7 +25,7 @@ type CalendarSlot struct {
 	ChannelName   string
 }
 
-// CalendarWork はカレンダーに表示する作品（放送開始日）を表します
+// CalendarWorkはカレンダーに表示する作品 (放送開始日) を表します
 type CalendarWork struct {
 	ID        WorkID
 	Title     string

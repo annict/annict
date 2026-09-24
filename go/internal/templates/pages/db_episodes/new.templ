@@ -1,0 +1,241 @@
+package db_episodes
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// rowsFieldNameは送信された行を保持するtextareaの名前。フォームのフィールド、エラー
+// 要約の項目、エラーメッセージのidがいずれもこの名前から決まるため、三者がずれない。
+const rowsFieldName = "rows"
+
+// NewPageDataは一括作成ページが描画するデータ (見出し・サブナビ・フォームのactionに
+// 使う親作品のidと名前、および送信されたフォームの状態)。
+type NewPageData struct {
+	WorkID viewmodel.WorkID
+	// WorkNameはviewmodel.DBEpisodeListWorkNameが解決した作品の表示名。空になるのは
+	// 文書タイトルが汎用のページ名へフォールバックするときと同じ条件。
+	WorkName string
+	// NoEpisodesは作品のno_episodesフラグを共有サブナビへ渡す。
+	NoEpisodes bool
+	CSRFToken  string
+	FormErrors *viewmodel.FormErrors
+	IsAdmin    bool
+	// ManualCreationは作品のエピソードを手動作成できない理由。1度だけ解決することで、
+	// 警告とフォームの無効化が同じ理由を見る。
+	ManualCreation viewmodel.DBEpisodeManualCreationRestriction
+	// Rowsは送信された内容をそのまま返す。送信が失敗しても入力し直しではなく手直しで
+	// 済むようにするため。
+	Rows string
+}
+
+// headingはページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// ページタイトルにフォールバックし、空の <h1> を描画しないようにする。
+func (d NewPageData) heading(ctx context.Context) string {
+	if d.WorkName != "" {
+		return d.WorkName
+	}
+
+	return templates.T(ctx, "db_episodes_new_title")
+}
+
+// hasRowsErrorは送信された行が受け付けられなかったかどうかを返す。
+func (d NewPageData) hasRowsError() bool {
+	return d.FormErrors != nil && d.FormErrors.HasFieldError(rowsFieldName)
+}
+
+// hasFormErrorsは送信されたフォームにフィールドエラーまたはグローバルエラーがあるかを
+// 返す。描画されたエラー要約が読み込み時にフォーカスを受け取るため、これがfalseの場合にだけ
+// textareaがautofocusできる。
+func (d NewPageData) hasFormErrors() bool {
+	return d.FormErrors != nil && d.FormErrors.HasErrors()
+}
+
+func (d NewPageData) formDisabled() bool {
+	return !d.IsAdmin && d.ManualCreation.Restricted()
+}
+
+// autofocusRowsは読み込み時にtextareaがフォーカスを受け取るかを返す。読み込み時の
+// フォーカスは「ページが次に入力されると考えている欄」を指すものであるため、描画されたエラー
+// 要約が送信の失敗理由を述べているときと、フォームが無効化されているときの双方で手放す。
+// 入力できない欄に降りると、理由を述べている警告を飛び越えてしまうため。
+func (d NewPageData) autofocusRows() bool {
+	return !d.hasFormErrors() && !d.formDisabled()
+}
+
+// showRestrictionWarningは常設の警告を描画するかを返す。却下された送信は同じ理由を
+// エラー要約 (読み込み時にフォーカスを受け取る) で伝えるため、その場合は警告を出さず二重に
+// 述べないようにする。
+func (d NewPageData) showRestrictionWarning() bool {
+	return d.ManualCreation.Restricted() && !d.hasGlobalError()
+}
+
+// hasGlobalErrorは、送信が個々のフィールドではなくフォーム全体に属する理由で却下された
+// かどうかを返す。
+func (d NewPageData) hasGlobalError() bool {
+	return d.FormErrors != nil && len(d.FormErrors.Global) > 0
+}
+
+// restrictionTitleKeyは警告の見出しを名指しする。管理者はフォームの無効化と送信の却下
+// のどちらからも除かれるため、見出しは読み手に当たらない制限を述べるのではなく、制限が通常の
+// 状態であることを述べる形にする。
+func (d NewPageData) restrictionTitleKey() string {
+	if d.IsAdmin {
+		return "db_episodes_new_restriction_admin_title"
+	}
+
+	return "db_episodes_new_restriction_title"
+}
+
+// restrictionMessageKeyは理由を述べる警告を名指しする。キーは直書きし、描画するページ
+// からgrepで追える状態に保つ。どの理由が優先されるかはドメイン側で1度だけ決まり、解決済み
+// の値として届く。管理者にはフォームが使えるままであるため、理由と、それでも手動で登録した
+// 場合に何が起きるかを述べる文言を渡す。
+func (d NewPageData) restrictionMessageKey() string {
+	if d.ManualCreation == viewmodel.DBEpisodeManualCreationEpisodesFilled {
+		if d.IsAdmin {
+			return "db_episodes_new_restricted_admin_episodes_filled"
+		}
+
+		return "db_episodes_new_restricted_episodes_filled"
+	}
+
+	if d.IsAdmin {
+		return "db_episodes_new_restricted_admin_slots_exist"
+	}
+
+	return "db_episodes_new_restricted_slots_exist"
+}
+
+// rowsErrorsは送信された行が集めたメッセージを返す (却下された行につき1件)。
+func (d NewPageData) rowsErrors() []string {
+	if d.FormErrors == nil {
+		return nil
+	}
+
+	return d.FormErrors.GetFieldErrors(rowsFieldName)
+}
+
+// newSummaryFieldsはエラー要約が名指しできる唯一のフィールドを並べる。フィールドが
+// 1つでも要約を描画するのは、要約が読み込み時にフォーカスを受け取り、サーバー描画のページで
+// 送信の失敗を通知する役割を担うため。
+func newSummaryFields(ctx context.Context) []components.FormErrorField {
+	return []components.FormErrorField{
+		{Name: rowsFieldName, Label: templates.T(ctx, "db_episodes_new_rows_label")},
+	}
+}
+
+templ New(data NewPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   data.heading(ctx),
+					Content: components.GuidelineLink(templates.T(ctx, "db_episodes_new_guideline_link"), viewmodel.HelpEpisodeBulkCreateURL()),
+					Actions: newBackToListLink(data.WorkID),
+				})
+			</div>
+		</div>
+
+		<div class="px-4">
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:     data.WorkID,
+				NoEpisodes: data.NoEpisodes,
+			})
+		</div>
+
+		@components.ContentCard("") {
+			<div class="flex flex-col gap-4">
+				@components.FormErrors(components.FormErrorsData{
+					Errors: data.FormErrors,
+					Fields: newSummaryFields(ctx),
+				})
+
+				if data.showRestrictionWarning() {
+					<div class="alert max-w-2xl" data-variant="warning">
+						@templates.DecorativeIcon("warning")
+						<h2>{ templates.T(ctx, data.restrictionTitleKey()) }</h2>
+						<section>
+							<p>{ templates.T(ctx, data.restrictionMessageKey()) }</p>
+						</section>
+					</div>
+				}
+
+				<form
+					action={ templates.DBWorkEpisodesPath(data.WorkID).SafeURL() }
+					class="max-w-2xl flex flex-col gap-6"
+					method="POST"
+				>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+
+					<div
+						role="group"
+						class="field"
+						if data.hasRowsError() {
+							data-invalid
+						}
+					>
+						<label for="rows" class="label">
+							{ templates.T(ctx, "db_episodes_new_rows_label") }
+							@components.RequiredBadge()
+						</label>
+						<textarea
+							id="rows"
+							name="rows"
+							class="textarea font-mono"
+							rows="20"
+							required
+							if data.autofocusRows() {
+								autofocus
+							}
+							if data.hasRowsError() {
+								aria-invalid="true"
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, rowsFieldName) }
+							}
+							if data.formDisabled() {
+								readonly
+							}
+						>{ data.Rows }</textarea>
+						if data.hasRowsError() {
+							for i, errorMsg := range data.rowsErrors() {
+								<p id={ components.FieldErrorID(rowsFieldName, i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div role="group" class="field" data-orientation="horizontal">
+						<button
+							type="submit"
+							class="btn rounded-full"
+							if data.formDisabled() {
+								disabled
+							}
+						>
+							@templates.DecorativeInlineIcon("floppy-disk-regular", templates.InlineIconStart)
+							{ templates.T(ctx, "db_episodes_new_submit") }
+						</button>
+					</div>
+				</form>
+			</div>
+		}
+	</div>
+}
+
+// newBackToListLinkは見出しの横に表示する操作を描画する。作品のエピソード一覧へ戻る
+// リンクで、送信が成功したときの着地点でもある。
+templ newBackToListLink(workID viewmodel.WorkID) {
+	<a
+		href={ templates.DBWorkEpisodesPath(workID).SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		@templates.DecorativeInlineIcon("arrow-bend-up-left-regular", templates.InlineIconStart)
+		{ templates.T(ctx, "db_episodes_new_back_to_list_link") }
+	</a>
+}

@@ -45,21 +45,20 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNewForm(w, r, http.StatusOK, nil, token, email, "")
 }
 
-// renderNewForm はユーザー名設定フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormはユーザー名設定フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, token string, email string, username string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_up_username_heading")
 	meta.Description = i18n.T(ctx, "sign_up_username_description")
-	meta.OGURL = h.cfg.AppURL() + "/sign_up/username"
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
 	data := sign_up_username.NewPageData{
 		CSRFToken:  csrfToken,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 		Token:      token,
 		Email:      email,
 		Username:   username,

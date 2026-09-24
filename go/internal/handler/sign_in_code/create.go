@@ -15,9 +15,9 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// codeErrorMap は usecase のコード検証エラーと i18n メッセージキーの対応表。
-// ログメッセージは err.Error() を使用するため重複を定義しない。
-// errors.Is で排他的にマッチするため、順序は意味を持たない。
+// codeErrorMapはusecaseのコード検証エラーとi18nメッセージキーの対応表。
+// ログメッセージはerr.Error() を使用するため重複を定義しない。
+// errors.Isで排他的にマッチするため、順序は意味を持たない。
 var codeErrorMap = []struct {
 	usecaseErr error
 	msgKey     string
@@ -78,7 +78,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	userID := model.UserID(userIDInt)
 
-	// Rate Limiting チェック（1 分間に 5 回まで）
+	// Rate Limitingチェック (1分間に5回まで)
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		emailKey := fmt.Sprintf("sign_in:verify:%s", email)
 		allowed, err := h.limiter.Check(ctx, emailKey, 5, 1*time.Minute)
@@ -128,7 +128,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// セッションを作成（usecase層）
+	// セッションを作成 (usecase層)
 	// トランザクション不要なのでnilを渡す
 	sessionResult, err := h.createSessionUC.Execute(ctx, nil, userID, output.EncryptedPassword)
 	if err != nil {
@@ -137,13 +137,13 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Cookie設定（session.Managerに委譲）
+	// Cookie設定 (session.Managerに委譲)
 	h.sessionMgr.SetSessionCookieByPublicID(w, r, sessionResult.PublicID)
 
 	// ログイン成功のフラッシュメッセージを設定
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "sign_in_success"))
 
-	// 一時セッション値を削除（sign_in_email と sign_in_user_id）
+	// 一時セッション値を削除 (sign_in_emailとsign_in_user_id)
 	if err := h.sessionMgr.DeleteValue(ctx, r, "sign_in_email"); err != nil {
 		slog.WarnContext(ctx, "一時セッション値の削除に失敗しました", "key", "sign_in_email", "error", err)
 	}
@@ -151,9 +151,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		slog.WarnContext(ctx, "一時セッション値の削除に失敗しました", "key", "sign_in_user_id", "error", err)
 	}
 
-	slog.InfoContext(ctx, "ログイン成功（メールログイン）", "user_id", userID, "username", output.Username)
+	slog.InfoContext(ctx, "ログイン成功 (メールログイン)", "user_id", userID, "username", output.Username)
 
-	// ログイン後のリダイレクト先を取得（バリデーション付き）
+	// ログイン後のリダイレクト先を取得 (バリデーション付き)
 	redirectTo := redirect.GetSafeRedirectURL(backURL)
 
 	http.Redirect(w, r, redirectTo, http.StatusSeeOther)

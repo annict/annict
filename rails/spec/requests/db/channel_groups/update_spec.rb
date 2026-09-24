@@ -3,7 +3,7 @@
 
 RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
   it "ログインしていないとき、ログインページにリダイレクトすること" do
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     old_channel_group = channel_group.attributes
     channel_group_params = {
       name: "ちゃんねるぐるーぷ"
@@ -19,7 +19,7 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
 
   it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     old_channel_group = channel_group.attributes
     channel_group_params = {
       name: "ちゃんねるぐるーぷ"
@@ -36,7 +36,7 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
 
   it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     old_channel_group = channel_group.attributes
     channel_group_params = {
       name: "ちゃんねるぐるーぷ"
@@ -53,7 +53,7 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
 
   it "管理者権限を持つユーザーがログインしているとき、チャンネルグループを更新できること" do
     user = create(:registered_user, :with_admin_role)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     old_channel_group = channel_group.attributes
     channel_group_params = {
       name: "ちゃんねるぐるーぷ"
@@ -73,7 +73,7 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
 
   it "管理者権限を持つユーザーがログインしているとき、並び順を更新できること" do
     user = create(:registered_user, :with_admin_role)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     channel_group_params = {
       name: channel_group.name,
       sort_number: 999
@@ -90,7 +90,7 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
 
   it "管理者権限を持つユーザーがログインしているとき、空の名前では更新されること" do
     user = create(:registered_user, :with_admin_role)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     channel_group_params = {
       name: ""
     }
@@ -106,7 +106,7 @@ RSpec.describe "PATCH /db/channel_groups/:id", type: :request do
 
   it "削除済みのチャンネルグループは更新できないこと" do
     user = create(:registered_user, :with_admin_role)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     channel_group.destroy!
     channel_group_params = {
       name: "ちゃんねるぐるーぷ"

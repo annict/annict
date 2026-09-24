@@ -7,24 +7,49 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Db is the layout for the Annict DB admin UI, composed only of a sidebar and the main content area.
-//
-// [Ja] Db は Annict DB 管理画面用のレイアウト。サイドバーとメインコンテンツのみで構成される。
+// DbはAnnict DB管理画面用のレイアウト。サイドバーとメインコンテンツのみで構成される。
 templ Db(meta viewmodel.PageMeta, assetVersion string, content templ.Component) {
 	<!DOCTYPE html>
 	<html lang={ templates.Locale(ctx) }>
 		<head>
-			@components.Head(meta, assetVersion)
+			@components.DBHead(meta, assetVersion)
 		</head>
-		<body>
-			<div class="flex bg-background">
+		<body class="bg-background">
+			// スキップリンクはページ最初のフォーカス可能要素で、キーボード・スクリーン
+			// リーダーの利用者が毎ページ、サイドバーのロゴ・検索欄・メニュー8件・戻るリンクを
+			// 通過せずに本文へ到達できるようにする。サイドバーとコンテンツ領域の間ではなく
+			// サイドバーの前に置く。Basecoatはデスクトップでサイドバーの直後の兄弟に余白を
+			// 与える (.sidebar + *) ため、そこへ要素を挟むとコンテンツ領域ではなくその要素が
+			// 余白を受け取ってしまう。
+			//
+			// フォーカス時はサイドバー自身のnav (z-50) より前面に置き、どこに重なっても
+			// 見えるようにする。面はリング付きのポップオーバー面にする。左上ではサイドバーの
+			// primary塗りのヘッダーに重なるため、primary塗りのリンクでは溶けてしまう。
+			<a
+				href="#db-main"
+				class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-60 focus:rounded-md focus:bg-popover focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-popover-foreground focus:shadow-md focus:ring-2 focus:ring-ring"
+			>
+				{ templates.T(ctx, "skip_to_main_content") }
+			</a>
+
+			@components.DBSidebar()
+
+			// サイドバーの直後の兄弟が背面領域全体になり、Basecoatがデスクトップでそこに
+			// 余白を与える (.sidebar + *)。Flashをこの内側に置くことで、そのfixedトースト
+			// (z-50、z-40のオーバーレイより前面) もモバイルオーバーレイ表示中は背面の他の要素と
+			// 一緒にinertになり、オーバーレイ背面で操作可能なまま残らない。
+			//
+			// 高さは動的ビューポート単位 (実際に見えている高さ) で決める。静的な単位 (100vh) は
+			// モバイルのツールバーが隠れた状態の高さを指すため、ツールバー表示中は背面領域が
+			// 画面より高いままになり、本来1画面に収まるページにもスクロールバーが出る。
+			<div class="min-h-dvh">
+				// tabindex="-1" によりスキップリンクの飛び先で領域自身がフォーカスを受け、
+				// 次のTabが文書の先頭ではなく本文から続く。
+				<main id="db-main" tabindex="-1">
+					@content
+				</main>
+
 				@components.Flash(ctx, session.FlashFromContext(ctx))
-				@components.DbSidebar()
-				<div class="flex-1 flex flex-col min-h-screen">
-					<main>
-						@content
-					</main>
-				</div>
 			</div>
 		</body>
 	</html>

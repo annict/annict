@@ -1,0 +1,396 @@
+package db_episodes
+
+import (
+	"context"
+	"fmt"
+
+	"github.com/a-h/templ"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// IndexPageDataはある作品のエピソード一覧ページが描画するデータ (見出し・サブナビ・
+// リンクに使う親作品のidと名前、およびエピソード1ページ分)。
+type IndexPageData struct {
+	WorkID viewmodel.WorkID
+	// WorkNameはviewmodel.DBEpisodeListWorkNameが解決した作品の表示名。空になるのは
+	// 文書タイトルが汎用のページ名へフォールバックするときと同じ条件。
+	WorkName string
+	// NoEpisodesは作品のno_episodesフラグを共有サブナビへ渡す。サブナビはその作品では
+	// エピソード由来の項目を落とす。
+	NoEpisodes bool
+	// Generationは自動生成の案内。作品がまだエピソードを持たなくても表示する。
+	// エピソードが無い作品でこそ、案内の3つの値が編集者に見通しを与えるため。
+	Generation viewmodel.DBEpisodeGenerationSummary
+	Episodes   []viewmodel.DBEpisodeListItem
+	Pagination viewmodel.Pagination
+	// IsCommitterは一括作成フォームへのリンクと、committer (管理者または編集者) が
+	// 行える行ごとの操作の出し分けに使う。一覧は公開だが、エピソードを作成・編集・非公開・
+	// 再公開できるのはcommitterだけのため、それができない閲覧者には導線を出さない。
+	// IsAdminはさらに削除の操作を出し分ける。
+	IsCommitter bool
+	IsAdmin     bool
+	// CSRFTokenはhtmxが発行するDELETEリクエスト (公開 / 削除) のX-CSRF-Token
+	// ヘッダーで送られ、それらのリクエストがCSRFミドルウェアを通るようにする。
+	CSRFToken string
+}
+
+// headingはページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// ページタイトルにフォールバックし、空の <h1> を描画しないようにする。
+func (d IndexPageData) heading(ctx context.Context) string {
+	if d.WorkName != "" {
+		return d.WorkName
+	}
+
+	return templates.T(ctx, "db_episodes_index_title")
+}
+
+// newEpisodesActionは見出しの横に表示する操作を返し、操作を出さない閲覧者にはnilを
+// 返す。MainTitleが操作のコンテナを描画しないのはこのnilによる。何も描画しない
+// コンポーネントもコンポーネントであるため、それを返すとエピソードを作成できない訪問者すべてに
+// 空のコンテナが残る。
+func (d IndexPageData) newEpisodesAction() templ.Component {
+	if !d.IsCommitter {
+		return nil
+	}
+
+	return indexNewEpisodesLink(d)
+}
+
+// hasRowActionsは閲覧者が行ごとの操作を1つでも行えるかを返し、操作列そのものを
+// 描画するかを決める。操作を持たない閲覧者に空のセルだけの列は出さない。このテーブルは
+// モバイル幅では既に横スクロールを要し、何も入らない列の見出しが行ごとに読み上げられて
+// しまうため。newEpisodesActionが見出しの操作コンテナを出さないのと同じ理由である。
+func (d IndexPageData) hasRowActions() bool {
+	return d.IsCommitter || d.IsAdmin
+}
+
+// tableMinWidthClassはコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
+// 操作列はその下限に自身の固定幅 (w-24) を上乗せする。これにより、幅指定の無い唯一の列で
+// あり余白を吸収するタイトル列が、操作を見る閲覧者にも見ない閲覧者にも同じ幅を保てる。
+func (d IndexPageData) tableMinWidthClass() string {
+	if d.hasRowActions() {
+		return "min-w-[1008px]"
+	}
+
+	return "min-w-[908px]"
+}
+
+templ Index(data IndexPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   data.heading(ctx),
+					Actions: data.newEpisodesAction(),
+				})
+			</div>
+		</div>
+
+		<div class="px-4">
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:     data.WorkID,
+				NoEpisodes: data.NoEpisodes,
+			})
+		</div>
+
+		<div class="px-4">
+			<div class="rounded-lg border bg-card px-4 py-3 text-sm">
+				<dl class="grid justify-items-start gap-1 text-muted-foreground text-balance md:text-pretty">
+					<div class="flex flex-wrap gap-x-2">
+						<dt>{ templates.T(ctx, "db_episodes_index_generation_planned_label") }</dt>
+						<dd class="text-card-foreground">{ plannedCountText(ctx, data.Generation.PlannedCount) }</dd>
+					</div>
+					<div class="flex flex-wrap gap-x-2">
+						<dt>{ templates.T(ctx, "db_episodes_index_generation_published_label") }</dt>
+						<dd class="text-card-foreground">
+							@indexPublishedCount(data.Generation)
+						</dd>
+					</div>
+					<div class="flex flex-wrap gap-x-2">
+						<dt>{ templates.T(ctx, "db_episodes_index_generation_generatable_label") }</dt>
+						<dd class="text-card-foreground">{ fmt.Sprintf("%d", data.Generation.MaxGeneratableEpisodeNumber) }</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+
+		@components.ContentCard("") {
+			if len(data.Episodes) == 0 {
+				@components.Empty(templates.T(ctx, "db_episodes_index_empty"), "")
+			} else {
+				<div class="flex flex-col gap-4">
+					<div
+						class="overflow-x-auto"
+						role="region"
+						aria-label={ templates.T(ctx, "db_episodes_index_table_caption") }
+						tabindex="0"
+					>
+						<table class={ "table table-fixed [&_th]:px-1 [&_td]:px-1", data.tableMinWidthClass() }>
+							<caption class="sr-only">
+								{ templates.T(ctx, "db_episodes_index_table_caption") }
+							</caption>
+							// 固定列幅でテーブルをコンテナ内に収め、幅指定の無いタイトル列だけが
+							// 残り幅を吸収するようにする (autoレイアウトでは余白が全列へ分散し、
+							// タイトルが狭いまま)。
+							<colgroup>
+								<col class="w-20"/>
+								<col class="w-12"/>
+								<col class="w-28"/>
+								<col/>
+								<col class="w-28"/>
+								<col class="w-24"/>
+								<col class="w-24"/>
+								<col class="w-24"/>
+								if data.hasRowActions() {
+									<col class="w-24"/>
+								}
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_id_label") }</th>
+									// 値は1〜3桁で、可視の見出しは列幅を広げない「#」にする。記号だけでは
+									// 意味が伝わらないため、支援技術には隠したテキストで列の名前を与える。
+									<th scope="col" class="text-left">
+										<span aria-hidden="true">#</span>
+										<span class="sr-only">{ templates.T(ctx, "db_episodes_index_table_published_position_label") }</span>
+									</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_number_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_title_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_prev_episode_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_sort_number_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_records_count_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_episodes_index_table_status_label") }</th>
+									if data.hasRowActions() {
+										<th scope="col" class="text-center">{ templates.T(ctx, "db_episodes_index_table_actions_label") }</th>
+									}
+								</tr>
+							</thead>
+							<tbody>
+								for _, episode := range data.Episodes {
+									<tr>
+										<td>
+											<a
+												href={ templates.EpisodePath(episode.WorkID, episode.ID).SafeURL() }
+												target="_blank"
+												rel="noopener"
+												aria-label={ templates.T(ctx, "db_episodes_index_id_link_aria_label", map[string]any{"ID": episode.ID.String()}) }
+												class="text-primary hover:underline inline-flex items-center gap-1"
+											>
+												{ episode.ID.String() }
+												@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
+											</a>
+										</td>
+										<td>{ valueOrDash(episode.PublishedPosition) }</td>
+										// 表示用の話数と数値の話数はRails画面と同じく1セルに縦に
+										// 積む。どちらも短く、話数ごとに列を分けるとタイトルに必要な幅を
+										// 削ってしまうため。
+										<td class="whitespace-normal [overflow-wrap:anywhere]">
+											<div>
+												<span class="sr-only">{ templates.T(ctx, "db_episodes_index_number_display_label") }: </span>
+												{ valueOrDash(episode.Number) }
+											</div>
+											<div class="text-muted-foreground">
+												<span class="sr-only">{ templates.T(ctx, "db_episodes_index_number_raw_label") }: </span>
+												{ valueOrDash(episode.RawNumber) }
+											</div>
+										</td>
+										<td class="whitespace-normal [overflow-wrap:anywhere]">
+											<div>
+												<span class="sr-only">{ templates.T(ctx, "db_episodes_index_title_ja_label") }: </span>
+												if episode.Title != "" {
+													<span lang="ja">{ episode.Title }</span>
+												} else {
+													{ missingValuePlaceholder }
+												}
+											</div>
+											<div class="text-muted-foreground">
+												<span class="sr-only">{ templates.T(ctx, "db_episodes_index_title_en_label") }: </span>
+												if episode.TitleEn != "" {
+													<span lang="en">{ episode.TitleEn }</span>
+												} else {
+													{ missingValuePlaceholder }
+												}
+											</div>
+										</td>
+										<td class="whitespace-normal [overflow-wrap:anywhere]">{ valueOrDash(episode.PrevNumber) }</td>
+										<td>{ fmt.Sprintf("%d", episode.SortNumber) }</td>
+										<td>{ fmt.Sprintf("%d", episode.EpisodeRecordsCount) }</td>
+										<td>
+											@components.StatusLabel(episode.Status)
+										</td>
+										if data.hasRowActions() {
+											<td class="text-center">
+												@indexActionButtons(data, episode)
+											</td>
+										}
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
+					@components.Pagination(data.Pagination)
+				</div>
+			}
+		}
+	</div>
+}
+
+// indexNewEpisodesLinkは一覧の見出しの横に表示する操作を描画する。Railsのエピソード
+// 一覧と同じく一括作成フォームへの導線。そもそも描画するかどうかはnewEpisodesActionが決める。
+// エピソードを作成できない閲覧者には、リンクもそれを囲むコンテナも出さないようにするため。
+templ indexNewEpisodesLink(data IndexPageData) {
+	<a
+		href={ templates.DBWorkEpisodesNewPath(data.WorkID).SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		@templates.DecorativeInlineIcon("plus-regular", templates.InlineIconStart)
+		{ templates.T(ctx, "db_episodes_index_new_link") }
+	</a>
+}
+
+// indexActionButtonsは1行分の操作列を描画する。committerには編集リンクと非公開
+// (公開中の行) または公開 (非公開の行) の操作を、管理者にはさらに削除の操作を出す。公開・削除は
+// 確認ダイアログ付きのhtmx DELETEボタンで、CSRFトークンはX-CSRF-Tokenヘッダーで送り、
+// どちらのハンドラーもhtmxリクエストにはHX-Redirectを返してhtmxが一覧へ遷移する。
+// 非公開は確認画面への素のリンク。作品一覧の操作列を踏襲し、2つの一覧が同じ操作を同じ形で
+// 提供するようにする。
+//
+// 各コントロールはアクセシブルネームで対象のエピソードを名指しし、公開・削除では確認文でも
+// 名指しする。スクリーンリーダーが行から切り離してコントロールを列挙したときに、最大100行の
+// ページで「編集」とだけ読めるコントロールが100個並ばないようにするため。aria-labelで
+// 置き換えず視覚的に隠したテキストで補うのは、可視ラベルをアクセシブルネームの先頭に残すため
+// (音声操作が照合するのはこの可視ラベル)。名指しにIDを使うのは行のIDリンクと同じ理由で、
+// エピソードの話数もタイトルも設定されている保証が無く、作品内で一意である保証も無いため。
+templ indexActionButtons(data IndexPageData, episode viewmodel.DBEpisodeListItem) {
+	<div class="flex flex-col items-stretch gap-1.5">
+		if data.IsCommitter {
+			<a
+				href={ templates.DBEpisodeEditPath(episode.ID).SafeURL() }
+				class="btn rounded-full"
+				data-variant="outline"
+				data-size="sm"
+			>
+				{ templates.T(ctx, "db_episodes_index_edit_link") }
+				@indexActionTarget(episode)
+			</a>
+			switch episode.Status {
+				case viewmodel.PublishingStatusPublished:
+					<a
+						href={ templates.DBEpisodeArchiveNewPath(episode.ID).SafeURL() }
+						class="btn rounded-full"
+						data-variant="warning"
+						data-size="sm"
+					>
+						{ templates.T(ctx, "db_episodes_index_archive_link") }
+						@indexActionTarget(episode)
+					</a>
+				case viewmodel.PublishingStatusArchived:
+					<button
+						type="button"
+						class="btn rounded-full"
+						data-variant="success"
+						data-size="sm"
+						hx-delete={ templates.DBEpisodeArchivePath(episode.ID).String() }
+						hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+						hx-confirm={ templates.T(ctx, "db_episodes_index_publish_confirm", map[string]any{"ID": episode.ID.String()}) }
+					>
+						{ templates.T(ctx, "db_episodes_index_publish_button") }
+						@indexActionTarget(episode)
+					</button>
+			}
+		}
+		if data.IsAdmin {
+			<button
+				type="button"
+				class="btn rounded-full"
+				data-variant="destructive"
+				data-size="sm"
+				hx-delete={ templates.DBEpisodePath(episode.ID).String() }
+				hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+				hx-confirm={ templates.T(ctx, "db_episodes_index_delete_confirm", map[string]any{"ID": episode.ID.String()}) }
+			>
+				{ templates.T(ctx, "db_episodes_index_delete_button") }
+				@indexActionTarget(episode)
+			</button>
+		}
+	</div>
+}
+
+// indexActionTargetは操作コントロールの対象エピソードを、支援技術にのみ向けて描画する。
+// 画面上では列は行の文脈の中で読めるため、IDを表示すると繰り返しのノイズになる。この要素は
+// 通常フローから外れて配置されるため、コントロールの箱にも何も足さず、ボタンは列の想定どおりの
+// 大きさのままになる。
+templ indexActionTarget(episode viewmodel.DBEpisodeListItem) {
+	<span class="sr-only">{ actionTargetLabel(ctx, episode) }</span>
+}
+
+// indexPublishedCountは公開中のエピソード数を、予定エピソード数が記録されていれば `10 / 12` の
+// 形で並べて描画する。記号の「/」は支援技術に比として伝わらないため、可視の値は読み上げから
+// 外し、同じ内容を文にしたものを視覚的に隠して添える。予定エピソード数が未登録のときは分母の
+// 無い比が進捗を述べないため、件数だけを描画する。
+templ indexPublishedCount(generation viewmodel.DBEpisodeGenerationSummary) {
+	if generation.PlannedCount == "" {
+		{ fmt.Sprintf("%d", generation.PublishedEpisodeCount) }
+	} else {
+		<span aria-hidden="true">{ publishedProgressText(generation) }</span>
+		<span class="sr-only">{ publishedProgressLabel(ctx, generation) }</span>
+	}
+}
+
+// publishedProgressTextは公開中のエピソード数を予定エピソード数と並べた可視の値を返す。
+func publishedProgressText(generation viewmodel.DBEpisodeGenerationSummary) string {
+	return fmt.Sprintf("%d / %s", generation.PublishedEpisodeCount, generation.PlannedCount)
+}
+
+// publishedProgressLabelは可視の `10 / 12` に代えて支援技術に伝える文を、先頭にスペースを
+// 付けて返す。スタイルシートが届かず隠したテキストが可視の値と並んで表示されるときも、
+// 2つが別の語として読めるようにするため (actionTargetLabelと同じ理由)。
+func publishedProgressLabel(ctx context.Context, generation viewmodel.DBEpisodeGenerationSummary) string {
+	return " " + templates.T(ctx, "db_episodes_index_generation_published_progress", map[string]any{
+		"Published": generation.PublishedEpisodeCount,
+		"Planned":   generation.PlannedCount,
+	})
+}
+
+// actionTargetLabelは操作コントロールのアクセシブルネームのうち隠された側を、先頭に
+// スペースを付けて返す。templはコントロールの可視ラベルとこのspanを隙間なく書き出すため、
+// ブラウザがそこに語の区切りを入れるかどうかは、このspanがCSSによって通常フローから
+// 外れていることに依存する。スペースをテキスト側に持たせることで、スタイルシートが届かない
+// ときも2つの半分が別の語として保たれる。
+func actionTargetLabel(ctx context.Context, episode viewmodel.DBEpisodeListItem) string {
+	return " " + templates.T(ctx, "db_episodes_index_action_target_label", map[string]any{"ID": episode.ID.String()})
+}
+
+// missingValuePlaceholderはエピソードの属性が未設定のときに表示する。空の値が描画漏れに
+// 見えず「未登録」と読めるようにするため。
+const missingValuePlaceholder = "-"
+
+// valueOrDashはvalueを、空のときはプレースホルダーを返す。ビューモデルは未設定の属性を
+// "" のままにしてテンプレートに欠落の描画方法を委ねており、一覧の各属性はいずれも同じ形で
+// 描画する。
+func valueOrDash(value string) string {
+	if value == "" {
+		return missingValuePlaceholder
+	}
+
+	return value
+}
+
+// plannedCountTextは作品の予定エピソード数を描画する。ビューモデルの空の値は「作品が記録して
+// いない」ことを表すため、その旨を言葉で示す。案内は3つの値を並べて述べるので、ここに
+// プレースホルダーを置くとそれ自体が件数のように読めてしまう。
+func plannedCountText(ctx context.Context, plannedCount string) string {
+	if plannedCount == "" {
+		return templates.T(ctx, "db_episodes_index_generation_unknown")
+	}
+
+	return plannedCount
+}

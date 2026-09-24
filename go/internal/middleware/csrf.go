@@ -1,20 +1,21 @@
-// Package middleware はHTTPミドルウェアを提供します
+// Package middlewareはHTTPミドルウェアを提供します
 package middleware
 
 import (
 	"net/http"
 	"strings"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/session"
 )
 
-// CSRFMiddleware はCSRF保護ミドルウェア
+// CSRFMiddlewareはCSRF保護ミドルウェア
 type CSRFMiddleware struct {
 	sessionManager *session.Manager
 	skipPaths      []string
 }
 
-// NewCSRFMiddleware は新しいCSRFミドルウェアを作成
+// NewCSRFMiddlewareは新しいCSRFミドルウェアを作成
 func NewCSRFMiddleware(sessionManager *session.Manager) *CSRFMiddleware {
 	return &CSRFMiddleware{
 		sessionManager: sessionManager,
@@ -25,7 +26,7 @@ func NewCSRFMiddleware(sessionManager *session.Manager) *CSRFMiddleware {
 	}
 }
 
-// Middleware はCSRFトークン検証ミドルウェアを返す
+// MiddlewareはCSRFトークン検証ミドルウェアを返す
 func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
@@ -44,29 +45,32 @@ func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 			}
 		}
 
+		// 以下の3つの判定 (セッションID無し / セッションデータ無し / トークン不一致) は
+		// いずれも同じ応答を返す。区別すると送信側にセッションの有無を伝えることになり、
+		// 読み手に求める次の行動もどの場合も同じ (ページを開き直して再送信する) であるため。
+
 		// セッションIDを取得
 		sessionID, err := m.sessionManager.GetSessionID(r)
 		if err != nil || sessionID == "" {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			httperror.InvalidCSRFToken(w, r)
 			return
 		}
 
 		// セッションデータを取得
 		sessionData, err := m.sessionManager.GetSession(ctx, sessionID)
 		if err != nil || sessionData == nil {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			httperror.InvalidCSRFToken(w, r)
 			return
 		}
 
-		// フォームからCSRFトークンを取得（フォームパラメータまたはヘッダー）
+		// フォームからCSRFトークンを取得 (フォームパラメータまたはヘッダー)
 		formToken := r.FormValue("csrf_token")
 		if formToken == "" {
 			formToken = r.Header.Get("X-CSRF-Token")
 		}
 
-		// トークンが一致しない場合は403エラー
 		if formToken != sessionData.CSRFToken {
-			http.Error(w, "Forbidden", http.StatusForbidden)
+			httperror.InvalidCSRFToken(w, r)
 			return
 		}
 
@@ -74,7 +78,7 @@ func (m *CSRFMiddleware) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-// GetCSRFToken はリクエストからCSRFトークンを取得
+// GetCSRFTokenはリクエストからCSRFトークンを取得
 // テンプレートでトークンを表示する際に使用
 func GetCSRFToken(r *http.Request, sessionManager *session.Manager) string {
 	ctx := r.Context()
@@ -94,7 +98,7 @@ func GetCSRFToken(r *http.Request, sessionManager *session.Manager) string {
 	return sessionData.CSRFToken
 }
 
-// GetOrCreateCSRFToken はCSRFトークンを取得し、セッションが存在しない場合は新規作成
+// GetOrCreateCSRFTokenはCSRFトークンを取得し、セッションが存在しない場合は新規作成
 // ログインページなど、セッションがまだ存在しない可能性があるページで使用
 func GetOrCreateCSRFToken(w http.ResponseWriter, r *http.Request, sessionManager *session.Manager) string {
 	ctx := r.Context()

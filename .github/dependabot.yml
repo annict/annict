@@ -1,26 +1,24 @@
-# To get started with Dependabot version updates, you'll need to specify which
-# package ecosystems to update and where the package manifests are located.
-# Please see the documentation for all configuration options:
+# Dependabotのバージョン更新を使うには、更新対象のパッケージエコシステムと
+# パッケージマニフェストの場所を指定する必要がある。
+# 設定オプションの一覧はドキュメントを参照。
 # https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
 
 version: 2
 updates:
-  # Go version dependencies
+  # Go版の依存パッケージ
   - package-ecosystem: "gomod"
     directory: "/go"
     schedule:
       interval: "daily"
-    # Grouped PRs intentionally exclude major version bumps: a major update
-    # can include breaking changes and we want to review each one in its
-    # own PR. Every group below pins update-types to patch / minor only.
-    #
-    # [Ja] グループ PR ではメジャー更新を意図的に除外している。
-    # メジャー更新は破壊的変更を含むことがあり個別 PR でレビューしたいため、
-    # 以下のすべてのグループで update-types を patch / minor のみに絞っている
+    # グループPRではメジャー更新を意図的に除外している。
+    # メジャー更新は破壊的変更を含むことがあり個別PRでレビューしたいため、
+    # 以下のすべてのグループでupdate-typesをpatch / minorのみに絞っている
     groups:
-      river:
+      aws-sdk-go-v2:
         patterns:
-          - "github.com/riverqueue/*"
+          - "github.com/aws/aws-sdk-go-v2"
+          - "github.com/aws/aws-sdk-go-v2/*"
+          - "github.com/aws/smithy-go"
         update-types:
           - "patch"
           - "minor"
@@ -36,11 +34,9 @@ updates:
         update-types:
           - "patch"
           - "minor"
-      aws-sdk-go-v2:
+      river:
         patterns:
-          - "github.com/aws/aws-sdk-go-v2"
-          - "github.com/aws/aws-sdk-go-v2/*"
-          - "github.com/aws/smithy-go"
+          - "github.com/riverqueue/*"
         update-types:
           - "patch"
           - "minor"
@@ -52,18 +48,14 @@ updates:
           - "patch"
           - "minor"
 
-  # Go version npm dependencies (pnpm)
+  # Go版のnpm依存パッケージ (pnpm)
   - package-ecosystem: "npm"
     directory: "/go"
     schedule:
       interval: "daily"
-    # Grouped PRs intentionally exclude major version bumps: a major update
-    # can include breaking changes and we want to review each one in its
-    # own PR. Every group below pins update-types to patch / minor only.
-    #
-    # [Ja] グループ PR ではメジャー更新を意図的に除外している。
-    # メジャー更新は破壊的変更を含むことがあり個別 PR でレビューしたいため、
-    # 以下のすべてのグループで update-types を patch / minor のみに絞っている
+    # グループPRではメジャー更新を意図的に除外している。
+    # メジャー更新は破壊的変更を含むことがあり個別PRでレビューしたいため、
+    # 以下のすべてのグループでupdate-typesをpatch / minorのみに絞っている
     groups:
       tailwindcss:
         patterns:
@@ -73,30 +65,22 @@ updates:
           - "patch"
           - "minor"
 
-  # Rails version bundler dependencies
+  # Rails版のbundler依存パッケージ
   - package-ecosystem: "bundler"
     directory: "/rails"
     schedule:
       interval: "daily"
-    # The Rails version is in maintenance mode; we only handle security
-    # updates driven by Dependabot alerts and do not create routine
-    # version-update PRs.
-    #
-    # [Ja] Rails 版はメンテナンスモードに入っており、Dependabot alerts に基づく
-    # セキュリティアップデートのみ対応する。通常の version update PR は作らない
+    # Rails版はメンテナンスモードに入っており、Dependabot alertsに基づく
+    # セキュリティアップデートのみ対応する。通常のversion update PRは作らない
     open-pull-requests-limit: 0
 
-  # Rails version npm dependencies
+  # Rails版のnpm依存パッケージ
   - package-ecosystem: "npm"
     directory: "/rails"
     schedule:
       interval: "daily"
-    # The Rails version is in maintenance mode; we only handle security
-    # updates driven by Dependabot alerts and do not create routine
-    # version-update PRs.
-    #
-    # [Ja] Rails 版はメンテナンスモードに入っており、Dependabot alerts に基づく
-    # セキュリティアップデートのみ対応する。通常の version update PR は作らない
+    # Rails版はメンテナンスモードに入っており、Dependabot alertsに基づく
+    # セキュリティアップデートのみ対応する。通常のversion update PRは作らない
     open-pull-requests-limit: 0
 
   # GitHub Actions

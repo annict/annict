@@ -11,26 +11,26 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New はパスワードリセット申請フォームを表示します (GET /password/reset)
+// Newはパスワードリセット申請フォームを表示します (GET /password/reset)
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNewForm(w, r, http.StatusOK, nil, "")
 }
 
-// renderNewForm はパスワードリセット申請フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormはパスワードリセット申請フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "password_reset_title")
-	meta.OGURL = h.cfg.AppURL() + "/password/reset"
+	meta.AddTurnstilePreconnect(h.cfg.TurnstileSiteKey)
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
 	data := passwordpages.ResetPageData{
 		CSRFToken:        csrfToken,
 		TurnstileSiteKey: h.cfg.TurnstileSiteKey,
-		FormErrors:       formErrors,
+		FormErrors:       viewmodel.NewFormErrors(formErrors),
 		Email:            email,
 	}
 

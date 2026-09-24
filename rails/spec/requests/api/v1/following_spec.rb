@@ -2,12 +2,8 @@
 # frozen_string_literal: true
 
 RSpec.describe "GET /v1/following", type: :request do
-  before do
-    Timecop.freeze(Time.parse("2017-01-29 08:39:04"))
-  end
-
-  after do
-    Timecop.return
+  around do |example|
+    Timecop.freeze(Time.parse("2017-01-29 08:39:04 +09:00")) { example.run }
   end
 
   it "filter_usernameパラメータが指定されている場合、ステータスコード200を返すこと" do

@@ -20,7 +20,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// TestCreate_RateLimiting_IP はIP単位のRate Limitingテスト
+// TestCreate_RateLimiting_IPはIP単位のRate Limitingテスト
 func TestCreate_RateLimiting_IP(t *testing.T) {
 	t.Parallel()
 
@@ -46,7 +46,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// Turnstileクライアントの初期化（テスト用）
+	// Turnstileクライアントの初期化 (テスト用)
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// Rate Limiterの初期化
@@ -55,10 +55,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	// ハンドラーの初期化
 	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, sendSignUpCodeUC, turnstileClient)
 
-	// Build per-test unique values so this test does not collide with
-	// other tests running in parallel against the shared Redis DB.
-	//
-	// [Ja] 共有 Redis DB に対する並列実行で他テストと衝突しないよう、
+	// 共有Redis DBに対する並列実行で他テストと衝突しないよう、
 	// 本テスト固有のキー構成値を組み立てる。
 	prefix := testutil.UniqueRateLimitPrefix(t)
 	clientIP := prefix + "-ip"
@@ -70,7 +67,7 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 		_ = limiter.Reset(ctx, "sign_up:email:"+email)
 	})
 
-	// 同一IPから6回アクセス（制限: 5回/時間）
+	// 同一IPから6回アクセス (制限: 5回/時間)
 	for i := 0; i < 6; i++ {
 		// リクエストパラメータを作成
 		formData := url.Values{}
@@ -91,20 +88,20 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 		handler.Create(rr, req)
 
 		if i < 5 {
-			// 最初の5回は成功（303）または検証失敗（422）
+			// 最初の5回は成功 (303) または検証失敗 (422)
 			if rr.Code != http.StatusSeeOther && rr.Code != http.StatusUnprocessableEntity {
-				t.Errorf("リクエスト %d: 予期しないステータスコード: got %v", i+1, rr.Code)
+				t.Errorf("%d件目のリクエストのステータスコード = %v、期待値 = 303または422", i+1, rr.Code)
 			}
 		} else {
-			// 6回目はRate Limitingで失敗（422でフォーム再描画）
+			// 6回目はRate Limitingで失敗 (422でフォーム再描画)
 			if rr.Code != http.StatusUnprocessableEntity {
-				t.Errorf("リクエスト %d: Rate Limitingが発動していません: got %v want %v", i+1, rr.Code, http.StatusUnprocessableEntity)
+				t.Errorf("%d件目のリクエストのステータスコード = %v、期待値 = %v (レート制限)", i+1, rr.Code, http.StatusUnprocessableEntity)
 			}
 		}
 	}
 }
 
-// TestCreate_RateLimiting_Email はメールアドレス単位のRate Limitingテスト
+// TestCreate_RateLimiting_Emailはメールアドレス単位のRate Limitingテスト
 func TestCreate_RateLimiting_Email(t *testing.T) {
 	t.Parallel()
 
@@ -130,7 +127,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// Turnstileクライアントの初期化（テスト用）
+	// Turnstileクライアントの初期化 (テスト用)
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// Rate Limiterの初期化
@@ -139,10 +136,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	// ハンドラーの初期化
 	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, sendSignUpCodeUC, turnstileClient)
 
-	// Build per-test unique values so this test does not collide with
-	// other tests running in parallel against the shared Redis DB.
-	//
-	// [Ja] 共有 Redis DB に対する並列実行で他テストと衝突しないよう、
+	// 共有Redis DBに対する並列実行で他テストと衝突しないよう、
 	// 本テスト固有のキー構成値を組み立てる。
 	prefix := testutil.UniqueRateLimitPrefix(t)
 	email := prefix + "@example.com"
@@ -165,7 +159,7 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 		formData.Set("csrf_token", "test-csrf-token")
 		formData.Set("cf-turnstile-response", "test-turnstile-token")
 
-		// リクエストを作成（異なるIPアドレスから）
+		// リクエストを作成 (異なるIPアドレスから)
 		req := httptest.NewRequest("POST", "/sign_up", strings.NewReader(formData.Encode()))
 		req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 		req.RemoteAddr = ipFor(i) + ":12345"
@@ -177,14 +171,14 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 		handler.Create(rr, req)
 
 		if i < 3 {
-			// 最初の3回は成功（303）または検証失敗（422）
+			// 最初の3回は成功 (303) または検証失敗 (422)
 			if rr.Code != http.StatusSeeOther && rr.Code != http.StatusUnprocessableEntity {
-				t.Errorf("リクエスト %d: 予期しないステータスコード: got %v", i+1, rr.Code)
+				t.Errorf("%d件目のリクエストのステータスコード = %v、期待値 = 303または422", i+1, rr.Code)
 			}
 		} else {
-			// 4回目はRate Limitingで失敗（422でフォーム再描画）
+			// 4回目はRate Limitingで失敗 (422でフォーム再描画)
 			if rr.Code != http.StatusUnprocessableEntity {
-				t.Errorf("リクエスト %d: Rate Limitingが発動していません: got %v want %v", i+1, rr.Code, http.StatusUnprocessableEntity)
+				t.Errorf("%d件目のリクエストのステータスコード = %v、期待値 = %v (レート制限)", i+1, rr.Code, http.StatusUnprocessableEntity)
 			}
 		}
 	}

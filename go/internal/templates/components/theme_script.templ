@@ -1,0 +1,19 @@
+package components
+
+// ThemeScriptは文書要素に `dark` クラスを付けることで、閲覧者が選好する配色を適用する。
+// bodyの解析前に <head> でインラインに実行するため、ライトテーマで一度描画してから切り替わる
+// ことがない。
+//
+// 単独のエラーページ用シェルを含むすべてのレイアウトがこれを描画し、どのページでも同じ方法で
+// テーマが決まるようにする。
+templ ThemeScript() {
+	<script>
+		(() => {
+			try {
+				if (matchMedia("(prefers-color-scheme: dark)").matches) {
+					document.documentElement.classList.add("dark");
+				}
+			} catch (_) {}
+		})();
+	</script>
+}

@@ -7,12 +7,12 @@ RSpec.describe "POST /db/channels", type: :request do
       name: "ちゃんねる"
     }
 
-    post "/db/channels", params: {channel: channel_params}
+    expect {
+      post "/db/channels", params: {channel: channel_params}
+    }.not_to change(Channel, :count)
 
     expect(response.status).to eq(302)
     expect(flash[:alert]).to eq("ログインしてください")
-
-    expect(Channel.all.size).to eq(220)
   end
 
   it "編集者権限を持たないユーザーがログインしているとき、アクセスできないこと" do
@@ -23,12 +23,12 @@ RSpec.describe "POST /db/channels", type: :request do
 
     login_as(user, scope: :user)
 
-    post "/db/channels", params: {channel: channel_params}
+    expect {
+      post "/db/channels", params: {channel: channel_params}
+    }.not_to change(Channel, :count)
 
     expect(response.status).to eq(302)
     expect(flash[:alert]).to eq("アクセスできません")
-
-    expect(Channel.all.size).to eq(220)
   end
 
   it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
@@ -39,16 +39,16 @@ RSpec.describe "POST /db/channels", type: :request do
 
     login_as(user, scope: :user)
 
-    post "/db/channels", params: {channel: channel_params}
+    expect {
+      post "/db/channels", params: {channel: channel_params}
+    }.not_to change(Channel, :count)
 
     expect(response.status).to eq(302)
     expect(flash[:alert]).to eq("アクセスできません")
-
-    expect(Channel.all.size).to eq(220)
   end
 
   it "管理者権限を持つユーザーがログインしているとき、チャンネルを作成できること" do
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     user = create(:registered_user, :with_admin_role)
     channel_params = {
       channel_group_id: channel_group.id,
@@ -57,14 +57,13 @@ RSpec.describe "POST /db/channels", type: :request do
 
     login_as(user, scope: :user)
 
-    expect(Channel.all.size).to eq(220)
-
-    post "/db/channels", params: {channel: channel_params}
+    expect {
+      post "/db/channels", params: {channel: channel_params}
+    }.to change(Channel, :count).by(1)
 
     expect(response.status).to eq(302)
     expect(flash[:notice]).to eq("登録しました")
 
-    expect(Channel.all.size).to eq(221)
     channel = Channel.last
 
     expect(channel.channel_group_id).to eq(channel_group.id)
@@ -80,16 +79,15 @@ RSpec.describe "POST /db/channels", type: :request do
 
     login_as(user, scope: :user)
 
-    expect(Channel.all.size).to eq(220)
-
-    post "/db/channels", params: {channel: channel_params}
+    expect {
+      post "/db/channels", params: {channel: channel_params}
+    }.not_to change(Channel, :count)
 
     expect(response.status).to eq(422)
-    expect(Channel.all.size).to eq(220)
   end
 
   it "管理者権限を持つユーザーがログインしているとき、vodとsort_numberも設定できること" do
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     user = create(:registered_user, :with_admin_role)
     channel_params = {
       channel_group_id: channel_group.id,

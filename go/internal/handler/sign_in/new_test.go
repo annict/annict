@@ -32,11 +32,11 @@ func TestNew(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// ログインコード送信ユースケースを作成（Dispatcher は nil でメール送信をスキップ）
+	// ログインコード送信ユースケースを作成 (Dispatcherはnilでメール送信をスキップ)
 	v := validator.NewSignInCreateValidator()
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
-	// Turnstile クライアントを作成（テスト環境用: 空のSecretKeyで検証をスキップ）
+	// Turnstileクライアントを作成 (テスト環境用: 空のSecretKeyで検証をスキップ)
 	turnstileClient := turnstile.NewClient("", "")
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), sendSignInCodeUC, turnstileClient)
@@ -45,18 +45,18 @@ func TestNew(t *testing.T) {
 	req := httptest.NewRequest("GET", "/sign_in", nil)
 	rr := httptest.NewRecorder()
 
-	// I18nミドルウェアを適用（テストでもlocaleを設定）
+	// I18nミドルウェアを適用 (テストでもlocaleを設定)
 	testutil.ApplyI18nMiddleware(t, handler.New)(rr, req)
 
 	// ステータスコードを確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	// Content-Typeを確認
 	contentType := rr.Header().Get("Content-Type")
 	if !strings.Contains(contentType, "text/html") {
-		t.Errorf("Content-Typeが正しくない: got %v", contentType)
+		t.Errorf("Content-Type = %v、期待値 = text/htmlを含むこと", contentType)
 	}
 
 	// レスポンスボディに期待される文字列が含まれているか確認
@@ -68,9 +68,10 @@ func TestNew(t *testing.T) {
 		"新規登録",              // サインアップリンク
 		"csrf_token",        // CSRFトークン
 		`action="/sign_in"`, // フォームアクション
-		"https://challenges.cloudflare.com/turnstile/v0/api.js", // Turnstile JavaScript
-		`class="cf-turnstile"`,                    // Turnstile ウィジェット
-		`data-sitekey="1x00000000000000000000AA"`, // Turnstile Site Key
+		"https://challenges.cloudflare.com/turnstile/v0/api.js", // TurnstileのJavaScript
+		`class="cf-turnstile"`,                    // Turnstileウィジェット
+		`data-sitekey="1x00000000000000000000AA"`, // TurnstileのSite Key
+		`<link rel="preconnect" href="https://challenges.cloudflare.com">`,
 	}
 
 	for _, expected := range expectedStrings {

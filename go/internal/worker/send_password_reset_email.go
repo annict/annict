@@ -9,18 +9,18 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// SendPasswordResetEmailWorker はパスワードリセットメール送信ワーカーです
+// SendPasswordResetEmailWorkerはパスワードリセットメール送信ワーカーです
 type SendPasswordResetEmailWorker struct {
 	river.WorkerDefaults[dispatcher.SendPasswordResetEmailArgs]
 	uc *usecase.SendPasswordResetEmailUsecase
 }
 
-// NewSendPasswordResetEmailWorker は新しい SendPasswordResetEmailWorker を作成します
+// NewSendPasswordResetEmailWorkerは新しいSendPasswordResetEmailWorkerを作成します
 func NewSendPasswordResetEmailWorker(uc *usecase.SendPasswordResetEmailUsecase) *SendPasswordResetEmailWorker {
 	return &SendPasswordResetEmailWorker{uc: uc}
 }
 
-// Work はパスワードリセットメールを送信します
+// Workはパスワードリセットメールを送信します
 func (w *SendPasswordResetEmailWorker) Work(ctx context.Context, job *river.Job[dispatcher.SendPasswordResetEmailArgs]) error {
 	return w.uc.Execute(ctx, usecase.SendPasswordResetEmailInput{
 		Email:    job.Args.Email,

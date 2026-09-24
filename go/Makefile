@@ -1,4 +1,4 @@
-# op run ラッパー: 1Password CLI 経由で .env の環境変数を解決してコマンドを実行する
+# op runラッパー: 1Password CLI経由で .envの環境変数を解決してコマンドを実行する
 # CI環境ではopコマンドが利用できないため、環境変数はGitHub Actionsで直接設定する
 OP_RUN_DEV = APP_ENV=dev op run --env-file=".env" --
 ifeq ($(CI),true)
@@ -11,9 +11,34 @@ endif
 help: ## ヘルプを表示
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}'
 
+.PHONY: setup
+setup: ## 依存関係をインストール
+	go mod download
+	pnpm install --frozen-lockfile
+
 .PHONY: run
 run: ## サーバーを起動
-	$(OP_RUN_DEV) go run cmd/server/main.go
+	$(OP_RUN_DEV) go run ./cmd/annict serve
+
+.PHONY: browse-login
+browse-login: ## devサイトへブラウザでログイン (別ユーザーはmake browse-login BROWSE_USER=2)
+	$(OP_RUN_DEV) bash scripts/browse.sh login $(BROWSE_USER)
+
+.PHONY: browse-check
+browse-check: ## devサイトのブラウザ確認に必要な環境を検証 (別ユーザーはBROWSE_USER=2)
+	$(OP_RUN_DEV) bash scripts/browse.sh check $(BROWSE_USER)
+
+.PHONY: browse-shot
+browse-shot: ## ログイン済みセッションでページを開きスクショ (例: make browse-shot URL=/db)
+	bash scripts/browse.sh shot "$(URL)"
+
+.PHONY: browse-close
+browse-close: ## ブラウザセッションを閉じ一時ファイルを削除
+	bash scripts/browse.sh close
+
+.PHONY: task
+task: ## 運用タスクを1回実行 (例: make task NAME=sync-animes / make task NAME=list)
+	$(OP_RUN_DEV) go run ./cmd/annict task $(NAME)
 
 .PHONY: templ-generate
 templ-generate: ## templファイルからGoコードを生成し、import文を整理
@@ -27,7 +52,7 @@ goimports: ## goimportsでimport文を整理
 	goimports -w .
 
 .PHONY: goimports-check
-goimports-check: ## goimportsでimport文をチェック（差分があればエラー）
+goimports-check: ## goimportsでimport文をチェック (差分があればエラー)
 	@which goimports > /dev/null || (echo "Installing goimports from go.mod..." && go install golang.org/x/tools/cmd/goimports)
 	@unformatted=$$(goimports -l .); \
 	if [ -n "$$unformatted" ]; then \
@@ -39,8 +64,8 @@ goimports-check: ## goimportsでimport文をチェック（差分があればエ
 	fi
 
 .PHONY: build
-build: templ-generate ## バイナリをビルド（templ-generateがgoimportsも実行）
-	go build -o bin/server cmd/server/main.go
+build: templ-generate ## バイナリをビルド (templ-generateがgoimportsも実行)
+	go build -o bin/annict ./cmd/annict
 
 .PHONY: test
 test: db-setup-test ## テストを実行
@@ -48,7 +73,7 @@ test: db-setup-test ## テストを実行
 	@bash -c 'set -o pipefail && $(OP_RUN_TEST) go test -json -race ./... | tparse -all'
 
 .PHONY: test-pkg
-test-pkg: db-setup-test ## 特定のパッケージのテストを実行（使用例: make test-pkg PKG=internal/handler/password_reset）
+test-pkg: db-setup-test ## 特定のパッケージのテストを実行 (使用例: make test-pkg PKG=internal/handler/password_reset)
 	@which tparse > /dev/null || (echo "Installing tparse from go.mod..." && go install github.com/mfridman/tparse)
 	@if [ -z "$(PKG)" ]; then \
 		echo "エラー: PKG変数を指定してください"; \
@@ -59,7 +84,7 @@ test-pkg: db-setup-test ## 特定のパッケージのテストを実行（使�
 	@bash -c 'set -o pipefail && $(OP_RUN_TEST) go test -json -race ./$(PKG) | tparse -all'
 
 .PHONY: test-run
-test-run: db-setup-test ## 特定のテストを実行（使用例: make test-run PKG=internal/handler/password_reset RUN=TestCreate_TurnstileVerification）
+test-run: db-setup-test ## 特定のテストを実行 (使用例: make test-run PKG=internal/handler/password_reset RUN=TestCreate_TurnstileVerification)
 	@which tparse > /dev/null || (echo "Installing tparse from go.mod..." && go install github.com/mfridman/tparse)
 	@if [ -z "$(PKG)" ]; then \
 		echo "エラー: PKG変数を指定してください"; \
@@ -75,10 +100,18 @@ test-run: db-setup-test ## 特定のテストを実行（使用例: make test-ru
 	@bash -c 'set -o pipefail && $(OP_RUN_TEST) go test -json -race ./$(PKG) -run $(RUN) | tparse -all'
 
 .PHONY: test-verbose
-test-verbose: db-setup-test ## 詳細ログ付きで全テストを実行（デバッグ用）
+test-verbose: db-setup-test ## 詳細ログ付きで全テストを実行 (デバッグ用)
 	@which tparse > /dev/null || (echo "Installing tparse from go.mod..." && go install github.com/mfridman/tparse)
 	@echo "ローカル環境: 詳細ログ付きで全テストを実行"
 	@bash -c 'set -o pipefail && $(OP_RUN_TEST) go test -json -race -count=1 ./... | tparse -all'
+
+.PHONY: test-js
+test-js: ## フロントエンドのユニットテストを実行 (Vitest)
+	pnpm test
+
+.PHONY: typecheck-js
+typecheck-js: ## フロントエンドのTypeScriptを型検査 (tsc --noEmit)
+	pnpm typecheck
 
 .PHONY: fmt
 fmt: ## コードをフォーマット
@@ -90,13 +123,20 @@ lint-golangci: ## golangci-lintを実行
 	@echo "🔍 golangci-lintを実行中..."
 	@golangci-lint run --config=.golangci.yml ./...
 
-.PHONY: lint-comments
-lint-comments: ## Check [Ja]-marker misuse in code comments (koryluslint). [Ja] コードコメントの [Ja] マーカー誤用をチェック (koryluslint)
-	@echo "🔍 コメントの英日併記をチェック中..."
+# koryluslintのcommentサブコマンドで、日本語テキストスタイル (korylus-lang.md §3) を
+# 検査する。koryluslintはgo.modのtoolディレクティブで固定し、公開モジュール
+# github.com/korylus/toolsから取得する。
+# 検査対象は.go / .templのコメントと、.sh / .tsのコメント・文字列、.sql / .css / .tomlの
+# 日本語を含む行。いずれも本モジュールの下にあるためgo toolで直接実行できる
+# (リポジトリルートのMarkdownを走査するルートMakefileのlint-mdと違い、固定版バイナリの
+# ビルドを必要としない)。
+.PHONY: lint-style
+lint-style: ## 日本語テキストスタイルをチェック (koryluslint)
+	@echo "🔍 日本語スタイルをチェック中..."
 	@go tool koryluslint comment
 
 .PHONY: lint
-lint: lint-golangci lint-comments ## リントを実行（golangci-lint + コメント併記チェック）
+lint: lint-golangci lint-style sqlc-diff ## リントを実行 (golangci-lint + 日本語スタイル + sqlc生成コードの同期)
 
 .PHONY: clean
 clean: ## ビルド成果物をクリーン
@@ -105,44 +145,60 @@ clean: ## ビルド成果物をクリーン
 
 # データベースマイグレーションコマンド
 
-# Strip the random \restrict / \unrestrict lines that pg_dump >= 17.6 emits into
-# db/schema.sql, which dbmate writes on both up and dump. Shared by db-migrate
-# and db-dump so the workaround lives in one place.
+# dbmateがup / dumpの双方でdb/schema.sqlへ書き込む、pg_dump 17.6以降が
+# 出力するランダムな \restrict / \unrestrict行を削除する。db-migrateとdb-dumpで
+# 共有し、回避策を1箇所にまとめる。
 # https://github.com/amacneil/dbmate/issues/678
-#
-# [Ja] dbmate が up / dump の双方で db/schema.sql へ書き込む、pg_dump 17.6 以降が
-# 出力するランダムな \restrict / \unrestrict 行を削除する。db-migrate と db-dump で
-# 共有し、回避策を 1 箇所にまとめる。
 STRIP_SCHEMA_RESTRICT = sed -i '/^\\restrict /d;/^\\unrestrict /d' db/schema.sql
+
+# データベースを作り直すターゲットで共有するリセットSQL。
+# publicスキーマはinitdbと同じ所有者 (pg_database_owner) で再作成し、db-dumpの出力に
+# 所有者由来の差分が入らないようにする。DROP SCHEMAが出すNOTICEは想定内のため
+# client_min_messagesで抑制する。
+DB_RESET_SCHEMA_SQL = SET client_min_messages TO warning; DROP SCHEMA IF EXISTS public CASCADE; CREATE SCHEMA public AUTHORIZATION pg_database_owner;
 
 .PHONY: db-migrate
 db-migrate: ## データベースマイグレーションを実行
 	$(OP_RUN_DEV) dbmate up
 	@$(STRIP_SCHEMA_RESTRICT)
 
-.PHONY: db-setup-test
-db-setup-test: ## テスト用データベースのスキーマをセットアップ
-	@if [ "$$CI" = "true" ]; then \
-		echo "CI環境: テストDBをリセットしてスキーマを適用"; \
-		psql -h localhost -U postgres -d annict_test -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' > /dev/null 2>&1; \
-		psql -h localhost -U postgres -d annict_test -f db/schema.sql > /dev/null; \
-	else \
-		echo "ローカル環境: テストDBをリセットしてスキーマを適用"; \
-		psql -h postgresql -U postgres -d annict_test -c 'DROP SCHEMA public CASCADE; CREATE SCHEMA public;' > /dev/null 2>&1; \
-		psql -h postgresql -U postgres -d annict_test -f db/schema.sql > /dev/null; \
-	fi
+# セットアップ手順から呼ぶ非破壊の初期化。dbmate createの成否を「データベースが
+# 存在しなかったか」の判定に使い、作成できたときだけスキーマをロードする。
+# 初回のスキーマロードに失敗したときは、この実行で作成したデータベースを削除してから
+# エラーを返し、同じコマンドの再実行で最初から構築し直せるようにする。
+# マイグレーションの適用は--no-dump-schemaを付け、セットアップの実行がGit管理下の
+# db/schema.sqlを書き換えないようにする。
+.PHONY: db-prepare-dev
+db-prepare-dev: ## 開発用データベースが無ければ構築し、未適用のマイグレーションを適用
+	@$(OP_RUN_DEV) bash -c 'if dbmate create > /dev/null 2>&1; then \
+		echo "開発用データベースを作成し、スキーマを適用"; \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/schema.sql > /dev/null || { dbmate drop > /dev/null 2>&1; exit 1; }; \
+	fi; \
+	dbmate --no-dump-schema up'
 
-.PHONY: db-migrate-test
-db-migrate-test: ## テスト環境のマイグレーションを実行（非推奨、db-setup-testを使用）
-	@echo "警告: db-migrate-testは非推奨です。代わりにdb-setup-testを使用してください。"
-	@make db-setup-test
+.PHONY: db-setup-dev
+db-setup-dev: ## 開発用データベースを作り直す (既存のデータは失われる)
+	@echo "開発用データベースをリセットしてスキーマを適用"
+	@$(OP_RUN_DEV) bash -c 'dbmate create > /dev/null 2>&1; \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -c "$(DB_RESET_SCHEMA_SQL)" > /dev/null && \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/schema.sql > /dev/null'
+
+# db-setup-devと同じ3ステップをテスト用データベースに対して行う。
+# CIのランナーにはdbmateが無く、dbmate createは失敗するだけで済むため、スキーマの適用は
+# psqlで行う。CIではデータベースをサービスコンテナが用意しているので作成は要らない。
+.PHONY: db-setup-test
+db-setup-test: ## テスト用データベースを作り直す (既存のデータは失われる)
+	@echo "テスト用データベースをリセットしてスキーマを適用"
+	@$(OP_RUN_TEST) bash -c 'dbmate create > /dev/null 2>&1; \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -c "$(DB_RESET_SCHEMA_SQL)" > /dev/null && \
+		psql "$$DATABASE_URL" -v ON_ERROR_STOP=1 -f db/schema.sql > /dev/null'
 
 .PHONY: db-rollback
 db-rollback: ## 最後のマイグレーションをロールバック
 	$(OP_RUN_DEV) dbmate down
 
 .PHONY: db-new
-db-new: ## 新しいマイグレーションファイルを作成（使用法: make db-new name=create_users）
+db-new: ## 新しいマイグレーションファイルを作成 (使用法: make db-new name=create_users)
 	dbmate new $(name)
 
 .PHONY: db-dump
@@ -152,9 +208,38 @@ db-dump: ## データベーススキーマをdb/schema.sqlにダンプ
 
 .PHONY: sqlc-generate
 sqlc-generate: ## SQLクエリからGoコードを生成
-	sqlc generate
+	go tool sqlc generate
+
+.PHONY: sqlc-diff
+sqlc-diff: ## 生成コードがクエリ・スキーマと同期しているかをチェック (差分があればエラー)
+	@echo "🔍 sqlc生成コードの同期をチェック中..."
+	@go tool sqlc diff
 
 .PHONY: seed
 seed: ## 開発環境用のシードデータを生成
 	@echo "シードデータを生成しています..."
-	$(OP_RUN_DEV) go run cmd/seed/main.go
+	$(OP_RUN_DEV) go run ./cmd/annict task seed
+
+.PHONY: seed-master
+seed-master: ## マスターデータを投入 (既存のデータは消さない)
+	@echo "マスターデータを投入しています..."
+	$(OP_RUN_DEV) go run ./cmd/annict task seed-master
+
+# ローカル検証用の本番スナップショット: 本番バックアップを取得し、隔離DBで
+# PIIをマスクしてマスク結果をローカルに取り込み、本番画像を開発用R2バケットへ
+# コピーする。load-snapshotは両方を実行する。
+
+.PHONY: load-snapshot
+load-snapshot: load-snapshot-db load-snapshot-images ## マスク済みDBスナップショットの取り込みと本番画像のコピーを一括実行する
+
+.PHONY: load-snapshot-db
+load-snapshot-db: ## マスク済み本番スナップショットをローカルDBに取り込む
+	$(OP_RUN_DEV) bash scripts/load_snapshot_db.sh
+
+.PHONY: restore-snapshot-db
+restore-snapshot-db: ## tmp/ のマスク済みダンプからローカルDBを再復元する
+	$(OP_RUN_DEV) bash scripts/load_snapshot_db.sh restore
+
+.PHONY: load-snapshot-images
+load-snapshot-images: ## 本番の作品・プロフィール画像を開発用R2バケットへ同期する
+	$(OP_RUN_DEV) bash scripts/load_snapshot_images.sh
