@@ -12,11 +12,11 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// ErrInvalidPasswordResetToken はパスワードリセットトークンが無効であることを示すエラーです。
-// Handler はこのエラーを errors.Is で判定してトークン無効時の処理を行います。
+// ErrInvalidPasswordResetTokenはパスワードリセットトークンが無効であることを示すエラーです。
+// Handlerはこのエラーをerrors.Isで判定してトークン無効時の処理を行います。
 var ErrInvalidPasswordResetToken = repository.ErrInvalidPasswordResetToken
 
-// UpdatePasswordResetUsecase はパスワードリセットによるパスワード更新を行うユースケースです
+// UpdatePasswordResetUsecaseはパスワードリセットによるパスワード更新を行うユースケースです
 type UpdatePasswordResetUsecase struct {
 	db                     *sql.DB
 	passwordResetTokenRepo *repository.PasswordResetTokenRepository
@@ -25,7 +25,7 @@ type UpdatePasswordResetUsecase struct {
 	validator              *validator.PasswordUpdateValidator
 }
 
-// NewUpdatePasswordResetUsecase は新しいUpdatePasswordResetUsecaseを作成します
+// NewUpdatePasswordResetUsecaseは新しいUpdatePasswordResetUsecaseを作成します
 func NewUpdatePasswordResetUsecase(db *sql.DB, passwordResetTokenRepo *repository.PasswordResetTokenRepository, userRepo *repository.UserRepository, sessionRepo *repository.SessionRepository, validator *validator.PasswordUpdateValidator) *UpdatePasswordResetUsecase {
 	return &UpdatePasswordResetUsecase{
 		db:                     db,
@@ -36,20 +36,20 @@ func NewUpdatePasswordResetUsecase(db *sql.DB, passwordResetTokenRepo *repositor
 	}
 }
 
-// UpdatePasswordResetInput はユースケースの入力パラメータです
+// UpdatePasswordResetInputはユースケースの入力パラメータです
 type UpdatePasswordResetInput struct {
 	Token                string
 	Password             string
 	PasswordConfirmation string
 }
 
-// UpdatePasswordResetOutput はパスワード更新の結果を表します
+// UpdatePasswordResetOutputはパスワード更新の結果を表します
 type UpdatePasswordResetOutput struct {
 	UserID    model.UserID
 	SessionID string // 新しいセッションID
 }
 
-// Execute はバリデーション・パスワード更新・セッション作成を行います
+// Executeはバリデーション・パスワード更新・セッション作成を行います
 func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdatePasswordResetInput) (*UpdatePasswordResetOutput, error) {
 	// 1. バリデーション
 	if err := uc.validator.Validate(ctx, validator.PasswordUpdateValidatorInput{
@@ -101,9 +101,9 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdateP
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗: %w", err)
 	}
 
-	// NOT NULL制約があるフィールドの検証（fail-fast）
+	// NOT NULL制約があるフィールドの検証 (fail-fast)
 	if err := validator.ValidateNotNullTime(user.CreatedAt, "created_at", user.ID); err != nil {
-		slog.ErrorContext(ctx, "データベース制約違反を検出しました（NOT NULL制約）",
+		slog.ErrorContext(ctx, "データベース制約違反を検出しました (NOT NULL制約)",
 			"table", "users",
 			"field", "created_at",
 			"user_id", user.ID,
@@ -112,7 +112,7 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdateP
 		return nil, err
 	}
 	if err := validator.ValidateNotNullTime(user.UpdatedAt, "updated_at", user.ID); err != nil {
-		slog.ErrorContext(ctx, "データベース制約違反を検出しました（NOT NULL制約）",
+		slog.ErrorContext(ctx, "データベース制約違反を検出しました (NOT NULL制約)",
 			"table", "users",
 			"field", "updated_at",
 			"user_id", user.ID,

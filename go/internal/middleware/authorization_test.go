@@ -4,8 +4,10 @@ import (
 	"context"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
+	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
 )
@@ -22,6 +24,41 @@ func newUserWithRole(role int32) *model.User {
 func setUserContext(r *http.Request, user *model.User) *http.Request {
 	ctx := context.WithValue(r.Context(), middleware.UserContextKey, user)
 	return r.WithContext(ctx)
+}
+
+// assertForbiddenPageは403が、以前http.Errorが返していた1行のプレーンテキストでは
+// なく共通のエラーページとして配信されることを検証する。/dbの画面で権限の無い閲覧者が実際に
+// 受け取る403はこれで、ルートのミドルウェアがハンドラーに入る前に拒否するため。
+func assertForbiddenPage(t *testing.T, rr *httptest.ResponseRecorder) {
+	t.Helper()
+
+	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
+		t.Errorf("Content-Type = %q、期待値 = text/html; charset=utf-8", contentType)
+	}
+
+	body := rr.Body.String()
+	for _, expected := range []string{
+		"<title>アクセスできません | Annict</title>",
+		"この操作を行う権限がありません。",
+		`href="/"`,
+		"ホームに戻る",
+	} {
+		if !strings.Contains(body, expected) {
+			t.Errorf("403レスポンスに%qが含まれていません", expected)
+		}
+	}
+}
+
+// assertForbiddenIsNotRedirectedは、通常 (非HTMX) のリクエストへの応答が、共通の403
+// ページがhttp.Errorを置き換えて以降返しているもののままであることを検証する。すなわち文書
+// そのものを返し、ブラウザに解釈させる遷移の指示は付けない。
+func assertForbiddenIsNotRedirected(t *testing.T, rr *httptest.ResponseRecorder) {
+	t.Helper()
+
+	if got := rr.Header().Get("HX-Redirect"); got != "" {
+		t.Errorf("HX-Redirect = %q、期待値 = 空", got)
+	}
+	assertForbiddenPage(t, rr)
 }
 
 func TestIsAdmin(t *testing.T) {
@@ -58,7 +95,7 @@ func TestIsAdmin(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			if got := middleware.IsAdmin(tt.user); got != tt.want {
-				t.Errorf("IsAdmin() = %v, want %v", got, tt.want)
+				t.Errorf("IsAdmin() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
@@ -98,7 +135,7 @@ func TestIsEditor(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			if got := middleware.IsEditor(tt.user); got != tt.want {
-				t.Errorf("IsEditor() = %v, want %v", got, tt.want)
+				t.Errorf("IsEditor() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
@@ -138,7 +175,7 @@ func TestIsCommitter(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 			if got := middleware.IsCommitter(tt.user); got != tt.want {
-				t.Errorf("IsCommitter() = %v, want %v", got, tt.want)
+				t.Errorf("IsCommitter() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
@@ -147,7 +184,7 @@ func TestIsCommitter(t *testing.T) {
 func TestRequireCommitter(t *testing.T) {
 	t.Parallel()
 
-	// 後続ハンドラー（ミドルウェアを通過した場合に実行される）
+	// 後続ハンドラー (ミドルウェアを通過した場合に実行される)
 	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
@@ -192,7 +229,11 @@ func TestRequireCommitter(t *testing.T) {
 			middleware.RequireCommitter(nextHandler).ServeHTTP(rr, req)
 
 			if rr.Code != tt.wantStatus {
-				t.Errorf("RequireCommitter() status = %d, want %d", rr.Code, tt.wantStatus)
+				t.Errorf("RequireCommitter()のステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatus)
+			}
+
+			if tt.wantStatus == http.StatusForbidden {
+				assertForbiddenIsNotRedirected(t, rr)
 			}
 
 			// 未認証の場合はリダイレクト先を確認
@@ -253,7 +294,11 @@ func TestRequireAdmin(t *testing.T) {
 			middleware.RequireAdmin(nextHandler).ServeHTTP(rr, req)
 
 			if rr.Code != tt.wantStatus {
-				t.Errorf("RequireAdmin() status = %d, want %d", rr.Code, tt.wantStatus)
+				t.Errorf("RequireAdmin()のステータスコード = %d、期待値 = %d", rr.Code, tt.wantStatus)
+			}
+
+			if tt.wantStatus == http.StatusForbidden {
+				assertForbiddenIsNotRedirected(t, rr)
 			}
 
 			if tt.user == nil {
@@ -262,6 +307,60 @@ func TestRequireAdmin(t *testing.T) {
 					t.Error("未認証の場合はLocationヘッダーが必要")
 				}
 			}
+		})
+	}
+}
+
+// TestRequireRole_HTMXRequestIsRedirectedToForbiddenPageは、拒否されたHTMXリクエストが
+// 全画面の403へ送られることを固定する。DB一覧の非公開・削除はhx-targetを指定していない
+// hx-deleteで発行するため、そのままでは403の文書全体が押したボタンの中にスワップされる。
+// 閲覧者がここに到達するのは、一覧を開いたままロールが外れた場合に限られる (ボタンはロールを
+// 持つ閲覧者にしか描画されず、セッション切れは先にCSRFミドルウェアが捕まえる)。
+func TestRequireRole_HTMXRequestIsRedirectedToForbiddenPage(t *testing.T) {
+	t.Parallel()
+
+	nextHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	tests := []struct {
+		name       string
+		middleware func(http.Handler) http.Handler
+		user       *model.User
+		path       string
+	}{
+		{
+			name:       "RequireCommitter",
+			middleware: middleware.RequireCommitter,
+			user:       newUserWithRole(middleware.RoleUser),
+			path:       "/db/episodes/1/archive",
+		},
+		{
+			name:       "RequireAdmin",
+			middleware: middleware.RequireAdmin,
+			user:       newUserWithRole(middleware.RoleEditor),
+			path:       "/db/episodes/1",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			req := httptest.NewRequest(http.MethodDelete, tt.path, nil)
+			req.Header.Set("HX-Request", "true")
+			req = setUserContext(req, tt.user)
+			rr := httptest.NewRecorder()
+
+			tt.middleware(nextHandler).ServeHTTP(rr, req)
+
+			if rr.Code != http.StatusForbidden {
+				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusForbidden)
+			}
+			if got := rr.Header().Get("HX-Redirect"); got != httperror.ForbiddenPath {
+				t.Errorf("HX-Redirect = %q、期待値 = %q", got, httperror.ForbiddenPath)
+			}
+			assertForbiddenPage(t, rr)
 		})
 	}
 }

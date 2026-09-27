@@ -17,7 +17,7 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// CreateUserParams ユーザー作成のパラメータ
+// CreateUserParamsユーザー作成のパラメータ
 type CreateUserParams struct {
 	Username string
 	Email    string
@@ -25,19 +25,19 @@ type CreateUserParams struct {
 	Locale   string // デフォルトは "ja"
 }
 
-// CreateUserResult ユーザー作成の結果
+// CreateUserResultユーザー作成の結果
 type CreateUserResult struct {
 	UserID    model.UserID
 	ProfileID int64
 }
 
-// CreateUserUsecase ユーザー生成Usecase（シード専用、バルクインサート対応）
+// CreateUserUsecaseユーザー生成Usecase (シード専用、バルクインサート対応)
 type CreateUserUsecase struct {
 	db      *sql.DB
 	queries *query.Queries
 }
 
-// NewCreateUserUsecase 新しいCreateUserUsecaseを作成
+// NewCreateUserUsecase新しいCreateUserUsecaseを作成
 func NewCreateUserUsecase(db *sql.DB, queries *query.Queries) *CreateUserUsecase {
 	return &CreateUserUsecase{
 		db:      db,
@@ -45,25 +45,25 @@ func NewCreateUserUsecase(db *sql.DB, queries *query.Queries) *CreateUserUsecase
 	}
 }
 
-// ExecuteBatch 複数のユーザーをバッチで作成します
+// ExecuteBatch複数のユーザーをバッチで作成します
 // 1000件ごとにコミットしてパフォーマンスを最適化します
 func (uc *CreateUserUsecase) ExecuteBatch(ctx context.Context, users []CreateUserParams, progressBar *progressbar.ProgressBar) ([]CreateUserResult, error) {
 	return uc.executeBatchWithTx(ctx, nil, users, progressBar)
 }
 
-// ExecuteBatchWithTx 複数のユーザーをバッチで作成します（テスト用：既存トランザクションを使用）
+// ExecuteBatchWithTx複数のユーザーをバッチで作成します (テスト用：既存トランザクションを使用)
 // txがnilの場合は内部でトランザクションを作成します
 func (uc *CreateUserUsecase) ExecuteBatchWithTx(ctx context.Context, tx *sql.Tx, users []CreateUserParams, progressBar *progressbar.ProgressBar) ([]CreateUserResult, error) {
 	return uc.executeBatchWithTx(ctx, tx, users, progressBar)
 }
 
-// executeBatchWithTx 内部実装：トランザクションを受け取るか新規作成する
+// executeBatchWithTx内部実装：トランザクションを受け取るか新規作成する
 func (uc *CreateUserUsecase) executeBatchWithTx(ctx context.Context, existingTx *sql.Tx, users []CreateUserParams, progressBar *progressbar.ProgressBar) ([]CreateUserResult, error) {
 	results := make([]CreateUserResult, 0, len(users))
 
 	// 既存トランザクションがある場合は、バッチサイズを無視して全件処理
 	if existingTx != nil {
-		// マルチ行INSERTのチャンクサイズ（100件ずつ）
+		// マルチ行INSERTのチャンクサイズ (100件ずつ)
 		multiInsertChunkSize := 100
 		for i := 0; i < len(users); i += multiInsertChunkSize {
 			end := i + multiInsertChunkSize
@@ -75,7 +75,7 @@ func (uc *CreateUserUsecase) executeBatchWithTx(ctx context.Context, existingTx 
 			// マルチ行INSERTで作成
 			chunkResults, err := uc.createMultipleUsers(ctx, existingTx, chunk)
 			if err != nil {
-				return nil, fmt.Errorf("ユーザーマルチ行INSERT エラー: %w", err)
+				return nil, fmt.Errorf("ユーザーマルチ行INSERTエラー: %w", err)
 			}
 			results = append(results, chunkResults...)
 
@@ -116,7 +116,7 @@ func (uc *CreateUserUsecase) executeBatchWithTx(ctx context.Context, existingTx 
 			// マルチ行INSERTで作成
 			chunkResults, err := uc.createMultipleUsers(ctx, tx, chunk)
 			if err != nil {
-				return nil, fmt.Errorf("ユーザーマルチ行INSERT エラー: %w", err)
+				return nil, fmt.Errorf("ユーザーマルチ行INSERTエラー: %w", err)
 			}
 			results = append(results, chunkResults...)
 
@@ -135,16 +135,16 @@ func (uc *CreateUserUsecase) executeBatchWithTx(ctx context.Context, existingTx 
 	return results, nil
 }
 
-// createMultipleUsers 複数のユーザーとプロフィールをマルチ行INSERTで作成します（トランザクション内）
+// createMultipleUsers複数のユーザーとプロフィールをマルチ行INSERTで作成します (トランザクション内)
 func (uc *CreateUserUsecase) createMultipleUsers(ctx context.Context, tx *sql.Tx, usersList []CreateUserParams) ([]CreateUserResult, error) {
 	if len(usersList) == 0 {
 		return []CreateUserResult{}, nil
 	}
 
-	// 1. パスワードをハッシュ化（並列化で高速化）
+	// 1. パスワードをハッシュ化 (並列化で高速化)
 	encryptedPasswords := make([]string, len(usersList))
 
-	// goroutineの並列度を制限するセマフォ（CPUコア数 x 2）
+	// goroutineの並列度を制限するセマフォ (CPUコア数x 2)
 	// bcryptは計算コストが高いため、並列化することで大幅な高速化が期待できる
 	maxConcurrency := runtime.NumCPU() * 2
 	semaphore := make(chan struct{}, maxConcurrency)
@@ -157,13 +157,13 @@ func (uc *CreateUserUsecase) createMultipleUsers(ctx context.Context, tx *sql.Tx
 		go func(idx int, p CreateUserParams) {
 			defer wg.Done()
 
-			// セマフォを取得（並列度を制限）
+			// セマフォを取得 (並列度を制限)
 			semaphore <- struct{}{}
 			defer func() { <-semaphore }()
 
 			encrypted, err := auth.HashPassword(p.Password)
 			if err != nil {
-				errChan <- fmt.Errorf("パスワードハッシュ化エラー（username: %s）: %w", p.Username, err)
+				errChan <- fmt.Errorf("パスワードハッシュ化エラー (username: %s): %w", p.Username, err)
 				return
 			}
 			encryptedPasswords[idx] = encrypted
@@ -174,7 +174,7 @@ func (uc *CreateUserUsecase) createMultipleUsers(ctx context.Context, tx *sql.Tx
 	wg.Wait()
 	close(errChan)
 
-	// エラーチェック（最初のエラーのみ返す）
+	// エラーチェック (最初のエラーのみ返す)
 	if err := <-errChan; err != nil {
 		return nil, err
 	}
@@ -182,23 +182,23 @@ func (uc *CreateUserUsecase) createMultipleUsers(ctx context.Context, tx *sql.Tx
 	// 2. usersテーブルにマルチ行INSERTでユーザーを一括挿入
 	userIDs, err := uc.createMultipleUsersInDB(ctx, tx, usersList, encryptedPasswords)
 	if err != nil {
-		return nil, fmt.Errorf("usersテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("usersテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
 	// 3. profilesテーブルにマルチ行INSERTでプロフィールを一括挿入
 	profileIDs, err := uc.createMultipleProfilesInDB(ctx, tx, userIDs)
 	if err != nil {
-		return nil, fmt.Errorf("profilesテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("profilesテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
 	// 4. settingsテーブルにマルチ行INSERTで設定を一括挿入
 	if err := uc.createMultipleSettingsInDB(ctx, tx, userIDs); err != nil {
-		return nil, fmt.Errorf("settingsテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("settingsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
 	// 5. email_notificationsテーブルにマルチ行INSERTでメール通知設定を一括挿入
 	if err := uc.createMultipleEmailNotificationsInDB(ctx, tx, userIDs); err != nil {
-		return nil, fmt.Errorf("email_notificationsテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("email_notificationsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
 	// 6. 結果を返す
@@ -232,7 +232,7 @@ func (uc *CreateUserUsecase) createMultipleUsersInDB(ctx context.Context, tx *sq
 			queryBuilder += ", "
 		}
 
-		// プレースホルダーの開始位置（各行は10個のパラメータ）
+		// プレースホルダーの開始位置 (各行は10個のパラメータ)
 		offset := i * 10
 		queryBuilder += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)",
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7, offset+8, offset+9, offset+10)
@@ -263,7 +263,7 @@ func (uc *CreateUserUsecase) createMultipleUsersInDB(ctx context.Context, tx *sq
 	// マルチ行INSERTを実行
 	rows, err := tx.QueryContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return nil, fmt.Errorf("usersテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("usersテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 	defer rows.Close()
 
@@ -272,7 +272,7 @@ func (uc *CreateUserUsecase) createMultipleUsersInDB(ctx context.Context, tx *sq
 	for rows.Next() {
 		var userID int64
 		if err := rows.Scan(&userID); err != nil {
-			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
+			return nil, fmt.Errorf("RETURNING idのスキャンエラー: %w", err)
 		}
 		userIDs = append(userIDs, userID)
 	}
@@ -302,7 +302,7 @@ func (uc *CreateUserUsecase) createMultipleProfilesInDB(ctx context.Context, tx 
 			queryBuilder += ", "
 		}
 
-		// プレースホルダーの開始位置（各行は6個のパラメータ）
+		// プレースホルダーの開始位置 (各行は6個のパラメータ)
 		offset := i * 6
 		queryBuilder += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d)",
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6)
@@ -323,7 +323,7 @@ func (uc *CreateUserUsecase) createMultipleProfilesInDB(ctx context.Context, tx 
 	// マルチ行INSERTを実行
 	rows, err := tx.QueryContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return nil, fmt.Errorf("profilesテーブルへのマルチ行INSERT エラー: %w", err)
+		return nil, fmt.Errorf("profilesテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 	defer rows.Close()
 
@@ -332,7 +332,7 @@ func (uc *CreateUserUsecase) createMultipleProfilesInDB(ctx context.Context, tx 
 	for rows.Next() {
 		var profileID int64
 		if err := rows.Scan(&profileID); err != nil {
-			return nil, fmt.Errorf("RETURNING id のスキャンエラー: %w", err)
+			return nil, fmt.Errorf("RETURNING idのスキャンエラー: %w", err)
 		}
 		profileIDs = append(profileIDs, profileID)
 	}
@@ -377,13 +377,13 @@ func (uc *CreateUserUsecase) createMultipleSettingsInDB(ctx context.Context, tx 
 			queryBuilder += ", "
 		}
 
-		// プレースホルダーの開始位置（各行は18個のパラメータ）
+		// プレースホルダーの開始位置 (各行は18個のパラメータ)
 		offset := i * 18
 		queryBuilder += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)",
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7, offset+8, offset+9,
 			offset+10, offset+11, offset+12, offset+13, offset+14, offset+15, offset+16, offset+17, offset+18)
 
-		// パラメータを追加（CompleteSignUpUsecaseと同じデフォルト値）
+		// パラメータを追加 (CompleteSignUpUsecaseと同じデフォルト値)
 		values = append(values,
 			userID,            // user_id
 			true,              // privacy_policy_agreed
@@ -409,7 +409,7 @@ func (uc *CreateUserUsecase) createMultipleSettingsInDB(ctx context.Context, tx 
 	// マルチ行INSERTを実行
 	_, err := tx.ExecContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return fmt.Errorf("settingsテーブルへのマルチ行INSERT エラー: %w", err)
+		return fmt.Errorf("settingsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
 	return nil
@@ -440,15 +440,15 @@ func (uc *CreateUserUsecase) createMultipleEmailNotificationsInDB(ctx context.Co
 			queryBuilder += ", "
 		}
 
-		// プレースホルダーの開始位置（各行は10個のパラメータ）
+		// プレースホルダーの開始位置 (各行は10個のパラメータ)
 		offset := i * 10
 		queryBuilder += fmt.Sprintf("($%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d, $%d)",
 			offset+1, offset+2, offset+3, offset+4, offset+5, offset+6, offset+7, offset+8, offset+9, offset+10)
 
-		// UUIDを生成（CompleteSignUpUsecaseと同じ形式）
+		// UUIDを生成 (CompleteSignUpUsecaseと同じ形式)
 		unsubscriptionKey := fmt.Sprintf("%s-%s", uuid.New().String(), uuid.New().String())
 
-		// パラメータを追加（CompleteSignUpUsecaseと同じデフォルト値）
+		// パラメータを追加 (CompleteSignUpUsecaseと同じデフォルト値)
 		values = append(values,
 			userID,            // user_id
 			unsubscriptionKey, // unsubscription_key
@@ -466,19 +466,19 @@ func (uc *CreateUserUsecase) createMultipleEmailNotificationsInDB(ctx context.Co
 	// マルチ行INSERTを実行
 	_, err := tx.ExecContext(ctx, queryBuilder, values...)
 	if err != nil {
-		return fmt.Errorf("email_notificationsテーブルへのマルチ行INSERT エラー: %w", err)
+		return fmt.Errorf("email_notificationsテーブルへのマルチ行INSERTエラー: %w", err)
 	}
 
 	return nil
 }
 
-// createSingleUser 単一のユーザーとプロフィールを作成します（トランザクション内）
+// createSingleUser単一のユーザーとプロフィールを作成します (トランザクション内)
 // 注意: この関数は後方互換性のために残していますが、
 // パフォーマンスのためにcreateMultipleUsersの使用を推奨します
 //
 //lint:ignore U1000 後方互換性のために保持
 func (uc *CreateUserUsecase) createSingleUser(ctx context.Context, tx *sql.Tx, params CreateUserParams) (*CreateUserResult, error) {
-	// パスワードをbcryptでハッシュ化（Rails互換）
+	// パスワードをbcryptでハッシュ化 (Rails互換)
 	encryptedPassword, err := auth.HashPassword(params.Password)
 	if err != nil {
 		return nil, fmt.Errorf("パスワードハッシュ化エラー: %w", err)

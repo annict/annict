@@ -11,16 +11,16 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateUserUsecase_ExecuteBatch はExecuteBatchメソッドのテスト
+// TestCreateUserUsecase_ExecuteBatchはExecuteBatchメソッドのテスト
 func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
-	// テストDBをセットアップ（トランザクションは各サブテストで作成）
+	// テストDBをセットアップ (トランザクションは各サブテストで作成)
 	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
 	queries := query.New(db)
 	uc := NewCreateUserUsecase(db, queries)
 
-	// ユニークなIDを生成（テスト間の衝突を避ける）
+	// ユニークなIDを生成 (テスト間の衝突を避ける)
 	uniqueID := fmt.Sprintf("%d", time.Now().UnixNano())
 
 	// テストケース
@@ -69,7 +69,7 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 			wantErr:   false,
 		},
 		{
-			name: "正常系: ロケール未指定（デフォルトja）",
+			name: "正常系: ロケール未指定 (デフォルトja)",
 			users: []CreateUserParams{
 				{
 					Username: fmt.Sprintf("no_locale_user_%s", uniqueID),
@@ -90,18 +90,18 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 
 			ctx := context.Background()
 
-			// ExecuteBatchWithTxを実行（テスト用トランザクションを使用）
+			// ExecuteBatchWithTxを実行 (テスト用トランザクションを使用)
 			results, err := uc.ExecuteBatchWithTx(ctx, tx, tt.users, nil)
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ExecuteBatch() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ExecuteBatch()のエラー = %v、期待値 = %v", err, tt.wantErr)
 				return
 			}
 
 			// 結果の数をチェック
 			if len(results) != tt.wantCount {
-				t.Errorf("ExecuteBatch() got %d results, want %d", len(results), tt.wantCount)
+				t.Errorf("ExecuteBatch()の結果件数 = %d、期待値 = %d", len(results), tt.wantCount)
 				return
 			}
 
@@ -109,10 +109,10 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 			for i, result := range results {
 				// UserIDとProfileIDが取得できていることを確認
 				if result.UserID == 0 {
-					t.Errorf("result[%d].UserID is 0", i)
+					t.Errorf("result[%d].UserID = 0、期待値 = 0以外", i)
 				}
 				if result.ProfileID == 0 {
-					t.Errorf("result[%d].ProfileID is 0", i)
+					t.Errorf("result[%d].ProfileID = 0、期待値 = 0以外", i)
 				}
 
 				// usersテーブルにレコードが作成されたか確認
@@ -126,19 +126,19 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 
 				// ユーザー名とメールアドレスが正しいか確認
 				if username != tt.users[i].Username {
-					t.Errorf("username = %v, want %v", username, tt.users[i].Username)
+					t.Errorf("username = %v、期待値 = %v", username, tt.users[i].Username)
 				}
 				if email != tt.users[i].Email {
-					t.Errorf("email = %v, want %v", email, tt.users[i].Email)
+					t.Errorf("email = %v、期待値 = %v", email, tt.users[i].Email)
 				}
 
-				// ロケールが正しいか確認（空文字の場合は"ja"がデフォルト）
+				// ロケールが正しいか確認 (空文字の場合は"ja"がデフォルト)
 				expectedLocale := tt.users[i].Locale
 				if expectedLocale == "" {
 					expectedLocale = "ja"
 				}
 				if locale != expectedLocale {
-					t.Errorf("locale = %v, want %v", locale, expectedLocale)
+					t.Errorf("locale = %v、期待値 = %v", locale, expectedLocale)
 				}
 
 				// profilesテーブルにレコードが作成されたか確認
@@ -152,7 +152,7 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 
 				// プロフィールのuser_idが正しいか確認
 				if profileUserID != int64(result.UserID) {
-					t.Errorf("profile.user_id = %v, want %v", profileUserID, result.UserID)
+					t.Errorf("profile.user_id = %v、期待値 = %v", profileUserID, result.UserID)
 				}
 
 				// settingsテーブルにレコードが作成されたか確認
@@ -167,12 +167,12 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 
 				// 設定のuser_idが正しいか確認
 				if settingUserID != int64(result.UserID) {
-					t.Errorf("setting.user_id = %v, want %v", settingUserID, result.UserID)
+					t.Errorf("setting.user_id = %v、期待値 = %v", settingUserID, result.UserID)
 				}
 
 				// privacy_policy_agreedがtrueであることを確認
 				if !privacyPolicyAgreed {
-					t.Errorf("privacy_policy_agreed = %v, want true", privacyPolicyAgreed)
+					t.Errorf("privacy_policy_agreed = %v、期待値 = true", privacyPolicyAgreed)
 				}
 
 				// email_notificationsテーブルにレコードが作成されたか確認
@@ -187,19 +187,19 @@ func TestCreateUserUsecase_ExecuteBatch(t *testing.T) {
 
 				// メール通知設定のuser_idが正しいか確認
 				if emailNotificationUserID != int64(result.UserID) {
-					t.Errorf("email_notification.user_id = %v, want %v", emailNotificationUserID, result.UserID)
+					t.Errorf("email_notification.user_id = %v、期待値 = %v", emailNotificationUserID, result.UserID)
 				}
 
 				// unsubscription_keyが空でないことを確認
 				if unsubscriptionKey == "" {
-					t.Error("unsubscription_key should not be empty")
+					t.Error("unsubscription_keyが空だった")
 				}
 			}
 		})
 	}
 }
 
-// TestCreateUserUsecase_PasswordHashing はパスワードハッシュ化のテスト
+// TestCreateUserUsecase_PasswordHashingはパスワードハッシュ化のテスト
 func TestCreateUserUsecase_PasswordHashing(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
@@ -222,11 +222,11 @@ func TestCreateUserUsecase_PasswordHashing(t *testing.T) {
 
 	results, err := uc.ExecuteBatchWithTx(ctx, tx, users, nil)
 	if err != nil {
-		t.Fatalf("ExecuteBatch() error = %v", err)
+		t.Fatalf("ExecuteBatch()のエラー = %v", err)
 	}
 
 	if len(results) != 1 {
-		t.Fatalf("ExecuteBatch() returned %d results, want 1", len(results))
+		t.Fatalf("ExecuteBatch()の結果件数 = %d、期待値 = 1", len(results))
 	}
 
 	// DBからencrypted_passwordを取得
@@ -260,7 +260,7 @@ func TestCreateUserUsecase_PasswordHashing(t *testing.T) {
 	}
 }
 
-// TestCreateUserUsecase_LargeBatch は大量のユーザー作成のテスト
+// TestCreateUserUsecase_LargeBatchは大量のユーザー作成のテスト
 func TestCreateUserUsecase_LargeBatch(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
@@ -271,7 +271,7 @@ func TestCreateUserUsecase_LargeBatch(t *testing.T) {
 
 	ctx := context.Background()
 
-	// 250人のユーザーを作成（100件チャンク×3回でマルチチャンク処理を検証）
+	// 250人のユーザーを作成 (100件チャンク×3回でマルチチャンク処理を検証)
 	userCount := 250
 	users := make([]CreateUserParams, userCount)
 	for i := 0; i < userCount; i++ {
@@ -283,24 +283,24 @@ func TestCreateUserUsecase_LargeBatch(t *testing.T) {
 		}
 	}
 
-	// ExecuteBatchWithTxを実行（テスト用トランザクションを使用）
+	// ExecuteBatchWithTxを実行 (テスト用トランザクションを使用)
 	results, err := uc.ExecuteBatchWithTx(ctx, tx, users, nil)
 	if err != nil {
-		t.Fatalf("ExecuteBatch() error = %v", err)
+		t.Fatalf("ExecuteBatch()のエラー = %v", err)
 	}
 
 	// 結果の数をチェック
 	if len(results) != userCount {
-		t.Errorf("ExecuteBatch() got %d results, want %d", len(results), userCount)
+		t.Errorf("ExecuteBatch()の結果件数 = %d、期待値 = %d", len(results), userCount)
 	}
 
 	// 最初と最後のユーザーを検証
 	if len(results) > 0 {
 		if results[0].UserID == 0 {
-			t.Error("results[0].UserID is 0")
+			t.Error("results[0].UserID = 0、期待値 = 0以外")
 		}
 		if results[len(results)-1].UserID == 0 {
-			t.Error("results[last].UserID is 0")
+			t.Error("results[last].UserID = 0、期待値 = 0以外")
 		}
 	}
 }

@@ -61,8 +61,8 @@ func TestShow(t *testing.T) {
 			// リクエストを作成
 			req := httptest.NewRequest(http.MethodGet, "/manifest.json", nil)
 
-			// i18n.T が動作するように locale をコンテキストに設定
-			// GetLocalizer が自動的に localizer を作成してくれる
+			// i18n.Tが動作するようにlocaleをコンテキストに設定
+			// GetLocalizerが自動的にlocalizerを作成してくれる
 			ctx := context.Background()
 			ctx = i18n.SetLocale(ctx, i18n.LangJa)
 			req = req.WithContext(ctx)
@@ -74,13 +74,13 @@ func TestShow(t *testing.T) {
 
 			// ステータスコードを確認
 			if rr.Code != tt.wantStatusCode {
-				t.Errorf("ステータスコード = %v, want %v", rr.Code, tt.wantStatusCode)
+				t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, tt.wantStatusCode)
 			}
 
 			// Content-Typeを確認
 			contentType := rr.Header().Get("Content-Type")
 			if contentType != tt.wantContentType {
-				t.Errorf("Content-Type = %v, want %v", contentType, tt.wantContentType)
+				t.Errorf("Content-Type = %v、期待値 = %v", contentType, tt.wantContentType)
 			}
 
 			// JSONをパース
@@ -89,74 +89,74 @@ func TestShow(t *testing.T) {
 				t.Fatalf("JSONのパースに失敗しました: %v", err)
 			}
 
-			// name を確認
+			// nameを確認
 			if manifest.Name != tt.wantName {
-				t.Errorf("Name = %v, want %v", manifest.Name, tt.wantName)
+				t.Errorf("Name = %v、期待値 = %v", manifest.Name, tt.wantName)
 			}
 
-			// short_name を確認
+			// short_nameを確認
 			if manifest.ShortName != tt.wantShortName {
-				t.Errorf("ShortName = %v, want %v", manifest.ShortName, tt.wantShortName)
+				t.Errorf("ShortName = %v、期待値 = %v", manifest.ShortName, tt.wantShortName)
 			}
 
 			// その他のフィールドを確認
 			if manifest.BackgroundColor != "#f85b73" {
-				t.Errorf("BackgroundColor = %v, want #f85b73", manifest.BackgroundColor)
+				t.Errorf("BackgroundColor = %v、期待値 = #f85b73", manifest.BackgroundColor)
 			}
 			if manifest.ThemeColor != "#f85b73" {
-				t.Errorf("ThemeColor = %v, want #f85b73", manifest.ThemeColor)
+				t.Errorf("ThemeColor = %v、期待値 = #f85b73", manifest.ThemeColor)
 			}
 			if manifest.Display != "standalone" {
-				t.Errorf("Display = %v, want standalone", manifest.Display)
+				t.Errorf("Display = %v、期待値 = standalone", manifest.Display)
 			}
 			if manifest.Scope != "/" {
-				t.Errorf("Scope = %v, want /", manifest.Scope)
+				t.Errorf("Scope = %v、期待値 = /", manifest.Scope)
 			}
 			if manifest.StartURL != "/" {
-				t.Errorf("StartURL = %v, want /", manifest.StartURL)
+				t.Errorf("StartURL = %v、期待値 = /", manifest.StartURL)
 			}
 
-			// description を確認（空でないこと）
+			// descriptionを確認 (空でないこと)
 			if manifest.Description == "" {
-				t.Error("Description が空です")
+				t.Error("Descriptionが空です")
 			}
 
-			// icons を確認
+			// iconsを確認
 			if len(manifest.Icons) != 2 {
-				t.Errorf("Icons の数 = %v, want 2", len(manifest.Icons))
+				t.Errorf("Iconsの数 = %v、期待値 = 2", len(manifest.Icons))
 			}
 
-			// 192x192 のアイコンを確認
+			// 192x192のアイコンを確認
 			if len(manifest.Icons) > 0 {
 				icon := manifest.Icons[0]
 				if icon.Sizes != "192x192" {
-					t.Errorf("Icons[0].Sizes = %v, want 192x192", icon.Sizes)
+					t.Errorf("Icons[0].Sizes = %v、期待値 = 192x192", icon.Sizes)
 				}
 				if icon.Src != "/static/images/icon-192.png" {
-					t.Errorf("Icons[0].Src = %v, want /static/images/icon-192.png", icon.Src)
+					t.Errorf("Icons[0].Src = %v、期待値 = /static/images/icon-192.png", icon.Src)
 				}
 				if icon.Type != "image/png" {
-					t.Errorf("Icons[0].Type = %v, want image/png", icon.Type)
+					t.Errorf("Icons[0].Type = %v、期待値 = image/png", icon.Type)
 				}
 				if icon.Purpose != "any maskable" {
-					t.Errorf("Icons[0].Purpose = %v, want any maskable", icon.Purpose)
+					t.Errorf("Icons[0].Purpose = %v、期待値 = any maskable", icon.Purpose)
 				}
 			}
 
-			// 512x512 のアイコンを確認
+			// 512x512のアイコンを確認
 			if len(manifest.Icons) > 1 {
 				icon := manifest.Icons[1]
 				if icon.Sizes != "512x512" {
-					t.Errorf("Icons[1].Sizes = %v, want 512x512", icon.Sizes)
+					t.Errorf("Icons[1].Sizes = %v、期待値 = 512x512", icon.Sizes)
 				}
 				if icon.Src != "/static/images/icon-512.png" {
-					t.Errorf("Icons[1].Src = %v, want /static/images/icon-512.png", icon.Src)
+					t.Errorf("Icons[1].Src = %v、期待値 = /static/images/icon-512.png", icon.Src)
 				}
 				if icon.Type != "image/png" {
-					t.Errorf("Icons[1].Type = %v, want image/png", icon.Type)
+					t.Errorf("Icons[1].Type = %v、期待値 = image/png", icon.Type)
 				}
 				if icon.Purpose != "any maskable" {
-					t.Errorf("Icons[1].Purpose = %v, want any maskable", icon.Purpose)
+					t.Errorf("Icons[1].Purpose = %v、期待値 = any maskable", icon.Purpose)
 				}
 			}
 		})

@@ -6,18 +6,18 @@ import (
 	"testing"
 )
 
-// TestLoad は環境変数から直接設定を読み込むテスト
+// TestLoadは環境変数から直接設定を読み込むテスト
 func TestLoad(t *testing.T) {
 	// 元のワーキングディレクトリを保存
 	originalWd, err := os.Getwd()
 	if err != nil {
-		t.Fatalf("failed to get current directory: %v", err)
+		t.Fatalf("カレントディレクトリの取得エラー = %v", err)
 	}
 	defer func() { _ = os.Chdir(originalWd) }() // テスト終了後に元のディレクトリに戻す
 
-	// テストの前にワーキングディレクトリをプロジェクトルート（go/）に変更
+	// テストの前にワーキングディレクトリをプロジェクトルート (go/) に変更
 	if err := os.Chdir("../.."); err != nil {
-		t.Fatalf("failed to change directory: %v", err)
+		t.Fatalf("ディレクトリの移動エラー = %v", err)
 	}
 
 	// 必須の環境変数を設定
@@ -52,21 +52,21 @@ func TestLoad(t *testing.T) {
 
 	cfg, err := Load()
 	if err != nil {
-		t.Fatalf("failed to load config: %v", err)
+		t.Fatalf("設定の読み込みエラー = %v", err)
 	}
 
 	// 基本的な設定が読み込まれていることを確認
 	if cfg.DatabaseURL == "" {
-		t.Error("DatabaseURL should not be empty")
+		t.Error("DatabaseURLが空だった")
 	}
 	if cfg.Port == "" {
-		t.Error("Port should not be empty")
+		t.Error("Portが空だった")
 	}
 	if cfg.Env != "dev" {
-		t.Errorf("Env = %v, want dev", cfg.Env)
+		t.Errorf("Env = %v、期待値 = dev", cfg.Env)
 	}
 
-	t.Logf("Config loaded successfully:")
+	t.Logf("設定を読み込んだ:")
 	t.Logf("  Env: %s", cfg.Env)
 	t.Logf("  DatabaseURL: %s", cfg.DatabaseURL)
 	t.Logf("  Port: %s", cfg.Port)
@@ -84,7 +84,7 @@ func TestDatabaseDSN(t *testing.T) {
 	expected := "postgres://user:pass@localhost:5432/testdb?sslmode=disable"
 
 	if dsn != expected {
-		t.Errorf("DatabaseDSN() = %v, want %v", dsn, expected)
+		t.Errorf("DatabaseDSN() = %v、期待値 = %v", dsn, expected)
 	}
 }
 
@@ -103,7 +103,7 @@ func TestIsDev(t *testing.T) {
 		t.Run(tt.env, func(t *testing.T) {
 			cfg := &Config{Env: tt.env}
 			if got := cfg.IsDev(); got != tt.want {
-				t.Errorf("IsDev() = %v, want %v", got, tt.want)
+				t.Errorf("IsDev() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
@@ -113,18 +113,22 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 	// 元のワーキングディレクトリを保存
 	originalWd, err := os.Getwd()
 	if err != nil {
-		t.Fatalf("failed to get current directory: %v", err)
+		t.Fatalf("カレントディレクトリの取得エラー = %v", err)
 	}
 	defer func() { _ = os.Chdir(originalWd) }() // テスト終了後に元のディレクトリに戻す
 
-	// テストの前にワーキングディレクトリをプロジェクトルート（go/）に変更
+	// テストの前にワーキングディレクトリをプロジェクトルート (go/) に変更
 	if err := os.Chdir("../.."); err != nil {
-		t.Fatalf("failed to change directory: %v", err)
+		t.Fatalf("ディレクトリの移動エラー = %v", err)
 	}
 
-	// 既存の環境変数を保存（テスト後に復元）
+	// 既存の環境変数を保存 (テスト後に復元)
 	originalSiteKey := os.Getenv("ANNICT_TURNSTILE_SITE_KEY")
 	originalSecretKey := os.Getenv("ANNICT_TURNSTILE_SECRET_KEY")
+	// ANNICT_TURNSTILE_DISABLEも保存・復元する。devの実 .envでこのフラグが
+	// trueに設定されていると、非prodでTurnstileキーが空に落とされ、本テストの
+	// キー設定検証が壊れるため、本テスト中は明示的に未設定にする。
+	originalDisableTurnstile := os.Getenv("ANNICT_TURNSTILE_DISABLE")
 	defer func() {
 		if originalSiteKey != "" {
 			_ = os.Setenv("ANNICT_TURNSTILE_SITE_KEY", originalSiteKey)
@@ -135,6 +139,11 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 			_ = os.Setenv("ANNICT_TURNSTILE_SECRET_KEY", originalSecretKey)
 		} else {
 			_ = os.Unsetenv("ANNICT_TURNSTILE_SECRET_KEY")
+		}
+		if originalDisableTurnstile != "" {
+			_ = os.Setenv("ANNICT_TURNSTILE_DISABLE", originalDisableTurnstile)
+		} else {
+			_ = os.Unsetenv("ANNICT_TURNSTILE_DISABLE")
 		}
 	}()
 
@@ -157,7 +166,7 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 			shouldSetSecretKey: true,
 		},
 		{
-			name:               "Turnstile環境変数が設定されていない場合（テスト環境のモック設定）",
+			name:               "Turnstile環境変数が設定されていない場合 (テスト環境のモック設定)",
 			siteKey:            "",
 			secretKey:          "",
 			wantSiteKey:        "",
@@ -190,6 +199,11 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 			_ = os.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
 			_ = os.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
 
+			// ANNICT_TURNSTILE_DISABLEを未設定にして、キー設定の検証が
+			// 無効化フラグの影響を受けないようにする。本テストはsite/secret
+			// キーがそのまま反映されることだけを検証する。
+			_ = os.Unsetenv("ANNICT_TURNSTILE_DISABLE")
+
 			// Turnstile環境変数を設定
 			if tt.shouldSetSiteKey {
 				_ = os.Setenv("ANNICT_TURNSTILE_SITE_KEY", tt.siteKey)
@@ -202,18 +216,136 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 				_ = os.Unsetenv("ANNICT_TURNSTILE_SECRET_KEY")
 			}
 
-			// Config を読み込み
+			// Configを読み込み
 			cfg, err := Load()
 			if err != nil {
-				t.Fatalf("Load() failed: %v", err)
+				t.Fatalf("Load()のエラー = %v", err)
 			}
 
 			// Turnstile設定を検証
 			if cfg.TurnstileSiteKey != tt.wantSiteKey {
-				t.Errorf("TurnstileSiteKey = %q, want %q", cfg.TurnstileSiteKey, tt.wantSiteKey)
+				t.Errorf("TurnstileSiteKey = %q、期待値 = %q", cfg.TurnstileSiteKey, tt.wantSiteKey)
 			}
 			if cfg.TurnstileSecretKey != tt.wantSecretKey {
-				t.Errorf("TurnstileSecretKey = %q, want %q", cfg.TurnstileSecretKey, tt.wantSecretKey)
+				t.Errorf("TurnstileSecretKey = %q、期待値 = %q", cfg.TurnstileSecretKey, tt.wantSecretKey)
+			}
+		})
+	}
+}
+
+// ANNICT_TURNSTILE_DISABLEのdev用オーバーライドを検証する。非本番では
+// Turnstileの2キーを空に落とし (既存の「キー空」経路でTurnstileが無効化される)、
+// 本番では無視する (fail-closed) ため、環境変数の漏れでBot対策が黙って無効化される
+// ことはない。
+func TestLoad_DisableTurnstile(t *testing.T) {
+	// 元のワーキングディレクトリを保存
+	originalWd, err := os.Getwd()
+	if err != nil {
+		t.Fatalf("カレントディレクトリの取得エラー = %v", err)
+	}
+	defer func() { _ = os.Chdir(originalWd) }() // テスト終了後に元のディレクトリに戻す
+
+	// テストの前にワーキングディレクトリをプロジェクトルート (go/) に変更
+	if err := os.Chdir("../.."); err != nil {
+		t.Fatalf("ディレクトリの移動エラー = %v", err)
+	}
+
+	// テスト後にANNICT_TURNSTILE_DISABLEを復元する。下の未設定ケースは自動
+	// 復元なしでこの変数を消し、devの実 .envではtrueが入っているため、後続の
+	// テストへ漏れないようここで復元する。
+	originalDisableTurnstile := os.Getenv("ANNICT_TURNSTILE_DISABLE")
+	defer func() {
+		if originalDisableTurnstile != "" {
+			_ = os.Setenv("ANNICT_TURNSTILE_DISABLE", originalDisableTurnstile)
+		} else {
+			_ = os.Unsetenv("ANNICT_TURNSTILE_DISABLE")
+		}
+	}()
+
+	// Turnstileキーがセットされている前提を作るためのサンプル値
+	const (
+		sampleSiteKey   = "1x00000000000000000000AA"
+		sampleSecretKey = "1x0000000000000000000000000000000AA"
+	)
+
+	tests := []struct {
+		name          string
+		env           string
+		disableFlag   string // 空文字列は「未設定」を表す
+		wantSiteKey   string
+		wantSecretKey string
+	}{
+		{
+			name:          "dev + フラグtrueで両キーが空に落ちる",
+			env:           "dev",
+			disableFlag:   "true",
+			wantSiteKey:   "",
+			wantSecretKey: "",
+		},
+		{
+			name:          "test + フラグtrueで両キーが空に落ちる",
+			env:           "test",
+			disableFlag:   "true",
+			wantSiteKey:   "",
+			wantSecretKey: "",
+		},
+		{
+			name:          "prod + フラグtrueでもキーは維持される (fail-closed)",
+			env:           "prod",
+			disableFlag:   "true",
+			wantSiteKey:   sampleSiteKey,
+			wantSecretKey: sampleSecretKey,
+		},
+		{
+			name:          "dev + フラグ未設定ならキーは維持される",
+			env:           "dev",
+			disableFlag:   "",
+			wantSiteKey:   sampleSiteKey,
+			wantSecretKey: sampleSecretKey,
+		},
+		{
+			name:          "dev + フラグfalseならキーは維持される",
+			env:           "dev",
+			disableFlag:   "false",
+			wantSiteKey:   sampleSiteKey,
+			wantSecretKey: sampleSecretKey,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 必須の環境変数を設定
+			t.Setenv("APP_ENV", tt.env)
+			t.Setenv("DATABASE_URL", "postgres://test:test@localhost:5432/test")
+			t.Setenv("ANNICT_PORT", "4004")
+			t.Setenv("ANNICT_DOMAIN", "test.example.com")
+			t.Setenv("ANNICT_COOKIE_DOMAIN", ".test.example.com")
+			t.Setenv("ANNICT_SESSION_SECURE", "false")
+			t.Setenv("ANNICT_SESSION_HTTPONLY", "true")
+			t.Setenv("ANNICT_IMGPROXY_ENDPOINT", "http://test:8080")
+			t.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
+			t.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
+
+			// Turnstileキーは常にセットしておき、無効化フラグの効果だけを見る
+			t.Setenv("ANNICT_TURNSTILE_SITE_KEY", sampleSiteKey)
+			t.Setenv("ANNICT_TURNSTILE_SECRET_KEY", sampleSecretKey)
+
+			if tt.disableFlag != "" {
+				t.Setenv("ANNICT_TURNSTILE_DISABLE", tt.disableFlag)
+			} else {
+				_ = os.Unsetenv("ANNICT_TURNSTILE_DISABLE")
+			}
+
+			cfg, err := Load()
+			if err != nil {
+				t.Fatalf("Load()のエラー = %v", err)
+			}
+
+			if cfg.TurnstileSiteKey != tt.wantSiteKey {
+				t.Errorf("TurnstileSiteKey = %q、期待値 = %q", cfg.TurnstileSiteKey, tt.wantSiteKey)
+			}
+			if cfg.TurnstileSecretKey != tt.wantSecretKey {
+				t.Errorf("TurnstileSecretKey = %q、期待値 = %q", cfg.TurnstileSecretKey, tt.wantSecretKey)
 			}
 		})
 	}
@@ -261,7 +393,7 @@ func TestParseAdminIPs(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := parseAdminIPs(tt.input)
 			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("parseAdminIPs(%q) = %v, want %v", tt.input, got, tt.want)
+				t.Errorf("parseAdminIPs(%q) = %v、期待値 = %v", tt.input, got, tt.want)
 			}
 		})
 	}
@@ -299,17 +431,17 @@ func TestParseSentryTracesSampleRate(t *testing.T) {
 			expected: 0.75,
 		},
 		{
-			name:     "無効な値（文字列）はデフォルト値0.5",
+			name:     "無効な値 (文字列) はデフォルト値0.5",
 			input:    "invalid",
 			expected: 0.5,
 		},
 		{
-			name:     "範囲外の値（負数）はデフォルト値0.5",
+			name:     "範囲外の値 (負数) はデフォルト値0.5",
 			input:    "-0.1",
 			expected: 0.5,
 		},
 		{
-			name:     "範囲外の値（1より大きい）はデフォルト値0.5",
+			name:     "範囲外の値 (1より大きい) はデフォルト値0.5",
 			input:    "1.5",
 			expected: 0.5,
 		},
@@ -319,7 +451,7 @@ func TestParseSentryTracesSampleRate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			result := parseSentryTracesSampleRate(tt.input)
 			if result != tt.expected {
-				t.Errorf("parseSentryTracesSampleRate(%q) = %v, want %v", tt.input, result, tt.expected)
+				t.Errorf("parseSentryTracesSampleRate(%q) = %v、期待値 = %v", tt.input, result, tt.expected)
 			}
 		})
 	}
@@ -329,13 +461,13 @@ func TestLoad_MaintenanceMode(t *testing.T) {
 	// 元のワーキングディレクトリを保存
 	originalWd, err := os.Getwd()
 	if err != nil {
-		t.Fatalf("failed to get current directory: %v", err)
+		t.Fatalf("カレントディレクトリの取得エラー = %v", err)
 	}
 	defer func() { _ = os.Chdir(originalWd) }()
 
-	// テストの前にワーキングディレクトリをプロジェクトルート（go/）に変更
+	// テストの前にワーキングディレクトリをプロジェクトルート (go/) に変更
 	if err := os.Chdir("../.."); err != nil {
-		t.Fatalf("failed to change directory: %v", err)
+		t.Fatalf("ディレクトリの移動エラー = %v", err)
 	}
 
 	// 既存の環境変数を保存
@@ -424,34 +556,27 @@ func TestLoad_MaintenanceMode(t *testing.T) {
 				_ = os.Unsetenv("ANNICT_ADMIN_IP")
 			}
 
-			// Config を読み込み
+			// Configを読み込み
 			cfg, err := Load()
 			if err != nil {
-				t.Fatalf("Load() failed: %v", err)
+				t.Fatalf("Load()のエラー = %v", err)
 			}
 
 			// メンテナンスモード設定を検証
 			if cfg.MaintenanceMode != tt.wantMaintenanceMode {
-				t.Errorf("MaintenanceMode = %v, want %v", cfg.MaintenanceMode, tt.wantMaintenanceMode)
+				t.Errorf("MaintenanceMode = %v、期待値 = %v", cfg.MaintenanceMode, tt.wantMaintenanceMode)
 			}
 			if !reflect.DeepEqual(cfg.AdminIPs, tt.wantAdminIPs) {
-				t.Errorf("AdminIPs = %v, want %v", cfg.AdminIPs, tt.wantAdminIPs)
+				t.Errorf("AdminIPs = %v、期待値 = %v", cfg.AdminIPs, tt.wantAdminIPs)
 			}
 		})
 	}
 }
 
-// TestGetGitCommitHash verifies that the GIT_REV environment variable takes
-// precedence and is shortened to 7 characters.
+// GIT_REV環境変数が最優先され、7文字に短縮されることを検証する。
 //
-// A Dokku deploy target has no .git directory, so the git command fails;
-// whether GIT_REV is usable therefore decides the Sentry release (avoiding a
-// fallback to "dev").
-//
-// [Ja] GIT_REV 環境変数が最優先され、7 文字に短縮されることを検証する。
-//
-// Dokku のデプロイ先には .git が無く git コマンドが失敗するため、GIT_REV を
-// 使えるかどうかが Sentry の release ("dev" 化の回避) を左右する。
+// Dokkuのデプロイ先には .gitが無くgitコマンドが失敗するため、GIT_REVを
+// 使えるかどうかがSentryのrelease ("dev" 化の回避) を左右する。
 func TestGetGitCommitHash(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -481,7 +606,7 @@ func TestGetGitCommitHash(t *testing.T) {
 
 			got := getGitCommitHash()
 			if got != tt.want {
-				t.Errorf("getGitCommitHash() = %q, want %q", got, tt.want)
+				t.Errorf("getGitCommitHash() = %q、期待値 = %q", got, tt.want)
 			}
 		})
 	}

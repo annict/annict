@@ -5,10 +5,10 @@ import (
 	"testing"
 )
 
-// ResendSender が Sender インターフェースを実装していることを確認
+// ResendSenderがSenderインターフェースを実装していることを確認
 var _ Sender = (*ResendSender)(nil)
 
-// NoopSender が Sender インターフェースを実装していることを確認
+// NoopSenderがSenderインターフェースを実装していることを確認
 var _ Sender = (*NoopSender)(nil)
 
 func TestNewResendSender(t *testing.T) {
@@ -17,13 +17,13 @@ func TestNewResendSender(t *testing.T) {
 	sender := NewResendSender("test-api-key", "test@example.com", "Annict")
 
 	if sender.client == nil {
-		t.Error("client is nil")
+		t.Error("clientがnilだった")
 	}
 	if sender.fromEmail != "test@example.com" {
-		t.Errorf("fromEmail = %s, want test@example.com", sender.fromEmail)
+		t.Errorf("fromEmail = %s、期待値 = test@example.com", sender.fromEmail)
 	}
 	if sender.fromName != "Annict" {
-		t.Errorf("fromName = %s, want Annict", sender.fromName)
+		t.Errorf("fromName = %s、期待値 = Annict", sender.fromName)
 	}
 }
 
@@ -57,7 +57,7 @@ func TestResendSender_from(t *testing.T) {
 			sender := NewResendSender("test-api-key", tt.fromEmail, tt.fromName)
 			got := sender.from()
 			if got != tt.want {
-				t.Errorf("from() = %s, want %s", got, tt.want)
+				t.Errorf("from() = %s、期待値 = %s", got, tt.want)
 			}
 		})
 	}
@@ -69,10 +69,10 @@ func TestNewNoopSender(t *testing.T) {
 	sender := NewNoopSender()
 
 	if sender.SentEmails == nil {
-		t.Error("SentEmails is nil")
+		t.Error("SentEmailsがnilだった")
 	}
 	if len(sender.SentEmails) != 0 {
-		t.Errorf("SentEmails length = %d, want 0", len(sender.SentEmails))
+		t.Errorf("SentEmailsの件数 = %d、期待値 = 0", len(sender.SentEmails))
 	}
 }
 
@@ -88,14 +88,14 @@ func TestNoopSender_Send(t *testing.T) {
 	}
 	err := sender.Send(ctx, input1)
 	if err != nil {
-		t.Fatalf("Send() error = %v", err)
+		t.Fatalf("Send()のエラー = %v", err)
 	}
 
 	if len(sender.SentEmails) != 1 {
-		t.Fatalf("SentEmails length = %d, want 1", len(sender.SentEmails))
+		t.Fatalf("SentEmailsの件数 = %d、期待値 = 1", len(sender.SentEmails))
 	}
 	if sender.SentEmails[0].To != "user1@example.com" {
-		t.Errorf("SentEmails[0].To = %s, want user1@example.com", sender.SentEmails[0].To)
+		t.Errorf("SentEmails[0].To = %s、期待値 = user1@example.com", sender.SentEmails[0].To)
 	}
 
 	input2 := SendInput{
@@ -104,14 +104,14 @@ func TestNoopSender_Send(t *testing.T) {
 	}
 	err = sender.Send(ctx, input2)
 	if err != nil {
-		t.Fatalf("Send() error = %v", err)
+		t.Fatalf("Send()のエラー = %v", err)
 	}
 
 	if len(sender.SentEmails) != 2 {
-		t.Fatalf("SentEmails length = %d, want 2", len(sender.SentEmails))
+		t.Fatalf("SentEmailsの件数 = %d、期待値 = 2", len(sender.SentEmails))
 	}
 	if sender.SentEmails[1].To != "user2@example.com" {
-		t.Errorf("SentEmails[1].To = %s, want user2@example.com", sender.SentEmails[1].To)
+		t.Errorf("SentEmails[1].To = %s、期待値 = user2@example.com", sender.SentEmails[1].To)
 	}
 }
 
@@ -123,15 +123,15 @@ func TestNoopSender_Reset(t *testing.T) {
 
 	err := sender.Send(ctx, SendInput{To: "test@example.com", Subject: "Test"})
 	if err != nil {
-		t.Fatalf("Send() error = %v", err)
+		t.Fatalf("Send()のエラー = %v", err)
 	}
 	if len(sender.SentEmails) != 1 {
-		t.Fatalf("SentEmails length = %d, want 1", len(sender.SentEmails))
+		t.Fatalf("SentEmailsの件数 = %d、期待値 = 1", len(sender.SentEmails))
 	}
 
 	sender.Reset()
 
 	if len(sender.SentEmails) != 0 {
-		t.Errorf("SentEmails length after Reset() = %d, want 0", len(sender.SentEmails))
+		t.Errorf("Reset()後のSentEmailsの件数 = %d、期待値 = 0", len(sender.SentEmails))
 	}
 }

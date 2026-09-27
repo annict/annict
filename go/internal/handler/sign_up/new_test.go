@@ -3,6 +3,7 @@ package sign_up_test
 import (
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
@@ -15,7 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// TestNew は新規登録フォーム表示のテスト
+// TestNewは新規登録フォーム表示のテスト
 func TestNew(t *testing.T) {
 	t.Parallel()
 
@@ -28,6 +29,10 @@ func TestNew(t *testing.T) {
 		t.Fatalf("設定の読み込みに失敗しました: %v", err)
 	}
 
+	// config.Loadはtest / devでANNICT_TURNSTILE_DISABLE=trueのときサイトキーを
+	// 空にしうるため、上書きする。以下の存在検証を実行環境に依存させないため。
+	cfg.TurnstileSiteKey = "1x00000000000000000000AA"
+
 	// usecaseの初期化
 	queries := testutil.NewQueriesWithTx(db, tx)
 	v := validator.NewSignUpCreateValidator()
@@ -37,7 +42,7 @@ func TestNew(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// Turnstileクライアントの初期化（テスト用）
+	// Turnstileクライアントの初期化 (テスト用)
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// ハンドラーの初期化
@@ -54,11 +59,23 @@ func TestNew(t *testing.T) {
 
 	// ステータスコードが200であることを確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("予期しないステータスコード: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("予期しないステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	// Content-Typeがtext/htmlであることを確認
 	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
-		t.Errorf("予期しないContent-Type: got %v want %v", contentType, "text/html; charset=utf-8")
+		t.Errorf("予期しないContent-Type = %v、期待値 = %v", contentType, "text/html; charset=utf-8")
+	}
+
+	body := rr.Body.String()
+	expectedStrings := []string{
+		`class="cf-turnstile"`,
+		`<link rel="preconnect" href="https://challenges.cloudflare.com">`,
+	}
+
+	for _, expected := range expectedStrings {
+		if !strings.Contains(body, expected) {
+			t.Errorf("レスポンスボディに期待される文字列が含まれていない: %s", expected)
+		}
 	}
 }

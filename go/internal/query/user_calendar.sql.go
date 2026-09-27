@@ -113,7 +113,7 @@ type GetCalendarWorksRow struct {
 	StartedOn sql.NullTime `db:"started_on"`
 }
 
-// カレンダー用の作品（放送開始日）を取得します
+// カレンダー用の作品 (放送開始日) を取得します
 func (q *Queries) GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error) {
 	rows, err := q.db.QueryContext(ctx, getCalendarWorks, userID)
 	if err != nil {
@@ -158,7 +158,7 @@ type GetLibraryEntryProgramIDsRow struct {
 	WatchedEpisodeIds []int64       `db:"watched_episode_ids"`
 }
 
-// ユーザーの視聴リスト（見たい・見てる）からprogram_idを取得します
+// ユーザーの視聴リスト (見たい・見てる) からprogram_idを取得します
 func (q *Queries) GetLibraryEntryProgramIDs(ctx context.Context, userID int64) ([]GetLibraryEntryProgramIDsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getLibraryEntryProgramIDs, userID)
 	if err != nil {

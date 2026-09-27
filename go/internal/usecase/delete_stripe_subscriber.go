@@ -10,14 +10,14 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// DeleteStripeSubscriberUsecase はサブスクリプション削除イベント処理のユースケース
+// DeleteStripeSubscriberUsecaseはサブスクリプション削除イベント処理のユースケース
 type DeleteStripeSubscriberUsecase struct {
 	db                   *sql.DB
 	stripeSubscriberRepo *repository.StripeSubscriberRepository
 	userRepo             *repository.UserRepository
 }
 
-// NewDeleteStripeSubscriberUsecase はDeleteStripeSubscriberUsecaseを作成します
+// NewDeleteStripeSubscriberUsecaseはDeleteStripeSubscriberUsecaseを作成します
 func NewDeleteStripeSubscriberUsecase(
 	db *sql.DB,
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
@@ -30,19 +30,19 @@ func NewDeleteStripeSubscriberUsecase(
 	}
 }
 
-// DeleteStripeSubscriberInput はcustomer.subscription.deletedイベントの入力データ
+// DeleteStripeSubscriberInputはcustomer.subscription.deletedイベントの入力データ
 type DeleteStripeSubscriberInput struct {
 	StripeSubscriptionID string    // StripeのサブスクリプションID (sub_xxx)
 	StripeCanceledAt     time.Time // キャンセル日時
 }
 
-// DeleteStripeSubscriberResult はcustomer.subscription.deletedイベント処理の結果
+// DeleteStripeSubscriberResultはcustomer.subscription.deletedイベント処理の結果
 type DeleteStripeSubscriberResult struct {
 	StripeSubscriber model.StripeSubscriber
-	UserID           *model.UserID // 紐付け解除されたユーザーID（存在する場合）
+	UserID           *model.UserID // 紐付け解除されたユーザーID (存在する場合)
 }
 
-// Execute はcustomer.subscription.deletedイベントを処理します
+// Executeはcustomer.subscription.deletedイベントを処理します
 //
 // 処理フロー:
 // 1. StripeサブスクリプションIDで既存レコードを検索
@@ -57,12 +57,8 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	if err != nil {
 		return nil, fmt.Errorf("StripeSubscriber取得に失敗: %w", err)
 	}
-	// Not-found is reported as a sentinel so the webhook layer can skip it without
-	// depending on sql.ErrNoRows. Returning here also keeps us out of the
-	// transaction below for an event we cannot act on.
-	//
-	// [Ja] 未存在は sentinel で返し、Webhook 層が sql.ErrNoRows に依存せずスキップできるようにする。
-	// ここで return することで、処理できないイベントに対して下のトランザクションを開かずに済む。
+	// 未存在はsentinelで返し、Webhook層がsql.ErrNoRowsに依存せずスキップできるようにする。
+	// ここでreturnすることで、処理できないイベントに対して下のトランザクションを開かずに済む。
 	if subscriber == nil {
 		return nil, ErrStripeSubscriberNotFound
 	}
@@ -120,10 +116,7 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	if err != nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriber取得に失敗: %w", err)
 	}
-	// The record was just updated above, so a nil here means an unexpected internal
-	// inconsistency rather than a normal not-found.
-	//
-	// [Ja] 直前に更新したレコードのため、ここでの nil は通常の未存在ではなく想定外の
+	// 直前に更新したレコードのため、ここでのnilは通常の未存在ではなく想定外の
 	// 内部不整合を意味する。
 	if updated == nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriberが見つかりません")

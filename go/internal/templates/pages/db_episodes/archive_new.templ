@@ -1,0 +1,81 @@
+package db_episodes
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// ArchiveNewPageDataはエピソード非公開確認ページが描画するデータ (非公開を確認する対象の
+// エピソードと、その見出し・サブナビ・キャンセルリンクが示す親作品)。
+type ArchiveNewPageData struct {
+	EpisodeID viewmodel.EpisodeID
+	// EpisodeNameはviewmodel.DBEpisodeNameが解決した、確認メッセージがエピソードを
+	// 名指しする表記。空にはならない。表示用話数もタイトルも無いエピソードはIDに
+	// フォールバックするため、メッセージは常に対象を名指しする。
+	EpisodeName string
+	WorkID      viewmodel.WorkID
+	// WorkNameはviewmodel.DBEpisodeListWorkNameが解決した作品の表示名。空の場合、
+	// 見出しは汎用のページ名へフォールバックし、文書タイトルはエピソード識別子を残して作品を
+	// 省く。
+	WorkName string
+	// NoEpisodesは作品のno_episodesフラグを共有サブナビへ渡す。
+	NoEpisodes bool
+	CSRFToken  string
+}
+
+// headingはページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
+// ページタイトルにフォールバックし、空の <h1> を描画しないようにする。エピソード自身は見出しでは
+// なく確認メッセージが名指しする。見出しが所属作品になっている他のエピソードページと揃えるため。
+func (d ArchiveNewPageData) heading(ctx context.Context) string {
+	if d.WorkName != "" {
+		return d.WorkName
+	}
+
+	return templates.T(ctx, "db_episodes_archive_new_title")
+}
+
+templ ArchiveNew(data ArchiveNewPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: data.heading(ctx),
+				})
+			</div>
+		</div>
+
+		<div class="px-4">
+			// 本ページのURLは作品ではなくエピソード基点のため、リクエストパスに
+			// 判断を委ねず、所属するサブナビの項目を自ら名指しする。
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:             data.WorkID,
+				NoEpisodes:         data.NoEpisodes,
+				CurrentSectionPath: templates.DBWorkEpisodesPath(data.WorkID),
+			})
+		</div>
+
+		@components.ContentCard("") {
+			<div class="max-w-2xl flex flex-col gap-6">
+				<div class="flex flex-col gap-2">
+					<p>{ templates.T(ctx, "db_episodes_archive_new_confirm_message", map[string]any{"Episode": data.EpisodeName}) }</p>
+					<p class="text-sm text-muted-foreground">{ templates.T(ctx, "db_episodes_archive_new_help") }</p>
+				</div>
+
+				<form method="POST" action={ templates.DBEpisodeArchivePath(data.EpisodeID).SafeURL() } class="flex items-center gap-2">
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					<button type="submit" class="btn rounded-full" data-variant="warning">
+						{ templates.T(ctx, "db_episodes_archive_new_submit") }
+					</button>
+					<a href={ templates.DBWorkEpisodesPath(data.WorkID).SafeURL() } class="btn rounded-full" data-variant="outline">
+						{ templates.T(ctx, "db_episodes_archive_new_cancel_link") }
+					</a>
+				</form>
+			</div>
+		}
+	</div>
+}

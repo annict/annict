@@ -15,7 +15,7 @@ import (
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// ログインユーザーの取得（認証必須）
+	// ログインユーザーの取得 (認証必須)
 	user := authMiddleware.GetUserFromContext(ctx)
 	if user == nil {
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
@@ -60,7 +60,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, output.CheckoutURL, http.StatusSeeOther)
 }
 
-// redirectWithError はエラーメッセージをフラッシュに設定してリダイレクトします
+// redirectWithErrorはエラーメッセージをフラッシュに設定してリダイレクトします
 func (h *Handler) redirectWithError(w http.ResponseWriter, r *http.Request, ctx context.Context, messageKey string) {
 	h.flashMgr.SetError(w, i18n.T(ctx, messageKey))
 	http.Redirect(w, r, "/supporters", http.StatusSeeOther)

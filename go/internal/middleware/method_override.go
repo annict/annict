@@ -2,11 +2,21 @@ package middleware
 
 import (
 	"net/http"
+	"slices"
 	"strings"
 )
 
-// MethodOverride はHTMLフォームから送信された_methodパラメータを読み取り、
-// HTTPメソッドを上書きします（Rails方式）
+// overridableMethodsは _methodパラメータによってPOSTから書き換えられるメソッドの
+// 一覧。ReverseProxyMiddlewareも、オーバーライド経由でしか到達できないルートを認識するために
+// これを読む。両ミドルウェアが「オーバーライドが生みうるメソッド」の認識を共有するため。
+var overridableMethods = []string{
+	http.MethodPut,
+	http.MethodPatch,
+	http.MethodDelete,
+}
+
+// MethodOverrideはHTMLフォームから送信された_methodパラメータを読み取り、
+// HTTPメソッドを上書きします (Rails方式)
 //
 // 使用例:
 //
@@ -14,7 +24,7 @@ import (
 //	  <input type="hidden" name="_method" value="PUT">
 //	</form>
 //
-// これにより、HTMLフォーム（GETとPOSTのみサポート）とREST API（PUT/PATCH/DELETE）で
+// これにより、HTMLフォーム (GETとPOSTのみサポート) とREST API (PUT/PATCH/DELETE) で
 // 同じルーティングを使用できます。
 func MethodOverride(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -26,8 +36,7 @@ func MethodOverride(next http.Handler) http.Handler {
 				if method != "" {
 					// サポートされているメソッドのみ許可
 					method = strings.ToUpper(method)
-					switch method {
-					case http.MethodPut, http.MethodPatch, http.MethodDelete:
+					if slices.Contains(overridableMethods, method) {
 						r.Method = method
 					}
 				}

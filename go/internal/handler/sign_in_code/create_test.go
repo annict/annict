@@ -20,14 +20,14 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// TestCreate_Success ログイン成功のテスト
+// TestCreate_Successログイン成功のテスト
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
-	// テストユーザーを作成（encrypted_passwordが空 = パスワードなし）
+	// テストユーザーを作成 (encrypted_passwordが空 = パスワードなし)
 	userID := testutil.NewUserBuilder(t, tx).
 		WithUsername("email_login_success_user").
 		WithEmail("email_login_success@example.com").
@@ -57,7 +57,7 @@ func TestCreate_Success(t *testing.T) {
 		t.Fatalf("メールログインコード作成エラー: %v", err)
 	}
 
-	// トランザクションをコミット（テストデータを他のトランザクションから見えるようにする）
+	// トランザクションをコミット (テストデータを他のトランザクションから見えるようにする)
 	if err := tx.Commit(); err != nil {
 		t.Fatalf("トランザクションのコミットに失敗: %v", err)
 	}
@@ -68,7 +68,7 @@ func TestCreate_Success(t *testing.T) {
 		_, _ = db.Exec("DELETE FROM users WHERE id = $1", userID)
 	})
 
-	// 通常のクエリを使用（トランザクションなし）
+	// 通常のクエリを使用 (トランザクションなし)
 	queries = query.New(db)
 
 	// 設定とセッションマネージャーを作成
@@ -95,32 +95,32 @@ func TestCreate_Success(t *testing.T) {
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
 	rr := httptest.NewRecorder()
 
-	// 1回目: sign_in_email を設定
+	// 1回目: sign_in_emailを設定
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_email", user.Email)
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_email): %v", err)
 	}
 
-	// Cookieを取得してリクエストに追加（セッションを維持）
+	// Cookieを取得してリクエストに追加 (セッションを維持)
 	cookies := rr.Result().Cookies()
 	for _, cookie := range cookies {
 		req.AddCookie(cookie)
 	}
 
-	// 2回目: sign_in_user_id を設定（同じセッションに追加）
+	// 2回目: sign_in_user_idを設定 (同じセッションに追加)
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_user_id", fmt.Sprintf("%d", userID))
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_user_id): %v", err)
 	}
 
-	// 更新されたCookieを取得（念のため）
+	// 更新されたCookieを取得 (念のため)
 	cookies = rr.Result().Cookies()
 
 	// フォームデータを作成
 	form := url.Values{}
 	form.Set("code", plainCode)
 
-	// リクエストを再作成（Cookieを含む）
+	// リクエストを再作成 (Cookieを含む)
 	req = httptest.NewRequest("POST", "/sign_in/code", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	for _, cookie := range cookies {
@@ -131,15 +131,15 @@ func TestCreate_Success(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
+	// ステータスコードを確認 (リダイレクト)
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	// リダイレクト先を確認
 	location := rr.Header().Get("Location")
 	if location != "/" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/")
 	}
 
 	// セッションCookieが設定されているか確認
@@ -164,20 +164,20 @@ func TestCreate_Success(t *testing.T) {
 			expectedDomain = expectedDomain[1:]
 		}
 		if sessionCookie.Domain != expectedDomain {
-			t.Errorf("セッションCookieのドメインが正しくない: got %v want %v",
+			t.Errorf("セッションCookieのドメイン = %v、期待値 = %v",
 				sessionCookie.Domain, expectedDomain)
 		}
 		if !sessionCookie.HttpOnly {
 			t.Error("セッションCookieがHttpOnlyではありません")
 		}
-		// テスト環境ではSecureはfalse（本番環境ではtrue）
+		// テスト環境ではSecureはfalse (本番環境ではtrue)
 		if sessionCookie.Secure {
 			t.Error("セッションCookieがSecureになっていますが、テスト環境ではfalseであるべきです")
 		}
 	}
 }
 
-// TestCreate_InvalidCode 間違ったコードを入力した場合のテスト
+// TestCreate_InvalidCode間違ったコードを入力した場合のテスト
 func TestCreate_InvalidCode(t *testing.T) {
 	t.Parallel()
 
@@ -237,19 +237,19 @@ func TestCreate_InvalidCode(t *testing.T) {
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
 	rr := httptest.NewRecorder()
 
-	// 1回目: sign_in_email を設定
+	// 1回目: sign_in_emailを設定
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_email", user.Email)
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_email): %v", err)
 	}
 
-	// Cookieを取得してリクエストに追加（セッションを維持）
+	// Cookieを取得してリクエストに追加 (セッションを維持)
 	cookies := rr.Result().Cookies()
 	for _, cookie := range cookies {
 		req.AddCookie(cookie)
 	}
 
-	// 2回目: sign_in_user_id を設定（同じセッションに追加）
+	// 2回目: sign_in_user_idを設定 (同じセッションに追加)
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_user_id", fmt.Sprintf("%d", userID))
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_user_id): %v", err)
@@ -258,7 +258,7 @@ func TestCreate_InvalidCode(t *testing.T) {
 	// 更新されたCookieを取得
 	cookies = rr.Result().Cookies()
 
-	// フォームデータを作成（間違ったコード）
+	// フォームデータを作成 (間違ったコード)
 	form := url.Values{}
 	form.Set("code", "999999") // 間違ったコード
 
@@ -273,13 +273,13 @@ func TestCreate_InvalidCode(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// 422 でフォーム再描画されることを確認
+	// 422でフォーム再描画されることを確認
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
-// TestCreate_SessionExpired セッションが切れている場合のテスト
+// TestCreate_SessionExpiredセッションが切れている場合のテスト
 func TestCreate_SessionExpired(t *testing.T) {
 	t.Parallel()
 
@@ -309,7 +309,7 @@ func TestCreate_SessionExpired(t *testing.T) {
 	form := url.Values{}
 	form.Set("code", "123456")
 
-	// リクエストを作成（セッションなし）
+	// リクエストを作成 (セッションなし)
 	req := httptest.NewRequest("POST", "/sign_in/code", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
@@ -317,19 +317,19 @@ func TestCreate_SessionExpired(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
+	// ステータスコードを確認 (リダイレクト)
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
-	// リダイレクト先を確認（セッション切れの場合は /sign_in にリダイレクト）
+	// リダイレクト先を確認 (セッション切れの場合は /sign_inにリダイレクト)
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in")
 	}
 }
 
-// TestCreate_CodeExpired コードの有効期限が切れている場合のテスト
+// TestCreate_CodeExpiredコードの有効期限が切れている場合のテスト
 func TestCreate_CodeExpired(t *testing.T) {
 	t.Parallel()
 
@@ -350,7 +350,7 @@ func TestCreate_CodeExpired(t *testing.T) {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
 
-	// 6桁コードを生成してデータベースに保存（有効期限切れ）
+	// 6桁コードを生成してデータベースに保存 (有効期限切れ)
 	plainCode := "123456"
 	codeDigest, err := auth.HashCode(plainCode)
 	if err != nil {
@@ -361,7 +361,7 @@ func TestCreate_CodeExpired(t *testing.T) {
 	if _, err := signInCodeRepoSetup.Create(ctx, repository.SignInCodeCreateParams{
 		UserID:     userID,
 		CodeDigest: codeDigest,
-		ExpiresAt:  time.Now().Add(-1 * time.Minute), // 有効期限切れ（1分前）
+		ExpiresAt:  time.Now().Add(-1 * time.Minute), // 有効期限切れ (1分前)
 	}); err != nil {
 		t.Fatalf("メールログインコード作成エラー: %v", err)
 	}
@@ -389,19 +389,19 @@ func TestCreate_CodeExpired(t *testing.T) {
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
 	rr := httptest.NewRecorder()
 
-	// 1回目: sign_in_email を設定
+	// 1回目: sign_in_emailを設定
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_email", user.Email)
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_email): %v", err)
 	}
 
-	// Cookieを取得してリクエストに追加（セッションを維持）
+	// Cookieを取得してリクエストに追加 (セッションを維持)
 	cookies := rr.Result().Cookies()
 	for _, cookie := range cookies {
 		req.AddCookie(cookie)
 	}
 
-	// 2回目: sign_in_user_id を設定（同じセッションに追加）
+	// 2回目: sign_in_user_idを設定 (同じセッションに追加)
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_user_id", fmt.Sprintf("%d", userID))
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_user_id): %v", err)
@@ -425,13 +425,13 @@ func TestCreate_CodeExpired(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// 422 でフォーム再描画されることを確認
+	// 422でフォーム再描画されることを確認
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
-// TestCreate_ValidationError バリデーションエラーのテスト
+// TestCreate_ValidationErrorバリデーションエラーのテスト
 func TestCreate_ValidationError(t *testing.T) {
 	t.Parallel()
 
@@ -475,19 +475,19 @@ func TestCreate_ValidationError(t *testing.T) {
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
 	rr := httptest.NewRecorder()
 
-	// 1回目: sign_in_email を設定
+	// 1回目: sign_in_emailを設定
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_email", user.Email)
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_email): %v", err)
 	}
 
-	// Cookieを取得してリクエストに追加（セッションを維持）
+	// Cookieを取得してリクエストに追加 (セッションを維持)
 	cookies := rr.Result().Cookies()
 	for _, cookie := range cookies {
 		req.AddCookie(cookie)
 	}
 
-	// 2回目: sign_in_user_id を設定（同じセッションに追加）
+	// 2回目: sign_in_user_idを設定 (同じセッションに追加)
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_user_id", fmt.Sprintf("%d", userID))
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_user_id): %v", err)
@@ -496,7 +496,7 @@ func TestCreate_ValidationError(t *testing.T) {
 	// 更新されたCookieを取得
 	cookies = rr.Result().Cookies()
 
-	// フォームデータを作成（不正なコード: 5桁）
+	// フォームデータを作成 (不正なコード: 5桁)
 	form := url.Values{}
 	form.Set("code", "12345") // 不正なコード
 
@@ -511,13 +511,13 @@ func TestCreate_ValidationError(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// 422 でフォーム再描画されることを確認
+	// 422でフォーム再描画されることを確認
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }
 
-// TestCreate_UserNotFound ユーザーが見つからない場合のテスト
+// TestCreate_UserNotFoundユーザーが見つからない場合のテスト
 func TestCreate_UserNotFound(t *testing.T) {
 	t.Parallel()
 
@@ -546,24 +546,24 @@ func TestCreate_UserNotFound(t *testing.T) {
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
-	// セッションにメールアドレスとユーザーIDを設定（存在しないユーザー）
+	// セッションにメールアドレスとユーザーIDを設定 (存在しないユーザー)
 	ctx := context.Background()
 	req := httptest.NewRequest("POST", "/sign_in/code", nil)
 	rr := httptest.NewRecorder()
 
-	// 1回目: sign_in_email を設定
+	// 1回目: sign_in_emailを設定
 	err := sessionMgr.SetValue(ctx, rr, req, "sign_in_email", "nonexistent@example.com")
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_email): %v", err)
 	}
 
-	// Cookieを取得してリクエストに追加（セッションを維持）
+	// Cookieを取得してリクエストに追加 (セッションを維持)
 	cookies := rr.Result().Cookies()
 	for _, cookie := range cookies {
 		req.AddCookie(cookie)
 	}
 
-	// 2回目: sign_in_user_id を設定（同じセッションに追加）
+	// 2回目: sign_in_user_idを設定 (同じセッションに追加)
 	err = sessionMgr.SetValue(ctx, rr, req, "sign_in_user_id", fmt.Sprintf("%d", nonExistentUserID))
 	if err != nil {
 		t.Fatalf("セッション値の設定エラー (sign_in_user_id): %v", err)
@@ -587,8 +587,8 @@ func TestCreate_UserNotFound(t *testing.T) {
 	// ハンドラーを実行
 	handler.Create(rr, req)
 
-	// 422 でフォーム再描画されることを確認
+	// 422でフォーム再描画されることを確認
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 }

@@ -26,14 +26,14 @@ func TestShow(t *testing.T) {
 	// ハンドラーを実行
 	handler.Show(rr, req)
 
-	// ステータスコードを確認（302 Found）
+	// ステータスコードを確認 (302 Found)
 	if rr.Code != http.StatusFound {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusFound)
 	}
 
 	// Locationヘッダーを確認
 	location := rr.Header().Get("Location")
 	if location != "https://annict.com" {
-		t.Errorf("wrong location: got %v want %v", location, "https://annict.com")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "https://annict.com")
 	}
 }

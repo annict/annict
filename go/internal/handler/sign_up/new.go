@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// New は新規登録フォームを表示します (GET /sign_up)
+// Newは新規登録フォームを表示します (GET /sign_up)
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -29,22 +29,22 @@ func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	h.renderNewForm(w, r, http.StatusOK, nil, "")
 }
 
-// renderNewForm は新規登録フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderNewFormは新規登録フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderNewForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_up_title")
 	meta.Description = i18n.T(ctx, "sign_up_description")
-	meta.OGURL = h.cfg.AppURL() + "/sign_up"
+	meta.AddTurnstilePreconnect(h.cfg.TurnstileSiteKey)
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
 	data := sign_up.NewPageData{
 		CSRFToken:        csrfToken,
 		TurnstileSiteKey: h.cfg.TurnstileSiteKey,
-		FormErrors:       formErrors,
+		FormErrors:       viewmodel.NewFormErrors(formErrors),
 		Email:            email,
 	}
 

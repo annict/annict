@@ -3,7 +3,7 @@
 
 RSpec.describe "DELETE /db/channel_groups/:id/publishing", type: :request do
   it "ログインしていないとき、ログインページにリダイレクトすること" do
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
 
     delete "/db/channel_groups/#{channel_group.id}/publishing"
     channel_group.reload
@@ -15,7 +15,7 @@ RSpec.describe "DELETE /db/channel_groups/:id/publishing", type: :request do
 
   it "エディターではないユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     login_as(user, scope: :user)
 
     delete "/db/channel_groups/#{channel_group.id}/publishing"
@@ -28,7 +28,7 @@ RSpec.describe "DELETE /db/channel_groups/:id/publishing", type: :request do
 
   it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     login_as(user, scope: :user)
 
     delete "/db/channel_groups/#{channel_group.id}/publishing"
@@ -41,7 +41,7 @@ RSpec.describe "DELETE /db/channel_groups/:id/publishing", type: :request do
 
   it "管理者権限を持つユーザーがログインしているとき、チャンネルグループを非公開にできること" do
     user = create(:registered_user, :with_admin_role)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     login_as(user, scope: :user)
 
     expect(channel_group.published?).to eq(true)

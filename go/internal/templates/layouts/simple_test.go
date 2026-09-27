@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"io"
-	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
@@ -27,17 +26,12 @@ func TestSimple_Rendering(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 	meta.SetTitle(ctx, "test_page_title")
 
 	// テストコンテンツ
@@ -60,7 +54,7 @@ func TestSimple_Rendering(t *testing.T) {
 		"<!doctype html>",
 		"<html lang=\"ja\">",
 		"<head>",
-		"<body class=\"min-h-screen flex items-center justify-center\">",
+		"<body class=\"min-h-dvh flex items-center justify-center\">",
 		"Test Content",
 	}
 
@@ -84,7 +78,7 @@ func TestSimple_Rendering(t *testing.T) {
 	}
 }
 
-// TestSimple_WithFlash フラッシュメッセージが表示されることを確認
+// TestSimple_WithFlashフラッシュメッセージが表示されることを確認
 func TestSimple_WithFlash(t *testing.T) {
 	t.Parallel()
 
@@ -93,17 +87,12 @@ func TestSimple_WithFlash(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	ctx = testutil.ContextWithFlash(ctx, session.FlashError, "エラーが発生しました")
 
@@ -131,7 +120,7 @@ func TestSimple_WithFlash(t *testing.T) {
 	}
 }
 
-// TestSimple_WithoutFlash フラッシュメッセージがnilの場合の表示を確認
+// TestSimple_WithoutFlashフラッシュメッセージがnilの場合の表示を確認
 func TestSimple_WithoutFlash(t *testing.T) {
 	t.Parallel()
 
@@ -140,17 +129,12 @@ func TestSimple_WithoutFlash(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := w.Write([]byte("<div>Content</div>"))
@@ -171,7 +155,43 @@ func TestSimple_WithoutFlash(t *testing.T) {
 	}
 }
 
-// TestSimple_I18n 国際化対応が正しく動作することを確認
+// TestSimple_FullHeightFollowsVisibleViewportはbodyの高さが可視ビューポートに
+// 追随することを検証する。モバイルのツールバー表示時にbodyが画面より高くなり、中央寄せの
+// コンテンツがずれることを防ぐ。
+func TestSimple_FullHeightFollowsVisibleViewport(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "annict.test",
+	}
+
+	req := httptest.NewRequest("GET", "/", nil)
+	req.Header.Set("Accept-Language", "ja")
+
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
+
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
+
+	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
+		_, err := w.Write([]byte("<div>Content</div>"))
+		return err
+	})
+
+	var buf bytes.Buffer
+	if err := Simple(ctx, meta, "v1.0.0", content).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	// class属性全体を固定するため、静的な単位へ戻せばここで落ちる。
+	if !strings.Contains(html, `<body class="min-h-dvh flex items-center justify-center">`) {
+		t.Error("bodyのフルハイト指定がmin-h-dvhになっていません")
+	}
+}
+
+// TestSimple_I18n国際化対応が正しく動作することを確認
 func TestSimple_I18n(t *testing.T) {
 	t.Parallel()
 
@@ -191,17 +211,12 @@ func TestSimple_I18n(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			// i18nミドルウェアを経由してコンテキストを取得
 			req := httptest.NewRequest("GET", "/", nil)
 			req.Header.Set("Accept-Language", tt.acceptLanguage)
 
-			var ctx context.Context
-			i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-				ctx = r.Context()
-			}))
-			i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+			ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-			meta := viewmodel.DefaultPageMeta(ctx, cfg)
+			meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 			content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 				_, err := w.Write([]byte("<div>Content</div>"))
@@ -224,7 +239,7 @@ func TestSimple_I18n(t *testing.T) {
 	}
 }
 
-// TestSimple_AssetVersion アセットバージョンが正しく設定されることを確認
+// TestSimple_AssetVersionアセットバージョンが正しく設定されることを確認
 func TestSimple_AssetVersion(t *testing.T) {
 	t.Parallel()
 
@@ -233,17 +248,12 @@ func TestSimple_AssetVersion(t *testing.T) {
 		Domain: "annict.test",
 	}
 
-	// i18nミドルウェアを経由してコンテキストを取得
 	req := httptest.NewRequest("GET", "/", nil)
 	req.Header.Set("Accept-Language", "ja")
 
-	var ctx context.Context
-	i18nHandler := i18n.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx = r.Context()
-	}))
-	i18nHandler.ServeHTTP(httptest.NewRecorder(), req)
+	ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
 
-	meta := viewmodel.DefaultPageMeta(ctx, cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
 
 	content := templ.ComponentFunc(func(ctx context.Context, w io.Writer) error {
 		_, err := w.Write([]byte("<div>Content</div>"))

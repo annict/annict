@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Show は6桁コード入力フォームを表示します (GET /sign_in/code)
+// Showは6桁コード入力フォームを表示します (GET /sign_in/code)
 func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -34,33 +34,32 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// メールアドレスがセッションにない場合は /sign_in にリダイレクト
+	// メールアドレスがセッションにない場合は /sign_inにリダイレクト
 	if email == "" {
 		http.Redirect(w, r, "/sign_in", http.StatusSeeOther)
 		return
 	}
 
-	// backパラメータを取得（ログイン後のリダイレクト先）
+	// backパラメータを取得 (ログイン後のリダイレクト先)
 	backURL := r.URL.Query().Get("back")
 
 	h.renderShowForm(w, r, http.StatusOK, nil, email, backURL)
 }
 
-// renderShowForm は6桁コード入力フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderShowFormは6桁コード入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderShowForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, email string, backURL string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "sign_in_code_title")
 	meta.Description = i18n.T(ctx, "sign_in_code_description")
-	meta.OGURL = h.cfg.AppURL() + "/sign_in/code"
 
 	csrfToken := middleware.GetOrCreateCSRFToken(w, r, h.sessionMgr)
 
 	data := signInCodePage.ShowPageData{
 		CSRFToken:  csrfToken,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 		Email:      email,
 		BackURL:    backURL,
 	}

@@ -2,7 +2,7 @@ package model
 
 import "time"
 
-// Setting はユーザー設定のドメインエンティティ
+// Settingはユーザー設定のドメインエンティティ
 type Setting struct {
 	ID                  SettingID
 	UserID              UserID

@@ -1,4 +1,4 @@
-// Package sign_in_code はログイン確認コード検証機能を提供します
+// Package sign_in_codeはログイン確認コード検証機能を提供します
 package sign_in_code
 
 import (
@@ -19,7 +19,7 @@ type Handler struct {
 	createSessionUC    *usecase.CreateSessionUsecase
 }
 
-// NewHandler 新しいHandlerを作成します
+// NewHandler新しいHandlerを作成します
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,

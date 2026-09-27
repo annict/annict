@@ -24,7 +24,7 @@ func TestUpdate_Success(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := testutil.NewQueriesWithTx(db, tx)
 
-	// テストユーザーを作成（encrypted_passwordが空 = パスワードなし）
+	// テストユーザーを作成 (encrypted_passwordが空 = パスワードなし)
 	userID := testutil.NewUserBuilder(t, tx).
 		WithUsername("resend_code_user").
 		WithEmail("resend_code@example.com").
@@ -74,7 +74,7 @@ func TestUpdate_Success(t *testing.T) {
 		t.Fatal("セッションクッキーが設定されていません")
 	}
 
-	// 2つ目の値を保存（Cookieを引き継ぐ）
+	// 2つ目の値を保存 (Cookieを引き継ぐ)
 	req2 := httptest.NewRequest(http.MethodPatch, "/sign_in/code", strings.NewReader(form.Encode()))
 	req2.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	for _, cookie := range cookies {
@@ -104,15 +104,15 @@ func TestUpdate_Success(t *testing.T) {
 	// ハンドラーを実行
 	handler.Update(rr, req)
 
-	// このテストでは sendSignInCodeUC.Execute が `db` への新トランザクションを開き、
-	// テスト用 tx に作成したユーザーが見えず FK 違反でシステムエラーになるため、
-	// 500 が返ることを確認する（システムエラー時は http.Error）。
+	// このテストではsendSignInCodeUC.Executeが `db` への新トランザクションを開き、
+	// テスト用txに作成したユーザーが見えずFK違反でシステムエラーになるため、
+	// 500が返ることを確認する (システムエラー時はhttp.Error)。
 	if rr.Code != http.StatusInternalServerError {
-		t.Errorf("ステータスコードが正しくありません: got %v want %v", rr.Code, http.StatusInternalServerError)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusInternalServerError)
 	}
 }
 
-// TestUpdate_AlreadyLoggedIn すでにログイン済みの場合のテスト
+// TestUpdate_AlreadyLoggedInすでにログイン済みの場合のテスト
 func TestUpdate_AlreadyLoggedIn(t *testing.T) {
 	t.Parallel()
 
@@ -180,17 +180,17 @@ func TestUpdate_AlreadyLoggedIn(t *testing.T) {
 
 	// ステータスコードをチェック
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくありません: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
-	// リダイレクト先をチェック（すでにログイン済みの場合は / にリダイレクト）
+	// リダイレクト先をチェック (すでにログイン済みの場合は / にリダイレクト)
 	location := rr.Header().Get("Location")
 	if location != "/" {
-		t.Errorf("リダイレクト先が正しくありません: got %v want %v", location, "/")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/")
 	}
 }
 
-// TestUpdate_NoEmailInSession セッションにメールアドレスがない場合のテスト
+// TestUpdate_NoEmailInSessionセッションにメールアドレスがない場合のテスト
 func TestUpdate_NoEmailInSession(t *testing.T) {
 	t.Parallel()
 
@@ -233,17 +233,17 @@ func TestUpdate_NoEmailInSession(t *testing.T) {
 
 	// ステータスコードをチェック
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくありません: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
-	// リダイレクト先をチェック（メールアドレスがない場合は /sign_in にリダイレクト）
+	// リダイレクト先をチェック (メールアドレスがない場合は /sign_inにリダイレクト)
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("リダイレクト先が正しくありません: got %v want %v", location, "/sign_in")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in")
 	}
 }
 
-// TestUpdate_NoUserIDInSession セッションにユーザーIDがない場合のテスト
+// TestUpdate_NoUserIDInSessionセッションにユーザーIDがない場合のテスト
 func TestUpdate_NoUserIDInSession(t *testing.T) {
 	t.Parallel()
 
@@ -278,7 +278,7 @@ func TestUpdate_NoUserIDInSession(t *testing.T) {
 	req := httptest.NewRequest(http.MethodPatch, "/sign_in/code", strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 
-	// セッションにメールアドレスのみを設定（ユーザーIDは設定しない）
+	// セッションにメールアドレスのみを設定 (ユーザーIDは設定しない)
 	ctx := context.Background()
 	rr := httptest.NewRecorder()
 	if err := sessionMgr.SetValue(ctx, rr, req, "sign_in_email", "test@example.com"); err != nil {
@@ -298,12 +298,12 @@ func TestUpdate_NoUserIDInSession(t *testing.T) {
 
 	// ステータスコードをチェック
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくありません: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
-	// リダイレクト先をチェック（ユーザーIDがない場合は /sign_in にリダイレクト）
+	// リダイレクト先をチェック (ユーザーIDがない場合は /sign_inにリダイレクト)
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("リダイレクト先が正しくありません: got %v want %v", location, "/sign_in")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in")
 	}
 }

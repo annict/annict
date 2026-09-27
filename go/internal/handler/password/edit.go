@@ -17,7 +17,12 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Edit は新しいパスワード入力フォームを表示します (GET /password/edit)
+// passwordEditPathは新しいパスワード入力フォームの代表GETパス。Editはこのパスで
+// ページを配信し、Updateは同じページをPATCH /passwordから再描画するため、双方とも
+// リクエストパスではなくここからcanonical URLを取る。
+const passwordEditPath = "/password/edit"
+
+// Editは新しいパスワード入力フォームを表示します (GET /password/edit)
 func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 	token := r.URL.Query().Get("token")
@@ -27,7 +32,7 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Rate Limiting: トークン検証の制限（10回/時間/IP）
+	// Rate Limiting: トークン検証の制限 (10回/時間/IP)
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		ip := clientip.GetClientIP(r)
 		tokenVerifyKey := fmt.Sprintf("password_reset:token_verify:ip:%s", ip)
@@ -64,21 +69,20 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	h.renderEditForm(w, r, http.StatusOK, nil, token)
 }
 
-// renderEditForm は新しいパスワード入力フォームをレンダリングします。
-// バリデーションエラーが存在する場合は status に http.StatusUnprocessableEntity を渡してください。
+// renderEditFormは新しいパスワード入力フォームをレンダリングします。
+// バリデーションエラーが存在する場合はstatusにhttp.StatusUnprocessableEntityを渡してください。
 func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status int, formErrors *model.ValidationError, token string) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, passwordEditPath)
 	meta.SetTitle(ctx, "password_edit_title")
-	meta.OGURL = h.cfg.AppURL() + "/password/edit"
 
 	csrfToken := middleware.GetCSRFToken(r, h.sessionMgr)
 
 	data := passwordpages.EditPageData{
 		CSRFToken:  csrfToken,
 		Token:      token,
-		FormErrors: formErrors,
+		FormErrors: viewmodel.NewFormErrors(formErrors),
 	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
@@ -90,13 +94,12 @@ func (h *Handler) renderEditForm(w http.ResponseWriter, r *http.Request, status 
 	}
 }
 
-// renderInvalidTokenError は無効なトークンエラーを表示します
+// renderInvalidTokenErrorは無効なトークンエラーを表示します
 func (h *Handler) renderInvalidTokenError(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, passwordEditPath)
 	meta.Title = i18n.T(ctx, "password_reset_token_invalid")
-	meta.OGURL = h.cfg.AppURL() + "/password/reset"
 
 	backLink := &errorpages.BackLink{
 		URL:  "/password/reset",

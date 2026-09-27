@@ -3,9 +3,9 @@ testdata_dir = "testdata"
 tmp_dir = "tmp"
 
 [build]
-args_bin = []
+args_bin = ["serve"]
 bin = "./tmp/main"
-cmd = "make templ-generate && APP_ENV=dev op run --env-file=.env -- go build -o ./tmp/main ./cmd/server"
+cmd = "make templ-generate && APP_ENV=dev op run --env-file=.env -- go build -o ./tmp/main ./cmd/annict"
 delay = 1000
 exclude_dir = ["assets", "tmp", "vendor", "testdata", "web"]
 exclude_file = []

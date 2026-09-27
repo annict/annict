@@ -5,10 +5,6 @@
       "schedule": "0 18 * * *"
     },
     {
-      "command": "bundle exec rails session:sweep",
-      "schedule": "0 19 * * *"
-    },
-    {
       "command": "bundle exec rails episode:generate",
       "schedule": "0 20 * * *"
     },

@@ -10,7 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Create はメールアドレス送信処理とログイン方法自動判定を行います (POST /sign_in)
+// Createはメールアドレス送信処理とログイン方法自動判定を行います (POST /sign_in)
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
@@ -46,7 +46,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	slog.DebugContext(ctx, "Turnstile検証成功")
 
-	// UseCaseを呼び出し（バリデーション + ユーザー検索 + コード送信）
+	// UseCaseを呼び出し (バリデーション + ユーザー検索 + コード送信)
 	output, err := h.sendSignInCodeUC.Execute(ctx, usecase.SendSignInCodeInput{
 		Email: email,
 	})

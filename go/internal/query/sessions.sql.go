@@ -8,6 +8,7 @@ package query
 import (
 	"context"
 	"encoding/json"
+	"time"
 )
 
 const createSession = `-- name: CreateSession :one
@@ -32,6 +33,36 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const deleteExpiredSessions = `-- name: DeleteExpiredSessions :execrows
+DELETE FROM sessions
+WHERE id IN (
+    SELECT expired.id
+    FROM sessions AS expired
+    WHERE expired.updated_at < $1
+    ORDER BY expired.updated_at
+    LIMIT $2
+    FOR UPDATE SKIP LOCKED
+)
+`
+
+type DeleteExpiredSessionsParams struct {
+	Cutoff    time.Time `db:"cutoff"`
+	BatchSize int32     `db:"batch_size"`
+}
+
+// updated_atがcutoffより古いセッションを最大batch_size件削除する。PostgreSQLの
+// DELETEはLIMITを取れないため、対象はupdated_atで並べたサブクエリで選び、
+// index_sessions_on_updated_atから古い順に読む。SKIP LOCKEDにより、並行実行時は他方が
+// ロック中の行を飛ばして次へ進める。付けない場合、後発は待たされた末に0件を削除すること
+// になり、滞留が残っていてもそこで消化が止まる。
+func (q *Queries) DeleteExpiredSessions(ctx context.Context, arg DeleteExpiredSessionsParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, deleteExpiredSessions, arg.Cutoff, arg.BatchSize)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 const deleteSession = `-- name: DeleteSession :exec

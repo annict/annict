@@ -5,7 +5,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// Work はテンプレート表示用の作品データです
+// Workはテンプレート表示用の作品データです
 type Work struct {
 	ID            WorkID
 	Title         string
@@ -15,13 +15,13 @@ type Work struct {
 	WatchersCount int32
 	SeasonYear    *int32
 	SeasonName    *string
-	SeasonNumber  *int32        // シーズン番号も保持（翻訳キー用）
+	SeasonNumber  *int32        // シーズン番号も保持 (翻訳キー用)
 	Casts         []Cast        // キャスト情報
 	Staffs        []Staff       // スタッフ情報
 	imageHelper   *image.Helper // 画像URL生成用のヘルパー
 }
 
-// GetImageURL は指定されたサイズとフォーマットで画像URLを取得します
+// GetImageURLは指定されたサイズとフォーマットで画像URLを取得します
 func (w *Work) GetImageURL(width int, format string) string {
 	if w.imageHelper == nil {
 		return ""
@@ -29,7 +29,7 @@ func (w *Work) GetImageURL(width int, format string) string {
 	return w.imageHelper.GetWorkImageURL(w.ImageDataJSON, width, format)
 }
 
-// GetSrcSet は1xと2xの画像URLセットを取得します
+// GetSrcSetは1xと2xの画像URLセットを取得します
 func (w *Work) GetSrcSet(width int, format string) string {
 	if w.imageHelper == nil {
 		return ""
@@ -38,7 +38,7 @@ func (w *Work) GetSrcSet(width int, format string) string {
 	return w.imageHelper.GetSrcSet(originalURL, width, format)
 }
 
-// Cast はキャスト情報を表します
+// Castはキャスト情報を表します
 type Cast struct {
 	ID              CastID
 	Name            string
@@ -49,7 +49,7 @@ type Cast struct {
 	PersonNameEn    string
 }
 
-// Staff はスタッフ情報を表します
+// Staffはスタッフ情報を表します
 type Staff struct {
 	ID          StaffID
 	Name        string
@@ -59,7 +59,7 @@ type Staff struct {
 	RoleOtherEn string
 }
 
-// NewWorksFromModels は []*model.Work から []viewmodel.Work に変換します
+// NewWorksFromModelsは []*model.Workから []viewmodel.Workに変換します
 func NewWorksFromModels(works []*model.Work, helper *image.Helper) []Work {
 	result := make([]Work, len(works))
 	for i, w := range works {
@@ -68,9 +68,9 @@ func NewWorksFromModels(works []*model.Work, helper *image.Helper) []Work {
 	return result
 }
 
-// NewWorkFromModel は *model.Work から viewmodel.Work に変換します
+// NewWorkFromModelは *model.Workからviewmodel.Workに変換します
 func NewWorkFromModel(m *model.Work, helper *image.Helper) Work {
-	// imgproxy用の画像URL生成（280pxサイズ、jpg形式）
+	// imgproxy用の画像URL生成 (280pxサイズ、jpg形式)
 	imageURL := ""
 	if helper != nil {
 		imageURL = helper.GetWorkImageURL(m.ImageData, 280, "jpg")
@@ -100,7 +100,7 @@ func NewWorkFromModel(m *model.Work, helper *image.Helper) Work {
 		work.SeasonNumber = m.SeasonName
 		// 日本語のシーズン名に変換
 		seasonNames := []string{"冬", "春", "夏", "秋"}
-		// seasonNamesは固定長（4要素）のため、int32への変換は安全
+		// seasonNamesは固定長 (4要素) のため、int32への変換は安全
 		seasonNamesLen := int32(len(seasonNames)) // #nosec G115
 		if *m.SeasonName >= 0 && *m.SeasonName < seasonNamesLen {
 			seasonStr := seasonNames[*m.SeasonName]

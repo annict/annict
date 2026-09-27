@@ -10,7 +10,7 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
-// JaText は日本語版のログインコード（テキスト形式）です
+// JaTextは日本語版のログインコード (テキスト形式) です
 func JaText(code string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

@@ -52,7 +52,7 @@ func TestGetClientIP(t *testing.T) {
 			expected:   "9.10.11.12",
 		},
 		{
-			name:       "ヘッダーがない場合はRemoteAddr（ポート番号なし）が使用される",
+			name:       "ヘッダーがない場合はRemoteAddr (ポート番号なし) が使用される",
 			remoteAddr: "13.14.15.16:1234",
 			expected:   "13.14.15.16",
 		},
@@ -83,7 +83,7 @@ func TestGetClientIP(t *testing.T) {
 
 			got := GetClientIP(req)
 			if got != tt.expected {
-				t.Errorf("GetClientIP() = %v, want %v", got, tt.expected)
+				t.Errorf("GetClientIP() = %v、期待値 = %v", got, tt.expected)
 			}
 		})
 	}

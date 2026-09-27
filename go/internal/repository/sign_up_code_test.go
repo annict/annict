@@ -10,7 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestSignUpCodeRepository_Create はサインアップコードを正常に作成し、Modelとして返却されることをテスト
+// TestSignUpCodeRepository_Createはサインアップコードを正常に作成し、Modelとして返却されることをテスト
 func TestSignUpCodeRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -38,16 +38,16 @@ func TestSignUpCodeRepository_Create(t *testing.T) {
 		t.Error("SignUpCodeIDがゼロ値です")
 	}
 	if code.Email != email {
-		t.Errorf("Emailが一致しません: got %v, want %v", code.Email, email)
+		t.Errorf("Email = %v、期待値 = %v", code.Email, email)
 	}
 	if code.CodeDigest != codeDigest {
-		t.Errorf("CodeDigestが一致しません: got %v, want %v", code.CodeDigest, codeDigest)
+		t.Errorf("CodeDigest = %v、期待値 = %v", code.CodeDigest, codeDigest)
 	}
 	if code.Attempts != 0 {
-		t.Errorf("Attemptsの初期値が0ではありません: got %v", code.Attempts)
+		t.Errorf("Attemptsの初期値 = %v、期待値 = 0", code.Attempts)
 	}
 	if code.UsedAt.Valid {
-		t.Error("UsedAtが有効値です（未使用のはず）")
+		t.Error("UsedAtが有効値です (未使用のはず)")
 	}
 	if code.CreatedAt.IsZero() {
 		t.Error("CreatedAtがゼロ値です")
@@ -57,7 +57,7 @@ func TestSignUpCodeRepository_Create(t *testing.T) {
 	}
 }
 
-// TestSignUpCodeRepository_GetValidByEmail は有効なコードが取得できることをテスト
+// TestSignUpCodeRepository_GetValidByEmailは有効なコードが取得できることをテスト
 func TestSignUpCodeRepository_GetValidByEmail(t *testing.T) {
 	t.Parallel()
 
@@ -86,17 +86,17 @@ func TestSignUpCodeRepository_GetValidByEmail(t *testing.T) {
 		t.Fatal("コードが取得できませんでした")
 	}
 	if got.ID != created.ID {
-		t.Errorf("IDが一致しません: got %v, want %v", got.ID, created.ID)
+		t.Errorf("ID = %v、期待値 = %v", got.ID, created.ID)
 	}
 	if got.Email != email {
-		t.Errorf("Emailが一致しません: got %v, want %v", got.Email, email)
+		t.Errorf("Email = %v、期待値 = %v", got.Email, email)
 	}
 	if got.CodeDigest != "valid-digest" {
-		t.Errorf("CodeDigestが一致しません: got %v, want valid-digest", got.CodeDigest)
+		t.Errorf("CodeDigest = %v、期待値 = valid-digest", got.CodeDigest)
 	}
 }
 
-// TestSignUpCodeRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestSignUpCodeRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestSignUpCodeRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -117,6 +117,6 @@ func TestSignUpCodeRepository_WithTx(t *testing.T) {
 	}
 
 	if code.Email != email {
-		t.Errorf("Emailが一致しません: got %v, want %v", code.Email, email)
+		t.Errorf("Email = %v、期待値 = %v", code.Email, email)
 	}
 }

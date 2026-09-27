@@ -1,23 +1,23 @@
-// Package manifest はWeb App Manifestのハンドラーを提供します
+// Package manifestはWeb App Manifestのハンドラーを提供します
 package manifest
 
 import (
 	"github.com/annict/annict/go/internal/config"
 )
 
-// Handler はWeb App Manifest関連のHTTPハンドラーです
+// HandlerはWeb App Manifest関連のHTTPハンドラーです
 type Handler struct {
 	cfg *config.Config
 }
 
-// NewHandler は新しいHandlerを作成します
+// NewHandlerは新しいHandlerを作成します
 func NewHandler(cfg *config.Config) *Handler {
 	return &Handler{
 		cfg: cfg,
 	}
 }
 
-// ManifestIcon はWeb App ManifestのIconを表します
+// ManifestIconはWeb App ManifestのIconを表します
 type ManifestIcon struct {
 	Purpose string `json:"purpose"`
 	Sizes   string `json:"sizes"`
@@ -25,7 +25,7 @@ type ManifestIcon struct {
 	Type    string `json:"type"`
 }
 
-// Manifest はWeb App Manifestの構造を表します
+// ManifestはWeb App Manifestの構造を表します
 type Manifest struct {
 	BackgroundColor string         `json:"background_color"`
 	Description     string         `json:"description"`

@@ -5,6 +5,10 @@ default: &default
   password: <%= ENV.fetch("ANNICT_POSTGRES_PASSWORD") %>
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   port: <%= ENV.fetch("ANNICT_POSTGRES_PORT") %>
+  # データベースのスキーマはgo/db/schema.sqlを正本とし、Railsは扱わない。
+  # このキーによりschema_dump_pathがnilを返し、db:migrate時のスキーマダンプと
+  # maintain_test_schema!によるロードの両方が止まる。
+  schema_dump: false
   username: <%= ENV.fetch("ANNICT_POSTGRES_USERNAME") %>
 
 development:

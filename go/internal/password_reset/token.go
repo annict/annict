@@ -1,4 +1,4 @@
-// Package password_reset はパスワードリセット機能を提供します
+// Package password_resetはパスワードリセット機能を提供します
 package password_reset
 
 import (
@@ -8,19 +8,19 @@ import (
 	"encoding/hex"
 )
 
-// GenerateToken は暗号学的に安全なリセットトークンを生成します
+// GenerateTokenは暗号学的に安全なリセットトークンを生成します
 func GenerateToken() (string, error) {
-	// 32バイト（256ビット）のランダムデータを生成
+	// 32バイト (256ビット) のランダムデータを生成
 	b := make([]byte, 32)
 	if _, err := rand.Read(b); err != nil {
 		return "", err
 	}
 
-	// URLセーフなBase64エンコード（パディングなし）
+	// URLセーフなBase64エンコード (パディングなし)
 	return base64.RawURLEncoding.EncodeToString(b), nil
 }
 
-// HashToken はトークンをSHA-256でハッシュ化します
+// HashTokenはトークンをSHA-256でハッシュ化します
 // データベースに保存する際は、このハッシュ化された値を使用します
 func HashToken(token string) string {
 	hash := sha256.Sum256([]byte(token))

@@ -44,7 +44,7 @@ func TestHandler_Create(t *testing.T) {
 			wantLocation:      "/sign_in/password",
 			wantSessionEmail:  true,
 			wantSessionUserID: true,
-			description:       "パスワードが存在する場合、/sign_in/password へリダイレクト",
+			description:       "パスワードが存在する場合、/sign_in/passwordへリダイレクト",
 		},
 		{
 			name:              "正常系 - パスワードなしユーザー",
@@ -55,7 +55,7 @@ func TestHandler_Create(t *testing.T) {
 			wantLocation:      "/sign_in/code",
 			wantSessionEmail:  true,
 			wantSessionUserID: true,
-			description:       "パスワードが存在しない場合、/sign_in/code へリダイレクト",
+			description:       "パスワードが存在しない場合、/sign_in/codeへリダイレクト",
 		},
 		{
 			name:          "異常系 - メールアドレスが空",
@@ -63,7 +63,7 @@ func TestHandler_Create(t *testing.T) {
 			userExists:    false,
 			wantStatus:    http.StatusUnprocessableEntity,
 			wantFormError: true,
-			description:   "メールアドレスが空の場合、422 でフォームを再描画する",
+			description:   "メールアドレスが空の場合、422でフォームを再描画する",
 		},
 		{
 			name:          "異常系 - ユーザーが存在しない",
@@ -71,7 +71,7 @@ func TestHandler_Create(t *testing.T) {
 			userExists:    false,
 			wantStatus:    http.StatusUnprocessableEntity,
 			wantFormError: true,
-			description:   "ユーザーが存在しない場合、422 でフォームを再描画する",
+			description:   "ユーザーが存在しない場合、422でフォームを再描画する",
 		},
 	}
 
@@ -89,7 +89,7 @@ func TestHandler_Create(t *testing.T) {
 			// テスト用ユーザーを作成
 			var testEmail string
 			if tt.userExists {
-				// テストごとにユニークなメールアドレスを生成（タイムスタンプを追加）
+				// テストごとにユニークなメールアドレスを生成 (タイムスタンプを追加)
 				testEmail = fmt.Sprintf("%d-%s", time.Now().UnixNano(), tt.email)
 				// テストケースごとにユニークなユーザー名を生成
 				username := strings.ReplaceAll(testEmail, "@", "_at_")
@@ -114,7 +114,7 @@ func TestHandler_Create(t *testing.T) {
 						t.Fatalf("新しいトランザクションの開始に失敗しました: %v", err)
 					}
 					tx = newTx
-					// テスト終了時に新しいトランザクションをロールバック（元のt.Cleanupは既に設定済み）
+					// テスト終了時に新しいトランザクションをロールバック (元のt.Cleanupは既に設定済み)
 					t.Cleanup(func() {
 						if err := tx.Rollback(); err != nil && err != sql.ErrTxDone {
 							t.Errorf("トランザクションのロールバックに失敗しました: %v", err)
@@ -136,11 +136,11 @@ func TestHandler_Create(t *testing.T) {
 			sessionRepo := repository.NewSessionRepository(queries)
 			sessionMgr := session.NewManager(sessionRepo, cfg)
 
-			// ログインコード送信ユースケースを作成（Dispatcher は nil でメール送信をスキップ）
+			// ログインコード送信ユースケースを作成 (Dispatcherはnilでメール送信をスキップ)
 			v := validator.NewSignInCreateValidator()
 			sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), repository.NewUserRepository(queries), nil, v)
 
-			// Turnstile クライアントを作成（テスト環境用: 空のSecretKeyで検証をスキップ）
+			// Turnstileクライアントを作成 (テスト環境用: 空のSecretKeyで検証をスキップ)
 			turnstileClient := turnstile.NewClient("", "")
 
 			// ハンドラーを作成
@@ -160,14 +160,14 @@ func TestHandler_Create(t *testing.T) {
 
 			// ステータスコードを検証
 			if rr.Code != tt.wantStatus {
-				t.Errorf("wrong status code: got %v want %v", rr.Code, tt.wantStatus)
+				t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, tt.wantStatus)
 			}
 
 			// リダイレクト先を検証
 			if tt.wantLocation != "" {
 				location := rr.Header().Get("Location")
 				if location != tt.wantLocation {
-					t.Errorf("wrong location: got %v want %v", location, tt.wantLocation)
+					t.Errorf("リダイレクト先 = %v、期待値 = %v", location, tt.wantLocation)
 				}
 			}
 

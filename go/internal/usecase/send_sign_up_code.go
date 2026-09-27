@@ -16,7 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// SendSignUpCodeUsecase は新規登録確認コードを生成・送信するユースケースです
+// SendSignUpCodeUsecaseは新規登録確認コードを生成・送信するユースケースです
 type SendSignUpCodeUsecase struct {
 	db             *sql.DB
 	signUpCodeRepo *repository.SignUpCodeRepository
@@ -25,7 +25,7 @@ type SendSignUpCodeUsecase struct {
 	validator      *validator.SignUpCreateValidator
 }
 
-// NewSendSignUpCodeUsecase は新しいSendSignUpCodeUsecaseを作成します
+// NewSendSignUpCodeUsecaseは新しいSendSignUpCodeUsecaseを作成します
 func NewSendSignUpCodeUsecase(
 	db *sql.DB,
 	signUpCodeRepo *repository.SignUpCodeRepository,
@@ -42,19 +42,19 @@ func NewSendSignUpCodeUsecase(
 	}
 }
 
-// SendSignUpCodeInput はユースケースの入力パラメータです
+// SendSignUpCodeInputはユースケースの入力パラメータです
 type SendSignUpCodeInput struct {
 	Email  string
 	Locale string
 }
 
-// SendSignUpCodeOutput はコード送信の結果を表します
+// SendSignUpCodeOutputはコード送信の結果を表します
 type SendSignUpCodeOutput struct {
-	Code  string // 平文コード（テスト用）
+	Code  string // 平文コード (テスト用)
 	Email string // メールアドレス
 }
 
-// Execute は新規登録確認コードを生成し、メール送信ジョブをエンキューします
+// Executeは新規登録確認コードを生成し、メール送信ジョブをエンキューします
 func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCodeInput) (*SendSignUpCodeOutput, error) {
 	// 1. バリデーション
 	if err := uc.validator.Validate(ctx, validator.SignUpCreateValidatorInput{
@@ -100,7 +100,7 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCo
 		return nil, fmt.Errorf("コードのハッシュ化に失敗: %w", err)
 	}
 
-	// コードをデータベースに保存（有効期限: 15分）
+	// コードをデータベースに保存 (有効期限: 15分)
 	if _, err := signUpCodeRepoTx.Create(ctx, repository.SignUpCodeCreateParams{
 		Email:      input.Email,
 		CodeDigest: codeDigest,
@@ -131,7 +131,7 @@ func (uc *SendSignUpCodeUsecase) Execute(ctx context.Context, input SendSignUpCo
 			)
 		}
 	} else {
-		slog.WarnContext(ctx, "Dispatcher が設定されていないため、メール送信ジョブをエンキューできませんでした",
+		slog.WarnContext(ctx, "Dispatcherが設定されていないため、メール送信ジョブをエンキューできませんでした",
 			"email", input.Email,
 		)
 	}

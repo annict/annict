@@ -86,7 +86,7 @@ func TestNew(t *testing.T) {
 			handler.New(rr, req)
 
 			if rr.Code != tt.expectedStatus {
-				t.Errorf("ステータスコードが一致しません: got %v want %v", rr.Code, tt.expectedStatus)
+				t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, tt.expectedStatus)
 			}
 
 			if tt.expectedBody != "" && rr.Code == http.StatusOK {

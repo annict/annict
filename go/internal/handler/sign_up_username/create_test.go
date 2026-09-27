@@ -106,7 +106,7 @@ func TestCreate(t *testing.T) {
 			handler.Create(rr, req)
 
 			if rr.Code != tt.expectedStatus {
-				t.Errorf("ステータスコードが一致しません: got %v want %v", rr.Code, tt.expectedStatus)
+				t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, tt.expectedStatus)
 			}
 
 			if tt.checkUser && rr.Code == http.StatusSeeOther {
@@ -120,7 +120,7 @@ func TestCreate(t *testing.T) {
 					}
 				} else {
 					if user.Username != tt.username {
-						t.Errorf("ユーザー名が一致しません: got %v want %v", user.Username, tt.username)
+						t.Errorf("ユーザー名 = %v、期待値 = %v", user.Username, tt.username)
 					}
 				}
 
@@ -193,9 +193,9 @@ func TestCreate_UsernameTaken(t *testing.T) {
 
 	handler.Create(rr, req)
 
-	// 重複ユーザー名はバリデーションエラー → 422 でフォーム再描画
+	// 重複ユーザー名はバリデーションエラー → 422でフォーム再描画
 	if rr.Code != http.StatusUnprocessableEntity {
-		t.Errorf("ステータスコードが一致しません: got %v want %v", rr.Code, http.StatusUnprocessableEntity)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusUnprocessableEntity)
 	}
 
 	// 新しいユーザーは作成されていないはず

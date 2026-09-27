@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-// mockSignUpCodeEmailSender はテスト用のモック
+// mockSignUpCodeEmailSenderはテスト用のモック
 type mockSignUpCodeEmailSender struct {
 	called bool
 	to     string
@@ -46,13 +46,13 @@ func TestSendSignUpCodeEmailUsecase_Execute(t *testing.T) {
 			wantCalled: true,
 		},
 		{
-			name:       "異常系: Email が空",
+			name:       "異常系: Emailが空",
 			input:      SendSignUpCodeEmailInput{Email: "", Code: "654321", Locale: "ja"},
 			wantErr:    true,
 			wantCalled: false,
 		},
 		{
-			name:       "異常系: Sender がエラー",
+			name:       "異常系: Senderがエラー",
 			input:      SendSignUpCodeEmailInput{Email: "test@example.com", Code: "654321", Locale: "ja"},
 			senderErr:  errors.New("メール送信エラー"),
 			wantErr:    true,
@@ -69,20 +69,20 @@ func TestSendSignUpCodeEmailUsecase_Execute(t *testing.T) {
 
 			err := uc.Execute(context.Background(), tt.input)
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Execute() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Execute()のエラー = %v、期待値 = %v", err, tt.wantErr)
 			}
 			if sender.called != tt.wantCalled {
-				t.Errorf("Send called = %v, want %v", sender.called, tt.wantCalled)
+				t.Errorf("Send()の呼び出し = %v、期待値 = %v", sender.called, tt.wantCalled)
 			}
 			if tt.wantCalled && !tt.wantErr {
 				if sender.to != tt.input.Email {
-					t.Errorf("to = %s, want %s", sender.to, tt.input.Email)
+					t.Errorf("to = %s、期待値 = %s", sender.to, tt.input.Email)
 				}
 				if sender.code != tt.input.Code {
-					t.Errorf("code = %s, want %s", sender.code, tt.input.Code)
+					t.Errorf("code = %s、期待値 = %s", sender.code, tt.input.Code)
 				}
 				if sender.locale != tt.input.Locale {
-					t.Errorf("locale = %s, want %s", sender.locale, tt.input.Locale)
+					t.Errorf("locale = %s、期待値 = %s", sender.locale, tt.input.Locale)
 				}
 			}
 		})

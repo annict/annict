@@ -20,7 +20,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// setupTestHandler はテスト用のハンドラーをセットアップします
+// setupTestHandlerはテスト用のハンドラーをセットアップします
 func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *annictStripe.Config) *Handler {
 	t.Helper()
 
@@ -34,13 +34,13 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB, stripeCfg *annictStr
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 	v := validator.NewSupportersCheckoutCreateValidator()
 
-	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
+	// テスト用にはnilを渡す (テストではStripe APIを呼び出さない)
 	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, stripeCfg, nil, v)
 
 	return NewHandler(flashMgr, createCheckoutSessionUC)
 }
 
-// createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します
+// createUserWithStripeSubscriberはStripeサブスクライバーを持つユーザーを作成します
 func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (model.UserID, model.StripeSubscriberID) {
 	t.Helper()
 
@@ -58,7 +58,7 @@ func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus strin
 	return userID, subscriberID
 }
 
-// getUserByID はユーザーIDからユーザー情報を取得します（テスト用）
+// getUserByIDはユーザーIDからユーザー情報を取得します (テスト用)
 func getUserByID(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	t.Helper()
 
@@ -90,7 +90,7 @@ func getUserByID(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	return &user
 }
 
-// TestCreate_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト
+// TestCreate_NotLoggedInは未ログインユーザーがアクセスした場合のテスト
 func TestCreate_NotLoggedIn(t *testing.T) {
 	t.Parallel()
 
@@ -113,16 +113,16 @@ func TestCreate_NotLoggedIn(t *testing.T) {
 
 	// ログインページへリダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/sign_in")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in")
 	}
 }
 
-// TestCreate_InvalidPlan は無効なプランが選択された場合のテスト
+// TestCreate_InvalidPlanは無効なプランが選択された場合のテスト
 func TestCreate_InvalidPlan(t *testing.T) {
 	t.Parallel()
 
@@ -162,18 +162,18 @@ func TestCreate_InvalidPlan(t *testing.T) {
 
 			// サポーターページへリダイレクトされることを確認
 			if rr.Code != http.StatusSeeOther {
-				t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+				t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 			}
 
 			location := rr.Header().Get("Location")
 			if location != "/supporters" {
-				t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+				t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 			}
 		})
 	}
 }
 
-// TestCreate_AlreadyActiveSubscription は既にアクティブなサブスクリプションがある場合のテスト
+// TestCreate_AlreadyActiveSubscriptionは既にアクティブなサブスクリプションがある場合のテスト
 func TestCreate_AlreadyActiveSubscription(t *testing.T) {
 	t.Parallel()
 
@@ -202,16 +202,16 @@ func TestCreate_AlreadyActiveSubscription(t *testing.T) {
 
 	// サポーターページへリダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }
 
-// TestCreate_PastDueSubscriptionBlocksCheckout は支払い遅延中のサブスクリプションがある場合のテスト
+// TestCreate_PastDueSubscriptionBlocksCheckoutは支払い遅延中のサブスクリプションがある場合のテスト
 func TestCreate_PastDueSubscriptionBlocksCheckout(t *testing.T) {
 	t.Parallel()
 
@@ -240,16 +240,16 @@ func TestCreate_PastDueSubscriptionBlocksCheckout(t *testing.T) {
 
 	// past_dueはアクティブとして扱われるため、リダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }
 
-// TestCreate_CanceledSubscriptionAllowsCheckout はキャンセル済みサブスクリプションがある場合はCheckoutを許可する
+// TestCreate_CanceledSubscriptionAllowsCheckoutはキャンセル済みサブスクリプションがある場合はCheckoutを許可する
 func TestCreate_CanceledSubscriptionAllowsCheckout(t *testing.T) {
 	t.Parallel()
 
@@ -279,11 +279,11 @@ func TestCreate_CanceledSubscriptionAllowsCheckout(t *testing.T) {
 	// canceledは非アクティブなので、Stripe API呼び出しに進む
 	// Stripe APIが設定されていない場合はエラーになりリダイレクトされる
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 }
 
-// TestCreate_NoSubscriptionAtAll はサブスクリプションが全くない場合のテスト
+// TestCreate_NoSubscriptionAtAllはサブスクリプションが全くない場合のテスト
 func TestCreate_NoSubscriptionAtAll(t *testing.T) {
 	t.Parallel()
 
@@ -313,11 +313,11 @@ func TestCreate_NoSubscriptionAtAll(t *testing.T) {
 	// サブスクリプションがないので、Stripe API呼び出しに進む
 	// Stripe APIが設定されていない場合はエラーになりリダイレクトされる
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 }
 
-// TestCreate_MissingPriceID は価格IDが設定されていない場合のテスト
+// TestCreate_MissingPriceIDは価格IDが設定されていない場合のテスト
 func TestCreate_MissingPriceID(t *testing.T) {
 	t.Parallel()
 
@@ -347,11 +347,11 @@ func TestCreate_MissingPriceID(t *testing.T) {
 
 	// 価格IDが設定されていないため、エラーでリダイレクト
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }

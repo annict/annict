@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestNew_PageMeta はパスワードリセット申請ページのPageMeta設定をテストします
+// TestNew_PageMetaはパスワードリセット申請ページのPageMeta設定をテストします
 func TestNew_PageMeta(t *testing.T) {
 	t.Parallel()
 
@@ -29,6 +29,11 @@ func TestNew_PageMeta(t *testing.T) {
 	if err != nil {
 		t.Fatalf("設定の読み込みに失敗: %v", err)
 	}
+
+	// config.Loadはtest / devでANNICT_TURNSTILE_DISABLE=trueのときサイトキーを
+	// 空にしうるため、上書きする。以下の存在検証を実行環境に依存させないため。
+	cfg.TurnstileSiteKey = "1x00000000000000000000AA"
+
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 
@@ -72,6 +77,11 @@ func TestNew_PageMeta(t *testing.T) {
 			expectedOGTitle := `<meta property="og:title" content="` + tt.expectedTitle + `">`
 			if !strings.Contains(body, expectedOGTitle) {
 				t.Errorf("期待されるog:titleが見つかりません: %q", expectedOGTitle)
+			}
+
+			expectedPreconnect := `<link rel="preconnect" href="https://challenges.cloudflare.com">`
+			if !strings.Contains(body, expectedPreconnect) {
+				t.Errorf("期待されるpreconnectが見つかりません: %q", expectedPreconnect)
 			}
 		})
 	}

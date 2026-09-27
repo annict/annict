@@ -30,9 +30,9 @@ describe "GraphQL API Query" do
       let!(:user) { create(:user) }
 
       context "when `orderBy` argument is specified" do
-        let!(:activity1) { create(:create_episode_record_activity, user: user) }
-        let!(:activity2) { create(:create_episode_record_activity, user: user) }
-        let!(:activity3) { create(:create_episode_record_activity, user: user) }
+        let!(:activity1) { create(:create_episode_record_activity, user: user, created_at: Time.parse("2026-01-01 10:00:00 +09:00")) }
+        let!(:activity2) { create(:create_episode_record_activity, user: user, created_at: Time.parse("2026-01-01 11:00:00 +09:00")) }
+        let!(:activity3) { create(:create_episode_record_activity, user: user, created_at: Time.parse("2026-01-01 12:00:00 +09:00")) }
         let(:result) do
           query_string = <<~QUERY
             query {
@@ -143,9 +143,9 @@ describe "GraphQL API Query" do
       let!(:status2) { create(:status, user: user, kind: :watched) }
       let!(:work1) { status1.work }
       let!(:work2) { status2.work }
-      let!(:library_entry1) { create(:library_entry, user: user, work: work1, status: status1) }
-      let!(:library_entry2) { create(:library_entry, user: user, work: work2, status: status2) }
-      let!(:library_entry3) { create(:library_entry, user: user, status: nil) } # ステータス未指定
+      let!(:library_entry1) { create(:library_entry, user: user, work: work1, status: status1, created_at: Time.parse("2026-01-01 10:00:00 +09:00")) }
+      let!(:library_entry2) { create(:library_entry, user: user, work: work2, status: status2, created_at: Time.parse("2026-01-01 11:00:00 +09:00")) }
+      let!(:library_entry3) { create(:library_entry, user: user, status: nil, created_at: Time.parse("2026-01-01 12:00:00 +09:00")) } # ステータス未指定
       let!(:work3) { library_entry3.work }
 
       context "`states` が指定されているとき" do
@@ -280,15 +280,12 @@ describe "GraphQL API Query" do
           result = Beta::AnnictSchema.execute(query_string)
 
           expect(result["errors"]).to be_nil
-          expect(result.dig("data", "user")).to eq(
-            "username" => user.username,
-            "records" => {
-              "nodes" => [
-                {"comment" => ""},
-                {"comment" => "おもしろかった"}
-              ]
-            }
-          )
+          expect(result.dig("data", "user", "username")).to eq(user.username)
+          # 並び順を指定しない `records` はORDER BYを持たないため、集合として検証する
+          expect(result.dig("data", "user", "records", "nodes")).to match_array([
+            {"comment" => ""},
+            {"comment" => "おもしろかった"}
+          ])
         end
       end
 

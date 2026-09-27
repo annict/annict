@@ -3,7 +3,7 @@
 
 RSpec.describe "POST /db/works/:work_id/programs", type: :request do
   it "ログインしていないとき、ログインページにリダイレクトすること" do
-    channel = Channel.first
+    channel = create(:channel)
     work = create(:work)
     form_params = {
       rows: "#{channel.id},2020-04-01 0:00"
@@ -17,7 +17,7 @@ RSpec.describe "POST /db/works/:work_id/programs", type: :request do
   end
 
   it "エディター権限を持たないユーザーがログインしているとき、アクセスできないこと" do
-    channel = Channel.first
+    channel = create(:channel)
     work = create(:work)
     user = create(:registered_user)
     form_params = {
@@ -34,7 +34,7 @@ RSpec.describe "POST /db/works/:work_id/programs", type: :request do
   end
 
   it "エディター権限を持つユーザーがログインしているとき、放送予定を作成できること" do
-    channel = Channel.first
+    channel = create(:channel)
     work = create(:work)
     user = create(:registered_user, :with_editor_role)
     form_params = {
@@ -57,7 +57,7 @@ RSpec.describe "POST /db/works/:work_id/programs", type: :request do
   end
 
   it "管理者権限を持つユーザーがログインしているとき、放送予定を作成できること" do
-    channel = Channel.first
+    channel = create(:channel)
     work = create(:work)
     user = create(:registered_user, :with_admin_role)
     form_params = {
@@ -80,8 +80,8 @@ RSpec.describe "POST /db/works/:work_id/programs", type: :request do
   end
 
   it "複数の放送予定を一度に作成できること" do
-    channel1 = Channel.first
-    channel2 = Channel.second
+    channel1 = create(:channel)
+    channel2 = create(:channel)
     work = create(:work)
     user = create(:registered_user, :with_editor_role)
     form_params = {
@@ -106,7 +106,7 @@ RSpec.describe "POST /db/works/:work_id/programs", type: :request do
   end
 
   it "不正な時刻形式が指定されたとき、バリデーションエラーになること" do
-    channel = Channel.first
+    channel = create(:channel)
     work = create(:work)
     user = create(:registered_user, :with_editor_role)
     form_params = {
@@ -122,7 +122,7 @@ RSpec.describe "POST /db/works/:work_id/programs", type: :request do
   end
 
   it "存在しない作品IDが指定されたとき、404エラーになること" do
-    channel = Channel.first
+    channel = create(:channel)
     user = create(:registered_user, :with_editor_role)
     form_params = {
       rows: "#{channel.id},2020-04-01 0:00"

@@ -5,7 +5,7 @@ import (
 	"encoding/base64"
 )
 
-// GenerateCSRFToken はRails互換のCSRFトークンを生成する
+// GenerateCSRFTokenはRails互換のCSRFトークンを生成する
 // Rails版: SecureRandom.base64(32)
 // 32バイトのランダムデータを生成し、Base64エンコードして返す
 func GenerateCSRFToken() (string, error) {

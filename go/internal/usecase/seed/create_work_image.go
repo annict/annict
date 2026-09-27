@@ -13,19 +13,19 @@ import (
 	"github.com/annict/annict/go/internal/seed"
 )
 
-// CreateWorkImageParams 作品画像作成のパラメータ
+// CreateWorkImageParams作品画像作成のパラメータ
 type CreateWorkImageParams struct {
 	WorkID model.WorkID
 	UserID model.UserID
 }
 
-// CreateWorkImageResult 作品画像作成の結果
+// CreateWorkImageResult作品画像作成の結果
 type CreateWorkImageResult struct {
 	WorkImageID int64
 	ImagePath   string
 }
 
-// CreateWorkImageUsecase 作品画像生成Usecase（シード専用、バルクインサート対応）
+// CreateWorkImageUsecase作品画像生成Usecase (シード専用、バルクインサート対応)
 type CreateWorkImageUsecase struct {
 	db              *sql.DB
 	queries         *query.Queries
@@ -36,7 +36,7 @@ type CreateWorkImageUsecase struct {
 	bucketName      string
 }
 
-// NewCreateWorkImageUsecase 新しいCreateWorkImageUsecaseを作成
+// NewCreateWorkImageUsecase新しいCreateWorkImageUsecaseを作成
 func NewCreateWorkImageUsecase(
 	db *sql.DB,
 	queries *query.Queries,
@@ -57,7 +57,7 @@ func NewCreateWorkImageUsecase(
 	}
 }
 
-// ExecuteBatch 複数の作品画像をバッチで作成します
+// ExecuteBatch複数の作品画像をバッチで作成します
 // 各作品画像について：
 // 1. ランダム画像を生成
 // 2. Cloudflare R2にアップロード
@@ -66,15 +66,15 @@ func (uc *CreateWorkImageUsecase) ExecuteBatch(ctx context.Context, params []Cre
 	return uc.executeBatchWithTx(ctx, nil, params, progressBar)
 }
 
-// ExecuteBatchWithTx 複数の作品画像をバッチで作成します（テスト用：既存トランザクションを使用）
+// ExecuteBatchWithTx複数の作品画像をバッチで作成します (テスト用：既存トランザクションを使用)
 // txがnilの場合は内部でトランザクションを作成します
 func (uc *CreateWorkImageUsecase) ExecuteBatchWithTx(ctx context.Context, tx *sql.Tx, params []CreateWorkImageParams, progressBar *progressbar.ProgressBar) ([]CreateWorkImageResult, error) {
 	return uc.executeBatchWithTx(ctx, tx, params, progressBar)
 }
 
-// executeBatchWithTx 内部実装：トランザクションを受け取るか新規作成する
+// executeBatchWithTx内部実装：トランザクションを受け取るか新規作成する
 func (uc *CreateWorkImageUsecase) executeBatchWithTx(ctx context.Context, existingTx *sql.Tx, params []CreateWorkImageParams, progressBar *progressbar.ProgressBar) ([]CreateWorkImageResult, error) {
-	// 既存トランザクションがある場合は、1件ずつ処理（テスト用）
+	// 既存トランザクションがある場合は、1件ずつ処理 (テスト用)
 	if existingTx != nil {
 		results := make([]CreateWorkImageResult, 0, len(params))
 		queries := uc.queries.WithTx(existingTx)
@@ -94,7 +94,7 @@ func (uc *CreateWorkImageUsecase) executeBatchWithTx(ctx context.Context, existi
 	}
 
 	// 既存トランザクションがない場合は、並列処理で高速化
-	// Worker Poolパターンで並列処理を実装（10並列）
+	// Worker Poolパターンで並列処理を実装 (10並列)
 	const numWorkers = 10
 
 	// ワーカージョブの定義
@@ -114,10 +114,10 @@ func (uc *CreateWorkImageUsecase) executeBatchWithTx(ctx context.Context, existi
 	jobs := make(chan workJob, len(params))
 	resultsCh := make(chan workResult, len(params))
 
-	// ワーカーを起動（goroutineで並列処理）
+	// ワーカーを起動 (goroutineで並列処理)
 	for w := 0; w < numWorkers; w++ {
 		go func() {
-			// 各ワーカーはqueriesを持つ（トランザクションなし）
+			// 各ワーカーはqueriesを持つ (トランザクションなし)
 			queries := uc.queries
 			for job := range jobs {
 				result, err := uc.createSingleWorkImage(ctx, queries, job.param)
@@ -136,7 +136,7 @@ func (uc *CreateWorkImageUsecase) executeBatchWithTx(ctx context.Context, existi
 	}
 	close(jobs)
 
-	// 結果を回収（順序を保持するためにマップを使用）
+	// 結果を回収 (順序を保持するためにマップを使用)
 	resultMap := make(map[int]CreateWorkImageResult)
 	errorMap := make(map[int]error)
 
@@ -171,15 +171,15 @@ func (uc *CreateWorkImageUsecase) executeBatchWithTx(ctx context.Context, existi
 	return orderedResults, nil
 }
 
-// createSingleWorkImage 単一の作品画像を作成します
+// createSingleWorkImage単一の作品画像を作成します
 func (uc *CreateWorkImageUsecase) createSingleWorkImage(ctx context.Context, queries *query.Queries, param CreateWorkImageParams) (*CreateWorkImageResult, error) {
-	// 1. ランダム画像を生成（Shrineのpretty_locationプラグインの仕様に合わせて作品IDを渡す）
+	// 1. ランダム画像を生成 (Shrineのpretty_locationプラグインの仕様に合わせて作品IDを渡す)
 	img, err := seed.GenerateRandomWorkImage(param.WorkID)
 	if err != nil {
 		return nil, fmt.Errorf("ランダム画像生成エラー: %w", err)
 	}
 
-	// 2. Cloudflare R2にアップロード（R2設定がある場合のみ）
+	// 2. Cloudflare R2にアップロード (R2設定がある場合のみ)
 	if uc.endpoint != "" && uc.accessKeyID != "" && uc.secretAccessKey != "" && uc.bucketName != "" {
 		if err := seed.UploadToR2(ctx, img, uc.endpoint, uc.accessKeyID, uc.secretAccessKey, uc.region, uc.bucketName); err != nil {
 			return nil, fmt.Errorf("r2へのアップロードエラー: %w", err)

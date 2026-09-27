@@ -7,11 +7,11 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// BottomNav はモバイル用のボトムナビゲーションコンポーネントです
-// md以上の画面サイズでは非表示になります
-// ctx: コンテキスト（I18n用）
-// user: ログインユーザー情報（nilの場合は未ログイン状態）
-// seasons: シーズン情報（前・現在・次）
+// BottomNavはモバイル用のボトムナビゲーションコンポーネントを描画する。
+// md以上の画面サイズでは非表示になる。
+//
+// userはログインユーザー情報 ( nilの場合は未ログイン状態 )。seasonsは
+// シーズン情報 ( 前・現在・次 )。
 templ BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Seasons) {
 	<div
 		class="md:hidden fixed bottom-0 left-1/2 w-full translate-x-[-50%] pb-safe
@@ -23,7 +23,7 @@ templ BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Sea
 				<button
 					class="flex flex-col items-center justify-center gap-1 cursor-pointer w-full"
 					type="button"
-					onclick="document.dispatchEvent(new CustomEvent('basecoat:sidebar'));"
+					onclick="document.getElementById('sidebar')?.toggle?.();"
 				>
 					@templates.Icon("list-regular", "w-[18px] h-[18px] fill-(--muted-foreground)")
 
@@ -48,7 +48,7 @@ templ BottomNav(ctx context.Context, user *viewmodel.User, seasons viewmodel.Sea
 	</div>
 }
 
-// bottomNavLink はボトムナビゲーションのリンクアイテムを生成します
+// bottomNavLinkはボトムナビゲーションのリンクアイテムを描画する。
 templ bottomNavLink(ctx context.Context, href string, labelKey string, iconName string) {
 	<li class="basis-1/5">
 		<a

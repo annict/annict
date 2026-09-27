@@ -1,4 +1,4 @@
-// Package supporters はサポーターページ関連のハンドラーを提供します
+// Package supportersはサポーターページ関連のハンドラーを提供します
 package supporters
 
 import (
@@ -11,7 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler はサポーター関連のHTTPハンドラーです
+// Handlerはサポーター関連のHTTPハンドラーです
 type Handler struct {
 	cfg                  *config.Config
 	sessionManager       *session.Manager
@@ -21,7 +21,7 @@ type Handler struct {
 	stripeClient         *stripe.Client
 }
 
-// NewHandler は新しいHandlerを作成します
+// NewHandlerは新しいHandlerを作成します
 func NewHandler(
 	cfg *config.Config,
 	sessionManager *session.Manager,

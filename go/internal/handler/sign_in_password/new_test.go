@@ -14,7 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// setupSessionWithEmail はセッションにメールアドレスを設定し、セッションCookieを返します
+// setupSessionWithEmailはセッションにメールアドレスを設定し、セッションCookieを返します
 func setupSessionWithEmail(t *testing.T, sessionMgr *session.Manager, email string) *http.Cookie {
 	t.Helper()
 
@@ -40,7 +40,7 @@ func setupSessionWithEmail(t *testing.T, sessionMgr *session.Manager, email stri
 	return nil
 }
 
-// newTestHandler はテスト用のHandlerを作成します
+// newTestHandlerはテスト用のHandlerを作成します
 func newTestHandler(t *testing.T, cfg *config.Config, sessionMgr *session.Manager, userRepo *repository.UserRepository, createSessionUC *usecase.CreateSessionUsecase) *Handler {
 	t.Helper()
 
@@ -83,18 +83,18 @@ func TestNew(t *testing.T) {
 	req.AddCookie(sessionCookie)
 	rr := httptest.NewRecorder()
 
-	// I18nミドルウェアを適用（テストでもlocaleを設定）
+	// I18nミドルウェアを適用 (テストでもlocaleを設定)
 	testutil.ApplyI18nMiddleware(t, handler.New)(rr, req)
 
 	// ステータスコードを確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	// Content-Typeを確認
 	contentType := rr.Header().Get("Content-Type")
 	if !strings.Contains(contentType, "text/html") {
-		t.Errorf("Content-Typeが正しくない: got %v", contentType)
+		t.Errorf("Content-Type = %v、期待値 = text/htmlを含むこと", contentType)
 	}
 }
 
@@ -134,7 +134,7 @@ func TestNew_WithBackParam(t *testing.T) {
 	testutil.ApplyI18nMiddleware(t, handler.New)(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	// レスポンスボディにbackパラメータのhiddenフィールドが含まれていることを確認
@@ -147,7 +147,7 @@ func TestNew_WithBackParam(t *testing.T) {
 	}
 }
 
-// TestNew_WithoutSessionEmail セッションにメールアドレスがない場合は/sign_inにリダイレクト
+// TestNew_WithoutSessionEmailセッションにメールアドレスがない場合は/sign_inにリダイレクト
 func TestNew_WithoutSessionEmail(t *testing.T) {
 	t.Parallel()
 
@@ -174,11 +174,11 @@ func TestNew_WithoutSessionEmail(t *testing.T) {
 
 	// /sign_inにリダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/sign_in")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in")
 	}
 }

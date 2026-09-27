@@ -1,4 +1,4 @@
-// Package middleware はHTTPミドルウェアを提供します
+// Package middlewareはHTTPミドルウェアを提供します
 package middleware
 
 import (
@@ -14,23 +14,23 @@ import (
 type contextKey string
 
 const (
-	// UserContextKey はコンテキストからユーザーを取得するためのキー
+	// UserContextKeyはコンテキストからユーザーを取得するためのキー
 	UserContextKey contextKey = "user"
 )
 
-// AuthMiddleware は認証を行うミドルウェア
+// AuthMiddlewareは認証を行うミドルウェア
 type AuthMiddleware struct {
 	sessionManager *session.Manager
 }
 
-// NewAuthMiddleware は新しいAuthMiddlewareを作成
+// NewAuthMiddlewareは新しいAuthMiddlewareを作成
 func NewAuthMiddleware(sessionManager *session.Manager) *AuthMiddleware {
 	return &AuthMiddleware{
 		sessionManager: sessionManager,
 	}
 }
 
-// Middleware はHTTPミドルウェアを返す
+// MiddlewareはHTTPミドルウェアを返す
 func (a *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// セッションからユーザー情報を取得
@@ -52,13 +52,13 @@ func (a *AuthMiddleware) Middleware(next http.Handler) http.Handler {
 	})
 }
 
-// RequireAuth は認証が必要なエンドポイント用のミドルウェア
+// RequireAuthは認証が必要なエンドポイント用のミドルウェア
 func (a *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := r.Context()
 		user := GetUserFromContext(ctx)
 		if user == nil {
-			// 未認証の場合はログインページにリダイレクト（元のURLを back パラメータに付与）
+			// 未認証の場合はログインページにリダイレクト (元のURLをbackパラメータに付与)
 			redirectToSignIn(w, r)
 			return
 		}
@@ -81,7 +81,7 @@ func (a *AuthMiddleware) RequireAuth(next http.Handler) http.Handler {
 	})
 }
 
-// GetUserFromContext はコンテキストからユーザー情報を取得
+// GetUserFromContextはコンテキストからユーザー情報を取得
 func GetUserFromContext(ctx context.Context) *model.User {
 	if user, ok := ctx.Value(UserContextKey).(*model.User); ok {
 		return user
@@ -89,8 +89,8 @@ func GetUserFromContext(ctx context.Context) *model.User {
 	return nil
 }
 
-// redirectToSignIn は未認証ユーザーをログインページにリダイレクトする
-// 元のURLを back パラメータとして付与することで、ログイン後に元のページに戻れるようにする
+// redirectToSignInは未認証ユーザーをログインページにリダイレクトする
+// 元のURLをbackパラメータとして付与することで、ログイン後に元のページに戻れるようにする
 func redirectToSignIn(w http.ResponseWriter, r *http.Request) {
 	backURL := r.URL.RequestURI()
 	redirectURL := "/sign_in?back=" + url.QueryEscape(backURL)

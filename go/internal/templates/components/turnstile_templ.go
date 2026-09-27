@@ -10,11 +10,11 @@ import (
 	templruntime "github.com/a-h/templ/runtime"
 )
 
-// Turnstile は Cloudflare Turnstile のウィジェットを表示します
+// TurnstileはCloudflare Turnstileのウィジェットを表示します
 // Bot対策として、フォーム送信時に自動的にチャレンジを実行します
 //
 // 引数:
-//   - siteKey: Turnstile Site Key（公開可能）
+//   - siteKey: Turnstile Site Key (公開可能)
 //
 // 使い方:
 //
@@ -43,7 +43,7 @@ func Turnstile(siteKey string) templ.Component {
 		}
 		ctx = templ.ClearChildren(ctx)
 		if siteKey != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Turnstile JavaScript を非同期で読み込む --> <script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js\" async defer></script> <!-- Turnstile ウィジェット --> <div class=\"cf-turnstile\" data-sitekey=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!-- Turnstile JavaScriptを非同期で読み込む --> <script src=\"https://challenges.cloudflare.com/turnstile/v0/api.js\" async defer></script> <!-- Turnstileウィジェット --> <div class=\"cf-turnstile\" data-sitekey=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}

@@ -1,33 +1,59 @@
 package components
 
 import (
+	"strconv"
+
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// DbSidebar renders the sidebar component for the Annict DB admin UI.
-//
-// [Ja] DbSidebar は Annict DB 管理画面用のサイドバーコンポーネントを描画する。
-templ DbSidebar() {
-	<aside class="sidebar" data-side="left" aria-hidden="false">
+// DBSidebarはAnnict DB管理画面用のサイドバーコンポーネントを描画する。
+templ DBSidebar() {
+	<aside
+		id="db-sidebar"
+		class="sidebar"
+		data-side="left"
+		data-desktop-open={ strconv.FormatBool(templates.IsDBSidebarOpen(ctx)) }
+		if templates.IsDBSidebarOpen(ctx) {
+			aria-hidden="false"
+		} else {
+			aria-hidden="true"
+			data-initial-open="false"
+			inert
+		}
+	>
 		<nav aria-label="Annict DB navigation">
-			<section class="scrollbar gap-4">
-				<div>
-					<a href="/db" class="flex items-center justify-center gap-2 bg-primary h-[52px] relative">
-						<img
-							height="30"
-							loading="lazy"
-							src="/static/images/logo-white.png"
-							width="25"
-							alt="Annict"
-						/>
+			<header class="bg-primary h-[52px] flex items-center justify-center relative">
+				<a href="/db" class="flex items-center gap-2">
+					<img
+						height="30"
+						loading="lazy"
+						src="/static/images/logo-white.png"
+						width="25"
+						alt="Annict"
+					/>
 
-						<span class="text-white font-bold text-lg absolute right-[90px]">
-							DB
-						</span>
-					</a>
-				</div>
+					<span class="text-white font-bold text-lg leading-none">
+						DB
+					</span>
+				</a>
 
-				<div class="px-4">
+				<button
+					type="button"
+					class="btn absolute right-0 mr-1 top-1/2 -translate-y-1/2 md:hidden text-white hover:bg-white/15"
+					data-variant="ghost"
+					data-size="icon"
+					data-sidebar-close="db-sidebar"
+					aria-controls="db-sidebar"
+					aria-label={ templates.T(ctx, "db_sidebar_close_label") }
+				>
+					@templates.Icon("x-regular", "size-5")
+				</button>
+			</header>
+
+			<section class="scrollbar gap-4 py-4">
+				// Basecoatはメニューのグループとfooterをp-2で字下げするため、検索欄も
+				// 同じpx-2にしてサイドバー内の横方向の余白を揃える。
+				<div class="px-2">
 					<form method="get" action="/db/search" autocomplete="off">
 						<input
 							type="text"
@@ -50,28 +76,38 @@ templ DbSidebar() {
 						@dbSidebarMenuItem("/db/channels", "db_sidebar_channels")
 					</ul>
 				</div>
-
-				<div class="px-2 mb-4 border-t border-border pt-4">
-					<a
-						href="/"
-						class="flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
-					>
-						<span class="text-sm text-muted-foreground">
-							{ templates.T(ctx, "db_sidebar_back_to_annict") }
-						</span>
-					</a>
-				</div>
 			</section>
+
+			// Basecoatはsectionだけを自身でスクロールする領域にする (flex-1
+			// overflow-y-auto) ため、footerに置いた戻るリンクはメニューがスクロールするほど
+			// 伸びてもサイドバーの下端に残る。
+			<footer class="border-t border-sidebar-border">
+				<a
+					href="/"
+					class="flex items-center justify-center gap-2 p-2 rounded-lg hover:bg-sidebar-accent transition-colors text-muted-foreground"
+				>
+					@templates.Icon("arrow-bend-up-left-regular", "size-[16px]")
+
+					<span class="text-sm">
+						{ templates.T(ctx, "db_sidebar_back_to_annict") }
+					</span>
+				</a>
+			</footer>
 		</nav>
 	</aside>
 }
 
+// dbSidebarMenuItemはサイドバーの項目を1つ描画し、リクエストパスが項目自身かその
+// サブリソースである間、現在ページとして印を付ける (aria-current)。作品を編集している間も
+// 作品の項目に印が残る。現在ページの塗りつぶしも同じ属性で切り替えるため、支援技術が読む印と
+// 目に見える印がずれることがない。他の項目をhoverするとbg-sidebar-accentで淡く色が付くが、
+// 塗りつぶされた現在ページとは区別が付く。
 templ dbSidebarMenuItem(path string, labelKey string) {
 	<li>
 		<a
 			href={ templ.SafeURL(path) }
-			class="flex items-center gap-3 p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
-			if templates.IsCurrentPath(ctx, path) {
+			class="flex items-center gap-3 p-2 rounded-lg transition-colors hover:bg-sidebar-accent aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground aria-[current=page]:hover:bg-primary"
+			if templates.IsCurrentPathPrefix(ctx, path) {
 				aria-current="page"
 			}
 		>

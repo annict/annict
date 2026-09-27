@@ -11,7 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Avatar はアバター画像を表示するコンポーネントです（50px固定）
+// Avatarはアバター画像を表示するコンポーネントです (50px固定)
 // アバターURLが空の場合は、ユーザー名の頭文字をフォールバック表示します
 func Avatar(user *viewmodel.User) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {

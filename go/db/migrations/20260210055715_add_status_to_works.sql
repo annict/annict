@@ -1,9 +1,9 @@
 -- migrate:up
 
--- 作品の状態を表す enum 型を作成
+-- 作品の状態を表すenum型を作成
 CREATE TYPE public.work_status AS ENUM ('published', 'archived', 'deleted');
 
--- works テーブルに status と archive_message カラムを追加
+-- worksテーブルにstatusとarchive_messageカラムを追加
 ALTER TABLE public.works ADD COLUMN status public.work_status NOT NULL DEFAULT 'published';
 ALTER TABLE public.works ADD COLUMN archive_message VARCHAR;
 
@@ -23,5 +23,5 @@ DROP INDEX IF EXISTS public.index_works_on_status;
 ALTER TABLE public.works DROP COLUMN IF EXISTS archive_message;
 ALTER TABLE public.works DROP COLUMN IF EXISTS status;
 
--- enum 型の削除
+-- enum型の削除
 DROP TYPE IF EXISTS public.work_status;

@@ -1,4 +1,4 @@
-// Package image は画像URL生成機能を提供します
+// Package imageは画像URL生成機能を提供します
 package image
 
 import (
@@ -12,37 +12,37 @@ import (
 	"github.com/annict/annict/go/internal/config"
 )
 
-// ImageData はwork_imagesテーブルのimage_dataカラムの構造
+// ImageDataはwork_imagesテーブルのimage_dataカラムの構造
 type ImageData struct {
 	Original ImageFile `json:"original"`
 	Master   ImageFile `json:"master"`
 }
 
-// ImageFile は画像ファイルの情報
+// ImageFileは画像ファイルの情報
 type ImageFile struct {
 	ID      string `json:"id"`      // S3互換ストレージのオブジェクトキー (例: "workimage/2349/image/master-xxx.jpg")
 	Storage string `json:"storage"` // ストレージタイプ (例: "store")
 }
 
-// Helper は画像URL生成のヘルパー構造体
+// Helperは画像URL生成のヘルパー構造体
 type Helper struct {
 	config *config.Config
 }
 
-// NewHelper は新しい画像ヘルパーを作成します
+// NewHelperは新しい画像ヘルパーを作成します
 func NewHelper(cfg *config.Config) *Helper {
 	return &Helper{
 		config: cfg,
 	}
 }
 
-// GetWorkImageURL は作品画像のURLを生成します
+// GetWorkImageURLは作品画像のURLを生成します
 func (h *Helper) GetWorkImageURL(imageDataJSON string, width int, format string) string {
 	// image_dataがある場合は、JSONから画像URLを取得
 	if imageDataJSON != "" {
 		var imageData ImageData
 		if err := json.Unmarshal([]byte(imageDataJSON), &imageData); err == nil {
-			// masterがあれば優先的に使用（最適化済みのJPEG）
+			// masterがあれば優先的に使用 (最適化済みのJPEG)
 			var objectKey string
 			if imageData.Master.ID != "" {
 				objectKey = imageData.Master.ID
@@ -51,7 +51,7 @@ func (h *Helper) GetWorkImageURL(imageDataJSON string, width int, format string)
 			}
 
 			if objectKey != "" {
-				// imgproxyはS3プロトコルを使用（imgproxy設定で対応済み）
+				// imgproxyはS3プロトコルを使用 (imgproxy設定で対応済み)
 				// 開発/本番環境: Cloudflare R2
 				// Shrineを使用しているため、shrine/プレフィックスが必要
 				s3URL := fmt.Sprintf("s3://%s/shrine/%s", h.config.S3BucketName, objectKey)
@@ -64,28 +64,39 @@ func (h *Helper) GetWorkImageURL(imageDataJSON string, width int, format string)
 	return ""
 }
 
-// GenerateImgproxyURL はimgproxyのURLを生成します
+// WorkImageHeightは指定幅に対する3:4の作品画像表示枠の高さを返す。呼び出し側は
+// width / height属性やプレースホルダーの枠に使い、すべてのサムネイル領域を同じ大きさで
+// 確保する。GenerateImgproxyURLは切り抜かずに元画像をこの枠へ収める。
+func WorkImageHeight(width int) int {
+	return width * 4 / 3
+}
+
+// GenerateImgproxyURLは作品画像を3:4の枠へ収める署名付きimgproxy URLを生成する。
 func (h *Helper) GenerateImgproxyURL(originalURL string, width int, format string) string {
 	if originalURL == "" {
 		return ""
 	}
 
-	// 画像の高さを4:3の比率で計算
-	height := width * 3 / 4
+	// 固定3:4表示枠の高さを計算する。
+	height := WorkImageHeight(width)
 
-	// Processing options
-	processingOptions := fmt.Sprintf("resize:fill:%d:%d:0/gravity:ce", width, height)
+	// 元画像のアスペクト比を保ち切り抜きが起きないよう "fit" でリサイズする。登録される
+	// 作品画像は3:4とは限らず、横長の画像は "fill" では上下が切れてしまう。imgproxyは枠より
+	// 片方向が小さい画像を返すので、呼び出し側が固定の3:4の枠内で中央寄せする。Rails版でも
+	// ann_work_image_urlはresizing_typeを渡さずimgproxy既定の "fit" になっており
+	// (1:1のアバターにのみfill-downを指定)、それに合わせている。
+	processingOptions := fmt.Sprintf("resize:fit:%d:%d:0", width, height)
 	if format != "jpg" {
 		processingOptions = fmt.Sprintf("%s/format:%s", processingOptions, format)
 	}
 
-	// URLをエンコード
+	// 元URLをエンコードする。
 	encodedURL := base64.RawURLEncoding.EncodeToString([]byte(originalURL))
 
-	// パスを構築
+	// imgproxyのパスを組み立てる。
 	path := fmt.Sprintf("/%s/%s.%s", processingOptions, encodedURL, format)
 
-	// 署名を生成
+	// パスへ署名する。
 	key, _ := hex.DecodeString(h.config.ImgproxyKey)
 	salt, _ := hex.DecodeString(h.config.ImgproxySalt)
 
@@ -94,30 +105,29 @@ func (h *Helper) GenerateImgproxyURL(originalURL string, width int, format strin
 	mac.Write([]byte(path))
 	signature := base64.RawURLEncoding.EncodeToString(mac.Sum(nil))
 
-	// 署名付きURLを構築
-	// フォーマット: /{signature}{path}
+	// 署名付きURLを "{endpoint}/{signature}{path}" 形式で組み立てる。
 	return fmt.Sprintf("%s/%s%s", h.config.ImgproxyEndpoint, signature, path)
 }
 
-// GetSrcSet は1xと2xの画像URLセットを生成します
+// GetSrcSetは1xと2xの画像URLセットを生成します
 func (h *Helper) GetSrcSet(originalURL string, width int, format string) string {
 	if originalURL == "" {
 		return ""
 	}
 
-	// 1xと2xのURLを生成（それぞれ署名付き）
+	// 1xと2xのURLを生成 (それぞれ署名付き)
 	url1x := h.GenerateImgproxyURL(originalURL, width, format)
 	url2x := h.GenerateImgproxyURL(originalURL, width*2, format)
 
 	return fmt.Sprintf("%s 1x, %s 2x", url1x, url2x)
 }
 
-// ExtractImageURL はimage_dataから画像URLを取得します
+// ExtractImageURLはimage_dataから画像URLを取得します
 func (h *Helper) ExtractImageURL(imageDataJSON string) string {
 	if imageDataJSON != "" {
 		var imageData ImageData
 		if err := json.Unmarshal([]byte(imageDataJSON), &imageData); err == nil {
-			// masterがあれば優先的に使用（最適化済みのJPEG）
+			// masterがあれば優先的に使用 (最適化済みのJPEG)
 			var objectKey string
 			if imageData.Master.ID != "" {
 				objectKey = imageData.Master.ID
@@ -126,7 +136,7 @@ func (h *Helper) ExtractImageURL(imageDataJSON string) string {
 			}
 
 			if objectKey != "" {
-				// S3プロトコルのURL（開発/本番環境: Cloudflare R2）
+				// S3プロトコルのURL (開発/本番環境: Cloudflare R2)
 				// Shrineプレフィックス付き
 				return fmt.Sprintf("s3://%s/shrine/%s", h.config.S3BucketName, objectKey)
 			}
@@ -135,7 +145,7 @@ func (h *Helper) ExtractImageURL(imageDataJSON string) string {
 	return ""
 }
 
-// GetAvatarImageURL はアバター画像のURLを生成します（1:1比率）
+// GetAvatarImageURLはアバター画像のURLを生成します (1:1比率)
 func (h *Helper) GetAvatarImageURL(imageDataJSON string, width int, format string) string {
 	// image_dataから元画像URLを取得
 	originalURL := h.ExtractImageURL(imageDataJSON)
@@ -146,7 +156,7 @@ func (h *Helper) GetAvatarImageURL(imageDataJSON string, width int, format strin
 	return h.generateSquareImgproxyURL(originalURL, width, format)
 }
 
-// generateSquareImgproxyURL は正方形（1:1）の画像URL生成します
+// generateSquareImgproxyURLは正方形 (1:1) の画像URL生成します
 func (h *Helper) generateSquareImgproxyURL(originalURL string, width int, format string) string {
 	if originalURL == "" {
 		return ""
@@ -155,7 +165,7 @@ func (h *Helper) generateSquareImgproxyURL(originalURL string, width int, format
 	// 1:1比率なので高さ＝幅
 	height := width
 
-	// Processing options（fill-downでアスペクト比を維持しつつ指定サイズに収める）
+	// Processing options (fill-downでアスペクト比を維持しつつ指定サイズに収める)
 	processingOptions := fmt.Sprintf("resize:fill-down:%d:%d:0/gravity:ce", width, height)
 	if format != "jpg" {
 		processingOptions = fmt.Sprintf("%s/format:%s", processingOptions, format)

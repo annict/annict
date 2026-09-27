@@ -10,7 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestStaffRepository_GetByWorkIDs は作品IDのリストに紐づくスタッフを取得できることをテスト
+// TestStaffRepository_GetByWorkIDsは作品IDのリストに紐づくスタッフを取得できることをテスト
 func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 	t.Parallel()
 
@@ -25,23 +25,23 @@ func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 
 		staffs, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{workID})
 		if err != nil {
-			t.Fatalf("GetByWorkIDs() error = %v", err)
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
 		}
 
 		if len(staffs) != 1 {
-			t.Fatalf("len(staffs) = %d, want 1", len(staffs))
+			t.Fatalf("len(staffs) = %d、期待値 = 1", len(staffs))
 		}
 		if staffs[0].WorkID != workID {
-			t.Errorf("WorkID = %v, want %v", staffs[0].WorkID, workID)
+			t.Errorf("WorkID = %v、期待値 = %v", staffs[0].WorkID, workID)
 		}
 		if staffs[0].Name != "監督A" {
-			t.Errorf("Name = %q, want %q", staffs[0].Name, "監督A")
+			t.Errorf("Name = %q、期待値 = %q", staffs[0].Name, "監督A")
 		}
 		if staffs[0].Role != "director" {
-			t.Errorf("Role = %q, want %q", staffs[0].Role, "director")
+			t.Errorf("Role = %q、期待値 = %q", staffs[0].Role, "director")
 		}
 		if staffs[0].ID == 0 {
-			t.Error("StaffID がゼロ値です")
+			t.Error("StaffIDがゼロ値です")
 		}
 	})
 
@@ -57,18 +57,18 @@ func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 
 		staffs, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{workID})
 		if err != nil {
-			t.Fatalf("GetByWorkIDs() error = %v", err)
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
 		}
 
 		if len(staffs) != 1 {
-			t.Fatalf("len(staffs) = %d, want 1", len(staffs))
+			t.Fatalf("len(staffs) = %d、期待値 = 1", len(staffs))
 		}
 		if staffs[0].Role != "director" {
-			t.Errorf("Role = %q, want %q (other は除外されるべき)", staffs[0].Role, "director")
+			t.Errorf("Role = %q、期待値 = %q (otherは除外されるべき)", staffs[0].Role, "director")
 		}
 	})
 
-	t.Run("正常系: workIDs が空の場合は空のスライスを返す", func(t *testing.T) {
+	t.Run("正常系: workIDsが空の場合は空のスライスを返す", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
@@ -76,10 +76,10 @@ func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 
 		staffs, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{})
 		if err != nil {
-			t.Fatalf("GetByWorkIDs() error = %v", err)
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
 		}
 		if len(staffs) != 0 {
-			t.Errorf("len(staffs) = %d, want 0", len(staffs))
+			t.Errorf("len(staffs) = %d、期待値 = 0", len(staffs))
 		}
 	})
 
@@ -91,15 +91,15 @@ func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 
 		staffs, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{999999999})
 		if err != nil {
-			t.Fatalf("GetByWorkIDs() error = %v", err)
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
 		}
 		if len(staffs) != 0 {
-			t.Errorf("len(staffs) = %d, want 0", len(staffs))
+			t.Errorf("len(staffs) = %d、期待値 = 0", len(staffs))
 		}
 	})
 }
 
-// TestStaffRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestStaffRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestStaffRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -117,6 +117,6 @@ func TestStaffRepository_WithTx(t *testing.T) {
 		t.Fatalf("WithTxで取得したRepositoryでGetByWorkIDsに失敗: %v", err)
 	}
 	if len(staffs) != 1 {
-		t.Errorf("len(staffs) = %d, want 1", len(staffs))
+		t.Errorf("len(staffs) = %d、期待値 = 1", len(staffs))
 	}
 }

@@ -12,14 +12,14 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// VerifySignUpCodeUsecase は6桁の新規登録確認コードを検証するユースケースです
+// VerifySignUpCodeUsecaseは6桁の新規登録確認コードを検証するユースケースです
 type VerifySignUpCodeUsecase struct {
 	db             *sql.DB
 	signUpCodeRepo *repository.SignUpCodeRepository
 	validator      *validator.SignUpCodeCreateValidator
 }
 
-// NewVerifySignUpCodeUsecase は新しいVerifySignUpCodeUsecaseを作成します
+// NewVerifySignUpCodeUsecaseは新しいVerifySignUpCodeUsecaseを作成します
 func NewVerifySignUpCodeUsecase(
 	db *sql.DB,
 	signUpCodeRepo *repository.SignUpCodeRepository,
@@ -32,16 +32,16 @@ func NewVerifySignUpCodeUsecase(
 	}
 }
 
-// VerifySignUpCodeInput はユースケースの入力パラメータです
+// VerifySignUpCodeInputはユースケースの入力パラメータです
 type VerifySignUpCodeInput struct {
 	Email string
 	Code  string
 }
 
-// VerifySignUpCodeOutput はユースケースの結果を表します
+// VerifySignUpCodeOutputはユースケースの結果を表します
 type VerifySignUpCodeOutput struct{}
 
-// Execute は6桁の新規登録確認コードを検証します
+// Executeは6桁の新規登録確認コードを検証します
 func (uc *VerifySignUpCodeUsecase) Execute(ctx context.Context, input VerifySignUpCodeInput) (*VerifySignUpCodeOutput, error) {
 	// 1. バリデーション
 	if err := uc.validator.Validate(ctx, validator.SignUpCodeCreateValidatorInput{
@@ -58,7 +58,7 @@ func (uc *VerifySignUpCodeUsecase) Execute(ctx context.Context, input VerifySign
 	return &VerifySignUpCodeOutput{}, nil
 }
 
-// verifyCode は6桁の新規登録確認コードを検証します
+// verifyCodeは6桁の新規登録確認コードを検証します
 func (uc *VerifySignUpCodeUsecase) verifyCode(ctx context.Context, email string, code string) error {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -69,7 +69,7 @@ func (uc *VerifySignUpCodeUsecase) verifyCode(ctx context.Context, email string,
 
 	signUpCodeRepoTx := uc.signUpCodeRepo.WithTx(tx)
 
-	// 有効なコードを取得（未使用 AND 有効期限内）
+	// 有効なコードを取得 (未使用AND有効期限内)
 	signUpCode, err := signUpCodeRepoTx.GetValidByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -78,7 +78,7 @@ func (uc *VerifySignUpCodeUsecase) verifyCode(ctx context.Context, email string,
 		return fmt.Errorf("コードの取得に失敗: %w", err)
 	}
 
-	// 試行回数チェック（5回まで）
+	// 試行回数チェック (5回まで)
 	if signUpCode.Attempts >= 5 {
 		// 試行回数が上限に達している場合、コードを無効化
 		if err := signUpCodeRepoTx.MarkAsUsed(ctx, signUpCode.ID); err != nil {
@@ -97,7 +97,7 @@ func (uc *VerifySignUpCodeUsecase) verifyCode(ctx context.Context, email string,
 		return ErrCodeAttemptsExceeded
 	}
 
-	// コード検証（bcryptで比較）
+	// コード検証 (bcryptで比較)
 	if !auth.VerifyCode(code, signUpCode.CodeDigest) {
 		// コードが間違っている場合、試行回数をインクリメント
 		if err := signUpCodeRepoTx.IncrementAttempts(ctx, signUpCode.ID); err != nil {

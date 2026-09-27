@@ -4,8 +4,8 @@ CREATE TABLE sign_up_codes (
     email VARCHAR(255) NOT NULL,
     code_digest VARCHAR(255) NOT NULL,  -- bcryptでハッシュ化された確認コード
     attempts INTEGER NOT NULL DEFAULT 0,  -- 検証試行回数
-    used_at TIMESTAMP WITH TIME ZONE,  -- 使用日時（NULL = 未使用）
-    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,  -- 有効期限（15分）
+    used_at TIMESTAMP WITH TIME ZONE,  -- 使用日時 (NULL = 未使用)
+    expires_at TIMESTAMP WITH TIME ZONE NOT NULL,  -- 有効期限 (15分)
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );

@@ -36,11 +36,11 @@ func TestNullTimeFromUnix(t *testing.T) {
 			result := NullTimeFromUnix(tt.timestamp)
 
 			if result.Valid != tt.wantValid {
-				t.Errorf("Valid: got %v, want %v", result.Valid, tt.wantValid)
+				t.Errorf("Valid = %v、期待値 = %v", result.Valid, tt.wantValid)
 			}
 
 			if tt.wantValid && result.Time.Unix() != tt.timestamp {
-				t.Errorf("Time.Unix(): got %d, want %d", result.Time.Unix(), tt.timestamp)
+				t.Errorf("Time.Unix() = %d、期待値 = %d", result.Time.Unix(), tt.timestamp)
 			}
 		})
 	}

@@ -142,9 +142,9 @@ describe "GraphQL API Query" do
     end
 
     context "when `casts` are fetched" do
-      let!(:cast1) { create(:cast, work: work1) }
-      let!(:cast2) { create(:cast, work: work1) }
-      let!(:cast3) { create(:cast, work: work2) }
+      let!(:cast1) { create(:cast, work: work1, created_at: Time.parse("2026-01-01 10:00:00 +09:00")) }
+      let!(:cast2) { create(:cast, work: work1, created_at: Time.parse("2026-01-01 11:00:00 +09:00")) }
+      let!(:cast3) { create(:cast, work: work2, created_at: Time.parse("2026-01-01 12:00:00 +09:00")) }
       let(:result) do
         query_string = <<~QUERY
           query {
@@ -243,9 +243,9 @@ describe "GraphQL API Query" do
 
     context "when `staffs` are fetched" do
       let(:organization) { create(:organization) }
-      let!(:staff1) { create(:staff, work: work1) }
-      let!(:staff2) { create(:staff, work: work1, resource: organization) }
-      let!(:staff3) { create(:staff, work: work2) }
+      let!(:staff1) { create(:staff, work: work1, created_at: Time.parse("2026-01-01 10:00:00 +09:00")) }
+      let!(:staff2) { create(:staff, work: work1, resource: organization, created_at: Time.parse("2026-01-01 11:00:00 +09:00")) }
+      let!(:staff3) { create(:staff, work: work2, created_at: Time.parse("2026-01-01 12:00:00 +09:00")) }
       let(:result) do
         query_string = <<~QUERY
           query {

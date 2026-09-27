@@ -44,28 +44,28 @@ func TestCleanupExpiredTokensWorker(t *testing.T) {
 	token3, _ := password_reset.GenerateToken()
 	token3Digest := password_reset.HashToken(token3)
 
-	// トークン1: 48時間前に期限切れ（削除対象）
+	// トークン1: 48時間前に期限切れ (削除対象)
 	if _, err := tokenRepo.Create(ctx, userID, token1Digest, time.Now().Add(-48*time.Hour)); err != nil {
 		t.Fatalf("トークン1の作成に失敗: %v", err)
 	}
 
-	// トークン2: 30時間前に使用済み（削除対象）
+	// トークン2: 30時間前に使用済み (削除対象)
 	token2Row, err := tokenRepo.Create(ctx, userID, token2Digest, time.Now().Add(1*time.Hour)) // 有効期限は未来
 	if err != nil {
 		t.Fatalf("トークン2の作成に失敗: %v", err)
 	}
-	// トークンを使用済みにする（30時間前）
+	// トークンを使用済みにする (30時間前)
 	if _, err := tx.ExecContext(ctx, "UPDATE password_reset_tokens SET used_at = $1 WHERE id = $2",
 		time.Now().Add(-30*time.Hour), int64(token2Row.ID)); err != nil {
 		t.Fatalf("トークン2の使用済み設定に失敗: %v", err)
 	}
 
-	// トークン3: 有効なトークン（削除対象外）
+	// トークン3: 有効なトークン (削除対象外)
 	if _, err := tokenRepo.Create(ctx, userID, token3Digest, time.Now().Add(1*time.Hour)); err != nil {
 		t.Fatalf("トークン3の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成（UseCase 経由）
+	// ワーカーを作成 (UseCase経由)
 	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行
@@ -85,11 +85,11 @@ func TestCleanupExpiredTokensWorker(t *testing.T) {
 
 	// トークン3のみが残っているはず
 	if len(tokens) != 1 {
-		t.Errorf("トークン数が正しくありません: got %d, want 1", len(tokens))
+		t.Errorf("トークン数 = %d、期待値 = 1", len(tokens))
 	}
 
 	if len(tokens) > 0 && tokens[0].TokenDigest != token3Digest {
-		t.Errorf("残っているトークンが正しくありません: got %s, want %s", tokens[0].TokenDigest, token3Digest)
+		t.Errorf("残っているトークン = %s、期待値 = %s", tokens[0].TokenDigest, token3Digest)
 	}
 }
 
@@ -99,10 +99,10 @@ func TestCleanupExpiredTokensWorker_NoTokens(t *testing.T) {
 
 	ctx := context.Background()
 
-	// ワーカーを作成（UseCase 経由）
+	// ワーカーを作成 (UseCase経由)
 	w := newCleanupExpiredTokensTestWorker(queries)
 
-	// ジョブを実行（トークンが存在しない状態）
+	// ジョブを実行 (トークンが存在しない状態)
 	job := &river.Job[worker.CleanupExpiredTokensArgs]{
 		Args: worker.CleanupExpiredTokensArgs{},
 	}
@@ -134,17 +134,17 @@ func TestCleanupExpiredTokensWorker_RecentlyExpired(t *testing.T) {
 	token2, _ := password_reset.GenerateToken()
 	token2Digest := password_reset.HashToken(token2)
 
-	// トークン1: 12時間前に期限切れ（削除対象外: 24時間以内）
+	// トークン1: 12時間前に期限切れ (削除対象外: 24時間以内)
 	if _, err := tokenRepo.Create(ctx, userID, token1Digest, time.Now().Add(-12*time.Hour)); err != nil {
 		t.Fatalf("トークン1の作成に失敗: %v", err)
 	}
 
-	// トークン2: 30時間前に期限切れ（削除対象）
+	// トークン2: 30時間前に期限切れ (削除対象)
 	if _, err := tokenRepo.Create(ctx, userID, token2Digest, time.Now().Add(-30*time.Hour)); err != nil {
 		t.Fatalf("トークン2の作成に失敗: %v", err)
 	}
 
-	// ワーカーを作成（UseCase 経由）
+	// ワーカーを作成 (UseCase経由)
 	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行
@@ -163,10 +163,10 @@ func TestCleanupExpiredTokensWorker_RecentlyExpired(t *testing.T) {
 	}
 
 	if len(tokens) != 1 {
-		t.Errorf("トークン数が正しくありません: got %d, want 1", len(tokens))
+		t.Errorf("トークン数 = %d、期待値 = 1", len(tokens))
 	}
 
 	if len(tokens) > 0 && tokens[0].TokenDigest != token1Digest {
-		t.Errorf("残っているトークンが正しくありません: got %s, want %s", tokens[0].TokenDigest, token1Digest)
+		t.Errorf("残っているトークン = %s、期待値 = %s", tokens[0].TokenDigest, token1Digest)
 	}
 }

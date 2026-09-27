@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// StripeSubscriber はStripeサブスクライバーのドメインエンティティ
+// StripeSubscriberはStripeサブスクライバーのドメインエンティティ
 type StripeSubscriber struct {
 	ID                       StripeSubscriberID
 	StripeCustomerID         string

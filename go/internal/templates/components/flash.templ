@@ -6,7 +6,7 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// Flash はフラッシュメッセージを表示します
+// Flashはフラッシュメッセージを表示します
 templ Flash(ctx context.Context, flash *session.Flash) {
 	if flash != nil {
 		<div id="toaster" class="toaster">

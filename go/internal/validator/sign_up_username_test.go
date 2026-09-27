@@ -89,7 +89,7 @@ func TestSignUpUsernameCreateValidatorValidate(t *testing.T) {
 
 				for _, field := range tt.wantFields {
 					if _, exists := ve.Fields[field]; !exists {
-						t.Errorf("フィールド %s のエラーが期待されましたが、見つかりませんでした", field)
+						t.Errorf("フィールド%sのエラーが期待されましたが、見つかりませんでした", field)
 					}
 				}
 
@@ -97,15 +97,15 @@ func TestSignUpUsernameCreateValidatorValidate(t *testing.T) {
 					for field, expectedMsg := range tt.wantErrorMessages {
 						actualMsgs, exists := ve.Fields[field]
 						if !exists {
-							t.Errorf("フィールド %s のエラーメッセージが見つかりませんでした", field)
+							t.Errorf("フィールド%sのエラーメッセージが見つかりませんでした", field)
 							continue
 						}
 						if len(actualMsgs) == 0 {
-							t.Errorf("フィールド %s のエラーメッセージが空です", field)
+							t.Errorf("フィールド%sのエラーメッセージが空です", field)
 							continue
 						}
 						if actualMsgs[0] != expectedMsg {
-							t.Errorf("フィールド %s のエラーメッセージが一致しません\n期待: %q\n実際: %q", field, expectedMsg, actualMsgs[0])
+							t.Errorf("フィールド%sのエラーメッセージが一致しません\n期待: %q\n実際: %q", field, expectedMsg, actualMsgs[0])
 						}
 					}
 				}

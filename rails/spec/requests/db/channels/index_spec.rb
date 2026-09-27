@@ -3,7 +3,7 @@
 
 RSpec.describe "GET /db/channels", type: :request do
   it "ユーザーがログインしていないとき、チャンネル一覧を表示すること" do
-    channel = Channel.first
+    channel = create(:channel)
 
     get "/db/channels"
 
@@ -13,7 +13,7 @@ RSpec.describe "GET /db/channels", type: :request do
 
   it "ユーザーがログインしているとき、チャンネル一覧を表示すること" do
     user = create(:registered_user)
-    channel = Channel.first
+    channel = create(:channel)
     login_as(user, scope: :user)
 
     get "/db/channels"
@@ -23,8 +23,7 @@ RSpec.describe "GET /db/channels", type: :request do
   end
 
   it "削除されたチャンネルは表示されないこと" do
-    channel = Channel.first
-    channel.update!(deleted_at: Time.current)
+    channel = create(:channel, deleted_at: Time.current)
 
     get "/db/channels"
 
@@ -33,29 +32,23 @@ RSpec.describe "GET /db/channels", type: :request do
   end
 
   it "VODチャンネルが先に表示されること" do
-    # VODでないチャンネルとVODチャンネルが存在することを確認
-    vod_channel = Channel.find_by(vod: true)
-    non_vod_channel = Channel.find_by(vod: false)
+    non_vod_channel = create(:channel, sort_number: 1)
+    vod_channel = create(:channel, :with_vod, sort_number: 2)
 
-    if vod_channel && non_vod_channel
-      get "/db/channels"
+    get "/db/channels"
 
-      expect(response.status).to eq(200)
-      # VODチャンネルが先に表示されることを確認
-      vod_position = response.body.index(vod_channel.name)
-      non_vod_position = response.body.index(non_vod_channel.name)
-      expect(vod_position).to be < non_vod_position if vod_position && non_vod_position
-    end
+    expect(response.status).to eq(200)
+    expect(response.body.index(vod_channel.name)).to be < response.body.index(non_vod_channel.name)
   end
 
   it "チャンネルグループと共に表示されること" do
-    channel = Channel.eager_load(:channel_group).merge(ChannelGroup.without_deleted).first
+    channel_group = create(:channel_group)
+    channel = create(:channel, channel_group:)
 
-    if channel&.channel_group
-      get "/db/channels"
+    get "/db/channels"
 
-      expect(response.status).to eq(200)
-      expect(response.body).to include(channel.name)
-    end
+    expect(response.status).to eq(200)
+    expect(response.body).to include(channel.name)
+    expect(response.body).to include(channel_group.name)
   end
 end

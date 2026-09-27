@@ -1,16 +1,16 @@
-// Package home はホームページのハンドラーを提供します
+// Package homeはホームページのハンドラーを提供します
 package home
 
 import (
 	"github.com/annict/annict/go/internal/config"
 )
 
-// Handler はホームページ関連のHTTPハンドラーです
+// Handlerはホームページ関連のHTTPハンドラーです
 type Handler struct {
 	cfg *config.Config
 }
 
-// NewHandler は新しいHandlerを作成します
+// NewHandlerは新しいHandlerを作成します
 func NewHandler(cfg *config.Config) *Handler {
 	return &Handler{
 		cfg: cfg,

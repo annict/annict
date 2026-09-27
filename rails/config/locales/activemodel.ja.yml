@@ -50,8 +50,6 @@ ja:
         rows: キャスト
       db/character_rows_form:
         rows: キャラクター
-      db/episode_rows_form:
-        rows: エピソード
       db/organization_rows_form:
         rows: 団体
       db/person_rows_form:

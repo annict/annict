@@ -9,7 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateSignUpCode はSignUpCodeの作成をテスト
+// TestCreateSignUpCodeはSignUpCodeの作成をテスト
 func TestCreateSignUpCode(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -24,25 +24,25 @@ func TestCreateSignUpCode(t *testing.T) {
 
 	code, err := queries.CreateSignUpCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign up code: %v", err)
+		t.Fatalf("サインアップコードの作成エラー = %v", err)
 	}
 
 	// 基本的なアサーション
 	if code.Email != "test_create@example.com" {
-		t.Errorf("Expected email 'test_create@example.com', got %s", code.Email)
+		t.Errorf("email = %s、期待値 = test_create@example.com", code.Email)
 	}
 	if code.CodeDigest != "test_digest_123" {
-		t.Errorf("Expected code digest 'test_digest_123', got %s", code.CodeDigest)
+		t.Errorf("コードのdigest = %s、期待値 = test_digest_123", code.CodeDigest)
 	}
 	if code.Attempts != 0 {
-		t.Errorf("Expected attempts 0, got %d", code.Attempts)
+		t.Errorf("attempts = %d、期待値 = 0", code.Attempts)
 	}
 	if code.UsedAt.Valid {
-		t.Error("Expected used_at to be NULL")
+		t.Error("used_atがNULLでなかった")
 	}
 }
 
-// TestGetValidSignUpCode は有効なSignUpCodeの取得をテスト
+// TestGetValidSignUpCodeは有効なSignUpCodeの取得をテスト
 func TestGetValidSignUpCode(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -58,24 +58,24 @@ func TestGetValidSignUpCode(t *testing.T) {
 	}
 	createdCode, err := queries.CreateSignUpCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign up code: %v", err)
+		t.Fatalf("サインアップコードの作成エラー = %v", err)
 	}
 
 	// 有効なコードを取得
 	code, err := queries.GetValidSignUpCode(context.Background(), email)
 	if err != nil {
-		t.Fatalf("Failed to get valid sign up code: %v", err)
+		t.Fatalf("有効なサインアップコードの取得エラー = %v", err)
 	}
 
 	if code.ID != createdCode.ID {
-		t.Errorf("Expected code ID %d, got %d", createdCode.ID, code.ID)
+		t.Errorf("コードのIDの期待値 = %d、実測値 = %d", createdCode.ID, code.ID)
 	}
 	if code.CodeDigest != "valid_code_digest" {
-		t.Errorf("Expected code digest 'valid_code_digest', got %s", code.CodeDigest)
+		t.Errorf("コードのdigest = %s、期待値 = valid_code_digest", code.CodeDigest)
 	}
 }
 
-// TestGetValidSignUpCode_Expired は期限切れのコードが取得されないことをテスト
+// TestGetValidSignUpCode_Expiredは期限切れのコードが取得されないことをテスト
 func TestGetValidSignUpCode_Expired(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -91,17 +91,17 @@ func TestGetValidSignUpCode_Expired(t *testing.T) {
 	}
 	_, err := queries.CreateSignUpCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign up code: %v", err)
+		t.Fatalf("サインアップコードの作成エラー = %v", err)
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignUpCode(context.Background(), email)
 	if err == nil {
-		t.Error("Expected error for expired code, but got nil")
+		t.Error("期限切れのコードでエラーを期待したが、nilだった")
 	}
 }
 
-// TestGetValidSignUpCode_Used は使用済みのコードが取得されないことをテスト
+// TestGetValidSignUpCode_Usedは使用済みのコードが取得されないことをテスト
 func TestGetValidSignUpCode_Used(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -117,23 +117,23 @@ func TestGetValidSignUpCode_Used(t *testing.T) {
 	}
 	code, err := queries.CreateSignUpCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign up code: %v", err)
+		t.Fatalf("サインアップコードの作成エラー = %v", err)
 	}
 
 	// コードを使用済みにする
 	err = queries.MarkSignUpCodeAsUsed(context.Background(), code.ID)
 	if err != nil {
-		t.Fatalf("Failed to mark code as used: %v", err)
+		t.Fatalf("コードを使用済みにする処理のエラー = %v", err)
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignUpCode(context.Background(), email)
 	if err == nil {
-		t.Error("Expected error for used code, but got nil")
+		t.Error("使用済みのコードでエラーを期待したが、nilだった")
 	}
 }
 
-// TestGetValidSignUpCode_ExceedsAttempts は試行回数制限を超えたコードが取得されないことをテスト
+// TestGetValidSignUpCode_ExceedsAttemptsは試行回数制限を超えたコードが取得されないことをテスト
 func TestGetValidSignUpCode_ExceedsAttempts(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -149,25 +149,25 @@ func TestGetValidSignUpCode_ExceedsAttempts(t *testing.T) {
 	}
 	code, err := queries.CreateSignUpCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign up code: %v", err)
+		t.Fatalf("サインアップコードの作成エラー = %v", err)
 	}
 
 	// 試行回数を5回インクリメント
 	for i := 0; i < 5; i++ {
 		err = queries.IncrementSignUpCodeAttempts(context.Background(), code.ID)
 		if err != nil {
-			t.Fatalf("Failed to increment attempts: %v", err)
+			t.Fatalf("attemptsの加算エラー = %v", err)
 		}
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignUpCode(context.Background(), email)
 	if err == nil {
-		t.Error("Expected error for code with too many attempts, but got nil")
+		t.Error("試行回数を超えたコードでエラーを期待したが、nilだった")
 	}
 }
 
-// TestIncrementSignUpCodeAttempts は試行回数のインクリメントをテスト
+// TestIncrementSignUpCodeAttemptsは試行回数のインクリメントをテスト
 func TestIncrementSignUpCodeAttempts(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -183,42 +183,42 @@ func TestIncrementSignUpCodeAttempts(t *testing.T) {
 	}
 	code, err := queries.CreateSignUpCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign up code: %v", err)
+		t.Fatalf("サインアップコードの作成エラー = %v", err)
 	}
 
 	// 試行回数をインクリメント
 	err = queries.IncrementSignUpCodeAttempts(context.Background(), code.ID)
 	if err != nil {
-		t.Fatalf("Failed to increment attempts: %v", err)
+		t.Fatalf("attemptsの加算エラー = %v", err)
 	}
 
 	// コードを再取得して確認
 	updatedCode, err := queries.GetValidSignUpCode(context.Background(), email)
 	if err != nil {
-		t.Fatalf("Failed to get code after increment: %v", err)
+		t.Fatalf("加算後のコードの取得エラー = %v", err)
 	}
 
 	if updatedCode.Attempts != 1 {
-		t.Errorf("Expected attempts 1, got %d", updatedCode.Attempts)
+		t.Errorf("attempts = %d、期待値 = 1", updatedCode.Attempts)
 	}
 
 	// さらにインクリメント
 	err = queries.IncrementSignUpCodeAttempts(context.Background(), code.ID)
 	if err != nil {
-		t.Fatalf("Failed to increment attempts again: %v", err)
+		t.Fatalf("attemptsの再加算エラー = %v", err)
 	}
 
 	updatedCode, err = queries.GetValidSignUpCode(context.Background(), email)
 	if err != nil {
-		t.Fatalf("Failed to get code after second increment: %v", err)
+		t.Fatalf("2回目の加算後のコードの取得エラー = %v", err)
 	}
 
 	if updatedCode.Attempts != 2 {
-		t.Errorf("Expected attempts 2, got %d", updatedCode.Attempts)
+		t.Errorf("attempts = %d、期待値 = 2", updatedCode.Attempts)
 	}
 }
 
-// TestMarkSignUpCodeAsUsed はコードを使用済みにするテスト
+// TestMarkSignUpCodeAsUsedはコードを使用済みにするテスト
 func TestMarkSignUpCodeAsUsed(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -234,23 +234,23 @@ func TestMarkSignUpCodeAsUsed(t *testing.T) {
 	}
 	code, err := queries.CreateSignUpCode(context.Background(), params)
 	if err != nil {
-		t.Fatalf("Failed to create sign up code: %v", err)
+		t.Fatalf("サインアップコードの作成エラー = %v", err)
 	}
 
 	// コードを使用済みにする
 	err = queries.MarkSignUpCodeAsUsed(context.Background(), code.ID)
 	if err != nil {
-		t.Fatalf("Failed to mark code as used: %v", err)
+		t.Fatalf("コードを使用済みにする処理のエラー = %v", err)
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignUpCode(context.Background(), email)
 	if err == nil {
-		t.Error("Expected error after marking code as used, but got nil")
+		t.Error("使用済みにしたコードでエラーを期待したが、nilだった")
 	}
 }
 
-// TestInvalidateSignUpCodesByEmail はメールアドレスの全コード無効化をテスト
+// TestInvalidateSignUpCodesByEmailはメールアドレスの全コード無効化をテスト
 func TestInvalidateSignUpCodesByEmail(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
@@ -267,19 +267,19 @@ func TestInvalidateSignUpCodesByEmail(t *testing.T) {
 		}
 		_, err := queries.CreateSignUpCode(context.Background(), params)
 		if err != nil {
-			t.Fatalf("Failed to create sign up code %d: %v", i, err)
+			t.Fatalf("サインアップコード[%d]の作成エラー = %v", i, err)
 		}
 	}
 
 	// メールアドレスのすべてのコードを無効化
 	err := queries.InvalidateSignUpCodesByEmail(context.Background(), email)
 	if err != nil {
-		t.Fatalf("Failed to invalidate codes by email: %v", err)
+		t.Fatalf("メール単位のコードの無効化エラー = %v", err)
 	}
 
-	// 有効なコードの取得を試みる（失敗するべき）
+	// 有効なコードの取得を試みる (失敗するべき)
 	_, err = queries.GetValidSignUpCode(context.Background(), email)
 	if err == nil {
-		t.Error("Expected error after invalidating all codes by email, but got nil")
+		t.Error("メール単位で全コードを無効化した後にエラーを期待したが、nilだった")
 	}
 }

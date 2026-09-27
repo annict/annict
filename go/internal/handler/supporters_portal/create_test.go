@@ -17,7 +17,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// setupTestHandler はテスト用のハンドラーをセットアップします
+// setupTestHandlerはテスト用のハンドラーをセットアップします
 func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 	t.Helper()
 
@@ -30,13 +30,13 @@ func setupTestHandler(t *testing.T, tx *sql.Tx, db *sql.DB) *Handler {
 	flashMgr := testutil.NewTestFlashManager()
 	stripeSubscriberRepo := repository.NewStripeSubscriberRepository(queries)
 
-	// テスト用には nil を渡す（テストでは Stripe API を呼び出さない）
+	// テスト用にはnilを渡す (テストではStripe APIを呼び出さない)
 	createPortalSessionUC := usecase.NewCreatePortalSessionUsecase(cfg, stripeSubscriberRepo, nil)
 
 	return NewHandler(flashMgr, createPortalSessionUC)
 }
 
-// createUserWithStripeSubscriber はStripeサブスクライバーを持つユーザーを作成します
+// createUserWithStripeSubscriberはStripeサブスクライバーを持つユーザーを作成します
 func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus string) (model.UserID, model.StripeSubscriberID) {
 	t.Helper()
 
@@ -54,7 +54,7 @@ func createUserWithStripeSubscriber(t *testing.T, tx *sql.Tx, stripeStatus strin
 	return userID, subscriberID
 }
 
-// createUserWithGumroadSubscriber はGumroadサブスクライバーを持つユーザーを作成します
+// createUserWithGumroadSubscriberはGumroadサブスクライバーを持つユーザーを作成します
 func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (model.UserID, model.GumroadSubscriberID) {
 	t.Helper()
 
@@ -62,7 +62,7 @@ func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (mode
 
 	builder := testutil.NewGumroadSubscriberBuilder(t, tx)
 	if ended {
-		// 過去の日時を設定（終了済み）
+		// 過去の日時を設定 (終了済み)
 		builder = builder.WithGumroadEndedAt(time.Now().AddDate(-1, 0, 0))
 	}
 	subscriberID := builder.Build()
@@ -76,7 +76,7 @@ func createUserWithGumroadSubscriber(t *testing.T, tx *sql.Tx, ended bool) (mode
 	return userID, subscriberID
 }
 
-// getUserByID はユーザーIDからユーザー情報を取得します（テスト用）
+// getUserByIDはユーザーIDからユーザー情報を取得します (テスト用)
 func getUserByID(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	t.Helper()
 
@@ -108,7 +108,7 @@ func getUserByID(t *testing.T, tx *sql.Tx, userID model.UserID) *model.User {
 	return &user
 }
 
-// TestCreate_NotLoggedIn は未ログインユーザーがアクセスした場合のテスト
+// TestCreate_NotLoggedInは未ログインユーザーがアクセスした場合のテスト
 func TestCreate_NotLoggedIn(t *testing.T) {
 	t.Parallel()
 
@@ -122,16 +122,16 @@ func TestCreate_NotLoggedIn(t *testing.T) {
 
 	// ログインページへリダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/sign_in")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in")
 	}
 }
 
-// TestCreate_NotSupporter は非サポーターユーザーがアクセスした場合のテスト
+// TestCreate_NotSupporterは非サポーターユーザーがアクセスした場合のテスト
 func TestCreate_NotSupporter(t *testing.T) {
 	t.Parallel()
 
@@ -151,16 +151,16 @@ func TestCreate_NotSupporter(t *testing.T) {
 
 	// サポーターページへリダイレクトされることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }
 
-// TestCreate_CanceledSubscription はキャンセル済みサブスクリプションの場合のテスト
+// TestCreate_CanceledSubscriptionはキャンセル済みサブスクリプションの場合のテスト
 func TestCreate_CanceledSubscription(t *testing.T) {
 	t.Parallel()
 
@@ -180,16 +180,16 @@ func TestCreate_CanceledSubscription(t *testing.T) {
 
 	// 非アクティブなのでサポーターページへリダイレクト
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }
 
-// TestCreate_UnpaidSubscription はunpaidステータスの場合のテスト
+// TestCreate_UnpaidSubscriptionはunpaidステータスの場合のテスト
 func TestCreate_UnpaidSubscription(t *testing.T) {
 	t.Parallel()
 
@@ -209,16 +209,16 @@ func TestCreate_UnpaidSubscription(t *testing.T) {
 
 	// 非アクティブなのでサポーターページへリダイレクト
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }
 
-// TestCreate_ActiveSubscription_StripeAPIError はアクティブなサブスクリプションでStripe API呼び出しがエラーの場合のテスト
+// TestCreate_ActiveSubscription_StripeAPIErrorはアクティブなサブスクリプションでStripe API呼び出しがエラーの場合のテスト
 // 注: テスト環境ではStripe APIが設定されていないため、エラーが発生してリダイレクトされる
 func TestCreate_ActiveSubscription_StripeAPIError(t *testing.T) {
 	t.Parallel()
@@ -239,16 +239,16 @@ func TestCreate_ActiveSubscription_StripeAPIError(t *testing.T) {
 
 	// Stripe APIがテスト環境で設定されていないためエラーになり、リダイレクトされる
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }
 
-// TestCreate_PastDueSubscription_StripeAPIError は支払い遅延中のサブスクリプションの場合のテスト
+// TestCreate_PastDueSubscription_StripeAPIErrorは支払い遅延中のサブスクリプションの場合のテスト
 // past_dueはアクティブとして扱われるため、Stripe APIを呼び出す
 func TestCreate_PastDueSubscription_StripeAPIError(t *testing.T) {
 	t.Parallel()
@@ -269,23 +269,23 @@ func TestCreate_PastDueSubscription_StripeAPIError(t *testing.T) {
 
 	// past_dueはアクティブなのでStripe APIを呼び出すが、テスト環境ではエラーになる
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }
 
-// TestCreate_GumroadSubscriber はGumroadサポーターがアクセスした場合のテスト
+// TestCreate_GumroadSubscriberはGumroadサポーターがアクセスした場合のテスト
 func TestCreate_GumroadSubscriber(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	handler := setupTestHandler(t, tx, db)
 
-	// アクティブなGumroadサポーターを作成（Stripeサブスクリプションなし）
+	// アクティブなGumroadサポーターを作成 (Stripeサブスクリプションなし)
 	userID, _ := createUserWithGumroadSubscriber(t, tx, false)
 	user := getUserByID(t, tx, userID)
 
@@ -298,11 +298,11 @@ func TestCreate_GumroadSubscriber(t *testing.T) {
 
 	// Stripeサポーターではないのでサポーターページへリダイレクト
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	location := rr.Header().Get("Location")
 	if location != "/supporters" {
-		t.Errorf("wrong redirect location: got %v want %v", location, "/supporters")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/supporters")
 	}
 }

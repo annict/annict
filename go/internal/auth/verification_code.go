@@ -8,7 +8,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// GenerateVerificationCode は6桁の確認コードを生成します
+// GenerateVerificationCodeは6桁の確認コードを生成します
 // 新規登録とログインの両方で共通して使用します
 func GenerateVerificationCode() (string, error) {
 	// 100000～999999の範囲の乱数を生成
@@ -20,7 +20,7 @@ func GenerateVerificationCode() (string, error) {
 	return fmt.Sprintf("%06d", code), nil
 }
 
-// HashCode はコードをbcryptでハッシュ化します
+// HashCodeはコードをbcryptでハッシュ化します
 // データベースに保存する際は、このハッシュ化された値を使用します
 // 新規登録とログインの両方で共通して使用します
 func HashCode(code string) (string, error) {
@@ -31,7 +31,7 @@ func HashCode(code string) (string, error) {
 	return string(hashedBytes), nil
 }
 
-// VerifyCode はコードとハッシュを比較して一致を検証します
+// VerifyCodeはコードとハッシュを比較して一致を検証します
 // 新規登録とログインの両方で共通して使用します
 func VerifyCode(code, hashedCode string) bool {
 	err := bcrypt.CompareHashAndPassword([]byte(hashedCode), []byte(code))

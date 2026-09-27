@@ -19,7 +19,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// generatePrivateID はテスト用のprivate ID生成関数（Repositoryの実装と同じロジック）
+// generatePrivateIDはテスト用のprivate ID生成関数 (Repositoryの実装と同じロジック)
 func generatePrivateID(publicID string) string {
 	hash := sha256.Sum256([]byte(publicID))
 	return fmt.Sprintf("2::%s", hex.EncodeToString(hash[:]))
@@ -64,13 +64,13 @@ func TestRequireAuth_UpdatesSessionUpdatedAt(t *testing.T) {
 	// 認証ミドルウェアを作成
 	authMW := middleware.NewAuthMiddleware(sessionManager)
 
-	// テスト用のハンドラー（認証が必要）
+	// テスト用のハンドラー (認証が必要)
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("OK"))
 	})
 
-	// リクエストを作成（セッションクッキー付き）
+	// リクエストを作成 (セッションクッキー付き)
 	req := httptest.NewRequest("GET", "/test", nil)
 	req.AddCookie(&http.Cookie{
 		Name:  session.SessionKey,
@@ -86,7 +86,7 @@ func TestRequireAuth_UpdatesSessionUpdatedAt(t *testing.T) {
 
 	// ステータスコードが200であることを確認
 	if rr.Code != http.StatusOK {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusOK)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
 	}
 
 	// セッションのupdated_atが更新されていることを確認
@@ -122,13 +122,13 @@ func TestRequireAuth_RedirectsWhenNotAuthenticated(t *testing.T) {
 	// 認証ミドルウェアを作成
 	authMW := middleware.NewAuthMiddleware(sessionManager)
 
-	// テスト用のハンドラー（認証が必要）
+	// テスト用のハンドラー (認証が必要)
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("OK"))
 	})
 
-	// リクエストを作成（未認証）
+	// リクエストを作成 (未認証)
 	req := httptest.NewRequest("GET", "/test", nil)
 
 	// レスポンスレコーダーを作成
@@ -137,16 +137,16 @@ func TestRequireAuth_RedirectsWhenNotAuthenticated(t *testing.T) {
 	// RequireAuthミドルウェアを適用
 	authMW.RequireAuth(testHandler).ServeHTTP(rr, req)
 
-	// ステータスコードが303（See Other）であることを確認
+	// ステータスコードが303 (See Other) であることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	// リダイレクト先が/sign_in?back=<元のURL>であることを確認
 	location := rr.Header().Get("Location")
 	expectedLocation := "/sign_in?back=%2Ftest"
 	if location != expectedLocation {
-		t.Errorf("wrong redirect location: got %v want %v", location, expectedLocation)
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, expectedLocation)
 	}
 }
 
@@ -175,13 +175,13 @@ func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 	// 認証ミドルウェアを作成
 	authMW := middleware.NewAuthMiddleware(sessionManager)
 
-	// テスト用のハンドラー（認証が必要）
+	// テスト用のハンドラー (認証が必要)
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("OK"))
 	})
 
-	// リクエストを作成（セッションクッキーなし、ただしコンテキストにユーザー情報あり）
+	// リクエストを作成 (セッションクッキーなし、ただしコンテキストにユーザー情報あり)
 	req := httptest.NewRequest("GET", "/test", nil)
 	req = req.WithContext(context.WithValue(req.Context(), middleware.UserContextKey, &model.User{
 		ID:    userID,
@@ -194,16 +194,16 @@ func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 	// RequireAuthミドルウェアを適用
 	authMW.RequireAuth(testHandler).ServeHTTP(rr, req)
 
-	// ステータスコードが303（See Other）であることを確認
+	// ステータスコードが303 (See Other) であることを確認
 	if rr.Code != http.StatusSeeOther {
-		t.Errorf("wrong status code: got %v want %v", rr.Code, http.StatusSeeOther)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 	}
 
 	// リダイレクト先が/sign_in?back=<元のURL>であることを確認
 	location := rr.Header().Get("Location")
 	expectedLocation := "/sign_in?back=%2Ftest"
 	if location != expectedLocation {
-		t.Errorf("wrong redirect location: got %v want %v", location, expectedLocation)
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, expectedLocation)
 	}
 }
 
@@ -227,7 +227,7 @@ func TestRequireAuth_RedirectsWithBackParam(t *testing.T) {
 	// 認証ミドルウェアを作成
 	authMW := middleware.NewAuthMiddleware(sessionManager)
 
-	// テスト用のハンドラー（認証が必要）
+	// テスト用のハンドラー (認証が必要)
 	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 	})
@@ -267,12 +267,12 @@ func TestRequireAuth_RedirectsWithBackParam(t *testing.T) {
 			authMW.RequireAuth(testHandler).ServeHTTP(rr, req)
 
 			if rr.Code != http.StatusSeeOther {
-				t.Errorf("ステータスコードが異なります: got %v, want %v", rr.Code, http.StatusSeeOther)
+				t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
 			}
 
 			location := rr.Header().Get("Location")
 			if location != tt.expectedLocation {
-				t.Errorf("リダイレクト先が異なります:\n  got:  %v\n  want: %v", location, tt.expectedLocation)
+				t.Errorf("リダイレクト先 = %v、期待値 = %v", location, tt.expectedLocation)
 			}
 		})
 	}

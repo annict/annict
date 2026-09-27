@@ -79,37 +79,24 @@ RSpec.describe "POST /db/works/:work_id/image", type: :request do
     expect(response.body).to include("著作者情報を入力してください")
   end
 
-  it "著作権情報が255文字を超える場合、エラーになること" do
-    skip "255文字制限は現在実装されていないため、スキップ"
-
+  it "著作者情報が256文字でも保存できること" do
     user = FactoryBot.create(:registered_user, :with_editor_role)
     work = FactoryBot.create(:work)
     login_as(user, scope: :user)
 
-    # 255文字を超える著作権情報でバリデーションエラーを確認
-    # image_dataがないとDBレベルでエラーになるため、バリデーションの前にダミーデータを設定
-    work_image = instance_double(WorkImage)
-    allow(WorkImage).to receive(:new).and_return(work_image)
-    allow(work_image).to receive(:work=)
-    allow(work_image).to receive(:user=)
-    allow(work_image).to receive(:copyright=)
-    allow(work_image).to receive(:image_data=)
-    allow(work_image).to receive(:valid?).and_return(false)
-    allow(work_image).to receive(:errors).and_return(
-      instance_double(ActiveModel::Errors, full_messages: ["著作者情報は255文字以内で入力してください"])
-    )
+    copyright = "a" * 256
+    image_file = fixture_file_upload("test_image.jpg", "image/jpeg")
 
     expect {
       post "/db/works/#{work.id}/image", params: {
         work_image: {
-          copyright: "a" * 256
+          image: image_file,
+          copyright: copyright
         }
       }
-    }.not_to change(WorkImage, :count)
+    }.to change(WorkImage, :count).by(1)
 
-    expect(response).to have_http_status(:ok)
-    # バリデーションエラーが表示されることを確認
-    # 実際のエラーメッセージはDBやモデルの設定によって異なる可能性がある
-    expect(response.body).to include("エラー")
+    expect(response).to redirect_to(db_work_image_detail_path(work))
+    expect(WorkImage.last.copyright).to eq(copyright)
   end
 end

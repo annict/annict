@@ -15,14 +15,14 @@ func TestRequestBodyLimitMiddleware_NoBody(t *testing.T) {
 	mw := NewRequestBodyLimitMiddleware(1024) // 1KB
 	handler := mw.Middleware(testHandler())
 
-	// GETリクエスト（ボディなし）
+	// GETリクエスト (ボディなし)
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
 	rr := httptest.NewRecorder()
 
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("ボディなしリクエスト: ステータスコード = %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("ボディなしリクエスト: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 }
 
@@ -42,7 +42,7 @@ func TestRequestBodyLimitMiddleware_SmallBody(t *testing.T) {
 		_, _ = w.Write(body)
 	}))
 
-	// 制限内のサイズのボディ（100バイト）
+	// 制限内のサイズのボディ (100バイト)
 	body := strings.Repeat("a", 100)
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(body))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -51,7 +51,7 @@ func TestRequestBodyLimitMiddleware_SmallBody(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("小さいボディ: ステータスコード = %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("小さいボディ: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 	if rr.Body.String() != body {
 		t.Errorf("小さいボディ: レスポンスボディが一致しません")
@@ -83,7 +83,7 @@ func TestRequestBodyLimitMiddleware_ExactLimit(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("ちょうど制限サイズ: ステータスコード = %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("ちょうど制限サイズ: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 }
 
@@ -102,8 +102,12 @@ func TestRequestBodyLimitMiddleware_ExceedsLimit_ContentLength(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusRequestEntityTooLarge {
-		t.Errorf("Content-Length超過: ステータスコード = %d, want %d", rr.Code, http.StatusRequestEntityTooLarge)
+		t.Errorf("Content-Length超過: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusRequestEntityTooLarge)
 	}
+
+	// 本拒否はリバースプロキシより前で書き出され、SecurityHeadersミドルウェアの及ばない
+	// 位置にあるため、本ミドルウェアが自身でヘッダーを設定する。
+	assertSecurityHeaders(t, rr.Header())
 }
 
 func TestRequestBodyLimitMiddleware_ExceedsLimit_ReadBody(t *testing.T) {
@@ -124,7 +128,7 @@ func TestRequestBodyLimitMiddleware_ExceedsLimit_ReadBody(t *testing.T) {
 		w.WriteHeader(http.StatusOK)
 	}))
 
-	// Content-Lengthが設定されていない場合（chunked encoding などの想定）
+	// Content-Lengthが設定されていない場合 (chunked encodingなどの想定)
 	// 実際に読み込んでエラーになるケースをテスト
 	body := bytes.NewReader(make([]byte, int(limit)+100))
 	req := httptest.NewRequest(http.MethodPost, "/", body)
@@ -146,7 +150,7 @@ func TestRequestBodyLimitMiddleware_ZeroContentLength(t *testing.T) {
 	mw := NewRequestBodyLimitMiddleware(1024) // 1KB
 	handler := mw.Middleware(testHandler())
 
-	// Content-Length = 0 のリクエスト
+	// Content-Length = 0のリクエスト
 	req := httptest.NewRequest(http.MethodPost, "/", strings.NewReader(""))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
@@ -154,7 +158,7 @@ func TestRequestBodyLimitMiddleware_ZeroContentLength(t *testing.T) {
 	handler.ServeHTTP(rr, req)
 
 	if rr.Code != http.StatusOK {
-		t.Errorf("空ボディ: ステータスコード = %d, want %d", rr.Code, http.StatusOK)
+		t.Errorf("空ボディ: ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 	}
 }
 
@@ -171,10 +175,10 @@ func TestRequestBodyLimitMiddleware_10MB(t *testing.T) {
 		size     int64
 		wantCode int
 	}{
-		{"1MB（制限内）", 1 * 1024 * 1024, http.StatusOK},
-		{"5MB（制限内）", 5 * 1024 * 1024, http.StatusOK},
-		{"10MB（ちょうど制限）", 10 * 1024 * 1024, http.StatusOK},
-		{"11MB（制限超過）", 11 * 1024 * 1024, http.StatusRequestEntityTooLarge},
+		{"1MB (制限内)", 1 * 1024 * 1024, http.StatusOK},
+		{"5MB (制限内)", 5 * 1024 * 1024, http.StatusOK},
+		{"10MB (ちょうど制限)", 10 * 1024 * 1024, http.StatusOK},
+		{"11MB (制限超過)", 11 * 1024 * 1024, http.StatusRequestEntityTooLarge},
 	}
 
 	for _, tc := range testCases {
@@ -187,7 +191,7 @@ func TestRequestBodyLimitMiddleware_10MB(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			if rr.Code != tc.wantCode {
-				t.Errorf("%s: ステータスコード = %d, want %d", tc.name, rr.Code, tc.wantCode)
+				t.Errorf("%s: ステータスコード = %d、期待値 = %d", tc.name, rr.Code, tc.wantCode)
 			}
 		})
 	}
@@ -214,7 +218,7 @@ func TestRequestBodyLimitMiddleware_DifferentMethods(t *testing.T) {
 			handler.ServeHTTP(rr, req)
 
 			if rr.Code != http.StatusOK {
-				t.Errorf("%s: ステータスコード = %d, want %d", method, rr.Code, http.StatusOK)
+				t.Errorf("%s: ステータスコード = %d、期待値 = %d", method, rr.Code, http.StatusOK)
 			}
 		})
 	}

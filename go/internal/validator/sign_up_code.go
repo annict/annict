@@ -7,20 +7,20 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// SignUpCodeCreateValidator は新規登録確認コード検証のバリデーションを行う
+// SignUpCodeCreateValidatorは新規登録確認コード検証のバリデーションを行う
 type SignUpCodeCreateValidator struct{}
 
-// NewSignUpCodeCreateValidator は SignUpCodeCreateValidator を生成する
+// NewSignUpCodeCreateValidatorはSignUpCodeCreateValidatorを生成する
 func NewSignUpCodeCreateValidator() *SignUpCodeCreateValidator {
 	return &SignUpCodeCreateValidator{}
 }
 
-// SignUpCodeCreateValidatorInput はバリデーションの入力パラメータ
+// SignUpCodeCreateValidatorInputはバリデーションの入力パラメータ
 type SignUpCodeCreateValidatorInput struct {
 	Code string // 6桁の数字コード
 }
 
-// Validate はバリデーションを行う
+// Validateはバリデーションを行う
 func (v *SignUpCodeCreateValidator) Validate(ctx context.Context, input SignUpCodeCreateValidatorInput) error {
 	ve := model.NewValidationError()
 

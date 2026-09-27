@@ -11,22 +11,22 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// PasswordUpdateValidator はパスワード更新フォームのバリデーションを行う
+// PasswordUpdateValidatorはパスワード更新フォームのバリデーションを行う
 type PasswordUpdateValidator struct{}
 
-// NewPasswordUpdateValidator は PasswordUpdateValidator を生成する
+// NewPasswordUpdateValidatorはPasswordUpdateValidatorを生成する
 func NewPasswordUpdateValidator() *PasswordUpdateValidator {
 	return &PasswordUpdateValidator{}
 }
 
-// PasswordUpdateValidatorInput はバリデーションの入力パラメータ
+// PasswordUpdateValidatorInputはバリデーションの入力パラメータ
 type PasswordUpdateValidatorInput struct {
 	Token                string
 	Password             string
 	PasswordConfirmation string
 }
 
-// Validate はバリデーションを行う
+// Validateはバリデーションを行う
 func (v *PasswordUpdateValidator) Validate(ctx context.Context, input PasswordUpdateValidatorInput) error {
 	ve := model.NewValidationError()
 
@@ -50,7 +50,7 @@ func (v *PasswordUpdateValidator) Validate(ctx context.Context, input PasswordUp
 		return ve
 	}
 
-	// パスワード強度チェック（sentinel error から i18n 翻訳を解決）
+	// パスワード強度チェック (sentinel errorからi18n翻訳を解決)
 	if err := auth.ValidatePasswordStrength(input.Password); err != nil {
 		switch {
 		case errors.Is(err, auth.ErrPasswordTooShort):
@@ -64,7 +64,7 @@ func (v *PasswordUpdateValidator) Validate(ctx context.Context, input PasswordUp
 		case errors.Is(err, auth.ErrPasswordInvalidChars):
 			ve.AddField("password", i18n.T(ctx, "password_strength_invalid_chars"))
 		default:
-			slog.ErrorContext(ctx, "auth.ValidatePasswordStrength から未知の sentinel error が返りました。validator 側に switch case の追加が必要です", "error", err)
+			slog.ErrorContext(ctx, "auth.ValidatePasswordStrengthから未知のsentinel errorが返りました。validator側にswitch caseの追加が必要です", "error", err)
 			return err
 		}
 		return ve

@@ -9,6 +9,21 @@ import (
 	"context"
 )
 
+const existsNumberFormatByID = `-- name: ExistsNumberFormatByID :one
+SELECT EXISTS (
+    SELECT 1
+    FROM number_formats
+    WHERE id = $1
+)
+`
+
+func (q *Queries) ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error) {
+	row := q.db.QueryRowContext(ctx, existsNumberFormatByID, id)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
+}
+
 const listNumberFormats = `-- name: ListNumberFormats :many
 SELECT id, name, sort_number
 FROM number_formats

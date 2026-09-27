@@ -137,6 +137,6 @@ func TestFlash_DismissButton(t *testing.T) {
 	// flash_dismissの翻訳が含まれているか確認
 	dismissText := i18n.T(ctx, "flash_dismiss")
 	if !strings.Contains(html, dismissText) {
-		t.Errorf("flash_dismissの翻訳が含まれていません（期待: %q）\nHTML: %s", dismissText, html)
+		t.Errorf("flash_dismissの翻訳が含まれていません (期待: %q)\nHTML: %s", dismissText, html)
 	}
 }

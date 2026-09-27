@@ -11,25 +11,21 @@ import (
 	annictstripe "github.com/annict/annict/go/internal/stripe"
 )
 
-// PortalSessionCreator abstracts creating a Stripe Billing Portal session. It is
-// defined on the caller (UseCase) side so the UseCase depends on a small
-// interface rather than the concrete *stripe.Client, and tests can inject a fake.
-//
-// [Ja] PortalSessionCreator は Stripe Billing Portal セッション作成を抽象化する。
-// 呼び出し側 (UseCase) で定義することで、UseCase は具象 *stripe.Client ではなく
-// 小さな interface に依存し、テストでは fake を注入できる。
+// PortalSessionCreatorはStripe Billing Portalセッション作成を抽象化する。
+// 呼び出し側 (UseCase) で定義することで、UseCaseは具象 *stripe.Clientではなく
+// 小さなinterfaceに依存し、テストではfakeを注入できる。
 type PortalSessionCreator interface {
 	CreatePortalSession(ctx context.Context, params annictstripe.PortalSessionParams) (string, error)
 }
 
-// CreatePortalSessionUsecase はStripe Customer Portalセッション作成のユースケースです
+// CreatePortalSessionUsecaseはStripe Customer Portalセッション作成のユースケースです
 type CreatePortalSessionUsecase struct {
 	cfg                  *config.Config
 	stripeSubscriberRepo *repository.StripeSubscriberRepository
 	portalCreator        PortalSessionCreator
 }
 
-// NewCreatePortalSessionUsecase は新しいCreatePortalSessionUsecaseを作成します
+// NewCreatePortalSessionUsecaseは新しいCreatePortalSessionUsecaseを作成します
 func NewCreatePortalSessionUsecase(
 	cfg *config.Config,
 	stripeSubscriberRepo *repository.StripeSubscriberRepository,
@@ -42,31 +38,31 @@ func NewCreatePortalSessionUsecase(
 	}
 }
 
-// CreatePortalSessionInput はユースケースの入力です
+// CreatePortalSessionInputはユースケースの入力です
 type CreatePortalSessionInput struct {
 	User   *model.User
 	Locale string
 }
 
-// CreatePortalSessionOutput はユースケースの出力です
+// CreatePortalSessionOutputはユースケースの出力です
 type CreatePortalSessionOutput struct {
 	PortalURL string
 }
 
-// NotStripeSubscriberError はStripeサポーターではない場合のエラーです
+// NotStripeSubscriberErrorはStripeサポーターではない場合のエラーです
 type NotStripeSubscriberError struct{}
 
 func (e *NotStripeSubscriberError) Error() string {
 	return "Stripeサポーターではありません"
 }
 
-// IsNotStripeSubscriberError はNotStripeSubscriberErrorかどうかを判定します
+// IsNotStripeSubscriberErrorはNotStripeSubscriberErrorかどうかを判定します
 func IsNotStripeSubscriberError(err error) bool {
 	var e *NotStripeSubscriberError
 	return errors.As(err, &e)
 }
 
-// Execute はStripe Customer Portalセッションを作成します
+// ExecuteはStripe Customer Portalセッションを作成します
 func (uc *CreatePortalSessionUsecase) Execute(ctx context.Context, input CreatePortalSessionInput) (*CreatePortalSessionOutput, error) {
 	user := input.User
 
@@ -79,10 +75,7 @@ func (uc *CreatePortalSessionUsecase) Execute(ctx context.Context, input CreateP
 	if err != nil {
 		return nil, fmt.Errorf("stripeサブスクライバーの取得に失敗しました: %w", err)
 	}
-	// The user references a subscriber that no longer exists; treat it as a
-	// non-supporter rather than dereferencing a nil value.
-	//
-	// [Ja] ユーザーが既に存在しないサブスクライバーを参照している状態であり、nil を
+	// ユーザーが既に存在しないサブスクライバーを参照している状態であり、nilを
 	// 参照外しせず非サポーターとして扱う。
 	if stripeSubscriber == nil {
 		return nil, &NotStripeSubscriberError{}
@@ -101,9 +94,7 @@ func (uc *CreatePortalSessionUsecase) Execute(ctx context.Context, input CreateP
 	// 4. Stripe Customer Portalセッションの作成
 	returnURL := uc.cfg.AppURL() + "/supporters"
 
-	// Default to English; only "ja" is rendered in Japanese.
-	//
-	// [Ja] デフォルトは英語。"ja" のときのみ日本語で表示する。
+	// デフォルトは英語。"ja" のときのみ日本語で表示する。
 	locale := "en"
 	if input.Locale == "ja" {
 		locale = "ja"

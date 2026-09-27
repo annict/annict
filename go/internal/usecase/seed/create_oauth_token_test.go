@@ -10,7 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateOAuthTokenUsecase_Execute は Execute メソッドのテスト
+// TestCreateOAuthTokenUsecase_ExecuteはExecuteメソッドのテスト
 func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 	// テストDBをセットアップ
 	db, _ := testutil.SetupTx(t)
@@ -57,8 +57,8 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 			},
 			params: CreateOAuthTokenParams{
 				ApplicationName: "", // デフォルト値を使用
-				ApplicationUID:  "", // デフォルト値（ランダム生成）
-				RedirectURI:     "", // デフォルト値（urn:ietf:wg:oauth:2.0:oob）
+				ApplicationUID:  "", // デフォルト値 (ランダム生成)
+				RedirectURI:     "", // デフォルト値 (urn:ietf:wg:oauth:2.0:oob)
 				Scopes:          "",
 				TokenCount:      2,
 			},
@@ -69,15 +69,15 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 				var appName string
 				err := tx.QueryRow("SELECT name FROM oauth_applications WHERE id = $1", result.ApplicationID).Scan(&appName)
 				if err != nil {
-					t.Fatalf("Failed to get application name: %v", err)
+					t.Fatalf("アプリケーション名の取得エラー = %v", err)
 				}
 				if appName != "Test Application" {
-					t.Errorf("Application name = %q, want %q", appName, "Test Application")
+					t.Errorf("Application name = %q、期待値 = %q", appName, "Test Application")
 				}
 			},
 		},
 		{
-			name: "正常系: 大量のトークンを作成（150件）",
+			name: "正常系: 大量のトークンを作成 (150件)",
 			setupUsers: func(t *testing.T, tx *sql.Tx) []model.UserID {
 				return createTestUsersForOAuth(t, tx, 150)
 			},
@@ -95,10 +95,10 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 				var tokenCount int
 				err := tx.QueryRow("SELECT COUNT(*) FROM oauth_access_tokens WHERE application_id = $1", result.ApplicationID).Scan(&tokenCount)
 				if err != nil {
-					t.Fatalf("Failed to count tokens: %v", err)
+					t.Fatalf("トークンの件数の取得エラー = %v", err)
 				}
 				if tokenCount != 150 {
-					t.Errorf("Token count = %d, want %d", tokenCount, 150)
+					t.Errorf("トークンの件数 = %d、期待値 = %d", tokenCount, 150)
 				}
 			},
 		},
@@ -137,12 +137,12 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 			params := tt.params
 			params.UserIDs = userIDs
 
-			// ExecuteWithTxを実行（テスト用トランザクションを使用）
+			// ExecuteWithTxを実行 (テスト用トランザクションを使用)
 			result, err := uc.ExecuteWithTx(ctx, tx, params, nil)
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
-				t.Errorf("Execute() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("Execute()のエラー = %v、期待値 = %v", err, tt.wantErr)
 				return
 			}
 
@@ -152,18 +152,18 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 
 			// 結果のチェック
 			if result.ApplicationID == 0 {
-				t.Error("Execute() returned ApplicationID = 0, want non-zero")
+				t.Error("Execute()のApplicationID = 0、期待値 = 0以外")
 			}
 
 			// トークン数のチェック
 			if len(result.TokenIDs) != tt.wantTokenCount {
-				t.Errorf("Execute() returned %d tokens, want %d", len(result.TokenIDs), tt.wantTokenCount)
+				t.Errorf("Execute()のトークン数 = %d、期待値 = %d", len(result.TokenIDs), tt.wantTokenCount)
 			}
 
 			// すべてのトークンIDが非ゼロであることを確認
 			for i, tokenID := range result.TokenIDs {
 				if tokenID == 0 {
-					t.Errorf("Execute() returned TokenIDs[%d] = 0, want non-zero", i)
+					t.Errorf("Execute()のTokenIDs[%d] = 0、期待値 = 0以外", i)
 				}
 			}
 
@@ -175,7 +175,7 @@ func TestCreateOAuthTokenUsecase_Execute(t *testing.T) {
 	}
 }
 
-// createTestUsersForOAuth テスト用のユーザーを作成するヘルパー関数（OAuth専用）
+// createTestUsersForOAuthテスト用のユーザーを作成するヘルパー関数 (OAuth専用)
 func createTestUsersForOAuth(t *testing.T, tx *sql.Tx, count int) []model.UserID {
 	t.Helper()
 	userIDs := make([]model.UserID, count)
@@ -191,7 +191,7 @@ func createTestUsersForOAuth(t *testing.T, tx *sql.Tx, count int) []model.UserID
 	return userIDs
 }
 
-// assertOAuthApplicationExists OAuth アプリケーションがDBに存在することを検証するヘルパー関数
+// assertOAuthApplicationExists OAuthアプリケーションがDBに存在することを検証するヘルパー関数
 func assertOAuthApplicationExists(t *testing.T, tx *sql.Tx, applicationID int64, expectedName, expectedUID string) {
 	t.Helper()
 
@@ -199,18 +199,18 @@ func assertOAuthApplicationExists(t *testing.T, tx *sql.Tx, applicationID int64,
 	var name, uid string
 	err := tx.QueryRow(query, applicationID).Scan(&name, &uid)
 	if err != nil {
-		t.Fatalf("Failed to get OAuth application (id=%d): %v", applicationID, err)
+		t.Fatalf("OAuthアプリケーションの取得エラー (id=%d) = %v", applicationID, err)
 	}
 
 	if name != expectedName {
-		t.Errorf("Application name = %q, want %q", name, expectedName)
+		t.Errorf("Application name = %q、期待値 = %q", name, expectedName)
 	}
 	if uid != expectedUID {
-		t.Errorf("Application UID = %q, want %q", uid, expectedUID)
+		t.Errorf("Application UID = %q、期待値 = %q", uid, expectedUID)
 	}
 }
 
-// assertOAuthAccessTokenExists OAuth アクセストークンがDBに存在することを検証するヘルパー関数
+// assertOAuthAccessTokenExists OAuthアクセストークンがDBに存在することを検証するヘルパー関数
 func assertOAuthAccessTokenExists(t *testing.T, tx *sql.Tx, tokenID int64, expectedApplicationID int64) {
 	t.Helper()
 
@@ -219,13 +219,13 @@ func assertOAuthAccessTokenExists(t *testing.T, tx *sql.Tx, tokenID int64, expec
 	var token string
 	err := tx.QueryRow(query, tokenID).Scan(&applicationID, &token)
 	if err != nil {
-		t.Fatalf("Failed to get OAuth access token (id=%d): %v", tokenID, err)
+		t.Fatalf("OAuthアクセストークンの取得エラー (id=%d) = %v", tokenID, err)
 	}
 
 	if applicationID != expectedApplicationID {
-		t.Errorf("Token application_id = %d, want %d", applicationID, expectedApplicationID)
+		t.Errorf("Token application_id = %d、期待値 = %d", applicationID, expectedApplicationID)
 	}
 	if token == "" {
-		t.Error("Token is empty, want non-empty")
+		t.Error("トークンが空だった。空でない値を期待")
 	}
 }

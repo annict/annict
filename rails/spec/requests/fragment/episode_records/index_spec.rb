@@ -2,6 +2,30 @@
 # frozen_string_literal: true
 
 RSpec.describe "GET /fragment/episodes/:episode_id/records", type: :request do
+  # 記録一覧は「自分の記録」「フォロー中のユーザーの記録」「全体の記録」の3つに分かれて描画され、
+  # 各記録は `turbo-frame#record_{id}` で囲まれる。
+  # 本文の部分一致では別の記録に一致してしまうため、対象一覧の記録IDで検証する。
+  def rendered_record_ids(section_index)
+    section = Nokogiri::HTML(response.body).css(".c-record-list")[section_index]
+
+    section.css("turbo-frame[id^='record_']").map { |frame| frame["id"].delete_prefix("record_").to_i }
+  end
+
+  def my_record_ids
+    rendered_record_ids(0)
+  end
+
+  def all_record_ids
+    rendered_record_ids(2)
+  end
+
+  def create_episode_record(user:, episode:, body:, watched_at:, rating_state: nil)
+    record = FactoryBot.create(:record, :with_episode_record, user:, work: episode.work, episode:, watched_at:)
+    record.episode_record.update!(body:, rating_state:)
+
+    record
+  end
+
   it "ログインしているとき、エピソードの記録一覧を表示すること" do
     user = FactoryBot.create(:registered_user)
     work = FactoryBot.create(:work)
@@ -113,25 +137,51 @@ RSpec.describe "GET /fragment/episodes/:episode_id/records", type: :request do
     expect(response.body).not_to include("削除された記録")
   end
 
-  it "レーティングの高い順に記録を表示すること" do
+  it "全体の記録一覧を評価の高い順に表示すること" do
     user = FactoryBot.create(:registered_user)
-    work = FactoryBot.create(:work)
-    episode = FactoryBot.create(:episode, work:)
+    episode = FactoryBot.create(:episode, work: FactoryBot.create(:work))
 
-    bad_record = FactoryBot.create(:record, :with_episode_record, user:, work:, episode:)
-    bad_record.episode_record.update!(body: "悪い評価", rating_state: "bad")
-
-    great_record = FactoryBot.create(:record, :with_episode_record, user:, work:, episode:)
-    great_record.episode_record.update!(body: "素晴らしい評価", rating_state: "great")
+    # 視聴日時を評価と逆順にして、並び順が評価で決まることを確かめる
+    bad_record = create_episode_record(
+      user: FactoryBot.create(:registered_user), episode:,
+      body: "悪い評価", rating_state: "bad", watched_at: Time.parse("2026-01-03 12:00:00 +09:00")
+    )
+    average_record = create_episode_record(
+      user: FactoryBot.create(:registered_user), episode:,
+      body: "普通の評価", rating_state: "average", watched_at: Time.parse("2026-01-02 12:00:00 +09:00")
+    )
+    great_record = create_episode_record(
+      user: FactoryBot.create(:registered_user), episode:,
+      body: "素晴らしい評価", rating_state: "great", watched_at: Time.parse("2026-01-01 12:00:00 +09:00")
+    )
 
     login_as(user, scope: :user)
     get "/fragment/episodes/#{episode.id}/records"
 
     expect(response.status).to eq(200)
-    # rating_stateの高い順で表示されることを確認
-    great_position = response.body.index("素晴らしい評価")
-    bad_position = response.body.index("悪い評価")
-    expect(great_position).to be < bad_position
+    expect(all_record_ids).to eq([great_record.id, average_record.id, bad_record.id])
+  end
+
+  it "自分の記録一覧を視聴日時の新しい順に表示すること" do
+    user = FactoryBot.create(:registered_user)
+    episode = FactoryBot.create(:episode, work: FactoryBot.create(:work))
+
+    # 評価を視聴日時と逆順にして、自分の記録では評価が並び順に影響しないことを確かめる
+    older_record = create_episode_record(
+      user:, episode:,
+      body: "先に見た記録", rating_state: "great", watched_at: Time.parse("2026-01-01 12:00:00 +09:00")
+    )
+    newer_record = create_episode_record(
+      user:, episode:,
+      body: "あとで見た記録", rating_state: "bad", watched_at: Time.parse("2026-01-02 12:00:00 +09:00")
+    )
+
+    login_as(user, scope: :user)
+    get "/fragment/episodes/#{episode.id}/records"
+
+    expect(response.status).to eq(200)
+    expect(my_record_ids).to eq([newer_record.id, older_record.id])
+    expect(all_record_ids).to be_empty
   end
 
   it "本文のない記録は全体の記録一覧に表示されないこと" do
@@ -154,24 +204,36 @@ RSpec.describe "GET /fragment/episodes/:episode_id/records", type: :request do
     # 本文のない記録は全体の記録一覧には含まれない
   end
 
-  it "ページネーションが機能すること" do
+  it "全体の記録一覧を1ページ20件でページ送りすること" do
     user = FactoryBot.create(:registered_user)
-    work = FactoryBot.create(:work)
-    episode = FactoryBot.create(:episode, work:)
+    episode = FactoryBot.create(:episode, work: FactoryBot.create(:work))
+    base_time = Time.parse("2026-01-01 00:00:00 +09:00")
 
-    # 21件の記録を作成（1ページ20件なので2ページになる）
-    21.times do |i|
-      other_user = FactoryBot.create(:registered_user)
-      record = FactoryBot.create(:record, :with_episode_record, user: other_user, work:, episode:)
-      record.episode_record.update!(body: "記録#{i + 1}")
+    # 評価の境界がページの境界と一致しないように、高評価11件・低評価10件の計21件を作る
+    great_records = Array.new(11) do |i|
+      create_episode_record(
+        user: FactoryBot.create(:registered_user), episode:,
+        body: "高評価の記録#{i + 1}", rating_state: "great", watched_at: base_time + i.hours
+      )
     end
+    bad_records = Array.new(10) do |i|
+      create_episode_record(
+        user: FactoryBot.create(:registered_user), episode:,
+        body: "低評価の記録#{i + 1}", rating_state: "bad", watched_at: base_time + i.hours
+      )
+    end
+    expected_ids = (great_records.reverse + bad_records.reverse).map(&:id)
 
     login_as(user, scope: :user)
+
+    get "/fragment/episodes/#{episode.id}/records"
+
+    expect(response.status).to eq(200)
+    expect(all_record_ids).to eq(expected_ids.first(20))
+
     get "/fragment/episodes/#{episode.id}/records?page=2"
 
     expect(response.status).to eq(200)
-    # 2ページ目には21番目の記録のみ表示される
-    expect(response.body).to include("記録1")
-    expect(response.body).not_to include("記録21")
+    expect(all_record_ids).to eq(expected_ids.last(1))
   end
 end

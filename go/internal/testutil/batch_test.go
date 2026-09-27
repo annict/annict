@@ -4,6 +4,8 @@ import (
 	"context"
 	"fmt"
 	"testing"
+
+	"github.com/lib/pq"
 )
 
 func TestBatchBuildWorks(t *testing.T) {
@@ -26,27 +28,34 @@ func TestBatchBuildWorks(t *testing.T) {
 	count := 10
 	ids, err := BatchBuildWorks(ctx, tx, count, callback)
 	if err != nil {
-		t.Fatalf("BatchBuildWorks failed: %v", err)
+		t.Fatalf("BatchBuildWorksのエラー = %v", err)
 	}
 
 	// IDが正しく返されることを確認
 	if len(ids) != count {
-		t.Errorf("wrong number of IDs: got %d, want %d", len(ids), count)
+		t.Errorf("IDの件数 = %d、期待値 = %d", len(ids), count)
 	}
 
 	// 進捗コールバックが正しく呼ばれたことを確認
 	if callbackCalled != count {
-		t.Errorf("callback not called correctly: got %d, want %d", callbackCalled, count)
+		t.Errorf("コールバックの呼び出し回数 = %d、期待値 = %d", callbackCalled, count)
 	}
 
-	// データベースに正しく作成されたことを確認
+	// 永続化されたことを確認する。ここで作成したidのみを数える。`make test` は
+	// パッケージ間で共有DBをリセットせずに `go test ./...` を実行するため、他パッケージの
+	// usecaseテストがGetTestDBでworksをコミットし、限定しないCOUNT(*) はもはやcountと
+	// 一致しなくなる。
+	workIDs := make([]int64, len(ids))
+	for i, id := range ids {
+		workIDs[i] = int64(id)
+	}
 	var actualCount int
-	err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM works").Scan(&actualCount)
+	err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM works WHERE id = ANY($1::bigint[])", pq.Array(workIDs)).Scan(&actualCount)
 	if err != nil {
-		t.Fatalf("failed to count works: %v", err)
+		t.Fatalf("作品の件数の取得エラー = %v", err)
 	}
 	if actualCount != count {
-		t.Errorf("wrong number of works in DB: got %d, want %d", actualCount, count)
+		t.Errorf("DBの作品の件数 = %d、期待値 = %d", actualCount, count)
 	}
 
 	// 各作品が正しく作成されたことを確認
@@ -54,11 +63,11 @@ func TestBatchBuildWorks(t *testing.T) {
 		var title string
 		err = tx.QueryRowContext(ctx, "SELECT title FROM works WHERE id = $1", int64(id)).Scan(&title)
 		if err != nil {
-			t.Fatalf("failed to get work %d: %v", id, err)
+			t.Fatalf("作品%dの取得エラー = %v", id, err)
 		}
 		// タイトルが設定されていることを確認
 		if title == "" {
-			t.Errorf("work %d has empty title", id)
+			t.Errorf("作品%dのtitleが空だった", id)
 		}
 	}
 }
@@ -74,12 +83,12 @@ func TestBatchBuildUsers(t *testing.T) {
 	count := 5
 	ids, err := BatchBuildUsers(ctx, tx, count, nil)
 	if err != nil {
-		t.Fatalf("BatchBuildUsers failed: %v", err)
+		t.Fatalf("BatchBuildUsersのエラー = %v", err)
 	}
 
 	// IDが正しく返されることを確認
 	if len(ids) != count {
-		t.Errorf("wrong number of IDs: got %d, want %d", len(ids), count)
+		t.Errorf("IDの件数 = %d、期待値 = %d", len(ids), count)
 	}
 
 	// 各ユーザーが正しく作成されたことを確認
@@ -87,12 +96,12 @@ func TestBatchBuildUsers(t *testing.T) {
 		var username string
 		err = tx.QueryRowContext(ctx, "SELECT username FROM users WHERE id = $1", id).Scan(&username)
 		if err != nil {
-			t.Fatalf("failed to get user %d: %v", id, err)
+			t.Fatalf("ユーザー%dの取得エラー = %v", id, err)
 		}
 		// ユーザー名が設定されていることを確認
 		expectedUsername := fmt.Sprintf("user_%d", i+1)
 		if username != expectedUsername {
-			t.Errorf("user %d has wrong username: got %s, want %s", id, username, expectedUsername)
+			t.Errorf("ユーザー%dのusername = %s、期待値 = %s", id, username, expectedUsername)
 		}
 	}
 }
@@ -111,22 +120,22 @@ func TestBatchBuildEpisodes(t *testing.T) {
 	count := 12
 	ids, err := BatchBuildEpisodes(ctx, tx, workID, count, nil)
 	if err != nil {
-		t.Fatalf("BatchBuildEpisodes failed: %v", err)
+		t.Fatalf("BatchBuildEpisodesのエラー = %v", err)
 	}
 
 	// IDが正しく返されることを確認
 	if len(ids) != count {
-		t.Errorf("wrong number of IDs: got %d, want %d", len(ids), count)
+		t.Errorf("IDの件数 = %d、期待値 = %d", len(ids), count)
 	}
 
 	// データベースに正しく作成されたことを確認
 	var actualCount int
 	err = tx.QueryRowContext(ctx, "SELECT COUNT(*) FROM episodes WHERE work_id = $1", int64(workID)).Scan(&actualCount)
 	if err != nil {
-		t.Fatalf("failed to count episodes: %v", err)
+		t.Fatalf("エピソードの件数の取得エラー = %v", err)
 	}
 	if actualCount != count {
-		t.Errorf("wrong number of episodes in DB: got %d, want %d", actualCount, count)
+		t.Errorf("DBのエピソードの件数 = %d、期待値 = %d", actualCount, count)
 	}
 }
 
@@ -142,6 +151,6 @@ func TestBatchBuildWithContext(t *testing.T) {
 	// キャンセルされたコンテキストでは失敗するはず
 	_, err := BatchBuildWorks(ctx, tx, 1, nil)
 	if err == nil {
-		t.Error("expected error with cancelled context, got nil")
+		t.Error("キャンセル済みのcontextでエラーを期待したが、nilだった")
 	}
 }

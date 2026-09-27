@@ -46,10 +46,10 @@ func TestFlashManager_SetSuccess(t *testing.T) {
 	}
 
 	if flash.Type != FlashSuccess {
-		t.Errorf("Type = %q, want %q", flash.Type, FlashSuccess)
+		t.Errorf("Type = %q、期待値 = %q", flash.Type, FlashSuccess)
 	}
 	if flash.Message != "操作が成功しました" {
-		t.Errorf("Message = %q, want %q", flash.Message, "操作が成功しました")
+		t.Errorf("Message = %q、期待値 = %q", flash.Message, "操作が成功しました")
 	}
 }
 
@@ -84,10 +84,10 @@ func TestFlashManager_SetError(t *testing.T) {
 	}
 
 	if flash.Type != FlashError {
-		t.Errorf("Type = %q, want %q", flash.Type, FlashError)
+		t.Errorf("Type = %q、期待値 = %q", flash.Type, FlashError)
 	}
 	if flash.Message != "エラーが発生しました" {
-		t.Errorf("Message = %q, want %q", flash.Message, "エラーが発生しました")
+		t.Errorf("Message = %q、期待値 = %q", flash.Message, "エラーが発生しました")
 	}
 }
 
@@ -115,13 +115,13 @@ func TestFlashManager_GetFlash(t *testing.T) {
 		t.Fatal("フラッシュメッセージがnilです")
 	}
 	if flash.Type != FlashSuccess {
-		t.Errorf("Type = %q, want %q", flash.Type, FlashSuccess)
+		t.Errorf("Type = %q、期待値 = %q", flash.Type, FlashSuccess)
 	}
 	if flash.Message != "テストメッセージ" {
-		t.Errorf("Message = %q, want %q", flash.Message, "テストメッセージ")
+		t.Errorf("Message = %q、期待値 = %q", flash.Message, "テストメッセージ")
 	}
 
-	// Cookieが削除されていることを確認（MaxAge=-1のCookieが設定される）
+	// Cookieが削除されていることを確認 (MaxAge=-1のCookieが設定される)
 	clearCookies := w2.Result().Cookies()
 	var clearCookie *http.Cookie
 	for _, c := range clearCookies {
@@ -134,7 +134,7 @@ func TestFlashManager_GetFlash(t *testing.T) {
 		t.Fatal("クリア用Cookieが設定されていません")
 	}
 	if clearCookie.MaxAge != -1 {
-		t.Errorf("MaxAge = %d, want -1", clearCookie.MaxAge)
+		t.Errorf("MaxAge = %d、期待値 = -1", clearCookie.MaxAge)
 	}
 }
 
@@ -148,7 +148,7 @@ func TestFlashManager_GetFlash_NoCookie(t *testing.T) {
 	flash := fm.GetFlash(w, r)
 
 	if flash != nil {
-		t.Errorf("Cookieがない場合にnilを返すべき: got %+v", flash)
+		t.Errorf("Cookieが無い場合の戻り値 = %+v、期待値 = nil", flash)
 	}
 }
 
@@ -166,7 +166,7 @@ func TestFlashManager_GetFlash_InvalidBase64(t *testing.T) {
 	flash := fm.GetFlash(w, r)
 
 	if flash != nil {
-		t.Errorf("不正なBase64でnilを返すべき: got %+v", flash)
+		t.Errorf("不正なBase64のときの戻り値 = %+v、期待値 = nil", flash)
 	}
 
 	// Cookieが削除されていることを確認
@@ -182,7 +182,7 @@ func TestFlashManager_GetFlash_InvalidBase64(t *testing.T) {
 		t.Fatal("クリア用Cookieが設定されていません")
 	}
 	if clearCookie.MaxAge != -1 {
-		t.Errorf("MaxAge = %d, want -1", clearCookie.MaxAge)
+		t.Errorf("MaxAge = %d、期待値 = -1", clearCookie.MaxAge)
 	}
 }
 
@@ -191,12 +191,12 @@ func TestFlashManager_Middleware_PutsFlashIntoContext(t *testing.T) {
 
 	fm := newTestFlashManager()
 
-	// 事前に Cookie を仕込む
+	// 事前にCookieを仕込む
 	preW := httptest.NewRecorder()
 	fm.SetSuccess(preW, "ok")
 	cookies := preW.Result().Cookies()
 	if len(cookies) == 0 {
-		t.Fatal("事前 Cookie が設定されていない")
+		t.Fatal("事前Cookieが設定されていない")
 	}
 
 	var captured *Flash
@@ -212,16 +212,16 @@ func TestFlashManager_Middleware_PutsFlashIntoContext(t *testing.T) {
 	handler.ServeHTTP(w, req)
 
 	if captured == nil {
-		t.Fatal("flash が context に積まれていない")
+		t.Fatal("flashがcontextに積まれていない")
 	}
 	if captured.Type != FlashSuccess {
-		t.Errorf("Type = %q, want %q", captured.Type, FlashSuccess)
+		t.Errorf("Type = %q、期待値 = %q", captured.Type, FlashSuccess)
 	}
 	if captured.Message != "ok" {
-		t.Errorf("Message = %q, want %q", captured.Message, "ok")
+		t.Errorf("Message = %q、期待値 = %q", captured.Message, "ok")
 	}
 
-	// 直後に Cookie が削除されていること（MaxAge=-1 の Set-Cookie）
+	// 直後にCookieが削除されていること (MaxAge=-1のSet-Cookie)
 	foundClear := false
 	for _, c := range w.Result().Cookies() {
 		if c.Name == FlashCookieName && c.MaxAge < 0 {
@@ -229,7 +229,7 @@ func TestFlashManager_Middleware_PutsFlashIntoContext(t *testing.T) {
 		}
 	}
 	if !foundClear {
-		t.Error("Middleware は Cookie を削除する Set-Cookie を発行すべき")
+		t.Error("MiddlewareはCookieを削除するSet-Cookieを発行すべき")
 	}
 }
 
@@ -250,10 +250,10 @@ func TestFlashManager_Middleware_NoCookie(t *testing.T) {
 	handler.ServeHTTP(w, req)
 
 	if !called {
-		t.Fatal("next.ServeHTTP が呼ばれていない")
+		t.Fatal("next.ServeHTTPが呼ばれていない")
 	}
 	if captured != nil {
-		t.Errorf("Cookie が無い場合 FlashFromContext は nil を返すべき: got %+v", captured)
+		t.Errorf("Cookieが無い場合のFlashFromContext() = %+v、期待値 = nil", captured)
 	}
 }
 
@@ -262,7 +262,7 @@ func TestFlashManager_FlashFromContext_NoValue(t *testing.T) {
 
 	flash := FlashFromContext(context.Background())
 	if flash != nil {
-		t.Errorf("空 context では nil を返すべき: got %+v", flash)
+		t.Errorf("空のcontextのときの戻り値 = %+v、期待値 = nil", flash)
 	}
 }
 
@@ -283,7 +283,7 @@ func TestFlashManager_GetFlash_InvalidJSON(t *testing.T) {
 	flash := fm.GetFlash(w, r)
 
 	if flash != nil {
-		t.Errorf("不正なJSONでnilを返すべき: got %+v", flash)
+		t.Errorf("不正なJSONのときの戻り値 = %+v、期待値 = nil", flash)
 	}
 
 	// Cookieが削除されていることを確認
@@ -299,6 +299,6 @@ func TestFlashManager_GetFlash_InvalidJSON(t *testing.T) {
 		t.Fatal("クリア用Cookieが設定されていません")
 	}
 	if clearCookie.MaxAge != -1 {
-		t.Errorf("MaxAge = %d, want -1", clearCookie.MaxAge)
+		t.Errorf("MaxAge = %d、期待値 = -1", clearCookie.MaxAge)
 	}
 }

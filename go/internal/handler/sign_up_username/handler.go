@@ -1,4 +1,4 @@
-// Package sign_up_username はサインアップユーザー名設定機能を提供します
+// Package sign_up_usernameはサインアップユーザー名設定機能を提供します
 package sign_up_username
 
 import (
@@ -9,7 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler ユーザー名設定とユーザー登録のHTTPハンドラーです
+// Handlerユーザー名設定とユーザー登録のHTTPハンドラーです
 type Handler struct {
 	cfg              *config.Config
 	sessionMgr       *session.Manager
@@ -18,7 +18,7 @@ type Handler struct {
 	completeSignUpUC *usecase.CompleteSignUpUsecase
 }
 
-// NewHandler 新しいHandlerを作成します
+// NewHandler新しいHandlerを作成します
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,

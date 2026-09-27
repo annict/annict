@@ -1,4 +1,4 @@
-// Package sign_up_code はサインアップ確認コード検証機能を提供します
+// Package sign_up_codeはサインアップ確認コード検証機能を提供します
 package sign_up_code
 
 import (
@@ -12,7 +12,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler 新規登録確認コード関連のHTTPハンドラーです
+// Handler新規登録確認コード関連のHTTPハンドラーです
 type Handler struct {
 	cfg                *config.Config
 	sessionMgr         *session.Manager
@@ -24,7 +24,7 @@ type Handler struct {
 	verifySignUpCodeUC *usecase.VerifySignUpCodeUsecase
 }
 
-// NewHandler 新しいHandlerを作成します
+// NewHandler新しいHandlerを作成します
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,

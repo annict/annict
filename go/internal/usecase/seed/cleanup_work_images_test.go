@@ -12,15 +12,15 @@ func TestCleanupWorkImagesUsecase_NoS3Config(t *testing.T) {
 	// S3設定なしでUsecaseを作成
 	uc := NewCleanupWorkImagesUsecase("", "", "", "", "")
 
-	// 実行（エラーなく完了するはず）
+	// 実行 (エラーなく完了するはず)
 	ctx := context.Background()
 	err := uc.Execute(ctx)
 	if err != nil {
-		t.Fatalf("expected no error when S3 config is not set, got: %v", err)
+		t.Fatalf("S3の設定が無いときのエラー = %v、期待値 = nil", err)
 	}
 }
 
-// TestCleanupWorkImagesUsecase_EmptyBucket バケットが空の場合のテスト
+// TestCleanupWorkImagesUsecase_EmptyBucketバケットが空の場合のテスト
 // 注: このテストは実際のS3接続が必要なため、統合テストとしてスキップします
 func TestCleanupWorkImagesUsecase_EmptyBucket(t *testing.T) {
 	t.Skip("統合テスト: 実際のS3接続が必要なため、ローカル環境ではスキップします")
@@ -37,11 +37,11 @@ func TestCleanupWorkImagesUsecase_EmptyBucket(t *testing.T) {
 	// ctx := context.Background()
 	// err := uc.Execute(ctx)
 	// if err != nil {
-	// 	t.Fatalf("unexpected error: %v", err)
+	// 	t.Fatalf("想定外のエラー = %v", err)
 	// }
 }
 
-// TestCleanupWorkImagesUsecase_WithObjects オブジェクトが存在する場合のテスト
+// TestCleanupWorkImagesUsecase_WithObjectsオブジェクトが存在する場合のテスト
 // 注: このテストは実際のS3接続が必要なため、統合テストとしてスキップします
 func TestCleanupWorkImagesUsecase_WithObjects(t *testing.T) {
 	t.Skip("統合テスト: 実際のS3接続が必要なため、ローカル環境ではスキップします")
@@ -52,7 +52,7 @@ func TestCleanupWorkImagesUsecase_WithObjects(t *testing.T) {
 	// 3. S3に画像が残っていないことを確認
 }
 
-// TestNewCleanupWorkImagesUsecase コンストラクタのテスト
+// TestNewCleanupWorkImagesUsecaseコンストラクタのテスト
 func TestNewCleanupWorkImagesUsecase(t *testing.T) {
 	t.Parallel()
 
@@ -65,28 +65,28 @@ func TestNewCleanupWorkImagesUsecase(t *testing.T) {
 	uc := NewCleanupWorkImagesUsecase(endpoint, accessKeyID, secretAccessKey, region, bucketName)
 
 	if uc == nil {
-		t.Fatal("expected non-nil usecase")
+		t.Fatal("usecaseがnilだった")
 	}
 
 	// 構造体のフィールドが正しく設定されているか確認
 	if uc.endpoint != endpoint {
-		t.Errorf("expected endpoint %q, got %q", endpoint, uc.endpoint)
+		t.Errorf("endpointの期待値 = %q、実測値 = %q", endpoint, uc.endpoint)
 	}
 	if uc.accessKeyID != accessKeyID {
-		t.Errorf("expected accessKeyID %q, got %q", accessKeyID, uc.accessKeyID)
+		t.Errorf("accessKeyIDの期待値 = %q、実測値 = %q", accessKeyID, uc.accessKeyID)
 	}
 	if uc.secretAccessKey != secretAccessKey {
-		t.Errorf("expected secretAccessKey %q, got %q", secretAccessKey, uc.secretAccessKey)
+		t.Errorf("secretAccessKeyの期待値 = %q、実測値 = %q", secretAccessKey, uc.secretAccessKey)
 	}
 	if uc.region != region {
-		t.Errorf("expected region %q, got %q", region, uc.region)
+		t.Errorf("regionの期待値 = %q、実測値 = %q", region, uc.region)
 	}
 	if uc.bucketName != bucketName {
-		t.Errorf("expected bucketName %q, got %q", bucketName, uc.bucketName)
+		t.Errorf("bucketNameの期待値 = %q、実測値 = %q", bucketName, uc.bucketName)
 	}
 }
 
-// TestCleanupWorkImagesUsecase_PartialS3Config 一部のS3設定のみが設定されている場合
+// TestCleanupWorkImagesUsecase_PartialS3Config一部のS3設定のみが設定されている場合
 func TestCleanupWorkImagesUsecase_PartialS3Config(t *testing.T) {
 	t.Parallel()
 
@@ -155,9 +155,9 @@ func TestCleanupWorkImagesUsecase_PartialS3Config(t *testing.T) {
 			ctx := context.Background()
 			err := uc.Execute(ctx)
 
-			// 一部の設定のみの場合はスキップされるはず（エラーなし）
+			// 一部の設定のみの場合はスキップされるはず (エラーなし)
 			if err != nil {
-				t.Fatalf("expected no error when partial S3 config is set, got: %v", err)
+				t.Fatalf("S3の設定が一部だけのときのエラー = %v、期待値 = nil", err)
 			}
 		})
 	}

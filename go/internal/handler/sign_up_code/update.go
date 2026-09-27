@@ -31,7 +31,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Rate Limiting チェック: メールアドレス単位（3 回/時間）
+	// Rate Limitingチェック: メールアドレス単位 (3回/時間)
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		emailKey := fmt.Sprintf("sign_up:send:%s", email)
 		allowed, err := h.limiter.Check(ctx, emailKey, 3, 1*time.Hour)
@@ -49,7 +49,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	// ロケールを取得（セッションまたはデフォルト）
+	// ロケールを取得 (セッションまたはデフォルト)
 	locale := i18n.GetLocale(ctx)
 
 	// ユースケース呼び出し: 確認コードを再送信
@@ -73,6 +73,6 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	// フラッシュメッセージを設定
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "sign_up_code_resend_success"))
 
-	// /sign_up/code にリダイレクト
+	// /sign_up/codeにリダイレクト
 	http.Redirect(w, r, "/sign_up/code", http.StatusSeeOther)
 }

@@ -15,11 +15,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// marshalSubscriptionEvent builds a stripe.Event whose Data.Raw is the JSON of the
-// given subscription, mirroring how Stripe delivers customer.subscription.* events.
-//
-// [Ja] 与えられた subscription を JSON 化して Data.Raw に持つ stripe.Event を組み立てる。
-// Stripe が customer.subscription.* イベントを配信する形を模している。
+// 与えられたsubscriptionをJSON化してData.Rawに持つstripe.Eventを組み立てる。
+// Stripeがcustomer.subscription.* イベントを配信する形を模している。
 func marshalSubscriptionEvent(t *testing.T, eventID string, eventType stripe.EventType, sub stripe.Subscription) *stripe.Event {
 	t.Helper()
 
@@ -35,15 +32,9 @@ func marshalSubscriptionEvent(t *testing.T, eventID string, eventType stripe.Eve
 	}
 }
 
-// TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound is a regression test
-// for a confirmed bug: an update / deleted event whose StripeSubscriber does not
-// exist must be recorded as skipped, not failed. The webhook layer previously
-// compared the wrapped error with == sql.ErrNoRows, so the not-found branch was
-// unreachable and the event was treated as failed.
-//
-// [Ja] 対応する StripeSubscriber が存在しない update / deleted イベントが failed では
-// なく skipped として記録されることを検証する確定バグの回帰テスト。以前は Webhook 層が
-// ラップ済みエラーを == sql.ErrNoRows で比較していたため、未存在分岐が到達不能で failed
+// 対応するStripeSubscriberが存在しないupdate / deletedイベントがfailedでは
+// なくskippedとして記録されることを検証する確定バグの回帰テスト。以前はWebhook層が
+// ラップ済みエラーを == sql.ErrNoRowsで比較していたため、未存在分岐が到達不能でfailed
 // 扱いになっていた。
 func TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound(t *testing.T) {
 	t.Parallel()
@@ -96,11 +87,8 @@ func TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound(t *testing.T) {
 			userRepo := repository.NewUserRepository(queries)
 			stripeWebhookEventRepo := repository.NewStripeWebhookEventRepository(queries)
 
-			// The create usecase is not exercised by these cases, so a nil Stripe
-			// client is sufficient.
-			//
-			// [Ja] これらのケースでは create ユースケースは実行されないため、Stripe
-			// クライアントは nil で十分。
+			// これらのケースではcreateユースケースは実行されないため、Stripe
+			// クライアントはnilで十分。
 			createUC := NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, nil)
 			updateUC := NewUpdateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
 			deleteUC := NewDeleteStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo)
@@ -108,9 +96,7 @@ func TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound(t *testing.T) {
 
 			ctx := context.Background()
 
-			// No StripeSubscriber row exists for this subscription ID.
-			//
-			// [Ja] 対応する StripeSubscriber が存在しないサブスクリプション ID。
+			// 対応するStripeSubscriberが存在しないサブスクリプションID。
 			subID := "sub_webhook_notfound_" + randomString(8)
 			eventID := "evt_webhook_notfound_" + randomString(8)
 			event := marshalSubscriptionEvent(t, eventID, tt.eventType, tt.buildSub(subID))
@@ -124,18 +110,14 @@ func TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound(t *testing.T) {
 				t.Fatalf("Webhookイベントの取得に失敗: %v", err)
 			}
 			if got.Status != model.WebhookEventStatusSkipped.String() {
-				t.Errorf("イベントステータス: got %s, want %s", got.Status, model.WebhookEventStatusSkipped)
+				t.Errorf("イベントステータス = %s、期待値 = %s", got.Status, model.WebhookEventStatusSkipped)
 			}
 		})
 	}
 }
 
-// marshalCheckoutSessionEvent builds a checkout.session.completed stripe.Event
-// whose Data.Raw is the JSON of the given session, mirroring how Stripe delivers
-// the event.
-//
-// [Ja] 与えられた session を JSON 化して Data.Raw に持つ checkout.session.completed の
-// stripe.Event を組み立てる。Stripe がイベントを配信する形を模している。
+// 与えられたsessionをJSON化してData.Rawに持つcheckout.session.completedの
+// stripe.Eventを組み立てる。Stripeがイベントを配信する形を模している。
 func marshalCheckoutSessionEvent(t *testing.T, eventID string, session stripe.CheckoutSession) *stripe.Event {
 	t.Helper()
 
@@ -151,27 +133,16 @@ func marshalCheckoutSessionEvent(t *testing.T, eventID string, session stripe.Ch
 	}
 }
 
-// TestProcessStripeWebhookUsecase_HandleCheckoutSessionCompleted exercises the
-// checkout.session.completed path: the happy path creates a StripeSubscriber and
-// links the user, while malformed sessions are either skipped (missing
-// subscription / customer) or failed (missing / invalid metadata user_id). The
-// missing-customer case is the regression guard for a panic on session.Customer.ID.
-//
-// [Ja] checkout.session.completed 経路を検証する。正常系では StripeSubscriber を作成し
-// ユーザーを紐付ける。不正なセッションは skipped (subscription / customer 欠落) または
-// failed (metadata の user_id 欠落 / 不正) になる。customer 欠落ケースは
-// session.Customer.ID 参照での panic に対する回帰ガードである。
+// checkout.session.completed経路を検証する。正常系ではStripeSubscriberを作成し
+// ユーザーを紐付ける。不正なセッションはskipped (subscription / customer欠落) または
+// failed (metadataのuser_id欠落 / 不正) になる。customer欠落ケースは
+// session.Customer.ID参照でのpanicに対する回帰ガードである。
 func TestProcessStripeWebhookUsecase_HandleCheckoutSessionCompleted(t *testing.T) {
 	t.Parallel()
 
-	// handleCheckoutSessionCompleted invokes CreateStripeSubscriberUsecase, which
-	// opens its own transaction, so use the shared DB directly and commit test data
-	// (GetTestDB) rather than an outer rollback transaction whose data the inner
-	// transaction could not see.
-	//
-	// [Ja] handleCheckoutSessionCompleted は内部でトランザクションを開く
-	// CreateStripeSubscriberUsecase を呼ぶため、内側のトランザクションから見えない
-	// 外側のロールバック用トランザクションではなく、共有 DB を直接使ってテストデータを
+	// handleCheckoutSessionCompletedは内部でトランザクションを開く
+	// CreateStripeSubscriberUsecaseを呼ぶため、内側のトランザクションから見えない
+	// 外側のロールバック用トランザクションではなく、共有DBを直接使ってテストデータを
 	// コミットする (GetTestDB)。
 	db := testutil.GetTestDB()
 	queries := query.New(db)
@@ -217,23 +188,20 @@ func TestProcessStripeWebhookUsecase_HandleCheckoutSessionCompleted(t *testing.T
 			t.Fatalf("Webhookイベントの取得に失敗: %v", err)
 		}
 		if gotEvent.Status != model.WebhookEventStatusProcessed.String() {
-			t.Errorf("イベントステータス: got %s, want %s", gotEvent.Status, model.WebhookEventStatusProcessed)
+			t.Errorf("イベントステータス = %s、期待値 = %s", gotEvent.Status, model.WebhookEventStatusProcessed)
 		}
 
-		// The StripeSubscriber must be created and the customer ID from the session
-		// carried onto the record.
-		//
-		// [Ja] StripeSubscriber が作成され、セッションの customer ID がレコードへ
+		// StripeSubscriberが作成され、セッションのcustomer IDがレコードへ
 		// 引き継がれることを確認する。
 		subscriber, err := stripeSubscriberRepo.GetByStripeSubscriptionID(ctx, subscriptionID)
 		if err != nil {
 			t.Fatalf("StripeSubscriber取得エラー: %v", err)
 		}
 		if subscriber == nil {
-			t.Fatal("StripeSubscriber が作成されていません")
+			t.Fatal("StripeSubscriberが作成されていません")
 		}
 		if subscriber.StripeCustomerID != customerID {
-			t.Errorf("StripeCustomerID: got %s, want %s", subscriber.StripeCustomerID, customerID)
+			t.Errorf("StripeCustomerID = %s、期待値 = %s", subscriber.StripeCustomerID, customerID)
 		}
 
 		linked, err := userRepo.GetByID(ctx, userID)
@@ -241,19 +209,15 @@ func TestProcessStripeWebhookUsecase_HandleCheckoutSessionCompleted(t *testing.T
 			t.Fatalf("ユーザー取得エラー: %v", err)
 		}
 		if !linked.StripeSubscriberID.Valid {
-			t.Fatal("ユーザーに StripeSubscriber が紐付けられていません")
+			t.Fatal("ユーザーにStripeSubscriberが紐付けられていません")
 		}
 		if linked.StripeSubscriberID.Int64 != int64(subscriber.ID) {
-			t.Errorf("紐付けられた StripeSubscriberID: got %d, want %d", linked.StripeSubscriberID.Int64, int64(subscriber.ID))
+			t.Errorf("紐付けられたStripeSubscriberID = %d、期待値 = %d", linked.StripeSubscriberID.Int64, int64(subscriber.ID))
 		}
 	})
 
-	// These cases short-circuit before CreateStripeSubscriberUsecase is reached, so
-	// they neither create a subscriber nor touch a user; only the webhook event row
-	// is written and asserted.
-	//
-	// [Ja] これらのケースは CreateStripeSubscriberUsecase 到達前に短絡するため、
-	// subscriber も作らずユーザーにも触れない。書き込まれて検証されるのは Webhook
+	// これらのケースはCreateStripeSubscriberUsecase到達前に短絡するため、
+	// subscriberも作らずユーザーにも触れない。書き込まれて検証されるのはWebhook
 	// イベント行のみ。
 	malformedCases := []struct {
 		name         string
@@ -314,11 +278,8 @@ func TestProcessStripeWebhookUsecase_HandleCheckoutSessionCompleted(t *testing.T
 				_, _ = db.Exec("DELETE FROM stripe_webhook_events WHERE stripe_event_id = $1", eventID)
 			})
 
-			// A nil Stripe client is sufficient: none of these cases reach the create
-			// usecase.
-			//
-			// [Ja] これらのケースは create ユースケースに到達しないため、Stripe
-			// クライアントは nil で十分。
+			// これらのケースはcreateユースケースに到達しないため、Stripe
+			// クライアントはnilで十分。
 			createUC := NewCreateStripeSubscriberUsecase(db, stripeSubscriberRepo, userRepo, nil)
 			uc := NewProcessStripeWebhookUsecase(stripeWebhookEventRepo, createUC, updateUC, deleteUC)
 
@@ -332,21 +293,16 @@ func TestProcessStripeWebhookUsecase_HandleCheckoutSessionCompleted(t *testing.T
 				t.Fatalf("Webhookイベントの取得に失敗: %v", err)
 			}
 			if got.Status != tc.wantStatus.String() {
-				t.Errorf("イベントステータス: got %s, want %s", got.Status, tc.wantStatus)
+				t.Errorf("イベントステータス = %s、期待値 = %s", got.Status, tc.wantStatus)
 			}
 		})
 	}
 }
 
-// newWebhookUsecaseForTest wires a ProcessStripeWebhookUsecase against the shared
-// test DB and returns it together with the repositories used to seed and assert.
-// The subscription-update / delete / invoice / unhandled paths under test never
-// reach CreateStripeSubscriberUsecase, so a nil SubscriptionRetriever is enough.
-//
-// [Ja] テスト用の共有 DB に対して ProcessStripeWebhookUsecase を組み立て、仕込みと
-// 検証に使う Repository と一緒に返す。本テストが対象とする subscription の更新 / 削除
-// / invoice / 対象外イベントの経路はいずれも CreateStripeSubscriberUsecase に到達しない
-// ため、SubscriptionRetriever は nil で十分。
+// テスト用の共有DBに対してProcessStripeWebhookUsecaseを組み立て、仕込みと
+// 検証に使うRepositoryと一緒に返す。本テストが対象とするsubscriptionの更新 / 削除
+// / invoice / 対象外イベントの経路はいずれもCreateStripeSubscriberUsecaseに到達しない
+// ため、SubscriptionRetrieverはnilで十分。
 func newWebhookUsecaseForTest(db *sql.DB) (
 	*ProcessStripeWebhookUsecase,
 	*repository.StripeSubscriberRepository,
@@ -366,29 +322,17 @@ func newWebhookUsecaseForTest(db *sql.DB) (
 	return uc, stripeSubscriberRepo, userRepo, stripeWebhookEventRepo
 }
 
-// TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated exercises the
-// customer.subscription.updated path: an event carrying items updates the existing
-// subscriber and is marked processed, an event without items is skipped before the
-// update usecase is reached, and an event whose status is invalid is rejected by the
-// update usecase and recorded as failed (the processing-failure path that ends in
-// MarkAsFailed). The not-found subscriber case is covered by
-// TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound.
-//
-// [Ja] customer.subscription.updated 経路を検証する。items 付きイベントは既存
-// subscriber を更新して processed になり、items を持たないイベントは update ユースケース
-// 到達前に skipped となり、ステータスが無効なイベントは update ユースケースに弾かれて
-// failed として記録される (MarkAsFailed に至る処理失敗経路)。未存在 subscriber のケースは
-// TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound が担当する。
+// customer.subscription.updated経路を検証する。items付きイベントは既存
+// subscriberを更新してprocessedになり、itemsを持たないイベントはupdateユースケース
+// 到達前にskippedとなり、ステータスが無効なイベントはupdateユースケースに弾かれて
+// failedとして記録される (MarkAsFailedに至る処理失敗経路)。未存在subscriberのケースは
+// TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFoundが担当する。
 func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testing.T) {
 	t.Parallel()
 
-	// UpdateStripeSubscriberUsecase reads and writes the subscriber directly without
-	// opening an inner transaction, and the fail case rejects the event before any
-	// lookup. Both rely on committed data, so use GetTestDB and clean up added rows.
-	//
-	// [Ja] UpdateStripeSubscriberUsecase は内部トランザクションを開かず subscriber を
+	// UpdateStripeSubscriberUsecaseは内部トランザクションを開かずsubscriberを
 	// 直接読み書きし、処理失敗ケースは参照前にイベントを弾く。どちらもコミット済みの
-	// データに依存するため、GetTestDB を使い追加した行をクリーンアップする。
+	// データに依存するため、GetTestDBを使い追加した行をクリーンアップする。
 	db := testutil.GetTestDB()
 	uc, stripeSubscriberRepo, _, stripeWebhookEventRepo := newWebhookUsecaseForTest(db)
 
@@ -408,16 +352,14 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testin
 			StripeCurrentPeriodEnd:   time.Now().AddDate(0, 1, 0),
 		})
 		if err != nil {
-			t.Fatalf("シード用 StripeSubscriber の作成に失敗: %v", err)
+			t.Fatalf("シード用StripeSubscriberの作成に失敗: %v", err)
 		}
 		t.Cleanup(func() {
 			_, _ = db.Exec("DELETE FROM stripe_webhook_events WHERE stripe_event_id = $1", eventID)
 			_, _ = db.Exec("DELETE FROM stripe_subscribers WHERE id = $1", int64(seeded.ID))
 		})
 
-		// The updated event carries a new price; the persisted record must reflect it.
-		//
-		// [Ja] updated イベントは新しい price を載せる。永続化レコードがそれを反映する必要がある。
+		// updatedイベントは新しいpriceを載せる。永続化レコードがそれを反映する必要がある。
 		event := marshalSubscriptionEvent(t, eventID, stripe.EventTypeCustomerSubscriptionUpdated, stripe.Subscription{
 			ID:     subscriptionID,
 			Status: stripe.SubscriptionStatusActive,
@@ -441,7 +383,7 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testin
 			t.Fatalf("Webhookイベントの取得に失敗: %v", err)
 		}
 		if gotEvent.Status != model.WebhookEventStatusProcessed.String() {
-			t.Errorf("イベントステータス: got %s, want %s", gotEvent.Status, model.WebhookEventStatusProcessed)
+			t.Errorf("イベントステータス = %s、期待値 = %s", gotEvent.Status, model.WebhookEventStatusProcessed)
 		}
 
 		updated, err := stripeSubscriberRepo.GetByStripeSubscriptionID(ctx, subscriptionID)
@@ -449,10 +391,10 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testin
 			t.Fatalf("StripeSubscriber取得エラー: %v", err)
 		}
 		if updated == nil {
-			t.Fatal("StripeSubscriber が見つかりません")
+			t.Fatal("StripeSubscriberが見つかりません")
 		}
 		if updated.StripePriceID != "price_yearly" {
-			t.Errorf("StripePriceID: got %s, want price_yearly", updated.StripePriceID)
+			t.Errorf("StripePriceID = %s、期待値 = price_yearly", updated.StripePriceID)
 		}
 	})
 
@@ -465,13 +407,9 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testin
 			_, _ = db.Exec("DELETE FROM stripe_webhook_events WHERE stripe_event_id = $1", eventID)
 		})
 
-		// An invalid status is rejected by UpdateStripeSubscriberUsecase before any
-		// repository lookup, so no subscriber is seeded. The error is not
-		// ErrStripeSubscriberNotFound, so the webhook records failed (not skipped).
-		//
-		// [Ja] 無効なステータスは UpdateStripeSubscriberUsecase がリポジトリ参照前に弾く
-		// ため、subscriber は仕込まない。このエラーは ErrStripeSubscriberNotFound では
-		// ないため、Webhook は (skipped ではなく) failed として記録する。
+		// 無効なステータスはUpdateStripeSubscriberUsecaseがリポジトリ参照前に弾く
+		// ため、subscriberは仕込まない。このエラーはErrStripeSubscriberNotFoundでは
+		// ないため、Webhookは (skippedではなく) failedとして記録する。
 		event := marshalSubscriptionEvent(t, eventID, stripe.EventTypeCustomerSubscriptionUpdated, stripe.Subscription{
 			ID:     "sub_updated_fail_" + randomString(8),
 			Status: stripe.SubscriptionStatus("invalid_status"),
@@ -495,7 +433,7 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testin
 			t.Fatalf("Webhookイベントの取得に失敗: %v", err)
 		}
 		if got.Status != model.WebhookEventStatusFailed.String() {
-			t.Errorf("イベントステータス: got %s, want %s", got.Status, model.WebhookEventStatusFailed)
+			t.Errorf("イベントステータス = %s、期待値 = %s", got.Status, model.WebhookEventStatusFailed)
 		}
 	})
 
@@ -508,12 +446,8 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testin
 			_, _ = db.Exec("DELETE FROM stripe_webhook_events WHERE stripe_event_id = $1", eventID)
 		})
 
-		// An updated event without items is skipped by handleCustomerSubscriptionUpdated
-		// before the update usecase (and any repository lookup) is reached, so no
-		// subscriber is seeded.
-		//
-		// [Ja] items を持たない updated イベントは handleCustomerSubscriptionUpdated が
-		// update ユースケース (およびリポジトリ参照) 到達前にスキップするため、subscriber は
+		// itemsを持たないupdatedイベントはhandleCustomerSubscriptionUpdatedが
+		// updateユースケース (およびリポジトリ参照) 到達前にスキップするため、subscriberは
 		// 仕込まない。
 		event := marshalSubscriptionEvent(t, eventID, stripe.EventTypeCustomerSubscriptionUpdated, stripe.Subscription{
 			ID:     "sub_updated_noitems_" + randomString(8),
@@ -529,27 +463,19 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionUpdated(t *testin
 			t.Fatalf("Webhookイベントの取得に失敗: %v", err)
 		}
 		if got.Status != model.WebhookEventStatusSkipped.String() {
-			t.Errorf("イベントステータス: got %s, want %s", got.Status, model.WebhookEventStatusSkipped)
+			t.Errorf("イベントステータス = %s、期待値 = %s", got.Status, model.WebhookEventStatusSkipped)
 		}
 	})
 }
 
-// TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted exercises the
-// customer.subscription.deleted path: the existing subscriber is moved to canceled,
-// the linked user is unlinked, and the event is marked processed. The not-found
-// subscriber case is covered by TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound.
-//
-// [Ja] customer.subscription.deleted 経路を検証する。既存 subscriber は canceled に
-// 更新され、紐付くユーザーは紐付け解除され、イベントは processed になる。未存在
-// subscriber のケースは TestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound
+// customer.subscription.deleted経路を検証する。既存subscriberはcanceledに
+// 更新され、紐付くユーザーは紐付け解除され、イベントはprocessedになる。未存在
+// subscriberのケースはTestProcessStripeWebhookUsecase_SkipsWhenSubscriberNotFound
 // が担当する。
 func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted(t *testing.T) {
 	t.Parallel()
 
-	// DeleteStripeSubscriberUsecase opens its own transaction, so the seed data must
-	// be committed (GetTestDB) for that inner transaction to see it.
-	//
-	// [Ja] DeleteStripeSubscriberUsecase は自前のトランザクションを開くため、前提データは
+	// DeleteStripeSubscriberUsecaseは自前のトランザクションを開くため、前提データは
 	// コミット (GetTestDB) して内側のトランザクションから見えるようにする必要がある。
 	db := testutil.GetTestDB()
 	uc, stripeSubscriberRepo, userRepo, stripeWebhookEventRepo := newWebhookUsecaseForTest(db)
@@ -570,12 +496,10 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted(t *testin
 			StripeCurrentPeriodEnd:   time.Now().AddDate(0, 1, 0),
 		})
 		if err != nil {
-			t.Fatalf("シード用 StripeSubscriber の作成に失敗: %v", err)
+			t.Fatalf("シード用StripeSubscriberの作成に失敗: %v", err)
 		}
 
-		// A user linked to the subscriber so we can assert the link is cleared.
-		//
-		// [Ja] subscriber に紐付くユーザーを作り、紐付けが解除されることを検証できるようにする。
+		// subscriberに紐付くユーザーを作り、紐付けが解除されることを検証できるようにする。
 		userID := insertStripeTestUserLinkedTo(t, db, sql.NullInt64{Int64: int64(seeded.ID), Valid: true})
 		t.Cleanup(func() {
 			_, _ = db.Exec("DELETE FROM stripe_webhook_events WHERE stripe_event_id = $1", eventID)
@@ -598,26 +522,22 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted(t *testin
 			t.Fatalf("Webhookイベントの取得に失敗: %v", err)
 		}
 		if gotEvent.Status != model.WebhookEventStatusProcessed.String() {
-			t.Errorf("イベントステータス: got %s, want %s", gotEvent.Status, model.WebhookEventStatusProcessed)
+			t.Errorf("イベントステータス = %s、期待値 = %s", gotEvent.Status, model.WebhookEventStatusProcessed)
 		}
 
-		// The subscriber status moves to canceled.
-		//
-		// [Ja] subscriber のステータスが canceled に更新される。
+		// subscriberのステータスがcanceledに更新される。
 		canceled, err := stripeSubscriberRepo.GetByStripeSubscriptionID(ctx, subscriptionID)
 		if err != nil {
 			t.Fatalf("StripeSubscriber取得エラー: %v", err)
 		}
 		if canceled == nil {
-			t.Fatal("StripeSubscriber が見つかりません")
+			t.Fatal("StripeSubscriberが見つかりません")
 		}
 		if canceled.StripeStatus != string(model.StripeSubscriptionStatusCanceled) {
-			t.Errorf("StripeStatus: got %s, want %s", canceled.StripeStatus, model.StripeSubscriptionStatusCanceled)
+			t.Errorf("StripeStatus = %s、期待値 = %s", canceled.StripeStatus, model.StripeSubscriptionStatusCanceled)
 		}
 
-		// The user is unlinked from the subscriber.
-		//
-		// [Ja] ユーザーの subscriber 紐付けが解除される。
+		// ユーザーのsubscriber紐付けが解除される。
 		unlinked, err := userRepo.GetByID(ctx, userID)
 		if err != nil {
 			t.Fatalf("ユーザー取得エラー: %v", err)
@@ -628,22 +548,14 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted(t *testin
 	})
 }
 
-// TestProcessStripeWebhookUsecase_MarksInvoiceAndUnhandledEvents covers the event
-// types that only update the webhook event row without touching a subscriber:
-// invoice.payment_succeeded / invoice.payment_failed are marked processed, and an
-// unhandled event type is marked skipped.
-//
-// [Ja] subscriber に触れず Webhook イベント行だけを更新するイベント種別を検証する。
-// invoice.payment_succeeded / invoice.payment_failed は processed、処理対象外の
-// イベント種別は skipped としてマークされる。
+// subscriberに触れずWebhookイベント行だけを更新するイベント種別を検証する。
+// invoice.payment_succeeded / invoice.payment_failedはprocessed、処理対象外の
+// イベント種別はskippedとしてマークされる。
 func TestProcessStripeWebhookUsecase_MarksInvoiceAndUnhandledEvents(t *testing.T) {
 	t.Parallel()
 
-	// These branches never read or write a subscriber and do not parse the payload,
-	// so an empty Data.Raw is sufficient.
-	//
-	// [Ja] これらの分岐は subscriber を読み書きせず、ペイロードもパースしないため、
-	// Data.Raw は空で十分。
+	// これらの分岐はsubscriberを読み書きせず、ペイロードもパースしないため、
+	// Data.Rawは空で十分。
 	db := testutil.GetTestDB()
 	uc, _, _, stripeWebhookEventRepo := newWebhookUsecaseForTest(db)
 
@@ -653,17 +565,17 @@ func TestProcessStripeWebhookUsecase_MarksInvoiceAndUnhandledEvents(t *testing.T
 		wantStatus model.WebhookEventStatus
 	}{
 		{
-			name:       "invoice.payment_succeeded は processed",
+			name:       "invoice.payment_succeededはprocessed",
 			eventType:  stripe.EventTypeInvoicePaymentSucceeded,
 			wantStatus: model.WebhookEventStatusProcessed,
 		},
 		{
-			name:       "invoice.payment_failed は processed (Stripe側で自動リトライ)",
+			name:       "invoice.payment_failedはprocessed (Stripe側で自動リトライ)",
 			eventType:  stripe.EventTypeInvoicePaymentFailed,
 			wantStatus: model.WebhookEventStatusProcessed,
 		},
 		{
-			name:       "処理対象外イベントは skipped",
+			name:       "処理対象外イベントはskipped",
 			eventType:  stripe.EventTypeCustomerCreated,
 			wantStatus: model.WebhookEventStatusSkipped,
 		},
@@ -694,7 +606,7 @@ func TestProcessStripeWebhookUsecase_MarksInvoiceAndUnhandledEvents(t *testing.T
 				t.Fatalf("Webhookイベントの取得に失敗: %v", err)
 			}
 			if got.Status != tt.wantStatus.String() {
-				t.Errorf("イベントステータス: got %s, want %s", got.Status, tt.wantStatus)
+				t.Errorf("イベントステータス = %s、期待値 = %s", got.Status, tt.wantStatus)
 			}
 		})
 	}

@@ -15,7 +15,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Popular は人気作品ページのコンテンツを表示します
+// Popularは人気作品ページのコンテンツを表示します
 func Popular(ctx context.Context, works []viewmodel.Work) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -112,7 +112,7 @@ func Popular(ctx context.Context, works []viewmodel.Work) templ.Component {
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" width=\"280\" height=\"210\" loading=\"lazy\" class=\"w-full h-full object-cover\"></picture></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "\" width=\"280\" height=\"373\" loading=\"lazy\" class=\"w-full h-full object-contain\"></picture></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
@@ -261,7 +261,7 @@ func Popular(ctx context.Context, works []viewmodel.Work) templ.Component {
 	})
 }
 
-// getWorkTitle は現在のロケールに応じた作品タイトルを返します
+// getWorkTitleは現在のロケールに応じた作品タイトルを返します
 func getWorkTitle(ctx context.Context, work viewmodel.Work) string {
 	locale := templates.Locale(ctx)
 	if locale == "en" && work.TitleEn != "" {
@@ -273,7 +273,7 @@ func getWorkTitle(ctx context.Context, work viewmodel.Work) string {
 	return work.Title
 }
 
-// formatSeasonInfo はシーズン情報をフォーマットします
+// formatSeasonInfoはシーズン情報をフォーマットします
 func formatSeasonInfo(ctx context.Context, work viewmodel.Work) string {
 	if work.SeasonYear == nil {
 		return ""
@@ -306,7 +306,7 @@ func formatSeasonInfo(ctx context.Context, work viewmodel.Work) string {
 	})
 }
 
-// formatCasts はキャスト情報をカンマ区切りでフォーマットします
+// formatCastsはキャスト情報をカンマ区切りでフォーマットします
 func formatCasts(casts []viewmodel.Cast) string {
 	if len(casts) == 0 {
 		return ""
@@ -326,7 +326,7 @@ func formatCasts(casts []viewmodel.Cast) string {
 	return result
 }
 
-// formatStaffs はスタッフ情報をカンマ区切りでフォーマットします
+// formatStaffsはスタッフ情報をカンマ区切りでフォーマットします
 func formatStaffs(staffs []viewmodel.Staff) string {
 	if len(staffs) == 0 {
 		return ""

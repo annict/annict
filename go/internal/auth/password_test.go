@@ -20,21 +20,21 @@ func TestSetBcryptCostForTest(t *testing.T) {
 
 		hashed, err := HashPassword("testpassword")
 		if err != nil {
-			t.Fatalf("HashPassword() error = %v", err)
+			t.Fatalf("HashPassword()のエラー = %v", err)
 		}
 
 		// ハッシュ化されたパスワードが検証できることを確認
 		if err := CheckPassword(hashed, "testpassword"); err != nil {
-			t.Errorf("CheckPassword() error = %v", err)
+			t.Errorf("CheckPassword()のエラー = %v", err)
 		}
 
 		// bcryptのコストがMinCostであることを確認
 		cost, err := bcrypt.Cost([]byte(hashed))
 		if err != nil {
-			t.Fatalf("bcrypt.Cost() error = %v", err)
+			t.Fatalf("bcrypt.Cost()のエラー = %v", err)
 		}
 		if cost != bcrypt.MinCost {
-			t.Errorf("bcrypt cost = %d, want %d", cost, bcrypt.MinCost)
+			t.Errorf("bcrypt cost = %d、期待値 = %d", cost, bcrypt.MinCost)
 		}
 	})
 
@@ -43,15 +43,15 @@ func TestSetBcryptCostForTest(t *testing.T) {
 
 		hashed, err := HashPassword("testpassword")
 		if err != nil {
-			t.Fatalf("HashPassword() error = %v", err)
+			t.Fatalf("HashPassword()のエラー = %v", err)
 		}
 
 		cost, err := bcrypt.Cost([]byte(hashed))
 		if err != nil {
-			t.Fatalf("bcrypt.Cost() error = %v", err)
+			t.Fatalf("bcrypt.Cost()のエラー = %v", err)
 		}
 		if cost != bcrypt.DefaultCost {
-			t.Errorf("bcrypt cost = %d, want %d", cost, bcrypt.DefaultCost)
+			t.Errorf("bcrypt cost = %d、期待値 = %d", cost, bcrypt.DefaultCost)
 		}
 	})
 }
@@ -73,17 +73,17 @@ func TestValidatePasswordStrength(t *testing.T) {
 			wantErr:  nil,
 		},
 		{
-			name:     "有効なパスワード: 小文字のみ（文字種要件なし）",
+			name:     "有効なパスワード: 小文字のみ (文字種要件なし)",
 			password: "abcdefgh",
 			wantErr:  nil,
 		},
 		{
-			name:     "有効なパスワード: 数字のみ（文字種要件なし）",
+			name:     "有効なパスワード: 数字のみ (文字種要件なし)",
 			password: "12345678",
 			wantErr:  nil,
 		},
 		{
-			name:     "有効なパスワード: 128文字（最大長）",
+			name:     "有効なパスワード: 128文字 (最大長)",
 			password: strings.Repeat("a", 128),
 			wantErr:  nil,
 		},
@@ -93,12 +93,12 @@ func TestValidatePasswordStrength(t *testing.T) {
 			wantErr:  nil,
 		},
 		{
-			name:     "無効: 7文字（最小長未満）",
+			name:     "無効: 7文字 (最小長未満)",
 			password: "abcd123",
 			wantErr:  ErrPasswordTooShort,
 		},
 		{
-			name:     "無効: 129文字（最大長超過）",
+			name:     "無効: 129文字 (最大長超過)",
 			password: strings.Repeat("a", 129),
 			wantErr:  ErrPasswordTooLong,
 		},
@@ -142,18 +142,18 @@ func TestValidatePasswordStrength(t *testing.T) {
 
 			if tt.wantErr == nil {
 				if err != nil {
-					t.Errorf("ValidatePasswordStrength() error = %v, want nil", err)
+					t.Errorf("ValidatePasswordStrength()のエラー = %v、期待値 = nil", err)
 				}
 				return
 			}
 
 			if err == nil {
-				t.Errorf("ValidatePasswordStrength() error = nil, want %v", tt.wantErr)
+				t.Errorf("ValidatePasswordStrength()のエラー = nil、期待値 = %v", tt.wantErr)
 				return
 			}
 
 			if !errors.Is(err, tt.wantErr) {
-				t.Errorf("ValidatePasswordStrength() error = %v, want errors.Is(_, %v)", err, tt.wantErr)
+				t.Errorf("ValidatePasswordStrength()のエラー = %v、期待値 = errors.Is(_, %v)", err, tt.wantErr)
 			}
 		})
 	}

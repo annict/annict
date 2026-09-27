@@ -104,13 +104,8 @@ en:
     db:
       comments:
         created: Comment has been created.
-      episodes:
-        auto_generate_info_html: "Total episodes: %{manual_episodes_count}<br>Published episodes: %{episodes_count}<br>Auto generate episodes: %{max_generate_episodes_count}"
       works:
-        no_episodes: No Episodes
-        no_image: No Image
-        no_release_season: No Season
-        no_slots: No Slots
+        action_target_label: "work %{id}"
     episode_records:
       created: Created
       new:
@@ -258,5 +253,3 @@ en:
       view_all_n_episodes: View All %{n} Episodes
       view_all_n_record_body_list: View All %{n} Comments
       view_all_n_staffs: View All %{n} Staffs
-      creating_episodes_restricted_episodes_filled: "You can not add episodes because episodes are created enough."
-      creating_episodes_restricted_slots_exists: "You can not add episodes because slots have been added."

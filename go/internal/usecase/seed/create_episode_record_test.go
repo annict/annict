@@ -11,7 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateEpisodeRecordUsecase_ExecuteBatch はExecuteBatchメソッドのテスト
+// TestCreateEpisodeRecordUsecase_ExecuteBatchはExecuteBatchメソッドのテスト
 func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 	// テストDBをセットアップ
 	db, _ := testutil.SetupTx(t)
@@ -92,7 +92,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 					WithTitle("第2話").
 					Build()
 
-				// 視聴記録パラメータ（2件）
+				// 視聴記録パラメータ (2件)
 				rating1 := 4.0
 				body1 := "良かった"
 				rating2 := 5.0
@@ -142,7 +142,7 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 					WithTitle("第1話").
 					Build()
 
-				// 視聴記録パラメータ（評価なし・コメントなし）
+				// 視聴記録パラメータ (評価なし・コメントなし)
 				records := []CreateEpisodeRecordParams{
 					{
 						UserID:    userID,
@@ -172,34 +172,34 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 			// テストデータをセットアップ
 			records, userID, workID, episodeID1, episodeID2 := tt.setupFunc(t, tx)
 
-			// ExecuteBatchWithTxを実行（テスト用トランザクションを使用）
+			// ExecuteBatchWithTxを実行 (テスト用トランザクションを使用)
 			results, err := uc.ExecuteBatchWithTx(ctx, tx, records, nil)
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ExecuteBatch() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ExecuteBatch()のエラー = %v、期待値 = %v", err, tt.wantErr)
 				return
 			}
 
 			// 結果の数をチェック
 			if len(results) != tt.wantCount {
-				t.Errorf("ExecuteBatch() returned %d results, want %d", len(results), tt.wantCount)
+				t.Errorf("ExecuteBatch()の結果件数 = %d、期待値 = %d", len(results), tt.wantCount)
 				return
 			}
 
 			// 結果の内容をチェック
 			for i, result := range results {
 				if result.RecordID == 0 {
-					t.Errorf("result[%d].RecordID is 0, want non-zero", i)
+					t.Errorf("result[%d].RecordID = 0、期待値 = 0以外", i)
 				}
 				if result.EpisodeRecordID == 0 {
-					t.Errorf("result[%d].EpisodeRecordID is 0, want non-zero", i)
+					t.Errorf("result[%d].EpisodeRecordID = 0、期待値 = 0以外", i)
 				}
 				if result.ActivityID == 0 {
-					t.Errorf("result[%d].ActivityID is 0, want non-zero", i)
+					t.Errorf("result[%d].ActivityID = 0、期待値 = 0以外", i)
 				}
 				if result.ActivityGroupID == 0 {
-					t.Errorf("result[%d].ActivityGroupID is 0, want non-zero", i)
+					t.Errorf("result[%d].ActivityGroupID = 0、期待値 = 0以外", i)
 				}
 			}
 
@@ -209,32 +209,32 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 				var episodeRecordsCount int32
 				err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM users WHERE id = $1", int64(userID)).Scan(&episodeRecordsCount)
 				if err != nil {
-					t.Errorf("Failed to get episode_records_count: %v", err)
+					t.Errorf("episode_records_countの取得エラー = %v", err)
 				}
 				if episodeRecordsCount != int32(tt.wantCount) {
-					t.Errorf("users.episode_records_count = %d, want %d", episodeRecordsCount, tt.wantCount)
+					t.Errorf("users.episode_records_count = %d、期待値 = %d", episodeRecordsCount, tt.wantCount)
 				}
 
 				// works.records_countをチェック
 				var recordsCount int32
 				err = tx.QueryRowContext(ctx, "SELECT records_count FROM works WHERE id = $1", int64(workID)).Scan(&recordsCount)
 				if err != nil {
-					t.Errorf("Failed to get records_count: %v", err)
+					t.Errorf("records_countの取得エラー = %v", err)
 				}
-				// 作品に対する視聴記録数は、すべての視聴記録が同じ作品に対するものなので、tt.wantCount と一致
+				// 作品に対する視聴記録数は、すべての視聴記録が同じ作品に対するものなので、tt.wantCountと一致
 				if recordsCount != int32(tt.wantCount) {
-					t.Errorf("works.records_count = %d, want %d", recordsCount, tt.wantCount)
+					t.Errorf("works.records_count = %d、期待値 = %d", recordsCount, tt.wantCount)
 				}
 
 				// episodes.episode_records_countをチェック
 				var episode1RecordsCount int32
 				err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM episodes WHERE id = $1", int64(episodeID1)).Scan(&episode1RecordsCount)
 				if err != nil {
-					t.Errorf("Failed to get episode_records_count: %v", err)
+					t.Errorf("episode_records_countの取得エラー = %v", err)
 				}
 				// 最初のエピソードには必ず1件の視聴記録がある
 				if episode1RecordsCount < 1 {
-					t.Errorf("episodes.episode_records_count = %d, want at least 1", episode1RecordsCount)
+					t.Errorf("episodes.episode_records_count = %d、期待値 = 1以上", episode1RecordsCount)
 				}
 
 				// 2件目のエピソードがある場合はそちらもチェック
@@ -242,10 +242,10 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 					var episode2RecordsCount int32
 					err = tx.QueryRowContext(ctx, "SELECT episode_records_count FROM episodes WHERE id = $1", int64(episodeID2)).Scan(&episode2RecordsCount)
 					if err != nil {
-						t.Errorf("Failed to get episode_records_count for episode2: %v", err)
+						t.Errorf("episode2のepisode_records_countの取得エラー = %v", err)
 					}
 					if episode2RecordsCount < 1 {
-						t.Errorf("episodes[2].episode_records_count = %d, want at least 1", episode2RecordsCount)
+						t.Errorf("episodes[2].episode_records_count = %d、期待値 = 1以上", episode2RecordsCount)
 					}
 				}
 
@@ -258,17 +258,17 @@ func TestCreateEpisodeRecordUsecase_ExecuteBatch(t *testing.T) {
 					LIMIT 1
 				`, int64(userID)).Scan(&activitiesCount)
 				if err != nil {
-					t.Errorf("Failed to get activities_count: %v", err)
+					t.Errorf("activities_countの取得エラー = %v", err)
 				}
 				if activitiesCount != int32(tt.wantCount) {
-					t.Errorf("activity_groups.activities_count = %d, want %d", activitiesCount, tt.wantCount)
+					t.Errorf("activity_groups.activities_count = %d、期待値 = %d", activitiesCount, tt.wantCount)
 				}
 			}
 		})
 	}
 }
 
-// TestCreateEpisodeRecordUsecase_RatingState は rating_state の設定をテスト
+// TestCreateEpisodeRecordUsecase_RatingStateはrating_stateの設定をテスト
 func TestCreateEpisodeRecordUsecase_RatingState(t *testing.T) {
 	// テストDBをセットアップ
 	db, _ := testutil.SetupTx(t)
@@ -288,22 +288,22 @@ func TestCreateEpisodeRecordUsecase_RatingState(t *testing.T) {
 			wantRatingState: "",
 		},
 		{
-			name:            "bad (rating < 2.5)",
+			name:            "評価が2.5未満ならbad",
 			rating:          floatPtr(2.0),
 			wantRatingState: "bad",
 		},
 		{
-			name:            "average (2.5 <= rating < 3.5)",
+			name:            "評価が2.5以上3.5未満ならaverage",
 			rating:          floatPtr(3.0),
 			wantRatingState: "average",
 		},
 		{
-			name:            "good (3.5 <= rating < 4.5)",
+			name:            "評価が3.5以上4.5未満ならgood",
 			rating:          floatPtr(4.0),
 			wantRatingState: "good",
 		},
 		{
-			name:            "great (4.5 <= rating)",
+			name:            "評価が4.5以上ならgreat",
 			rating:          floatPtr(5.0),
 			wantRatingState: "great",
 		},
@@ -316,7 +316,7 @@ func TestCreateEpisodeRecordUsecase_RatingState(t *testing.T) {
 
 			ctx := context.Background()
 
-			// ユーザーを作成（一意のメールアドレスを使用）
+			// ユーザーを作成 (一意のメールアドレスを使用)
 			userID := testutil.NewUserBuilder(t, tx).
 				WithUsername(fmt.Sprintf("rating_test_user_%d", i)).
 				WithEmail(fmt.Sprintf("rating_%d@example.com", i)).
@@ -348,24 +348,24 @@ func TestCreateEpisodeRecordUsecase_RatingState(t *testing.T) {
 			// ExecuteBatchWithTxを実行
 			results, err := uc.ExecuteBatchWithTx(ctx, tx, records, nil)
 			if err != nil {
-				t.Fatalf("ExecuteBatchWithTx() error = %v", err)
+				t.Fatalf("ExecuteBatchWithTx()のエラー = %v", err)
 			}
 
 			// rating_stateをチェック
 			var ratingState string
 			err = tx.QueryRowContext(ctx, "SELECT rating_state FROM episode_records WHERE id = $1", results[0].EpisodeRecordID).Scan(&ratingState)
 			if err != nil {
-				t.Fatalf("Failed to get rating_state: %v", err)
+				t.Fatalf("rating_stateの取得エラー = %v", err)
 			}
 
 			if ratingState != tt.wantRatingState {
-				t.Errorf("rating_state = %q, want %q", ratingState, tt.wantRatingState)
+				t.Errorf("rating_state = %q、期待値 = %q", ratingState, tt.wantRatingState)
 			}
 		})
 	}
 }
 
-// floatPtr はfloat64のポインタを返すヘルパー関数
+// floatPtrはfloat64のポインタを返すヘルパー関数
 func floatPtr(f float64) *float64 {
 	return &f
 }

@@ -1,4 +1,10 @@
-// Package i18n はi18n機能を提供します
+// Package i18nは翻訳の取得と、コンテキストが運ぶリクエストのロケールを提供する。
+//
+// 本パッケージはアプリケーション内の他のパッケージに依存しない。リクエストのロケールの解決には
+// ログイン中のユーザーが要り、それはinternal/middlewareにあるため、解決処理をここに置くと
+// internal/middlewareが本パッケージの翻訳を使う描画を行えなくなる
+// (middleware → httperror → i18n → middlewareの循環)。解決はmiddleware.I18nが担い、
+// 本パッケージは翻訳だけを担うleafに保つ。
 package i18n
 
 import (
@@ -11,8 +17,6 @@ import (
 	"github.com/BurntSushi/toml"
 	"github.com/nicksnyder/go-i18n/v2/i18n"
 	"golang.org/x/text/language"
-
-	authMiddleware "github.com/annict/annict/go/internal/middleware"
 )
 
 // 翻訳ファイルを埋め込み
@@ -38,7 +42,7 @@ const (
 // グローバルなバンドル
 var bundle *i18n.Bundle
 
-// init でlocalesディレクトリから全ての翻訳ファイルを読み込む
+// initでlocalesディレクトリから全ての翻訳ファイルを読み込む
 func init() {
 	// 日本語をデフォルト言語として設定
 	bundle = i18n.NewBundle(language.Japanese)
@@ -63,7 +67,7 @@ func init() {
 	}
 }
 
-// T は翻訳関数（テンプレートから呼び出される）
+// Tは翻訳関数 (テンプレートから呼び出される)
 func T(ctx context.Context, messageID string, templateData ...map[string]any) string {
 	localizer := GetLocalizer(ctx)
 	if localizer == nil {
@@ -95,7 +99,7 @@ func T(ctx context.Context, messageID string, templateData ...map[string]any) st
 	return message
 }
 
-// GetLocale はコンテキストから言語設定を取得する
+// GetLocaleはコンテキストから言語設定を取得する
 func GetLocale(ctx context.Context) string {
 	if locale, ok := ctx.Value(localeContextKey).(string); ok {
 		return locale
@@ -103,12 +107,14 @@ func GetLocale(ctx context.Context) string {
 	return DefaultLang
 }
 
-// SetLocale はコンテキストに言語設定を保存する
+// SetLocaleはコンテキストに言語設定を保存し、あわせてその言語のLocalizerも保存する。
+// 1リクエストが描画する翻訳の解決をTの呼び出しごとではなく1回で済ませるため。
 func SetLocale(ctx context.Context, locale string) context.Context {
-	return context.WithValue(ctx, localeContextKey, locale)
+	ctx = context.WithValue(ctx, localeContextKey, locale)
+	return context.WithValue(ctx, localizerContextKey, i18n.NewLocalizer(bundle, locale))
 }
 
-// GetLocalizer はコンテキストからLocalizerを取得する
+// GetLocalizerはコンテキストからLocalizerを取得する
 func GetLocalizer(ctx context.Context) *i18n.Localizer {
 	if localizer, ok := ctx.Value(localizerContextKey).(*i18n.Localizer); ok {
 		return localizer
@@ -118,12 +124,7 @@ func GetLocalizer(ctx context.Context) *i18n.Localizer {
 	return i18n.NewLocalizer(bundle, locale)
 }
 
-// SetLocalizer はコンテキストにLocalizerを保存する
-func SetLocalizer(ctx context.Context, localizer *i18n.Localizer) context.Context {
-	return context.WithValue(ctx, localizerContextKey, localizer)
-}
-
-// DetectLanguage はリクエストのAccept-Languageヘッダーから言語を検出する
+// DetectLanguageはリクエストのAccept-Languageヘッダーから言語を検出する
 func DetectLanguage(r *http.Request) string {
 	// Accept-Languageヘッダーから取得
 	acceptLang := r.Header.Get("Accept-Language")
@@ -139,34 +140,7 @@ func DetectLanguage(r *http.Request) string {
 	return DefaultLang
 }
 
-// Middleware はI18nミドルウェアを提供する
-// ログイン済みユーザーの場合はusers.localeを、未ログインの場合はAccept-Languageヘッダーから言語を決定する
-func Middleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var locale string
-
-		// コンテキストからユーザー情報を取得
-		user := authMiddleware.GetUserFromContext(r.Context())
-		if user != nil {
-			// ログイン済み: users.localeを使用
-			locale = user.Locale
-			// 念のため、サポート対象の言語かチェック
-			if locale != LangJa && locale != LangEn {
-				locale = DefaultLang
-			}
-		} else {
-			// 未ログイン: Accept-Languageヘッダーから検出
-			locale = DetectLanguage(r)
-		}
-
-		// Localizerを作成
-		localizer := i18n.NewLocalizer(bundle, locale)
-
-		// コンテキストに設定
-		ctx := SetLocale(r.Context(), locale)
-		ctx = SetLocalizer(ctx, localizer)
-
-		// 次のハンドラーへ
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
+// IsSupportedLangはlocaleが本アプリケーションが翻訳を持つ言語かどうかを返す。
+func IsSupportedLang(locale string) bool {
+	return locale == LangJa || locale == LangEn
 }

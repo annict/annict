@@ -14,7 +14,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// randomString はテスト用のランダムな文字列を生成します
+// randomStringはテスト用のランダムな文字列を生成します
 func randomString(n int) string {
 	id := uuid.New().String()
 	if n > len(id) {
@@ -26,7 +26,7 @@ func randomString(n int) string {
 func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
-	// テストDBを取得（トランザクションを使わない統合テスト）
+	// テストDBを取得 (トランザクションを使わない統合テスト)
 	db := testutil.GetTestDB()
 	queries := query.New(db)
 
@@ -43,7 +43,7 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 		// 一意のIDを生成
 		subscriptionID := "sub_test_delete_" + randomString(8)
 
-		// テスト用のStripeSubscriberを作成（コミットされる）
+		// テスト用のStripeSubscriberを作成 (コミットされる)
 		subscriber, err := stripeSubscriberRepo.Create(context.Background(), query.CreateStripeSubscriberParams{
 			StripeCustomerID:         "cus_test_" + randomString(8),
 			StripeSubscriptionID:     subscriptionID,
@@ -77,7 +77,7 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 
 		// ステータスがcanceledに更新されていることを確認
 		if result.StripeSubscriber.StripeStatus != string(model.StripeSubscriptionStatusCanceled) {
-			t.Errorf("StripeStatus: got %s, want %s", result.StripeSubscriber.StripeStatus, model.StripeSubscriptionStatusCanceled)
+			t.Errorf("StripeStatus = %s、期待値 = %s", result.StripeSubscriber.StripeStatus, model.StripeSubscriptionStatusCanceled)
 		}
 
 		// キャンセル日時が設定されていることを確認
@@ -152,7 +152,7 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 			return
 		}
 		if int64(*result.UserID) != userID {
-			t.Errorf("UserID: got %d, want %d", *result.UserID, userID)
+			t.Errorf("UserID = %d、期待値 = %d", *result.UserID, userID)
 		}
 
 		// ユーザーの紐付けが解除されていることを確認
@@ -181,7 +181,7 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 			t.Fatal("エラーが期待されましたが、nilが返されました")
 		}
 		if !errors.Is(err, ErrStripeSubscriberNotFound) {
-			t.Errorf("ErrStripeSubscriberNotFound が期待されましたが、別のエラーが返されました: %v", err)
+			t.Errorf("ErrStripeSubscriberNotFoundが期待されましたが、別のエラーが返されました: %v", err)
 		}
 	})
 }

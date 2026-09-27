@@ -24,7 +24,7 @@ func TestStripeSubscriptionStatus_String(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.expected, func(t *testing.T) {
 			if got := tt.status.String(); got != tt.expected {
-				t.Errorf("String() = %v, want %v", got, tt.expected)
+				t.Errorf("String() = %v、期待値 = %v", got, tt.expected)
 			}
 		})
 	}
@@ -52,7 +52,7 @@ func TestStripeSubscriptionStatus_IsValid(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.status.IsValid(); got != tt.expected {
-				t.Errorf("IsValid() = %v, want %v", got, tt.expected)
+				t.Errorf("IsValid() = %v、期待値 = %v", got, tt.expected)
 			}
 		})
 	}
@@ -70,7 +70,7 @@ func TestStripeSubscriptionStatus_IsActive(t *testing.T) {
 			expected: true,
 		},
 		{
-			name:     "past_due状態はアクティブ（猶予期間）",
+			name:     "past_due状態はアクティブ (猶予期間)",
 			status:   model.StripeSubscriptionStatusPastDue,
 			expected: true,
 		},
@@ -114,7 +114,7 @@ func TestStripeSubscriptionStatus_IsActive(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.status.IsActive(); got != tt.expected {
-				t.Errorf("IsActive() = %v, want %v", got, tt.expected)
+				t.Errorf("IsActive() = %v、期待値 = %v", got, tt.expected)
 			}
 		})
 	}

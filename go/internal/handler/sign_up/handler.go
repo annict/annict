@@ -8,7 +8,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler 新規登録関連のHTTPハンドラーです
+// Handler新規登録関連のHTTPハンドラーです
 type Handler struct {
 	cfg              *config.Config
 	sessionMgr       *session.Manager
@@ -18,7 +18,7 @@ type Handler struct {
 	turnstileClient  *turnstile.Client
 }
 
-// NewHandler 新しいHandlerを作成します
+// NewHandler新しいHandlerを作成します
 func NewHandler(
 	cfg *config.Config,
 	sessionMgr *session.Manager,

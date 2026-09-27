@@ -10,7 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestPasswordResetTokenRepository_Create はトークンを正常に作成し、Modelとして返却されることをテスト
+// TestPasswordResetTokenRepository_Createはトークンを正常に作成し、Modelとして返却されることをテスト
 func TestPasswordResetTokenRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -37,20 +37,20 @@ func TestPasswordResetTokenRepository_Create(t *testing.T) {
 		t.Error("PasswordResetTokenIDがゼロ値です")
 	}
 	if token.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", token.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", token.UserID, userID)
 	}
 	if token.TokenDigest != tokenDigest {
-		t.Errorf("TokenDigestが一致しません: got %v, want %v", token.TokenDigest, tokenDigest)
+		t.Errorf("TokenDigest = %v、期待値 = %v", token.TokenDigest, tokenDigest)
 	}
 	if token.UsedAt.Valid {
-		t.Error("UsedAtが有効値です（未使用のはず）")
+		t.Error("UsedAtが有効値です (未使用のはず)")
 	}
 	if token.CreatedAt.IsZero() {
 		t.Error("CreatedAtがゼロ値です")
 	}
 }
 
-// TestPasswordResetTokenRepository_DeleteUnusedByUserID は未使用トークンが削除されることをテスト
+// TestPasswordResetTokenRepository_DeleteUnusedByUserIDは未使用トークンが削除されることをテスト
 func TestPasswordResetTokenRepository_DeleteUnusedByUserID(t *testing.T) {
 	t.Parallel()
 
@@ -83,11 +83,11 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID(t *testing.T) {
 	}
 
 	if len(tokens) != 0 {
-		t.Errorf("未使用トークンが残っています: got %d, want 0", len(tokens))
+		t.Errorf("未使用トークンの件数 = %d、期待値 = 0", len(tokens))
 	}
 }
 
-// TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens は使用済みトークンが残ることをテスト
+// TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokensは使用済みトークンが残ることをテスト
 func TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens(t *testing.T) {
 	t.Parallel()
 
@@ -127,18 +127,18 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens(t *te
 	}
 
 	if len(tokens) != 1 {
-		t.Fatalf("トークン数が正しくありません: got %d, want 1", len(tokens))
+		t.Fatalf("トークン数 = %d、期待値 = 1", len(tokens))
 	}
 
 	if tokens[0].TokenDigest != "used_digest" {
-		t.Errorf("残っているトークンが正しくありません: got %v, want used_digest", tokens[0].TokenDigest)
+		t.Errorf("残っているトークン = %v、期待値 = used_digest", tokens[0].TokenDigest)
 	}
 	if !tokens[0].UsedAt.Valid {
-		t.Error("使用済みトークンの UsedAt が有効値ではありません")
+		t.Error("使用済みトークンのUsedAtが有効値ではありません")
 	}
 }
 
-// TestPasswordResetTokenRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestPasswordResetTokenRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestPasswordResetTokenRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -161,7 +161,7 @@ func TestPasswordResetTokenRepository_WithTx(t *testing.T) {
 	}
 
 	if token.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", token.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", token.UserID, userID)
 	}
 
 	// トランザクション内でGetByDigestできることを確認
@@ -171,6 +171,6 @@ func TestPasswordResetTokenRepository_WithTx(t *testing.T) {
 	}
 
 	if fetched.ID != token.ID {
-		t.Errorf("取得したトークンIDが一致しません: got %v, want %v", fetched.ID, token.ID)
+		t.Errorf("取得したトークンID = %v、期待値 = %v", fetched.ID, token.ID)
 	}
 }

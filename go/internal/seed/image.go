@@ -19,46 +19,46 @@ import (
 )
 
 const (
-	// WorkImageWidth は作品画像の幅（3:4の縦長）
+	// WorkImageWidthは作品画像の幅 (3:4の縦長)
 	WorkImageWidth = 600
-	// WorkImageHeight は作品画像の高さ（3:4の縦長）
+	// WorkImageHeightは作品画像の高さ (3:4の縦長)
 	WorkImageHeight = 800
 
-	// ProfileImageWidth はプロフィール画像の幅（1:1の正方形）
+	// ProfileImageWidthはプロフィール画像の幅 (1:1の正方形)
 	ProfileImageWidth = 400
-	// ProfileImageHeight はプロフィール画像の高さ（1:1の正方形）
+	// ProfileImageHeightはプロフィール画像の高さ (1:1の正方形)
 	ProfileImageHeight = 400
 
-	// ShrinePathPrefix はShrine gemの画像パスプレフィックス
+	// ShrinePathPrefixはShrine gemの画像パスプレフィックス
 	ShrinePathPrefix = "shrine/workimage"
-	// ShrineProfilePathPrefix はプロフィール画像のShrine gemのパスプレフィックス
+	// ShrineProfilePathPrefixはプロフィール画像のShrine gemのパスプレフィックス
 	ShrineProfilePathPrefix = "shrine/profile"
 )
 
-// RandomImage はランダムに生成された画像とそのメタデータを保持する
+// RandomImageはランダムに生成された画像とそのメタデータを保持する
 type RandomImage struct {
 	Data     []byte // PNG画像のバイトデータ
-	Filename string // ファイル名（UUID.png）
-	Path     string // S3パス（shrine/workimage/UUID.png）
-	Size     int    // ファイルサイズ（バイト）
+	Filename string // ファイル名 (UUID.png)
+	Path     string // S3パス (shrine/workimage/UUID.png)
+	Size     int    // ファイルサイズ (バイト)
 	Width    int    // 画像の幅
 	Height   int    // 画像の高さ
 }
 
-// ShrineImageData はShrine gemのimage_dataカラムに格納するJSON構造
+// ShrineImageDataはShrine gemのimage_dataカラムに格納するJSON構造
 // 実際のShrineではバージョン管理のため、トップレベルに "master" キーがある
 type ShrineImageData struct {
 	Master ShrineImageVersion `json:"master"`
 }
 
-// ShrineImageVersion はShrineの画像バージョン情報
+// ShrineImageVersionはShrineの画像バージョン情報
 type ShrineImageVersion struct {
 	ID       string                  `json:"id"`
 	Storage  string                  `json:"storage"`
 	Metadata ShrineImageDataMetadata `json:"metadata"`
 }
 
-// ShrineImageDataMetadata はShrine gemのメタデータ構造
+// ShrineImageDataMetadataはShrine gemのメタデータ構造
 type ShrineImageDataMetadata struct {
 	Filename string `json:"filename"`
 	Size     int    `json:"size"`
@@ -67,8 +67,8 @@ type ShrineImageDataMetadata struct {
 	Height   int    `json:"height"`
 }
 
-// GenerateRandomWorkImage はランダムな単色画像を生成します（作品画像用: 600x800px）
-// workID: 作品ID（Shrineのpretty_locationプラグインの仕様に合わせるため）
+// GenerateRandomWorkImageはランダムな単色画像を生成します (作品画像用: 600x800px)
+// workID: 作品ID (Shrineのpretty_locationプラグインの仕様に合わせるため)
 func GenerateRandomWorkImage(workID model.WorkID) (*RandomImage, error) {
 	// Shrineのpretty_locationプラグインの仕様に合わせたパスを生成
 	// 形式: shrine/workimage/{work_id}/image/master-{hash}.png
@@ -79,8 +79,8 @@ func GenerateRandomWorkImage(workID model.WorkID) (*RandomImage, error) {
 	return generateImage(WorkImageWidth, WorkImageHeight, filename, path)
 }
 
-// GenerateRandomProfileImage はランダムな単色画像を生成します（プロフィール画像用: 400x400px）
-// profileID: プロフィールID（Shrineのpretty_locationプラグインの仕様に合わせるため）
+// GenerateRandomProfileImageはランダムな単色画像を生成します (プロフィール画像用: 400x400px)
+// profileID: プロフィールID (Shrineのpretty_locationプラグインの仕様に合わせるため)
 func GenerateRandomProfileImage(profileID int64) (*RandomImage, error) {
 	// Shrineのpretty_locationプラグインの仕様に合わせたパスを生成
 	// 形式: shrine/profile/{profile_id}/image/master-{hash}.png
@@ -91,7 +91,7 @@ func GenerateRandomProfileImage(profileID int64) (*RandomImage, error) {
 	return generateImage(ProfileImageWidth, ProfileImageHeight, filename, path)
 }
 
-// generateImage は指定されたサイズのランダムな単色画像を生成します（内部ヘルパー関数）
+// generateImageは指定されたサイズのランダムな単色画像を生成します (内部ヘルパー関数)
 func generateImage(width, height int, filename, path string) (*RandomImage, error) {
 	// 画像を作成
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
@@ -106,7 +106,7 @@ func generateImage(width, height int, filename, path string) (*RandomImage, erro
 		}
 	}
 
-	// PNG形式でエンコード（圧縮レベルをBestSpeedに設定して高速化）
+	// PNG形式でエンコード (圧縮レベルをBestSpeedに設定して高速化)
 	// テストデータなので画質より速度を優先
 	var buf bytes.Buffer
 	encoder := &png.Encoder{
@@ -126,7 +126,7 @@ func generateImage(width, height int, filename, path string) (*RandomImage, erro
 	}, nil
 }
 
-// randomColor はランダムなRGBカラーを生成します
+// randomColorはランダムなRGBカラーを生成します
 // シード画像生成用のため、暗号学的に安全な乱数は不要
 func randomColor() color.RGBA {
 	return color.RGBA{
@@ -137,9 +137,9 @@ func randomColor() color.RGBA {
 	}
 }
 
-// UploadToR2 は画像をCloudflare R2にアップロードします
+// UploadToR2は画像をCloudflare R2にアップロードします
 func UploadToR2(ctx context.Context, img *RandomImage, endpoint, accessKeyID, secretAccessKey, region, bucketName string) error {
-	// S3クライアントを作成（Cloudflare R2はS3互換API）
+	// S3クライアントを作成 (Cloudflare R2はS3互換API)
 	cfg := aws.Config{
 		Region: region,
 		Credentials: credentials.NewStaticCredentialsProvider(
@@ -165,10 +165,10 @@ func UploadToR2(ctx context.Context, img *RandomImage, endpoint, accessKeyID, se
 	return nil
 }
 
-// GenerateShrineImageData はShrine形式のimage_data JSONを生成します
+// GenerateShrineImageDataはShrine形式のimage_data JSONを生成します
 func GenerateShrineImageData(img *RandomImage) (string, error) {
 	// Shrineのpretty_locationプラグインの仕様では、
-	// IDには "shrine/" プレフィックスを含めない（storage側で管理される）
+	// IDには "shrine/" プレフィックスを含めない (storage側で管理される)
 	// 例: "workimage/40001/image/master-192a17d3-6832-490a-899f-16dfe7bab1b2.png"
 	idWithoutPrefix := img.Path
 	if len(img.Path) > 7 && img.Path[:7] == "shrine/" {

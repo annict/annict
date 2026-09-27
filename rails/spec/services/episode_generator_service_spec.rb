@@ -3,7 +3,7 @@
 
 describe Deprecated::EpisodeGeneratorService, type: :service do
   context "New work" do
-    let(:channel) { Channel.first }
+    let(:channel) { create(:channel) }
 
     context "has no episodes" do
       let(:work) { create(:work) }
@@ -109,7 +109,7 @@ describe Deprecated::EpisodeGeneratorService, type: :service do
   end
 
   context "Old work" do
-    let(:channel) { Channel.first }
+    let(:channel) { create(:channel) }
     let(:work) { create(:work) }
 
     context "has no irregular episodes" do

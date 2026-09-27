@@ -1,6 +1,7 @@
 <% @works.each do |work| %>
 * <%= work.title %><br>
-  <%= link_to db_edit_work_url(work), db_edit_work_url(work) %><br>
+  <% edit_work_url = "#{ENV.fetch("ANNICT_URL")}/db/works/#{work.id}/edit" %>
+  <%= link_to edit_work_url, edit_work_url %><br>
 <% end %>
 <br>
 <br>

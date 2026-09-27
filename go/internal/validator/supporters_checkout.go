@@ -7,20 +7,20 @@ import (
 	"github.com/annict/annict/go/internal/model"
 )
 
-// SupportersCheckoutCreateValidator はCheckoutセッション作成のバリデーションを行う
+// SupportersCheckoutCreateValidatorはCheckoutセッション作成のバリデーションを行う
 type SupportersCheckoutCreateValidator struct{}
 
-// NewSupportersCheckoutCreateValidator は SupportersCheckoutCreateValidator を生成する
+// NewSupportersCheckoutCreateValidatorはSupportersCheckoutCreateValidatorを生成する
 func NewSupportersCheckoutCreateValidator() *SupportersCheckoutCreateValidator {
 	return &SupportersCheckoutCreateValidator{}
 }
 
-// SupportersCheckoutCreateValidatorInput はバリデーションの入力パラメータ
+// SupportersCheckoutCreateValidatorInputはバリデーションの入力パラメータ
 type SupportersCheckoutCreateValidatorInput struct {
 	Plan string
 }
 
-// Validate はバリデーションを行う
+// Validateはバリデーションを行う
 func (v *SupportersCheckoutCreateValidator) Validate(ctx context.Context, input SupportersCheckoutCreateValidatorInput) error {
 	ve := model.NewValidationError()
 

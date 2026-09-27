@@ -10,7 +10,7 @@ WHERE LOWER(u.username) = LOWER(@username)
 LIMIT 1;
 
 -- name: GetLibraryEntryProgramIDs :many
--- ユーザーの視聴リスト（見たい・見てる）からprogram_idを取得します
+-- ユーザーの視聴リスト (見たい・見てる) からprogram_idを取得します
 SELECT
     le.program_id,
     le.watched_episode_ids
@@ -47,7 +47,7 @@ WHERE s.deleted_at IS NULL
 ORDER BY s.started_at ASC;
 
 -- name: GetCalendarWorks :many
--- カレンダー用の作品（放送開始日）を取得します
+-- カレンダー用の作品 (放送開始日) を取得します
 SELECT
     w.id,
     w.title,

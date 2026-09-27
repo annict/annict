@@ -3,7 +3,7 @@
 
 RSpec.describe "GET /db/channel_groups", type: :request do
   it "ログインしていないとき、チャンネルグループ一覧を表示すること" do
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
 
     get "/db/channel_groups"
 
@@ -13,7 +13,7 @@ RSpec.describe "GET /db/channel_groups", type: :request do
 
   it "ログインしているとき、チャンネルグループ一覧を表示すること" do
     user = create(:registered_user)
-    channel_group = ChannelGroup.first
+    channel_group = create(:channel_group)
     login_as(user, scope: :user)
 
     get "/db/channel_groups"

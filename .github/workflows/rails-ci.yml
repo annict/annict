@@ -7,10 +7,12 @@ on:
       - develop
     paths:
       - "rails/**"
+      - "go/db/schema.sql"
       - ".github/workflows/rails-ci.yml"
   pull_request:
     paths:
       - "rails/**"
+      - "go/db/schema.sql"
       - ".github/workflows/rails-ci.yml"
 
 jobs:
@@ -29,39 +31,6 @@ jobs:
           bundler-cache: true
           working-directory: rails
       - run: bin/rails zeitwerk:check
-
-  sorbet:
-    name: Sorbet
-    permissions:
-      contents: write
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: rails
-    steps:
-      - uses: actions/checkout@v7
-      - name: Setup Ruby and install gems
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: 3.3.10
-          bundler-cache: true
-          working-directory: rails
-      - run: bin/rails sorbet:update
-      - name: Push RBI files or fail
-        run: |
-          if [ -n "$(git status --porcelain)" ]; then
-            if [ "$GITHUB_ACTOR" = "dependabot[bot]" ]; then
-              git config user.email 49699333+dependabot[bot]@users.noreply.github.com
-              git config user.name dependabot[bot]
-              git add .
-              git commit -m "Update RBI files"
-              git push
-            else
-              echo "Error! 未更新のRBIファイルがあるようです。bin/rails sorbet:update を実行して差分をコミットしてください。"
-              exit 1
-            fi
-          fi
-      - run: bin/srb tc
 
   standard:
     name: Standard
@@ -106,7 +75,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - name: Setup Node.js
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: 22.17.0
           package-manager-cache: false
@@ -171,7 +140,7 @@ jobs:
           working-directory: rails
 
       - name: Setup Node
-        uses: actions/setup-node@v5
+        uses: actions/setup-node@v7
         with:
           node-version: 22.17.0
           package-manager-cache: false
@@ -180,25 +149,9 @@ jobs:
         run: |
           npm install --global yarn@1.22.22
 
-      - name: Run `yarn install`
-        run: |
-          yarn install
-
-      - name: Install Playwright browsers
-        run: |
-          yarn playwright install --with-deps
-
-      - name: Run `assets:precompile`
-        run: |
-          bin/rails assets:precompile
-
-      - name: Setup Database
-        run: |
-          bin/rails db:setup
-
       - name: Run tests
         run: |
-          bin/rspec
+          make test
 
       - name: Upload Capybara screenshot
         uses: actions/upload-artifact@v7

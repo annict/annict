@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// GumroadSubscriber はGumroadサブスクライバーのドメインエンティティ
+// GumroadSubscriberはGumroadサブスクライバーのドメインエンティティ
 type GumroadSubscriber struct {
 	ID                                 GumroadSubscriberID
 	GumroadID                          string

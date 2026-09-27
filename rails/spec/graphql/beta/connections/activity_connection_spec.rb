@@ -4,9 +4,9 @@
 describe Beta::Connections::ActivityConnection do
   let(:user) { create(:user) }
   let(:id) { Beta::AnnictSchema.id_from_object(user, user.class) }
-  let!(:activity) { create(:create_episode_record_activity, user: user) }
+  let!(:activity) { create(:create_episode_record_activity, user: user, created_at: Time.parse("2026-01-01 10:00:00 +09:00")) }
   let!(:status) { create(:status, user: user) }
-  let!(:activity_2) { create(:activity, user: user, itemable: status) }
+  let!(:activity_2) { create(:activity, user: user, itemable: status, created_at: Time.parse("2026-01-01 11:00:00 +09:00")) }
   let(:result) do
     query_string = <<~GRAPHQL
       query {

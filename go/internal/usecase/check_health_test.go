@@ -21,15 +21,15 @@ func TestCheckHealthUsecase_Execute(t *testing.T) {
 
 		result, err := uc.Execute(context.Background())
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("想定外のエラー = %v", err)
 		}
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("resultがnilだった")
 		}
 
 		if !result.DBHealthy {
-			t.Errorf("expected DBHealthy to be true, got false (error: %s)", result.DBError)
+			t.Errorf("DBHealthy = false、期待値 = true (エラー = %s)", result.DBError)
 		}
 	})
 }

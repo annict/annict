@@ -2,12 +2,8 @@
 # frozen_string_literal: true
 
 RSpec.describe "GET /v1/me/following_activities", type: :request do
-  before do
-    Timecop.freeze(Time.parse("2017-01-29 08:39:04"))
-  end
-
-  after do
-    Timecop.return
+  around do |example|
+    Timecop.freeze(Time.parse("2017-01-29 08:39:04 +09:00")) { example.run }
   end
 
   it "パラメータを指定しない場合、200ステータスを返すこと" do

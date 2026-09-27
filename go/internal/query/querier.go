@@ -11,28 +11,61 @@ import (
 )
 
 type Querier interface {
-	// Aggregates the number of records per day for the given user, after
-	// converting watched_at from UTC to the supplied time zone. The result
-	// only contains days that have at least one record; callers are expected
-	// to zero-fill missing days when building a contiguous range.
-	//
-	// watched_at is stored as a UTC timestamp (Rails convention) even though
-	// the column type is `timestamp without time zone`, so it is interpreted
-	// as UTC before being converted to the caller's time zone.
-	//
-	// [Ja] watched_at を UTC から指定タイムゾーンへ変換した上で、ユーザー単位の
+	// watched_atをUTCから指定タイムゾーンへ変換した上で、ユーザー単位の
 	// 日次レコード数を集計する。結果には記録のある日のみが含まれるため、連続した
-	// 日付範囲を作るときは呼び出し元で 0 埋めする前提とする。
+	// 日付範囲を作るときは呼び出し元で0埋めする前提とする。
 	//
-	// watched_at は `timestamp without time zone` 型だが Rails 規約に従って
-	// UTC で保存されているため、いったん UTC として解釈してから指定タイムゾーン
+	// watched_atは `timestamp without time zone` 型だがRails規約に従って
+	// UTCで保存されているため、いったんUTCとして解釈してから指定タイムゾーン
 	// に変換する。
 	AggregateDailyRecordCountsByUserID(ctx context.Context, arg AggregateDailyRecordCountsByUserIDParams) ([]AggregateDailyRecordCountsByUserIDRow, error)
+	// 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
+	// unpublished_atを再スタンプせず、1行も返さない。作品idは確認ページが前提とした親作品との
+	// 一致を要求する。その間にAnnict::DataCare::MoveEpisodeで別作品へ移されたエピソードが、
+	// もう所属していない作品のカウンターを減算しないようにするため。親作品も未削除のままであること
+	// を要求する。確認ページ用の射影は削除済み作品を除外するが、作品のライフサイクルは本ステート
+	// メントの開始前や、別のトランザクションがepisode行をロックしている間にも変わり得るため。
+	//
+	// 更新した行は現在のanime_idを返す。両書きが、実際に非公開にした時点の写像を対象にするため。
+	// 確認ページの読み取り後に写像が変わっても、送信が以前のanimeを更新してはならない。
+	//
+	// Railsの非公開はEpisode#update(unpublished_at:) であり、db_activityは作らないが、
+	// updated_atを進め、belongs_to :work, touch: trueで親作品をtouchし、counter_cultureで
+	// works.episodes_countを減算する (column_nameのラムダは公開中のエピソードだけを数える)。
+	// 3つとも本ステートメントで再現する。1文にまとめるのは、カウンターが数える対象の状態から
+	// ずれないようにするため (減算は上のUPDATEが実際に行った遷移に対してだけ走る)。最終結果は
+	// 作品の更新成功にも依存させる。同時の論理削除によって作品の更新がスキップされた場合、:oneは
+	// 行を返さず、呼び出し元が最初のCTEによるepisodeの更新も含めてトランザクションをロール
+	// バックする。
+	//
+	// 書き込みはepisodesが先、worksが後で、Railsが保存する順序と同じ。これにより2つの
+	// アプリケーションは同じ作品に対してデッドロックせず、順に待ち合う。Goのエピソード更新は
+	// 逆順で取る (LockWorkForEpisodeUpdateByIDで作品が先) が、この反転が循環にならないのは、
+	// 更新側が必要なエピソードをNOWAITで先取りし、待たずに試行を中断するため。一括作成も作品を
+	// 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
+	ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
+	CountDBEpisodes(ctx context.Context, workID int64) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
+	CreateAnime(ctx context.Context, arg CreateAnimeParams) (Anime, error)
+	CreateAnimeClassification(ctx context.Context, arg CreateAnimeClassificationParams) (AnimeClassification, error)
+	CreateAnimeEvent(ctx context.Context, arg CreateAnimeEventParams) (AnimeEvent, error)
+	CreateAnimeExternalID(ctx context.Context, arg CreateAnimeExternalIDParams) (AnimeExternalID, error)
+	CreateAnimeHashtag(ctx context.Context, arg CreateAnimeHashtagParams) (AnimeHashtag, error)
+	CreateAnimeLink(ctx context.Context, arg CreateAnimeLinkParams) (AnimeLink, error)
+	CreateAnimeOfficialAccount(ctx context.Context, arg CreateAnimeOfficialAccountParams) (AnimeOfficialAccount, error)
+	CreateAnimeSeason(ctx context.Context, arg CreateAnimeSeasonParams) (AnimeSeason, error)
 	CreateEmailNotification(ctx context.Context, arg CreateEmailNotificationParams) (CreateEmailNotificationRow, error)
+	// anime_idは後から書き戻さず行と一緒に書く。一括作成はエピソード本体より先にその
+	// animeを挿入するため、マッピングカラムの値が既に分かっているため。prev_episode_idには
+	// 挿入時点でsort_numberが最大のエピソードを入れる (Railsのafter_createコールバックが
+	// 入れるのと同じ値)。Annict DBの一覧は直前のエピソードをsort_number順から導出するが、
+	// 公開側のエピソードページとGraphQL APIは今もこのカラムを読む。データ変更CTEはさらに、
+	// Railsのsave_and_create_activity! と同じepisodes.createのDB活動を、挿入行を
+	// parameters.newとして記録する。
+	CreateEpisode(ctx context.Context, arg CreateEpisodeParams) (int64, error)
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
 	CreatePasswordResetToken(ctx context.Context, arg CreatePasswordResetTokenParams) (PasswordResetToken, error)
@@ -46,31 +79,132 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	CreateWork(ctx context.Context, arg CreateWorkParams) (int64, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
+	DeleteAnimeEvent(ctx context.Context, id int64) error
+	DeleteAnimeExternalID(ctx context.Context, id int64) error
+	DeleteAnimeHashtag(ctx context.Context, id int64) error
+	DeleteAnimeLink(ctx context.Context, id int64) error
+	DeleteAnimeOfficialAccount(ctx context.Context, id int64) error
+	DeleteAnimeSeason(ctx context.Context, id int64) error
+	// 削除は、エピソードがまだ削除されていないことを条件とする。他者が削除する前に開いた一覧から、
+	// その削除後に送信された場合は、deleted_atを再スタンプせず、カウンターを2度目に減算せず、
+	// 1行も返さない。作品idは一覧が名指しした親作品との一致を要求する。その間に
+	// Annict::DataCare::MoveEpisodeで別作品へ移されたエピソードが、もう所属していない作品の
+	// カウンターを減算しないようにするため。親作品も
+	// 未削除のままであることを要求する。トランザクション前の射影は削除済み作品を除外するが、作品の
+	// ライフサイクルは本ステートメントの開始前や、別のトランザクションがepisode行をロックしている
+	// 間にも変わり得るため。
+	//
+	// 更新した行は現在のanime_idを返す。両書きが、トランザクション前の射影が観測した写像ではなく、
+	// 実際に削除した時点の写像を対象にするため。
+	//
+	// Railsの削除はdestroy_in_batchesで行を消すため、counter_cultureが
+	// works.episodes_countを減算し (column_nameのラムダは公開中のエピソードだけを数えるため、
+	// すでに非公開のエピソードの削除では何も減らない)、belongs_to :work, touch: trueが
+	// works.updated_atを進める。Goの削除はソフトデリートで行が残り、どちらの副作用も自動的には
+	// 従わないため、2つとも本ステートメントで再現する。1文にまとめるのは、カウンターが数える対象の
+	// 状態からずれないようにするため (減算は上のUPDATEが実際に行った遷移に対してだけ、かつまだ
+	// 数えられていた行に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+	// よって作品の更新がスキップされた場合、:oneは行を返さず、呼び出し元が最初のCTEによる
+	// episodeの更新も含めてトランザクションをロールバックする。
+	//
+	// 書き込みがepisodes先・works後なのはArchiveDBEpisodeが述べる理由による。非公開と違い、
+	// ロックする範囲には削除するエピソードを名乗る行も含まれ、下のCTEがそれをエピソードと作品の
+	// 間で書く。同一作品に対する2つの削除はprev_episode_idの順に行を取るが、これは循環ではなく
+	// 連鎖であり、作品はどちらも最後に取る。Goのエピソード更新はここでも作品を先に取り、必要な
+	// エピソードをNOWAITで先取りして、待たずに試行を中断するため、こちらの反転も循環にならない。
+	//
+	// 削除するエピソードを直前として名乗る行は、そのポインタをクリアする。Railsの
+	// before_destroy :unset_prev_episode_idが行が消える前に行うことと同じ。Goでは行が残り、
+	// prev_episode_id自体にスコープは無い。公開側のエピソードの前後導線・GraphQLの
+	// EpisodeType.prev_episode・REST APIはこのカラムが名指しするものをそのまま読むため、残した
+	// ポインタは削除済みエピソードを見せてしまう。Railsのコールバックが見つける「公開中の1行」で
+	// はなく、名乗っている未削除の行すべてをクリアするのは、非公開の後続行が古いポインタを持ったまま
+	// 再公開された瞬間に、それが表に戻るのを防ぐため。後続行を削除するエピソード自身の直前行へ張り
+	// 替えることはしない。それはGoの削除後の状態を、後続行に直前を持たせないRailsの削除後の状態
+	// と食い違わせるため。
+	//
+	// クリアが書くのはprev_episode_idだけで、変更履歴も親のtouchも後続行の版の更新も行わない。
+	// 理由はUpdateDBEpisodeの張り替えが述べるものと同じ。削除するエピソード自身の
+	// prev_episode_idはそのままにする。削除済みの行は何も表示しないため。
+	DeleteDBEpisode(ctx context.Context, arg DeleteDBEpisodeParams) (DeleteDBEpisodeRow, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
+	// updated_atがcutoffより古いセッションを最大batch_size件削除する。PostgreSQLの
+	// DELETEはLIMITを取れないため、対象はupdated_atで並べたサブクエリで選び、
+	// index_sessions_on_updated_atから古い順に読む。SKIP LOCKEDにより、並行実行時は他方が
+	// ロック中の行を飛ばして次へ進める。付けない場合、後発は待たされた末に0件を削除すること
+	// になり、滞留が残っていてもそこで消化が止まる。
+	DeleteExpiredSessions(ctx context.Context, arg DeleteExpiredSessionsParams) (int64, error)
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
 	DeleteSession(ctx context.Context, sessionID string) error
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error
-	// Looks up a user ID by username, excluding soft-deleted users.
-	// Used by features that should return 404 for deleted users (e.g. tracking
-	// heatmap fragment) without exposing other user attributes.
-	//
-	// [Ja] 論理削除されていないユーザーの ID を username で検索する。
-	// 削除済みユーザーに対して 404 を返すべき機能 (例: 視聴記録ヒートマップ
+	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
+	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
+	// RailsアクションのWork.without_deleted.findと同じ順序で、送信行をパースする前に親作品を
+	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
+	// 判断には使わない。
+	ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error)
+	// 論理削除されていないユーザーのIDをusernameで検索する。
+	// 削除済みユーザーに対して404を返すべき機能 (例: 視聴記録ヒートマップ
 	// フラグメント) で、他のユーザー属性を取得せずに利用する。
 	GetActiveUserIDByUsername(ctx context.Context, lower string) (int64, error)
 	GetActivityByID(ctx context.Context, id int64) (GetActivityByIDRow, error)
 	GetActivityGroupByID(ctx context.Context, id int64) (ActivityGroup, error)
 	GetActivityGroupByUserAndType(ctx context.Context, arg GetActivityGroupByUserAndTypeParams) (ActivityGroup, error)
+	GetAnimeByID(ctx context.Context, id int64) (Anime, error)
+	GetAnimeClassificationByAnimeID(ctx context.Context, animeID int64) (AnimeClassification, error)
 	// カレンダー用の放送枠を取得します
 	// 現在時刻から7日後までの未視聴エピソードを対象とします
 	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
-	// カレンダー用の作品（放送開始日）を取得します
+	// カレンダー用の作品 (放送開始日) を取得します
 	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
+	// 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
+	// カラム (number / title)、状態のタイムスタンプ、そしてページが親作品から必要とする2つの
+	// カラム (見出しに使うtitleと、共有の作品サブナビが使うno_episodes)。送信が使うanimeの
+	// 写像は、このトランザクション前の射影ではなく、ArchiveDBEpisodeが実際に更新した行から得る。
+	//
+	// 状態のタイムスタンプは絞り込みに使わず選択する。ページと送信がどの状態を受け付けるかは
+	// model.Episode.DerivedStatusを通じて呼び出し側が決めるため。deleted_atで絞るのは、削除済み
+	// エピソードが双方の対象外であるためで、GetEpisodeForEditByIDと揃う。DerivedStatusが欠けの
+	// 無い行を読めるよう、カラム自体は併せて運ぶ。
+	//
+	// 絞り込みはGetEpisodeForEditByIDと揃える。確認ページに到達できるエピソードと、送信を
+	// 受け付けるエピソードを一致させるため。再公開の送信 (UnarchiveDBEpisode) も同じ行を読み、
+	// 逆向きの状態条件を当てるため、両方向が同じエピソードに届く。
+	GetEpisodeForArchiveByID(ctx context.Context, id int64) (GetEpisodeForArchiveByIDRow, error)
+	// 削除の送信はページではなく確認アラートから来るため、この射影は書き込みが必要とするもの
+	// だけを運ぶ。対象のidと、送信が名指しするとみなす親作品 (DeleteDBEpisodeをその作品に束縛し、
+	// 削除の成功時に着地する先でもある)。表示のための読み取りは無いため、エピソードを名指しする
+	// カラムは運ばない。
+	//
+	// 削除済みエピソードと、削除済み作品のエピソードは除外する。Db::EpisodesController#destroyの
+	// RailsのEpisode.without_deleted.findと、非公開エンドポイント群が届く範囲に揃えるため。
+	// 状態はそれ以上絞らない。公開中のエピソードも非公開のエピソードも削除できるため、非公開
+	// エンドポイントと違い呼び出し側が当てる状態条件が無く、タイムスタンプを運ぶ必要も無い。
+	GetEpisodeForDeleteByID(ctx context.Context, id int64) (GetEpisodeForDeleteByIDRow, error)
+	// 編集フォームは、エピソードの編集対象カラムと、ページが親作品から必要とする2つの
+	// カラム (見出しに使うtitleと、共有の作品サブナビが使うno_episodes) を一緒に読む。
+	// 1行で両方を賄うため、フォームを開くのに往復は1回で済む。
+	//
+	// 削除済みエピソードはdeleted_atで除外し (編集アクションが使うRailsの
+	// Episode.without_deleted.findと同じ)、作品もエピソード一覧と同じ条件で絞る。作品が
+	// 失われたエピソードを、その作品を見出しとサブナビで指すページから編集させないため。
+	//
+	// updated_atはフォームがhiddenで持ち回る版。古い読み取りに対する送信を更新側で
+	// 却下できるようにする。
+	GetEpisodeForEditByID(ctx context.Context, id int64) (GetEpisodeForEditByIDRow, error)
+	// 更新が読むのは、送信された値が運ばないものだけ。title_roと状態のタイムスタンプ
+	// (animesへの両書きが写像するがフォームでは編集しない) と、両書きを行うか自体を決める2つの
+	// マッピングカラム (エピソード自身のanimeと親作品のanime)。編集対象のカラムは送信された値が
+	// 置き換えるため読まない。
+	//
+	// 絞り込みはGetEpisodeForEditByIDと揃える。編集フォームに到達できるエピソードと、送信を
+	// 受け付けるエピソードを一致させるため。
+	GetEpisodeForUpdateByID(ctx context.Context, id int64) (GetEpisodeForUpdateByIDRow, error)
 	GetEpisodeRecordByID(ctx context.Context, id int64) (GetEpisodeRecordByIDRow, error)
 	GetGumroadSubscriberByID(ctx context.Context, id int64) (GumroadSubscriber, error)
-	// ユーザーの視聴リスト（見たい・見てる）からprogram_idを取得します
+	// ユーザーの視聴リスト (見たい・見てる) からprogram_idを取得します
 	GetLibraryEntryProgramIDs(ctx context.Context, userID int64) ([]GetLibraryEntryProgramIDsRow, error)
 	GetOAuthApplicationByUID(ctx context.Context, uid string) (GetOAuthApplicationByUIDRow, error)
 	GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error)
@@ -97,19 +231,191 @@ type Querier interface {
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
+	GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error)
+	// episode_countとlatest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の
+	// 新規エピソードはepisode_count * 100の1ステップ先から始まり、sort_numberが最大の
+	// エピソードが最初に作る行のprev_episode_idになる。どちらも非公開・削除済みを除外せずに
+	// 作品のエピソードを集計する (Railsのフォームのwork.episodes.countと同じ)。エピソードを
+	// 非公開にした作品で、既に使われているsort_numberを振り直さないため。anime_idは作成が
+	// 参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品のanimeを必要とする)。
+	//
+	// latest_episode_id / latest_sort_numberは、作品がまだエピソードを持たないとき0に
+	// なる。idは正の値のため、呼び出し側は0を「直前のエピソードなし」と読む (上の
+	// max_generatable_episode_numberがスロットの無い作品に対して採るのと同じ形)。
+	GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (GetWorkForEpisodeCreateByIDRow, error)
+	// エピソードフォームは、見出しでの名指し、共有サブナビの出し分け、およびRailsの
+	// 手動作成ガードを保つために作品を取得する。公開中のエピソード数がmanual_episodes_countに
+	// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
+	// 見るが、表示層で上書きして作成できる。
+	GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error)
+	// published_episode_countとmax_generatable_episode_numberはエピソード一覧の自動生成の
+	// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
+	// 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも1作品について別テーブルを
+	// 集計する値のため、作品の行と一緒に引いてページの往復を増やさない。
+	//
+	// max_generatable_episode_numberが使うMAXはNULLを飛ばすが、Railsの案内は作品の有効な
+	// スロットをnumber降順に並べた先頭行を読む。PostgreSQLのDESCはNULLS FIRSTのため、
+	// number未設定の有効スロットが1件でもあればRailsはその行に当たって0を報告する。
+	// MAXが報告するのは自動生成が実際に到達する話数であり、Railsと結果が分かれるのは
+	// 移植漏れではなく意図的な選択。
+	GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error)
+	// Annict DBの作品の状態変更 (非公開・公開・削除) の確認画面が共有する射影。各画面が対象を
+	// 名指しするタイトルと、呼び出し側が現在の状態を導出してその操作を適用できない作品を弾くための
+	// 作品状態のsourceを運ぶ。3つの画面が受け付ける状態はそれぞれ異なるため、ここでは状態を
+	// 絞り込まない。
+	GetWorkForStateChangeByID(ctx context.Context, id int64) (GetWorkForStateChangeByIDRow, error)
 	IncrementSignInCodeAttempts(ctx context.Context, id int64) error
 	IncrementSignUpCodeAttempts(ctx context.Context, id int64) error
+	// RailsのEpisode.createは公開話数のカウンターキャッシュを加算し、親作品をtouchする。
+	// 一括作成は既に作品行をロックしているため、新しく公開した行数を原子的に加算し、共有するRails
+	// APIから同じカウンターとタイムスタンプの副作用が見えるようにする。
+	IncrementWorkEpisodesCount(ctx context.Context, arg IncrementWorkEpisodesCountParams) (int64, error)
 	InvalidateSignUpCodesByEmail(ctx context.Context, email string) error
 	InvalidateUserPasswordResetTokens(ctx context.Context, userID int64) error
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
 	IsFeatureFlagEnabled(ctx context.Context, arg IsFeatureFlagEnabledParams) (bool, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
+	ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeClassification, error)
+	ListAnimeEventsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeEvent, error)
+	ListAnimeExternalIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeExternalID, error)
+	ListAnimeHashtagsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeHashtag, error)
+	ListAnimeLinksByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeLink, error)
+	ListAnimeOfficialAccountsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeOfficialAccount, error)
+	ListAnimeSeasonsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeSeason, error)
+	ListAnimesByIDs(ctx context.Context, dollar_1 []int64) ([]Anime, error)
+	// 直前のエピソードはepisodes.prev_episode_idを読まず、sort_number昇順の隣接行から
+	// 導出する。ウィンドウはCTEの中で作品の一覧全体に対して評価され、LIMIT / OFFSETが
+	// 1ページに絞り込む前に確定するため、ページ末尾の行も次ページに載るエピソードを指せる。
+	// 作品内の連番 (published_position) も同じ理由でCTEの中で振る。公開中のエピソードだけを
+	// sort_number昇順 (同値はid昇順) に数えるため、非公開の行は連番を消費せず、LEFT JOINで
+	// NULLになる。母集団を案内の「公開中のエピソード数」と揃え、公開中の最大の連番がその件数と
+	// 一致するようにするため。
+	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
+	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
+	// UpdateDBEpisodeがこの後に書く行と、隣接行として参照する行をid昇順で列挙する。編集対象
+	// 自身・移動前の直前行・移動前の直後行・移動後の直前行・移動後の直後行の5行である。呼び出し側
+	// はこれだけをロックするため、1回の編集のロック範囲が作品のエピソード数に比例して増えない。
+	//
+	// この導出が有効なのは、LockWorkForEpisodeUpdateByIDが既に親作品を保持しており、並び順を
+	// 変える書き込みがそれを迂回できないため。唯一の例外はAnnict::DataCare::MoveEpisodeで、
+	// episodes.work_idをupdate_columnで書くため作品ロックを取らない。本ステートメントの後に
+	// この作品へ移されてきた行は列挙もロックもされない。これは手動のデータ整備操作であり、また
+	// UpdateDBEpisodeが自身のスナップショットで導出し直すことで開く窓と同じものである。
+	ListEpisodeIDsForEpisodeUpdateByID(ctx context.Context, arg ListEpisodeIDsForEpisodeUpdateByIDParams) ([]int64, error)
+	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
+	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
+	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
+	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
+	// 隣接リンクの導出・書き込み前に、列挙されたエピソードをid昇順でロックする。Railsは
+	// エピソードをロックしてから作品をtouchし、Goの更新順序と逆になるため、NOWAITにより循環を
+	// 完成させず本トランザクションを中断する。UseCaseはトランザクション全体をrollbackして短時間
+	// 後に再試行し、その間にRailsは解放された作品ロックを取得して完了できる。UpdateDBEpisodeが
+	// 更新する行と、prev_episode_idから参照する移動先の直前行は、Railsが保持するロックで待たされ
+	// 得るため、列挙された隣接行を先取りすれば足りる。idは
+	// ListEpisodeIDsForEpisodeUpdateByIDが既に整列済みで、ORDER BYがその順序でのロック取得を保つ。
+	//
+	// 行は読み戻さない。本ステートメントはロック句のためだけに存在する。
+	LockEpisodesForEpisodeUpdateByIDs(ctx context.Context, ids []int64) error
+	// 採番の起点を読む前に、1作品への一括作成を直列化する。ロッククエリと集計クエリを分ける
+	// ことで、待機側がロックを得た後に集計を実行し、先行トランザクションがコミットしたエピソードを
+	// 参照できるようにする。
+	LockWorkForEpisodeCreateByID(ctx context.Context, id int64) (int64, error)
+	// 隣接エピソードを読む前に、削除されていない親作品をロックする。UpdateDBEpisodeとは
+	// 別の文にすることで、ここで待機したトランザクションが、後で移動前後の隣接行を導出するときに
+	// READ COMMITTEDの新しいスナップショットを得られるようにする。返したidは、編集フォーム用の
+	// 事前読み取り後に対象が別作品へ移った場合の却下にも使う。
+	//
+	// FOR SHAREではなくtouched_workが必要とする強さで最初から取るのは、同一トランザクションの
+	// 後段で共有ロックを排他ロックへ昇格させると、同じ作品への2つの送信が互いの共有ロックを
+	// 待ち合い、PostgreSQLが片方をデッドロックで中断するためである。
+	//
+	// また、このロックの保持中はこの作品の並び順が固定される。Railsで一覧を並べ替え得る経路は
+	// いずれもworks行も書くためここで待たされる (DB管理画面の編集・作成・削除はすべて
+	// belongs_to :work, touch: trueかcounter_culture :workを通る)。Goの一括作成も
+	// LockWorkForEpisodeCreateByIDで同じロックを取る。したがって隣接行は本ステートメントの後に
+	// 導出でき、commitまで有効なままである。
+	LockWorkForEpisodeUpdateByID(ctx context.Context, id int64) (int64, error)
 	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error
 	TouchSession(ctx context.Context, sessionID string) error
+	// 再公開はArchiveDBEpisodeの逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
+	// カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開
+	// であることを条件とする。他者が再公開する前に開いた一覧から、その再公開後に送信された場合は、
+	// すでにNULLのunpublished_atをクリアせず1行も返さない。作品idは一覧が名指しした親作品との
+	// 一致を要求する。その間にAnnict::DataCare::MoveEpisodeで別作品へ移されたエピソードが、
+	// もう所属していない作品の
+	// カウンターを加算しないようにするため。親作品も未削除のままであることを要求する。トランザクション
+	// 前の射影は削除済み作品を除外するが、作品のライフサイクルは本ステートメントの開始前や、別の
+	// トランザクションがepisode行をロックしている間にも変わり得るため。
+	//
+	// 更新した行は現在のanime_idを返す。両書きが、トランザクション前の射影が観測した写像では
+	// なく、実際に再公開した時点の写像を対象にするため。
+	//
+	// Railsの再公開はEpisode#update(unpublished_at: nil) であり、db_activityは作らないが、
+	// updated_atを進め、belongs_to :work, touch: trueで親作品をtouchし、counter_cultureで
+	// works.episodes_countを加算する (column_nameのラムダは公開中のエピソードだけを数えるため、
+	// unpublished_atのクリアで行が数え直される)。3つとも本ステートメントで再現する。1文に
+	// まとめるのは、カウンターが数える対象の状態からずれないようにするため (加算は上のUPDATEが
+	// 実際に行った遷移に対してだけ走る)。最終結果は作品の更新成功にも依存させる。同時の論理削除に
+	// よって作品の更新がスキップされた場合、:oneは行を返さず、呼び出し元が最初のCTEによる
+	// episodeの更新も含めてトランザクションをロールバックする。
+	//
+	// 書き込みがepisodes先・works後なのはArchiveDBEpisodeが述べる理由による。
+	UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisodeParams) (UnarchiveDBEpisodeRow, error)
+	UpdateAnime(ctx context.Context, arg UpdateAnimeParams) error
+	UpdateAnimeClassificationByAnimeID(ctx context.Context, arg UpdateAnimeClassificationByAnimeIDParams) error
+	UpdateAnimeEvent(ctx context.Context, arg UpdateAnimeEventParams) error
+	UpdateAnimeExternalID(ctx context.Context, arg UpdateAnimeExternalIDParams) error
+	UpdateAnimeLink(ctx context.Context, arg UpdateAnimeLinkParams) error
+	UpdateAnimeOfficialAccount(ctx context.Context, arg UpdateAnimeOfficialAccountParams) error
+	// 正本の行から導出したライフサイクル状態だけを更新する。非公開の経路はanime全体の
+	// スナップショットを書き戻さず本クエリを使うことで、事前読み取り後にコミットされた無関係な
+	// 内容編集を保持する。
+	UpdateAnimeStatus(ctx context.Context, arg UpdateAnimeStatusParams) error
+	// 送信が名乗る版の照合は、直前の読み取りとの比較ではなくUPDATEの中で行う。比較と書き込み
+	// の間に他の書き込みが挟まらないようにするため。共有カラムはNULL許容のためNULLも明示的な
+	// 版であり、IS NOT DISTINCT FROMなら2文に分けずに照合できる。書き込みはupdated_atを進める
+	// ので、同じNULL版からの2件目はもう一致しない。したがって1行も返らないことは、その間に
+	// 他者が行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
+	//
+	// prev_episode_idは、エピソード一覧が直前のエピソードを導出するのと同じ規則 (sort_number
+	// 昇順、同値ならid) で、送信されたsort_numberから再計算する。Railsはこのカラムを作成時に
+	// しか入れず、ずれの修正は編集フォームの選択欄で人が行う前提だったが、Goのフォームにその欄は
+	// 無い。公開側のエピソードの前後導線・GraphQL API・REST APIは今もこのカラムを読む。
+	//
+	// 親作品のtouchとepisodes.updateのDB活動の記録は、内容が実際に変わったときにだけ行う。
+	// Railsのsave_and_create_activity! も、変更の無い保存では双方を行わないため。比較の対象は
+	// 送信された5カラムで、prev_episode_idは含めない。同カラムは入力ではなく並び順から導出される
+	// ため、別のエピソードが動いたことによる再計算まで拾うと、共有DBの変更履歴に「その編集者が
+	// 行っていない編集」として現れてしまう。データ変更CTEは最後のSELECTが読むかどうかに関わらず
+	// 実行されるため、どちらもSELECTにjoinしない。created_activityをjoinすると、何も変わら
+	// なかった送信で返すべきidが落ちてしまう。
+	//
+	// 移動は、エピソードの前後にある2行が別の行を隣接として名乗ったままにするため、その2行も
+	// 同一文で張り替える。移動前にエピソードの直後だった行は移動前の直前のエピソードを名乗るように
+	// し、移動後に直後になる行はエピソード自身を名乗るようにする。2行が同一の場合、エピソードはどの
+	// 行も跨いでおらず、どちらも書かない (sort_numberが変わらない送信はすべてこれに該当する)。作品
+	// 全体の再計算は意図的に行わない。一括作成はRailsのafter_createコールバックと同じ規則で
+	// prev_episode_idを入れており、その値は一覧が導出する隣接行と意図的に異なるため、一括再計算は
+	// 無関係な編集でその判断を上書きしてしまう。
+	//
+	// 張り替えはdb_activityを作らず、親作品もtouchせず、隣接行のupdated_atも進めない。並び順
+	// から導出される値の維持であって、誰かが行った編集の適用ではないため (Railsが同カラムを
+	// update_columnで書くのも同じ理由)。また隣接行の版を進めると、どのフォームも送信しないカラムを
+	// 理由に、他の編集者が開いているフォームを競合にしてしまう。
+	//
+	// 呼び出し側は、先行する別ステートメントで削除されていない親作品と、
+	// ListEpisodeIDsForEpisodeUpdateByIDが列挙した隣接行を既にロックしている。このプロトコルを
+	// 本ステートメントの外に置くことが重要で、作品ロックを待った後にREAD COMMITTEDの新しい
+	// スナップショットで本ステートメントを開始し、直前にcommitした更新を移動前後の隣接行の
+	// 読み取りへ反映できる。以下の隣接CTEが呼び出し側からidを受け取らずに導出をやり直すのは、
+	// 本ステートメントが書く行を、自身のスナップショットが隣接と判断した行に一致させるため。
+	// ここでも作品idを条件にすることで、ロック・事前読み取りした親に書き込みを束縛する。
+	UpdateDBEpisode(ctx context.Context, arg UpdateDBEpisodeParams) (int64, error)
+	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
 	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error
@@ -117,6 +423,19 @@ type Querier interface {
 	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
 	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
 	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
+	// 送信が名乗る版の照合は、直前の読み取りとの比較ではなくUPDATEの中で行う。比較と書き込み
+	// の間に他の書き込みが挟まらないようにするため。共有カラムはNULL許容のためNULLも明示的な版
+	// であり、IS NOT DISTINCT FROMなら2文に分けずに照合できる。書き込みはupdated_atを進めるので、
+	// 同じNULL版からの2件目はもう一致しない。したがって1行も更新されないことは、その間に他者が
+	// 行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
+	UpdateWork(ctx context.Context, arg UpdateWorkParams) (int64, error)
+	UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error
+	UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error
+	UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error
+	// 欠損した分類の再作成と既存行の更新をアトミックに行う。エピソード編集では事前の
+	// 存在確認をせずこのクエリを使い、並行削除によって両書き先のanimeだけが分類なしで残るのを
+	// 防ぐ。
+	UpsertAnimeClassification(ctx context.Context, arg UpsertAnimeClassificationParams) error
 }
 
 var _ Querier = (*Queries)(nil)

@@ -32,19 +32,19 @@ func TestGetUserCalendarUsecase_Execute(t *testing.T) {
 			Now:      time.Now(),
 		})
 		if err != nil {
-			t.Fatalf("unexpected error: %v", err)
+			t.Fatalf("想定外のエラー = %v", err)
 		}
 
 		if result == nil {
-			t.Fatal("result should not be nil")
+			t.Fatal("resultがnilだった")
 		}
 
 		if result.UserCalendar == nil {
-			t.Fatal("UserCalendar should not be nil")
+			t.Fatal("UserCalendarがnilだった")
 		}
 
 		if result.UserCalendar.Username != "calendar_test_user" {
-			t.Errorf("Username = %q, want %q", result.UserCalendar.Username, "calendar_test_user")
+			t.Errorf("Username = %q、期待値 = %q", result.UserCalendar.Username, "calendar_test_user")
 		}
 	})
 
@@ -62,7 +62,7 @@ func TestGetUserCalendarUsecase_Execute(t *testing.T) {
 			Now:      time.Now(),
 		})
 		if err == nil {
-			t.Error("expected error but got nil")
+			t.Error("エラーを期待したが、nilだった")
 		}
 	})
 }

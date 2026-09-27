@@ -3,7 +3,7 @@
 
 RSpec.describe "GET /db/channels/:id/edit", type: :request do
   it "ログインしていないとき、ログインページにリダイレクトすること" do
-    channel = Channel.first
+    channel = create(:channel)
 
     get "/db/channels/#{channel.id}/edit"
 
@@ -13,7 +13,7 @@ RSpec.describe "GET /db/channels/:id/edit", type: :request do
 
   it "編集者権限を持つユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user, :with_editor_role)
-    channel = Channel.first
+    channel = create(:channel)
     login_as(user, scope: :user)
 
     get "/db/channels/#{channel.id}/edit"
@@ -24,7 +24,7 @@ RSpec.describe "GET /db/channels/:id/edit", type: :request do
 
   it "管理者権限を持つユーザーがログインしているとき、チャンネル編集フォームが表示されること" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
+    channel = create(:channel)
     login_as(user, scope: :user)
 
     get "/db/channels/#{channel.id}/edit"
@@ -35,7 +35,7 @@ RSpec.describe "GET /db/channels/:id/edit", type: :request do
 
   it "一般ユーザーがログインしているとき、アクセスできないこと" do
     user = create(:registered_user)
-    channel = Channel.first
+    channel = create(:channel)
     login_as(user, scope: :user)
 
     get "/db/channels/#{channel.id}/edit"
@@ -46,7 +46,7 @@ RSpec.describe "GET /db/channels/:id/edit", type: :request do
 
   it "削除されたチャンネルにアクセスしようとしたとき、404エラーになること" do
     user = create(:registered_user, :with_admin_role)
-    channel = Channel.first
+    channel = create(:channel)
     channel.update!(deleted_at: Time.current)
     login_as(user, scope: :user)
 

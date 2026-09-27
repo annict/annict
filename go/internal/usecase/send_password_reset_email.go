@@ -6,29 +6,29 @@ import (
 	"log/slog"
 )
 
-// PasswordResetEmailSender はパスワードリセットメールの送信を行うインターフェース
+// PasswordResetEmailSenderはパスワードリセットメールの送信を行うインターフェース
 type PasswordResetEmailSender interface {
 	Send(ctx context.Context, to, resetURL, locale string) error
 }
 
-// SendPasswordResetEmailUsecase はパスワードリセットメールの送信ユースケース
+// SendPasswordResetEmailUsecaseはパスワードリセットメールの送信ユースケース
 type SendPasswordResetEmailUsecase struct {
 	sender PasswordResetEmailSender
 }
 
-// NewSendPasswordResetEmailUsecase は SendPasswordResetEmailUsecase を生成する
+// NewSendPasswordResetEmailUsecaseはSendPasswordResetEmailUsecaseを生成する
 func NewSendPasswordResetEmailUsecase(sender PasswordResetEmailSender) *SendPasswordResetEmailUsecase {
 	return &SendPasswordResetEmailUsecase{sender: sender}
 }
 
-// SendPasswordResetEmailInput はパスワードリセットメール送信の入力パラメータ
+// SendPasswordResetEmailInputはパスワードリセットメール送信の入力パラメータ
 type SendPasswordResetEmailInput struct {
 	Email    string
 	ResetURL string
 	Locale   string
 }
 
-// Execute はパスワードリセットメールを送信する
+// Executeはパスワードリセットメールを送信する
 func (uc *SendPasswordResetEmailUsecase) Execute(ctx context.Context, input SendPasswordResetEmailInput) error {
 	if input.Email == "" {
 		return fmt.Errorf("メールアドレスが空です")

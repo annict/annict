@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// setupSession はログイン状態をシミュレートするためのセッションを作成し、セッションCookieを返します
+// setupSessionはログイン状態をシミュレートするためのセッションを作成し、セッションCookieを返します
 func setupSession(t *testing.T, sessionMgr *session.Manager, userID model.UserID) *http.Cookie {
 	t.Helper()
 
@@ -22,7 +22,7 @@ func setupSession(t *testing.T, sessionMgr *session.Manager, userID model.UserID
 	rr := httptest.NewRecorder()
 	ctx := req.Context()
 
-	// ログインセッションを作成（userID付き）
+	// ログインセッションを作成 (userID付き)
 	if err := sessionMgr.CreateSession(ctx, rr, req, userID); err != nil {
 		t.Fatalf("セッションの作成に失敗: %v", err)
 	}
@@ -39,7 +39,7 @@ func setupSession(t *testing.T, sessionMgr *session.Manager, userID model.UserID
 	return nil
 }
 
-// TestDelete_WithSession セッションがある場合のログアウトテスト
+// TestDelete_WithSessionセッションがある場合のログアウトテスト
 func TestDelete_WithSession(t *testing.T) {
 	t.Parallel()
 
@@ -74,18 +74,18 @@ func TestDelete_WithSession(t *testing.T) {
 	// ハンドラーを実行
 	handler.Delete(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
+	// ステータスコードを確認 (リダイレクト)
 	if rr.Code != http.StatusFound {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusFound)
 	}
 
 	// リダイレクト先を確認
 	location := rr.Header().Get("Location")
 	if location != "/" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/")
 	}
 
-	// セッションCookieが削除されているか確認（MaxAge=-1）
+	// セッションCookieが削除されているか確認 (MaxAge=-1)
 	cookies := rr.Result().Cookies()
 	var newSessionCookie *http.Cookie
 	for _, cookie := range cookies {
@@ -99,7 +99,7 @@ func TestDelete_WithSession(t *testing.T) {
 		t.Error("セッションCookie削除のレスポンスがありません")
 	} else {
 		if newSessionCookie.MaxAge != -1 {
-			t.Errorf("セッションCookieのMaxAgeが正しくない: got %v want %v", newSessionCookie.MaxAge, -1)
+			t.Errorf("セッションCookieのMaxAge = %v、期待値 = %v", newSessionCookie.MaxAge, -1)
 		}
 	}
 
@@ -113,7 +113,7 @@ func TestDelete_WithSession(t *testing.T) {
 	}
 }
 
-// TestDelete_WithoutSession セッションがない場合のログアウトテスト
+// TestDelete_WithoutSessionセッションがない場合のログアウトテスト
 func TestDelete_WithoutSession(t *testing.T) {
 	t.Parallel()
 
@@ -138,15 +138,15 @@ func TestDelete_WithoutSession(t *testing.T) {
 	// ハンドラーを実行
 	handler.Delete(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
+	// ステータスコードを確認 (リダイレクト)
 	if rr.Code != http.StatusFound {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusFound)
 	}
 
 	// リダイレクト先を確認
 	location := rr.Header().Get("Location")
 	if location != "/" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/")
 	}
 }
 
@@ -177,22 +177,22 @@ func TestDelete_POSTMethod(t *testing.T) {
 	// ログインセッションを作成
 	sessionCookie := setupSession(t, sessionMgr, userID)
 
-	// POSTリクエストを作成（Method Override経由でDELETEに変換される前の状態）
+	// POSTリクエストを作成 (Method Override経由でDELETEに変換される前の状態)
 	req := httptest.NewRequest("POST", "/sign_out", nil)
 	req.AddCookie(sessionCookie)
 	rr := httptest.NewRecorder()
 
-	// ハンドラーを実行（直接呼び出し）
+	// ハンドラーを実行 (直接呼び出し)
 	handler.Delete(rr, req)
 
-	// ステータスコードを確認（リダイレクト）
+	// ステータスコードを確認 (リダイレクト)
 	if rr.Code != http.StatusFound {
-		t.Errorf("ステータスコードが正しくない: got %v want %v", rr.Code, http.StatusFound)
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusFound)
 	}
 
 	// リダイレクト先を確認
 	location := rr.Header().Get("Location")
 	if location != "/" {
-		t.Errorf("リダイレクト先が正しくない: got %v want %v", location, "/")
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/")
 	}
 }

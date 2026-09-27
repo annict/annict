@@ -2,12 +2,8 @@
 # frozen_string_literal: true
 
 class Episode < ApplicationRecord
-  extend Enumerize
-
   include DbActivityMethods
   include Unpublishable
-
-  enumerize :status, in: %i[published archived deleted], default: :published, scope: true
 
   DIFF_FIELDS = %i[
     number sort_number sc_count title prev_episode_id fetch_syobocal raw_number title_en
@@ -120,16 +116,6 @@ class Episode < ApplicationRecord
     episode_record.detect_locale!(:body)
     episode_record.build_record(user: user, work: work, watched_at: watched_at)
     episode_record
-  end
-
-  # Determine the publication state from the status column value.
-  # [Ja] status カラムの値で公開状態を判定する
-  def published?
-    status.to_s == "published"
-  end
-
-  def archived?
-    status.to_s == "archived"
   end
 
   private def unset_prev_episode_id

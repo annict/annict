@@ -83,13 +83,13 @@ func TestTurnstile_JavaScriptLoading(t *testing.T) {
 
 	html := buf.String()
 
-	// JavaScript が非同期で読み込まれるか確認
+	// JavaScriptが非同期で読み込まれるか確認
 	if !strings.Contains(html, "async") {
-		t.Error("Turnstile JavaScript が async 属性で読み込まれていません")
+		t.Error("Turnstile JavaScriptがasync属性で読み込まれていません")
 	}
 
 	if !strings.Contains(html, "defer") {
-		t.Error("Turnstile JavaScript が defer 属性で読み込まれていません")
+		t.Error("Turnstile JavaScriptがdefer属性で読み込まれていません")
 	}
 }
 
@@ -109,6 +109,6 @@ func TestTurnstile_InvisibleMode(t *testing.T) {
 
 	// data-appearance属性が含まれていないことを確認
 	if strings.Contains(html, `data-appearance`) {
-		t.Error("Turnstile に data-appearance 属性が含まれています")
+		t.Error("Turnstileにdata-appearance属性が含まれています")
 	}
 }

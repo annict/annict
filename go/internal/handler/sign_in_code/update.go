@@ -26,7 +26,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// backパラメータを取得（リダイレクト時に引き継ぐ）
+	// backパラメータを取得 (リダイレクト時に引き継ぐ)
 	backURL := r.FormValue("back")
 
 	// backパラメータ付きのリダイレクト先URLを構築するヘルパー関数
@@ -85,7 +85,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 	userID := model.UserID(userIDInt)
 
-	// Rate Limiting チェック（1 分間に 3 回まで）
+	// Rate Limitingチェック (1分間に3回まで)
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		emailKey := fmt.Sprintf("sign_in:send:%s", email)
 		allowed, err := h.limiter.Check(ctx, emailKey, 3, 1*time.Minute)
@@ -120,6 +120,6 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	// フラッシュメッセージを設定
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "sign_in_code_resend_success"))
 
-	// /sign_in/code にリダイレクト（backパラメータを引き継ぐ）
+	// /sign_in/codeにリダイレクト (backパラメータを引き継ぐ)
 	http.Redirect(w, r, buildRedirectURL("/sign_in/code"), http.StatusSeeOther)
 }

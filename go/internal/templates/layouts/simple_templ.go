@@ -16,7 +16,7 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Simple はシンプルなレイアウトです
+// Simpleはシンプルなレイアウトです
 // ヘッダー、フラッシュメッセージ、コンテンツのみを含みます
 func Simple(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, content templ.Component) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
@@ -60,7 +60,7 @@ func Simple(ctx context.Context, meta viewmodel.PageMeta, assetVersion string, c
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</head><body class=\"min-h-screen flex items-center justify-center\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</head><body class=\"min-h-dvh flex items-center justify-center\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

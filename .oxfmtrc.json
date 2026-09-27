@@ -24,7 +24,6 @@
     "rails/app/views/",
     "rails/db/",
     "rails/public/",
-    "rails/sorbet/",
     "rails/tmp/"
   ]
 }

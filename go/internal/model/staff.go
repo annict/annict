@@ -1,6 +1,6 @@
 package model
 
-// Staff はスタッフ情報を表します
+// Staffはスタッフ情報を表します
 type Staff struct {
 	ID          StaffID
 	WorkID      WorkID

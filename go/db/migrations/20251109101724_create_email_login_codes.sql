@@ -5,7 +5,7 @@ CREATE TABLE email_login_codes (
     code_digest VARCHAR(255) NOT NULL,  -- bcryptでハッシュ化された6桁コード
     attempts INT NOT NULL DEFAULT 0,     -- 試行回数
     expires_at TIMESTAMP WITH TIME ZONE NOT NULL,  -- 有効期限
-    used_at TIMESTAMP WITH TIME ZONE,    -- 使用済み時刻（NULL = 未使用）
+    used_at TIMESTAMP WITH TIME ZONE,    -- 使用済み時刻 (NULL = 未使用)
     created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
 );

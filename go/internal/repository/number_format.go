@@ -7,17 +7,17 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// NumberFormatRepository はNumberFormat関連のデータアクセスを担当します
+// NumberFormatRepositoryはNumberFormat関連のデータアクセスを担当します
 type NumberFormatRepository struct {
 	queries *query.Queries
 }
 
-// NewNumberFormatRepository はNumberFormatRepositoryを作成します
+// NewNumberFormatRepositoryはNumberFormatRepositoryを作成します
 func NewNumberFormatRepository(queries *query.Queries) *NumberFormatRepository {
 	return &NumberFormatRepository{queries: queries}
 }
 
-// ListAll は全てのNumberFormatをsort_number順で取得します
+// ListAllは全てのNumberFormatをsort_number順で取得します
 func (r *NumberFormatRepository) ListAll(ctx context.Context) ([]model.NumberFormat, error) {
 	rows, err := r.queries.ListNumberFormats(ctx)
 	if err != nil {
@@ -33,4 +33,11 @@ func (r *NumberFormatRepository) ListAll(ctx context.Context) ([]model.NumberFor
 		}
 	}
 	return result, nil
+}
+
+// ExistsByIDは指定の話数フォーマットが登録されているかを返す。
+// works.number_format_idとanime_classifications.number_format_idはいずれも
+// number_formats(id) への外部キーのため、どの行も指さない値はカラムに届かずINSERTが失敗する。
+func (r *NumberFormatRepository) ExistsByID(ctx context.Context, id model.NumberFormatID) (bool, error) {
+	return r.queries.ExistsNumberFormatByID(ctx, int64(id))
 }

@@ -3,7 +3,7 @@
 
 RSpec.describe "PATCH /db/slots/:id", type: :request do
   it "ログインしていないユーザーはアクセスできずログインページにリダイレクトされること" do
-    channel = Channel.first
+    channel = create(:channel)
     slot = create(:slot)
     old_slot = slot.attributes
     slot_params = {
@@ -19,7 +19,7 @@ RSpec.describe "PATCH /db/slots/:id", type: :request do
   end
 
   it "編集者権限のないユーザーはアクセスできないこと" do
-    channel = Channel.first
+    channel = create(:channel)
     user = create(:registered_user)
     slot = create(:slot)
     old_slot = slot.attributes
@@ -38,7 +38,7 @@ RSpec.describe "PATCH /db/slots/:id", type: :request do
   end
 
   it "編集者権限のあるユーザーがスロットを更新できること" do
-    channel = Channel.first
+    channel = create(:channel)
     user = create(:registered_user, :with_editor_role)
     slot = create(:slot)
     old_slot = slot.attributes
@@ -59,7 +59,7 @@ RSpec.describe "PATCH /db/slots/:id", type: :request do
   end
 
   it "編集者権限のあるユーザーが複数のパラメーターでスロットを更新できること" do
-    channel = Channel.first
+    channel = create(:channel)
     user = create(:registered_user, :with_editor_role)
     slot = create(:slot)
     work = slot.work

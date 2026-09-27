@@ -13,7 +13,7 @@ import (
 	"github.com/annict/annict/go/internal/validator"
 )
 
-// VerifySignInCodeUsecase は6桁のログインコードを検証するユースケースです
+// VerifySignInCodeUsecaseは6桁のログインコードを検証するユースケースです
 type VerifySignInCodeUsecase struct {
 	db             *sql.DB
 	signInCodeRepo *repository.SignInCodeRepository
@@ -21,7 +21,7 @@ type VerifySignInCodeUsecase struct {
 	validator      *validator.SignInCodeCreateValidator
 }
 
-// NewVerifySignInCodeUsecase は新しいVerifySignInCodeUsecaseを作成します
+// NewVerifySignInCodeUsecaseは新しいVerifySignInCodeUsecaseを作成します
 func NewVerifySignInCodeUsecase(
 	db *sql.DB,
 	signInCodeRepo *repository.SignInCodeRepository,
@@ -36,28 +36,28 @@ func NewVerifySignInCodeUsecase(
 	}
 }
 
-// VerifySignInCodeInput はユースケースの入力パラメータです
+// VerifySignInCodeInputはユースケースの入力パラメータです
 type VerifySignInCodeInput struct {
 	UserID model.UserID
 	Code   string
 }
 
-// VerifySignInCodeOutput はユースケースの結果を表します
+// VerifySignInCodeOutputはユースケースの結果を表します
 type VerifySignInCodeOutput struct {
-	EncryptedPassword string // ユーザーのパスワードハッシュ（セッション作成用）
-	Username          string // ユーザー名（ログ用）
+	EncryptedPassword string // ユーザーのパスワードハッシュ (セッション作成用)
+	Username          string // ユーザー名 (ログ用)
 }
 
 var (
-	// ErrCodeNotFound はコードが見つからない場合のエラーです
+	// ErrCodeNotFoundはコードが見つからない場合のエラーです
 	ErrCodeNotFound = errors.New("コードが見つからないか、有効期限が切れています")
-	// ErrCodeInvalid はコードが間違っている場合のエラーです
+	// ErrCodeInvalidはコードが間違っている場合のエラーです
 	ErrCodeInvalid = errors.New("コードが正しくありません")
-	// ErrCodeAttemptsExceeded は試行回数が上限に達した場合のエラーです
+	// ErrCodeAttemptsExceededは試行回数が上限に達した場合のエラーです
 	ErrCodeAttemptsExceeded = errors.New("試行回数が上限に達しました。新しいコードを送信してください")
 )
 
-// Execute は6桁のログインコードを検証し、成功時にユーザー情報を返します
+// Executeは6桁のログインコードを検証し、成功時にユーザー情報を返します
 func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySignInCodeInput) (*VerifySignInCodeOutput, error) {
 	// 1. バリデーション
 	if err := uc.validator.Validate(ctx, validator.SignInCodeCreateValidatorInput{
@@ -86,7 +86,7 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySign
 	}, nil
 }
 
-// verifyCode は6桁のログインコードを検証します
+// verifyCodeは6桁のログインコードを検証します
 func (uc *VerifySignInCodeUsecase) verifyCode(ctx context.Context, userID model.UserID, code string) error {
 	// トランザクション開始
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -97,7 +97,7 @@ func (uc *VerifySignInCodeUsecase) verifyCode(ctx context.Context, userID model.
 
 	signInCodeRepoTx := uc.signInCodeRepo.WithTx(tx)
 
-	// 有効なコードを取得（未使用 AND 有効期限内）
+	// 有効なコードを取得 (未使用AND有効期限内)
 	signInCode, err := signInCodeRepoTx.GetValidByUserID(ctx, userID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -106,7 +106,7 @@ func (uc *VerifySignInCodeUsecase) verifyCode(ctx context.Context, userID model.
 		return fmt.Errorf("コードの取得に失敗: %w", err)
 	}
 
-	// 試行回数チェック（5回まで）
+	// 試行回数チェック (5回まで)
 	if signInCode.Attempts >= 5 {
 		// 試行回数が上限に達している場合、コードを無効化
 		if err := signInCodeRepoTx.MarkAsUsed(ctx, signInCode.ID); err != nil {
@@ -125,7 +125,7 @@ func (uc *VerifySignInCodeUsecase) verifyCode(ctx context.Context, userID model.
 		return ErrCodeAttemptsExceeded
 	}
 
-	// コード検証（bcryptで比較）
+	// コード検証 (bcryptで比較)
 	if !auth.VerifyCode(code, signInCode.CodeDigest) {
 		// コードが間違っている場合、試行回数をインクリメント
 		if err := signInCodeRepoTx.IncrementAttempts(ctx, signInCode.ID); err != nil {

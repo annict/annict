@@ -1,6 +1,4 @@
-// Package tracking_heatmap renders the watch-record heatmap HTML fragment.
-//
-// [Ja] tracking_heatmap パッケージは視聴記録ヒートマップの HTML フラグメントをレンダリングする。
+// tracking_heatmapパッケージは視聴記録ヒートマップのHTMLフラグメントをレンダリングする。
 package tracking_heatmap
 
 import (
@@ -9,18 +7,11 @@ import (
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
-// Show renders the heatmap fragment returned from GET
-// /fragment/@:username/tracking_heatmap. The output is wrapped in
-// <turbo-frame id="tracking-heatmap"> and matches the Rails ERB
-// (rails/app/views/fragment/tracking_heatmaps/show.html.erb) so the
-// Stimulus controller and SCSS on the profile page can render it
-// unmodified.
-//
-// [Ja] Show は GET /fragment/@:username/tracking_heatmap が返すヒートマップ
+// ShowはGET /fragment/@:username/tracking_heatmapが返すヒートマップ
 // フラグメントをレンダリングする。出力は <turbo-frame id="tracking-heatmap">
-// でラップされ、Rails 版 ERB (rails/app/views/fragment/tracking_heatmaps/show.html.erb)
-// と一致する HTML を返すことで、プロフィールページの Stimulus controller と
-// SCSS を無改修で動かす。
+// でラップされ、Rails版ERB (rails/app/views/fragment/tracking_heatmaps/show.html.erb)
+// と一致するHTMLを返すことで、プロフィールページのStimulus controllerと
+// SCSSを無改修で動かす。
 templ Show(cells []viewmodel.TrackingHeatmapCell) {
 	<turbo-frame id="tracking-heatmap">
 		<div class="c-tracking-heatmap">

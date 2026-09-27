@@ -9,7 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestSettingRepository_Create は設定を正常に作成し、Modelとして返却されることをテスト
+// TestSettingRepository_Createは設定を正常に作成し、Modelとして返却されることをテスト
 func TestSettingRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -31,13 +31,13 @@ func TestSettingRepository_Create(t *testing.T) {
 		t.Error("SettingIDがゼロ値です")
 	}
 	if setting.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", setting.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", setting.UserID, userID)
 	}
-	// CreateクエリでINSERT時に明示的に true を指定している
+	// CreateクエリでINSERT時に明示的にtrueを指定している
 	if !setting.PrivacyPolicyAgreed {
 		t.Error("PrivacyPolicyAgreedがtrueではありません")
 	}
-	// CreateクエリでINSERT時に明示的に true を指定している
+	// CreateクエリでINSERT時に明示的にtrueを指定している
 	if !setting.HideRecordBody {
 		t.Error("HideRecordBodyがtrueではありません")
 	}
@@ -49,7 +49,7 @@ func TestSettingRepository_Create(t *testing.T) {
 	}
 }
 
-// TestSettingRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestSettingRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestSettingRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -68,6 +68,6 @@ func TestSettingRepository_WithTx(t *testing.T) {
 	}
 
 	if setting.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", setting.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", setting.UserID, userID)
 	}
 }

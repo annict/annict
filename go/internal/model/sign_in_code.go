@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-// SignInCode はメールでログインする際の 6 桁コードのドメインエンティティ
+// SignInCodeはメールでログインする際の6桁コードのドメインエンティティ
 type SignInCode struct {
 	ID         SignInCodeID
 	UserID     UserID

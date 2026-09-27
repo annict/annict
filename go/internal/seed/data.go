@@ -7,7 +7,7 @@ import (
 
 // アニメタイトル生成用のデータソース
 
-// 形容詞リスト（アニメタイトルでよく使われる言葉）
+// 形容詞リスト (アニメタイトルでよく使われる言葉)
 var adjectives = []string{
 	"魔法の", "伝説の", "秘密の", "不思議な", "輝く",
 	"永遠の", "失われた", "禁断の", "幻想の", "運命の",
@@ -21,7 +21,7 @@ var adjectives = []string{
 	"赤い", "青い", "緑の", "黒い", "白い",
 }
 
-// 名詞リスト（アニメのテーマやキャラクターに関連する言葉）
+// 名詞リスト (アニメのテーマやキャラクターに関連する言葉)
 var nouns = []string{
 	"冒険", "物語", "戦士", "魔女", "勇者",
 	"姫", "騎士", "王国", "帝国", "世界",
@@ -40,7 +40,7 @@ var nouns = []string{
 	"スポーツ", "野球", "サッカー", "バスケ", "テニス",
 }
 
-// サフィックスリスト（タイトルの末尾でよく使われる言葉）
+// サフィックスリスト (タイトルの末尾でよく使われる言葉)
 var suffixes = []string{
 	"物語", "伝説", "クロニクル", "サーガ", "戦記",
 	"〜始まりの章〜", "〜運命の扉〜", "〜光と闇〜", "〜新世界〜", "〜無限の夢〜",
@@ -49,7 +49,7 @@ var suffixes = []string{
 	"〜魂の絆〜", "〜永遠の約束〜", "〜運命の歯車〜", "〜星降る夜に〜", "〜希望の光〜",
 }
 
-// シーズン名（春夏秋冬）
+// シーズン名 (春夏秋冬)
 type SeasonName string
 
 const (
@@ -59,7 +59,7 @@ const (
 	SeasonWinter SeasonName = "winter"
 )
 
-// AllSeasons は全シーズンのリスト
+// AllSeasonsは全シーズンのリスト
 var AllSeasons = []SeasonName{
 	SeasonSpring,
 	SeasonSummer,
@@ -77,7 +77,7 @@ const (
 	MediaWeb   MediaType = "web"
 )
 
-// AllMediaTypes は全メディアタイプのリスト
+// AllMediaTypesは全メディアタイプのリスト
 var AllMediaTypes = []MediaType{
 	MediaTV,
 	MediaOVA,
@@ -108,48 +108,48 @@ var usernameNouns = []string{
 	"artist", "creator", "builder", "maker", "designer",
 }
 
-// GenerateAnimeTitle はランダムなアニメタイトルを生成します
+// GenerateAnimeTitleはランダムなアニメタイトルを生成します
 func GenerateAnimeTitle(r *rand.Rand) string {
 	// パターンをランダムに選択
 	pattern := r.Intn(4)
 
 	switch pattern {
 	case 0:
-		// 形容詞 + 名詞（例: 魔法の冒険）
+		// 形容詞 + 名詞 (例: 魔法の冒険)
 		adj := adjectives[r.Intn(len(adjectives))]
 		noun := nouns[r.Intn(len(nouns))]
 		return fmt.Sprintf("%s%s", adj, noun)
 	case 1:
-		// 形容詞 + 名詞 + サフィックス（例: 魔法の冒険物語）
+		// 形容詞 + 名詞 + サフィックス (例: 魔法の冒険物語)
 		adj := adjectives[r.Intn(len(adjectives))]
 		noun := nouns[r.Intn(len(nouns))]
 		suffix := suffixes[r.Intn(len(suffixes))]
 		return fmt.Sprintf("%s%s%s", adj, noun, suffix)
 	case 2:
-		// 名詞のみ（例: 冒険）
+		// 名詞のみ (例: 冒険)
 		noun := nouns[r.Intn(len(nouns))]
 		return noun
 	default:
-		// 名詞 + サフィックス（例: 冒険物語）
+		// 名詞 + サフィックス (例: 冒険物語)
 		noun := nouns[r.Intn(len(nouns))]
 		suffix := suffixes[r.Intn(len(suffixes))]
 		return fmt.Sprintf("%s%s", noun, suffix)
 	}
 }
 
-// GenerateSeasonYear は2020〜2025年のランダムな年を生成します
+// GenerateSeasonYearは2020〜2025年のランダムな年を生成します
 func GenerateSeasonYear(r *rand.Rand) int32 {
 	// 年は2020〜2025の範囲内のため、int32への変換は安全
 	return int32(2020 + r.Intn(6)) // #nosec G115 // 2020〜2025
 }
 
-// GenerateSeasonName はランダムなシーズン名を生成します
+// GenerateSeasonNameはランダムなシーズン名を生成します
 func GenerateSeasonName(r *rand.Rand) SeasonName {
 	return AllSeasons[r.Intn(len(AllSeasons))]
 }
 
-// GenerateMediaType はランダムなメディアタイプを生成します
-// weightedはtrueの場合、TVアニメの出現率を高くします（よりリアルな分布）
+// GenerateMediaTypeはランダムなメディアタイプを生成します
+// weightedはtrueの場合、TVアニメの出現率を高くします (よりリアルな分布)
 func GenerateMediaType(r *rand.Rand, weighted bool) MediaType {
 	if !weighted {
 		return AllMediaTypes[r.Intn(len(AllMediaTypes))]
@@ -169,7 +169,7 @@ func GenerateMediaType(r *rand.Rand, weighted bool) MediaType {
 	}
 }
 
-// GenerateUsername はランダムなユーザー名を生成します
+// GenerateUsernameはランダムなユーザー名を生成します
 // numberが0の場合は連番なし、1以上の場合は連番を付与します
 func GenerateUsername(r *rand.Rand, number int) string {
 	adj := usernameAdjectives[r.Intn(len(usernameAdjectives))]
@@ -183,7 +183,7 @@ func GenerateUsername(r *rand.Rand, number int) string {
 
 // エピソード記録の感想文生成用のデータソース
 
-// 感想文テンプレート（プレースホルダーを含む）
+// 感想文テンプレート (プレースホルダーを含む)
 var episodeBodyTemplates = []string{
 	"今回の話はとても面白かったです！{character}の活躍が印象的でした。",
 	"{scene}のシーンに感動しました。次回も楽しみです。",
@@ -238,7 +238,7 @@ var emotionWords = []string{
 	"優しい", "温かい", "楽しい", "面白い", "感慨深い",
 }
 
-// GenerateJapaneseEpisodeRecordBody は日本語のエピソード記録感想文を生成します
+// GenerateJapaneseEpisodeRecordBodyは日本語のエピソード記録感想文を生成します
 func GenerateJapaneseEpisodeRecordBody(r *rand.Rand) string {
 	// ランダムなテンプレートを選択
 	template := episodeBodyTemplates[r.Intn(len(episodeBodyTemplates))]
@@ -252,7 +252,7 @@ func GenerateJapaneseEpisodeRecordBody(r *rand.Rand) string {
 	return body
 }
 
-// replacePlaceholder はテンプレート内のプレースホルダーをランダムな単語で置換します
+// replacePlaceholderはテンプレート内のプレースホルダーをランダムな単語で置換します
 func replacePlaceholder(template, placeholder string, words []string, r *rand.Rand) string {
 	if len(words) == 0 {
 		return template
@@ -261,7 +261,7 @@ func replacePlaceholder(template, placeholder string, words []string, r *rand.Ra
 	return replaceAll(template, placeholder, word)
 }
 
-// replaceAll は文字列内のすべてのoldをnewに置換します
+// replaceAllは文字列内のすべてのoldをnewに置換します
 func replaceAll(s, old, new string) string {
 	result := ""
 	for {
@@ -276,7 +276,7 @@ func replaceAll(s, old, new string) string {
 	return result
 }
 
-// indexOf は文字列内で最初にsubstrが出現する位置を返します（見つからない場合は-1）
+// indexOfは文字列内で最初にsubstrが出現する位置を返します (見つからない場合は-1)
 func indexOf(s, substr string) int {
 	for i := 0; i <= len(s)-len(substr); i++ {
 		if s[i:i+len(substr)] == substr {

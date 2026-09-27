@@ -24,10 +24,10 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	token := r.FormValue("token")
 	username := r.FormValue("username")
 
-	// ロケールを取得（セッションまたはデフォルト）
+	// ロケールを取得 (セッションまたはデフォルト)
 	locale := i18n.GetLocale(ctx)
 
-	// ユースケースを実行（バリデーション + ビジネスロジック）
+	// ユースケースを実行 (バリデーション + ビジネスロジック)
 	output, err := h.completeSignUpUC.Execute(ctx, usecase.CompleteSignUpInput{
 		Token:    token,
 		Username: username,
@@ -36,14 +36,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// バリデーションエラー
 		if ve := model.AsValidationError(err); ve != nil {
-			// トークンが無効な場合は /sign_up に戻す（token を再発行する必要があるため）
+			// トークンが無効な場合は /sign_upに戻す (tokenを再発行する必要があるため)
 			if ve.HasFieldError("token") {
 				h.flashMgr.SetError(w, i18n.T(ctx, "sign_up_username_error_token_invalid"))
 				http.Redirect(w, r, "/sign_up", http.StatusSeeOther)
 				return
 			}
-			// メールアドレスは Redis のトークン経由でしか取得できないため、再描画では空にする。
-			// Email 表示は無効化されるが、token と username の入力でフォーム再送信できる。
+			// メールアドレスはRedisのトークン経由でしか取得できないため、再描画では空にする。
+			// Email表示は無効化されるが、tokenとusernameの入力でフォーム再送信できる。
 			h.renderNewForm(w, r, http.StatusUnprocessableEntity, ve, token, "", username)
 			return
 		}
@@ -57,12 +57,12 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// セッションCookieを設定（session.Managerに委譲）
+	// セッションCookieを設定 (session.Managerに委譲)
 	h.sessionMgr.SetSessionCookieByPublicID(w, r, output.SessionPublicID)
 
-	// セッションから sign_up_email を削除
+	// セッションからsign_up_emailを削除
 	if err := h.sessionMgr.DeleteValue(ctx, r, "sign_up_email"); err != nil {
-		slog.WarnContext(ctx, "セッションから sign_up_email の削除に失敗しました（処理は続行）", "error", err)
+		slog.WarnContext(ctx, "セッションからsign_up_emailの削除に失敗しました (処理は続行)", "error", err)
 	}
 
 	slog.InfoContext(ctx, "ユーザー登録成功",

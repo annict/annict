@@ -8,14 +8,14 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// GetPopularWorksUsecase は人気作品を取得するユースケースです
+// GetPopularWorksUsecaseは人気作品を取得するユースケースです
 type GetPopularWorksUsecase struct {
 	workRepo  *repository.WorkRepository
 	castRepo  *repository.CastRepository
 	staffRepo *repository.StaffRepository
 }
 
-// NewGetPopularWorksUsecase は新しいGetPopularWorksUsecaseを作成します
+// NewGetPopularWorksUsecaseは新しいGetPopularWorksUsecaseを作成します
 func NewGetPopularWorksUsecase(
 	workRepo *repository.WorkRepository,
 	castRepo *repository.CastRepository,
@@ -28,12 +28,12 @@ func NewGetPopularWorksUsecase(
 	}
 }
 
-// GetPopularWorksOutput はユースケースの出力です
+// GetPopularWorksOutputはユースケースの出力です
 type GetPopularWorksOutput struct {
 	Works []*model.Work
 }
 
-// Execute は人気作品をキャスト・スタッフ情報と共に取得します
+// Executeは人気作品をキャスト・スタッフ情報と共に取得します
 func (uc *GetPopularWorksUsecase) Execute(ctx context.Context) (*GetPopularWorksOutput, error) {
 	works, err := uc.workRepo.GetPopular(ctx)
 	if err != nil {
@@ -68,8 +68,8 @@ func (uc *GetPopularWorksUsecase) Execute(ctx context.Context) (*GetPopularWorks
 		staffsByWorkID[s.WorkID] = append(staffsByWorkID[s.WorkID], s)
 	}
 
-	// workRepo.GetPopular が毎回新規 *model.Work を生成して返すことを前提に、
-	// 取得した Work インスタンスへ Casts/Staffs を直接代入する。Repository 側で
+	// workRepo.GetPopularが毎回新規 *model.Workを生成して返すことを前提に、
+	// 取得したWorkインスタンスへCasts/Staffsを直接代入する。Repository側で
 	// キャッシュやプール再利用を導入する場合はこの前提を見直す必要がある。
 	for _, w := range works {
 		w.Casts = castsByWorkID[w.ID]

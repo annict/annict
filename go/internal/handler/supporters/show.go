@@ -29,13 +29,13 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	showSuccessMessage := r.URL.Query().Get("success") == "true"
 	showCanceledMessage := r.URL.Query().Get("canceled") == "true"
 
-	// CSRFトークンを取得（ログイン済みユーザーのみフォームが表示されるため）
+	// CSRFトークンを取得 (ログイン済みユーザーのみフォームが表示されるため)
 	csrfToken := ""
 	if user != nil {
 		csrfToken = authMiddleware.GetOrCreateCSRFToken(w, r, h.sessionManager)
 	}
 
-	// ユーザーのタイムゾーンをロード（未ログイン時はAsia/Tokyo）
+	// ユーザーのタイムゾーンをロード (未ログイン時はAsia/Tokyo)
 	userLocation := time.FixedZone("Asia/Tokyo", 9*60*60)
 	if user != nil && user.TimeZone != "" {
 		if loc, err := time.LoadLocation(user.TimeZone); err == nil {
@@ -63,7 +63,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// ページメタ情報を準備
-	meta := viewmodel.DefaultPageMeta(ctx, h.cfg)
+	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, r.URL.Path)
 	meta.SetTitle(ctx, "supporters_title")
 
 	// テンプレートをレンダリング
@@ -83,7 +83,7 @@ func (h *Handler) Show(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// buildSupporterPageData はUseCaseの出力からサポーターページのビューモデルを構築します
+// buildSupporterPageDataはUseCaseの出力からサポーターページのビューモデルを構築します
 func buildSupporterPageData(result *usecase.GetSupporterStatusOutput, data viewmodel.SupporterPageData) viewmodel.SupporterPageData {
 	if result.IsStripeActive && result.StripeSubscriber != nil {
 		data.StripeSubscriber = convertStripeSubscriberToView(result.StripeSubscriber)
@@ -107,7 +107,7 @@ func buildSupporterPageData(result *usecase.GetSupporterStatusOutput, data viewm
 	return data
 }
 
-// convertStripeSubscriberToView はStripeサブスクライバーをビューモデルに変換します
+// convertStripeSubscriberToViewはStripeサブスクライバーをビューモデルに変換します
 func convertStripeSubscriberToView(s *model.StripeSubscriber) *viewmodel.StripeSubscriberView {
 	view := &viewmodel.StripeSubscriberView{
 		CustomerID:       s.StripeCustomerID,
@@ -120,7 +120,7 @@ func convertStripeSubscriberToView(s *model.StripeSubscriber) *viewmodel.StripeS
 	return view
 }
 
-// convertGumroadSubscriberToView はGumroadサブスクライバーをビューモデルに変換します
+// convertGumroadSubscriberToViewはGumroadサブスクライバーをビューモデルに変換します
 func convertGumroadSubscriberToView(s *model.GumroadSubscriber) *viewmodel.GumroadSubscriberView {
 	view := &viewmodel.GumroadSubscriberView{
 		GumroadID: s.GumroadID,

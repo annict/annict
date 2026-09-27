@@ -1,4 +1,4 @@
-// Package password はパスワード変更機能を提供します
+// Package passwordはパスワード変更機能を提供します
 package password
 
 import (
@@ -8,7 +8,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Handler はパスワード編集・更新のHTTPハンドラーです
+// Handlerはパスワード編集・更新のHTTPハンドラーです
 type Handler struct {
 	cfg                     *config.Config
 	sessionMgr              *session.Manager
@@ -18,7 +18,7 @@ type Handler struct {
 	updatePasswordResetUC   *usecase.UpdatePasswordResetUsecase
 }
 
-// NewHandler は新しいHandlerを作成します
+// NewHandlerは新しいHandlerを作成します
 func NewHandler(cfg *config.Config, sessionMgr *session.Manager, flashMgr *session.FlashManager, limiter *ratelimit.Limiter, getPasswordResetTokenUC *usecase.GetPasswordResetTokenUsecase, updatePasswordResetUC *usecase.UpdatePasswordResetUsecase) *Handler {
 	return &Handler{
 		cfg:                     cfg,

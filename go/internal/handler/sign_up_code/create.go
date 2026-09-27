@@ -15,8 +15,8 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// codeErrors は usecase のコード検証で既知のエラー一覧。
-// ユーザー向けメッセージはセキュリティのため全ケースで共通化している（情報漏洩対策）ため、
+// codeErrorsはusecaseのコード検証で既知のエラー一覧。
+// ユーザー向けメッセージはセキュリティのため全ケースで共通化している (情報漏洩対策) ため、
 // メッセージキーを持たず単純なエラーのスライスとして定義する。
 var codeErrors = []error{
 	usecase.ErrCodeNotFound,
@@ -50,7 +50,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Rate Limiting チェック: コード検証（10 回/時間/IP）
+	// Rate Limitingチェック: コード検証 (10回/時間/IP)
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		ipKey := fmt.Sprintf("sign_up:verify:%s", clientip.GetClientIP(r))
 		allowed, err := h.limiter.Check(ctx, ipKey, 10, 1*time.Hour)
@@ -80,8 +80,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// セキュリティのため、すべての既知エラーで同じメッセージを表示（情報漏洩対策）
-		// errors.Is で排他的にマッチするため、順序は意味を持たない
+		// セキュリティのため、すべての既知エラーで同じメッセージを表示 (情報漏洩対策)
+		// errors.Isで排他的にマッチするため、順序は意味を持たない
 		matched := false
 		for _, ce := range codeErrors {
 			if errors.Is(err, ce) {
@@ -104,14 +104,14 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// すべての既知エラーで同じメッセージを表示（情報漏洩対策）
+		// すべての既知エラーで同じメッセージを表示 (情報漏洩対策)
 		codeErr := model.NewValidationError()
 		codeErr.AddField("code", i18n.T(ctx, "sign_up_code_error_invalid"))
 		h.renderNewForm(w, r, http.StatusUnprocessableEntity, codeErr, email)
 		return
 	}
 
-	// 一時トークンを生成してRedisに保存（次のステップで使用）
+	// 一時トークンを生成してRedisに保存 (次のステップで使用)
 	token, err := generateToken()
 	if err != nil {
 		slog.ErrorContext(ctx, "一時トークンの生成に失敗しました", "error", err)
@@ -119,7 +119,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Redisに一時トークンを保存（値はメールアドレス、有効期限: 15分）
+	// Redisに一時トークンを保存 (値はメールアドレス、有効期限: 15分)
 	if h.redisClient != nil {
 		tokenKey := fmt.Sprintf("sign_up_token:%s", token)
 		err = h.redisClient.Set(ctx, tokenKey, email, 15*time.Minute).Err()
@@ -139,7 +139,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/sign_up/username?token=%s", token), http.StatusSeeOther)
 }
 
-// generateToken は32バイトのランダムな一時トークンを生成します
+// generateTokenは32バイトのランダムな一時トークンを生成します
 func generateToken() (string, error) {
 	randomBytes := make([]byte, 32)
 	if _, err := rand.Read(randomBytes); err != nil {

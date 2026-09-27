@@ -10,7 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestSignInCodeRepository_Create はサインインコードを正常に作成し、Modelとして返却されることをテスト
+// TestSignInCodeRepository_Createはサインインコードを正常に作成し、Modelとして返却されることをテスト
 func TestSignInCodeRepository_Create(t *testing.T) {
 	t.Parallel()
 
@@ -41,16 +41,16 @@ func TestSignInCodeRepository_Create(t *testing.T) {
 		t.Error("SignInCodeIDがゼロ値です")
 	}
 	if code.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", code.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", code.UserID, userID)
 	}
 	if code.CodeDigest != codeDigest {
-		t.Errorf("CodeDigestが一致しません: got %v, want %v", code.CodeDigest, codeDigest)
+		t.Errorf("CodeDigest = %v、期待値 = %v", code.CodeDigest, codeDigest)
 	}
 	if code.Attempts != 0 {
-		t.Errorf("Attemptsの初期値が0ではありません: got %v", code.Attempts)
+		t.Errorf("Attemptsの初期値 = %v、期待値 = 0", code.Attempts)
 	}
 	if code.UsedAt.Valid {
-		t.Error("UsedAtが有効値です（未使用のはず）")
+		t.Error("UsedAtが有効値です (未使用のはず)")
 	}
 	if code.CreatedAt.IsZero() {
 		t.Error("CreatedAtがゼロ値です")
@@ -60,7 +60,7 @@ func TestSignInCodeRepository_Create(t *testing.T) {
 	}
 }
 
-// TestSignInCodeRepository_GetValidByUserID は有効なコードが取得できることをテスト
+// TestSignInCodeRepository_GetValidByUserIDは有効なコードが取得できることをテスト
 func TestSignInCodeRepository_GetValidByUserID(t *testing.T) {
 	t.Parallel()
 
@@ -91,17 +91,17 @@ func TestSignInCodeRepository_GetValidByUserID(t *testing.T) {
 		t.Fatal("コードが取得できませんでした")
 	}
 	if got.ID != created.ID {
-		t.Errorf("IDが一致しません: got %v, want %v", got.ID, created.ID)
+		t.Errorf("ID = %v、期待値 = %v", got.ID, created.ID)
 	}
 	if got.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", got.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", got.UserID, userID)
 	}
 	if got.CodeDigest != "valid-digest" {
-		t.Errorf("CodeDigestが一致しません: got %v, want valid-digest", got.CodeDigest)
+		t.Errorf("CodeDigest = %v、期待値 = valid-digest", got.CodeDigest)
 	}
 }
 
-// TestSignInCodeRepository_WithTx はWithTxで取得したRepositoryがトランザクション内で動作することをテスト
+// TestSignInCodeRepository_WithTxはWithTxで取得したRepositoryがトランザクション内で動作することをテスト
 func TestSignInCodeRepository_WithTx(t *testing.T) {
 	t.Parallel()
 
@@ -125,6 +125,6 @@ func TestSignInCodeRepository_WithTx(t *testing.T) {
 	}
 
 	if code.UserID != userID {
-		t.Errorf("UserIDが一致しません: got %v, want %v", code.UserID, userID)
+		t.Errorf("UserID = %v、期待値 = %v", code.UserID, userID)
 	}
 }

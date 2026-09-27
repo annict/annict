@@ -22,7 +22,6 @@ class Work < ApplicationRecord
 
   enumerize :media, in: {tv: 1, ova: 2, movie: 3, web: 4, other: 0}
   enumerize :season_name, in: Season::NAME_HASH
-  enumerize :status, in: %i[published archived deleted], default: :published, scope: true
 
   belongs_to :number_format, optional: true
   belongs_to :season_model, class_name: "SeasonModel", foreign_key: :season_id, optional: true
@@ -110,36 +109,6 @@ class Work < ApplicationRecord
     where(season_year: nil, season_name: nil)
   }
 
-  scope :with_no_episodes, -> {
-    where(no_episodes: false).where(<<~SQL)
-      NOT EXISTS (
-        SELECT * FROM episodes WHERE
-          1 = 1
-          AND episodes.work_id = works.id
-          AND episodes.deleted_at IS NULL
-          AND episodes.unpublished_at IS NULL
-      )
-    SQL
-  }
-
-  scope :with_no_slots, -> {
-    where(<<~SQL)
-      NOT EXISTS (
-        SELECT * FROM slots WHERE
-          1 = 1
-          AND slots.work_id = works.id
-          AND slots.deleted_at IS NULL
-          AND slots.unpublished_at IS NULL
-      )
-    SQL
-  }
-
-  # 作品画像が設定されていない作品
-  scope :with_no_image, -> {
-    joins("LEFT OUTER JOIN work_images ON work_images.work_id = works.id")
-      .where("work_images.id IS NULL")
-  }
-
   scope :order_by_season, ->(type = :asc) {
     order(season_year: type, season_name: type, id: :asc)
   }
@@ -223,18 +192,6 @@ class Work < ApplicationRecord
 
   def sync_with_syobocal?
     sc_tid.present?
-  end
-
-  def episodes_filled?
-    !manual_episodes_count.nil? && episodes.only_kept.count >= manual_episodes_count
-  end
-
-  def slots_exists?
-    slots.where.not(started_at: nil).exists?
-  end
-
-  def manual_episodes_creatable?
-    !episodes_filled? && !slots_exists?
   end
 
   def syobocal_url
@@ -355,16 +312,6 @@ class Work < ApplicationRecord
 
     decrement!(:watchers_count) if is_prev_positive
     increment!(:watchers_count) if is_next_positive
-  end
-
-  # Determine the publication state from the status column value.
-  # [Ja] status カラムの値で公開状態を判定する
-  def published?
-    status.to_s == "published"
-  end
-
-  def archived?
-    status.to_s == "archived"
   end
 
   def self.ransackable_attributes(auth_object = nil)

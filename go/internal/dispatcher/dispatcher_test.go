@@ -8,7 +8,7 @@ import (
 	"github.com/riverqueue/river/rivertype"
 )
 
-// mockJobInserter はテスト用のモック
+// mockJobInserterはテスト用のモック
 type mockJobInserter struct {
 	called bool
 	args   river.JobArgs
@@ -22,20 +22,20 @@ func (m *mockJobInserter) Insert(_ context.Context, args river.JobArgs, opts *ri
 	return &rivertype.JobInsertResult{}, nil
 }
 
-// assertEnqueueInvocation は Insert が期待通りの opts で呼ばれたことを検証する
+// assertEnqueueInvocationはInsertが期待通りのoptsで呼ばれたことを検証する
 func assertEnqueueInvocation(t *testing.T, mock *mockJobInserter) {
 	t.Helper()
 	if !mock.called {
-		t.Fatal("Insert が呼ばれていません")
+		t.Fatal("Insertが呼ばれていません")
 	}
 	if mock.opts == nil {
-		t.Fatal("InsertOpts が nil です")
+		t.Fatal("InsertOptsがnilです")
 	}
 	if mock.opts.MaxAttempts != 5 {
-		t.Errorf("MaxAttempts = %d, want 5", mock.opts.MaxAttempts)
+		t.Errorf("MaxAttempts = %d、期待値 = 5", mock.opts.MaxAttempts)
 	}
 	if mock.opts.Queue != river.QueueDefault {
-		t.Errorf("Queue = %s, want %s", mock.opts.Queue, river.QueueDefault)
+		t.Errorf("Queue = %s、期待値 = %s", mock.opts.Queue, river.QueueDefault)
 	}
 }
 
@@ -47,23 +47,23 @@ func TestEnqueueSignInCodeEmail(t *testing.T) {
 
 	err := d.EnqueueSignInCodeEmail(context.Background(), "test@example.com", "123456", "ja")
 	if err != nil {
-		t.Fatalf("EnqueueSignInCodeEmail() error = %v", err)
+		t.Fatalf("EnqueueSignInCodeEmail()のエラー = %v", err)
 	}
 
 	assertEnqueueInvocation(t, mock)
 
 	args, ok := mock.args.(SendSignInCodeEmailArgs)
 	if !ok {
-		t.Fatalf("args の型が SendSignInCodeEmailArgs ではありません: %T", mock.args)
+		t.Fatalf("argsの型がSendSignInCodeEmailArgsではありません: %T", mock.args)
 	}
 	if args.Email != "test@example.com" {
-		t.Errorf("Email = %s, want test@example.com", args.Email)
+		t.Errorf("Email = %s、期待値 = test@example.com", args.Email)
 	}
 	if args.Code != "123456" {
-		t.Errorf("Code = %s, want 123456", args.Code)
+		t.Errorf("Code = %s、期待値 = 123456", args.Code)
 	}
 	if args.Locale != "ja" {
-		t.Errorf("Locale = %s, want ja", args.Locale)
+		t.Errorf("Locale = %s、期待値 = ja", args.Locale)
 	}
 }
 
@@ -75,23 +75,23 @@ func TestEnqueueSignUpCodeEmail(t *testing.T) {
 
 	err := d.EnqueueSignUpCodeEmail(context.Background(), "test@example.com", "654321", "en")
 	if err != nil {
-		t.Fatalf("EnqueueSignUpCodeEmail() error = %v", err)
+		t.Fatalf("EnqueueSignUpCodeEmail()のエラー = %v", err)
 	}
 
 	assertEnqueueInvocation(t, mock)
 
 	args, ok := mock.args.(SendSignUpCodeEmailArgs)
 	if !ok {
-		t.Fatalf("args の型が SendSignUpCodeEmailArgs ではありません: %T", mock.args)
+		t.Fatalf("argsの型がSendSignUpCodeEmailArgsではありません: %T", mock.args)
 	}
 	if args.Email != "test@example.com" {
-		t.Errorf("Email = %s, want test@example.com", args.Email)
+		t.Errorf("Email = %s、期待値 = test@example.com", args.Email)
 	}
 	if args.Code != "654321" {
-		t.Errorf("Code = %s, want 654321", args.Code)
+		t.Errorf("Code = %s、期待値 = 654321", args.Code)
 	}
 	if args.Locale != "en" {
-		t.Errorf("Locale = %s, want en", args.Locale)
+		t.Errorf("Locale = %s、期待値 = en", args.Locale)
 	}
 }
 
@@ -103,23 +103,23 @@ func TestEnqueuePasswordResetEmail(t *testing.T) {
 
 	err := d.EnqueuePasswordResetEmail(context.Background(), "test@example.com", "https://example.com/password/edit?token=abc", "ja")
 	if err != nil {
-		t.Fatalf("EnqueuePasswordResetEmail() error = %v", err)
+		t.Fatalf("EnqueuePasswordResetEmail()のエラー = %v", err)
 	}
 
 	assertEnqueueInvocation(t, mock)
 
 	args, ok := mock.args.(SendPasswordResetEmailArgs)
 	if !ok {
-		t.Fatalf("args の型が SendPasswordResetEmailArgs ではありません: %T", mock.args)
+		t.Fatalf("argsの型がSendPasswordResetEmailArgsではありません: %T", mock.args)
 	}
 	if args.Email != "test@example.com" {
-		t.Errorf("Email = %s, want test@example.com", args.Email)
+		t.Errorf("Email = %s、期待値 = test@example.com", args.Email)
 	}
 	if args.ResetURL != "https://example.com/password/edit?token=abc" {
-		t.Errorf("ResetURL = %s, want https://example.com/password/edit?token=abc", args.ResetURL)
+		t.Errorf("ResetURL = %s、期待値 = https://example.com/password/edit?token=abc", args.ResetURL)
 	}
 	if args.Locale != "ja" {
-		t.Errorf("Locale = %s, want ja", args.Locale)
+		t.Errorf("Locale = %s、期待値 = ja", args.Locale)
 	}
 }
 
@@ -139,7 +139,7 @@ func TestArgs_Kind(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.gotKind != tt.want {
-				t.Errorf("Kind() = %s, want %s", tt.gotKind, tt.want)
+				t.Errorf("Kind() = %s、期待値 = %s", tt.gotKind, tt.want)
 			}
 		})
 	}
@@ -177,10 +177,10 @@ func TestArgs_InsertOpts(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if tt.opts.Queue != tt.wantQueue {
-				t.Errorf("Queue = %q, want %q", tt.opts.Queue, tt.wantQueue)
+				t.Errorf("Queue = %q、期待値 = %q", tt.opts.Queue, tt.wantQueue)
 			}
 			if tt.opts.MaxAttempts != tt.wantMaxAttempts {
-				t.Errorf("MaxAttempts = %d, want %d", tt.opts.MaxAttempts, tt.wantMaxAttempts)
+				t.Errorf("MaxAttempts = %d、期待値 = %d", tt.opts.MaxAttempts, tt.wantMaxAttempts)
 			}
 		})
 	}

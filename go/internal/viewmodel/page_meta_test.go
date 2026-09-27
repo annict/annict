@@ -8,7 +8,7 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 )
 
-// TestDefaultPageMeta はDefaultPageMeta関数のテスト
+// TestDefaultPageMetaはDefaultPageMeta関数のテスト
 func TestDefaultPageMeta(t *testing.T) {
 	// テスト用のconfigを作成
 	cfg := &config.Config{
@@ -43,53 +43,53 @@ func TestDefaultPageMeta(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
 
 			// DefaultPageMetaを呼び出し
-			meta := DefaultPageMeta(ctx, cfg)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 
 			// タイトルの確認
 			if meta.Title != tt.expectedTitle {
-				t.Errorf("Title: got %q, want %q", meta.Title, tt.expectedTitle)
+				t.Errorf("Title = %q、期待値 = %q", meta.Title, tt.expectedTitle)
 			}
 
-			// Descriptionの確認（一部の文字列が含まれているか）
+			// Descriptionの確認 (一部の文字列が含まれているか)
 			switch tt.locale {
 			case i18n.LangJa:
 				if meta.Description == "" {
-					t.Error("Description is empty for Japanese locale")
+					t.Error("日本語ロケールのmeta.Descriptionが空だった")
 				}
 				// 日本語の一部が含まれていることを確認
 				if len(meta.Description) < 10 {
-					t.Errorf("Description too short: %q", meta.Description)
+					t.Errorf("meta.Description = %q、期待値 = 10バイト以上", meta.Description)
 				}
 			case i18n.LangEn:
 				if meta.Description == "" {
-					t.Error("Description is empty for English locale")
+					t.Error("英語ロケールのmeta.Descriptionが空だった")
 				}
 				// 英語の一部が含まれていることを確認
 				if len(meta.Description) < 10 {
-					t.Errorf("Description too short: %q", meta.Description)
+					t.Errorf("meta.Description = %q、期待値 = 10バイト以上", meta.Description)
 				}
 			}
 
 			// OGTypeのデフォルト値を確認
 			if meta.OGType != "website" {
-				t.Errorf("OGType: got %q, want %q", meta.OGType, "website")
+				t.Errorf("OGType = %q、期待値 = %q", meta.OGType, "website")
 			}
 
-			// OGURLが空であることを確認（デフォルト値）
-			if meta.OGURL != "" {
-				t.Errorf("OGURL: got %q, want empty string", meta.OGURL)
+			expectedCanonicalURL := "https://test.annict.com/works/popular"
+			if meta.CanonicalURL != expectedCanonicalURL {
+				t.Errorf("CanonicalURL = %q、期待値 = %q", meta.CanonicalURL, expectedCanonicalURL)
 			}
 
 			// OGImageが正しく設定されていることを確認
 			expectedOGImage := "https://test.annict.com/static/images/og-image.png"
 			if meta.OGImage != expectedOGImage {
-				t.Errorf("OGImage: got %q, want %q", meta.OGImage, expectedOGImage)
+				t.Errorf("OGImage = %q、期待値 = %q", meta.OGImage, expectedOGImage)
 			}
 		})
 	}
 }
 
-// TestDefaultPageMetaWithoutLocale はロケールが設定されていない場合のテスト
+// TestDefaultPageMetaWithoutLocaleはロケールが設定されていない場合のテスト
 func TestDefaultPageMetaWithoutLocale(t *testing.T) {
 	// テスト用のconfigを作成
 	cfg := &config.Config{
@@ -97,33 +97,99 @@ func TestDefaultPageMetaWithoutLocale(t *testing.T) {
 		Domain: "test.annict.com",
 	}
 
-	// ロケールを設定せずに呼び出し（デフォルトは日本語）
+	// ロケールを設定せずに呼び出し (デフォルトは日本語)
 	ctx := context.Background()
-	meta := DefaultPageMeta(ctx, cfg)
+	meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 
 	// タイトルが設定されていることを確認
 	if meta.Title == "" {
-		t.Error("Title is empty")
+		t.Error("meta.Titleが空だった")
 	}
 
 	// Descriptionが設定されていることを確認
 	if meta.Description == "" {
-		t.Error("Description is empty")
+		t.Error("meta.Descriptionが空だった")
 	}
 
 	// OGTypeがデフォルト値であることを確認
 	if meta.OGType != "website" {
-		t.Errorf("OGType: got %q, want %q", meta.OGType, "website")
+		t.Errorf("OGType = %q、期待値 = %q", meta.OGType, "website")
 	}
 
 	// OGImageが設定されていることを確認
 	expectedOGImage := "https://test.annict.com/static/images/og-image.png"
 	if meta.OGImage != expectedOGImage {
-		t.Errorf("OGImage: got %q, want %q", meta.OGImage, expectedOGImage)
+		t.Errorf("OGImage = %q、期待値 = %q", meta.OGImage, expectedOGImage)
 	}
 }
 
-// TestPageMeta_SetTitle はSetTitleメソッドのテスト
+// TestDefaultPageMeta_CanonicalURLはcanonical URLがそのページ自身の絶対URL
+// (設定されたオリジン + リクエストパス) になることを、公開ページとAnnict DB管理画面の
+// 双方について検証します。
+func TestDefaultPageMeta_CanonicalURL(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "test.annict.com",
+	}
+
+	tests := []struct {
+		name string
+		path string
+		want string
+	}{
+		{
+			name: "トップページ",
+			path: "/",
+			want: "https://test.annict.com/",
+		},
+		{
+			name: "公開ページ",
+			path: "/works/popular",
+			want: "https://test.annict.com/works/popular",
+		},
+		{
+			name: "Annict DBの画面",
+			path: "/db/works/1/edit",
+			want: "https://test.annict.com/db/works/1/edit",
+		},
+		{
+			name: "末尾スラッシュを除去",
+			path: "/works/popular/",
+			want: "https://test.annict.com/works/popular",
+		},
+		{
+			name: "重複スラッシュとドットセグメントを正規化",
+			path: "/works//season/../popular/",
+			want: "https://test.annict.com/works/popular",
+		},
+		{
+			name: "ページを分けるパラメータはクエリとして保つ",
+			path: "/db/works?page=3",
+			want: "https://test.annict.com/db/works?page=3",
+		},
+		{
+			name: "クエリを持つ場合もパス部分だけを正規化する",
+			path: "/db/works/?page=3",
+			want: "https://test.annict.com/db/works?page=3",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			meta := DefaultPageMeta(context.Background(), cfg, tt.path)
+
+			if meta.CanonicalURL != tt.want {
+				t.Errorf("CanonicalURL = %q、期待値 = %q", meta.CanonicalURL, tt.want)
+			}
+		})
+	}
+}
+
+// TestPageMeta_SetTitleはSetTitleメソッドのテスト
 func TestPageMeta_SetTitle(t *testing.T) {
 	cfg := &config.Config{
 		Env:    "test",
@@ -153,17 +219,107 @@ func TestPageMeta_SetTitle(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
-			meta := DefaultPageMeta(ctx, cfg)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 			meta.SetTitle(ctx, tt.titleKey)
 
 			if meta.Title != tt.expectedTitle {
-				t.Errorf("Title: got %q, want %q", meta.Title, tt.expectedTitle)
+				t.Errorf("Title = %q、期待値 = %q", meta.Title, tt.expectedTitle)
 			}
 		})
 	}
 }
 
-// TestPageMeta_SetTitleWithoutSuffix はSetTitleWithoutSuffixメソッドのテスト
+// TestPageMeta_SetDBTitleはSetDBTitleが各ロケールで " | Annict DB" サフィックスを付けることを検証します。
+func TestPageMeta_SetDBTitle(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "test.annict.com",
+	}
+
+	tests := []struct {
+		name          string
+		locale        string
+		titleKey      string
+		expectedTitle string
+	}{
+		{
+			name:          "日本語環境でのタイトル設定",
+			locale:        i18n.LangJa,
+			titleKey:      "db_works_index_title",
+			expectedTitle: "作品 | Annict DB",
+		},
+		{
+			name:          "英語環境でのタイトル設定",
+			locale:        i18n.LangEn,
+			titleKey:      "db_works_index_title",
+			expectedTitle: "Works | Annict DB",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ctx := i18n.SetLocale(context.Background(), tt.locale)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
+			meta.SetDBTitle(ctx, tt.titleKey)
+
+			if meta.Title != tt.expectedTitle {
+				t.Errorf("Title = %q、期待値 = %q", meta.Title, tt.expectedTitle)
+			}
+		})
+	}
+}
+
+// TestPageMeta_AddTurnstilePreconnectはヒントがウィジェットの描画に追従することを
+// 検証する。components.Turnstileはsite keyがあるときだけ描画するため、空のキーでは
+// PreconnectOriginsを変えてはならない。
+func TestPageMeta_AddTurnstilePreconnect(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "test.annict.com",
+	}
+
+	tests := []struct {
+		name    string
+		siteKey string
+		want    []string
+	}{
+		{
+			name:    "site keyがあるときはオリジンを宣言する",
+			siteKey: "1x00000000000000000000AA",
+			want:    []string{"https://challenges.cloudflare.com"},
+		},
+		{
+			name:    "site keyが空のときは宣言しない",
+			siteKey: "",
+			want:    nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), i18n.LangJa)
+			meta := DefaultPageMeta(ctx, cfg, "/sign_in")
+			meta.AddTurnstilePreconnect(tt.siteKey)
+
+			if len(meta.PreconnectOrigins) != len(tt.want) {
+				t.Fatalf("PreconnectOrigins = %v、期待値 = %v", meta.PreconnectOrigins, tt.want)
+			}
+			for i, want := range tt.want {
+				if meta.PreconnectOrigins[i] != want {
+					t.Errorf("PreconnectOrigins[%d] = %q、期待値 = %q", i, meta.PreconnectOrigins[i], want)
+				}
+			}
+		})
+	}
+}
+
+// TestPageMeta_SetTitleWithoutSuffixはSetTitleWithoutSuffixメソッドのテスト
 func TestPageMeta_SetTitleWithoutSuffix(t *testing.T) {
 	cfg := &config.Config{
 		Env:    "test",
@@ -177,13 +333,13 @@ func TestPageMeta_SetTitleWithoutSuffix(t *testing.T) {
 		expectedTitle string
 	}{
 		{
-			name:          "日本語環境でのタイトル設定（サフィックスなし）",
+			name:          "日本語環境でのタイトル設定 (サフィックスなし)",
 			locale:        i18n.LangJa,
 			titleKey:      "default_title",
 			expectedTitle: "Annict",
 		},
 		{
-			name:          "英語環境でのタイトル設定（サフィックスなし）",
+			name:          "英語環境でのタイトル設定 (サフィックスなし)",
 			locale:        i18n.LangEn,
 			titleKey:      "default_title",
 			expectedTitle: "Annict",
@@ -193,11 +349,11 @@ func TestPageMeta_SetTitleWithoutSuffix(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
-			meta := DefaultPageMeta(ctx, cfg)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
 			meta.SetTitleWithoutSuffix(ctx, tt.titleKey)
 
 			if meta.Title != tt.expectedTitle {
-				t.Errorf("Title: got %q, want %q", meta.Title, tt.expectedTitle)
+				t.Errorf("Title = %q、期待値 = %q", meta.Title, tt.expectedTitle)
 			}
 		})
 	}

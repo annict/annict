@@ -14,8 +14,8 @@ import (
 	"github.com/annict/annict/go/internal/seed"
 )
 
-// CleanupProfileImagesUsecase プロフィール画像クリーンアップUsecase（シード専用）
-// Cloudflare R2上の shrine/profile/ プレフィックス配下のすべての画像を削除します
+// CleanupProfileImagesUsecaseプロフィール画像クリーンアップUsecase (シード専用)
+// Cloudflare R2上のshrine/profile/ プレフィックス配下のすべての画像を削除します
 type CleanupProfileImagesUsecase struct {
 	endpoint        string
 	accessKeyID     string
@@ -24,7 +24,7 @@ type CleanupProfileImagesUsecase struct {
 	bucketName      string
 }
 
-// NewCleanupProfileImagesUsecase 新しいCleanupProfileImagesUsecaseを作成
+// NewCleanupProfileImagesUsecase新しいCleanupProfileImagesUsecaseを作成
 func NewCleanupProfileImagesUsecase(
 	endpoint string,
 	accessKeyID string,
@@ -41,8 +41,11 @@ func NewCleanupProfileImagesUsecase(
 	}
 }
 
-// Execute Cloudflare R2上の shrine/profile/ プレフィックス配下のすべての画像を削除します
-// データベース上の profiles テーブルのimage_dataカラムは既に cmd/seed/main.go の cleanupExistingData で削除済みです
+// ExecuteはCloudflare R2上のshrine/profile/ プレフィックス配下にある画像を
+// すべて削除する。
+//
+// シード生成フローでは、このUseCaseがストレージ上のオブジェクトを削除する前に、
+// seeder.Runが対応するデータベース行を削除する。
 func (uc *CleanupProfileImagesUsecase) Execute(ctx context.Context) error {
 	// S3設定がない場合はスキップ
 	if uc.endpoint == "" || uc.accessKeyID == "" || uc.secretAccessKey == "" || uc.bucketName == "" {
@@ -50,7 +53,7 @@ func (uc *CleanupProfileImagesUsecase) Execute(ctx context.Context) error {
 		return nil
 	}
 
-	// S3クライアントを作成（Cloudflare R2はS3互換API）
+	// S3クライアントを作成 (Cloudflare R2はS3互換API)
 	cfg := aws.Config{
 		Region: uc.region,
 		Credentials: credentials.NewStaticCredentialsProvider(
@@ -113,7 +116,7 @@ func (uc *CleanupProfileImagesUsecase) Execute(ctx context.Context) error {
 	return nil
 }
 
-// listAllObjects S3バケット内の shrine/profile/ プレフィックス配下のすべてのオブジェクトを取得します
+// listAllObjects S3バケット内のshrine/profile/ プレフィックス配下のすべてのオブジェクトを取得します
 func (uc *CleanupProfileImagesUsecase) listAllObjects(ctx context.Context, client *s3.Client) ([]types.Object, error) {
 	var allObjects []types.Object
 	var continuationToken *string
@@ -142,7 +145,7 @@ func (uc *CleanupProfileImagesUsecase) listAllObjects(ctx context.Context, clien
 	return allObjects, nil
 }
 
-// deleteObjectsBatch 複数のオブジェクトをバッチで削除します（最大1000件）
+// deleteObjectsBatch複数のオブジェクトをバッチで削除します (最大1000件)
 func (uc *CleanupProfileImagesUsecase) deleteObjectsBatch(ctx context.Context, client *s3.Client, objects []types.Object) error {
 	// DeleteObjects用のObjectIdentifierリストを作成
 	identifiers := make([]types.ObjectIdentifier, len(objects))

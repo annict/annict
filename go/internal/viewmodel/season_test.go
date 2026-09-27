@@ -25,7 +25,7 @@ func TestSeason_Path(t *testing.T) {
 			want:  "/works/2026-winter",
 		},
 		{
-			name:  "spring",
+			name:  "springの値でも/works/{value}を返す",
 			value: "2026-spring",
 			want:  "/works/2026-spring",
 		},
@@ -36,7 +36,7 @@ func TestSeason_Path(t *testing.T) {
 			t.Parallel()
 			s := Season{Value: tt.value}
 			if got := s.Path(); got != tt.want {
-				t.Errorf("Season.Path() = %v, want %v", got, tt.want)
+				t.Errorf("Season.Path() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
@@ -97,7 +97,7 @@ func TestSeason_Icon(t *testing.T) {
 			t.Parallel()
 			s := Season{Value: tt.value}
 			if got := s.Icon(); got != tt.want {
-				t.Errorf("Season.Icon() = %v, want %v", got, tt.want)
+				t.Errorf("Season.Icon() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}
@@ -115,13 +115,13 @@ func TestNewSeasons(t *testing.T) {
 	seasons := NewSeasons(cfg)
 
 	if seasons.Previous.Value != "2025-autumn" {
-		t.Errorf("Previous.Value = %v, want %v", seasons.Previous.Value, "2025-autumn")
+		t.Errorf("Previous.Value = %v、期待値 = %v", seasons.Previous.Value, "2025-autumn")
 	}
 	if seasons.Current.Value != "2026-winter" {
-		t.Errorf("Current.Value = %v, want %v", seasons.Current.Value, "2026-winter")
+		t.Errorf("Current.Value = %v、期待値 = %v", seasons.Current.Value, "2026-winter")
 	}
 	if seasons.Next.Value != "2026-spring" {
-		t.Errorf("Next.Value = %v, want %v", seasons.Next.Value, "2026-spring")
+		t.Errorf("Next.Value = %v、期待値 = %v", seasons.Next.Value, "2026-spring")
 	}
 }
 
@@ -133,20 +133,20 @@ func TestNewSeasons_EmptyConfig(t *testing.T) {
 	seasons := NewSeasons(cfg)
 
 	if seasons.Previous.Value != "" {
-		t.Errorf("Previous.Value = %v, want empty string", seasons.Previous.Value)
+		t.Errorf("Previous.Value = %v、期待値 = 空文字列", seasons.Previous.Value)
 	}
 	if seasons.Current.Value != "" {
-		t.Errorf("Current.Value = %v, want empty string", seasons.Current.Value)
+		t.Errorf("Current.Value = %v、期待値 = 空文字列", seasons.Current.Value)
 	}
 	if seasons.Next.Value != "" {
-		t.Errorf("Next.Value = %v, want empty string", seasons.Next.Value)
+		t.Errorf("Next.Value = %v、期待値 = 空文字列", seasons.Next.Value)
 	}
 
 	// 空の場合はデフォルトのパスとアイコンを返す
 	if seasons.Previous.Path() != "/works" {
-		t.Errorf("Previous.Path() = %v, want /works", seasons.Previous.Path())
+		t.Errorf("Previous.Path() = %v、期待値 = /works", seasons.Previous.Path())
 	}
 	if seasons.Previous.Icon() != "info" {
-		t.Errorf("Previous.Icon() = %v, want info", seasons.Previous.Icon())
+		t.Errorf("Previous.Icon() = %v、期待値 = info", seasons.Previous.Icon())
 	}
 }

@@ -9,9 +9,9 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestCreateFollowUsecase_ExecuteBatch はExecuteBatchメソッドのテスト
+// TestCreateFollowUsecase_ExecuteBatchはExecuteBatchメソッドのテスト
 func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
-	// テストDBをセットアップ（トランザクションは各サブテストで作成）
+	// テストDBをセットアップ (トランザクションは各サブテストで作成)
 	db, _ := testutil.SetupTx(t)
 
 	// Usecaseを作成
@@ -153,25 +153,25 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 			// フォロー関係のパラメータを生成
 			followParams := tt.follows(userIDs)
 
-			// ExecuteBatchWithTxを実行（テスト用トランザクションを使用）
+			// ExecuteBatchWithTxを実行 (テスト用トランザクションを使用)
 			results, err := uc.ExecuteBatchWithTx(ctx, tx, followParams, nil)
 
 			// エラーチェック
 			if (err != nil) != tt.wantErr {
-				t.Errorf("ExecuteBatch() error = %v, wantErr %v", err, tt.wantErr)
+				t.Errorf("ExecuteBatch()のエラー = %v、期待値 = %v", err, tt.wantErr)
 				return
 			}
 
 			// 結果の数をチェック
 			if len(results) != tt.wantCount {
-				t.Errorf("ExecuteBatch() returned %d results, want %d", len(results), tt.wantCount)
+				t.Errorf("ExecuteBatch()の結果件数 = %d、期待値 = %d", len(results), tt.wantCount)
 				return
 			}
 
 			// すべてのフォロー関係が作成されたことを確認
 			for _, result := range results {
 				if result.FollowID == 0 {
-					t.Error("ExecuteBatch() returned FollowID = 0, want non-zero")
+					t.Error("ExecuteBatch()のFollowID = 0、期待値 = 0以外")
 				}
 			}
 
@@ -188,7 +188,7 @@ func TestCreateFollowUsecase_ExecuteBatch(t *testing.T) {
 	}
 }
 
-// createTestUsers テスト用のユーザーを作成するヘルパー関数
+// createTestUsersテスト用のユーザーを作成するヘルパー関数
 func createTestUsers(t *testing.T, tx *sql.Tx, count int) []model.UserID {
 	t.Helper()
 	userIDs := make([]model.UserID, count)
@@ -202,7 +202,7 @@ func createTestUsers(t *testing.T, tx *sql.Tx, count int) []model.UserID {
 	return userIDs
 }
 
-// assertUserCounts ユーザーのフォロー/フォロワー数を検証するヘルパー関数
+// assertUserCountsユーザーのフォロー/フォロワー数を検証するヘルパー関数
 func assertUserCounts(t *testing.T, tx *sql.Tx, userID model.UserID, expectedFollowingCount, expectedFollowersCount int) {
 	t.Helper()
 
@@ -210,18 +210,18 @@ func assertUserCounts(t *testing.T, tx *sql.Tx, userID model.UserID, expectedFol
 	var followingCount, followersCount int
 	err := tx.QueryRow(query, userID).Scan(&followingCount, &followersCount)
 	if err != nil {
-		t.Fatalf("Failed to get user counts (user_id=%d): %v", userID, err)
+		t.Fatalf("ユーザーの集計値の取得エラー (user_id=%d) = %v", userID, err)
 	}
 
 	if followingCount != expectedFollowingCount {
-		t.Errorf("User %d: following_count = %d, want %d", userID, followingCount, expectedFollowingCount)
+		t.Errorf("ユーザー%dのfollowing_count = %d、期待値 = %d", userID, followingCount, expectedFollowingCount)
 	}
 	if followersCount != expectedFollowersCount {
-		t.Errorf("User %d: followers_count = %d, want %d", userID, followersCount, expectedFollowersCount)
+		t.Errorf("ユーザー%dのfollowers_count = %d、期待値 = %d", userID, followersCount, expectedFollowersCount)
 	}
 }
 
-// assertFollowExists フォロー関係がDBに存在することを検証するヘルパー関数
+// assertFollowExistsフォロー関係がDBに存在することを検証するヘルパー関数
 func assertFollowExists(t *testing.T, tx *sql.Tx, followerID, followingID model.UserID) {
 	t.Helper()
 
@@ -229,10 +229,10 @@ func assertFollowExists(t *testing.T, tx *sql.Tx, followerID, followingID model.
 	var count int
 	err := tx.QueryRow(query, followerID, followingID).Scan(&count)
 	if err != nil {
-		t.Fatalf("Failed to check follow existence (follower=%d, following=%d): %v", followerID, followingID, err)
+		t.Fatalf("フォロー関係の確認エラー (follower=%d, following=%d) = %v", followerID, followingID, err)
 	}
 
 	if count == 0 {
-		t.Errorf("Follow relationship does not exist: follower_id=%d, following_id=%d", followerID, followingID)
+		t.Errorf("フォロー関係が存在しない: follower_id=%d, following_id=%d", followerID, followingID)
 	}
 }

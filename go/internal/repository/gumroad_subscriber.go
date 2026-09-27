@@ -8,17 +8,17 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// GumroadSubscriberRepository はGumroadサブスクライバー関連のデータアクセスを担当します
+// GumroadSubscriberRepositoryはGumroadサブスクライバー関連のデータアクセスを担当します
 type GumroadSubscriberRepository struct {
 	queries *query.Queries
 }
 
-// NewGumroadSubscriberRepository はGumroadSubscriberRepositoryを作成します
+// NewGumroadSubscriberRepositoryはGumroadSubscriberRepositoryを作成します
 func NewGumroadSubscriberRepository(queries *query.Queries) *GumroadSubscriberRepository {
 	return &GumroadSubscriberRepository{queries: queries}
 }
 
-// GetByID はIDでGumroadサブスクライバーを検索します
+// GetByIDはIDでGumroadサブスクライバーを検索します
 func (r *GumroadSubscriberRepository) GetByID(ctx context.Context, id model.GumroadSubscriberID) (model.GumroadSubscriber, error) {
 	row, err := r.queries.GetGumroadSubscriberByID(ctx, int64(id))
 	if err != nil {
@@ -27,7 +27,7 @@ func (r *GumroadSubscriberRepository) GetByID(ctx context.Context, id model.Gumr
 	return toGumroadSubscriberModel(row), nil
 }
 
-// IsActive はサブスクリプションがアクティブかどうかを判定します
+// IsActiveはサブスクリプションがアクティブかどうかを判定します
 // Rails版のGumroadSubscriber.active?と同じロジック:
 // !gumroad_cancelled_at&.past? && !gumroad_ended_at&.past?
 func (r *GumroadSubscriberRepository) IsActive(subscriber *model.GumroadSubscriber) bool {
@@ -46,7 +46,7 @@ func (r *GumroadSubscriberRepository) IsActive(subscriber *model.GumroadSubscrib
 	return true
 }
 
-// toGumroadSubscriberModel はqueryの結果をモデルに変換します
+// toGumroadSubscriberModelはqueryの結果をモデルに変換します
 func toGumroadSubscriberModel(row query.GumroadSubscriber) model.GumroadSubscriber {
 	return model.GumroadSubscriber{
 		ID:                                 model.GumroadSubscriberID(row.ID),

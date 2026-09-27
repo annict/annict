@@ -46,7 +46,7 @@ module Deprecated::Footers
                     next if !view_context.locale_ja? && is_for_japanese
 
                     h.tag :li, class: "mb-2" do
-                      h.tag :a, href: link_url, target: "_blank" do
+                      h.tag :a, href: link_url, rel: "noopener", target: "_blank" do
                         h.text link_title
                       end
                     end
@@ -115,7 +115,6 @@ module Deprecated::Footers
         [view_context.userland_path, t("noun.annict_userland")],
         [view_context.forum_path, t("noun.annict_forum")],
         [view_context.db_root_path, t("noun.annict_db")],
-        ["https://developers.annict.com", t("noun.annict_developers")],
         ["/supporters", t("noun.annict_supporters")]
       ]
     end
@@ -124,6 +123,7 @@ module Deprecated::Footers
       [
         [view_context.community_path, t("noun.community"), true],
         [view_context.faq_path, t("noun.faq"), true],
+        ["https://wikino.app/s/annict/topics/5", t("noun.developer_help"), false],
         [view_context.terms_path, t("noun.terms_of_use"), true],
         [view_context.privacy_path, t("noun.privacy_policy"), true],
         [view_context.legal_path, t("head.title.pages.legal"), true]

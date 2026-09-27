@@ -9,19 +9,19 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// CleanupExpiredSignInCodesUsecase は期限切れログインコードのクリーンアップを担当します
+// CleanupExpiredSignInCodesUsecaseは期限切れログインコードのクリーンアップを担当する。
 type CleanupExpiredSignInCodesUsecase struct {
 	signInCodeRepo *repository.SignInCodeRepository
 }
 
-// NewCleanupExpiredSignInCodesUsecase は新しい CleanupExpiredSignInCodesUsecase を作成します
+// NewCleanupExpiredSignInCodesUsecaseは新しいCleanupExpiredSignInCodesUsecaseを作成する。
 func NewCleanupExpiredSignInCodesUsecase(signInCodeRepo *repository.SignInCodeRepository) *CleanupExpiredSignInCodesUsecase {
 	return &CleanupExpiredSignInCodesUsecase{
 		signInCodeRepo: signInCodeRepo,
 	}
 }
 
-// Execute は24時間以上前に期限切れまたは使用済みになったログインコードを削除します
+// Executeは24時間以上前に期限切れまたは使用済みになったログインコードを削除する。
 func (uc *CleanupExpiredSignInCodesUsecase) Execute(ctx context.Context) error {
 	slog.InfoContext(ctx, "ログインコードクリーンアップを開始します")
 

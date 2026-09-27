@@ -10,11 +10,11 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// Create はStripe Webhookを受信して処理します (POST /webhooks/stripe)
+// CreateはStripe Webhookを受信して処理します (POST /webhooks/stripe)
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	// リクエストボディを読み取り（Stripe署名検証に必要）
+	// リクエストボディを読み取り (Stripe署名検証に必要)
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		slog.ErrorContext(ctx, "Webhookリクエストボディの読み取りに失敗", "error", err)
@@ -51,6 +51,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		slog.ErrorContext(ctx, "Webhook処理に失敗", "error", err)
 	}
 
-	// Stripeには常に200を返す（リトライを防ぐため）
+	// Stripeには常に200を返す (リトライを防ぐため)
 	w.WriteHeader(http.StatusOK)
 }
