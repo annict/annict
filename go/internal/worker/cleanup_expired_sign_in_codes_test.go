@@ -8,6 +8,7 @@ import (
 	"github.com/riverqueue/river"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -82,8 +83,8 @@ func TestCleanupExpiredSignInCodesWorker(t *testing.T) {
 	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[worker.CleanupExpiredSignInCodesArgs]{
-		Args: worker.CleanupExpiredSignInCodesArgs{},
+	job := &river.Job[dispatcher.CleanupExpiredSignInCodesArgs]{
+		Args: dispatcher.CleanupExpiredSignInCodesArgs{},
 	}
 
 	err = w.Work(ctx, job)
@@ -127,8 +128,8 @@ func TestCleanupExpiredSignInCodesWorker_NoCodes(t *testing.T) {
 	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
 	// ジョブを実行 (コードが存在しない状態)
-	job := &river.Job[worker.CleanupExpiredSignInCodesArgs]{
-		Args: worker.CleanupExpiredSignInCodesArgs{},
+	job := &river.Job[dispatcher.CleanupExpiredSignInCodesArgs]{
+		Args: dispatcher.CleanupExpiredSignInCodesArgs{},
 	}
 
 	err := w.Work(ctx, job)
@@ -182,8 +183,8 @@ func TestCleanupExpiredSignInCodesWorker_RecentlyExpired(t *testing.T) {
 	w := newCleanupExpiredSignInCodesTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[worker.CleanupExpiredSignInCodesArgs]{
-		Args: worker.CleanupExpiredSignInCodesArgs{},
+	job := &river.Job[dispatcher.CleanupExpiredSignInCodesArgs]{
+		Args: dispatcher.CleanupExpiredSignInCodesArgs{},
 	}
 
 	err := w.Work(ctx, job)

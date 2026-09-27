@@ -4,23 +4,9 @@ import (
 	"context"
 
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/dispatcher"
 )
-
-// CleanupExpiredTokensArgsはトークンクリーンアップジョブの引数。
-type CleanupExpiredTokensArgs struct{}
-
-// Kindはジョブの種類を返す。
-func (CleanupExpiredTokensArgs) Kind() string {
-	return "cleanup_expired_tokens"
-}
-
-// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
-func (CleanupExpiredTokensArgs) InsertOpts() river.InsertOpts {
-	return river.InsertOpts{
-		Queue:       river.QueueDefault,
-		MaxAttempts: 3,
-	}
-}
 
 // ExpiredTokenCleanerは期限切れトークンのクリーンアップを実行する。
 type ExpiredTokenCleaner interface {
@@ -29,7 +15,7 @@ type ExpiredTokenCleaner interface {
 
 // CleanupExpiredTokensWorkerはトークンクリーンアップワーカー。
 type CleanupExpiredTokensWorker struct {
-	river.WorkerDefaults[CleanupExpiredTokensArgs]
+	river.WorkerDefaults[dispatcher.CleanupExpiredTokensArgs]
 	cleaner ExpiredTokenCleaner
 }
 
@@ -41,6 +27,6 @@ func NewCleanupExpiredTokensWorker(cleaner ExpiredTokenCleaner) *CleanupExpiredT
 }
 
 // Workは有効期限切れおよび使用済みのトークンを削除する。
-func (w *CleanupExpiredTokensWorker) Work(ctx context.Context, job *river.Job[CleanupExpiredTokensArgs]) error {
+func (w *CleanupExpiredTokensWorker) Work(ctx context.Context, job *river.Job[dispatcher.CleanupExpiredTokensArgs]) error {
 	return w.cleaner.Execute(ctx)
 }

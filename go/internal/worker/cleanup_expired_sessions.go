@@ -4,23 +4,9 @@ import (
 	"context"
 
 	"github.com/riverqueue/river"
+
+	"github.com/annict/annict/go/internal/dispatcher"
 )
-
-// CleanupExpiredSessionsArgsは期限切れセッションのクリーンアップジョブの引数。
-type CleanupExpiredSessionsArgs struct{}
-
-// Kindはジョブの種類を返す。
-func (CleanupExpiredSessionsArgs) Kind() string {
-	return "cleanup_expired_sessions"
-}
-
-// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
-func (CleanupExpiredSessionsArgs) InsertOpts() river.InsertOpts {
-	return river.InsertOpts{
-		Queue:       river.QueueDefault,
-		MaxAttempts: 3,
-	}
-}
 
 // ExpiredSessionCleanerは期限切れセッションのクリーンアップを実行する。
 type ExpiredSessionCleaner interface {
@@ -29,7 +15,7 @@ type ExpiredSessionCleaner interface {
 
 // CleanupExpiredSessionsWorkerはセッションクリーンアップワーカー。
 type CleanupExpiredSessionsWorker struct {
-	river.WorkerDefaults[CleanupExpiredSessionsArgs]
+	river.WorkerDefaults[dispatcher.CleanupExpiredSessionsArgs]
 	cleaner ExpiredSessionCleaner
 }
 
@@ -41,6 +27,6 @@ func NewCleanupExpiredSessionsWorker(cleaner ExpiredSessionCleaner) *CleanupExpi
 }
 
 // Workは期限切れとなるまでアクセスされていないセッションを削除する。
-func (w *CleanupExpiredSessionsWorker) Work(ctx context.Context, job *river.Job[CleanupExpiredSessionsArgs]) error {
+func (w *CleanupExpiredSessionsWorker) Work(ctx context.Context, job *river.Job[dispatcher.CleanupExpiredSessionsArgs]) error {
 	return w.cleaner.Execute(ctx)
 }

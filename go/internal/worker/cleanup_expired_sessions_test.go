@@ -7,6 +7,7 @@ import (
 
 	"github.com/riverqueue/river"
 
+	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/worker"
 )
 
@@ -18,14 +19,6 @@ type expiredSessionCleanerStub struct {
 func (s *expiredSessionCleanerStub) Execute(_ context.Context) error {
 	s.called = true
 	return s.err
-}
-
-func TestCleanupExpiredSessionsArgs_Kind(t *testing.T) {
-	t.Parallel()
-
-	if got, want := (worker.CleanupExpiredSessionsArgs{}).Kind(), "cleanup_expired_sessions"; got != want {
-		t.Errorf("Kind() = %q、期待値 = %q", got, want)
-	}
 }
 
 func TestCleanupExpiredSessionsWorker_Work(t *testing.T) {
@@ -44,8 +37,8 @@ func TestCleanupExpiredSessionsWorker_Work(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			cleaner := &expiredSessionCleanerStub{err: tt.wantErr}
 			w := worker.NewCleanupExpiredSessionsWorker(cleaner)
-			job := &river.Job[worker.CleanupExpiredSessionsArgs]{
-				Args: worker.CleanupExpiredSessionsArgs{},
+			job := &river.Job[dispatcher.CleanupExpiredSessionsArgs]{
+				Args: dispatcher.CleanupExpiredSessionsArgs{},
 			}
 
 			err := w.Work(context.Background(), job)

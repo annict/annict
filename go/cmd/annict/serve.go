@@ -225,7 +225,9 @@ func runServe() {
 	periodicJobTokenCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
-			return worker.CleanupExpiredTokensArgs{}, nil
+			args := dispatcher.CleanupExpiredTokensArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
 		},
 		nil,
 	)
@@ -237,7 +239,9 @@ func runServe() {
 	periodicJobSignInCodeCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
-			return worker.CleanupExpiredSignInCodesArgs{}, nil
+			args := dispatcher.CleanupExpiredSignInCodesArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
 		},
 		nil,
 	)
@@ -249,7 +253,9 @@ func runServe() {
 	periodicJobSessionCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
-			return worker.CleanupExpiredSessionsArgs{}, nil
+			args := dispatcher.CleanupExpiredSessionsArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
 		},
 		nil,
 	)
@@ -263,7 +269,9 @@ func runServe() {
 	periodicJobSyncAnimes := river.NewPeriodicJob(
 		hourlySchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
-			return worker.SyncAnimesArgs{}, nil
+			args := dispatcher.SyncAnimesArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
 		},
 		nil,
 	)

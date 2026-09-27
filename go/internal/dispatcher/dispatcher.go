@@ -57,6 +57,60 @@ func (SendPasswordResetEmailArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 5}
 }
 
+// --- 定期ジョブの引数型 ---
+//
+// 以下のジョブはUseCaseから投入するのではなく、Riverの定期ジョブとして
+// cmd/annict/serve.goで登録し、Riverがスケジュールに従って投入する。
+// そのためEnqueue*メソッドは持たない。Kind()の文字列はriver_jobに保存され、
+// Workerを引くキーになるため変えないこと。
+
+// CleanupExpiredTokensArgsはトークンクリーンアップジョブの引数。
+type CleanupExpiredTokensArgs struct{}
+
+// Kindはジョブの種類を返す。
+func (CleanupExpiredTokensArgs) Kind() string { return "cleanup_expired_tokens" }
+
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
+func (CleanupExpiredTokensArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
+}
+
+// CleanupExpiredSignInCodesArgsは期限切れログインコードのクリーンアップジョブの引数。
+type CleanupExpiredSignInCodesArgs struct{}
+
+// Kindはジョブの種類を返す。
+func (CleanupExpiredSignInCodesArgs) Kind() string { return "cleanup_expired_sign_in_codes" }
+
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
+func (CleanupExpiredSignInCodesArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
+}
+
+// CleanupExpiredSessionsArgsは期限切れセッションのクリーンアップジョブの引数。
+type CleanupExpiredSessionsArgs struct{}
+
+// Kindはジョブの種類を返す。
+func (CleanupExpiredSessionsArgs) Kind() string { return "cleanup_expired_sessions" }
+
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
+func (CleanupExpiredSessionsArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
+}
+
+// SyncAnimesArgsはフェーズ2のフル・リコンシリエーションバッチジョブの引数型。
+// ペイロードは持たない。ジョブはworks / episodesテーブル全体をリコンサイルするため、
+// 実行ごとにパラメータ化するものがない。
+type SyncAnimesArgs struct{}
+
+// Kindはジョブの種類を返す。
+func (SyncAnimesArgs) Kind() string { return "sync_animes" }
+
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。リコンサイルは冪等なので、
+// 一時的な失敗は数回まで安全に再試行でき、取りこぼしは次回の定期実行でも拾われる。
+func (SyncAnimesArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
+}
+
 // --- Dispatcher ---
 
 // JobInserterはジョブをキューに追加するインターフェース
