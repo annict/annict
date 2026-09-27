@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/riverqueue/river"
 
@@ -49,6 +50,25 @@ func TestSyncAnimesWorker_Work_PropagatesError(t *testing.T) {
 	job := &river.Job[worker.SyncAnimesArgs]{Args: worker.SyncAnimesArgs{}}
 	if err := w.Work(context.Background(), job); !errors.Is(err, wantErr) {
 		t.Fatalf("Work()のエラー = %v、期待値 = %v", err, wantErr)
+	}
+}
+
+func TestSyncAnimesWorker_Timeout(t *testing.T) {
+	t.Parallel()
+
+	w := worker.NewSyncAnimesWorker(&fakeAnimesSyncer{})
+
+	// Riverの既定のタイムアウト (1分) では全件走査が打ち切られるため上書きしている。
+	// 実行間隔 (1時間) より短いことも確認する。
+	got := w.Timeout(&river.Job[worker.SyncAnimesArgs]{})
+	if got != 30*time.Minute {
+		t.Errorf("Timeout() = %v、期待値 = 30m", got)
+	}
+	if got <= river.JobTimeoutDefault {
+		t.Errorf("Timeout() = %v、Riverの既定値 %v より長くなければならない", got, river.JobTimeoutDefault)
+	}
+	if got >= time.Hour {
+		t.Errorf("Timeout() = %v、実行間隔 (1時間) より短くなければならない", got)
 	}
 }
 
