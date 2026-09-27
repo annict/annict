@@ -108,14 +108,22 @@ func (r *SessionRepository) DeleteSession(ctx context.Context, sessionID string)
 	return r.queries.DeleteSession(ctx, privateID)
 }
 
-// DeleteExpiredはupdated_atがcutoffより古いセッションを最大limit件削除し、
-// 削除した件数を返す。limitがあることで、呼び出し元は大量の滞留をテーブル全体に対する
-// 長いトランザクションを保持せずに、区切られたステップで消化できる。
-func (r *SessionRepository) DeleteExpired(ctx context.Context, cutoff time.Time, limit int32) (int64, error) {
-	return r.queries.DeleteExpiredSessions(ctx, query.DeleteExpiredSessionsParams{
-		Cutoff:    cutoff,
-		BatchSize: limit,
+// DeleteExpiredはupdated_atがlowerBound以上かつcutoffより古いセッションを最大limit件
+// 削除し、削除した件数と、削除した行のupdated_atの最大値を返す。limitがあることで、
+// 呼び出し元は大量の滞留をテーブル全体に対する長いトランザクションを保持せずに、区切られた
+// ステップで消化できる。返した最大値を次の呼び出しのlowerBoundに渡すと、削除済みの
+// インデックスエントリを読み直さずに続きから削除できる。下限を設けないときはlowerBoundに
+// time.Timeのゼロ値を渡す。削除が0件のときの最大値はlowerBoundをそのまま返す。
+func (r *SessionRepository) DeleteExpired(ctx context.Context, cutoff, lowerBound time.Time, limit int32) (int64, time.Time, error) {
+	row, err := r.queries.DeleteExpiredSessions(ctx, query.DeleteExpiredSessionsParams{
+		LowerBound: lowerBound,
+		Cutoff:     cutoff,
+		BatchSize:  limit,
 	})
+	if err != nil {
+		return 0, time.Time{}, err
+	}
+	return row.DeletedCount, row.MaxUpdatedAt, nil
 }
 
 // generatePrivateIDはpublic IDからprivate IDを生成

@@ -35,12 +35,18 @@ func (uc *CleanupExpiredSessionsUsecase) Execute(ctx context.Context) error {
 
 	cutoff := time.Now().Add(-model.SessionMaxAge)
 
+	// lowerBoundは次のバッチが読み始めるupdated_at。直前のバッチで削除した行の最大値を
+	// 引き継ぎ、削除済みでVACUUMを待つインデックスエントリを先頭から読み直さないようにする。
+	// 実行をまたいでは引き継がないため、各実行の最初のバッチはゼロ値 (下限なし) から読む。
+	// SKIP LOCKEDで飛ばした行が下限より古くなっても、次回の実行の最初のバッチで拾われる。
+	var lowerBound time.Time
 	var deleted int64
 	for {
-		count, err := uc.sessionRepo.DeleteExpired(ctx, cutoff, cleanupExpiredSessionsBatchSize)
+		count, maxUpdatedAt, err := uc.sessionRepo.DeleteExpired(ctx, cutoff, lowerBound, cleanupExpiredSessionsBatchSize)
 		if err != nil {
 			slog.ErrorContext(ctx, "セッションの削除に失敗しました",
 				"cutoff", cutoff,
+				"lower_bound", lowerBound,
 				"deleted", deleted,
 				"error", err,
 			)
@@ -48,6 +54,7 @@ func (uc *CleanupExpiredSessionsUsecase) Execute(ctx context.Context) error {
 		}
 
 		deleted += count
+		lowerBound = maxUpdatedAt
 		if count < cleanupExpiredSessionsBatchSize {
 			break
 		}

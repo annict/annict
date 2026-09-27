@@ -35,34 +35,51 @@ func (q *Queries) CreateSession(ctx context.Context, arg CreateSessionParams) (S
 	return i, err
 }
 
-const deleteExpiredSessions = `-- name: DeleteExpiredSessions :execrows
-DELETE FROM sessions
-WHERE id IN (
-    SELECT expired.id
-    FROM sessions AS expired
-    WHERE expired.updated_at < $1
-    ORDER BY expired.updated_at
-    LIMIT $2
-    FOR UPDATE SKIP LOCKED
+const deleteExpiredSessions = `-- name: DeleteExpiredSessions :one
+WITH deleted AS (
+    DELETE FROM sessions
+    WHERE id IN (
+        SELECT expired.id
+        FROM sessions AS expired
+        WHERE expired.updated_at >= $1
+            AND expired.updated_at < $2
+        ORDER BY expired.updated_at
+        LIMIT $3
+        FOR UPDATE SKIP LOCKED
+    )
+    RETURNING sessions.updated_at
 )
+SELECT
+    COUNT(*) AS deleted_count,
+    COALESCE(MAX(deleted.updated_at), $1)::timestamp AS max_updated_at
+FROM deleted
 `
 
 type DeleteExpiredSessionsParams struct {
-	Cutoff    time.Time `db:"cutoff"`
-	BatchSize int32     `db:"batch_size"`
+	LowerBound time.Time `db:"lower_bound"`
+	Cutoff     time.Time `db:"cutoff"`
+	BatchSize  int32     `db:"batch_size"`
 }
 
-// updated_atがcutoffより古いセッションを最大batch_size件削除する。PostgreSQLの
-// DELETEはLIMITを取れないため、対象はupdated_atで並べたサブクエリで選び、
-// index_sessions_on_updated_atから古い順に読む。SKIP LOCKEDにより、並行実行時は他方が
-// ロック中の行を飛ばして次へ進める。付けない場合、後発は待たされた末に0件を削除すること
-// になり、滞留が残っていてもそこで消化が止まる。
-func (q *Queries) DeleteExpiredSessions(ctx context.Context, arg DeleteExpiredSessionsParams) (int64, error) {
-	result, err := q.db.ExecContext(ctx, deleteExpiredSessions, arg.Cutoff, arg.BatchSize)
-	if err != nil {
-		return 0, err
-	}
-	return result.RowsAffected()
+type DeleteExpiredSessionsRow struct {
+	DeletedCount int64     `db:"deleted_count"`
+	MaxUpdatedAt time.Time `db:"max_updated_at"`
+}
+
+// updated_atがlower_bound以上かつcutoffより古いセッションを最大batch_size件削除し、
+// 削除した件数と、削除した行のupdated_atの最大値を返す。PostgreSQLのDELETEはLIMITを
+// 取れないため、対象はupdated_atで並べたサブクエリで選び、
+// index_sessions_on_updated_atから古い順に読む。呼び出し元は返した最大値を次のバッチの
+// lower_boundに渡すことで、削除済みでVACUUMを待つインデックスエントリを先頭から読み
+// 直さずに済む。lower_boundを「以上」にしているのは、同じupdated_atの行がバッチの境目で
+// 分かれても取りこぼさないため。SKIP LOCKEDにより、並行実行時は他方がロック中の行を
+// 飛ばして次へ進める。付けない場合、後発は待たされた末に0件を削除することになり、滞留が
+// 残っていてもそこで消化が止まる。削除が0件のときの最大値はlower_boundを返す。
+func (q *Queries) DeleteExpiredSessions(ctx context.Context, arg DeleteExpiredSessionsParams) (DeleteExpiredSessionsRow, error) {
+	row := q.db.QueryRowContext(ctx, deleteExpiredSessions, arg.LowerBound, arg.Cutoff, arg.BatchSize)
+	var i DeleteExpiredSessionsRow
+	err := row.Scan(&i.DeletedCount, &i.MaxUpdatedAt)
+	return i, err
 }
 
 const deleteSession = `-- name: DeleteSession :exec

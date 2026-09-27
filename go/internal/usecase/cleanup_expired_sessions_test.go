@@ -82,6 +82,30 @@ func TestCleanupExpiredSessionsUsecase_Execute(t *testing.T) {
 		}
 	})
 
+	t.Run("正常系: 同じupdated_atの行がバッチの境目で分かれても取りこぼさない", func(t *testing.T) {
+		db, tx := testutil.SetupTx(t)
+		queries := query.New(db).WithTx(tx)
+		uc := NewCleanupExpiredSessionsUsecase(repository.NewSessionRepository(queries))
+
+		// 最初のバッチが古い行 (バッチサイズ - 1件) と境目の行の1件目までを削除し、境目の
+		// 残りの行を次のバッチに持ち越すよう配置する。
+		older := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+		boundary := time.Date(2000, 1, 2, 0, 0, 0, 0, time.UTC)
+		insertSessions(t, tx, "cleanup-sessions-older-", older, cleanupExpiredSessionsBatchSize-1)
+		insertSessions(t, tx, "cleanup-sessions-boundary-", boundary, 2)
+
+		if err := uc.Execute(context.Background()); err != nil {
+			t.Fatalf("Executeに失敗: %v", err)
+		}
+
+		if got := countSessions(t, tx, "cleanup-sessions-older-"); got != 0 {
+			t.Errorf("古い期限切れセッションの件数 = %d、期待値 = 0", got)
+		}
+		if got := countSessions(t, tx, "cleanup-sessions-boundary-"); got != 0 {
+			t.Errorf("境目の期限切れセッションの件数 = %d、期待値 = 0", got)
+		}
+	})
+
 	t.Run("異常系: 削除エラーを原因付きで返す", func(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
