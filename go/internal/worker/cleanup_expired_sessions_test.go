@@ -4,10 +4,12 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/riverqueue/river"
 
 	"github.com/annict/annict/go/internal/dispatcher"
+	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/worker"
 )
 
@@ -49,5 +51,27 @@ func TestCleanupExpiredSessionsWorker_Work(t *testing.T) {
 				t.Errorf("Work()のエラー = %v、期待値 = %v", err, tt.wantErr)
 			}
 		})
+	}
+}
+
+func TestCleanupExpiredSessionsWorker_Timeout(t *testing.T) {
+	t.Parallel()
+
+	w := worker.NewCleanupExpiredSessionsWorker(&expiredSessionCleanerStub{})
+
+	// UseCaseの上限時間で打ち切った実行がタイムアウトのエラーにならないよう、上限時間より
+	// 長くする。前の実行と次の実行が重ならないよう、実行間隔 (1時間) より短いことも確認する。
+	got := w.Timeout(&river.Job[dispatcher.CleanupExpiredSessionsArgs]{})
+	if got != 15*time.Minute {
+		t.Errorf("Timeout() = %v、期待値 = 15m", got)
+	}
+	if got <= usecase.CleanupExpiredSessionsTimeLimit {
+		t.Errorf("Timeout() = %v、UseCaseの上限時間 %v より長くなければならない", got, usecase.CleanupExpiredSessionsTimeLimit)
+	}
+	if got <= river.JobTimeoutDefault {
+		t.Errorf("Timeout() = %v、Riverの既定値 %v より長くなければならない", got, river.JobTimeoutDefault)
+	}
+	if got >= time.Hour {
+		t.Errorf("Timeout() = %v、実行間隔 (1時間) より短くなければならない", got)
 	}
 }
