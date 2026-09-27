@@ -8,6 +8,7 @@ import (
 
 	"github.com/riverqueue/river"
 
+	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/worker"
 )
@@ -31,7 +32,7 @@ func TestSyncAnimesWorker_Work_CallsSyncer(t *testing.T) {
 	syncer := &fakeAnimesSyncer{result: &usecase.SyncAnimesResult{}}
 	w := worker.NewSyncAnimesWorker(syncer)
 
-	job := &river.Job[worker.SyncAnimesArgs]{Args: worker.SyncAnimesArgs{}}
+	job := &river.Job[dispatcher.SyncAnimesArgs]{Args: dispatcher.SyncAnimesArgs{}}
 	if err := w.Work(context.Background(), job); err != nil {
 		t.Fatalf("Work()のエラー = %v", err)
 	}
@@ -47,7 +48,7 @@ func TestSyncAnimesWorker_Work_PropagatesError(t *testing.T) {
 	syncer := &fakeAnimesSyncer{err: wantErr}
 	w := worker.NewSyncAnimesWorker(syncer)
 
-	job := &river.Job[worker.SyncAnimesArgs]{Args: worker.SyncAnimesArgs{}}
+	job := &river.Job[dispatcher.SyncAnimesArgs]{Args: dispatcher.SyncAnimesArgs{}}
 	if err := w.Work(context.Background(), job); !errors.Is(err, wantErr) {
 		t.Fatalf("Work()のエラー = %v、期待値 = %v", err, wantErr)
 	}
@@ -60,7 +61,7 @@ func TestSyncAnimesWorker_Timeout(t *testing.T) {
 
 	// Riverの既定のタイムアウト (1分) では全件走査が打ち切られるため上書きしている。
 	// 実行間隔 (1時間) より短いことも確認する。
-	got := w.Timeout(&river.Job[worker.SyncAnimesArgs]{})
+	got := w.Timeout(&river.Job[dispatcher.SyncAnimesArgs]{})
 	if got != 30*time.Minute {
 		t.Errorf("Timeout() = %v、期待値 = 30m", got)
 	}
@@ -69,15 +70,5 @@ func TestSyncAnimesWorker_Timeout(t *testing.T) {
 	}
 	if got >= time.Hour {
 		t.Errorf("Timeout() = %v、実行間隔 (1時間) より短くなければならない", got)
-	}
-}
-
-func TestSyncAnimesArgs_Kind(t *testing.T) {
-	t.Parallel()
-
-	// kind文字列は永続化されるジョブ識別子。リネームで予定済みジョブが孤立する
-	// のを検出できるよう固定する。
-	if got := (worker.SyncAnimesArgs{}).Kind(); got != "sync_animes" {
-		t.Errorf("Kind() = %q、期待値 = sync_animes", got)
 	}
 }

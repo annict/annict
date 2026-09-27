@@ -7,6 +7,7 @@ import (
 
 	"github.com/riverqueue/river"
 
+	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
@@ -69,8 +70,8 @@ func TestCleanupExpiredTokensWorker(t *testing.T) {
 	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[worker.CleanupExpiredTokensArgs]{
-		Args: worker.CleanupExpiredTokensArgs{},
+	job := &river.Job[dispatcher.CleanupExpiredTokensArgs]{
+		Args: dispatcher.CleanupExpiredTokensArgs{},
 	}
 
 	if err := w.Work(ctx, job); err != nil {
@@ -103,8 +104,8 @@ func TestCleanupExpiredTokensWorker_NoTokens(t *testing.T) {
 	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行 (トークンが存在しない状態)
-	job := &river.Job[worker.CleanupExpiredTokensArgs]{
-		Args: worker.CleanupExpiredTokensArgs{},
+	job := &river.Job[dispatcher.CleanupExpiredTokensArgs]{
+		Args: dispatcher.CleanupExpiredTokensArgs{},
 	}
 
 	if err := w.Work(ctx, job); err != nil {
@@ -148,8 +149,8 @@ func TestCleanupExpiredTokensWorker_RecentlyExpired(t *testing.T) {
 	w := newCleanupExpiredTokensTestWorker(queries)
 
 	// ジョブを実行
-	job := &river.Job[worker.CleanupExpiredTokensArgs]{
-		Args: worker.CleanupExpiredTokensArgs{},
+	job := &river.Job[dispatcher.CleanupExpiredTokensArgs]{
+		Args: dispatcher.CleanupExpiredTokensArgs{},
 	}
 
 	if err := w.Work(ctx, job); err != nil {

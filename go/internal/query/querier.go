@@ -128,12 +128,16 @@ type Querier interface {
 	// prev_episode_idはそのままにする。削除済みの行は何も表示しないため。
 	DeleteDBEpisode(ctx context.Context, arg DeleteDBEpisodeParams) (DeleteDBEpisodeRow, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
-	// updated_atがcutoffより古いセッションを最大batch_size件削除する。PostgreSQLの
-	// DELETEはLIMITを取れないため、対象はupdated_atで並べたサブクエリで選び、
-	// index_sessions_on_updated_atから古い順に読む。SKIP LOCKEDにより、並行実行時は他方が
-	// ロック中の行を飛ばして次へ進める。付けない場合、後発は待たされた末に0件を削除すること
-	// になり、滞留が残っていてもそこで消化が止まる。
-	DeleteExpiredSessions(ctx context.Context, arg DeleteExpiredSessionsParams) (int64, error)
+	// updated_atがlower_bound以上かつcutoffより古いセッションを最大batch_size件削除し、
+	// 削除した件数と、削除した行のupdated_atの最大値を返す。PostgreSQLのDELETEはLIMITを
+	// 取れないため、対象はupdated_atで並べたサブクエリで選び、
+	// index_sessions_on_updated_atから古い順に読む。呼び出し元は返した最大値を次のバッチの
+	// lower_boundに渡すことで、削除済みでVACUUMを待つインデックスエントリを先頭から読み
+	// 直さずに済む。lower_boundを「以上」にしているのは、同じupdated_atの行がバッチの境目で
+	// 分かれても取りこぼさないため。SKIP LOCKEDにより、並行実行時は他方がロック中の行を
+	// 飛ばして次へ進める。付けない場合、後発は待たされた末に0件を削除することになり、滞留が
+	// 残っていてもそこで消化が止まる。削除が0件のときの最大値はlower_boundを返す。
+	DeleteExpiredSessions(ctx context.Context, arg DeleteExpiredSessionsParams) (DeleteExpiredSessionsRow, error)
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
 	DeleteSession(ctx context.Context, sessionID string) error
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error

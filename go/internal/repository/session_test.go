@@ -470,7 +470,7 @@ func TestDeleteExpired_OnlyOlderThanCutoff(t *testing.T) {
 	insertSessionWithUpdatedAt(t, tx, oldID, cutoff.Add(-time.Hour))
 	insertSessionWithUpdatedAt(t, tx, freshID, cutoff.Add(time.Hour))
 
-	deleted, err := repo.DeleteExpired(context.Background(), cutoff, 100)
+	deleted, _, err := repo.DeleteExpired(context.Background(), cutoff, time.Time{}, 100)
 	if err != nil {
 		t.Fatalf("DeleteExpiredに失敗: %v", err)
 	}
@@ -499,7 +499,7 @@ func TestDeleteExpired_RespectsLimit(t *testing.T) {
 		insertSessionWithUpdatedAt(t, tx, fmt.Sprintf("delete-expired-limit-%d", i), cutoff.Add(-time.Hour))
 	}
 
-	deleted, err := repo.DeleteExpired(context.Background(), cutoff, 2)
+	deleted, _, err := repo.DeleteExpired(context.Background(), cutoff, time.Time{}, 2)
 	if err != nil {
 		t.Fatalf("DeleteExpiredに失敗: %v", err)
 	}
@@ -508,7 +508,7 @@ func TestDeleteExpired_RespectsLimit(t *testing.T) {
 		t.Errorf("削除件数 = %d、期待値 = 2", deleted)
 	}
 
-	remaining, err := repo.DeleteExpired(context.Background(), cutoff, 2)
+	remaining, _, err := repo.DeleteExpired(context.Background(), cutoff, time.Time{}, 2)
 	if err != nil {
 		t.Fatalf("2回目のDeleteExpiredに失敗: %v", err)
 	}
@@ -530,7 +530,8 @@ func TestDeleteExpired_NoTarget(t *testing.T) {
 	cutoff := time.Now().Add(-30 * 24 * time.Hour)
 	insertSessionWithUpdatedAt(t, tx, freshID, cutoff.Add(time.Hour))
 
-	deleted, err := repo.DeleteExpired(context.Background(), cutoff, 100)
+	lowerBound := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	deleted, maxUpdatedAt, err := repo.DeleteExpired(context.Background(), cutoff, lowerBound, 100)
 	if err != nil {
 		t.Fatalf("DeleteExpiredに失敗: %v", err)
 	}
@@ -538,7 +539,106 @@ func TestDeleteExpired_NoTarget(t *testing.T) {
 	if deleted != 0 {
 		t.Errorf("削除件数 = %d、期待値 = 0", deleted)
 	}
+	if !maxUpdatedAt.Equal(lowerBound) {
+		t.Errorf("updated_atの最大値 = %v、期待値 = %v (下限)", maxUpdatedAt, lowerBound)
+	}
 	if !sessionExists(t, tx, freshID) {
 		t.Error("対象外のセッションが削除されています")
+	}
+}
+
+// TestDeleteExpired_ReturnsMaxUpdatedAtは削除した行のupdated_atの最大値を返すことをテスト
+func TestDeleteExpired_ReturnsMaxUpdatedAt(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	older := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	newer := time.Date(2000, 1, 2, 0, 0, 0, 0, time.UTC)
+	insertSessionWithUpdatedAt(t, tx, "delete-expired-max-older", older)
+	insertSessionWithUpdatedAt(t, tx, "delete-expired-max-newer", newer)
+
+	cutoff := time.Now().Add(-30 * 24 * time.Hour)
+	deleted, maxUpdatedAt, err := repo.DeleteExpired(context.Background(), cutoff, time.Time{}, 100)
+	if err != nil {
+		t.Fatalf("DeleteExpiredに失敗: %v", err)
+	}
+
+	if deleted != 2 {
+		t.Errorf("削除件数 = %d、期待値 = 2", deleted)
+	}
+	if !maxUpdatedAt.Equal(newer) {
+		t.Errorf("updated_atの最大値 = %v、期待値 = %v", maxUpdatedAt, newer)
+	}
+}
+
+// TestDeleteExpired_SkipsOlderThanLowerBoundは下限より古いセッションを削除しないことをテスト
+func TestDeleteExpired_SkipsOlderThanLowerBound(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	const (
+		belowID = "delete-expired-below-lower-bound"
+		atID    = "delete-expired-at-lower-bound"
+	)
+
+	lowerBound := time.Date(2000, 1, 2, 0, 0, 0, 0, time.UTC)
+	insertSessionWithUpdatedAt(t, tx, belowID, lowerBound.Add(-time.Hour))
+	insertSessionWithUpdatedAt(t, tx, atID, lowerBound)
+
+	cutoff := time.Now().Add(-30 * 24 * time.Hour)
+	deleted, _, err := repo.DeleteExpired(context.Background(), cutoff, lowerBound, 100)
+	if err != nil {
+		t.Fatalf("DeleteExpiredに失敗: %v", err)
+	}
+
+	if deleted != 1 {
+		t.Errorf("削除件数 = %d、期待値 = 1", deleted)
+	}
+	if !sessionExists(t, tx, belowID) {
+		t.Error("下限より古いセッションが削除されています")
+	}
+	if sessionExists(t, tx, atID) {
+		t.Error("下限と同じupdated_atのセッションが削除されていません")
+	}
+}
+
+// TestDeleteExpired_ContinuesFromMaxUpdatedAtは、同じupdated_atの行がlimitの境目で
+// 分かれても、返した最大値を下限に渡した次の呼び出しで残りを削除できることをテスト
+func TestDeleteExpired_ContinuesFromMaxUpdatedAt(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	updatedAt := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	for i := 0; i < 3; i++ {
+		insertSessionWithUpdatedAt(t, tx, fmt.Sprintf("delete-expired-tie-%d", i), updatedAt)
+	}
+
+	cutoff := time.Now().Add(-30 * 24 * time.Hour)
+	deleted, maxUpdatedAt, err := repo.DeleteExpired(context.Background(), cutoff, time.Time{}, 2)
+	if err != nil {
+		t.Fatalf("DeleteExpiredに失敗: %v", err)
+	}
+	if deleted != 2 {
+		t.Errorf("削除件数 = %d、期待値 = 2", deleted)
+	}
+	if !maxUpdatedAt.Equal(updatedAt) {
+		t.Errorf("updated_atの最大値 = %v、期待値 = %v", maxUpdatedAt, updatedAt)
+	}
+
+	remaining, _, err := repo.DeleteExpired(context.Background(), cutoff, maxUpdatedAt, 2)
+	if err != nil {
+		t.Fatalf("2回目のDeleteExpiredに失敗: %v", err)
+	}
+	if remaining != 1 {
+		t.Errorf("残りの削除件数 = %d、期待値 = 1", remaining)
 	}
 }

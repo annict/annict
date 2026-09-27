@@ -76,13 +76,20 @@ func (s dailyAt2AMSchedule) Next(current time.Time) time.Time {
 	return next
 }
 
-// hourlyScheduleは1時間ごと、毎時0分にジョブを実行する。
-type hourlySchedule struct{}
+// hourlyScheduleは1時間ごと、毎時minute分にジョブを実行する。ゼロ値は毎時0分。
+// 同じ時刻に重い定期ジョブが重ならないよう、ジョブごとに分をずらせるようにしている。
+type hourlySchedule struct {
+	minute int
+}
 
-// Nextはcurrentの次の毎時0分を返す。
+// Nextはcurrentより後で最初に来る毎時minute分を返す。
 func (s hourlySchedule) Next(current time.Time) time.Time {
-	return time.Date(current.Year(), current.Month(), current.Day(), current.Hour(), 0, 0, 0, current.Location()).
-		Add(time.Hour)
+	next := time.Date(current.Year(), current.Month(), current.Day(), current.Hour(), s.minute, 0, 0, current.Location())
+	if !next.After(current) {
+		next = next.Add(time.Hour)
+	}
+
+	return next
 }
 
 // runServeはHTTPサーバーを起動する。設定の読み込み・依存の組み立て・ルートと
@@ -225,7 +232,9 @@ func runServe() {
 	periodicJobTokenCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
-			return worker.CleanupExpiredTokensArgs{}, nil
+			args := dispatcher.CleanupExpiredTokensArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
 		},
 		nil,
 	)
@@ -237,7 +246,9 @@ func runServe() {
 	periodicJobSignInCodeCleanup := river.NewPeriodicJob(
 		dailyAt2AMSchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
-			return worker.CleanupExpiredSignInCodesArgs{}, nil
+			args := dispatcher.CleanupExpiredSignInCodesArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
 		},
 		nil,
 	)
@@ -245,17 +256,21 @@ func runServe() {
 	riverClient.Client().PeriodicJobs().Add(periodicJobSignInCodeCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "ログインコードクリーンアップ", "schedule", "毎日深夜2時")
 
-	// セッションクリーンアップを毎日深夜2時の定期実行ジョブとして登録する。
+	// セッションクリーンアップを毎時30分の定期実行ジョブとして登録する。1回の実行は
+	// UseCaseの上限時間で打ち切るため、滞留があっても毎時少しずつ削除して負荷を一定に抑える。
+	// 毎時0分に動くanimes同期バッチと重ならないよう30分にずらす。
 	periodicJobSessionCleanup := river.NewPeriodicJob(
-		dailyAt2AMSchedule{},
+		hourlySchedule{minute: 30},
 		func() (river.JobArgs, *river.InsertOpts) {
-			return worker.CleanupExpiredSessionsArgs{}, nil
+			args := dispatcher.CleanupExpiredSessionsArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
 		},
 		nil,
 	)
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobSessionCleanup)
-	slog.Info("定期実行ジョブを登録しました", "job", "セッションクリーンアップ", "schedule", "毎日深夜2時")
+	slog.Info("定期実行ジョブを登録しました", "job", "セッションクリーンアップ", "schedule", "毎時30分")
 
 	// animesリコンサイルを毎時登録する。フェーズ2ではまだ両書きが無く、本バッチが
 	// animesを更新する唯一の経路のため、毎時実行で鮮度と差分メトリクスの取得頻度を優先する。
@@ -263,7 +278,9 @@ func runServe() {
 	periodicJobSyncAnimes := river.NewPeriodicJob(
 		hourlySchedule{},
 		func() (river.JobArgs, *river.InsertOpts) {
-			return worker.SyncAnimesArgs{}, nil
+			args := dispatcher.SyncAnimesArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
 		},
 		nil,
 	)

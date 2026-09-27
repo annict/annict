@@ -185,3 +185,66 @@ func TestArgs_InsertOpts(t *testing.T) {
 		})
 	}
 }
+
+// TestPeriodicJobArgsは定期ジョブのArgsのKindとInsertOptsを検証する。
+// Kindの文字列はriver_jobに保存され、Workerを引くキーになるため固定する。
+func TestPeriodicJobArgs(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		args interface {
+			river.JobArgs
+			InsertOpts() river.InsertOpts
+		}
+		wantKind        string
+		wantQueue       string
+		wantMaxAttempts int
+	}{
+		{
+			name:            "CleanupExpiredTokensArgs",
+			args:            CleanupExpiredTokensArgs{},
+			wantKind:        "cleanup_expired_tokens",
+			wantQueue:       river.QueueDefault,
+			wantMaxAttempts: 3,
+		},
+		{
+			name:            "CleanupExpiredSignInCodesArgs",
+			args:            CleanupExpiredSignInCodesArgs{},
+			wantKind:        "cleanup_expired_sign_in_codes",
+			wantQueue:       river.QueueDefault,
+			wantMaxAttempts: 3,
+		},
+		{
+			name:            "CleanupExpiredSessionsArgs",
+			args:            CleanupExpiredSessionsArgs{},
+			wantKind:        "cleanup_expired_sessions",
+			wantQueue:       river.QueueDefault,
+			wantMaxAttempts: 3,
+		},
+		{
+			name:            "SyncAnimesArgs",
+			args:            SyncAnimesArgs{},
+			wantKind:        "sync_animes",
+			wantQueue:       river.QueueDefault,
+			wantMaxAttempts: 3,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := tt.args.Kind(); got != tt.wantKind {
+				t.Errorf("Kind() = %q、期待値 = %q", got, tt.wantKind)
+			}
+			opts := tt.args.InsertOpts()
+			if opts.Queue != tt.wantQueue {
+				t.Errorf("Queue = %q、期待値 = %q", opts.Queue, tt.wantQueue)
+			}
+			if opts.MaxAttempts != tt.wantMaxAttempts {
+				t.Errorf("MaxAttempts = %d、期待値 = %d", opts.MaxAttempts, tt.wantMaxAttempts)
+			}
+		})
+	}
+}
