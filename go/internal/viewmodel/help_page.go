@@ -21,9 +21,9 @@ func helpTopicURL(topicNumber string) string {
 //
 // TODO: ヘルプページをWikinoに公開したら、仮のIDを実際のものに差し替える。
 const (
-	helpWorkEditingPageID       = "xxx"
-	helpEpisodeEditingPageID    = "xxx"
-	helpEpisodeBulkCreatePageID = "xxx"
+	helpWorkEditingPageID       = "399"
+	helpEpisodeEditingPageID    = "400"
+	helpEpisodeBulkCreatePageID = "406"
 )
 
 // AnnictのAPI (認証・GraphQL API・REST API V1) の開発者向けドキュメントを収めた
