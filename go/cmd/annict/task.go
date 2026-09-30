@@ -40,6 +40,10 @@ type taskDef struct {
 // 一覧もusageも本mapから生成するため、タスクの追加は本レジストリへの登録1箇所で
 // 済み、ヘルプ文言を別途書き足す必要は無い。
 var tasks = newTasks(map[string]taskDef{
+	"cleanup-anonymous-sessions": {
+		desc: "最終アクセスから1日を過ぎた未ログインのセッションを削除する",
+		body: cleanupAnonymousSessions,
+	},
 	"cleanup-expired-sessions": {
 		desc: "最終アクセスから30日を過ぎたセッションを削除する",
 		body: cleanupExpiredSessions,

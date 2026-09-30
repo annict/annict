@@ -387,11 +387,10 @@ type DBWorkListParams struct {
 	FilterNoImage    bool
 	FilterNoSeason   bool
 	FilterNoSlots    bool
-	SeasonYear       *int32
-	SeasonName       *int32
 	// SeasonYears / SeasonNamesはリリース時期の複数選択フィルタで照合する
 	// (年, 季節) ペアを表す並列配列。空スライスならフィルタは無効。両スライスは同じ
-	// 長さで、SeasonYearsのi番目がSeasonNamesのi番目と対になる。
+	// 長さで、SeasonYearsのi番目がSeasonNamesのi番目と対になる。SeasonNamesの0は
+	// 「季節未登録」を表し、その年でseason_nameがNULLの作品に一致する。
 	SeasonYears []int32
 	SeasonNames []int32
 	Page        int32
@@ -409,8 +408,6 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 		FilterNoImage:    sql.NullBool{Bool: params.FilterNoImage, Valid: params.FilterNoImage},
 		FilterNoSeason:   sql.NullBool{Bool: params.FilterNoSeason, Valid: params.FilterNoSeason},
 		FilterNoSlots:    sql.NullBool{Bool: params.FilterNoSlots, Valid: params.FilterNoSlots},
-		SeasonYear:       nullInt32FromPtr(params.SeasonYear),
-		SeasonName:       nullInt32FromPtr(params.SeasonName),
 		SeasonYears:      params.SeasonYears,
 		SeasonNames:      params.SeasonNames,
 		PerPage:          params.PerPage,
@@ -462,8 +459,6 @@ func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams
 		FilterNoImage:    sql.NullBool{Bool: params.FilterNoImage, Valid: params.FilterNoImage},
 		FilterNoSeason:   sql.NullBool{Bool: params.FilterNoSeason, Valid: params.FilterNoSeason},
 		FilterNoSlots:    sql.NullBool{Bool: params.FilterNoSlots, Valid: params.FilterNoSlots},
-		SeasonYear:       nullInt32FromPtr(params.SeasonYear),
-		SeasonName:       nullInt32FromPtr(params.SeasonName),
 		SeasonYears:      params.SeasonYears,
 		SeasonNames:      params.SeasonNames,
 	})
@@ -812,11 +807,4 @@ func workFromSatelliteSyncRow(row query.ListWorksForSatelliteSyncByIDsRow) *mode
 		work.EndedOn = &endedOn
 	}
 	return work
-}
-
-func nullInt32FromPtr(v *int32) sql.NullInt32 {
-	if v == nil {
-		return sql.NullInt32{}
-	}
-	return sql.NullInt32{Int32: *v, Valid: true}
 }

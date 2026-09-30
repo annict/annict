@@ -248,15 +248,14 @@ WHERE w.deleted_at IS NULL
         SELECT 1 FROM slots s
         WHERE s.work_id = w.id AND s.deleted_at IS NULL AND s.unpublished_at IS NULL
     ))
-    AND (sqlc.narg('season_year')::int IS NULL OR w.season_year = sqlc.narg('season_year'))
-    AND (sqlc.narg('season_name')::int IS NULL OR w.season_name = sqlc.narg('season_name'))
     AND (
         coalesce(cardinality(sqlc.arg('season_years')::int[]), 0) = 0
         OR EXISTS (
             SELECT 1
             FROM generate_subscripts(sqlc.arg('season_years')::int[], 1) AS i
             WHERE w.season_year = (sqlc.arg('season_years')::int[])[i]
-                AND w.season_name = (sqlc.arg('season_names')::int[])[i]
+                -- 季節の0は「季節未登録」を表し、season_nameがNULLの作品に一致させる
+                AND w.season_name IS NOT DISTINCT FROM NULLIF((sqlc.arg('season_names')::int[])[i], 0)
         )
     )
 ORDER BY w.id DESC
@@ -280,15 +279,14 @@ WHERE w.deleted_at IS NULL
         SELECT 1 FROM slots s
         WHERE s.work_id = w.id AND s.deleted_at IS NULL AND s.unpublished_at IS NULL
     ))
-    AND (sqlc.narg('season_year')::int IS NULL OR w.season_year = sqlc.narg('season_year'))
-    AND (sqlc.narg('season_name')::int IS NULL OR w.season_name = sqlc.narg('season_name'))
     AND (
         coalesce(cardinality(sqlc.arg('season_years')::int[]), 0) = 0
         OR EXISTS (
             SELECT 1
             FROM generate_subscripts(sqlc.arg('season_years')::int[], 1) AS i
             WHERE w.season_year = (sqlc.arg('season_years')::int[])[i]
-                AND w.season_name = (sqlc.arg('season_names')::int[])[i]
+                -- 季節の0は「季節未登録」を表し、season_nameがNULLの作品に一致させる
+                AND w.season_name IS NOT DISTINCT FROM NULLIF((sqlc.arg('season_names')::int[])[i], 0)
         )
     );
 

@@ -50,3 +50,31 @@ SELECT
     COUNT(*) AS deleted_count,
     COALESCE(MAX(deleted.updated_at), sqlc.arg('lower_bound'))::timestamp AS max_updated_at
 FROM deleted;
+
+-- name: DeleteAnonymousSessions :one
+-- ログインしていない (dataにwarden.user.user.keyを持たない) セッションのうち、updated_atが
+-- lower_bound以上かつcutoffより古いものを最大batch_size件削除し、削除した件数と、削除した
+-- 行のupdated_atの最大値を返す。範囲はindex_sessions_on_updated_atから古い順に読み、
+-- ログインキーの有無は行を見て判定する。バッチの区切り方、lower_boundの引き継ぎ、
+-- SKIP LOCKEDの理由はDeleteExpiredSessionsと同じ。dataがJSONオブジェクトでない行は
+-- ?演算子が偽を返すため未ログインとして扱う。ログイン情報を持たないので消して問題ない。
+-- 削除の直前にログインされて行が更新された場合は、FOR UPDATEの再評価でupdated_atが
+-- 条件から外れるため削除されない。
+WITH deleted AS (
+    DELETE FROM sessions
+    WHERE id IN (
+        SELECT anonymous.id
+        FROM sessions AS anonymous
+        WHERE anonymous.updated_at >= sqlc.arg('lower_bound')
+            AND anonymous.updated_at < sqlc.arg('cutoff')
+            AND NOT (anonymous.data ? 'warden.user.user.key')
+        ORDER BY anonymous.updated_at
+        LIMIT sqlc.arg('batch_size')
+        FOR UPDATE SKIP LOCKED
+    )
+    RETURNING sessions.updated_at
+)
+SELECT
+    COUNT(*) AS deleted_count,
+    COALESCE(MAX(deleted.updated_at), sqlc.arg('lower_bound'))::timestamp AS max_updated_at
+FROM deleted;

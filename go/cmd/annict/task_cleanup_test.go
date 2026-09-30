@@ -15,6 +15,7 @@ var cleanupTaskBodies = map[string]taskBody{
 	"cleanup-expired-tokens":        cleanupExpiredTokens,
 	"cleanup-expired-sign-in-codes": cleanupExpiredSignInCodes,
 	"cleanup-expired-sessions":      cleanupExpiredSessions,
+	"cleanup-anonymous-sessions":    cleanupAnonymousSessions,
 }
 
 // TestCleanupTaskBodies_Registeredは、各タスク名がそれぞれのタスク本体に解決すること

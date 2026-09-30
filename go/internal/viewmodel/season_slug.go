@@ -37,6 +37,17 @@ var seasons = []seasonDef{
 	{value: 4, slug: "autumn", key: "season_autumn"},
 }
 
+// seasonNoneSlugはリリース時期フィルタで「季節未登録」を表すスラッグトークン
+// ("2026-none")。共有URLに載るため改名しない。季節の部分にハイフンを含めると
+// RailsのSeason.find_by_slugの分割 (split("-")) と食い違うため、1語にしている。
+const seasonNoneSlug = "none"
+
+// seasonNoneValueは「季節未登録」を (年, 季節) の組の季節として表す番兵値。
+// works.season_nameのenumは1〜4で0は使われないため、一覧のクエリは0を
+// season_nameがNULLの作品に一致させる。seasonsには含めず、作品フォームの季節の
+// selectやseasonLabelKeyには現れない。
+const seasonNoneValue int32 = 0
+
 // seasonMaxYearはリリース時期のUIが提供する最新の年 (現在の年 + 5) を返す。
 func seasonMaxYear() int {
 	return time.Now().Year() + seasonMaxYearOffset
@@ -61,9 +72,9 @@ type SeasonFilterOption struct {
 }
 
 // ParseSeasonSlugsはリリース時期のスラッグ ("2024-spring") を、DB一覧フィルタが
-// 照合する並列の (年, 季節) enumペアに変換する。不正・範囲外のスラッグはセーフティネット
-// としてスキップする (スラッグはサーバー生成の <option> 由来のため実際には発生しない)。
-// 戻り値の2スライスは常に同じ長さ。
+// 照合する並列の (年, 季節) enumペアに変換する。季節未登録のスラッグ ("2024-none")
+// は季節をseasonNoneValueにする。共有URLや手入力で届く不正・範囲外のスラッグは
+// スキップする。戻り値の2スライスは常に同じ長さ。
 func ParseSeasonSlugs(slugs []string) (years []int32, names []int32) {
 	maxYear := seasonMaxYear()
 	for _, slug := range slugs {
@@ -86,9 +97,12 @@ func parseSeasonSlug(slug string, maxYear int) (year int32, name int32, ok bool)
 	if err != nil || y < seasonStartYear || y > maxYear {
 		return 0, 0, false
 	}
+	// yは上で [seasonStartYear, maxYear] に制限済みのためint32に収まる。
+	if nameStr == seasonNoneSlug {
+		return int32(y), seasonNoneValue, true // #nosec G109 G115
+	}
 	for _, s := range seasons {
 		if s.slug == nameStr {
-			// yは上で [seasonStartYear, maxYear] に制限済みのためint32に収まる。
 			return int32(y), s.value, true // #nosec G109 G115
 		}
 	}
@@ -96,7 +110,9 @@ func parseSeasonSlug(slug string, maxYear int) (year int32, name int32, ok bool)
 }
 
 // NewSeasonFilterOptionsはリリース時期の複数選択オプションを降順 (新しい年・季節が先)
-// で構築し、RailsのSeason.list(sort: :desc) に合わせる。selectedSlugsは事前選択済みの
+// で構築し、RailsのSeason.list(sort: :desc) に合わせる。各年の季節の後ろには季節
+// 未登録の選択肢を置く (Railsのinclude_all: trueが年単位の選択肢を年内の末尾に置くのに
+// 合わせる)。selectedSlugsは事前選択済みの
 // オプションを印付け、フォームが利用者の現在の選択を再描画できるようにする。
 func NewSeasonFilterOptions(ctx context.Context, selectedSlugs []string) []SeasonFilterOption {
 	selected := make(map[string]bool, len(selectedSlugs))
@@ -105,7 +121,7 @@ func NewSeasonFilterOptions(ctx context.Context, selectedSlugs []string) []Seaso
 	}
 
 	maxYear := seasonMaxYear()
-	options := make([]SeasonFilterOption, 0, (maxYear-seasonStartYear+1)*len(seasons))
+	options := make([]SeasonFilterOption, 0, (maxYear-seasonStartYear+1)*(len(seasons)+1))
 	for year := maxYear; year >= seasonStartYear; year-- {
 		// seasonsを逆順に走査し、年内で新しい季節を先頭にする
 		// (autumn -> summer -> spring -> winter)。Railsの降順に合わせる。
@@ -121,6 +137,12 @@ func NewSeasonFilterOptions(ctx context.Context, selectedSlugs []string) []Seaso
 				Selected: selected[slug],
 			})
 		}
+		noneSlug := fmt.Sprintf("%d-%s", year, seasonNoneSlug)
+		options = append(options, SeasonFilterOption{
+			Slug:     noneSlug,
+			Label:    i18n.T(ctx, "year_no_season", map[string]any{"Year": year}),
+			Selected: selected[noneSlug],
+		})
 	}
 	return options
 }

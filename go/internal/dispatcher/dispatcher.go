@@ -97,6 +97,17 @@ func (CleanupExpiredSessionsArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
 }
 
+// CleanupAnonymousSessionsArgsは未ログインセッションのクリーンアップジョブの引数。
+type CleanupAnonymousSessionsArgs struct{}
+
+// Kindはジョブの種類を返す。
+func (CleanupAnonymousSessionsArgs) Kind() string { return "cleanup_anonymous_sessions" }
+
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
+func (CleanupAnonymousSessionsArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
+}
+
 // SyncAnimesArgsはフェーズ2のフル・リコンシリエーションバッチジョブの引数型。
 // ペイロードは持たない。ジョブはworks / episodesテーブル全体をリコンサイルするため、
 // 実行ごとにパラメータ化するものがない。
