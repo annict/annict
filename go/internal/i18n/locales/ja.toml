@@ -56,7 +56,7 @@ description = "年とシーズンの表示形式"
 other = "{{.Year}}年{{.Season}}"
 
 [year_no_season]
-description = "季節が未登録のときの年のみの表示形式"
+description = "季節が未登録のときの年のみの表示形式 (作品一覧の表とリリース時期フィルタの選択肢)"
 other = "{{.Year}}年 (季節未登録)"
 
 # ログイン関連
