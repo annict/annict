@@ -501,44 +501,6 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		}
 	})
 
-	t.Run("正常系: シーズン指定フィルタ", func(t *testing.T) {
-		t.Parallel()
-		db, tx := testutil.SetupTx(t)
-		ctx := context.Background()
-
-		testutil.NewWorkBuilder(t, tx).WithTitle("2024春").WithSeason(2024, testutil.SeasonSpring).Build()
-		testutil.NewWorkBuilder(t, tx).WithTitle("2024夏").WithSeason(2024, testutil.SeasonSummer).Build()
-
-		year := int32(2024)
-		season := int32(testutil.SeasonSpring)
-		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
-		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
-			SeasonYear: &year,
-			SeasonName: &season,
-			Page:       1,
-			PerPage:    100,
-		})
-		if err != nil {
-			t.Fatalf("ListForDB()のエラー = %v", err)
-		}
-
-		for _, item := range items {
-			if item.Title == "2024夏" {
-				t.Error("別のシーズンの作品が返された")
-			}
-		}
-
-		found := false
-		for _, item := range items {
-			if item.Title == "2024春" {
-				found = true
-			}
-		}
-		if !found {
-			t.Error("指定したシーズンの作品が返されなかった")
-		}
-	})
-
 	t.Run("正常系: 放送予定未登録フィルタ", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
@@ -640,6 +602,50 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		}
 		if byID[noSeason] {
 			t.Error("シーズンなしの作品は除外されるべき")
+		}
+	})
+
+	t.Run("正常系: リリース時期の季節0は季節未登録の作品に一致する", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		yearOnly2026 := testutil.NewWorkBuilder(t, tx).WithTitle("2026季節未登録").WithSeasonYearOnly(2026).Build()
+		spring2026 := testutil.NewWorkBuilder(t, tx).WithTitle("2026春").WithSeason(2026, testutil.SeasonSpring).Build()
+		yearOnly2025 := testutil.NewWorkBuilder(t, tx).WithTitle("2025季節未登録").WithSeasonYearOnly(2025).Build()
+		noSeason := testutil.NewWorkBuilder(t, tx).WithTitle("リリース時期なし").WithNoSeason().Build()
+		winter2024 := testutil.NewWorkBuilder(t, tx).WithTitle("2024冬").WithSeason(2024, testutil.SeasonWinter).Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		// 季節未登録の組と季節ありの組を同時に選び、いずれかに一致する作品が残る。
+		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			SeasonYears: []int32{2026, 2024},
+			SeasonNames: []int32{0, testutil.SeasonWinter},
+			Page:        1,
+			PerPage:     100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB()のエラー = %v", err)
+		}
+
+		byID := make(map[model.WorkID]bool, len(items))
+		for _, item := range items {
+			byID[item.ID] = true
+		}
+		if !byID[yearOnly2026] {
+			t.Error("2026年の季節未登録の作品は含まれるべき")
+		}
+		if !byID[winter2024] {
+			t.Error("同時に選んだ2024冬の作品は含まれるべき")
+		}
+		if byID[spring2026] {
+			t.Error("2026年でも季節ありの作品は除外されるべき")
+		}
+		if byID[yearOnly2025] {
+			t.Error("別の年の季節未登録の作品は除外されるべき")
+		}
+		if byID[noSeason] {
+			t.Error("年も季節も未登録の作品は除外されるべき")
 		}
 	})
 
@@ -778,6 +784,31 @@ func TestWorkRepository_CountForDB(t *testing.T) {
 
 		if count != 3 {
 			t.Errorf("CountForDB() = %d、期待値 = 3 (公開エピソードを持つ作品だけを除外)", count)
+		}
+	})
+
+	t.Run("正常系: リリース時期の季節未登録の組がカウントにも適用される", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		// GetTestDBを使うテストが共有DBにコミットする作品から隔離するため固有の年を使う。
+		const isolatedYear = 1903
+		testutil.NewWorkBuilder(t, tx).WithTitle("季節未登録A").WithSeasonYearOnly(isolatedYear).Build()
+		testutil.NewWorkBuilder(t, tx).WithTitle("季節未登録B").WithSeasonYearOnly(isolatedYear).Build()
+		testutil.NewWorkBuilder(t, tx).WithTitle("季節あり").WithSeason(isolatedYear, testutil.SeasonSpring).Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		count, err := repo.CountForDB(ctx, repository.DBWorkListParams{
+			SeasonYears: []int32{isolatedYear},
+			SeasonNames: []int32{0},
+		})
+		if err != nil {
+			t.Fatalf("CountForDB()のエラー = %v", err)
+		}
+
+		if count != 2 {
+			t.Errorf("CountForDB() = %d、期待値 = 2", count)
 		}
 	})
 

@@ -363,3 +363,53 @@ func TestIndex_PaginationLinks(t *testing.T) {
 	}
 }
 
+// TestIndex_WithSeasonNoneFilterは「{年}年 (季節未登録)」の選択肢で一覧を絞り込めて、
+// その条件がog:url・ページネーションのリンク・選択肢の選択状態に残ることを検証する。
+func TestIndex_WithSeasonNoneFilter(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	// ページネーションのリンクを描画させるため、季節未登録の作品を1ページの件数より
+	// 1件多く作る。季節ありの作品は最後に作り、絞り込みが効かなければ1ページ目の
+	// 先頭に並ぶようにする。
+	for i := range int(perPage) + 1 {
+		testutil.NewWorkBuilder(t, tx).
+			WithTitle(fmt.Sprintf("2026季節未登録アニメ%d", i)).
+			WithSeasonYearOnly(2026).
+			Build()
+	}
+	testutil.NewWorkBuilder(t, tx).
+		WithTitle("2026春アニメ").
+		WithSeason(2026, testutil.SeasonSpring).
+		Build()
+
+	handler := newTestHandler(t, db, tx)
+
+	req := httptest.NewRequest("GET", "/db/works?season_slugs=2026-none", nil)
+	rr := httptest.NewRecorder()
+
+	handler.Index(rr, req)
+
+	if status := rr.Code; status != http.StatusOK {
+		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
+	}
+
+	body := rr.Body.String()
+	if !strings.Contains(body, fmt.Sprintf("2026季節未登録アニメ%d", perPage)) {
+		t.Error("2026年の季節未登録の作品が表示されるべき")
+	}
+	if strings.Contains(body, "2026春アニメ") {
+		t.Error("2026年でも季節ありの作品は除外されるべき")
+	}
+	for _, want := range []string{
+		`<meta property="og:url" content="https://test.annict.com/db/works?season_slugs=2026-none">`,
+		`href="/db/works?page=2&amp;season_slugs=2026-none"`,
+		`<option value="2026-none" selected>`,
+		`<div role="option" data-value="2026-none" aria-selected="true">`,
+	} {
+		if !strings.Contains(body, want) {
+			t.Errorf("レスポンスに含まれていない文字列 = %q", want)
+		}
+	}
+}

@@ -35,7 +35,10 @@ type WorkBuilder struct {
 	seasonName int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
 	seasonYear int32
 	noSeason   bool // trueの場合、season_year/season_nameをNULLにする
-	noEpisodes bool // no_episodesカラムの値
+	// noSeasonNameがtrueの場合、season_yearは残してseason_nameだけをNULLにする
+	// (公開年だけが決まっていて季節が未登録の作品)。
+	noSeasonName bool
+	noEpisodes   bool // no_episodesカラムの値
 	// 外部サービスのID (NULL許容)。nilの場合はカラムをNULLのままにする。
 	scTid      *int32
 	malAnimeID *int32
@@ -110,6 +113,15 @@ func (b *WorkBuilder) WithSeason(year int32, seasonName int32) *WorkBuilder {
 	b.seasonName = seasonName
 	b.seasonYear = year
 	b.noSeason = false
+	b.noSeasonName = false
+	return b
+}
+
+// WithSeasonYearOnlyは公開年だけを設定し、季節 (season_name) をNULLにします
+func (b *WorkBuilder) WithSeasonYearOnly(year int32) *WorkBuilder {
+	b.seasonYear = year
+	b.noSeason = false
+	b.noSeasonName = true
 	return b
 }
 
@@ -178,7 +190,9 @@ func (b *WorkBuilder) Build() model.WorkID {
 		seasonName = nil
 	} else {
 		seasonYear = b.seasonYear
-		seasonName = b.seasonName
+		if !b.noSeasonName {
+			seasonName = b.seasonName
+		}
 	}
 
 	var scTid, malAnimeID, manualEpisodesCount interface{}
