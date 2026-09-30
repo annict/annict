@@ -223,6 +223,13 @@ func TestPeriodicJobArgs(t *testing.T) {
 			wantMaxAttempts: 3,
 		},
 		{
+			name:            "CleanupAnonymousSessionsArgs",
+			args:            CleanupAnonymousSessionsArgs{},
+			wantKind:        "cleanup_anonymous_sessions",
+			wantQueue:       river.QueueDefault,
+			wantMaxAttempts: 3,
+		},
+		{
 			name:            "SyncAnimesArgs",
 			args:            SyncAnimesArgs{},
 			wantKind:        "sync_animes",

@@ -126,6 +126,22 @@ func (r *SessionRepository) DeleteExpired(ctx context.Context, cutoff, lowerBoun
 	return row.DeletedCount, row.MaxUpdatedAt, nil
 }
 
+// DeleteAnonymousはログインしていないセッションのうち、updated_atがlowerBound以上かつ
+// cutoffより古いものを最大limit件削除し、削除した件数と、削除した行のupdated_atの最大値を
+// 返す。ログイン済みのセッションは範囲内でも削除しない。limitとlowerBoundの扱いは
+// DeleteExpiredと同じで、削除が0件のときの最大値はlowerBoundをそのまま返す。
+func (r *SessionRepository) DeleteAnonymous(ctx context.Context, cutoff, lowerBound time.Time, limit int32) (int64, time.Time, error) {
+	row, err := r.queries.DeleteAnonymousSessions(ctx, query.DeleteAnonymousSessionsParams{
+		LowerBound: lowerBound,
+		Cutoff:     cutoff,
+		BatchSize:  limit,
+	})
+	if err != nil {
+		return 0, time.Time{}, err
+	}
+	return row.DeletedCount, row.MaxUpdatedAt, nil
+}
+
 // generatePrivateIDはpublic IDからprivate IDを生成
 // Rails/Rackの実装と互換性のある形式: "2::" + SHA256(publicID)
 func (r *SessionRepository) generatePrivateID(publicID string) string {

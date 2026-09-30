@@ -29,6 +29,7 @@ type NewClientParams struct {
 	CleanupExpiredTokens      ExpiredTokenCleaner
 	CleanupExpiredSignInCodes ExpiredSignInCodeCleaner
 	CleanupExpiredSessions    ExpiredSessionCleaner
+	CleanupAnonymousSessions  AnonymousSessionCleaner
 	SyncAnimes                AnimesSyncer
 }
 
@@ -92,6 +93,10 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	// セッションクリーンアップワーカーを登録する。
 	river.AddWorker(workers, NewCleanupExpiredSessionsWorker(params.CleanupExpiredSessions))
 	slog.InfoContext(ctx, "CleanupExpiredSessionsWorkerを登録しました")
+
+	// 未ログインセッションのクリーンアップワーカーを登録する。
+	river.AddWorker(workers, NewCleanupAnonymousSessionsWorker(params.CleanupAnonymousSessions))
+	slog.InfoContext(ctx, "CleanupAnonymousSessionsWorkerを登録しました")
 
 	// animesリコンサイルバッチワーカーを登録する。
 	river.AddWorker(workers, NewSyncAnimesWorker(params.SyncAnimes))

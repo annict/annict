@@ -41,9 +41,8 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), getDBWorkArchiveNewUC, archiveWorkUC, unarchiveWorkUC)
 }
 
-// assertNotFoundPageは404が、以前http.Errorが返していた1行のプレーンテキストでは
-// なく共通のエラーページとして配信されることを検証する。古いリンクを辿った読み手が、何が
-// 起きたかを述べ戻る導線を持つページに着地するようにするため。
+// assertNotFoundPageは404が共通のエラーページとして配信されることを検証する。古い
+// リンクを辿った読み手が、何が起きたかを述べ戻る導線を持つページに着地するようにするため。
 func assertNotFoundPage(t *testing.T, rr *httptest.ResponseRecorder) {
 	t.Helper()
 
