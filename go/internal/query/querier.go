@@ -85,6 +85,15 @@ type Querier interface {
 	DeleteAnimeLink(ctx context.Context, id int64) error
 	DeleteAnimeOfficialAccount(ctx context.Context, id int64) error
 	DeleteAnimeSeason(ctx context.Context, id int64) error
+	// ログインしていない (dataにwarden.user.user.keyを持たない) セッションのうち、updated_atが
+	// lower_bound以上かつcutoffより古いものを最大batch_size件削除し、削除した件数と、削除した
+	// 行のupdated_atの最大値を返す。範囲はindex_sessions_on_updated_atから古い順に読み、
+	// ログインキーの有無は行を見て判定する。バッチの区切り方、lower_boundの引き継ぎ、
+	// SKIP LOCKEDの理由はDeleteExpiredSessionsと同じ。dataがJSONオブジェクトでない行は
+	// ?演算子が偽を返すため未ログインとして扱う。ログイン情報を持たないので消して問題ない。
+	// 削除の直前にログインされて行が更新された場合は、FOR UPDATEの再評価でupdated_atが
+	// 条件から外れるため削除されない。
+	DeleteAnonymousSessions(ctx context.Context, arg DeleteAnonymousSessionsParams) (DeleteAnonymousSessionsRow, error)
 	// 削除は、エピソードがまだ削除されていないことを条件とする。他者が削除する前に開いた一覧から、
 	// その削除後に送信された場合は、deleted_atを再スタンプせず、カウンターを2度目に減算せず、
 	// 1行も返さない。作品idは一覧が名指しした親作品との一致を要求する。その間に

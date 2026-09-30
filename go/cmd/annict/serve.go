@@ -196,6 +196,7 @@ func runServe() {
 	cleanupExpiredTokensUC := newCleanupExpiredTokensUsecase(queries)
 	cleanupExpiredSignInCodesUC := newCleanupExpiredSignInCodesUsecase(queries)
 	cleanupExpiredSessionsUC := newCleanupExpiredSessionsUsecase(queries)
+	cleanupAnonymousSessionsUC := newCleanupAnonymousSessionsUsecase(queries)
 
 	// フェーズ2のフル・リコンシリエーションバッチUseCaseを組み立てる (Worker用)。
 	// works / episodesをanimes / anime_classificationsへ同期する下の定期ジョブから
@@ -208,6 +209,7 @@ func runServe() {
 		CleanupExpiredTokens:      cleanupExpiredTokensUC,
 		CleanupExpiredSignInCodes: cleanupExpiredSignInCodesUC,
 		CleanupExpiredSessions:    cleanupExpiredSessionsUC,
+		CleanupAnonymousSessions:  cleanupAnonymousSessionsUC,
 		SyncAnimes:                syncAnimesUC,
 	}, cfg)
 	if err != nil {
@@ -271,6 +273,22 @@ func runServe() {
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobSessionCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "セッションクリーンアップ", "schedule", "毎時30分")
+
+	// 未ログインセッションのクリーンアップを毎時45分の定期実行ジョブとして登録する。
+	// 毎時0分のanimes同期バッチと、毎時30分から最大40分ごろまで動く期限切れセッションの
+	// クリーンアップと重ならず、同時にDBへ負荷をかけないよう45分にずらす。
+	periodicJobAnonymousSessionCleanup := river.NewPeriodicJob(
+		hourlySchedule{minute: 45},
+		func() (river.JobArgs, *river.InsertOpts) {
+			args := dispatcher.CleanupAnonymousSessionsArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
+		},
+		nil,
+	)
+
+	riverClient.Client().PeriodicJobs().Add(periodicJobAnonymousSessionCleanup)
+	slog.Info("定期実行ジョブを登録しました", "job", "未ログインセッションクリーンアップ", "schedule", "毎時45分")
 
 	// animesリコンサイルを毎時登録する。フェーズ2ではまだ両書きが無く、本バッチが
 	// animesを更新する唯一の経路のため、毎時実行で鮮度と差分メトリクスの取得頻度を優先する。

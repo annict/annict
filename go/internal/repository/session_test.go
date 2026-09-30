@@ -642,3 +642,129 @@ func TestDeleteExpired_ContinuesFromMaxUpdatedAt(t *testing.T) {
 		t.Errorf("残りの削除件数 = %d、期待値 = 1", remaining)
 	}
 }
+
+// insertSessionWithDataはprivate ID、data、updated_atを明示したセッション行を1件
+// 挿入する。DeleteAnonymousはdataのログインキーの有無とupdated_atで行を選ぶため、
+// テストではその両方を指定して行を配置する必要がある。
+func insertSessionWithData(t *testing.T, tx *sql.Tx, sessionID, data string, updatedAt time.Time) {
+	t.Helper()
+
+	_, err := tx.Exec(
+		`INSERT INTO sessions (session_id, data, created_at, updated_at) VALUES ($1, $2, $3, $4)`,
+		sessionID, data, updatedAt, updatedAt,
+	)
+	if err != nil {
+		t.Fatalf("セッションの作成に失敗: %v", err)
+	}
+}
+
+// TestDeleteAnonymous_OnlyAnonymousInRangeは、下限以上かつカットオフより古い未ログインの
+// セッションだけが削除され、ログイン済みのセッションや範囲外のセッションは残ることをテスト
+func TestDeleteAnonymous_OnlyAnonymousInRange(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	const (
+		anonymousID = "delete-anonymous-target"
+		nonObjectID = "delete-anonymous-non-object"
+		loggedInID  = "delete-anonymous-logged-in"
+		freshID     = "delete-anonymous-fresh"
+		belowID     = "delete-anonymous-below-lower-bound"
+	)
+
+	lowerBound := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	cutoff := time.Date(2000, 1, 10, 0, 0, 0, 0, time.UTC)
+	inRange := time.Date(2000, 1, 5, 0, 0, 0, 0, time.UTC)
+	insertSessionWithData(t, tx, anonymousID, `{"_csrf_token": "token"}`, inRange)
+	// dataの既定値は文字列の "{}" のため、JSONオブジェクトでない行も未ログインとして扱う。
+	insertSessionWithData(t, tx, nonObjectID, `"{}"`, inRange)
+	insertSessionWithData(t, tx, loggedInID, `{"warden.user.user.key": [[1], "salt"], "_csrf_token": "token"}`, inRange)
+	insertSessionWithData(t, tx, freshID, `{"_csrf_token": "token"}`, cutoff.Add(time.Hour))
+	insertSessionWithData(t, tx, belowID, `{"_csrf_token": "token"}`, lowerBound.Add(-time.Hour))
+
+	deleted, _, err := repo.DeleteAnonymous(context.Background(), cutoff, lowerBound, 100)
+	if err != nil {
+		t.Fatalf("DeleteAnonymousに失敗: %v", err)
+	}
+
+	if deleted != 2 {
+		t.Errorf("削除件数 = %d、期待値 = 2", deleted)
+	}
+	if sessionExists(t, tx, anonymousID) {
+		t.Error("範囲内の未ログインのセッションが削除されていません")
+	}
+	if sessionExists(t, tx, nonObjectID) {
+		t.Error("dataがJSONオブジェクトでないセッションが削除されていません")
+	}
+	if !sessionExists(t, tx, loggedInID) {
+		t.Error("ログイン済みのセッションが削除されています")
+	}
+	if !sessionExists(t, tx, freshID) {
+		t.Error("カットオフより新しいセッションが削除されています")
+	}
+	if !sessionExists(t, tx, belowID) {
+		t.Error("下限より古いセッションが削除されています")
+	}
+}
+
+// TestDeleteAnonymous_ReturnsMaxUpdatedAtは、limitで頭打ちになったときに削除した行の
+// updated_atの最大値を返し、それを下限に渡した次の呼び出しで残りを削除できることをテスト
+func TestDeleteAnonymous_ReturnsMaxUpdatedAt(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	older := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	newer := time.Date(2000, 1, 2, 0, 0, 0, 0, time.UTC)
+	insertSessionWithData(t, tx, "delete-anonymous-max-older", `{}`, older)
+	insertSessionWithData(t, tx, "delete-anonymous-max-newer-0", `{}`, newer)
+	insertSessionWithData(t, tx, "delete-anonymous-max-newer-1", `{}`, newer)
+
+	cutoff := time.Date(2000, 1, 10, 0, 0, 0, 0, time.UTC)
+	deleted, maxUpdatedAt, err := repo.DeleteAnonymous(context.Background(), cutoff, time.Time{}, 2)
+	if err != nil {
+		t.Fatalf("DeleteAnonymousに失敗: %v", err)
+	}
+	if deleted != 2 {
+		t.Errorf("削除件数 = %d、期待値 = 2", deleted)
+	}
+	if !maxUpdatedAt.Equal(newer) {
+		t.Errorf("updated_atの最大値 = %v、期待値 = %v", maxUpdatedAt, newer)
+	}
+
+	remaining, _, err := repo.DeleteAnonymous(context.Background(), cutoff, maxUpdatedAt, 2)
+	if err != nil {
+		t.Fatalf("2回目のDeleteAnonymousに失敗: %v", err)
+	}
+	if remaining != 1 {
+		t.Errorf("残りの削除件数 = %d、期待値 = 1", remaining)
+	}
+}
+
+// TestDeleteAnonymous_NoTargetは対象が無い場合に0件と下限を返すことをテスト
+func TestDeleteAnonymous_NoTarget(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	lowerBound := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	cutoff := time.Date(2000, 1, 10, 0, 0, 0, 0, time.UTC)
+	deleted, maxUpdatedAt, err := repo.DeleteAnonymous(context.Background(), cutoff, lowerBound, 100)
+	if err != nil {
+		t.Fatalf("DeleteAnonymousに失敗: %v", err)
+	}
+
+	if deleted != 0 {
+		t.Errorf("削除件数 = %d、期待値 = 0", deleted)
+	}
+	if !maxUpdatedAt.Equal(lowerBound) {
+		t.Errorf("updated_atの最大値 = %v、期待値 = %v (下限)", maxUpdatedAt, lowerBound)
+	}
+}
