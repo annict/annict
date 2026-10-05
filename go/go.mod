@@ -25,9 +25,9 @@ require (
 	github.com/mfridman/tparse v0.18.0
 	github.com/redis/go-redis/v9 v9.22.0
 	github.com/resend/resend-go/v2 v2.28.0
-	github.com/riverqueue/river v0.47.0
-	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.47.0
-	github.com/riverqueue/river/rivertype v0.47.0
+	github.com/riverqueue/river v0.48.0
+	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.48.0
+	github.com/riverqueue/river/rivertype v0.48.0
 	github.com/schollz/progressbar/v3 v3.19.1
 	github.com/stripe/stripe-go/v84 v84.4.1
 	golang.org/x/tools v0.50.0
@@ -86,8 +86,8 @@ require (
 	github.com/pingcap/log v1.1.0 // indirect
 	github.com/pingcap/tidb/pkg/parser v0.0.0-20250324122243-d51e00e5bbf0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/riverqueue/river/riverdriver v0.47.0 // indirect
-	github.com/riverqueue/river/rivershared v0.47.0 // indirect
+	github.com/riverqueue/river/riverdriver v0.48.0 // indirect
+	github.com/riverqueue/river/rivershared v0.48.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/riza-io/grpc-go v0.2.0 // indirect
 	github.com/spf13/cobra v1.9.1 // indirect
