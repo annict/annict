@@ -56,7 +56,7 @@ func TestCleanupTaskBodies_Wiring(t *testing.T) {
 
 	for name, body := range cleanupTaskBodies {
 		t.Run(name, func(t *testing.T) {
-			if err := body(context.Background(), nil, db, testutil.NewQueriesWithTx(db, tx)); err != nil {
+			if err := body(context.Background(), nil, db, testutil.NewQueriesWithTx(db, tx), nil); err != nil {
 				t.Errorf("%s()のエラー = %v", name, err)
 			}
 		})
@@ -76,7 +76,7 @@ func TestCleanupTaskBodies_Error(t *testing.T) {
 
 	for name, body := range cleanupTaskBodies {
 		t.Run(name, func(t *testing.T) {
-			if err := body(context.Background(), nil, db, testutil.NewQueriesWithTx(db, tx)); err == nil {
+			if err := body(context.Background(), nil, db, testutil.NewQueriesWithTx(db, tx), nil); err == nil {
 				t.Errorf("%s()のエラー = nil、期待値 = エラーあり", name)
 			}
 		})
