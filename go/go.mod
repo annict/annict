@@ -13,7 +13,7 @@ require (
 )
 
 require (
-	github.com/a-h/templ v0.3.1020
+	github.com/a-h/templ v0.3.1070
 	github.com/aws/aws-sdk-go-v2 v1.47.2
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.8
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.2
@@ -38,7 +38,7 @@ require (
 	cel.dev/expr v0.25.2 // indirect
 	filippo.io/edwards25519 v1.1.1 // indirect
 	github.com/a-h/parse v0.0.0-20250122154542-74294addb73e // indirect
-	github.com/andybalholm/brotli v1.1.0 // indirect
+	github.com/andybalholm/brotli v1.2.6 // indirect
 	github.com/antlr4-go/antlr/v4 v4.13.1 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.21 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.5.5 // indirect
@@ -61,9 +61,9 @@ require (
 	github.com/cubicdaiya/gonp v1.0.4 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/fatih/color v1.18.0 // indirect
+	github.com/fatih/color v1.19.0 // indirect
 	github.com/fatih/structtag v1.2.0 // indirect
-	github.com/fsnotify/fsnotify v1.7.0 // indirect
+	github.com/fsnotify/fsnotify v1.10.1 // indirect
 	github.com/go-sql-driver/mysql v1.9.3 // indirect
 	github.com/google/cel-go v0.29.0 // indirect
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
@@ -73,8 +73,8 @@ require (
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/korylus/tools v1.4.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
-	github.com/mattn/go-colorable v0.1.14 // indirect
-	github.com/mattn/go-isatty v0.0.22 // indirect
+	github.com/mattn/go-colorable v0.1.15 // indirect
+	github.com/mattn/go-isatty v0.0.24 // indirect
 	github.com/mattn/go-pointer v0.0.1 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
@@ -130,6 +130,7 @@ require (
 )
 
 tool (
+	github.com/a-h/templ/cmd/templ
 	github.com/korylus/tools/cmd/koryluslint
 	github.com/sqlc-dev/sqlc/cmd/sqlc
 )
