@@ -130,6 +130,7 @@ require (
 )
 
 tool (
+	github.com/a-h/templ/cmd/templ
 	github.com/korylus/tools/cmd/koryluslint
 	github.com/sqlc-dev/sqlc/cmd/sqlc
 )

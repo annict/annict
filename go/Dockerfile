@@ -51,13 +51,12 @@ COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
 
-# tools.goで宣言した開発ツール (templ / goimports) をインストールする。
+# tools.goで宣言した開発ツール (goimports) をインストールする。
 # `-mod=mod` を指定してgo.modのバージョンを厳密に解決し、固定したバージョンを
-# 確実にインストールする。
+# 確実にインストールする。templはgo.modのtool宣言から `go tool` で実行する。
 COPY tools.go ./
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    go install -mod=mod github.com/a-h/templ/cmd/templ && \
     go install -mod=mod golang.org/x/tools/cmd/goimports
 
 # 残りのソースをコピーする。コミット済みの *_templ.goやテストファイルは
@@ -71,8 +70,10 @@ COPY . .
 # この組み合わせにより、古い生成ファイルが新規生成と混在したときに発生する
 # 「duplicate import of github.com/a-h/templ」ビルドエラーを防ぐ。
 # goimportsはローカルの `make templ-generate` と挙動を揃えて `-w .` で実行する。
-RUN find internal -name '*_templ.go' -delete && \
-    templ generate && \
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    find internal -name '*_templ.go' -delete && \
+    go tool templ generate && \
     goimports -w .
 
 # フロントエンドアセット (CSS / JS) をビルドする。
