@@ -255,3 +255,24 @@ func TestPeriodicJobArgs(t *testing.T) {
 		})
 	}
 }
+
+func TestDeleteUserArgs(t *testing.T) {
+	t.Parallel()
+
+	args := DeleteUserArgs{UserID: 42}
+	if got := args.Kind(); got != "delete_user" {
+		t.Errorf("Kind() = %q、期待値 = %q", got, "delete_user")
+	}
+
+	opts := args.InsertOpts()
+	if opts.Queue != river.QueueDefault {
+		t.Errorf("Queue = %q、期待値 = %q", opts.Queue, river.QueueDefault)
+	}
+	if opts.MaxAttempts != 10 {
+		t.Errorf("MaxAttempts = %d、期待値 = 10", opts.MaxAttempts)
+	}
+	// 同じユーザーの削除ジョブが並行して進まないよう、引数 (ユーザーID) で一意にする。
+	if !opts.UniqueOpts.ByArgs {
+		t.Error("UniqueOpts.ByArgs = false、期待値 = true")
+	}
+}

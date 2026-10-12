@@ -1518,6 +1518,12 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		b.t.Fatalf("ステータスデータの作成に失敗しました: %v", err)
 	}
 
+	// プログラムを指定しない場合は、program_idをNULLのまま作成する。
+	var programID any
+	if b.programID != 0 {
+		programID = b.programID
+	}
+
 	// ライブラリエントリを作成 (status_idを設定)
 	query := `
 		INSERT INTO library_entries (
@@ -1532,7 +1538,7 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		query,
 		int64(b.userID),
 		int64(b.workID),
-		b.programID,
+		programID,
 		kind,
 		statusID,
 		time.Now(),

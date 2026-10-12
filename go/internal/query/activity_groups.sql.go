@@ -9,6 +9,34 @@ import (
 	"context"
 )
 
+const deleteActivityGroupsByUserID = `-- name: DeleteActivityGroupsByUserID :one
+WITH deleted AS (
+    DELETE FROM activity_groups
+    WHERE id IN (
+        SELECT target.id
+        FROM activity_groups AS target
+        WHERE target.user_id = $1
+        LIMIT $2
+    )
+    RETURNING activity_groups.id
+)
+SELECT COUNT(*) FROM deleted
+`
+
+type DeleteActivityGroupsByUserIDParams struct {
+	UserID    int64 `db:"user_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+// ユーザーのアクティビティグループを最大batch_size件削除し、削除した件数を返す。
+// グループに属するアクティビティは先に削除しておく (activitiesからの外部キーがあるため)。
+func (q *Queries) DeleteActivityGroupsByUserID(ctx context.Context, arg DeleteActivityGroupsByUserIDParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, deleteActivityGroupsByUserID, arg.UserID, arg.BatchSize)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getActivityGroupByID = `-- name: GetActivityGroupByID :one
 SELECT id, user_id, itemable_type, single, activities_count, created_at, updated_at
 FROM activity_groups

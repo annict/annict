@@ -41,3 +41,11 @@ func (u *User) IsEditor() bool {
 func (u *User) IsCommitter() bool {
 	return u.IsAdmin() || u.IsEditor()
 }
+
+// UserDeletionTargetは退会の削除処理が対象のユーザーについて参照する属性。
+// 削除処理は論理削除済みのユーザーだけを扱うため、論理削除の有無を持つ。
+type UserDeletionTarget struct {
+	ID                 UserID
+	Deleted            bool
+	StripeSubscriberID *StripeSubscriberID
+}

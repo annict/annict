@@ -5,6 +5,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -128,6 +129,28 @@ func (r *UserRepository) FindActiveIDByEmail(ctx context.Context, email string) 
 	return &userID, nil
 }
 
+// FindDeletionTargetは退会の削除処理の対象として、論理削除済みのユーザーも含めて
+// IDで取得する。ユーザーが存在しない (削除を終えた) 場合は (nil, nil) を返す。
+func (r *UserRepository) FindDeletionTarget(ctx context.Context, id model.UserID) (*model.UserDeletionTarget, error) {
+	row, err := r.queries.GetUserForDeletion(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	target := &model.UserDeletionTarget{
+		ID:      model.UserID(row.ID),
+		Deleted: row.DeletedAt.Valid,
+	}
+	if row.StripeSubscriberID.Valid {
+		stripeSubscriberID := model.StripeSubscriberID(row.StripeSubscriberID.Int64)
+		target.StripeSubscriberID = &stripeSubscriberID
+	}
+	return target, nil
+}
+
 // UpdateStripeSubscriberIDはユーザーのStripeサブスクライバーIDを更新します
 func (r *UserRepository) UpdateStripeSubscriberID(ctx context.Context, userID model.UserID, stripeSubscriberID *model.StripeSubscriberID) error {
 	var nullableID sql.NullInt64
@@ -196,4 +219,37 @@ func (r *UserRepository) IsSupporter(ctx context.Context, user *model.User) (boo
 	}
 
 	return false, nil
+}
+
+// DeleteByIDはユーザー行を、外部キーにON DELETEの無い従属データ (設定・メール通知設定・
+// メールアドレスの確認) とほかのユーザーから参照されていない購読情報と一緒に削除し、
+// 削除した件数を返します。そのほかの従属データは外部キーのON DELETEに従って扱われます。
+// 購読情報を共有するユーザーの削除を直列化するため、購読情報の行をロックしてから、別の文で
+// 最後の参照者かを確かめて削除します。ロックを削除の文まで保持するよう、WithTxで
+// トランザクションを渡したRepositoryから呼んでください。
+func (r *UserRepository) DeleteByID(ctx context.Context, id model.UserID) (int64, error) {
+	user, err := r.queries.GetUserForDeletion(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return 0, nil
+		}
+		return 0, fmt.Errorf("削除対象ユーザーの取得に失敗: %w", err)
+	}
+	// StripeとGumroadの購読情報を両方持つユーザーどうしが互いのロックを待ってデッドロックしないよう、
+	// 常にStripe → Gumroadの順でロックする。
+	if user.StripeSubscriberID.Valid {
+		if _, err := r.queries.LockStripeSubscriberForUserDeletion(ctx, user.StripeSubscriberID.Int64); err != nil && !errors.Is(err, sql.ErrNoRows) {
+			return 0, fmt.Errorf("購読情報(Stripe)のロックに失敗: %w", err)
+		}
+	}
+	if user.GumroadSubscriberID.Valid {
+		if _, err := r.queries.LockGumroadSubscriberForUserDeletion(ctx, user.GumroadSubscriberID.Int64); err != nil && !errors.Is(err, sql.ErrNoRows) {
+			return 0, fmt.Errorf("購読情報(Gumroad)のロックに失敗: %w", err)
+		}
+	}
+	count, err := r.queries.DeleteUser(ctx, int64(id))
+	if err != nil {
+		return 0, fmt.Errorf("ユーザー行の削除に失敗: %w", err)
+	}
+	return count, nil
 }

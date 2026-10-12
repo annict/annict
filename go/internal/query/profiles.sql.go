@@ -110,6 +110,42 @@ func (q *Queries) ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, er
 	return items, nil
 }
 
+const listProfileImageDataByUserID = `-- name: ListProfileImageDataByUserID :many
+SELECT image_data, background_image_data
+FROM profiles
+WHERE user_id = $1
+`
+
+type ListProfileImageDataByUserIDRow struct {
+	ImageData           sql.NullString `db:"image_data"`
+	BackgroundImageData sql.NullString `db:"background_image_data"`
+}
+
+// 退会の削除処理でストレージから消す画像を求めるため、ユーザーのプロフィール画像と背景画像の
+// Shrineの添付データを取得する。
+func (q *Queries) ListProfileImageDataByUserID(ctx context.Context, userID int64) ([]ListProfileImageDataByUserIDRow, error) {
+	rows, err := q.db.QueryContext(ctx, listProfileImageDataByUserID, userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListProfileImageDataByUserIDRow{}
+	for rows.Next() {
+		var i ListProfileImageDataByUserIDRow
+		if err := rows.Scan(&i.ImageData, &i.BackgroundImageData); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updateProfileImageData = `-- name: UpdateProfileImageData :exec
 UPDATE profiles
 SET image_data = $1,

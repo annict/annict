@@ -66,6 +66,10 @@ func TestRunTask_List(t *testing.T) {
 			t.Errorf("一覧に含まれていないタスク%qの説明:\n%s", name, listing)
 		}
 	}
+	// 引数を取るタスクは、運用者が一覧から引数の並びを読み取れるよう名前の後ろに併記する。
+	if want := "delete-user <user_id>"; !strings.Contains(listing, want) {
+		t.Errorf("一覧に含まれていない文字列 = %q:\n%s", want, listing)
+	}
 }
 
 func TestRunTask_Errors(t *testing.T) {
@@ -100,6 +104,16 @@ func TestRunTask_Errors(t *testing.T) {
 			name:     "未知のタスク名の後ろに余分な引数",
 			args:     []string{"no-such-task", "--dry-run"},
 			wantErrs: []string{`不明なタスクです: "no-such-task"`},
+		},
+		{
+			name:     "引数を取るタスクに引数なし",
+			args:     []string{"delete-user"},
+			wantErrs: []string{`タスク "delete-user"には引数 <user_id>を指定してください`},
+		},
+		{
+			name:     "引数を取るタスクに余分な引数",
+			args:     []string{"delete-user", "1", "2"},
+			wantErrs: []string{`タスク "delete-user"には引数 <user_id>を指定してください`},
 		},
 	}
 

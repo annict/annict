@@ -53,6 +53,58 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
+const deleteUser = `-- name: DeleteUser :one
+WITH deleted_settings AS (
+    DELETE FROM settings
+    WHERE settings.user_id = $1
+),
+deleted_email_notifications AS (
+    DELETE FROM email_notifications
+    WHERE email_notifications.user_id = $1
+),
+deleted_email_confirmations AS (
+    DELETE FROM email_confirmations
+    WHERE email_confirmations.user_id = $1
+),
+deleted_user AS (
+    DELETE FROM users
+    WHERE users.id = $1
+    RETURNING users.stripe_subscriber_id, users.gumroad_subscriber_id
+),
+deleted_stripe_subscribers AS (
+    DELETE FROM stripe_subscribers
+    WHERE stripe_subscribers.id IN (SELECT deleted_user.stripe_subscriber_id FROM deleted_user)
+        AND NOT EXISTS (
+            SELECT 1
+            FROM users AS other_users
+            WHERE other_users.stripe_subscriber_id = stripe_subscribers.id
+                AND other_users.id <> $1
+        )
+),
+deleted_gumroad_subscribers AS (
+    DELETE FROM gumroad_subscribers
+    WHERE gumroad_subscribers.id IN (SELECT deleted_user.gumroad_subscriber_id FROM deleted_user)
+        AND NOT EXISTS (
+            SELECT 1
+            FROM users AS other_users
+            WHERE other_users.gumroad_subscriber_id = gumroad_subscribers.id
+                AND other_users.id <> $1
+        )
+)
+SELECT COUNT(*) FROM deleted_user
+`
+
+// ユーザー行を削除し、削除した件数を返す。外部キーにON DELETEの無い1件ずつの従属データ
+// (設定・メール通知設定・メールアドレスの確認) と、ほかのユーザーから参照されていない
+// 購読情報も同じ文の中で削除する。外部キーの検査は文の終わりに行われるため、ユーザー行と
+// 参照し合う行を1つの文で削除できる。そのほかの従属データは外部キーのON DELETEに任せる。
+func (q *Queries) DeleteUser(ctx context.Context, userID int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, deleteUser, userID)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getActiveUserByEmailForSignIn = `-- name: GetActiveUserByEmailForSignIn :one
 SELECT id, email, encrypted_password
 FROM users
@@ -295,6 +347,55 @@ func (q *Queries) GetUserByUsername(ctx context.Context, lower string) (GetUserB
 		&i.UpdatedAt,
 	)
 	return i, err
+}
+
+const getUserForDeletion = `-- name: GetUserForDeletion :one
+SELECT id, deleted_at, stripe_subscriber_id, gumroad_subscriber_id
+FROM users
+WHERE id = $1
+LIMIT 1
+`
+
+type GetUserForDeletionRow struct {
+	ID                  int64         `db:"id"`
+	DeletedAt           sql.NullTime  `db:"deleted_at"`
+	StripeSubscriberID  sql.NullInt64 `db:"stripe_subscriber_id"`
+	GumroadSubscriberID sql.NullInt64 `db:"gumroad_subscriber_id"`
+}
+
+// 退会の削除処理の対象を確かめるため、論理削除済みのユーザーも含めてIDで取得する。
+func (q *Queries) GetUserForDeletion(ctx context.Context, id int64) (GetUserForDeletionRow, error) {
+	row := q.db.QueryRowContext(ctx, getUserForDeletion, id)
+	var i GetUserForDeletionRow
+	err := row.Scan(
+		&i.ID,
+		&i.DeletedAt,
+		&i.StripeSubscriberID,
+		&i.GumroadSubscriberID,
+	)
+	return i, err
+}
+
+const lockGumroadSubscriberForUserDeletion = `-- name: LockGumroadSubscriberForUserDeletion :one
+SELECT id FROM gumroad_subscribers WHERE id = $1 FOR UPDATE
+`
+
+// 購読情報を共有するユーザーの削除を直列化する。
+func (q *Queries) LockGumroadSubscriberForUserDeletion(ctx context.Context, id int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, lockGumroadSubscriberForUserDeletion, id)
+	err := row.Scan(&id)
+	return id, err
+}
+
+const lockStripeSubscriberForUserDeletion = `-- name: LockStripeSubscriberForUserDeletion :one
+SELECT id FROM stripe_subscribers WHERE id = $1 FOR UPDATE
+`
+
+// 購読情報を共有するユーザーの削除を直列化する。
+func (q *Queries) LockStripeSubscriberForUserDeletion(ctx context.Context, id int64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, lockStripeSubscriberForUserDeletion, id)
+	err := row.Scan(&id)
+	return id, err
 }
 
 const updateUserPassword = `-- name: UpdateUserPassword :exec

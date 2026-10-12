@@ -60,6 +60,11 @@ var tasks = newTasks(map[string]taskDef{
 		desc: "24時間以上前に期限切れ・使用済みになったパスワードリセットトークンを削除する",
 		body: cleanupExpiredTokens,
 	},
+	"delete-user": {
+		desc:   "論理削除済みのユーザーのデータを最後まで削除する (退会・利用停止したユーザーが対象)",
+		params: []string{"user_id"},
+		body:   deleteUser,
+	},
 	"seed": {
 		desc:  "開発用のシードデータを生成する (dev / testでのみ実行できる)",
 		guard: guardSeed,

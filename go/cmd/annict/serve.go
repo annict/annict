@@ -53,6 +53,7 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
 	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/storage"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/turnstile"
@@ -203,6 +204,24 @@ func runServe() {
 	// 呼ばれる。配線はnewSyncAnimesUsecase経由で `task sync-animes` サブコマンドと共有する。
 	syncAnimesUC := newSyncAnimesUsecase(db, queries)
 
+	// stripe-goクライアントを、UseCaseごとのinterfaceを実装するadapterで
+	// ラップする。これにより各UseCaseは *stripe.Clientではなくseamに依存する。
+	// 下のユーザーの削除ジョブとサポーター関連のハンドラーの双方が使う。
+	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
+	stripeAdapter := annictStripe.NewAdapter(stripeClient)
+
+	// プロフィール画像などを置くオブジェクトストレージ (Cloudflare R2) のクライアントを、
+	// UseCaseのinterfaceを実装するadapterでラップする。
+	storageAdapter := storage.NewAdapter(
+		storage.NewClient(cfg.S3Endpoint, cfg.S3AccessKeyID, cfg.S3SecretAccessKey, cfg.S3Region),
+		cfg.S3BucketName,
+	)
+
+	// 退会・利用停止したユーザーの削除ジョブのUseCaseを組み立てる (Worker用)。
+	// 1回の実行時間に上限を設け、超えた分はジョブのsnoozeで続きから進める。配線は
+	// newDeleteUserUsecase経由で `task delete-user` サブコマンドと共有する。
+	deleteUserUC := newDeleteUserUsecase(db, queries, stripeAdapter, storageAdapter, usecase.DeleteUserTimeLimit)
+
 	// Riverクライアントの初期化
 	ctx := context.Background()
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
@@ -211,6 +230,7 @@ func runServe() {
 		CleanupExpiredSessions:    cleanupExpiredSessionsUC,
 		CleanupAnonymousSessions:  cleanupAnonymousSessionsUC,
 		SyncAnimes:                syncAnimesUC,
+		DeleteUser:                deleteUserUC,
 	}, cfg)
 	if err != nil {
 		slog.Error("Riverクライアントの初期化に失敗しました", "error", err)
@@ -522,10 +542,6 @@ func runServe() {
 		PriceMonthlyID: cfg.StripePriceMonthlyID,
 		PriceYearlyID:  cfg.StripePriceYearlyID,
 	}
-	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
-	// stripe-goクライアントを、UseCaseごとのinterfaceを実装するadapterで
-	// ラップする。これにより各UseCaseは *stripe.Clientではなくseamに依存する。
-	stripeAdapter := annictStripe.NewAdapter(stripeClient)
 	getSupporterStatusUC := usecase.NewGetSupporterStatusUsecase(stripeSubscriberRepo, gumroadSubscriberRepo)
 	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, getSupporterStatusUC, annictStripeCfg, stripeClient)
 

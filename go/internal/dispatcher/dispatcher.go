@@ -57,6 +57,26 @@ func (SendPasswordResetEmailArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 5}
 }
 
+// DeleteUserArgsは退会・利用停止したユーザーのデータを削除するジョブの引数。
+// メールアドレスなどの個人情報はジョブの行に残さないよう、ユーザーIDだけを持つ。
+type DeleteUserArgs struct {
+	UserID int64 `json:"user_id"`
+}
+
+// Kindはジョブの種類を返す
+func (DeleteUserArgs) Kind() string { return "delete_user" }
+
+// InsertOptsはジョブのInsertオプションを返す。同じユーザーの削除が並行して進まないよう、
+// 引数 (ユーザーID) で一意にする。Stripeの一時的な障害でも数時間は再試行が続くよう、
+// 試行回数を既定のジョブより多くする。
+func (DeleteUserArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{
+		Queue:       river.QueueDefault,
+		MaxAttempts: 10,
+		UniqueOpts:  river.UniqueOpts{ByArgs: true},
+	}
+}
+
 // --- 定期ジョブの引数型 ---
 //
 // 以下のジョブはUseCaseから投入するのではなく、Riverの定期ジョブとして

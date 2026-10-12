@@ -31,7 +31,14 @@ type NewClientParams struct {
 	CleanupExpiredSessions    ExpiredSessionCleaner
 	CleanupAnonymousSessions  AnonymousSessionCleaner
 	SyncAnimes                AnimesSyncer
+	DeleteUser                UserDeleter
 }
+
+// SoftStopTimeoutは、停止時に実行中のジョブの完了を待ち、待ちきれなければcontextを
+// キャンセルするまでの時間。ユーザーの削除のように1回の実行が長いジョブも、呼び出し元
+// (serve.go) の停止のタイムアウトより前に中断させて結果を記録させる。記録されないまま
+// プロセスが終わったジョブは、Riverに救出されるまで再開されず、試行回数も消費するため。
+const SoftStopTimeout = 5 * time.Second
 
 // NewClientは新しいRiverクライアントを作成します
 func NewClient(ctx context.Context, databaseURL string, params NewClientParams, cfg *config.Config) (*Client, error) {
@@ -102,6 +109,10 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	river.AddWorker(workers, NewSyncAnimesWorker(params.SyncAnimes))
 	slog.InfoContext(ctx, "SyncAnimesWorkerを登録しました")
 
+	// ユーザーの削除ワーカーを登録する。
+	river.AddWorker(workers, NewDeleteUserWorker(params.DeleteUser))
+	slog.InfoContext(ctx, "DeleteUserWorkerを登録しました")
+
 	// Riverにはslog.Default() ではなく素の標準エラー出力ハンドラーで
 	// ログを取らせる。slog.Default() のハンドラーはErrorレベルをSentryへ
 	// ファンアウトする。Riverのバックグラウンドサービスは一時的な接続失敗を
@@ -123,7 +134,8 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		Queues: map[string]river.QueueConfig{
 			river.QueueDefault: {MaxWorkers: 10},
 		},
-		Workers: workers,
+		Workers:         workers,
+		SoftStopTimeout: SoftStopTimeout,
 		Middleware: []rivertype.Middleware{
 			annictSentry.RiverWorkerMiddleware(),
 		},
