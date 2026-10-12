@@ -83,6 +83,12 @@ updates:
     # セキュリティアップデートのみ対応する。通常のversion update PRは作らない
     open-pull-requests-limit: 0
 
+  # リポジトリ全体で使う開発ツールのnpm依存パッケージ (pnpm)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "daily"
+
   # GitHub Actions
   - package-ecosystem: "github-actions"
     directory: "/"
