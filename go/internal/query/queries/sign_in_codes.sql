@@ -8,10 +8,16 @@ INSERT INTO sign_in_codes (
 ) RETURNING *;
 
 -- name: GetValidSignInCode :one
+-- コードの発行後に退会・利用停止したユーザーのコードは無効として扱う。
 SELECT * FROM sign_in_codes
 WHERE user_id = $1
 AND used_at IS NULL
 AND expires_at > NOW()
+AND EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = sign_in_codes.user_id
+    AND users.deleted_at IS NULL
+)
 ORDER BY created_at DESC
 LIMIT 1;
 

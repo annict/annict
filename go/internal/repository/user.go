@@ -17,11 +17,11 @@ type User = model.User
 // UpdateUserPasswordParamsはパスワード更新のパラメータの型エイリアスです
 type UpdateUserPasswordParams = query.UpdateUserPasswordParams
 
-// GetUserByIDRowはユーザーID検索結果の型エイリアスです
-type GetUserByIDRow = query.GetUserByIDRow
+// GetActiveUserByIDRowはユーザーID検索結果の型エイリアスです
+type GetActiveUserByIDRow = query.GetActiveUserByIDRow
 
-// GetUserByEmailOrUsernameRowはメールアドレス/ユーザー名検索結果の型エイリアスです
-type GetUserByEmailOrUsernameRow = query.GetUserByEmailOrUsernameRow
+// GetActiveUserByEmailOrUsernameRowはメールアドレス/ユーザー名検索結果の型エイリアスです
+type GetActiveUserByEmailOrUsernameRow = query.GetActiveUserByEmailOrUsernameRow
 
 // UserRepositoryはUser関連のデータアクセスを担当します
 type UserRepository struct {
@@ -40,14 +40,14 @@ func (r *UserRepository) WithTx(tx *sql.Tx) *UserRepository {
 	return &UserRepository{queries: r.queries.WithTx(tx)}
 }
 
-// GetByEmailForSignInはメールアドレスでユーザーを検索します (サインイン用)
-func (r *UserRepository) GetByEmailForSignIn(ctx context.Context, email string) (query.GetUserByEmailForSignInRow, error) {
-	return r.queries.GetUserByEmailForSignIn(ctx, email)
+// GetActiveByEmailForSignInは論理削除されていないユーザーをメールアドレスで検索します (サインイン用)
+func (r *UserRepository) GetActiveByEmailForSignIn(ctx context.Context, email string) (query.GetActiveUserByEmailForSignInRow, error) {
+	return r.queries.GetActiveUserByEmailForSignIn(ctx, email)
 }
 
-// GetByEmailOrUsernameはメールアドレスまたはユーザー名でユーザーを検索します
-func (r *UserRepository) GetByEmailOrUsername(ctx context.Context, emailOrUsername string) (query.GetUserByEmailOrUsernameRow, error) {
-	return r.queries.GetUserByEmailOrUsername(ctx, emailOrUsername)
+// GetActiveByEmailOrUsernameは論理削除されていないユーザーをメールアドレスまたはユーザー名で検索します
+func (r *UserRepository) GetActiveByEmailOrUsername(ctx context.Context, emailOrUsername string) (query.GetActiveUserByEmailOrUsernameRow, error) {
+	return r.queries.GetActiveUserByEmailOrUsername(ctx, emailOrUsername)
 }
 
 // GetByEmailはメールアドレスでユーザーを検索します
@@ -55,9 +55,9 @@ func (r *UserRepository) GetByEmail(ctx context.Context, email string) (query.Ge
 	return r.queries.GetUserByEmail(ctx, email)
 }
 
-// GetByIDはユーザーIDでユーザーを検索します
-func (r *UserRepository) GetByID(ctx context.Context, id model.UserID) (query.GetUserByIDRow, error) {
-	return r.queries.GetUserByID(ctx, int64(id))
+// GetActiveByIDは論理削除されていないユーザーをユーザーIDで検索します
+func (r *UserRepository) GetActiveByID(ctx context.Context, id model.UserID) (query.GetActiveUserByIDRow, error) {
+	return r.queries.GetActiveUserByID(ctx, int64(id))
 }
 
 // UserCreateParamsはユーザー作成のパラメータ
@@ -103,6 +103,21 @@ func (r *UserRepository) GetByUsername(ctx context.Context, username string) err
 // (nil, nil) を返す。
 func (r *UserRepository) FindActiveIDByUsername(ctx context.Context, username string) (*model.UserID, error) {
 	id, err := r.queries.GetActiveUserIDByUsername(ctx, username)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	userID := model.UserID(id)
+	return &userID, nil
+}
+
+// FindActiveIDByEmailは論理削除されていないユーザーのIDをメールアドレスで取得する。
+// ユーザーが存在しない場合や削除済み (deleted_at IS NOT NULL) の場合は
+// (nil, nil) を返す。
+func (r *UserRepository) FindActiveIDByEmail(ctx context.Context, email string) (*model.UserID, error) {
+	id, err := r.queries.GetActiveUserIDByEmail(ctx, email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil

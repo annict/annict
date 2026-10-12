@@ -3,6 +3,7 @@ package repository_test
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"testing"
 	"time"
 
@@ -100,6 +101,50 @@ func TestUserRepository_GetByUsername_CaseInsensitive(t *testing.T) {
 	if err != nil {
 		t.Errorf("大文字小文字を区別しない検索でエラーが返されました: %v", err)
 	}
+}
+
+// TestUserRepository_FindActiveIDByEmailは論理削除されていないユーザーのIDだけを返すことをテスト
+func TestUserRepository_FindActiveIDByEmail(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewUserRepository(query.New(db)).WithTx(tx)
+	ctx := context.Background()
+
+	activeUser := testutil.NewUserBuilder(t, tx).BuildWithResult()
+	deletedUser := testutil.NewUserBuilder(t, tx).
+		WithDeletedAt(time.Now()).
+		BuildWithResult()
+
+	t.Run("有効なユーザーはIDを返す (大文字小文字を区別しない)", func(t *testing.T) {
+		got, err := repo.FindActiveIDByEmail(ctx, strings.ToUpper(activeUser.Email))
+		if err != nil {
+			t.Fatalf("FindActiveIDByEmailのエラー = %v", err)
+		}
+		if got == nil || *got != activeUser.ID {
+			t.Errorf("ID = %v、期待値 = %v", got, activeUser.ID)
+		}
+	})
+
+	t.Run("削除済みユーザーはnilを返す", func(t *testing.T) {
+		got, err := repo.FindActiveIDByEmail(ctx, deletedUser.Email)
+		if err != nil {
+			t.Fatalf("FindActiveIDByEmailのエラー = %v", err)
+		}
+		if got != nil {
+			t.Errorf("ID = %v、期待値 = nil", *got)
+		}
+	})
+
+	t.Run("存在しないユーザーはnilを返す", func(t *testing.T) {
+		got, err := repo.FindActiveIDByEmail(ctx, "find-active-id-nonexistent@example.com")
+		if err != nil {
+			t.Fatalf("FindActiveIDByEmailのエラー = %v", err)
+		}
+		if got != nil {
+			t.Errorf("ID = %v、期待値 = nil", *got)
+		}
+	})
 }
 
 // TestUserRepository_UpdateStripeSubscriberID_SetはStripeサブスクライバーIDを設定できることをテスト

@@ -32,7 +32,7 @@ type SignInPasswordCreateValidatorInput struct {
 
 // SignInPasswordCreateValidateOutputはバリデーション成功時の出力
 type SignInPasswordCreateValidateOutput struct {
-	User repository.GetUserByEmailOrUsernameRow
+	User repository.GetActiveUserByEmailOrUsernameRow
 }
 
 // Validateはバリデーションを行い、成功時は認証済みユーザー情報を返す
@@ -53,7 +53,8 @@ func (v *SignInPasswordCreateValidator) Validate(ctx context.Context, input Sign
 	}
 
 	// 2. 状態バリデーション (DB検証)
-	user, err := v.userRepo.GetByEmailOrUsername(ctx, input.EmailOrUsername)
+	// 削除済みユーザーは存在しないユーザーと同じ応答にする
+	user, err := v.userRepo.GetActiveByEmailOrUsername(ctx, input.EmailOrUsername)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			ve.AddGlobal(i18n.T(ctx, "sign_in_error_invalid_credentials"))

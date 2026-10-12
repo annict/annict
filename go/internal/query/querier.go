@@ -156,6 +156,16 @@ type Querier interface {
 	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
 	// 判断には使わない。
 	ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error)
+	GetActiveUserByEmailForSignIn(ctx context.Context, lower string) (GetActiveUserByEmailForSignInRow, error)
+	GetActiveUserByEmailOrUsername(ctx context.Context, lower string) (GetActiveUserByEmailOrUsernameRow, error)
+	// 論理削除されていないユーザーをIDで取得する。
+	// セッションやログインコードからユーザーを引く認証の経路で使い、
+	// 退会・利用停止でdeleted_atが立ったユーザーを未ログインとして扱う。
+	GetActiveUserByID(ctx context.Context, id int64) (GetActiveUserByIDRow, error)
+	// 論理削除されていないユーザーのIDをメールアドレスで検索する。
+	// 削除済みユーザーのメールアドレスも一意制約の対象のため、
+	// 登録済みかの確認には使わず、パスワードリセットなど本人の操作を受け付ける経路で使う。
+	GetActiveUserIDByEmail(ctx context.Context, lower string) (int64, error)
 	// 論理削除されていないユーザーのIDをusernameで検索する。
 	// 削除済みユーザーに対して404を返すべき機能 (例: 視聴記録ヒートマップ
 	// フラグメント) で、他のユーザー属性を取得せずに利用する。
@@ -220,6 +230,7 @@ type Querier interface {
 	// ユーザーの視聴リスト (見たい・見てる) からprogram_idを取得します
 	GetLibraryEntryProgramIDs(ctx context.Context, userID int64) ([]GetLibraryEntryProgramIDsRow, error)
 	GetOAuthApplicationByUID(ctx context.Context, uid string) (GetOAuthApplicationByUIDRow, error)
+	// トークンの発行後に退会・利用停止したユーザーのトークンは無効として扱う。
 	GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error)
 	GetPasswordResetTokensByUserID(ctx context.Context, userID int64) ([]PasswordResetToken, error)
 	GetPopularWorks(ctx context.Context) ([]GetPopularWorksRow, error)
@@ -234,13 +245,11 @@ type Querier interface {
 	GetStripeSubscriberByStripeSubscriptionID(ctx context.Context, stripeSubscriptionID string) (StripeSubscriber, error)
 	GetStripeWebhookEventByStripeEventID(ctx context.Context, stripeEventID string) (StripeWebhookEvent, error)
 	GetUserByEmail(ctx context.Context, lower string) (GetUserByEmailRow, error)
-	GetUserByEmailForSignIn(ctx context.Context, lower string) (GetUserByEmailForSignInRow, error)
-	GetUserByEmailOrUsername(ctx context.Context, lower string) (GetUserByEmailOrUsernameRow, error)
-	GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error)
 	GetUserByStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (GetUserByStripeSubscriberIDRow, error)
 	GetUserByUsername(ctx context.Context, lower string) (GetUserByUsernameRow, error)
 	// ユーザーのカレンダー情報を取得します
 	GetUserCalendarInfo(ctx context.Context, username string) (GetUserCalendarInfoRow, error)
+	// コードの発行後に退会・利用停止したユーザーのコードは無効として扱う。
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)

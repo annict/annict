@@ -156,7 +156,7 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 		}
 
 		// ユーザーの紐付けが解除されていることを確認
-		updatedUser, err := userRepo.GetByID(ctx, model.UserID(userID))
+		updatedUser, err := userRepo.GetActiveByID(ctx, model.UserID(userID))
 		if err != nil {
 			t.Errorf("ユーザー取得エラー: %v", err)
 			return

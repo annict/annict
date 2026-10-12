@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -161,6 +162,50 @@ func TestCreatePasswordResetTokenUsecase_Execute_WithNonExistentUser(t *testing.
 	// ユーザーが存在しない場合はnilを返す
 	if result != nil {
 		t.Errorf("存在しないユーザーなのにresultが返されました: %+v", result)
+	}
+}
+
+// TestCreatePasswordResetTokenUsecase_Execute_WithDeletedUserは削除済みユーザーにトークンを発行しないことをテストします
+func TestCreatePasswordResetTokenUsecase_Execute_WithDeletedUser(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	user := testutil.NewUserBuilder(t, tx).
+		WithDeletedAt(time.Now()).
+		BuildWithResult()
+
+	// トランザクションをコミット (UseCaseが新しいトランザクションを開始するため)
+	if err := tx.Commit(); err != nil {
+		t.Fatalf("トランザクションのコミットに失敗: %v", err)
+	}
+	t.Cleanup(func() { testutil.DeleteUser(t, db, user.ID) })
+
+	queries := query.New(db)
+	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
+
+	v := validator.NewPasswordResetCreateValidator()
+	uc := NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), passwordResetTokenRepo, nil, nil, v)
+
+	ctx := context.Background()
+	result, err := uc.Execute(ctx, CreatePasswordResetTokenInput{
+		Email: user.Email,
+	})
+
+	// 存在しないユーザーと同じく、エラーもトークンも返さない
+	if err != nil {
+		t.Errorf("削除済みユーザーでのエラー = %v、期待値 = nil", err)
+	}
+	if result != nil {
+		t.Errorf("削除済みユーザーでのresult = %+v、期待値 = nil", result)
+	}
+
+	tokens, err := queries.GetPasswordResetTokensByUserID(ctx, int64(user.ID))
+	if err != nil {
+		t.Fatalf("GetPasswordResetTokensByUserIDのエラー = %v", err)
+	}
+	if len(tokens) != 0 {
+		t.Errorf("len(tokens) = %d、期待値 = 0", len(tokens))
 	}
 }
 

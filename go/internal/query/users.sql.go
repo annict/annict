@@ -53,6 +53,140 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (CreateU
 	return i, err
 }
 
+const getActiveUserByEmailForSignIn = `-- name: GetActiveUserByEmailForSignIn :one
+SELECT id, email, encrypted_password
+FROM users
+WHERE LOWER(email) = LOWER($1)
+  AND deleted_at IS NULL
+LIMIT 1
+`
+
+type GetActiveUserByEmailForSignInRow struct {
+	ID                int64  `db:"id"`
+	Email             string `db:"email"`
+	EncryptedPassword string `db:"encrypted_password"`
+}
+
+func (q *Queries) GetActiveUserByEmailForSignIn(ctx context.Context, lower string) (GetActiveUserByEmailForSignInRow, error) {
+	row := q.db.QueryRowContext(ctx, getActiveUserByEmailForSignIn, lower)
+	var i GetActiveUserByEmailForSignInRow
+	err := row.Scan(&i.ID, &i.Email, &i.EncryptedPassword)
+	return i, err
+}
+
+const getActiveUserByEmailOrUsername = `-- name: GetActiveUserByEmailOrUsername :one
+SELECT id, username, email, role, encrypted_password, created_at, updated_at
+FROM users
+WHERE (LOWER(email) = LOWER($1) OR LOWER(username) = LOWER($1))
+  AND deleted_at IS NULL
+LIMIT 1
+`
+
+type GetActiveUserByEmailOrUsernameRow struct {
+	ID                int64        `db:"id"`
+	Username          string       `db:"username"`
+	Email             string       `db:"email"`
+	Role              int32        `db:"role"`
+	EncryptedPassword string       `db:"encrypted_password"`
+	CreatedAt         sql.NullTime `db:"created_at"`
+	UpdatedAt         sql.NullTime `db:"updated_at"`
+}
+
+func (q *Queries) GetActiveUserByEmailOrUsername(ctx context.Context, lower string) (GetActiveUserByEmailOrUsernameRow, error) {
+	row := q.db.QueryRowContext(ctx, getActiveUserByEmailOrUsername, lower)
+	var i GetActiveUserByEmailOrUsernameRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Role,
+		&i.EncryptedPassword,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getActiveUserByID = `-- name: GetActiveUserByID :one
+SELECT
+    u.id,
+    u.username,
+    u.email,
+    u.role,
+    u.encrypted_password,
+    u.locale,
+    u.time_zone,
+    u.stripe_subscriber_id,
+    u.gumroad_subscriber_id,
+    u.notifications_count,
+    u.created_at,
+    u.updated_at,
+    p.image_data AS profile_image_data
+FROM users u
+LEFT JOIN profiles p ON p.user_id = u.id
+WHERE u.id = $1
+  AND u.deleted_at IS NULL
+LIMIT 1
+`
+
+type GetActiveUserByIDRow struct {
+	ID                  int64          `db:"id"`
+	Username            string         `db:"username"`
+	Email               string         `db:"email"`
+	Role                int32          `db:"role"`
+	EncryptedPassword   string         `db:"encrypted_password"`
+	Locale              string         `db:"locale"`
+	TimeZone            string         `db:"time_zone"`
+	StripeSubscriberID  sql.NullInt64  `db:"stripe_subscriber_id"`
+	GumroadSubscriberID sql.NullInt64  `db:"gumroad_subscriber_id"`
+	NotificationsCount  int32          `db:"notifications_count"`
+	CreatedAt           sql.NullTime   `db:"created_at"`
+	UpdatedAt           sql.NullTime   `db:"updated_at"`
+	ProfileImageData    sql.NullString `db:"profile_image_data"`
+}
+
+// 論理削除されていないユーザーをIDで取得する。
+// セッションやログインコードからユーザーを引く認証の経路で使い、
+// 退会・利用停止でdeleted_atが立ったユーザーを未ログインとして扱う。
+func (q *Queries) GetActiveUserByID(ctx context.Context, id int64) (GetActiveUserByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getActiveUserByID, id)
+	var i GetActiveUserByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.Email,
+		&i.Role,
+		&i.EncryptedPassword,
+		&i.Locale,
+		&i.TimeZone,
+		&i.StripeSubscriberID,
+		&i.GumroadSubscriberID,
+		&i.NotificationsCount,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.ProfileImageData,
+	)
+	return i, err
+}
+
+const getActiveUserIDByEmail = `-- name: GetActiveUserIDByEmail :one
+SELECT id
+FROM users
+WHERE LOWER(email) = LOWER($1)
+  AND deleted_at IS NULL
+LIMIT 1
+`
+
+// 論理削除されていないユーザーのIDをメールアドレスで検索する。
+// 削除済みユーザーのメールアドレスも一意制約の対象のため、
+// 登録済みかの確認には使わず、パスワードリセットなど本人の操作を受け付ける経路で使う。
+func (q *Queries) GetActiveUserIDByEmail(ctx context.Context, lower string) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getActiveUserIDByEmail, lower)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const getActiveUserIDByUsername = `-- name: GetActiveUserIDByUsername :one
 SELECT id
 FROM users
@@ -97,116 +231,6 @@ func (q *Queries) GetUserByEmail(ctx context.Context, lower string) (GetUserByEm
 		&i.Role,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getUserByEmailForSignIn = `-- name: GetUserByEmailForSignIn :one
-SELECT id, email, encrypted_password
-FROM users
-WHERE LOWER(email) = LOWER($1)
-LIMIT 1
-`
-
-type GetUserByEmailForSignInRow struct {
-	ID                int64  `db:"id"`
-	Email             string `db:"email"`
-	EncryptedPassword string `db:"encrypted_password"`
-}
-
-func (q *Queries) GetUserByEmailForSignIn(ctx context.Context, lower string) (GetUserByEmailForSignInRow, error) {
-	row := q.db.QueryRowContext(ctx, getUserByEmailForSignIn, lower)
-	var i GetUserByEmailForSignInRow
-	err := row.Scan(&i.ID, &i.Email, &i.EncryptedPassword)
-	return i, err
-}
-
-const getUserByEmailOrUsername = `-- name: GetUserByEmailOrUsername :one
-SELECT id, username, email, role, encrypted_password, created_at, updated_at
-FROM users
-WHERE LOWER(email) = LOWER($1) OR LOWER(username) = LOWER($1)
-LIMIT 1
-`
-
-type GetUserByEmailOrUsernameRow struct {
-	ID                int64        `db:"id"`
-	Username          string       `db:"username"`
-	Email             string       `db:"email"`
-	Role              int32        `db:"role"`
-	EncryptedPassword string       `db:"encrypted_password"`
-	CreatedAt         sql.NullTime `db:"created_at"`
-	UpdatedAt         sql.NullTime `db:"updated_at"`
-}
-
-func (q *Queries) GetUserByEmailOrUsername(ctx context.Context, lower string) (GetUserByEmailOrUsernameRow, error) {
-	row := q.db.QueryRowContext(ctx, getUserByEmailOrUsername, lower)
-	var i GetUserByEmailOrUsernameRow
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.Email,
-		&i.Role,
-		&i.EncryptedPassword,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const getUserByID = `-- name: GetUserByID :one
-SELECT
-    u.id,
-    u.username,
-    u.email,
-    u.role,
-    u.encrypted_password,
-    u.locale,
-    u.time_zone,
-    u.stripe_subscriber_id,
-    u.gumroad_subscriber_id,
-    u.notifications_count,
-    u.created_at,
-    u.updated_at,
-    p.image_data AS profile_image_data
-FROM users u
-LEFT JOIN profiles p ON p.user_id = u.id
-WHERE u.id = $1
-LIMIT 1
-`
-
-type GetUserByIDRow struct {
-	ID                  int64          `db:"id"`
-	Username            string         `db:"username"`
-	Email               string         `db:"email"`
-	Role                int32          `db:"role"`
-	EncryptedPassword   string         `db:"encrypted_password"`
-	Locale              string         `db:"locale"`
-	TimeZone            string         `db:"time_zone"`
-	StripeSubscriberID  sql.NullInt64  `db:"stripe_subscriber_id"`
-	GumroadSubscriberID sql.NullInt64  `db:"gumroad_subscriber_id"`
-	NotificationsCount  int32          `db:"notifications_count"`
-	CreatedAt           sql.NullTime   `db:"created_at"`
-	UpdatedAt           sql.NullTime   `db:"updated_at"`
-	ProfileImageData    sql.NullString `db:"profile_image_data"`
-}
-
-func (q *Queries) GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error) {
-	row := q.db.QueryRowContext(ctx, getUserByID, id)
-	var i GetUserByIDRow
-	err := row.Scan(
-		&i.ID,
-		&i.Username,
-		&i.Email,
-		&i.Role,
-		&i.EncryptedPassword,
-		&i.Locale,
-		&i.TimeZone,
-		&i.StripeSubscriberID,
-		&i.GumroadSubscriberID,
-		&i.NotificationsCount,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.ProfileImageData,
 	)
 	return i, err
 }

@@ -1,4 +1,7 @@
--- name: GetUserByID :one
+-- name: GetActiveUserByID :one
+-- 論理削除されていないユーザーをIDで取得する。
+-- セッションやログインコードからユーザーを引く認証の経路で使い、
+-- 退会・利用停止でdeleted_atが立ったユーザーを未ログインとして扱う。
 SELECT
     u.id,
     u.username,
@@ -16,12 +19,14 @@ SELECT
 FROM users u
 LEFT JOIN profiles p ON p.user_id = u.id
 WHERE u.id = $1
+  AND u.deleted_at IS NULL
 LIMIT 1;
 
--- name: GetUserByEmailOrUsername :one
+-- name: GetActiveUserByEmailOrUsername :one
 SELECT id, username, email, role, encrypted_password, created_at, updated_at
 FROM users
-WHERE LOWER(email) = LOWER($1) OR LOWER(username) = LOWER($1)
+WHERE (LOWER(email) = LOWER($1) OR LOWER(username) = LOWER($1))
+  AND deleted_at IS NULL
 LIMIT 1;
 
 -- name: GetUserByEmail :one
@@ -30,10 +35,21 @@ FROM users
 WHERE LOWER(email) = LOWER($1)
 LIMIT 1;
 
--- name: GetUserByEmailForSignIn :one
+-- name: GetActiveUserByEmailForSignIn :one
 SELECT id, email, encrypted_password
 FROM users
 WHERE LOWER(email) = LOWER($1)
+  AND deleted_at IS NULL
+LIMIT 1;
+
+-- name: GetActiveUserIDByEmail :one
+-- 論理削除されていないユーザーのIDをメールアドレスで検索する。
+-- 削除済みユーザーのメールアドレスも一意制約の対象のため、
+-- 登録済みかの確認には使わず、パスワードリセットなど本人の操作を受け付ける経路で使う。
+SELECT id
+FROM users
+WHERE LOWER(email) = LOWER($1)
+  AND deleted_at IS NULL
 LIMIT 1;
 
 -- name: UpdateUserPassword :exec

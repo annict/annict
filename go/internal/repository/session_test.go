@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"database/sql"
 	"encoding/hex"
+	"errors"
 	"fmt"
 	"testing"
 	"time"
@@ -211,8 +212,8 @@ func TestGetSessionByID_NonExistent(t *testing.T) {
 	}
 }
 
-// TestGetUserByID_Successはユーザーを正常に取得できることをテスト
-func TestGetUserByID_Success(t *testing.T) {
+// TestGetActiveUserByID_Successはユーザーを正常に取得できることをテスト
+func TestGetActiveUserByID_Success(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
@@ -225,10 +226,9 @@ func TestGetUserByID_Success(t *testing.T) {
 		WithEmail("test@example.com").
 		Build()
 
-	// GetUserByIDを実行
-	user, err := repo.GetUserByID(context.Background(), userID)
+	user, err := repo.GetActiveUserByID(context.Background(), userID)
 	if err != nil {
-		t.Fatalf("GetUserByIDに失敗: %v", err)
+		t.Fatalf("GetActiveUserByIDに失敗: %v", err)
 	}
 
 	// ユーザーが取得できたことを確認
@@ -242,16 +242,16 @@ func TestGetUserByID_Success(t *testing.T) {
 	}
 }
 
-// TestGetUserByID_NonExistentは存在しないユーザーIDでエラーが返ることをテスト
-func TestGetUserByID_NonExistent(t *testing.T) {
+// TestGetActiveUserByID_NonExistentは存在しないユーザーIDでエラーが返ることをテスト
+func TestGetActiveUserByID_NonExistent(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 	repo := repository.NewSessionRepository(queries)
 
-	// 存在しないユーザーIDでGetUserByIDを実行
-	user, err := repo.GetUserByID(context.Background(), 999999)
+	// 存在しないユーザーIDでGetActiveUserByIDを実行
+	user, err := repo.GetActiveUserByID(context.Background(), 999999)
 
 	// エラーが返ることを確認
 	if err == nil {
@@ -766,5 +766,26 @@ func TestDeleteAnonymous_NoTarget(t *testing.T) {
 	}
 	if !maxUpdatedAt.Equal(lowerBound) {
 		t.Errorf("updated_atの最大値 = %v、期待値 = %v (下限)", maxUpdatedAt, lowerBound)
+	}
+}
+
+// TestGetActiveUserByID_DeletedUserは削除済みユーザーでsql.ErrNoRowsが返ることをテスト
+func TestGetActiveUserByID_DeletedUser(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSessionRepository(queries)
+
+	userID := testutil.NewUserBuilder(t, tx).
+		WithDeletedAt(time.Now()).
+		Build()
+
+	user, err := repo.GetActiveUserByID(context.Background(), userID)
+	if !errors.Is(err, sql.ErrNoRows) {
+		t.Errorf("エラー = %v、期待値 = sql.ErrNoRows", err)
+	}
+	if user != nil {
+		t.Errorf("ユーザー = %+v、期待値 = nil", user)
 	}
 }

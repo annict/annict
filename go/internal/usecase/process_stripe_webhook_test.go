@@ -204,7 +204,7 @@ func TestProcessStripeWebhookUsecase_HandleCheckoutSessionCompleted(t *testing.T
 			t.Errorf("StripeCustomerID = %s、期待値 = %s", subscriber.StripeCustomerID, customerID)
 		}
 
-		linked, err := userRepo.GetByID(ctx, userID)
+		linked, err := userRepo.GetActiveByID(ctx, userID)
 		if err != nil {
 			t.Fatalf("ユーザー取得エラー: %v", err)
 		}
@@ -538,7 +538,7 @@ func TestProcessStripeWebhookUsecase_HandleCustomerSubscriptionDeleted(t *testin
 		}
 
 		// ユーザーのsubscriber紐付けが解除される。
-		unlinked, err := userRepo.GetByID(ctx, userID)
+		unlinked, err := userRepo.GetActiveByID(ctx, userID)
 		if err != nil {
 			t.Fatalf("ユーザー取得エラー: %v", err)
 		}
