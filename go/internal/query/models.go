@@ -744,17 +744,17 @@ type CharacterFavorite struct {
 }
 
 type CharacterImage struct {
-	ID                    int64     `db:"id"`
-	CharacterID           int64     `db:"character_id"`
-	UserID                int64     `db:"user_id"`
-	AttachmentFileName    string    `db:"attachment_file_name"`
-	AttachmentFileSize    int32     `db:"attachment_file_size"`
-	AttachmentContentType string    `db:"attachment_content_type"`
-	AttachmentUpdatedAt   time.Time `db:"attachment_updated_at"`
-	Copyright             string    `db:"copyright"`
-	Asin                  string    `db:"asin"`
-	CreatedAt             time.Time `db:"created_at"`
-	UpdatedAt             time.Time `db:"updated_at"`
+	ID                    int64         `db:"id"`
+	CharacterID           int64         `db:"character_id"`
+	UserID                sql.NullInt64 `db:"user_id"`
+	AttachmentFileName    string        `db:"attachment_file_name"`
+	AttachmentFileSize    int32         `db:"attachment_file_size"`
+	AttachmentContentType string        `db:"attachment_content_type"`
+	AttachmentUpdatedAt   time.Time     `db:"attachment_updated_at"`
+	Copyright             string        `db:"copyright"`
+	Asin                  string        `db:"asin"`
+	CreatedAt             time.Time     `db:"created_at"`
+	UpdatedAt             time.Time     `db:"updated_at"`
 }
 
 type Collection struct {
@@ -1769,7 +1769,7 @@ type WorkComment struct {
 type WorkImage struct {
 	ID                    int64          `db:"id"`
 	WorkID                int64          `db:"work_id"`
-	UserID                int64          `db:"user_id"`
+	UserID                sql.NullInt64  `db:"user_id"`
 	AttachmentFileName    sql.NullString `db:"attachment_file_name"`
 	AttachmentFileSize    sql.NullInt32  `db:"attachment_file_size"`
 	AttachmentContentType sql.NullString `db:"attachment_content_type"`
