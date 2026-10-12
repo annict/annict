@@ -3,6 +3,7 @@ package repository_test
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"strings"
 	"testing"
 	"time"
@@ -949,4 +950,127 @@ func TestUserRepository_DeleteByID_SharedSubscribersConcurrently(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestUserRepository_AnonymizeAndSoftDeleteは、ユーザー名とメールアドレスを置き換えて論理削除し、
+// すでに論理削除されたユーザーは変更しないことをテスト
+func TestUserRepository_AnonymizeAndSoftDelete(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewUserRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	userID := testutil.NewUserBuilder(t, tx).Build()
+	var originalUsername string
+	if err := tx.QueryRowContext(ctx, "SELECT username FROM users WHERE id = $1", int64(userID)).Scan(&originalUsername); err != nil {
+		t.Fatalf("元のユーザー名の取得に失敗: %v", err)
+	}
+
+	updated, err := repo.AnonymizeAndSoftDelete(ctx, userID, "古いユーザー名", "anonymized_user", "anonymized_user@example.com")
+	if err != nil {
+		t.Fatalf("ユーザー名が異なる場合のAnonymizeAndSoftDelete()のエラー = %v", err)
+	}
+	if updated != 0 {
+		t.Errorf("ユーザー名が異なる場合の変更件数 = %d、期待値 = 0", updated)
+	}
+
+	updated, err = repo.AnonymizeAndSoftDelete(ctx, userID, originalUsername, "anonymized_user", "anonymized_user@example.com")
+	if err != nil {
+		t.Fatalf("AnonymizeAndSoftDelete()のエラー = %v", err)
+	}
+	if updated != 1 {
+		t.Errorf("変更した件数 = %d、期待値 = 1", updated)
+	}
+
+	var username, email string
+	var deletedAt sql.NullTime
+	if err := tx.QueryRowContext(ctx, "SELECT username, email, deleted_at FROM users WHERE id = $1", int64(userID)).Scan(&username, &email, &deletedAt); err != nil {
+		t.Fatalf("ユーザーの取得に失敗: %v", err)
+	}
+	if username != "anonymized_user" {
+		t.Errorf("username = %q、期待値 = %q", username, "anonymized_user")
+	}
+	if email != "anonymized_user@example.com" {
+		t.Errorf("email = %q、期待値 = %q", email, "anonymized_user@example.com")
+	}
+	if !deletedAt.Valid {
+		t.Error("deleted_atが立っていない")
+	}
+
+	updated, err = repo.AnonymizeAndSoftDelete(ctx, userID, originalUsername, "another_user", "another_user@example.com")
+	if err != nil {
+		t.Fatalf("2回目のAnonymizeAndSoftDelete()のエラー = %v", err)
+	}
+	if updated != 0 {
+		t.Errorf("論理削除済みのユーザーで変更した件数 = %d、期待値 = 0", updated)
+	}
+	if err := tx.QueryRowContext(ctx, "SELECT username FROM users WHERE id = $1", int64(userID)).Scan(&username); err != nil {
+		t.Fatalf("ユーザーの取得に失敗: %v", err)
+	}
+	if username != "anonymized_user" {
+		t.Errorf("論理削除済みのユーザーのusername = %q、期待値 = %q", username, "anonymized_user")
+	}
+}
+
+// TestUserRepository_LockForAccountDeletionは、ロックしたユーザーの匿名化する前の最新の属性と
+// 論理削除済みかどうかを返し、存在しないユーザーではsql.ErrNoRowsを返すことをテスト
+func TestUserRepository_LockForAccountDeletion(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewUserRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	stripeSubscriberID := testutil.CreateTestStripeSubscriber(t, tx)
+	activeUserID := testutil.NewUserBuilder(t, tx).WithLocale("en").WithStripeSubscriberID(&stripeSubscriberID).Build()
+	deletedUserID := testutil.NewUserBuilder(t, tx).WithDeletedAt(time.Now()).Build()
+
+	tests := []struct {
+		name                   string
+		userID                 model.UserID
+		wantLocale             string
+		wantStripeSubscriberID *model.StripeSubscriberID
+		wantDeleted            bool
+	}{
+		{name: "論理削除されていないユーザー", userID: activeUserID, wantLocale: "en", wantStripeSubscriberID: &stripeSubscriberID, wantDeleted: false},
+		{name: "論理削除済みのユーザー", userID: deletedUserID, wantLocale: "ja", wantDeleted: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var wantUsername, wantEmail string
+			if err := tx.QueryRowContext(ctx, "SELECT username, email FROM users WHERE id = $1", int64(tt.userID)).Scan(&wantUsername, &wantEmail); err != nil {
+				t.Fatalf("ユーザーの取得に失敗: %v", err)
+			}
+
+			user, err := repo.LockForAccountDeletion(ctx, tt.userID)
+			if err != nil {
+				t.Fatalf("LockForAccountDeletion()のエラー = %v", err)
+			}
+			if user.Username != wantUsername {
+				t.Errorf("Username = %q、期待値 = %q", user.Username, wantUsername)
+			}
+			if user.Email != wantEmail {
+				t.Errorf("Email = %q、期待値 = %q", user.Email, wantEmail)
+			}
+			if user.Locale != tt.wantLocale {
+				t.Errorf("Locale = %q、期待値 = %q", user.Locale, tt.wantLocale)
+			}
+			if (user.StripeSubscriberID == nil) != (tt.wantStripeSubscriberID == nil) ||
+				(user.StripeSubscriberID != nil && *user.StripeSubscriberID != *tt.wantStripeSubscriberID) {
+				t.Errorf("StripeSubscriberID = %v、期待値 = %v", user.StripeSubscriberID, tt.wantStripeSubscriberID)
+			}
+			if user.Deleted != tt.wantDeleted {
+				t.Errorf("Deleted = %v、期待値 = %v", user.Deleted, tt.wantDeleted)
+			}
+		})
+	}
+
+	t.Run("存在しないユーザーはsql.ErrNoRowsを返す", func(t *testing.T) {
+		_, err := repo.LockForAccountDeletion(ctx, model.UserID(-1))
+		if !errors.Is(err, sql.ErrNoRows) {
+			t.Errorf("エラー = %v、期待値 = sql.ErrNoRows", err)
+		}
+	})
 }

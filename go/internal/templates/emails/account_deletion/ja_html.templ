@@ -1,0 +1,22 @@
+package account_deletion
+
+// JaHTMLは日本語版の退会完了メール (HTML形式) です
+templ JaHTML(isStripeSupporter bool) {
+	<!DOCTYPE html>
+	<html lang="ja">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>退会を受け付けました</title>
+		</head>
+		<body style="font-family: sans-serif; line-height: 1.6; color: #333; padding: 20px;">
+			<p>Annictの退会を受け付けました。</p>
+			<p>アカウントに紐づくデータは、これから順次削除します。</p>
+			if isStripeSupporter {
+				<p>サポーターのサブスクリプションは即時に解約します。残りの期間の料金は返金されません。</p>
+			}
+			<p>これまでAnnictを使っていただき、ありがとうございました。</p>
+			<p>この退会に心当たりがない場合は、<a href="mailto:hello@annict.com">hello@annict.com</a> までお問い合わせください。</p>
+		</body>
+	</html>
+}

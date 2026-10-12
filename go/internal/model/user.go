@@ -42,6 +42,16 @@ func (u *User) IsCommitter() bool {
 	return u.IsAdmin() || u.IsEditor()
 }
 
+// AccountDeletionUserは退会の受付でロックしたユーザーの属性。
+// 匿名化する前のメールアドレスとロケールを、退会完了メールの送信に使う。
+type AccountDeletionUser struct {
+	Username           string
+	Email              string
+	Locale             string
+	StripeSubscriberID *StripeSubscriberID
+	Deleted            bool
+}
+
 // UserDeletionTargetは退会の削除処理が対象のユーザーについて参照する属性。
 // 削除処理は論理削除済みのユーザーだけを扱うため、論理削除の有無を持つ。
 type UserDeletionTarget struct {

@@ -3,12 +3,14 @@ package worker
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
 	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/riverqueue/river"
+	"github.com/riverqueue/river/riverdriver/riverdatabasesql"
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
 	"github.com/riverqueue/river/rivertype"
 
@@ -87,6 +89,11 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		sendPasswordResetEmailUC := usecase.NewSendPasswordResetEmailUsecase(passwordResetSender)
 		river.AddWorker(workers, NewSendPasswordResetEmailWorker(sendPasswordResetEmailUC))
 		slog.InfoContext(ctx, "SendPasswordResetEmailWorkerを登録しました")
+
+		accountDeletionSender := email.NewAccountDeletionSender(emailSender)
+		sendAccountDeletionEmailUC := usecase.NewSendAccountDeletionEmailUsecase(accountDeletionSender)
+		river.AddWorker(workers, NewSendAccountDeletionEmailWorker(sendAccountDeletionEmailUC))
+		slog.InfoContext(ctx, "SendAccountDeletionEmailWorkerを登録しました")
 	}
 
 	// トークンクリーンアップワーカーを登録
@@ -150,6 +157,15 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		riverClient: riverClient,
 		pool:        pool,
 	}, nil
+}
+
+// NewTxInserterは、アプリケーションのdatabase/sqlのトランザクションの中でジョブを投入する
+// 投入専用のRiverクライアントを作成します。キューとワーカーを持たないため、ジョブの実行は
+// NewClientのクライアントが担います。ロガーはNewClientと同じ理由でSentryへ送らないものにします。
+func NewTxInserter(db *sql.DB) (*river.Client[*sql.Tx], error) {
+	return river.NewClient(riverdatabasesql.New(db), &river.Config{
+		Logger: slog.New(annictSentry.NewBaseHandler()),
+	})
 }
 
 // StartはRiverクライアントを起動します

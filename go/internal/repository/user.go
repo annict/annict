@@ -151,6 +151,39 @@ func (r *UserRepository) FindDeletionTarget(ctx context.Context, id model.UserID
 	return target, nil
 }
 
+// AnonymizeAndSoftDeleteは退会を受け付けたユーザーのユーザー名とメールアドレスを置き換え、
+// 論理削除します。検証済みのユーザー名と一致しない場合や、すでに論理削除された場合は
+// 変更せず、変更した件数を返します。
+func (r *UserRepository) AnonymizeAndSoftDelete(ctx context.Context, id model.UserID, expectedUsername, username, email string) (int64, error) {
+	return r.queries.AnonymizeAndSoftDeleteUser(ctx, query.AnonymizeAndSoftDeleteUserParams{
+		ID:               int64(id),
+		ExpectedUsername: expectedUsername,
+		Username:         username,
+		Email:            email,
+	})
+}
+
+// LockForAccountDeletionは退会の受付中にユーザー行をロックし、匿名化する前の最新の属性と、
+// 論理削除済みかどうかを返します。ユーザーが存在しない場合はsql.ErrNoRowsを返します。
+func (r *UserRepository) LockForAccountDeletion(ctx context.Context, id model.UserID) (*model.AccountDeletionUser, error) {
+	row, err := r.queries.LockUserForAccountDeletion(ctx, int64(id))
+	if err != nil {
+		return nil, err
+	}
+
+	user := &model.AccountDeletionUser{
+		Username: row.Username,
+		Email:    row.Email,
+		Locale:   row.Locale,
+		Deleted:  row.DeletedAt.Valid,
+	}
+	if row.StripeSubscriberID.Valid {
+		stripeSubscriberID := model.StripeSubscriberID(row.StripeSubscriberID.Int64)
+		user.StripeSubscriberID = &stripeSubscriberID
+	}
+	return user, nil
+}
+
 // UpdateStripeSubscriberIDはユーザーのStripeサブスクライバーIDを更新します
 func (r *UserRepository) UpdateStripeSubscriberID(ctx context.Context, userID model.UserID, stripeSubscriberID *model.StripeSubscriberID) error {
 	var nullableID sql.NullInt64

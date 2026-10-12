@@ -19,6 +19,11 @@ type Querier interface {
 	// UTCで保存されているため、いったんUTCとして解釈してから指定タイムゾーン
 	// に変換する。
 	AggregateDailyRecordCountsByUserID(ctx context.Context, arg AggregateDailyRecordCountsByUserIDParams) ([]AggregateDailyRecordCountsByUserIDRow, error)
+	// 退会を受け付けたユーザーのユーザー名とメールアドレスを再登録に使えるよう置き換え、
+	// deleted_atを立てる。すでに論理削除されたユーザーは対象にせず、同時に送られた退会の
+	// 受付が二重に処理されないよう、変更した件数を返す。ユーザー名が検証時から
+	// 変わった場合も更新しない。
+	AnonymizeAndSoftDeleteUser(ctx context.Context, arg AnonymizeAndSoftDeleteUserParams) (int64, error)
 	// 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
 	// unpublished_atを再スタンプせず、1行も返さない。作品idは確認ページが前提とした親作品との
 	// 一致を要求する。その間にAnnict::DataCare::MoveEpisodeで別作品へ移されたエピソードが、
@@ -508,6 +513,10 @@ type Querier interface {
 	LockGumroadSubscriberForUserDeletion(ctx context.Context, id int64) (int64, error)
 	// 購読情報を共有するユーザーの削除を直列化する。
 	LockStripeSubscriberForUserDeletion(ctx context.Context, id int64) (int64, error)
+	// OAuthアプリケーション作成と退会の受付をユーザー行のロックで直列化する。
+	// 退会の同意に用いたユーザー名と、退会完了メールの送信先・ロケール・サポーター契約も
+	// ロック後の値を使う。
+	LockUserForAccountDeletion(ctx context.Context, id int64) (LockUserForAccountDeletionRow, error)
 	// 採番の起点を読む前に、1作品への一括作成を直列化する。ロッククエリと集計クエリを分ける
 	// ことで、待機側がロックを得た後に集計を実行し、先行トランザクションがコミットしたエピソードを
 	// 参照できるようにする。

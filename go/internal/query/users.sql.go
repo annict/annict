@@ -10,6 +10,40 @@ import (
 	"database/sql"
 )
 
+const anonymizeAndSoftDeleteUser = `-- name: AnonymizeAndSoftDeleteUser :execrows
+UPDATE users
+SET username = $1,
+    email = $2,
+    deleted_at = NOW()
+WHERE id = $3
+  AND username = $4
+  AND deleted_at IS NULL
+`
+
+type AnonymizeAndSoftDeleteUserParams struct {
+	Username         string `db:"username"`
+	Email            string `db:"email"`
+	ID               int64  `db:"id"`
+	ExpectedUsername string `db:"expected_username"`
+}
+
+// 退会を受け付けたユーザーのユーザー名とメールアドレスを再登録に使えるよう置き換え、
+// deleted_atを立てる。すでに論理削除されたユーザーは対象にせず、同時に送られた退会の
+// 受付が二重に処理されないよう、変更した件数を返す。ユーザー名が検証時から
+// 変わった場合も更新しない。
+func (q *Queries) AnonymizeAndSoftDeleteUser(ctx context.Context, arg AnonymizeAndSoftDeleteUserParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, anonymizeAndSoftDeleteUser,
+		arg.Username,
+		arg.Email,
+		arg.ID,
+		arg.ExpectedUsername,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (username, email, encrypted_password, locale, role, time_zone, created_at, updated_at)
 VALUES ($1, $2, $3, $4, 0, 'Asia/Tokyo', NOW(), NOW())
@@ -396,6 +430,37 @@ func (q *Queries) LockStripeSubscriberForUserDeletion(ctx context.Context, id in
 	row := q.db.QueryRowContext(ctx, lockStripeSubscriberForUserDeletion, id)
 	err := row.Scan(&id)
 	return id, err
+}
+
+const lockUserForAccountDeletion = `-- name: LockUserForAccountDeletion :one
+SELECT username, email, locale, stripe_subscriber_id, deleted_at
+FROM users
+WHERE id = $1
+FOR UPDATE
+`
+
+type LockUserForAccountDeletionRow struct {
+	Username           string        `db:"username"`
+	Email              string        `db:"email"`
+	Locale             string        `db:"locale"`
+	StripeSubscriberID sql.NullInt64 `db:"stripe_subscriber_id"`
+	DeletedAt          sql.NullTime  `db:"deleted_at"`
+}
+
+// OAuthアプリケーション作成と退会の受付をユーザー行のロックで直列化する。
+// 退会の同意に用いたユーザー名と、退会完了メールの送信先・ロケール・サポーター契約も
+// ロック後の値を使う。
+func (q *Queries) LockUserForAccountDeletion(ctx context.Context, id int64) (LockUserForAccountDeletionRow, error) {
+	row := q.db.QueryRowContext(ctx, lockUserForAccountDeletion, id)
+	var i LockUserForAccountDeletionRow
+	err := row.Scan(
+		&i.Username,
+		&i.Email,
+		&i.Locale,
+		&i.StripeSubscriberID,
+		&i.DeletedAt,
+	)
+	return i, err
 }
 
 const updateUserPassword = `-- name: UpdateUserPassword :exec

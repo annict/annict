@@ -88,6 +88,28 @@ SELECT id, username, email, role, stripe_subscriber_id, created_at, updated_at
 FROM users
 WHERE stripe_subscriber_id = $1
 LIMIT 1;
+-- name: AnonymizeAndSoftDeleteUser :execrows
+-- 退会を受け付けたユーザーのユーザー名とメールアドレスを再登録に使えるよう置き換え、
+-- deleted_atを立てる。すでに論理削除されたユーザーは対象にせず、同時に送られた退会の
+-- 受付が二重に処理されないよう、変更した件数を返す。ユーザー名が検証時から
+-- 変わった場合も更新しない。
+UPDATE users
+SET username = sqlc.arg('username'),
+    email = sqlc.arg('email'),
+    deleted_at = NOW()
+WHERE id = sqlc.arg('id')
+  AND username = sqlc.arg('expected_username')
+  AND deleted_at IS NULL;
+
+-- name: LockUserForAccountDeletion :one
+-- OAuthアプリケーション作成と退会の受付をユーザー行のロックで直列化する。
+-- 退会の同意に用いたユーザー名と、退会完了メールの送信先・ロケール・サポーター契約も
+-- ロック後の値を使う。
+SELECT username, email, locale, stripe_subscriber_id, deleted_at
+FROM users
+WHERE id = $1
+FOR UPDATE;
+
 -- name: GetUserForDeletion :one
 -- 退会の削除処理の対象を確かめるため、論理削除済みのユーザーも含めてIDで取得する。
 SELECT id, deleted_at, stripe_subscriber_id, gumroad_subscriber_id

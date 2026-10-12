@@ -1,0 +1,16 @@
+package account_deletion
+
+// EnTextは英語版の退会完了メール (テキスト形式) です
+templ EnText(isStripeSupporter bool) {
+	We have received your request to delete your Annict account.
+
+	The data associated with your account will be deleted shortly.
+
+	if isStripeSupporter {
+		Your supporter subscription will be canceled immediately. The remaining period will not be refunded.
+	}
+
+	Thank you for using Annict.
+
+	If you did not request this, please contact us at hello@annict.com.
+}

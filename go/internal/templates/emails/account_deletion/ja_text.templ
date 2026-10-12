@@ -1,0 +1,16 @@
+package account_deletion
+
+// JaTextは日本語版の退会完了メール (テキスト形式) です
+templ JaText(isStripeSupporter bool) {
+	Annictの退会を受け付けました。
+
+	アカウントに紐づくデータは、これから順次削除します。
+
+	if isStripeSupporter {
+		サポーターのサブスクリプションは即時に解約します。残りの期間の料金は返金されません。
+	}
+
+	これまでAnnictを使っていただき、ありがとうございました。
+
+	この退会に心当たりがない場合は、hello@annict.com までお問い合わせください。
+}

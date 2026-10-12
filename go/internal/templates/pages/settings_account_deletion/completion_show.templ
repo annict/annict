@@ -1,0 +1,25 @@
+package settings_account_deletion
+
+import "github.com/annict/annict/go/internal/templates"
+
+// CompletionShowは退会の完了ページを表示します。
+// 受付後はセッションが無く、Go版のフラッシュメッセージを出せる画面へ戻せないため、完了をこのページで伝える。
+templ CompletionShow() {
+	<div class="flex flex-col gap-4 py-4">
+		<h1 class="text-2xl font-bold antialiased px-4">
+			{ templates.T(ctx, "settings_account_deletion_completion_show_heading") }
+		</h1>
+		<hr/>
+		<div class="max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0">
+			<div class="card px-4">
+				<p>{ templates.T(ctx, "settings_account_deletion_completion_show_description") }</p>
+				<p>{ templates.T(ctx, "settings_account_deletion_completion_show_thanks") }</p>
+				<p>
+					<a href="/" class="underline">
+						{ templates.T(ctx, "settings_account_deletion_completion_show_back_to_home") }
+					</a>
+				</p>
+			</div>
+		</div>
+	</div>
+}
