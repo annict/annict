@@ -15,9 +15,19 @@ module Oauth
 
     def create
       @application = Oauth::Application.new(application_params)
-      @application.owner = current_user
+      owner = current_user
+      @application.owner = owner
 
-      if @application.save
+      # Go版の退会受付もユーザー行をロックする。ロック後に削除状態を読み直してから
+      # 保存することで、退会とアプリケーション作成の順序を確定させる。
+      saved = false
+      owner.with_lock do
+        saved = @application.save unless owner.deleted_at?
+      end
+
+      return head :forbidden if owner.deleted_at?
+
+      if saved
         flash[:notice] = t "messages.oauth.applications.created"
         redirect_to oauth_application_url(@application)
       else
