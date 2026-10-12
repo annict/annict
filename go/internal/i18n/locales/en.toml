@@ -377,6 +377,11 @@ other = "Too many requests. Please try again later."
 description = "パスワードリセットメールの件名"
 other = "Annict - Password Reset Request"
 
+# 退会完了メール
+[account_deletion_email_subject]
+description = "退会完了メールの件名"
+other = "Annict - Your account deletion request has been received"
+
 # ログインコードメール
 [sign_in_code_email_subject]
 description = "ログインコードメールの件名"
@@ -2052,4 +2057,130 @@ other = "The page may have been left open too long, or you may have signed in ag
 
 [error_back_to_home]
 description = "汎用エラーページからホームへ戻るリンク"
+other = "Back to Home"
+
+# 退会の確認ページ
+[settings_account_deletion_new_title]
+description = "退会の確認ページのタイトル"
+other = "Delete Account"
+
+[settings_account_deletion_new_heading]
+description = "退会の確認ページの見出し"
+other = "Delete Account"
+
+[settings_account_deletion_new_description]
+description = "退会の確認ページの導入文"
+other = "Deleting your account will delete it along with the following data. Deleted data cannot be restored."
+
+[settings_account_deletion_new_deleted_heading]
+description = "退会の確認ページの削除されるものの見出し"
+other = "What will be deleted"
+
+[settings_account_deletion_new_deleted_account]
+description = "退会の確認ページの削除されるもの (アカウント情報)"
+other = "Account information (username, email address, profile, profile images, and settings)"
+
+[settings_account_deletion_new_deleted_records]
+description = "退会の確認ページの削除されるもの (記録)"
+other = "Records, reviews, statuses, and your library"
+
+[settings_account_deletion_new_deleted_social]
+description = "退会の確認ページの削除されるもの (交流)"
+other = "Likes, comments, follows, favorites, collections, and notifications"
+
+[settings_account_deletion_new_deleted_forum]
+description = "退会の確認ページの削除されるもの (フォーラム)"
+other = "Forum threads you started (including comments by other users)"
+
+[settings_account_deletion_new_deleted_db]
+description = "退会の確認ページの削除されるもの (Annict DB)"
+other = "Your Annict DB edit history and comments"
+
+[settings_account_deletion_new_deleted_api]
+description = "退会の確認ページの削除されるもの (API)"
+other = "API access tokens and authorizations for connected applications"
+
+[settings_account_deletion_new_kept_heading]
+description = "退会の確認ページの退会後も残るものの見出し"
+other = "What will remain"
+
+[settings_account_deletion_new_kept_mentions]
+description = "退会の確認ページの退会後も残るもの (ユーザー名の文字列)"
+other = "Your username as text in posts by other users"
+
+[settings_account_deletion_new_kept_forum_comments]
+description = "退会の確認ページの退会後も残るもの (フォーラムのコメント)"
+other = "The text of forum comments you wrote in threads started by other users (no longer linked to your account)"
+
+[settings_account_deletion_new_kept_db_values]
+description = "退会の確認ページの退会後も残るもの (Annict DBの作品データ)"
+other = "Work data you edited in Annict DB"
+
+[settings_account_deletion_new_kept_work_images]
+description = "退会の確認ページの退会後も残るもの (作品画像)"
+other = "Work images you uploaded (no longer linked to your account)"
+
+[settings_account_deletion_new_stripe_supporter_heading]
+description = "退会の確認ページのStripeのサポーター向けの注意の見出し"
+other = "Your supporter subscription will be canceled immediately"
+
+[settings_account_deletion_new_stripe_supporter_description]
+description = "退会の確認ページのStripeのサポーター向けの注意"
+other = "Deleting your account immediately cancels your supporter subscription. The remaining period will not be refunded."
+
+[settings_account_deletion_new_gumroad_supporter_heading]
+description = "退会の確認ページのGumroadのサポーター向けの注意の見出し"
+other = "You need to cancel on Gumroad"
+
+[settings_account_deletion_new_gumroad_supporter_description]
+description = "退会の確認ページのGumroadのサポーター向けの注意"
+other = "Supporter subscriptions purchased on Gumroad cannot be canceled from Annict. Please cancel it on Gumroad."
+
+[settings_account_deletion_new_oauth_applications_heading]
+description = "退会の確認ページのOAuthアプリケーションが残っている場合の見出し"
+other = "You cannot delete your account while you have applications"
+
+[settings_account_deletion_new_oauth_applications_description]
+description = "退会の確認ページのOAuthアプリケーションが残っている場合の案内"
+other = "Please delete all the applications you created on the applications page, then open this page again."
+
+[settings_account_deletion_new_oauth_applications]
+description = "退会の確認ページからアプリケーションの管理ページへのリンク"
+other = "Go to the applications page"
+
+[validation_account_deletion_oauth_applications_kept]
+description = "退会の受付でOAuthアプリケーションが残っている場合のエラー"
+other = "You cannot delete your account while you still have applications you created"
+
+[validation_account_deletion_username_mismatch]
+description = "退会の受付で入力したユーザー名が一致しない場合のエラー"
+other = "The username does not match"
+
+[settings_account_deletion_new_username_label]
+description = "退会の確認ページのユーザー名の入力欄のラベル"
+other = "To confirm, type your username \"{{.Username}}\""
+
+[settings_account_deletion_new_submit_button]
+description = "退会の確認ページの退会ボタン"
+other = "Delete Account"
+
+# 退会の完了ページ
+[settings_account_deletion_completion_show_title]
+description = "退会の完了ページのタイトル"
+other = "Your Account Deletion Has Been Accepted"
+
+[settings_account_deletion_completion_show_heading]
+description = "退会の完了ページの見出し"
+other = "Your Account Deletion Has Been Accepted"
+
+[settings_account_deletion_completion_show_description]
+description = "退会の完了ページの説明"
+other = "We have accepted your request to delete your account. Your data will be deleted shortly."
+
+[settings_account_deletion_completion_show_thanks]
+description = "退会の完了ページのお礼"
+other = "Thank you for using Annict."
+
+[settings_account_deletion_completion_show_back_to_home]
+description = "退会の完了ページからトップページへのリンク"
 other = "Back to Home"
