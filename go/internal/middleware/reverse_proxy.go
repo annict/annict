@@ -37,9 +37,18 @@ type featureFlaggedPattern struct {
 	flag    model.FeatureFlagName
 }
 
-// 現在フラグでゲートされているパスは無い。次にRails版からGo版へ移す画面は
-// この仕組みで段階的に公開するため、リストは削除せず空のまま残す (ADR 0002)。
-var featureFlaggedPatterns []featureFlaggedPattern
+// Rails版からGo版へ移す画面のうち、フラグを有効にした利用者にだけGo版を公開するもの (ADR 0002)。
+var featureFlaggedPatterns = []featureFlaggedPattern{
+	{pattern: regexp.MustCompile(`^/settings/account/deletion(/.*)?$`), flag: model.FeatureFlagGoAccountDeletion},
+}
+
+// フラグでゲートしている画面のうち、フラグの判定に必要なセッションが無い状態で開かれるため、
+// フラグに関係なくGo版で処理するパス。isGoHandledPathが完全一致で判定する。
+// TODO: go_account_deletionフラグを削除して退会の画面をgoHandledPathsへ移すときに一覧から外す。
+var goHandledFlagExemptPaths = []string{
+	// 退会の受付でセッションを破棄した直後にリダイレクトされる完了ページ。
+	"/settings/account/deletion/completed",
+}
 
 // ReverseProxyMiddlewareはRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
@@ -375,6 +384,12 @@ func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceTok
 
 // isGoHandledPathはGo版で処理するパスかどうかを判定
 func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
+	for _, p := range goHandledFlagExemptPaths {
+		if path == p {
+			return true
+		}
+	}
+
 	// goHandledPathsは前方一致で判定するため、一覧に入れると /errors配下すべてを
 	// Go側が引き取ることになる。Goが持つエラーページは下記の一覧だけなので完全一致で判定する。
 	for _, p := range goHandledErrorPaths {
