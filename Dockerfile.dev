@@ -23,6 +23,7 @@ apt update
 apt dist-upgrade -yq
 
 PACKAGES=$(cat <<'PKGLIST' | sed 's/#.*//'
+  bind9-dnsutils            # DNS調査用のdig
   build-essential
   bubblewrap                # CodexのLinux sandboxに必要
   ca-certificates           # HTTPS接続に必要
@@ -238,6 +239,15 @@ ENV PATH="${GOPATH}/bin:${PATH}"
 # (`@latest` は使わない)。curlで取得する上記のバイナリと異なりSHA256のARGは
 # 不要 (ダウンロードの改ざん検証はGo module checksum DBが担保するため)。
 RUN go install github.com/air-verse/air@v1.65.3
+
+# --- ログインシェルのPATH ---
+#
+# Debianの /etc/profileはPATHを固定値で上書きするため、bash -lなどのログインシェルでは
+# ENVで追加した /mise/shimsや /go/binが消える。/etc/profileが最後に読み込む
+# /etc/profile.dに、イメージのPATHを書き出しておく。
+USER root
+RUN echo "export PATH=\"${PATH}\"" > /etc/profile.d/annict-path.sh
+USER ${USERNAME}
 
 # --- Rubyツール ---
 RUN gem install bundler -v 2.3.12
