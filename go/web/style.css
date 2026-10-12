@@ -60,7 +60,7 @@
   /* フォーカス状態 */
   .link:focus,
   .link-muted:focus {
-    @apply outline-none ring-2 ring-ring;
+    @apply ring-ring ring-2 outline-none;
   }
 }
 
