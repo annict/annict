@@ -33,6 +33,8 @@ import (
 	"github.com/annict/annict/go/internal/handler/password"
 	"github.com/annict/annict/go/internal/handler/password_reset"
 	"github.com/annict/annict/go/internal/handler/popular_work"
+	"github.com/annict/annict/go/internal/handler/settings_account_deletion"
+	"github.com/annict/annict/go/internal/handler/settings_account_deletion_completion"
 	"github.com/annict/annict/go/internal/handler/sign_in"
 	"github.com/annict/annict/go/internal/handler/sign_in_code"
 	"github.com/annict/annict/go/internal/handler/sign_in_password"
@@ -53,6 +55,7 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 	annictSentry "github.com/annict/annict/go/internal/sentry"
 	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/storage"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/turnstile"
@@ -203,6 +206,24 @@ func runServe() {
 	// 呼ばれる。配線はnewSyncAnimesUsecase経由で `task sync-animes` サブコマンドと共有する。
 	syncAnimesUC := newSyncAnimesUsecase(db, queries)
 
+	// stripe-goクライアントを、UseCaseごとのinterfaceを実装するadapterで
+	// ラップする。これにより各UseCaseは *stripe.Clientではなくseamに依存する。
+	// 下のユーザーの削除ジョブとサポーター関連のハンドラーの双方が使う。
+	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
+	stripeAdapter := annictStripe.NewAdapter(stripeClient)
+
+	// プロフィール画像などを置くオブジェクトストレージ (Cloudflare R2) のクライアントを、
+	// UseCaseのinterfaceを実装するadapterでラップする。
+	storageAdapter := storage.NewAdapter(
+		storage.NewClient(cfg.S3Endpoint, cfg.S3AccessKeyID, cfg.S3SecretAccessKey, cfg.S3Region),
+		cfg.S3BucketName,
+	)
+
+	// 退会・利用停止したユーザーの削除ジョブのUseCaseを組み立てる (Worker用)。
+	// 1回の実行時間に上限を設け、超えた分はジョブのsnoozeで続きから進める。配線は
+	// newDeleteUserUsecase経由で `task delete-user` サブコマンドと共有する。
+	deleteUserUC := newDeleteUserUsecase(db, queries, stripeAdapter, storageAdapter, usecase.DeleteUserTimeLimit)
+
 	// Riverクライアントの初期化
 	ctx := context.Background()
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
@@ -211,6 +232,7 @@ func runServe() {
 		CleanupExpiredSessions:    cleanupExpiredSessionsUC,
 		CleanupAnonymousSessions:  cleanupAnonymousSessionsUC,
 		SyncAnimes:                syncAnimesUC,
+		DeleteUser:                deleteUserUC,
 	}, cfg)
 	if err != nil {
 		slog.Error("Riverクライアントの初期化に失敗しました", "error", err)
@@ -447,7 +469,12 @@ func runServe() {
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 
 	// Dispatcherの初期化
-	d := dispatcher.NewDispatcher(riverClient.Client())
+	txInserter, err := worker.NewTxInserter(db)
+	if err != nil {
+		slog.Error("ジョブ投入用のRiverクライアントの作成に失敗しました", "error", err)
+		os.Exit(1)
+	}
+	d := dispatcher.NewDispatcher(riverClient.Client(), txInserter)
 
 	// 6桁コード送信ユースケースの初期化
 	signInValidator := validator.NewSignInCreateValidator()
@@ -522,12 +549,15 @@ func runServe() {
 		PriceMonthlyID: cfg.StripePriceMonthlyID,
 		PriceYearlyID:  cfg.StripePriceYearlyID,
 	}
-	stripeClient := annictStripe.NewClient(cfg.StripeSecretKey)
-	// stripe-goクライアントを、UseCaseごとのinterfaceを実装するadapterで
-	// ラップする。これにより各UseCaseは *stripe.Clientではなくseamに依存する。
-	stripeAdapter := annictStripe.NewAdapter(stripeClient)
 	getSupporterStatusUC := usecase.NewGetSupporterStatusUsecase(stripeSubscriberRepo, gumroadSubscriberRepo)
 	supportersHandler := supporters.NewHandler(cfg, sessionManager, imageHelper, getSupporterStatusUC, annictStripeCfg, stripeClient)
+
+	// 退会ハンドラーの初期化
+	oauthApplicationRepo := repository.NewOAuthApplicationRepository(queries)
+	getAccountDeletionNewUC := usecase.NewGetAccountDeletionNewUsecase(stripeSubscriberRepo, gumroadSubscriberRepo, oauthApplicationRepo)
+	createAccountDeletionUC := usecase.NewCreateAccountDeletionUsecase(db, userRepo, stripeSubscriberRepo, d, validator.NewSettingsAccountDeletionCreateValidator(oauthApplicationRepo))
+	settingsAccountDeletionHandler := settings_account_deletion.NewHandler(cfg, sessionManager, imageHelper, getAccountDeletionNewUC, createAccountDeletionUC)
+	settingsAccountDeletionCompletionHandler := settings_account_deletion_completion.NewHandler(cfg, imageHelper)
 
 	// Stripe Checkoutハンドラーの初期化
 	createSupportersCheckoutValidator := validator.NewSupportersCheckoutCreateValidator()
@@ -591,6 +621,11 @@ func runServe() {
 
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
+
+	// 退会 (go_account_deletionフラグを有効にした利用者にだけGo版で配信する)
+	r.With(authMW.RequireAuth).Get("/settings/account/deletion/new", settingsAccountDeletionHandler.New)
+	r.With(authMW.RequireAuth).Post("/settings/account/deletion", settingsAccountDeletionHandler.Create)
+	r.Get("/settings/account/deletion/completed", settingsAccountDeletionCompletionHandler.Show)
 
 	// DB管理画面
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)

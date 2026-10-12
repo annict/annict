@@ -3,12 +3,14 @@ package worker
 
 import (
 	"context"
+	"database/sql"
 	"log/slog"
 	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/riverqueue/river"
+	"github.com/riverqueue/river/riverdriver/riverdatabasesql"
 	"github.com/riverqueue/river/riverdriver/riverpgxv5"
 	"github.com/riverqueue/river/rivertype"
 
@@ -31,7 +33,14 @@ type NewClientParams struct {
 	CleanupExpiredSessions    ExpiredSessionCleaner
 	CleanupAnonymousSessions  AnonymousSessionCleaner
 	SyncAnimes                AnimesSyncer
+	DeleteUser                UserDeleter
 }
+
+// SoftStopTimeoutは、停止時に実行中のジョブの完了を待ち、待ちきれなければcontextを
+// キャンセルするまでの時間。ユーザーの削除のように1回の実行が長いジョブも、呼び出し元
+// (serve.go) の停止のタイムアウトより前に中断させて結果を記録させる。記録されないまま
+// プロセスが終わったジョブは、Riverに救出されるまで再開されず、試行回数も消費するため。
+const SoftStopTimeout = 5 * time.Second
 
 // NewClientは新しいRiverクライアントを作成します
 func NewClient(ctx context.Context, databaseURL string, params NewClientParams, cfg *config.Config) (*Client, error) {
@@ -80,6 +89,11 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		sendPasswordResetEmailUC := usecase.NewSendPasswordResetEmailUsecase(passwordResetSender)
 		river.AddWorker(workers, NewSendPasswordResetEmailWorker(sendPasswordResetEmailUC))
 		slog.InfoContext(ctx, "SendPasswordResetEmailWorkerを登録しました")
+
+		accountDeletionSender := email.NewAccountDeletionSender(emailSender)
+		sendAccountDeletionEmailUC := usecase.NewSendAccountDeletionEmailUsecase(accountDeletionSender)
+		river.AddWorker(workers, NewSendAccountDeletionEmailWorker(sendAccountDeletionEmailUC))
+		slog.InfoContext(ctx, "SendAccountDeletionEmailWorkerを登録しました")
 	}
 
 	// トークンクリーンアップワーカーを登録
@@ -102,6 +116,10 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	river.AddWorker(workers, NewSyncAnimesWorker(params.SyncAnimes))
 	slog.InfoContext(ctx, "SyncAnimesWorkerを登録しました")
 
+	// ユーザーの削除ワーカーを登録する。
+	river.AddWorker(workers, NewDeleteUserWorker(params.DeleteUser))
+	slog.InfoContext(ctx, "DeleteUserWorkerを登録しました")
+
 	// Riverにはslog.Default() ではなく素の標準エラー出力ハンドラーで
 	// ログを取らせる。slog.Default() のハンドラーはErrorレベルをSentryへ
 	// ファンアウトする。Riverのバックグラウンドサービスは一時的な接続失敗を
@@ -123,7 +141,8 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		Queues: map[string]river.QueueConfig{
 			river.QueueDefault: {MaxWorkers: 10},
 		},
-		Workers: workers,
+		Workers:         workers,
+		SoftStopTimeout: SoftStopTimeout,
 		Middleware: []rivertype.Middleware{
 			annictSentry.RiverWorkerMiddleware(),
 		},
@@ -138,6 +157,15 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		riverClient: riverClient,
 		pool:        pool,
 	}, nil
+}
+
+// NewTxInserterは、アプリケーションのdatabase/sqlのトランザクションの中でジョブを投入する
+// 投入専用のRiverクライアントを作成します。キューとワーカーを持たないため、ジョブの実行は
+// NewClientのクライアントが担います。ロガーはNewClientと同じ理由でSentryへ送らないものにします。
+func NewTxInserter(db *sql.DB) (*river.Client[*sql.Tx], error) {
+	return river.NewClient(riverdatabasesql.New(db), &river.Config{
+		Logger: slog.New(annictSentry.NewBaseHandler()),
+	})
 }
 
 // StartはRiverクライアントを起動します

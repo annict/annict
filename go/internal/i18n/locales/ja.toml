@@ -376,6 +376,11 @@ other = "リクエストが多すぎます。しばらくしてから再度お�
 description = "パスワードリセットメールの件名"
 other = "Annict - パスワードリセットのご案内"
 
+# 退会完了メール
+[account_deletion_email_subject]
+description = "退会完了メールの件名"
+other = "Annict - 退会を受け付けました"
+
 # ログインコードメール
 [sign_in_code_email_subject]
 description = "ログインコードメールの件名"
@@ -2052,3 +2057,129 @@ other = "ページを開いたまま時間が経ったか、別のタブでロ�
 [error_back_to_home]
 description = "汎用エラーページからホームへ戻るリンク"
 other = "ホームに戻る"
+
+# 退会の確認ページ
+[settings_account_deletion_new_title]
+description = "退会の確認ページのタイトル"
+other = "アカウントの削除"
+
+[settings_account_deletion_new_heading]
+description = "退会の確認ページの見出し"
+other = "アカウントの削除"
+
+[settings_account_deletion_new_description]
+description = "退会の確認ページの導入文"
+other = "退会すると、アカウントと次のデータを削除します。削除したデータは元に戻せません。"
+
+[settings_account_deletion_new_deleted_heading]
+description = "退会の確認ページの削除されるものの見出し"
+other = "削除されるもの"
+
+[settings_account_deletion_new_deleted_account]
+description = "退会の確認ページの削除されるもの (アカウント情報)"
+other = "アカウント情報 (ユーザー名・メールアドレス・プロフィール・プロフィール画像・設定)"
+
+[settings_account_deletion_new_deleted_records]
+description = "退会の確認ページの削除されるもの (記録)"
+other = "記録・感想・ステータス・ライブラリ"
+
+[settings_account_deletion_new_deleted_social]
+description = "退会の確認ページの削除されるもの (交流)"
+other = "いいね・コメント・フォロー・お気に入り・コレクション・通知"
+
+[settings_account_deletion_new_deleted_forum]
+description = "退会の確認ページの削除されるもの (フォーラム)"
+other = "自分が立てたフォーラムのスレッド (ほかの人のコメントを含む)"
+
+[settings_account_deletion_new_deleted_db]
+description = "退会の確認ページの削除されるもの (Annict DB)"
+other = "Annict DBの編集履歴とコメント"
+
+[settings_account_deletion_new_deleted_api]
+description = "退会の確認ページの削除されるもの (API)"
+other = "APIのアクセストークンと、連携しているアプリケーションへの認可"
+
+[settings_account_deletion_new_kept_heading]
+description = "退会の確認ページの退会後も残るものの見出し"
+other = "退会後も残るもの"
+
+[settings_account_deletion_new_kept_mentions]
+description = "退会の確認ページの退会後も残るもの (ユーザー名の文字列)"
+other = "ほかの人の投稿の中に書かれた、あなたのユーザー名の文字列"
+
+[settings_account_deletion_new_kept_forum_comments]
+description = "退会の確認ページの退会後も残るもの (フォーラムのコメント)"
+other = "ほかの人のスレッドに書いたフォーラムのコメントの本文 (あなたのアカウントとの紐づきは外れます)"
+
+[settings_account_deletion_new_kept_db_values]
+description = "退会の確認ページの退会後も残るもの (Annict DBの作品データ)"
+other = "Annict DBで編集した作品データの内容"
+
+[settings_account_deletion_new_kept_work_images]
+description = "退会の確認ページの退会後も残るもの (作品画像)"
+other = "アップロードした作品画像 (あなたのアカウントとの紐づきは外れます)"
+
+[settings_account_deletion_new_stripe_supporter_heading]
+description = "退会の確認ページのStripeのサポーター向けの注意の見出し"
+other = "サポーター契約は即時に解約されます"
+
+[settings_account_deletion_new_stripe_supporter_description]
+description = "退会の確認ページのStripeのサポーター向けの注意"
+other = "退会すると、サポーターのサブスクリプションを即時に解約します。残りの期間の料金は返金されません。"
+
+[settings_account_deletion_new_gumroad_supporter_heading]
+description = "退会の確認ページのGumroadのサポーター向けの注意の見出し"
+other = "Gumroadでの解約が必要です"
+
+[settings_account_deletion_new_gumroad_supporter_description]
+description = "退会の確認ページのGumroadのサポーター向けの注意"
+other = "Gumroadで登録したサポーターのサブスクリプションは、Annictからは解約できません。Gumroadで解約してください。"
+
+[settings_account_deletion_new_oauth_applications_heading]
+description = "退会の確認ページのOAuthアプリケーションが残っている場合の見出し"
+other = "作成したアプリケーションが残っているため、退会できません"
+
+[settings_account_deletion_new_oauth_applications_description]
+description = "退会の確認ページのOAuthアプリケーションが残っている場合の案内"
+other = "アプリケーションの管理ページで、作成したアプリケーションをすべて削除してから、もう一度このページを開いてください。"
+
+[settings_account_deletion_new_oauth_applications]
+description = "退会の確認ページからアプリケーションの管理ページへのリンク"
+other = "アプリケーションの管理ページへ"
+
+[validation_account_deletion_oauth_applications_kept]
+description = "退会の受付でOAuthアプリケーションが残っている場合のエラー"
+other = "作成したアプリケーションが残っているため、退会できません"
+
+[validation_account_deletion_username_mismatch]
+description = "退会の受付で入力したユーザー名が一致しない場合のエラー"
+other = "ユーザー名が一致しません"
+
+[settings_account_deletion_new_username_label]
+description = "退会の確認ページのユーザー名の入力欄のラベル"
+other = "確認のため、ユーザー名「{{.Username}}」を入力してください"
+
+[settings_account_deletion_new_submit_button]
+description = "退会の確認ページの退会ボタン"
+other = "退会する"
+
+# 退会の完了ページ
+[settings_account_deletion_completion_show_title]
+description = "退会の完了ページのタイトル"
+other = "退会を受け付けました"
+
+[settings_account_deletion_completion_show_heading]
+description = "退会の完了ページの見出し"
+other = "退会を受け付けました"
+
+[settings_account_deletion_completion_show_description]
+description = "退会の完了ページの説明"
+other = "アカウントの削除を受け付けました。データの削除は順次行います。"
+
+[settings_account_deletion_completion_show_thanks]
+description = "退会の完了ページのお礼"
+other = "これまでAnnictを使っていただき、ありがとうございました。"
+
+[settings_account_deletion_completion_show_back_to_home]
+description = "退会の完了ページからトップページへのリンク"
+other = "トップページへ"

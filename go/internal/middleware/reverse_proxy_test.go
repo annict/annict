@@ -15,7 +15,10 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/session"
+	"github.com/annict/annict/go/internal/testutil"
 )
 
 func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
@@ -1082,7 +1085,7 @@ func TestIsFeatureFlagEnabled_NoMatchingPattern(t *testing.T) {
 		featureFlagRepo: checker,
 	}
 
-	// featureFlaggedPatternsが空なのでマッチしない
+	// どのフラグ付きパターンにもマッチしないパス
 	req := httptest.NewRequest("GET", "/some-path", nil)
 
 	if mw.isFeatureFlagEnabled(req, "some-token") {
@@ -1409,6 +1412,137 @@ func TestReverseProxyMiddleware_DBFallback_MatchedGoRouteStillHitsInnerChain(t *
 	}
 	if strings.Contains(rr.Body.String(), "Rails response") {
 		t.Errorf("実装済みのPOST /db/worksの転送先 = %q、期待値 = Railsへフォールバックしないこと", rr.Body.String())
+	}
+}
+
+// 指定したフラグだけを有効と答えるフィーチャーフラグ判定。パスがどのフラグに対応づくかを検証するために使う。
+type singleFlagChecker struct {
+	flag model.FeatureFlagName
+}
+
+func (c *singleFlagChecker) IsEnabledByDeviceOrUser(_ context.Context, _ string, _ model.UserID, name model.FeatureFlagName) (bool, error) {
+	return name == c.flag, nil
+}
+
+// TestReverseProxyMiddleware_AccountDeletionFeatureFlagは、退会の画面がgo_account_deletionフラグを
+// 有効にした利用者にだけGo版で配信され、それ以外はRails版へ流れることを検証する。
+func TestReverseProxyMiddleware_AccountDeletionFeatureFlag(t *testing.T) {
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{Domain: "annict-test.page"}
+	goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	})
+
+	tests := []struct {
+		name   string
+		flag   model.FeatureFlagName
+		path   string
+		wantGo bool
+	}{
+		{name: "フラグ有効: 確認ページはGo版", flag: model.FeatureFlagGoAccountDeletion, path: "/settings/account/deletion/new", wantGo: true},
+		{name: "フラグ有効: 完了ページはGo版", flag: model.FeatureFlagGoAccountDeletion, path: "/settings/account/deletion/completed", wantGo: true},
+		{name: "フラグ有効: 受付はGo版", flag: model.FeatureFlagGoAccountDeletion, path: "/settings/account/deletion", wantGo: true},
+		{name: "フラグ有効: アカウント設定ページはRails版", flag: model.FeatureFlagGoAccountDeletion, path: "/settings/account", wantGo: false},
+		{name: "フラグ有効: 前方一致するだけのパスはRails版", flag: model.FeatureFlagGoAccountDeletion, path: "/settings/account/deletions", wantGo: false},
+		{name: "別のフラグだけ有効: 確認ページはRails版", flag: model.FeatureFlagExample, path: "/settings/account/deletion/new", wantGo: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, &singleFlagChecker{flag: tt.flag}, nil)
+			if err != nil {
+				t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+			}
+
+			rr := httptest.NewRecorder()
+			proxyMiddleware.Middleware(goHandler).ServeHTTP(rr, httptest.NewRequest("GET", tt.path, nil))
+
+			want := "Rails response"
+			if tt.wantGo {
+				want = "Go response"
+			}
+			if !strings.Contains(rr.Body.String(), want) {
+				t.Errorf("レスポンスボディ = %q、期待値 = %qを含むこと", rr.Body.String(), want)
+			}
+		})
+	}
+}
+
+// ユーザーIDにだけ退会フラグが付いている状態を再現する。
+type accountDeletionUserFlagChecker struct {
+	userID model.UserID
+}
+
+func (c *accountDeletionUserFlagChecker) IsEnabledByDeviceOrUser(_ context.Context, _ string, userID model.UserID, name model.FeatureFlagName) (bool, error) {
+	return userID == c.userID && name == model.FeatureFlagGoAccountDeletion, nil
+}
+
+// TestReverseProxyMiddleware_AccountDeletionCompletionWithoutSessionは、退会受付でセッションを
+// 破棄した後も、ユーザー単位のフラグに依存せず完了ページをGo版で配信することを検証する。
+func TestReverseProxyMiddleware_AccountDeletionCompletionWithoutSession(t *testing.T) {
+	db, tx := testutil.SetupTx(t)
+	userID := testutil.NewUserBuilder(t, tx).Build()
+	sessionID := testutil.NewSessionBuilder(t, tx).WithUserID(userID).Build()
+	cfg := &config.Config{Domain: "annict-test.page"}
+	sessionManager := session.NewManager(repository.NewSessionRepository(query.New(db).WithTx(tx)), cfg)
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(
+		railsServer.URL,
+		cfg,
+		&accountDeletionUserFlagChecker{userID: userID},
+		sessionManager,
+	)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	})
+	handler := proxyMiddleware.Middleware(goHandler)
+
+	// ユーザー単位のフラグで確認ページへ到達できる状態から、受付後のセッション破棄を再現する。
+	beforeRequest := httptest.NewRequest(http.MethodGet, "/settings/account/deletion/new", nil)
+	beforeRequest.AddCookie(&http.Cookie{Name: session.SessionKey, Value: sessionID})
+	beforeRequest.AddCookie(&http.Cookie{Name: DeviceTokenCookieName, Value: "device-without-flag"})
+	beforeResponse := httptest.NewRecorder()
+	handler.ServeHTTP(beforeResponse, beforeRequest)
+	if got := beforeResponse.Body.String(); got != "Go response" {
+		t.Fatalf("セッション破棄前のレスポンスボディ = %q、期待値 = Go response", got)
+	}
+
+	if err := sessionManager.DestroySession(context.Background(), httptest.NewRecorder(), beforeRequest); err != nil {
+		t.Fatalf("セッションの破棄に失敗: %v", err)
+	}
+
+	for _, tc := range []struct {
+		name string
+		path string
+		want string
+	}{
+		{name: "完了ページ", path: "/settings/account/deletion/completed", want: "Go response"},
+		{name: "確認ページ", path: "/settings/account/deletion/new", want: "Rails response"},
+		{name: "完了ページに似たパス", path: "/settings/account/deletion/completed/extra", want: "Rails response"},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, tc.path, nil)
+			req.AddCookie(&http.Cookie{Name: session.SessionKey, Value: sessionID})
+			req.AddCookie(&http.Cookie{Name: DeviceTokenCookieName, Value: "device-without-flag"})
+			rr := httptest.NewRecorder()
+			handler.ServeHTTP(rr, req)
+			if got := rr.Body.String(); got != tc.want {
+				t.Errorf("レスポンスボディ = %q、期待値 = %q", got, tc.want)
+			}
+		})
 	}
 }
 

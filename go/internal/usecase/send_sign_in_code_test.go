@@ -177,6 +177,49 @@ func TestSendSignInCodeUsecase_Execute_UserNotFound(t *testing.T) {
 	}
 }
 
+func TestSendSignInCodeUsecase_Execute_DeletedUser(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	queries := query.New(db)
+
+	setupTx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("トランザクションのBeginのエラー = %v", err)
+	}
+	defer func() { _ = setupTx.Rollback() }()
+
+	user := testutil.NewUserBuilder(t, setupTx).
+		WithEncryptedPassword("").
+		WithDeletedAt(time.Now()).
+		BuildWithResult()
+
+	if err := setupTx.Commit(); err != nil {
+		t.Fatalf("Commit()のエラー = %v", err)
+	}
+	t.Cleanup(func() { testutil.DeleteUser(t, db, user.ID) })
+
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	v := validator.NewSignInCreateValidator()
+	uc := NewSendSignInCodeUsecase(db, signInCodeRepo, repository.NewUserRepository(queries), nil, v)
+
+	ctx := context.Background()
+
+	// 削除済みユーザーは存在しないユーザーと同じバリデーションエラーにする
+	_, err = uc.Execute(ctx, SendSignInCodeInput{Email: user.Email})
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("削除済みユーザーでのエラー = %v、期待値 = バリデーションエラー", err)
+	}
+	if len(ve.GetFieldErrors("email")) == 0 {
+		t.Error("emailのフィールドエラーが1件も無い")
+	}
+
+	if code, err := signInCodeRepo.GetValidByUserID(ctx, user.ID); err == nil {
+		t.Errorf("削除済みユーザーのログインコード = %+v、期待値 = 作成されない", code)
+	}
+}
+
 func TestSendSignInCodeUsecase_Execute_ValidationError(t *testing.T) {
 	t.Parallel()
 

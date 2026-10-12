@@ -1,0 +1,69 @@
+-- name: DeleteLikesByUserID :one
+-- ユーザーが付けたいいねを最大batch_size件削除し、削除した件数を返す。
+-- いいね先の種類ごとに、いいね先のlikes_countを削除した件数だけ減算する。Rails版の別名
+-- (AnimeRecord) で作られたいいねは作品の記録 (WorkRecord) として数える。updated_atは
+-- 変えない。いいねで他人に届いた通知は先の段階 (ユーザーが起こした通知の削除) で
+-- 削除しておく。
+WITH deleted AS (
+    DELETE FROM likes
+    WHERE id IN (
+        SELECT target.id
+        FROM likes AS target
+        WHERE target.user_id = sqlc.arg('user_id')
+        LIMIT sqlc.arg('batch_size')
+    )
+    RETURNING likes.recipient_type, likes.recipient_id
+),
+counts AS (
+    SELECT
+        CASE WHEN deleted.recipient_type = 'AnimeRecord' THEN 'WorkRecord' ELSE deleted.recipient_type END AS recipient_type,
+        deleted.recipient_id,
+        COUNT(*) AS likes_count
+    FROM deleted
+    GROUP BY
+        CASE WHEN deleted.recipient_type = 'AnimeRecord' THEN 'WorkRecord' ELSE deleted.recipient_type END,
+        deleted.recipient_id
+),
+decremented_episode_records AS (
+    UPDATE episode_records
+    SET likes_count = episode_records.likes_count - counts.likes_count
+    FROM counts
+    WHERE counts.recipient_type = 'EpisodeRecord' AND episode_records.id = counts.recipient_id
+    RETURNING episode_records.id
+),
+decremented_work_records AS (
+    UPDATE work_records
+    SET likes_count = work_records.likes_count - counts.likes_count
+    FROM counts
+    WHERE counts.recipient_type = 'WorkRecord' AND work_records.id = counts.recipient_id
+    RETURNING work_records.id
+),
+decremented_statuses AS (
+    UPDATE statuses
+    SET likes_count = statuses.likes_count - counts.likes_count
+    FROM counts
+    WHERE counts.recipient_type = 'Status' AND statuses.id = counts.recipient_id
+    RETURNING statuses.id
+),
+decremented_multiple_episode_records AS (
+    UPDATE multiple_episode_records
+    SET likes_count = multiple_episode_records.likes_count - counts.likes_count
+    FROM counts
+    WHERE counts.recipient_type = 'MultipleEpisodeRecord' AND multiple_episode_records.id = counts.recipient_id
+    RETURNING multiple_episode_records.id
+),
+decremented_comments AS (
+    UPDATE comments
+    SET likes_count = comments.likes_count - counts.likes_count
+    FROM counts
+    WHERE counts.recipient_type = 'Comment' AND comments.id = counts.recipient_id
+    RETURNING comments.id
+),
+decremented_collections AS (
+    UPDATE collections
+    SET likes_count = collections.likes_count - counts.likes_count
+    FROM counts
+    WHERE counts.recipient_type = 'Collection' AND collections.id = counts.recipient_id
+    RETURNING collections.id
+)
+SELECT COUNT(*) FROM deleted;

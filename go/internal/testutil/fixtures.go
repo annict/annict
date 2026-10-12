@@ -347,6 +347,7 @@ type UserBuilder struct {
 	locale             string
 	role               int32
 	stripeSubscriberID *model.StripeSubscriberID
+	deletedAt          *time.Time
 }
 
 // NewUserBuilderは新しいUserBuilderを作成します
@@ -399,6 +400,12 @@ func (b *UserBuilder) WithRole(role int32) *UserBuilder {
 // WithStripeSubscriberIDはStripeサブスクライバーIDを設定します
 func (b *UserBuilder) WithStripeSubscriberID(id *model.StripeSubscriberID) *UserBuilder {
 	b.stripeSubscriberID = id
+	return b
+}
+
+// WithDeletedAtは論理削除日時を設定します (退会・利用停止したユーザー)
+func (b *UserBuilder) WithDeletedAt(deletedAt time.Time) *UserBuilder {
+	b.deletedAt = &deletedAt
 	return b
 }
 
@@ -503,6 +510,13 @@ func (b *UserBuilder) Build() model.UserID {
 		_, err = b.tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, int64(*b.stripeSubscriberID), id)
 		if err != nil {
 			b.t.Fatalf("ユーザーのStripeSubscriberID更新に失敗しました: %v", err)
+		}
+	}
+
+	if b.deletedAt != nil {
+		_, err = b.tx.Exec(`UPDATE users SET deleted_at = $1 WHERE id = $2`, *b.deletedAt, id)
+		if err != nil {
+			b.t.Fatalf("ユーザーのdeleted_at更新に失敗しました: %v", err)
 		}
 	}
 
@@ -1504,6 +1518,12 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		b.t.Fatalf("ステータスデータの作成に失敗しました: %v", err)
 	}
 
+	// プログラムを指定しない場合は、program_idをNULLのまま作成する。
+	var programID any
+	if b.programID != 0 {
+		programID = b.programID
+	}
+
 	// ライブラリエントリを作成 (status_idを設定)
 	query := `
 		INSERT INTO library_entries (
@@ -1518,7 +1538,7 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		query,
 		int64(b.userID),
 		int64(b.workID),
-		b.programID,
+		programID,
 		kind,
 		statusID,
 		time.Now(),

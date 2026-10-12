@@ -789,7 +789,7 @@ ALTER SEQUENCE public.character_favorites_id_seq OWNED BY public.character_favor
 CREATE TABLE public.character_images (
     id bigint NOT NULL,
     character_id bigint NOT NULL,
-    user_id bigint NOT NULL,
+    user_id bigint,
     attachment_file_name character varying NOT NULL,
     attachment_file_size integer NOT NULL,
     attachment_content_type character varying NOT NULL,
@@ -3463,7 +3463,7 @@ ALTER SEQUENCE public.work_comments_id_seq OWNED BY public.work_comments.id;
 CREATE TABLE public.work_images (
     id bigint NOT NULL,
     work_id bigint NOT NULL,
-    user_id bigint NOT NULL,
+    user_id bigint,
     attachment_file_name character varying,
     attachment_file_size integer,
     attachment_content_type character varying,
@@ -5756,6 +5756,13 @@ CREATE INDEX index_db_activities_on_trackable_id_and_trackable_type ON public.db
 
 
 --
+-- Name: index_db_activities_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_db_activities_on_user_id ON public.db_activities USING btree (user_id);
+
+
+--
 -- Name: index_db_comments_on_locale; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6141,6 +6148,13 @@ CREATE INDEX index_library_entries_on_work_id ON public.library_entries USING bt
 
 
 --
+-- Name: index_likes_on_recipient_type_and_recipient_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_likes_on_recipient_type_and_recipient_id ON public.likes USING btree (recipient_type, recipient_id);
+
+
+--
 -- Name: index_multiple_episode_records_on_user_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6183,10 +6197,31 @@ CREATE UNIQUE INDEX index_number_formats_on_name ON public.number_formats USING 
 
 
 --
+-- Name: index_oauth_access_grants_on_application_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_oauth_access_grants_on_application_id ON public.oauth_access_grants USING btree (application_id);
+
+
+--
+-- Name: index_oauth_access_grants_on_resource_owner_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_oauth_access_grants_on_resource_owner_id ON public.oauth_access_grants USING btree (resource_owner_id);
+
+
+--
 -- Name: index_oauth_access_grants_on_token; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE UNIQUE INDEX index_oauth_access_grants_on_token ON public.oauth_access_grants USING btree (token);
+
+
+--
+-- Name: index_oauth_access_tokens_on_application_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_oauth_access_tokens_on_application_id ON public.oauth_access_tokens USING btree (application_id);
 
 
 --
@@ -7354,6 +7389,14 @@ ALTER TABLE ONLY public.channels
 
 
 --
+-- Name: character_images character_images_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.character_images
+    ADD CONSTRAINT character_images_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
+
+
+--
 -- Name: episode_records checkins_episode_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7414,7 +7457,7 @@ ALTER TABLE ONLY public.episodes
 --
 
 ALTER TABLE ONLY public.feature_flags
-    ADD CONSTRAINT feature_flags_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id);
+    ADD CONSTRAINT feature_flags_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
 
 
 --
@@ -7439,14 +7482,6 @@ ALTER TABLE ONLY public.finished_tips
 
 ALTER TABLE ONLY public.work_comments
     ADD CONSTRAINT fk_rails_00410fd248 FOREIGN KEY (work_id) REFERENCES public.works(id);
-
-
---
--- Name: character_images fk_rails_057f9798e7; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.character_images
-    ADD CONSTRAINT fk_rails_057f9798e7 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -7543,14 +7578,6 @@ ALTER TABLE ONLY public.userland_project_members
 
 ALTER TABLE ONLY public.staffs
     ADD CONSTRAINT fk_rails_39944239d2 FOREIGN KEY (work_id) REFERENCES public.works(id);
-
-
---
--- Name: work_images fk_rails_3bad625b28; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.work_images
-    ADD CONSTRAINT fk_rails_3bad625b28 FOREIGN KEY (user_id) REFERENCES public.users(id);
 
 
 --
@@ -7655,14 +7682,6 @@ ALTER TABLE ONLY public.activities
 
 ALTER TABLE ONLY public.programs
     ADD CONSTRAINT fk_rails_513ea7b8c6 FOREIGN KEY (work_id) REFERENCES public.works(id);
-
-
---
--- Name: reactions fk_rails_53df387e77; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.reactions
-    ADD CONSTRAINT fk_rails_53df387e77 FOREIGN KEY (collection_item_id) REFERENCES public.collection_items(id);
 
 
 --
@@ -7866,14 +7885,6 @@ ALTER TABLE ONLY public.work_taggables
 
 
 --
--- Name: reactions fk_rails_9f02fc96a0; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.reactions
-    ADD CONSTRAINT fk_rails_9f02fc96a0 FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
 -- Name: faq_contents fk_rails_a06684bdd4; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7967,14 +7978,6 @@ ALTER TABLE ONLY public.episode_records
 
 ALTER TABLE ONLY public.forum_post_participants
     ADD CONSTRAINT fk_rails_b725df9f16 FOREIGN KEY (forum_post_id) REFERENCES public.forum_posts(id);
-
-
---
--- Name: reactions fk_rails_b76961a906; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.reactions
-    ADD CONSTRAINT fk_rails_b76961a906 FOREIGN KEY (target_user_id) REFERENCES public.users(id);
 
 
 --
@@ -8258,6 +8261,30 @@ ALTER TABLE ONLY public.providers
 
 
 --
+-- Name: reactions reactions_collection_item_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reactions
+    ADD CONSTRAINT reactions_collection_item_id_fkey FOREIGN KEY (collection_item_id) REFERENCES public.collection_items(id) ON DELETE CASCADE;
+
+
+--
+-- Name: reactions reactions_target_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reactions
+    ADD CONSTRAINT reactions_target_user_id_fkey FOREIGN KEY (target_user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: reactions reactions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.reactions
+    ADD CONSTRAINT reactions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: receptions receptions_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8303,6 +8330,14 @@ ALTER TABLE ONLY public.statuses
 
 ALTER TABLE ONLY public.syobocal_alerts
     ADD CONSTRAINT syobocal_alerts_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE;
+
+
+--
+-- Name: work_images work_images_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.work_images
+    ADD CONSTRAINT work_images_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -8633,4 +8668,11 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20260708101249'),
     ('20260708153526'),
     ('20260709095705'),
-    ('20260816095359');
+    ('20260816095359'),
+    ('20261007120000'),
+    ('20261007120100'),
+    ('20261007130000'),
+    ('20261008100000'),
+    ('20261008100100'),
+    ('20261008100200'),
+    ('20261008100300');

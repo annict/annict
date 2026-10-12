@@ -96,7 +96,7 @@ func (uc *UpdatePasswordResetUsecase) Execute(ctx context.Context, input UpdateP
 	}
 
 	// 新しいセッションを作成
-	user, err := userRepoTx.GetByID(ctx, resetToken.UserID)
+	user, err := userRepoTx.GetActiveByID(ctx, resetToken.UserID)
 	if err != nil {
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗: %w", err)
 	}

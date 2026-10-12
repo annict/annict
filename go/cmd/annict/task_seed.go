@@ -26,8 +26,8 @@ func guardSeed(cfg *config.Config) error {
 // ここでAPP_ENVを読み直さず、runWithDBが読み込み済みの設定をそのまま渡す。生成はRiverを
 // 介さずシードのUseCaseを直接駆動する。シード生成はローカル開発の手順であり、対応する
 // 定期実行が無いため。何をどの順で生成するかはseeder側の関心事。
-func seed(ctx context.Context, cfg *config.Config, db *sql.DB, queries *query.Queries) error {
-	if err := seedMaster(ctx, cfg, db, queries); err != nil {
+func seed(ctx context.Context, cfg *config.Config, db *sql.DB, queries *query.Queries, _ []string) error {
+	if err := seedMaster(ctx, cfg, db, queries, nil); err != nil {
 		return err
 	}
 

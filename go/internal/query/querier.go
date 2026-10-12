@@ -19,6 +19,11 @@ type Querier interface {
 	// UTCで保存されているため、いったんUTCとして解釈してから指定タイムゾーン
 	// に変換する。
 	AggregateDailyRecordCountsByUserID(ctx context.Context, arg AggregateDailyRecordCountsByUserIDParams) ([]AggregateDailyRecordCountsByUserIDRow, error)
+	// 退会を受け付けたユーザーのユーザー名とメールアドレスを再登録に使えるよう置き換え、
+	// deleted_atを立てる。すでに論理削除されたユーザーは対象にせず、同時に送られた退会の
+	// 受付が二重に処理されないよう、変更した件数を返す。ユーザー名が検証時から
+	// 変わった場合も更新しない。
+	AnonymizeAndSoftDeleteUser(ctx context.Context, arg AnonymizeAndSoftDeleteUserParams) (int64, error)
 	// 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
 	// unpublished_atを再スタンプせず、1行も返さない。作品idは確認ページが前提とした親作品との
 	// 一致を要求する。その間にAnnict::DataCare::MoveEpisodeで別作品へ移されたエピソードが、
@@ -79,6 +84,11 @@ type Querier interface {
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
 	CreateWork(ctx context.Context, arg CreateWorkParams) (int64, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
+	// ユーザーのアクティビティを最大batch_size件削除し、削除した件数を返す。
+	DeleteActivitiesByUserID(ctx context.Context, arg DeleteActivitiesByUserIDParams) (int64, error)
+	// ユーザーのアクティビティグループを最大batch_size件削除し、削除した件数を返す。
+	// グループに属するアクティビティは先に削除しておく (activitiesからの外部キーがあるため)。
+	DeleteActivityGroupsByUserID(ctx context.Context, arg DeleteActivityGroupsByUserIDParams) (int64, error)
 	DeleteAnimeEvent(ctx context.Context, id int64) error
 	DeleteAnimeExternalID(ctx context.Context, id int64) error
 	DeleteAnimeHashtag(ctx context.Context, id int64) error
@@ -94,6 +104,31 @@ type Querier interface {
 	// 削除の直前にログインされて行が更新された場合は、FOR UPDATEの再評価でupdated_atが
 	// 条件から外れるため削除されない。
 	DeleteAnonymousSessions(ctx context.Context, arg DeleteAnonymousSessionsParams) (DeleteAnonymousSessionsRow, error)
+	// ユーザーのキャラクターのお気に入りを最大batch_size件削除し、削除した件数を返す。
+	// お気に入り先のcharacters.favorite_users_countを削除した件数だけ減算する。updated_atは変えない。
+	// ユーザー自身のお気に入り数はユーザー行ごと削除するため減算しない。
+	DeleteCharacterFavoritesByUserID(ctx context.Context, arg DeleteCharacterFavoritesByUserIDParams) (int64, error)
+	// ユーザーのコレクション項目と、ユーザーのコレクションに入っている項目を最大batch_size件削除し、
+	// 削除した件数を返す。項目に付いたリアクションは外部キーのON DELETE CASCADEで消える。
+	DeleteCollectionItemsByUserID(ctx context.Context, arg DeleteCollectionItemsByUserIDParams) (int64, error)
+	// ユーザーのコレクションを最大batch_size件削除し、削除した件数を返す。
+	// コレクションに付いた他人のいいねも同じ文の中で削除する。いいねでユーザーに届いた通知は
+	// 通知の段階で削除済みのため扱わない。コレクション項目は先に削除しておく (外部キーがあるため)。
+	DeleteCollectionsByUserID(ctx context.Context, arg DeleteCollectionsByUserIDParams) (int64, error)
+	// ユーザーが書いたコメントを最大batch_size件削除し、削除した件数を返す。
+	// コメントに付いたいいねも同じ文の中で削除し、コメント先のエピソードの記録の
+	// comments_countを削除した件数だけ減算する。updated_atは変えない。
+	// コメントで他人に届いた通知と、コメントへのいいねでユーザーに届いた通知は、
+	// 先の段階 (ユーザーが起こした通知・ユーザー宛ての通知の削除) で削除しておく。
+	// ユーザー自身の記録に書いたコメントは、記録の段階で削除済みになる。
+	DeleteCommentsByUserID(ctx context.Context, arg DeleteCommentsByUserIDParams) (int64, error)
+	// ユーザーのエピソードの記録に付いたコメント (書いたのが誰かを問わない) を最大
+	// batch_size件削除し、削除した件数を返す。同じ文の中で次も削除する。
+	// - コメントでユーザーに届いた通知 (コメントの通知は記録の持ち主宛て)
+	// - コメントに付いたいいねと、そのいいねでコメントを書いた人に届いた通知
+	// 他人宛ての通知のうち未読の分だけ、宛先のusers.notifications_count (未読数) を減算する。
+	// 通知は宛先 (user_id) で絞り、user_idのインデックスから引く。
+	DeleteCommentsOnEpisodeRecordsByUserID(ctx context.Context, arg DeleteCommentsOnEpisodeRecordsByUserIDParams) (int64, error)
 	// 削除は、エピソードがまだ削除されていないことを条件とする。他者が削除する前に開いた一覧から、
 	// その削除後に送信された場合は、deleted_atを再スタンプせず、カウンターを2度目に減算せず、
 	// 1行も返さない。作品idは一覧が名指しした親作品との一致を要求する。その間に
@@ -136,6 +171,22 @@ type Querier interface {
 	// 理由はUpdateDBEpisodeの張り替えが述べるものと同じ。削除するエピソード自身の
 	// prev_episode_idはそのままにする。削除済みの行は何も表示しないため。
 	DeleteDBEpisode(ctx context.Context, arg DeleteDBEpisodeParams) (DeleteDBEpisodeRow, error)
+	// ユーザーが行ったAnnict DBの編集履歴を最大batch_size件削除し、削除した件数を返す。
+	DeleteDbActivitiesByUserID(ctx context.Context, arg DeleteDbActivitiesByUserIDParams) (int64, error)
+	// ユーザーが書いたAnnict DBのコメントを最大batch_size件削除し、削除した件数を返す。
+	DeleteDbCommentsByUserID(ctx context.Context, arg DeleteDbCommentsByUserIDParams) (int64, error)
+	// ユーザーが持つ論理削除済みのアプリケーションを最大batch_size件削除し、削除した件数を返す。
+	// アプリケーションを参照するアクセストークン・認可・記録・ステータスは先に削除するか、
+	// 参照を外しておく (外部キーがあるため)。論理削除されていないアプリケーションは扱わない。
+	DeleteDeletedOAuthApplicationsByOwnerID(ctx context.Context, arg DeleteDeletedOAuthApplicationsByOwnerIDParams) (int64, error)
+	// ユーザーのエピソードの記録を最大batch_size件削除し、削除した件数を返す。
+	// 記録に付いたいいねと、そのいいねで記録の持ち主 (削除するユーザー) に届いた通知も
+	// 同じ文の中で削除する。論理削除されていない記録の分だけ、エピソードの記録数と
+	// 本文のある記録数を減算する (Railsの再集計タスクと同じ定義)。updated_atは変えない。
+	// 記録を参照するアクティビティは先に削除しておく (外部キーがあるため)。記録に付いた
+	// コメントは外部キーのON DELETE CASCADEでも消えるが、コメントのいいね・通知を
+	// 残さないよう先の段階で削除しておく。
+	DeleteEpisodeRecordsByUserID(ctx context.Context, arg DeleteEpisodeRecordsByUserIDParams) (int64, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
 	// updated_atがlower_bound以上かつcutoffより古いセッションを最大batch_size件削除し、
 	// 削除した件数と、削除した行のupdated_atの最大値を返す。PostgreSQLのDELETEはLIMITを
@@ -148,14 +199,137 @@ type Querier interface {
 	// 残っていてもそこで消化が止まる。削除が0件のときの最大値はlower_boundを返す。
 	DeleteExpiredSessions(ctx context.Context, arg DeleteExpiredSessionsParams) (DeleteExpiredSessionsRow, error)
 	DeleteExpiredSignInCodes(ctx context.Context, expiresAt time.Time) error
+	// ユーザーへのフォローを最大batch_size件削除し、削除した件数を返す。
+	// フォローしていたユーザーのusers.following_countを削除した件数だけ減算する。updated_atは変えない。
+	// フォローの通知は先の段階 (ユーザー宛ての通知の削除) で削除しておく。
+	DeleteFollowsByFollowingID(ctx context.Context, arg DeleteFollowsByFollowingIDParams) (int64, error)
+	// ユーザーがしたフォローを最大batch_size件削除し、削除した件数を返す。
+	// フォロー先のusers.followers_countを削除した件数だけ減算する。updated_atは変えない。
+	// フォローの通知は先の段階 (ユーザーが起こした通知の削除) で削除しておく。
+	DeleteFollowsByUserID(ctx context.Context, arg DeleteFollowsByUserIDParams) (int64, error)
+	// ユーザーが立てたスレッドに付いたコメント (他人のものを含む) を最大batch_size件削除し、
+	// 削除した件数を返す。スレッドごと削除するため、スレッドのコメント数は減算しない。
+	DeleteForumCommentsOnForumPostsByUserID(ctx context.Context, arg DeleteForumCommentsOnForumPostsByUserIDParams) (int64, error)
+	// ユーザーのスレッドへの参加と、ユーザーが立てたスレッドの他人の参加を最大batch_size件削除し、
+	// 削除した件数を返す。
+	DeleteForumPostParticipantsByUserID(ctx context.Context, arg DeleteForumPostParticipantsByUserIDParams) (int64, error)
+	// ユーザーが立てたスレッドを最大batch_size件削除し、削除した件数を返す。
+	// スレッドのコメントと参加者は先に削除しておく (外部キーがあるため)。
+	DeleteForumPostsByUserID(ctx context.Context, arg DeleteForumPostsByUserIDParams) (int64, error)
+	// ユーザーのライブラリエントリを最大batch_size件削除し、削除した件数を返す。
+	// 見たい・見てる・見た (statuses.kindが1・2・3) のエントリの分だけ、同じ文の中で
+	// works.watchers_countを減算する。1文にまとめることで、削除と減算が必ず一緒に
+	// 確定し、再実行しても二重に減算しない。ステータスは後から削除するため、この時点では
+	// 参照できる。updated_atはRailsのカウンタの更新と同じく変えない。
+	DeleteLibraryEntriesByUserID(ctx context.Context, arg DeleteLibraryEntriesByUserIDParams) (int64, error)
+	// ユーザーが付けたいいねを最大batch_size件削除し、削除した件数を返す。
+	// いいね先の種類ごとに、いいね先のlikes_countを削除した件数だけ減算する。Rails版の別名
+	// (AnimeRecord) で作られたいいねは作品の記録 (WorkRecord) として数える。updated_atは
+	// 変えない。いいねで他人に届いた通知は先の段階 (ユーザーが起こした通知の削除) で
+	// 削除しておく。
+	DeleteLikesByUserID(ctx context.Context, arg DeleteLikesByUserIDParams) (int64, error)
+	// ユーザーの複数エピソードの記録を最大batch_size件削除し、削除した件数を返す。
+	// 記録に付いたいいねと、そのいいねで記録の持ち主 (削除するユーザー) に届いた通知も
+	// 同じ文の中で削除する。記録を参照するアクティビティとエピソードの記録は先に削除して
+	// おく (外部キーがあるため)。
+	DeleteMultipleEpisodeRecordsByUserID(ctx context.Context, arg DeleteMultipleEpisodeRecordsByUserIDParams) (int64, error)
+	// 他のユーザーがユーザーをミュートした行を最大batch_size件削除し、削除した件数を返す。
+	DeleteMuteUsersByMutedUserID(ctx context.Context, arg DeleteMuteUsersByMutedUserIDParams) (int64, error)
+	// ユーザーがしたミュートを最大batch_size件削除し、削除した件数を返す。
+	DeleteMuteUsersByUserID(ctx context.Context, arg DeleteMuteUsersByUserIDParams) (int64, error)
+	// ユーザーが起こした通知 (ユーザーのいいね・コメント・フォローで他人に届いた通知) を
+	// 最大batch_size件削除し、削除した件数を返す。他人宛ての通知のうち未読の分だけ、
+	// 宛先のusers.notifications_count (未読数) を減算する。updated_atは変えない。
+	// 通知はaction_user_idのインデックスから引く。通知のきっかけになったいいね・コメントより
+	// 先に削除し、他人の通知一覧に参照先の無い通知を残さないようにする。
+	DeleteNotificationsByActionUserID(ctx context.Context, arg DeleteNotificationsByActionUserIDParams) (int64, error)
+	// ユーザー宛ての通知を最大batch_size件削除し、削除した件数を返す。
+	// 未読数はユーザー自身の行が持ち、ユーザー行ごと削除するため減算しない。
+	DeleteNotificationsByUserID(ctx context.Context, arg DeleteNotificationsByUserIDParams) (int64, error)
+	// ユーザーが許可した認可と、ユーザーが持つ論理削除済みのアプリケーションに残る
+	// 他人の認可を最大batch_size件削除し、削除した件数を返す。
+	DeleteOAuthAccessGrantsByUserID(ctx context.Context, arg DeleteOAuthAccessGrantsByUserIDParams) (int64, error)
+	// ユーザーに発行したアクセストークンと、ユーザーが持つ論理削除済みのアプリケーションに残る
+	// 他人のアクセストークンを最大batch_size件削除し、削除した件数を返す。
+	DeleteOAuthAccessTokensByUserID(ctx context.Context, arg DeleteOAuthAccessTokensByUserIDParams) (int64, error)
+	// ユーザーの団体のお気に入りを最大batch_size件削除し、削除した件数を返す。
+	// お気に入り先のorganizations.favorite_users_countを削除した件数だけ減算する。updated_atは変えない。
+	// ユーザー自身のお気に入り数はユーザー行ごと削除するため減算しない。
+	DeleteOrganizationFavoritesByUserID(ctx context.Context, arg DeleteOrganizationFavoritesByUserIDParams) (int64, error)
+	// ユーザーの人物のお気に入りを最大batch_size件削除し、削除した件数を返す。
+	// お気に入り先のpeople.favorite_users_countを削除した件数だけ減算する。updated_atは変えない。
+	// ユーザー自身のお気に入り数はユーザー行ごと削除するため減算しない。
+	DeletePersonFavoritesByUserID(ctx context.Context, arg DeletePersonFavoritesByUserIDParams) (int64, error)
+	// ユーザーの記録を最大batch_size件削除し、削除した件数を返す。
+	// 論理削除されていない記録の分だけ、同じ文の中でworks.records_countを減算する
+	// (Railsの再集計タスクと同じ定義)。updated_atは変えない。記録を参照するエピソードの
+	// 記録と作品の記録は先に削除しておく (外部キーがあるため)。
+	DeleteRecordsByUserID(ctx context.Context, arg DeleteRecordsByUserIDParams) (int64, error)
 	DeleteSession(ctx context.Context, sessionID string) error
+	// ユーザーのステータスを最大batch_size件削除し、削除した件数を返す。
+	// ステータスに付いたいいねと、そのいいねでステータスの持ち主 (削除するユーザー) に
+	// 届いた通知も同じ文の中で削除する。持ち主宛ての通知に絞ることで、notificationsは
+	// user_idのインデックスから引ける。ステータスを参照するアクティビティとライブラリ
+	// エントリは先に削除しておく (外部キーがあるため)。
+	DeleteStatusesByUserID(ctx context.Context, arg DeleteStatusesByUserIDParams) (int64, error)
 	DeleteUnusedPasswordResetTokensByUserID(ctx context.Context, userID int64) error
+	// ユーザー行を削除し、削除した件数を返す。外部キーにON DELETEの無い1件ずつの従属データ
+	// (設定・メール通知設定・メールアドレスの確認) と、ほかのユーザーから参照されていない
+	// 購読情報も同じ文の中で削除する。外部キーの検査は文の終わりに行われるため、ユーザー行と
+	// 参照し合う行を1つの文で削除できる。そのほかの従属データは外部キーのON DELETEに任せる。
+	DeleteUser(ctx context.Context, userID int64) (int64, error)
+	// ユーザーのUserlandプロジェクトへの参加を最大batch_size件削除し、削除した件数を返す。
+	DeleteUserlandProjectMembersByUserID(ctx context.Context, arg DeleteUserlandProjectMembersByUserIDParams) (int64, error)
+	// ユーザーが書いた作品へのコメントを最大batch_size件削除し、削除した件数を返す。
+	DeleteWorkCommentsByUserID(ctx context.Context, arg DeleteWorkCommentsByUserIDParams) (int64, error)
+	// ユーザーの作品の記録を最大batch_size件削除し、削除した件数を返す。
+	// 記録に付いたいいねと、そのいいねで記録の持ち主 (削除するユーザー) に届いた通知も
+	// 同じ文の中で削除する。いいね先の種類には、Rails版の別名 (AnimeRecord) で作られた
+	// いいねも含める。論理削除されていない記録の分だけ、作品の記録数と本文のある記録数を
+	// 減算する (Railsの再集計タスクと同じ定義)。updated_atは変えない。
+	// 記録を参照するアクティビティとエピソードの記録 (review_id) は先に削除しておく
+	// (外部キーがあるため)。
+	DeleteWorkRecordsByUserID(ctx context.Context, arg DeleteWorkRecordsByUserIDParams) (int64, error)
+	// ユーザーが使ったタグの記録 (タグの説明を含む) を最大batch_size件削除し、削除した件数を返す。
+	// タグ (work_tags) は他のユーザーと共有するため残す。
+	DeleteWorkTaggablesByUserID(ctx context.Context, arg DeleteWorkTaggablesByUserIDParams) (int64, error)
+	// ユーザーが作品に付けたタグを最大batch_size件削除し、削除した件数を返す。
+	// タグのwork_tags.work_taggings_countを削除した件数だけ減算する。updated_atは変えない。
+	DeleteWorkTaggingsByUserID(ctx context.Context, arg DeleteWorkTaggingsByUserIDParams) (int64, error)
+	// ユーザーが持つ論理削除済みのアプリケーションから投稿された他人のエピソードの記録を最大batch_size件、
+	// アプリケーションとの紐づきを外し、外した件数を返す。投稿元のアプリケーションは表示に
+	// 使われないため、エピソードの記録そのものと更新日時は変えない。
+	DetachDeletedOAuthApplicationsFromEpisodeRecords(ctx context.Context, arg DetachDeletedOAuthApplicationsFromEpisodeRecordsParams) (int64, error)
+	// ユーザーが持つ論理削除済みのアプリケーションから投稿された他人のステータスを最大batch_size件、
+	// アプリケーションとの紐づきを外し、外した件数を返す。投稿元のアプリケーションは表示に
+	// 使われないため、ステータスそのものと更新日時は変えない。
+	DetachDeletedOAuthApplicationsFromStatuses(ctx context.Context, arg DetachDeletedOAuthApplicationsFromStatusesParams) (int64, error)
+	// ユーザーが持つ論理削除済みのアプリケーションから投稿された他人の作品の記録を最大batch_size件、
+	// アプリケーションとの紐づきを外し、外した件数を返す。投稿元のアプリケーションは表示に
+	// 使われないため、作品の記録そのものと更新日時は変えない。
+	DetachDeletedOAuthApplicationsFromWorkRecords(ctx context.Context, arg DetachDeletedOAuthApplicationsFromWorkRecordsParams) (int64, error)
+	// ユーザーが他人のスレッドに書いたコメントを最大batch_size件、投稿者との紐づきを外し、
+	// 外した件数を返す。スレッドの流れを保つため本文は残す。ユーザーが立てたスレッドの
+	// コメントは先に削除しておく。
+	DetachForumCommentsFromUser(ctx context.Context, arg DetachForumCommentsFromUserParams) (int64, error)
+	// ユーザーが持つ論理削除されていないアプリケーションがあるかを返す。
+	ExistsKeptOAuthApplicationByOwnerID(ctx context.Context, userID int64) (bool, error)
 	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
 	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
 	// RailsアクションのWork.without_deleted.findと同じ順序で、送信行をパースする前に親作品を
 	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
 	// 判断には使わない。
 	ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error)
+	GetActiveUserByEmailForSignIn(ctx context.Context, lower string) (GetActiveUserByEmailForSignInRow, error)
+	GetActiveUserByEmailOrUsername(ctx context.Context, lower string) (GetActiveUserByEmailOrUsernameRow, error)
+	// 論理削除されていないユーザーをIDで取得する。
+	// セッションやログインコードからユーザーを引く認証の経路で使い、
+	// 退会・利用停止でdeleted_atが立ったユーザーを未ログインとして扱う。
+	GetActiveUserByID(ctx context.Context, id int64) (GetActiveUserByIDRow, error)
+	// 論理削除されていないユーザーのIDをメールアドレスで検索する。
+	// 削除済みユーザーのメールアドレスも一意制約の対象のため、
+	// 登録済みかの確認には使わず、パスワードリセットなど本人の操作を受け付ける経路で使う。
+	GetActiveUserIDByEmail(ctx context.Context, lower string) (int64, error)
 	// 論理削除されていないユーザーのIDをusernameで検索する。
 	// 削除済みユーザーに対して404を返すべき機能 (例: 視聴記録ヒートマップ
 	// フラグメント) で、他のユーザー属性を取得せずに利用する。
@@ -220,6 +394,7 @@ type Querier interface {
 	// ユーザーの視聴リスト (見たい・見てる) からprogram_idを取得します
 	GetLibraryEntryProgramIDs(ctx context.Context, userID int64) ([]GetLibraryEntryProgramIDsRow, error)
 	GetOAuthApplicationByUID(ctx context.Context, uid string) (GetOAuthApplicationByUIDRow, error)
+	// トークンの発行後に退会・利用停止したユーザーのトークンは無効として扱う。
 	GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error)
 	GetPasswordResetTokensByUserID(ctx context.Context, userID int64) ([]PasswordResetToken, error)
 	GetPopularWorks(ctx context.Context) ([]GetPopularWorksRow, error)
@@ -234,13 +409,13 @@ type Querier interface {
 	GetStripeSubscriberByStripeSubscriptionID(ctx context.Context, stripeSubscriptionID string) (StripeSubscriber, error)
 	GetStripeWebhookEventByStripeEventID(ctx context.Context, stripeEventID string) (StripeWebhookEvent, error)
 	GetUserByEmail(ctx context.Context, lower string) (GetUserByEmailRow, error)
-	GetUserByEmailForSignIn(ctx context.Context, lower string) (GetUserByEmailForSignInRow, error)
-	GetUserByEmailOrUsername(ctx context.Context, lower string) (GetUserByEmailOrUsernameRow, error)
-	GetUserByID(ctx context.Context, id int64) (GetUserByIDRow, error)
 	GetUserByStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (GetUserByStripeSubscriberIDRow, error)
 	GetUserByUsername(ctx context.Context, lower string) (GetUserByUsernameRow, error)
 	// ユーザーのカレンダー情報を取得します
 	GetUserCalendarInfo(ctx context.Context, username string) (GetUserCalendarInfoRow, error)
+	// 退会の削除処理の対象を確かめるため、論理削除済みのユーザーも含めてIDで取得する。
+	GetUserForDeletion(ctx context.Context, id int64) (GetUserForDeletionRow, error)
+	// コードの発行後に退会・利用停止したユーザーのコードは無効として扱う。
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
@@ -318,6 +493,9 @@ type Querier interface {
 	ListEpisodeIDsForEpisodeUpdateByID(ctx context.Context, arg ListEpisodeIDsForEpisodeUpdateByIDParams) ([]int64, error)
 	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
+	// 退会の削除処理でストレージから消す画像を求めるため、ユーザーのプロフィール画像と背景画像の
+	// Shrineの添付データを取得する。
+	ListProfileImageDataByUserID(ctx context.Context, userID int64) ([]ListProfileImageDataByUserIDRow, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
@@ -331,6 +509,14 @@ type Querier interface {
 	//
 	// 行は読み戻さない。本ステートメントはロック句のためだけに存在する。
 	LockEpisodesForEpisodeUpdateByIDs(ctx context.Context, ids []int64) error
+	// 購読情報を共有するユーザーの削除を直列化する。
+	LockGumroadSubscriberForUserDeletion(ctx context.Context, id int64) (int64, error)
+	// 購読情報を共有するユーザーの削除を直列化する。
+	LockStripeSubscriberForUserDeletion(ctx context.Context, id int64) (int64, error)
+	// OAuthアプリケーション作成と退会の受付をユーザー行のロックで直列化する。
+	// 退会の同意に用いたユーザー名と、退会完了メールの送信先・ロケール・サポーター契約も
+	// ロック後の値を使う。
+	LockUserForAccountDeletion(ctx context.Context, id int64) (LockUserForAccountDeletionRow, error)
 	// 採番の起点を読む前に、1作品への一括作成を直列化する。ロッククエリと集計クエリを分ける
 	// ことで、待機側がロックを得た後に集計を実行し、先行トランザクションがコミットしたエピソードを
 	// 参照できるようにする。

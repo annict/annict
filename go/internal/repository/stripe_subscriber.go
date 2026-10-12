@@ -99,6 +99,24 @@ func (r *StripeSubscriberRepository) IsActive(subscriber *model.StripeSubscriber
 	return status.IsActive()
 }
 
+// HasActiveSubscriptionは、idのStripeSubscriberが有効なサブスクリプションを持つかを返します。
+// idがnilの場合や該当行が無い場合はfalseを返します。
+func (r *StripeSubscriberRepository) HasActiveSubscription(ctx context.Context, id *model.StripeSubscriberID) (bool, error) {
+	if id == nil {
+		return false, nil
+	}
+
+	subscriber, err := r.GetByID(ctx, *id)
+	if err != nil {
+		return false, err
+	}
+	if subscriber == nil {
+		return false, nil
+	}
+
+	return r.IsActive(subscriber), nil
+}
+
 // toStripeSubscriberModelはqueryの結果をモデルに変換します
 func toStripeSubscriberModel(row query.StripeSubscriber) model.StripeSubscriber {
 	return model.StripeSubscriber{

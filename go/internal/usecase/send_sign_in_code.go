@@ -64,8 +64,8 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 		return nil, err
 	}
 
-	// 2. ユーザー検索
-	user, err := uc.userRepo.GetByEmailForSignIn(ctx, input.Email)
+	// 2. ユーザー検索 (削除済みユーザーは存在しないユーザーと同じ応答にする)
+	user, err := uc.userRepo.GetActiveByEmailForSignIn(ctx, input.Email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			ve := model.NewValidationError()
@@ -155,7 +155,7 @@ func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID
 
 	// メール送信ジョブをエンキュー
 	if uc.dispatcher != nil {
-		user, err := uc.userRepo.GetByID(ctx, userID)
+		user, err := uc.userRepo.GetActiveByID(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "ユーザー情報の取得に失敗しました",
 				"user_id", userID,

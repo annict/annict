@@ -25,6 +25,6 @@ func newCleanupAnonymousSessionsUsecase(queries *query.Queries) *usecase.Cleanup
 // 一定期間を過ぎた未ログインのセッションを削除する。`serve` が登録する毎時の定期ジョブと
 // 違いRiverを介さず、同じUseCaseを組み立てて直接呼ぶ。上限で打ち切った残りを続けて
 // 消したいときは、繰り返し実行する。
-func cleanupAnonymousSessions(ctx context.Context, _ *config.Config, _ *sql.DB, queries *query.Queries) error {
+func cleanupAnonymousSessions(ctx context.Context, _ *config.Config, _ *sql.DB, queries *query.Queries, _ []string) error {
 	return newCleanupAnonymousSessionsUsecase(queries).Execute(ctx)
 }

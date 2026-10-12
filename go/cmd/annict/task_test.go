@@ -5,6 +5,7 @@ import (
 	"context"
 	"errors"
 	"regexp"
+	"slices"
 	"strings"
 	"testing"
 )
@@ -13,6 +14,10 @@ import (
 // 運用者がシェルで打ち込む名前であるため、アンダースコアやキャメルケースを混在させず
 // 形を1つに揃える。
 var taskNamePattern = regexp.MustCompile(`^[a-z][a-z0-9]*(-[a-z0-9]+)*$`)
+
+// paramNamePatternは位置引数の名前の命名規則。usageに `<user_id>` の形で表示するため、
+// DBの列名と同じ英小文字のスネークケースに揃える。
+var paramNamePattern = regexp.MustCompile(`^[a-z][a-z0-9]*(_[a-z0-9]+)*$`)
 
 func TestTasks_Registry(t *testing.T) {
 	t.Parallel()
@@ -32,6 +37,11 @@ func TestTasks_Registry(t *testing.T) {
 		}
 		if task.run == nil {
 			t.Errorf("タスク%qにrun関数が無い", name)
+		}
+		for _, param := range task.params {
+			if !paramNamePattern.MatchString(param) {
+				t.Errorf("タスク%qの引数名%qが%sに一致しない", name, param, paramNamePattern)
+			}
 		}
 	}
 }
@@ -55,6 +65,10 @@ func TestRunTask_List(t *testing.T) {
 		if !strings.Contains(listing, task.desc) {
 			t.Errorf("一覧に含まれていないタスク%qの説明:\n%s", name, listing)
 		}
+	}
+	// 引数を取るタスクは、運用者が一覧から引数の並びを読み取れるよう名前の後ろに併記する。
+	if want := "delete-user <user_id>"; !strings.Contains(listing, want) {
+		t.Errorf("一覧に含まれていない文字列 = %q:\n%s", want, listing)
 	}
 }
 
@@ -91,6 +105,16 @@ func TestRunTask_Errors(t *testing.T) {
 			args:     []string{"no-such-task", "--dry-run"},
 			wantErrs: []string{`不明なタスクです: "no-such-task"`},
 		},
+		{
+			name:     "引数を取るタスクに引数なし",
+			args:     []string{"delete-user"},
+			wantErrs: []string{`タスク "delete-user"には引数 <user_id>を指定してください`},
+		},
+		{
+			name:     "引数を取るタスクに余分な引数",
+			args:     []string{"delete-user", "1", "2"},
+			wantErrs: []string{`タスク "delete-user"には引数 <user_id>を指定してください`},
+		},
 	}
 
 	for _, tt := range tests {
@@ -108,7 +132,7 @@ func TestRunTask_Errors(t *testing.T) {
 				}
 			}
 			// エラーはusageテキストを含むため、呼び出し元が再実行しなくても済む。
-			if !strings.Contains(err.Error(), "使い方: annict task <name>") {
+			if !strings.Contains(err.Error(), "使い方: annict task <name> [<args>...]") {
 				t.Errorf("runTask()のエラー = %q、期待値 = タスクの使い方を含むこと", err)
 			}
 			if out.Len() != 0 {
@@ -140,18 +164,22 @@ func TestRun_TaskDispatch(t *testing.T) {
 	called := false
 	registry := map[string]taskDef{
 		"test-task": {
-			desc: "test task",
-			run: func(gotCtx context.Context) error {
+			desc:   "test task",
+			params: []string{"user_id"},
+			run: func(gotCtx context.Context, gotArgs []string) error {
 				called = true
 				if gotCtx != ctx {
 					t.Errorf("タスクに渡されたcontext = %v、期待値 = %v", gotCtx, ctx)
+				}
+				if !slices.Equal(gotArgs, []string{"42"}) {
+					t.Errorf("タスクに渡された引数 = %q、期待値 = %q", gotArgs, []string{"42"})
 				}
 				return wantErr
 			},
 		},
 	}
 
-	err := run(ctx, &bytes.Buffer{}, []string{"task", "test-task"}, registry)
+	err := run(ctx, &bytes.Buffer{}, []string{"task", "test-task", "42"}, registry)
 	if !called {
 		t.Error("タスクが呼ばれなかった")
 	}

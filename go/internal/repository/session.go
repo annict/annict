@@ -47,9 +47,10 @@ func (r *SessionRepository) GetSessionByID(ctx context.Context, sessionID string
 	return toSessionModel(row), nil
 }
 
-// GetUserByIDはユーザーIDからユーザー情報を取得します
-func (r *SessionRepository) GetUserByID(ctx context.Context, userID model.UserID) (*model.User, error) {
-	row, err := r.queries.GetUserByID(ctx, int64(userID))
+// GetActiveUserByIDはユーザーIDから論理削除されていないユーザーの情報を取得します。
+// 削除済みのユーザーはsql.ErrNoRowsを返します。
+func (r *SessionRepository) GetActiveUserByID(ctx context.Context, userID model.UserID) (*model.User, error) {
+	row, err := r.queries.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		return nil, err
 	}
