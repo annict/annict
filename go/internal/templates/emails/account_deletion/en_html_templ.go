@@ -32,7 +32,7 @@ func EnHTML(isStripeSupporter bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Account Deletion Request Received</title></head><body style=\"font-family: sans-serif; line-height: 1.6; color: #333; padding: 20px;\"><p>We have received your request to delete your Annict account.</p><p>The data associated with your account will be deleted shortly.</p>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<!doctype html><html lang=\"en\"><head><meta charset=\"UTF-8\"><meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"><title>Account Deletion Request Received</title></head><body style=\"font-family: sans-serif; line-height: 1.6; color: #333; padding: 20px;\"><p>We have received your request to delete your Annict account.</p><p>The data associated with your account will be deleted shortly. Deleted accounts and data cannot be restored.</p>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,7 +42,7 @@ func EnHTML(isStripeSupporter bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p>Thank you for using Annict.</p><p>If you did not request this, please contact us at <a href=\"mailto:hello@annict.com\">hello@annict.com</a>.</p></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p>You can sign up again as a new account with the same username and email address.</p><p>Thank you for using Annict.</p><p>If you did not request this, someone else may have used your account. Please review the password for your email account, and if you used your Annict password on other services, change it there as well. Then let us know at <a href=\"mailto:hello@annict.com\">hello@annict.com</a> so that we can investigate.</p></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

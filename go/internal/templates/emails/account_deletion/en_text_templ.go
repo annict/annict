@@ -32,7 +32,7 @@ func EnText(isStripeSupporter bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "We have received your request to delete your Annict account. The data associated with your account will be deleted shortly. ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "We have received your request to delete your Annict account. The data associated with your account will be deleted shortly. Deleted accounts and data cannot be restored. ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,7 +42,7 @@ func EnText(isStripeSupporter bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Thank you for using Annict. If you did not request this, please contact us at hello@annict.com.")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "You can sign up again as a new account with the same username and email address. Thank you for using Annict. If you did not request this, someone else may have used your account. Please review the password for your email account, and if you used your Annict password on other services, change it there as well. Then let us know at hello@annict.com so that we can investigate.")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
