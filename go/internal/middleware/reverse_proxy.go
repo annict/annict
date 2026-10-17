@@ -441,6 +441,12 @@ func (m *ReverseProxyMiddleware) isGoSharedPath(path string) bool {
 
 // isAPISubdomainはAPIサブドメイン (api.annict.comまたはapi.annict-dev.page) かどうかを判定
 func (m *ReverseProxyMiddleware) isAPISubdomain(host string) bool {
+	return isAPIHost(host, m.cfg.Domain)
+}
+
+// isAPIHostはHostがAPIサブドメイン (api.{domain}) かどうかを判定する。
+// リバースプロキシとレート制限のミドルウェアが同じ判定を使う。
+func isAPIHost(host string, domain string) bool {
 	// ポート番号を除去 (開発環境では :8080などのポートが含まれる場合がある)
 	hostWithoutPort := host
 	if idx := strings.Index(host, ":"); idx != -1 {
@@ -449,8 +455,8 @@ func (m *ReverseProxyMiddleware) isAPISubdomain(host string) bool {
 
 	// APIサブドメインのパターン
 	apiSubdomains := []string{
-		"api." + m.cfg.Domain,           // 例: api.annict.com, api.annict-dev.page
-		"api." + m.cfg.Domain + ":8080", // 開発環境でポート付きの場合
+		"api." + domain,           // 例: api.annict.com, api.annict-dev.page
+		"api." + domain + ":8080", // 開発環境でポート付きの場合
 	}
 
 	for _, apiSubdomain := range apiSubdomains {

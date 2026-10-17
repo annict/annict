@@ -2139,6 +2139,14 @@ other = "サービスに接続できません"
 description = "汎用502エラーページの説明"
 other = "しばらくしてから、もう一度お試しください。"
 
+[error_too_many_requests_title]
+description = "汎用429エラーページのタイトル"
+other = "アクセスが集中しています"
+
+[error_too_many_requests_message]
+description = "汎用429エラーページの説明"
+other = "短い時間に多くのリクエストが送られたため、一時的にアクセスを制限しています。1分ほど待ってから、もう一度お試しください。"
+
 [error_internal_server_title]
 description = "汎用500エラーページのタイトル"
 other = "問題が発生しました"

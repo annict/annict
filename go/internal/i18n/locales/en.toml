@@ -2140,6 +2140,14 @@ other = "Cannot connect to the service"
 description = "汎用502エラーページの説明"
 other = "Please try again later."
 
+[error_too_many_requests_title]
+description = "汎用429エラーページのタイトル"
+other = "Too many requests"
+
+[error_too_many_requests_message]
+description = "汎用429エラーページの説明"
+other = "Access is temporarily limited because too many requests were sent in a short time. Please wait about a minute and try again."
+
 [error_internal_server_title]
 description = "汎用500エラーページのタイトル"
 other = "Something went wrong"

@@ -391,6 +391,12 @@ func runServe() {
 	maintenanceMW := authMiddleware.NewMaintenanceMiddleware(cfg)
 	r.Use(maintenanceMW.Middleware)
 
+	// Webサイトのレート制限ミドルウェア。リバースプロキシより前に置き、Go版が描画する
+	// ページとRails版へ中継するページの両方を接続元IP単位で数える。メンテナンス中は
+	// メンテナンスページを返すだけのため、メンテナンスミドルウェアの内側に置く。
+	rateLimitMW := authMiddleware.NewRateLimitMiddleware(cfg, limiter, sessionManager)
+	r.Use(rateLimitMW.Middleware)
+
 	// リバースプロキシミドルウェア
 	// Go版で処理するかRails版にプロキシするかを判定
 	// Rails版にプロキシする場合は後続のミドルウェアをスキップ
