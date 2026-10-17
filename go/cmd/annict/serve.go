@@ -378,7 +378,7 @@ func runServe() {
 	r := chi.NewRouter()
 
 	// ミドルウェア
-	r.Use(middleware.Logger)
+	r.Use(authMiddleware.AccessLog)
 	r.Use(middleware.RequestID)
 
 	// リクエストボディサイズ制限 (10MB)
