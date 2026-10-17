@@ -704,9 +704,49 @@ other = "Save 2 months!"
 description = "登録ボタン"
 other = "Subscribe"
 
+[supporters_monthly_yearly_total]
+description = "月額プランを1年間続けた場合の支払総額の目安"
+other = "Estimated total for one year: ¥3,480"
+
+[supporters_conditions_title]
+description = "申込み前に確認する契約条件の見出し"
+other = "Before you subscribe"
+
+[supporters_conditions_renewal]
+description = "契約条件 - 初回の支払いと自動更新"
+other = "Your first payment is made when you subscribe. Your subscription then renews automatically every month (Monthly Plan) or every year (Yearly Plan), and you are charged at each renewal until you cancel."
+
 [supporters_payment_method]
-description = "支払い方法説明"
-other = "Pay with credit card (powered by Stripe)"
+description = "契約条件 - 支払い方法"
+other = "Pay by credit card (including JCB), Apple Pay, or Link (powered by Stripe)."
+
+[supporters_conditions_start]
+description = "契約条件 - 特典の提供時期"
+other = "Benefits are available as soon as your payment is complete."
+
+[supporters_conditions_cancellation]
+description = "契約条件 - 解約と解約後の特典"
+other = "After subscribing, you can cancel anytime from this page. Benefits remain available until the end of the period you have already paid for."
+
+[supporters_conditions_refund]
+description = "契約条件 - 返金"
+other = "Payments already made are non-refundable, except in cases caused by us, such as a duplicate charge."
+
+[supporters_conditions_account_deletion]
+description = "契約条件 - 退会したときの解約と返金"
+other = "If you delete your account, your subscription is canceled immediately and the remaining period is not refunded."
+
+[supporters_conditions_details]
+description = "契約条件の詳細の参照先の案内"
+other = "Full details on billing, cancellation, and refunds are available on the following pages."
+
+[supporters_conditions_legal_notice]
+description = "契約条件の詳細として特定商取引法に基づく表記へ遷移するリンク"
+other = "Legal Notice (Specified Commercial Transactions Act, in Japanese)"
+
+[supporters_conditions_terms]
+description = "契約条件の詳細として利用規約のサポーターの条へ遷移するリンク"
+other = "Terms of Service (Article 11: Annict Supporters)"
 
 [supporters_gumroad_title]
 description = "Gumroadサポーターセクションタイトル"

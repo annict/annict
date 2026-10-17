@@ -703,9 +703,49 @@ other = "2ヶ月分お得！"
 description = "登録ボタン"
 other = "登録する"
 
+[supporters_monthly_yearly_total]
+description = "月額プランを1年間続けた場合の支払総額の目安"
+other = "1年間続けた場合の総額の目安: ¥3,480"
+
+[supporters_conditions_title]
+description = "申込み前に確認する契約条件の見出し"
+other = "お申し込みの前にご確認ください"
+
+[supporters_conditions_renewal]
+description = "契約条件 - 初回の支払いと自動更新"
+other = "お申し込み時に初回のお支払いが行われ、解約するまで1か月 (月額プラン) または1年 (年額プラン) ごとに自動で更新・請求されます"
+
 [supporters_payment_method]
-description = "支払い方法説明"
-other = "クレジットカードでお支払いいただけます (Stripe決済)"
+description = "契約条件 - 支払い方法"
+other = "クレジットカード (JCBを含む)、Apple Pay、Linkでお支払いいただけます (Stripe決済)"
+
+[supporters_conditions_start]
+description = "契約条件 - 特典の提供時期"
+other = "お支払いが完了すると、すぐに特典をご利用いただけます"
+
+[supporters_conditions_cancellation]
+description = "契約条件 - 解約と解約後の特典"
+other = "登録後はこのページからいつでも解約でき、解約後もお支払い済みの期間が終わるまで特典をご利用いただけます"
+
+[supporters_conditions_refund]
+description = "契約条件 - 返金"
+other = "お支払い済みの料金は返金いたしません (二重に請求した場合など、運営者の責任による場合を除きます)"
+
+[supporters_conditions_account_deletion]
+description = "契約条件 - 退会したときの解約と返金"
+other = "退会すると、その時点で解約され、残りの期間の料金は返金されません"
+
+[supporters_conditions_details]
+description = "契約条件の詳細の参照先の案内"
+other = "支払時期・解約・返金などの詳しい条件は、次のページでご確認いただけます"
+
+[supporters_conditions_legal_notice]
+description = "契約条件の詳細として特定商取引法に基づく表記へ遷移するリンク"
+other = "特定商取引法に基づく表記"
+
+[supporters_conditions_terms]
+description = "契約条件の詳細として利用規約のサポーターの条へ遷移するリンク"
+other = "利用規約 (第11条 サポーター)"
 
 [supporters_gumroad_title]
 description = "Gumroadサポーターセクションタイトル"
