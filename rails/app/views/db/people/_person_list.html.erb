@@ -1,3 +1,4 @@
+<% return_to_query = {return_to: request.fullpath}.to_query %>
 <table class="table table-sm">
   <thead>
     <tr>
@@ -32,13 +33,40 @@
           <%= render Db::PublishingStateLabelComponent.new(resource: person) %>
         </td>
         <td>
-          <%= render Db::ActionButtonsComponent.new(
-              user: current_user,
-              resource: person,
-              detail_path: db_person_detail_path(person),
-              edit_path: db_edit_person_path(person),
-              publishing_path: db_person_publishing_path(person)
-          ) %>
+          <%# どの操作もこの画面から送信せず Go 版の画面へのリンクにする。書き込みのエンドポイントは
+              この画面が用意できない CSRF トークンを検証するため、変更を実行するフォームは Go 版の
+              確認画面が持つ。各リンクは行ごとに同じ文言を繰り返すため、対象の人物をアクセシブル
+              ネームに足し、表示上は隠す。確認画面へのリンクはこの画面を return_to として渡し、
+              変更をやめた場合も完了した場合もこの検索結果に戻るようにする。 %>
+          <div class="btn-group btn-group-sm">
+            <% if policy(person).edit? %>
+              <%= link_to "/db/people/#{person.id}/edit", class: "btn btn-primary btn-sm" do %>
+                <%= t("noun.edit") %>
+                <span class="visually-hidden"><%= t("messages.db.people.action_target_label", id: person.id) %></span>
+              <% end %>
+            <% end %>
+
+            <% if policy(person).unpublish? %>
+              <% if person.published? %>
+                <%= link_to "/db/people/#{person.id}/archive/new?#{return_to_query}", class: "btn btn-warning btn-sm" do %>
+                  <%= t("noun.unpublish") %>
+                  <span class="visually-hidden"><%= t("messages.db.people.action_target_label", id: person.id) %></span>
+                <% end %>
+              <% else %>
+                <%= link_to "/db/people/#{person.id}/unarchive/new?#{return_to_query}", class: "btn btn-success btn-sm" do %>
+                  <%= t("noun.publish") %>
+                  <span class="visually-hidden"><%= t("messages.db.people.action_target_label", id: person.id) %></span>
+                <% end %>
+              <% end %>
+            <% end %>
+
+            <% if policy(person).destroy? %>
+              <%= link_to "/db/people/#{person.id}/deletion/new?#{return_to_query}", class: "btn btn-danger btn-sm" do %>
+                <%= t("noun.delete") %>
+                <span class="visually-hidden"><%= t("messages.db.people.action_target_label", id: person.id) %></span>
+              <% end %>
+            <% end %>
+          </div>
         </td>
       </tr>
   <% end %>

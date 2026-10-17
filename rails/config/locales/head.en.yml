@@ -110,10 +110,6 @@ en:
           edit: "%{name}"
           index: Organizations
           new: New Organizations
-        people:
-          edit: "%{name}"
-          index: People
-          new: New People
         person_fans:
           index: Fans of %{person_name}
         slots:

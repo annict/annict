@@ -104,6 +104,8 @@ en:
     db:
       comments:
         created: Comment has been created.
+      people:
+        action_target_label: "person %{id}"
       works:
         action_target_label: "work %{id}"
     episode_records:
