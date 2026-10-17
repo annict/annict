@@ -104,7 +104,7 @@ module Annict
 
     config.middleware.insert_before(0, Rack::Cors) do
       ALLOWED_METHODS = %i[get post patch delete options].freeze
-      EXPOSED_HEADERS = %w[ETag].freeze
+      EXPOSED_HEADERS = %w[ETag Retry-After RateLimit-Limit RateLimit-Remaining RateLimit-Reset].freeze
       allow do
         origins "*"
         resource "*", headers: :any, methods: ALLOWED_METHODS, expose: EXPOSED_HEADERS
