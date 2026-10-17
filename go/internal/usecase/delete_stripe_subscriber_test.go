@@ -166,6 +166,49 @@ func TestDeleteStripeSubscriberUsecase_Execute(t *testing.T) {
 		}
 	})
 
+	t.Run("論理削除済みのユーザーとの紐付けは残す", func(t *testing.T) {
+		t.Parallel()
+
+		// ユースケースが開くトランザクションから見えるよう、準備した行をコミットする。
+		setupTx, err := db.Begin()
+		if err != nil {
+			t.Fatalf("準備用トランザクションの開始に失敗: %v", err)
+		}
+		t.Cleanup(func() { _ = setupTx.Rollback() })
+		subscriber := testutil.NewStripeSubscriberBuilder(t, setupTx).BuildWithResult()
+		userID := testutil.NewUserBuilder(t, setupTx).
+			WithStripeSubscriberID(&subscriber.ID).
+			WithDeletedAt(time.Now()).
+			Build()
+		if err := setupTx.Commit(); err != nil {
+			t.Fatalf("準備用トランザクションのコミットに失敗: %v", err)
+		}
+		t.Cleanup(func() {
+			if _, err := userRepo.DeleteByID(context.Background(), userID); err != nil {
+				t.Errorf("後片付けでユーザーを削除できない: %v", err)
+			}
+		})
+
+		result, err := uc.Execute(context.Background(), DeleteStripeSubscriberInput{
+			StripeSubscriptionID: subscriber.StripeSubscriptionID,
+			StripeCanceledAt:     time.Now(),
+		})
+		if err != nil {
+			t.Fatalf("予期しないエラー: %v", err)
+		}
+		if result.StripeSubscriber.StripeStatus != string(model.StripeSubscriptionStatusCanceled) {
+			t.Errorf("StripeStatus = %s、期待値 = %s", result.StripeSubscriber.StripeStatus, model.StripeSubscriptionStatusCanceled)
+		}
+		if result.UserID != nil {
+			t.Errorf("UserID = %d、期待値 = nil", *result.UserID)
+		}
+		// 退会の削除処理がユーザー行と一緒に購読情報を削除できるよう、紐付けが残る。
+		readTx := beginReadTxForTest(t, db)
+		if got := testutil.CountRows(t, readTx, "users", "id = $1 AND stripe_subscriber_id = $2", int64(userID), int64(subscriber.ID)); got != 1 {
+			t.Errorf("紐付けが残るユーザーの件数 = %d、期待値 = 1", got)
+		}
+	})
+
 	t.Run("存在しないサブスクリプションIDはErrStripeSubscriberNotFound", func(t *testing.T) {
 		t.Parallel()
 

@@ -44,6 +44,28 @@ func (q *Queries) AnonymizeAndSoftDeleteUser(ctx context.Context, arg AnonymizeA
 	return result.RowsAffected()
 }
 
+const clearActiveUserStripeSubscriberID = `-- name: ClearActiveUserStripeSubscriberID :one
+UPDATE users AS target
+SET stripe_subscriber_id = NULL, updated_at = NOW()
+WHERE target.id = (
+    SELECT candidate.id FROM users AS candidate
+    WHERE candidate.stripe_subscriber_id = $1 AND candidate.deleted_at IS NULL
+    LIMIT 1
+)
+  AND target.stripe_subscriber_id = $1
+  AND target.deleted_at IS NULL
+RETURNING target.id
+`
+
+// 解約の通知で有効なユーザーの紐付けだけを外す。退会受付との行ロック競合後にも
+// deleted_atを再評価し、論理削除済みのユーザーの紐付けを残す。
+func (q *Queries) ClearActiveUserStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (int64, error) {
+	row := q.db.QueryRowContext(ctx, clearActiveUserStripeSubscriberID, stripeSubscriberID)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (username, email, encrypted_password, locale, role, time_zone, created_at, updated_at)
 VALUES ($1, $2, $3, $4, 0, 'Asia/Tokyo', NOW(), NOW())

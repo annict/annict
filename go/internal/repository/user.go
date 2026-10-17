@@ -201,17 +201,17 @@ func (r *UserRepository) GetByStripeSubscriberID(ctx context.Context, stripeSubs
 	return r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: int64(stripeSubscriberID), Valid: true})
 }
 
-// FindUserIDByStripeSubscriberIDはStripeサブスクライバーIDからユーザーIDを検索します
-// ユーザーが見つからない場合はnilを返します (sql.ErrNoRowsの場合)
-func (r *UserRepository) FindUserIDByStripeSubscriberID(ctx context.Context, stripeSubscriberID model.StripeSubscriberID) (*model.UserID, error) {
-	user, err := r.queries.GetUserByStripeSubscriberID(ctx, sql.NullInt64{Int64: int64(stripeSubscriberID), Valid: true})
+// ClearActiveUserStripeSubscriberIDは論理削除されていないユーザーの紐付けを外し、
+// 対象のユーザーIDを返します。対象が無い場合はnilを返します。
+func (r *UserRepository) ClearActiveUserStripeSubscriberID(ctx context.Context, stripeSubscriberID model.StripeSubscriberID) (*model.UserID, error) {
+	id, err := r.queries.ClearActiveUserStripeSubscriberID(ctx, sql.NullInt64{Int64: int64(stripeSubscriberID), Valid: true})
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			return nil, nil
 		}
 		return nil, err
 	}
-	userID := model.UserID(user.ID)
+	userID := model.UserID(id)
 	return &userID, nil
 }
 

@@ -92,18 +92,11 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	}
 
 	// Userとの紐付けを解除
-	// StripeSubscriberIDが一致するユーザーを探してnilに設定
-	userID, err := userRepoTx.FindUserIDByStripeSubscriberID(ctx, subscriber.ID)
+	// 論理削除済みのユーザー (退会の削除処理の途中) は紐付けを残す。退会の削除処理はユーザーの
+	// 購読情報を紐付けから引き、ユーザー行と一緒に削除するため、紐付けを外すと購読情報が残ってしまう。
+	userID, err := userRepoTx.ClearActiveUserStripeSubscriberID(ctx, subscriber.ID)
 	if err != nil {
-		return nil, fmt.Errorf("ユーザー検索に失敗: %w", err)
-	}
-
-	if userID != nil {
-		// 紐付けを解除
-		err = userRepoTx.UpdateStripeSubscriberID(ctx, *userID, nil)
-		if err != nil {
-			return nil, fmt.Errorf("ユーザー紐付け解除に失敗: %w", err)
-		}
+		return nil, fmt.Errorf("ユーザー紐付け解除に失敗: %w", err)
 	}
 
 	// トランザクションコミット
@@ -116,10 +109,10 @@ func (uc *DeleteStripeSubscriberUsecase) Execute(
 	if err != nil {
 		return nil, fmt.Errorf("更新後のStripeSubscriber取得に失敗: %w", err)
 	}
-	// 直前に更新したレコードのため、ここでのnilは通常の未存在ではなく想定外の
-	// 内部不整合を意味する。
+	// 更新と並行して退会の削除処理がユーザー行と一緒に購読情報を削除した場合は、
+	// 記録が無いイベントとしてWebhook層にスキップさせる。
 	if updated == nil {
-		return nil, fmt.Errorf("更新後のStripeSubscriberが見つかりません")
+		return nil, ErrStripeSubscriberNotFound
 	}
 
 	return &DeleteStripeSubscriberResult{

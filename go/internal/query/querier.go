@@ -49,6 +49,9 @@ type Querier interface {
 	// 更新側が必要なエピソードをNOWAITで先取りし、待たずに試行を中断するため。一括作成も作品を
 	// 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
 	ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error)
+	// 解約の通知で有効なユーザーの紐付けだけを外す。退会受付との行ロック競合後にも
+	// deleted_atを再評価し、論理削除済みのユーザーの紐付けを残す。
+	ClearActiveUserStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (int64, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
 	CountDBEpisodes(ctx context.Context, workID int64) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
