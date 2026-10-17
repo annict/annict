@@ -111,15 +111,20 @@ func NewWorkFromModel(m *model.Work, helper *image.Helper) Work {
 	// キャストとスタッフの変換
 	work.Casts = make([]Cast, len(m.Casts))
 	for i, cast := range m.Casts {
-		work.Casts[i] = Cast{
-			ID:              CastID(cast.ID),
-			Name:            cast.Name,
-			NameEn:          cast.NameEn,
-			CharacterName:   cast.CharacterName,
-			CharacterNameEn: cast.CharacterNameEn,
-			PersonName:      cast.PersonName,
-			PersonNameEn:    cast.PersonNameEn,
+		c := Cast{
+			ID:     CastID(cast.ID),
+			Name:   cast.Name,
+			NameEn: cast.NameEn,
 		}
+		if cast.Character != nil {
+			c.CharacterName = cast.Character.Name
+			c.CharacterNameEn = cast.Character.NameEn
+		}
+		if cast.Person != nil {
+			c.PersonName = cast.Person.Name
+			c.PersonNameEn = cast.Person.NameEn
+		}
+		work.Casts[i] = c
 	}
 
 	work.Staffs = make([]Staff, len(m.Staffs))

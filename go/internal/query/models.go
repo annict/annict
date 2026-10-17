@@ -365,6 +365,50 @@ func (ns NullLanguage) Value() (driver.Value, error) {
 	return string(ns.Language), nil
 }
 
+type PersonStatus string
+
+const (
+	PersonStatusPublished PersonStatus = "published"
+	PersonStatusArchived  PersonStatus = "archived"
+	PersonStatusDelisted  PersonStatus = "delisted"
+	PersonStatusDeleted   PersonStatus = "deleted"
+)
+
+func (e *PersonStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = PersonStatus(s)
+	case string:
+		*e = PersonStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for PersonStatus: %T", src)
+	}
+	return nil
+}
+
+type NullPersonStatus struct {
+	PersonStatus PersonStatus
+	Valid        bool // Valid is true if PersonStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullPersonStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.PersonStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.PersonStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullPersonStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.PersonStatus), nil
+}
+
 type ReleaseStatus string
 
 const (
@@ -1216,6 +1260,9 @@ type Person struct {
 	StaffsCount        int32          `db:"staffs_count"`
 	DeletedAt          sql.NullTime   `db:"deleted_at"`
 	UnpublishedAt      sql.NullTime   `db:"unpublished_at"`
+	Status             PersonStatus   `db:"status"`
+	ArchiveMessage     sql.NullString `db:"archive_message"`
+	DelistMessage      sql.NullString `db:"delist_message"`
 }
 
 type PersonFavorite struct {

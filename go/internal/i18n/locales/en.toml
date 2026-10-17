@@ -1123,6 +1123,258 @@ other = "Archived"
 description = "公開状態 - 削除"
 other = "Deleted"
 
+# DB人物一覧ページ
+[db_people_index_title]
+description = "DB人物一覧ページのタイトル"
+other = "People"
+
+[db_people_index_table_caption]
+description = "DB人物一覧表のキャプションとスクロール領域のaria-label"
+other = "DB people list"
+
+[db_people_index_new_link]
+description = "人物一覧から一括登録ページへのリンク"
+other = "New"
+
+[db_people_index_empty]
+description = "人物一覧の空表示の見出し"
+other = "No people found"
+
+[db_people_index_table_id_label]
+description = "人物一覧のテーブルヘッダー - ID"
+other = "ID"
+
+[db_people_index_table_name_label]
+description = "人物一覧のテーブルヘッダー - 名前 (名前・読み・英語名)"
+other = "Name"
+
+[db_people_index_table_status_label]
+description = "人物一覧のテーブルヘッダー - ステータス"
+other = "Status"
+
+[db_people_index_status_published]
+description = "人物一覧の状態のバッジ - 公開中"
+other = "Published"
+
+[db_people_index_status_archived]
+description = "人物一覧の状態のバッジ - アーカイブ"
+other = "Archived"
+
+[db_people_index_table_actions_label]
+description = "人物一覧のテーブルヘッダー - 操作"
+other = "Actions"
+
+[db_people_index_id_link_aria_label]
+description = "人物IDリンク (公開ページを新しいタブで開く) のaria-label"
+other = "Open person {{.ID}} in a new tab"
+
+[db_people_index_action_target_label]
+description = "人物一覧の操作リンクのアクセシブルネームに足す対象人物 (画面には表示しない)"
+other = "person {{.ID}}"
+
+[db_people_index_edit_link]
+description = "人物一覧から編集フォームへのリンク"
+other = "Edit"
+
+[db_people_index_archive_link]
+description = "人物一覧からアーカイブ確認画面へのリンク (公開中の人物に表示)"
+other = "Archive"
+
+[db_people_index_unarchive_button]
+description = "人物一覧のアーカイブ解除ボタン (アーカイブの人物に表示)"
+other = "Unarchive"
+
+[db_people_index_unarchive_confirm]
+description = "人物一覧のアーカイブ解除ボタンの確認ダイアログ"
+other = "Unarchive person {{.ID}}?"
+
+[db_people_index_delete_button]
+description = "人物一覧の削除ボタン (管理者に表示)"
+other = "Delete"
+
+[db_people_index_delete_confirm]
+description = "人物一覧の削除ボタンの確認ダイアログ"
+other = "Delete person {{.ID}}?"
+
+# DB人物一括登録ページ
+[db_people_new_title]
+description = "DB人物一括登録ページのタイトル"
+other = "New People"
+
+[db_people_new_back_to_list_link]
+description = "人物一括登録ページから人物一覧へのリンク"
+other = "Back to list"
+
+[db_people_new_rows_label]
+description = "人物一括登録ページの入力欄 (1行1人) のラベル"
+other = "People"
+
+[db_people_new_rows_description]
+description = "人物一括登録ページの入力欄の形式の説明"
+other = "Enter one person per line, with the name and its reading separated by a comma (,). The reading is optional."
+
+[db_people_new_rows_example_label]
+description = "人物一括登録ページの入力例の前置き"
+other = "Example: "
+
+[db_people_new_rows_example]
+description = "人物一括登録ページの入力例"
+other = "徳川家康,とくがわいえやす"
+
+[db_people_new_submit]
+description = "人物一括登録ページの送信ボタン"
+other = "Create"
+
+# DB人物編集ページ
+[db_people_edit_document_title]
+description = "人物を識別できる編集ページの文書タイトル"
+other = "Edit Person | {{.Name}}"
+
+[db_people_edit_person_page_link]
+description = "人物編集ページから公開側の人物ページへのリンク"
+other = "Person Page"
+
+[db_people_edit_person_page_link_aria_label]
+description = "公開側の人物ページへのリンク (新しいタブで開く) のaria-label"
+other = "Open the person page in a new tab"
+
+[db_people_edit_name_label]
+description = "フォームラベル - 名前"
+other = "Name"
+
+[db_people_edit_name_kana_label]
+description = "フォームラベル - 名前 (かな)"
+other = "Name (Kana)"
+
+[db_people_edit_name_en_label]
+description = "フォームラベル - 名前 (英語)"
+other = "Name (English)"
+
+[db_people_edit_nickname_label]
+description = "フォームラベル - ニックネーム"
+other = "Nickname"
+
+[db_people_edit_nickname_en_label]
+description = "フォームラベル - ニックネーム (英語)"
+other = "Nickname (English)"
+
+[db_people_edit_gender_label]
+description = "フォームラベル - 性別"
+other = "Gender"
+
+[db_people_edit_blood_type_label]
+description = "フォームラベル - 血液型"
+other = "Blood Type"
+
+[db_people_edit_prefecture_label]
+description = "フォームラベル - 出身地"
+other = "Birthplace"
+
+[db_people_edit_birthday_label]
+description = "フォームラベル - 誕生日"
+other = "Birthday"
+
+[db_people_edit_height_label]
+description = "フォームラベル - 身長 (cm)"
+other = "Height (cm)"
+
+[db_people_edit_url_label]
+description = "フォームラベル - URL"
+other = "URL"
+
+[db_people_edit_url_en_label]
+description = "フォームラベル - URL (英語)"
+other = "URL (English)"
+
+[db_people_edit_wikipedia_url_label]
+description = "フォームラベル - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_people_edit_wikipedia_url_en_label]
+description = "フォームラベル - Wikipedia URL (英語)"
+other = "Wikipedia URL (English)"
+
+[db_people_edit_twitter_username_label]
+description = "フォームラベル - Xユーザー名"
+other = "X Username"
+
+[db_people_edit_twitter_username_en_label]
+description = "フォームラベル - Xユーザー名 (英語)"
+other = "X Username (English)"
+
+[db_people_edit_conflict_heading]
+description = "人物編集ページで、競合時に表示する保存済みの内容の見出し"
+other = "Currently saved content"
+
+[db_people_edit_conflict_no_field_changes]
+description = "人物編集ページで、競合したが本フォームの項目には違いが無かったときの説明"
+other = "There are no differences in the fields on this form. Something outside the form, such as the publishing status, may have changed."
+
+[db_people_edit_conflict_help]
+description = "人物編集ページで、競合時に取りうる対処を述べる説明"
+other = "Your input is kept in the form below. Compare it with the currently saved content, and update again if your input is correct. To keep the content above, leave the page without updating."
+
+[db_people_edit_submit]
+description = "人物編集ページの送信ボタン"
+other = "Update"
+
+# DB人物のアーカイブ・アーカイブ解除・削除の確認ページ
+[db_people_archive_new_document_title]
+description = "人物を識別できるアーカイブ確認ページの文書タイトル"
+other = "Archive Person | {{.Name}}"
+
+[db_people_archive_new_confirm_message]
+description = "人物アーカイブ確認ページの確認メッセージ"
+other = "Archive “{{.Name}}”?"
+
+[db_people_archive_new_help]
+description = "人物アーカイブ確認ページで、アーカイブすると何が起きるかを述べる説明"
+other = "An archived person still appears on the person page and in the cast and staff of works. You can restore it later with “Unarchive” on the person list."
+
+[db_people_archive_new_submit]
+description = "人物アーカイブ確認ページの実行ボタン"
+other = "Archive"
+
+[db_people_archive_new_cancel_link]
+description = "人物アーカイブ確認ページのキャンセルリンク"
+other = "Cancel"
+
+[db_people_unarchive_new_document_title]
+description = "人物を識別できるアーカイブ解除確認ページの文書タイトル"
+other = "Unarchive Person | {{.Name}}"
+
+[db_people_unarchive_new_confirm_message]
+description = "人物アーカイブ解除確認ページの確認メッセージ"
+other = "Unarchive “{{.Name}}”?"
+
+[db_people_unarchive_new_submit]
+description = "人物アーカイブ解除確認ページの実行ボタン"
+other = "Unarchive"
+
+[db_people_unarchive_new_cancel_link]
+description = "人物アーカイブ解除確認ページのキャンセルリンク"
+other = "Cancel"
+
+[db_people_deletion_new_document_title]
+description = "人物を識別できる削除確認ページの文書タイトル"
+other = "Delete Person | {{.Name}}"
+
+[db_people_deletion_new_confirm_message]
+description = "人物削除確認ページの確認メッセージ"
+other = "Delete “{{.Name}}”?"
+
+[db_people_deletion_new_help]
+description = "人物削除確認ページで、削除すると何が起きるかを述べる説明"
+other = "A deleted person no longer appears on any page, including the person list, and cannot be restored from the screen."
+
+[db_people_deletion_new_submit]
+description = "人物削除確認ページの実行ボタン"
+other = "Delete"
+
+[db_people_deletion_new_cancel_link]
+description = "人物削除確認ページのキャンセルリンク"
+other = "Cancel"
+
 # DB作品一覧ページ
 [db_works_index_title]
 description = "DB作品一覧ページのタイトル"
@@ -1912,6 +2164,26 @@ other = "Episode has been published successfully"
 description = "エピソード削除成功メッセージ"
 other = "Episode has been deleted successfully"
 
+[flash_db_people_created]
+description = "人物一括登録成功メッセージ"
+other = "People have been created successfully"
+
+[flash_db_person_updated]
+description = "人物更新成功メッセージ"
+other = "Person has been updated successfully"
+
+[flash_db_person_archived]
+description = "人物アーカイブ成功メッセージ"
+other = "Person has been archived successfully"
+
+[flash_db_person_unarchived]
+description = "人物アーカイブ解除成功メッセージ"
+other = "Person has been unarchived successfully"
+
+[flash_db_person_deleted]
+description = "人物削除成功メッセージ"
+other = "Person has been deleted successfully"
+
 # バリデーション共通メッセージ
 [validation_required]
 description = "必須フィールドのバリデーションエラー"
@@ -2004,6 +2276,70 @@ other = "Please enter a title of no more than {{.MaxLength}} characters"
 [validation_episode_row_raw_number_invalid]
 description = "エピソードの行の話数が数値ではない"
 other = "Please enter a numeric value for the number"
+
+[validation_person_row_error]
+description = "人物の行入力のエラーに行番号を添える書式"
+other = "Line {{.Line}}: {{.Message}}"
+
+[validation_person_rows_too_many]
+description = "人物一括登録フォームの行数が1回の上限を超えている"
+other = "Please enter no more than {{.MaxRows}} people at a time"
+
+[validation_person_row_name_required]
+description = "人物の行に名前が入力されていない"
+other = "Enter a name"
+
+[validation_person_row_too_many_columns]
+description = "人物の行に名前と読みより多くの列が入力されている"
+other = "Only the name and its reading ({{.MaxColumns}} columns) can be entered"
+
+[validation_person_row_name_duplicated]
+description = "人物の行の名前が、同じ送信の前の行と重複している"
+other = "The same name is also on line {{.Line}}"
+
+[validation_person_row_name_already_taken]
+description = "同じ名前の人物が既に登録されている"
+other = "A person with this name already exists"
+
+[validation_person_name_already_taken]
+description = "編集した人物の名前が、別の人物の名前として既に登録されている"
+other = "A person with this name already exists"
+
+[validation_person_gender_invalid]
+description = "人物の性別が許可値の範囲外"
+other = "Please select a valid gender"
+
+[validation_person_blood_type_invalid]
+description = "人物の血液型が許可値の範囲外"
+other = "Please select a valid blood type"
+
+[validation_person_prefecture_invalid]
+description = "人物の出身地が登録されていない"
+other = "Please select a valid birthplace"
+
+[person_gender_male]
+description = "人物の性別 - 男性"
+other = "Male"
+
+[person_gender_female]
+description = "人物の性別 - 女性"
+other = "Female"
+
+[person_blood_type_a]
+description = "人物の血液型 - A型"
+other = "A"
+
+[person_blood_type_b]
+description = "人物の血液型 - B型"
+other = "B"
+
+[person_blood_type_ab]
+description = "人物の血液型 - AB型"
+other = "AB"
+
+[person_blood_type_o]
+description = "人物の血液型 - O型"
+other = "O"
 
 [media_tv]
 description = "メディア種別 - TV"
@@ -2111,6 +2447,10 @@ other = "User not found"
 [error_work_not_found]
 description = "作品が見つからない場合のエラーメッセージ"
 other = "Work not found"
+
+[error_person_not_found]
+description = "人物が見つからない場合のエラーメッセージ"
+other = "Person not found"
 
 [error_episode_not_found]
 description = "エピソードが見つからない場合のエラーメッセージ"

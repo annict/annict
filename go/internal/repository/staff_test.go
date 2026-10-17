@@ -3,6 +3,7 @@ package repository_test
 import (
 	"context"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -65,6 +66,97 @@ func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 		}
 		if staffs[0].Role != "director" {
 			t.Errorf("Role = %q、期待値 = %q (otherは除外されるべき)", staffs[0].Role, "director")
+		}
+	})
+
+	t.Run("正常系: スタッフや人物が非公開・削除済みのスタッフは除外される", func(t *testing.T) {
+		t.Parallel()
+
+		now := time.Now()
+		tests := []struct {
+			name  string
+			build func(b *testutil.StaffBuilder) *testutil.StaffBuilder
+		}{
+			{"スタッフが非公開", func(b *testutil.StaffBuilder) *testutil.StaffBuilder { return b.WithUnpublishedAt(now) }},
+			{"スタッフが削除済み", func(b *testutil.StaffBuilder) *testutil.StaffBuilder { return b.WithDeletedAt(now) }},
+			{"人物が非公開", func(b *testutil.StaffBuilder) *testutil.StaffBuilder { return b.WithPersonUnpublishedAt(now) }},
+			{"人物が削除済み", func(b *testutil.StaffBuilder) *testutil.StaffBuilder { return b.WithPersonDeletedAt(now) }},
+		}
+
+		for _, tt := range tests {
+			t.Run(tt.name, func(t *testing.T) {
+				t.Parallel()
+				db, tx := testutil.SetupTx(t)
+				queries := query.New(db).WithTx(tx)
+				repo := repository.NewStaffRepository(queries)
+
+				workID := testutil.NewWorkBuilder(t, tx).WithTitle("作品C").Build()
+				testutil.NewStaffBuilder(t, tx, workID).WithName("公開状態テスト-公開スタッフ-" + tt.name).Build()
+				tt.build(testutil.NewStaffBuilder(t, tx, workID).WithName("公開状態テスト-除外スタッフ-" + tt.name)).Build()
+
+				staffs, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{workID})
+				if err != nil {
+					t.Fatalf("GetByWorkIDs()のエラー = %v", err)
+				}
+
+				if len(staffs) != 1 {
+					t.Fatalf("len(staffs) = %d、期待値 = 1", len(staffs))
+				}
+				if staffs[0].Name != "公開状態テスト-公開スタッフ-"+tt.name {
+					t.Errorf("Name = %q、期待値 = %q", staffs[0].Name, "公開状態テスト-公開スタッフ-"+tt.name)
+				}
+			})
+		}
+	})
+
+	t.Run("正常系: 団体を参照するスタッフは人物の公開状態に関わらず取得できる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		queries := query.New(db).WithTx(tx)
+		repo := repository.NewStaffRepository(queries)
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("作品D").Build()
+		organizationID := testutil.CreateTestOrganization(t, tx)
+		testutil.NewStaffBuilder(t, tx, workID).
+			WithName("アニメーション制作D").
+			WithRole("studio").
+			WithOrganization(organizationID).
+			Build()
+
+		staffs, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{workID})
+		if err != nil {
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
+		}
+
+		if len(staffs) != 1 {
+			t.Fatalf("len(staffs) = %d、期待値 = 1", len(staffs))
+		}
+		if staffs[0].Name != "アニメーション制作D" {
+			t.Errorf("Name = %q、期待値 = %q", staffs[0].Name, "アニメーション制作D")
+		}
+	})
+
+	t.Run("正常系: 非公開のスタッフは団体を参照していても除外される", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		queries := query.New(db).WithTx(tx)
+		repo := repository.NewStaffRepository(queries)
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("作品E").Build()
+		organizationID := testutil.CreateTestOrganization(t, tx)
+		testutil.NewStaffBuilder(t, tx, workID).
+			WithName("アニメーション制作E").
+			WithRole("studio").
+			WithOrganization(organizationID).
+			WithUnpublishedAt(time.Now()).
+			Build()
+
+		staffs, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{workID})
+		if err != nil {
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
+		}
+		if len(staffs) != 0 {
+			t.Errorf("len(staffs) = %d、期待値 = 0", len(staffs))
 		}
 	})
 

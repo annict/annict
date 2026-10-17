@@ -1333,6 +1333,7 @@ func TestReverseProxyMiddleware_AnnictDBRouting(t *testing.T) {
 	router.Get("/db/works", goResponse)
 	router.Get("/db/works/{work_id}/episodes", goResponse)
 	router.Get("/db/episodes/{id}/edit", goResponse)
+	router.Get("/db/people", goResponse)
 	proxyMiddleware.SetRouter(router)
 
 	handler := proxyMiddleware.Middleware(http.HandlerFunc(goResponse))
@@ -1344,6 +1345,7 @@ func TestReverseProxyMiddleware_AnnictDBRouting(t *testing.T) {
 	}{
 		{"作品一覧はGo版が処理する", "/db/works", "Go response"},
 		{"エピソード編集はGo版が処理する", "/db/episodes/1/edit", "Go response"},
+		{"人物一覧はGo版が処理する", "/db/people", "Go response"},
 		{"Annict DBのトップはRails版へプロキシする", "/db", "Rails response"},
 		{"Go版に無いキャスト一覧はRails版へプロキシする", "/db/works/1/casts", "Rails response"},
 	}
@@ -1423,13 +1425,13 @@ func TestReverseProxyMiddleware_DBFallback_ThroughMiddlewareChain(t *testing.T) 
 		{"実装済み編集フォームはGo版が処理する", "GET", "/db/works/42/edit", http.StatusOK, "Go response"},
 
 		// Go未実装の /db/* のGETはRails版へフォールバックする (ステータスもRails側を透過)。
-		{"未実装の/db直下はRails版へフォールバック", "GET", "/db/people", http.StatusOK, "Rails response"},
+		{"未実装の/db直下はRails版へフォールバック", "GET", "/db/characters", http.StatusOK, "Rails response"},
 		{"未実装のネストパスもRails版へフォールバック", "GET", "/db/works/123/episodes", http.StatusOK, "Rails response"},
 		{"未実装の作品詳細もRails版へフォールバック", "GET", "/db/works/123", http.StatusOK, "Rails response"},
 
 		// Go未実装の /db/* の非GETも、内側のCSRFに403で弾かれずRailsへフォールバックする。
 		// フォールバックがCSRFより前のMiddlewareレイヤーで起きること (影響Bの回帰防止) を担保する。
-		{"未実装POSTはCSRF403にならずRailsへフォールバック", "POST", "/db/people", http.StatusOK, "Rails response"},
+		{"未実装POSTはCSRF403にならずRailsへフォールバック", "POST", "/db/characters", http.StatusOK, "Rails response"},
 		{"未実装PATCH(作品詳細)もRailsへフォールバック", "PATCH", "/db/works/123", http.StatusOK, "Rails response"},
 
 		// 登録済みの /db/worksへのメソッド不一致 (GET/POSTは登録済みだがPATCHは未登録) も、

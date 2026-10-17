@@ -1122,6 +1122,258 @@ other = "非公開"
 description = "公開状態 - 削除"
 other = "削除"
 
+# DB人物一覧ページ
+[db_people_index_title]
+description = "DB人物一覧ページのタイトル"
+other = "人物"
+
+[db_people_index_table_caption]
+description = "DB人物一覧表のキャプションとスクロール領域のaria-label"
+other = "DB人物一覧"
+
+[db_people_index_new_link]
+description = "人物一覧から一括登録ページへのリンク"
+other = "新規登録"
+
+[db_people_index_empty]
+description = "人物一覧の空表示の見出し"
+other = "人物が見つかりませんでした"
+
+[db_people_index_table_id_label]
+description = "人物一覧のテーブルヘッダー - ID"
+other = "ID"
+
+[db_people_index_table_name_label]
+description = "人物一覧のテーブルヘッダー - 名前 (名前・読み・英語名)"
+other = "名前"
+
+[db_people_index_table_status_label]
+description = "人物一覧のテーブルヘッダー - ステータス"
+other = "ステータス"
+
+[db_people_index_status_published]
+description = "人物一覧の状態のバッジ - 公開中"
+other = "公開"
+
+[db_people_index_status_archived]
+description = "人物一覧の状態のバッジ - アーカイブ"
+other = "アーカイブ"
+
+[db_people_index_table_actions_label]
+description = "人物一覧のテーブルヘッダー - 操作"
+other = "操作"
+
+[db_people_index_id_link_aria_label]
+description = "人物IDリンク (公開ページを新しいタブで開く) のaria-label"
+other = "人物 {{.ID}} を新しいタブで開く"
+
+[db_people_index_action_target_label]
+description = "人物一覧の操作リンクのアクセシブルネームに足す対象人物 (画面には表示しない)"
+other = "人物 {{.ID}}"
+
+[db_people_index_edit_link]
+description = "人物一覧から編集フォームへのリンク"
+other = "編集"
+
+[db_people_index_archive_link]
+description = "人物一覧からアーカイブ確認画面へのリンク (公開中の人物に表示)"
+other = "アーカイブ"
+
+[db_people_index_unarchive_button]
+description = "人物一覧のアーカイブ解除ボタン (アーカイブの人物に表示)"
+other = "アーカイブ解除"
+
+[db_people_index_unarchive_confirm]
+description = "人物一覧のアーカイブ解除ボタンの確認ダイアログ"
+other = "人物 {{.ID}} のアーカイブを解除しますか？"
+
+[db_people_index_delete_button]
+description = "人物一覧の削除ボタン (管理者に表示)"
+other = "削除"
+
+[db_people_index_delete_confirm]
+description = "人物一覧の削除ボタンの確認ダイアログ"
+other = "人物 {{.ID}} を削除しますか？"
+
+# DB人物一括登録ページ
+[db_people_new_title]
+description = "DB人物一括登録ページのタイトル"
+other = "人物登録"
+
+[db_people_new_back_to_list_link]
+description = "人物一括登録ページから人物一覧へのリンク"
+other = "一覧に戻る"
+
+[db_people_new_rows_label]
+description = "人物一括登録ページの入力欄 (1行1人) のラベル"
+other = "人物"
+
+[db_people_new_rows_description]
+description = "人物一括登録ページの入力欄の形式の説明"
+other = "1行に1人ずつ、名前と読みをカンマ (,) で区切って入力してください。読みは省略できます。"
+
+[db_people_new_rows_example_label]
+description = "人物一括登録ページの入力例の前置き"
+other = "例: "
+
+[db_people_new_rows_example]
+description = "人物一括登録ページの入力例"
+other = "徳川家康,とくがわいえやす"
+
+[db_people_new_submit]
+description = "人物一括登録ページの送信ボタン"
+other = "登録する"
+
+# DB人物編集ページ
+[db_people_edit_document_title]
+description = "人物を識別できる編集ページの文書タイトル"
+other = "人物編集 | {{.Name}}"
+
+[db_people_edit_person_page_link]
+description = "人物編集ページから公開側の人物ページへのリンク"
+other = "人物ページ"
+
+[db_people_edit_person_page_link_aria_label]
+description = "公開側の人物ページへのリンク (新しいタブで開く) のaria-label"
+other = "人物ページを新しいタブで開く"
+
+[db_people_edit_name_label]
+description = "フォームラベル - 名前"
+other = "名前"
+
+[db_people_edit_name_kana_label]
+description = "フォームラベル - 名前 (かな)"
+other = "名前 (かな)"
+
+[db_people_edit_name_en_label]
+description = "フォームラベル - 名前 (英語)"
+other = "名前 (英語)"
+
+[db_people_edit_nickname_label]
+description = "フォームラベル - ニックネーム"
+other = "ニックネーム"
+
+[db_people_edit_nickname_en_label]
+description = "フォームラベル - ニックネーム (英語)"
+other = "ニックネーム (英語)"
+
+[db_people_edit_gender_label]
+description = "フォームラベル - 性別"
+other = "性別"
+
+[db_people_edit_blood_type_label]
+description = "フォームラベル - 血液型"
+other = "血液型"
+
+[db_people_edit_prefecture_label]
+description = "フォームラベル - 出身地"
+other = "出身地"
+
+[db_people_edit_birthday_label]
+description = "フォームラベル - 誕生日"
+other = "誕生日"
+
+[db_people_edit_height_label]
+description = "フォームラベル - 身長 (cm)"
+other = "身長 (cm)"
+
+[db_people_edit_url_label]
+description = "フォームラベル - URL"
+other = "URL"
+
+[db_people_edit_url_en_label]
+description = "フォームラベル - URL (英語)"
+other = "URL (英語)"
+
+[db_people_edit_wikipedia_url_label]
+description = "フォームラベル - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_people_edit_wikipedia_url_en_label]
+description = "フォームラベル - Wikipedia URL (英語)"
+other = "Wikipedia URL (英語)"
+
+[db_people_edit_twitter_username_label]
+description = "フォームラベル - Xユーザー名"
+other = "Xユーザー名"
+
+[db_people_edit_twitter_username_en_label]
+description = "フォームラベル - Xユーザー名 (英語)"
+other = "Xユーザー名 (英語)"
+
+[db_people_edit_conflict_heading]
+description = "人物編集ページで、競合時に表示する保存済みの内容の見出し"
+other = "現在保存されている内容"
+
+[db_people_edit_conflict_no_field_changes]
+description = "人物編集ページで、競合したが本フォームの項目には違いが無かったときの説明"
+other = "このフォームで編集できる項目に違いはありません。公開状態など、フォームの外で変更された可能性があります。"
+
+[db_people_edit_conflict_help]
+description = "人物編集ページで、競合時に取りうる対処を述べる説明"
+other = "入力した内容は下のフォームにそのまま残しています。現在保存されている内容と見比べて、入力した内容で問題なければもう一度更新してください。上の内容をそのまま残す場合は、更新せずにページを離れてください。"
+
+[db_people_edit_submit]
+description = "人物編集ページの送信ボタン"
+other = "更新する"
+
+# DB人物のアーカイブ・アーカイブ解除・削除の確認ページ
+[db_people_archive_new_document_title]
+description = "人物を識別できるアーカイブ確認ページの文書タイトル"
+other = "人物アーカイブ | {{.Name}}"
+
+[db_people_archive_new_confirm_message]
+description = "人物アーカイブ確認ページの確認メッセージ"
+other = "「{{.Name}}」をアーカイブしますか？"
+
+[db_people_archive_new_help]
+description = "人物アーカイブ確認ページで、アーカイブすると何が起きるかを述べる説明"
+other = "アーカイブしても、この人物は人物ページや作品のキャスト・スタッフに引き続き表示されます。あとから一覧の「アーカイブ解除」で元に戻せます。"
+
+[db_people_archive_new_submit]
+description = "人物アーカイブ確認ページの実行ボタン"
+other = "アーカイブする"
+
+[db_people_archive_new_cancel_link]
+description = "人物アーカイブ確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_people_unarchive_new_document_title]
+description = "人物を識別できるアーカイブ解除確認ページの文書タイトル"
+other = "人物アーカイブ解除 | {{.Name}}"
+
+[db_people_unarchive_new_confirm_message]
+description = "人物アーカイブ解除確認ページの確認メッセージ"
+other = "「{{.Name}}」のアーカイブを解除しますか？"
+
+[db_people_unarchive_new_submit]
+description = "人物アーカイブ解除確認ページの実行ボタン"
+other = "アーカイブを解除する"
+
+[db_people_unarchive_new_cancel_link]
+description = "人物アーカイブ解除確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_people_deletion_new_document_title]
+description = "人物を識別できる削除確認ページの文書タイトル"
+other = "人物削除 | {{.Name}}"
+
+[db_people_deletion_new_confirm_message]
+description = "人物削除確認ページの確認メッセージ"
+other = "「{{.Name}}」を削除しますか？"
+
+[db_people_deletion_new_help]
+description = "人物削除確認ページで、削除すると何が起きるかを述べる説明"
+other = "削除すると、この人物は一覧を含むすべてのページに表示されなくなり、画面から元に戻すことはできません。"
+
+[db_people_deletion_new_submit]
+description = "人物削除確認ページの実行ボタン"
+other = "削除する"
+
+[db_people_deletion_new_cancel_link]
+description = "人物削除確認ページのキャンセルリンク"
+other = "キャンセル"
+
 # DB作品一覧ページ
 [db_works_index_title]
 description = "DB作品一覧ページのタイトル"
@@ -1911,6 +2163,26 @@ other = "エピソードを公開しました"
 description = "エピソード削除成功メッセージ"
 other = "エピソードを削除しました"
 
+[flash_db_people_created]
+description = "人物一括登録成功メッセージ"
+other = "人物を登録しました"
+
+[flash_db_person_updated]
+description = "人物更新成功メッセージ"
+other = "人物を更新しました"
+
+[flash_db_person_archived]
+description = "人物アーカイブ成功メッセージ"
+other = "人物をアーカイブしました"
+
+[flash_db_person_unarchived]
+description = "人物アーカイブ解除成功メッセージ"
+other = "人物のアーカイブを解除しました"
+
+[flash_db_person_deleted]
+description = "人物削除成功メッセージ"
+other = "人物を削除しました"
+
 # バリデーション共通メッセージ
 [validation_required]
 description = "必須フィールドのバリデーションエラー"
@@ -2003,6 +2275,70 @@ other = "タイトルは{{.MaxLength}}文字以内で入力してください"
 [validation_episode_row_raw_number_invalid]
 description = "エピソードの行の話数が数値ではない"
 other = "話数は数値で入力してください"
+
+[validation_person_row_error]
+description = "人物の行入力のエラーに行番号を添える書式"
+other = "{{.Line}} 行目: {{.Message}}"
+
+[validation_person_rows_too_many]
+description = "人物一括登録フォームの行数が1回の上限を超えている"
+other = "一度に登録する人物は{{.MaxRows}}件以内にしてください"
+
+[validation_person_row_name_required]
+description = "人物の行に名前が入力されていない"
+other = "名前を入力してください"
+
+[validation_person_row_too_many_columns]
+description = "人物の行に名前と読みより多くの列が入力されている"
+other = "入力できるのは名前と読みの{{.MaxColumns}}列までです"
+
+[validation_person_row_name_duplicated]
+description = "人物の行の名前が、同じ送信の前の行と重複している"
+other = "同じ名前が{{.Line}} 行目にもあります"
+
+[validation_person_row_name_already_taken]
+description = "同じ名前の人物が既に登録されている"
+other = "この名前の人物は既に登録されています"
+
+[validation_person_name_already_taken]
+description = "編集した人物の名前が、別の人物の名前として既に登録されている"
+other = "この名前の人物は既に登録されています"
+
+[validation_person_gender_invalid]
+description = "人物の性別が許可値の範囲外"
+other = "正しい性別を選択してください"
+
+[validation_person_blood_type_invalid]
+description = "人物の血液型が許可値の範囲外"
+other = "正しい血液型を選択してください"
+
+[validation_person_prefecture_invalid]
+description = "人物の出身地が登録されていない"
+other = "正しい出身地を選択してください"
+
+[person_gender_male]
+description = "人物の性別 - 男性"
+other = "男性"
+
+[person_gender_female]
+description = "人物の性別 - 女性"
+other = "女性"
+
+[person_blood_type_a]
+description = "人物の血液型 - A型"
+other = "A型"
+
+[person_blood_type_b]
+description = "人物の血液型 - B型"
+other = "B型"
+
+[person_blood_type_ab]
+description = "人物の血液型 - AB型"
+other = "AB型"
+
+[person_blood_type_o]
+description = "人物の血液型 - O型"
+other = "O型"
 
 [media_tv]
 description = "メディア種別 - TV"
@@ -2110,6 +2446,10 @@ other = "ユーザーが見つかりませんでした"
 [error_work_not_found]
 description = "作品が見つからない場合のエラーメッセージ"
 other = "作品が見つかりませんでした"
+
+[error_person_not_found]
+description = "人物が見つからない場合のエラーメッセージ"
+other = "人物が見つかりませんでした"
 
 [error_episode_not_found]
 description = "エピソードが見つからない場合のエラーメッセージ"

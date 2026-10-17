@@ -1,0 +1,55 @@
+package db_people
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// UnarchiveNewPageDataはアーカイブ解除確認ページが描画するデータ (CSRFトークン、フォームの
+// actionに使う対象の人物のid、ページ見出しと確認文に使う名前、キャンセルリンクと送信の
+// 戻り先にする一覧)。人物の名前は必須のため、作品の確認画面と異なり見出しのフォールバックは
+// 持たない (編集ページと同じ)。
+type UnarchiveNewPageData struct {
+	CSRFToken string
+	PersonID  viewmodel.PersonID
+	Name      string
+	ReturnTo  string
+}
+
+// 人物のアーカイブ解除はそのアーカイブの削除であるため、フォームは人物のアーカイブの
+// エンドポイントへ送信する。HTMLのフォームはGETとPOSTしか送れないため、他の /dbのフォームと同じ
+// メソッドオーバーライドでDELETEを運ぶ。
+templ UnarchiveNew(data UnarchiveNewPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: data.Name,
+				})
+			</div>
+		</div>
+
+		@components.ContentCard("") {
+			<div class="max-w-2xl flex flex-col gap-6">
+				<div class="flex flex-col gap-2">
+					<p>{ templates.T(ctx, "db_people_unarchive_new_confirm_message", map[string]any{"Name": data.Name}) }</p>
+				</div>
+
+				<form method="POST" action={ templates.DBPersonArchivePath(data.PersonID).SafeURL() } class="flex items-center gap-2">
+					<input type="hidden" name="_method" value="DELETE"/>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					<input type="hidden" name="return_to" value={ data.ReturnTo }/>
+					<button type="submit" class="btn rounded-full" data-variant="success">
+						{ templates.T(ctx, "db_people_unarchive_new_submit") }
+					</button>
+					<a href={ data.ReturnTo } class="btn rounded-full" data-variant="outline">
+						{ templates.T(ctx, "db_people_unarchive_new_cancel_link") }
+					</a>
+				</form>
+			</div>
+		}
+	</div>
+}

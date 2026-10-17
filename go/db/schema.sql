@@ -145,6 +145,18 @@ CREATE TYPE public.language AS ENUM (
 
 
 --
+-- Name: person_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.person_status AS ENUM (
+    'published',
+    'archived',
+    'delisted',
+    'deleted'
+);
+
+
+--
 -- Name: release_status; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -2139,7 +2151,10 @@ CREATE TABLE public.people (
     casts_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    status public.person_status DEFAULT 'published'::public.person_status NOT NULL,
+    archive_message character varying,
+    delist_message character varying
 );
 
 
@@ -6388,7 +6403,7 @@ CREATE INDEX index_people_on_favorite_users_count ON public.people USING btree (
 -- Name: index_people_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_people_on_name ON public.people USING btree (name);
+CREATE UNIQUE INDEX index_people_on_name ON public.people USING btree (name) WHERE (status <> 'deleted'::public.person_status);
 
 
 --
@@ -8699,4 +8714,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20261012072250'),
     ('20261012095110'),
     ('20261013084107'),
-    ('20261014154243');
+    ('20261014154243'),
+    ('20261016165628'),
+    ('20261016173859');
