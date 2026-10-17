@@ -541,7 +541,7 @@ func runServe() {
 	// パスワードログインハンドラーの初期化
 	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(userRepo)
 	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
-	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, flashMgr, authenticateByPasswordUC)
+	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, flashMgr, limiter, authenticateByPasswordUC)
 
 	// ログアウトハンドラーの初期化
 	signOutHandler := sign_out.NewHandler(sessionManager)
