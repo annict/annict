@@ -164,50 +164,20 @@ func workFromCreateWorkParams(params repository.CreateWorkParams) *model.Work {
 		OfficialSiteURLEn:     params.OfficialSiteURLEn,
 		WikipediaURL:          params.WikipediaURL,
 		WikipediaURLEn:        params.WikipediaURLEn,
+		ManualEpisodesCount:   params.ManualEpisodesCount,
+		NumberFormatID:        params.NumberFormatID,
+		ScTid:                 params.ScTid,
+		MalAnimeID:            params.MalAnimeID,
+		TwitterUsername:       params.TwitterUsername,
+		TwitterHashtag:        params.TwitterHashtag,
+		SeasonYear:            params.SeasonYear,
+		SeasonName:            params.SeasonName,
+		StartedOn:             params.StartedOn,
+		EndedOn:               params.EndedOn,
 	}
 	if params.TitleKana != "" {
 		titleKana := params.TitleKana
 		work.TitleKana = &titleKana
-	}
-	if params.ManualEpisodesCount.Valid {
-		manualEpisodesCount := params.ManualEpisodesCount.Int32
-		work.ManualEpisodesCount = &manualEpisodesCount
-	}
-	if params.NumberFormatID.Valid {
-		numberFormatID := model.NumberFormatID(params.NumberFormatID.Int64)
-		work.NumberFormatID = &numberFormatID
-	}
-	if params.ScTid.Valid {
-		scTid := params.ScTid.Int32
-		work.ScTid = &scTid
-	}
-	if params.MalAnimeID.Valid {
-		malAnimeID := params.MalAnimeID.Int32
-		work.MalAnimeID = &malAnimeID
-	}
-	if params.TwitterUsername.Valid {
-		twitterUsername := params.TwitterUsername.String
-		work.TwitterUsername = &twitterUsername
-	}
-	if params.TwitterHashtag.Valid {
-		twitterHashtag := params.TwitterHashtag.String
-		work.TwitterHashtag = &twitterHashtag
-	}
-	if params.SeasonYear.Valid {
-		seasonYear := params.SeasonYear.Int32
-		work.SeasonYear = &seasonYear
-	}
-	if params.SeasonName.Valid {
-		seasonName := params.SeasonName.Int32
-		work.SeasonName = &seasonName
-	}
-	if params.StartedOn.Valid {
-		startedOn := params.StartedOn.Time
-		work.StartedOn = &startedOn
-	}
-	if params.EndedOn.Valid {
-		endedOn := params.EndedOn.Time
-		work.EndedOn = &endedOn
 	}
 	return work
 }
