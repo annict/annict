@@ -7,7 +7,7 @@ module Api
       before_action :prepare_params!, only: %i[index]
 
       def index
-        @casts = Cast.only_kept
+        @casts = Cast.only_kept.with_kept_person
         @casts = Deprecated::Api::V1::CastIndexService.new(@casts, @params).result
       end
     end

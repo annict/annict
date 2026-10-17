@@ -9,6 +9,6 @@ class CastsController < ApplicationV6Controller
 
     set_work_header_resources
 
-    @casts = @work.casts.only_kept.order(:sort_number)
+    @casts = @work.casts.only_kept.with_kept_person.order(:sort_number)
   end
 end

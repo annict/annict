@@ -7,7 +7,7 @@
 
       <mj-text padding-top="0" line-height="22px">
         <% characters = work.characters.merge(@user.favorite_characters) %>
-        <% people = work.people.merge(@user.favorite_people) %>
+        <% people = work.people.only_kept.merge(@user.favorite_people) %>
         <% organizations = work.organizations.merge(@user.favorite_organizations) %>
         <% resources = characters | people | organizations %>
         <%= resources.map { |resource| resource.local_name }.join(", ") %>

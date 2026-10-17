@@ -55,19 +55,19 @@
       </mj-text>
     <% end %>
 
-    <% if work.casts.only_kept.exists? %>
+    <% if work.casts.only_kept.with_kept_person.exists? %>
       <mj-text font-weight="800" padding="10px 25px"><%= I18n.t("noun.casts") %></mj-text>
       <mj-text padding-top="0" line-height="22px">
-        <% work.casts.only_kept.order(:sort_number).limit(10).each do |cast| %>
+        <% work.casts.only_kept.with_kept_person.order(:sort_number).limit(10).each do |cast| %>
           <%= cast.character.local_name %>: <%= cast.person.local_name %>
         <% end %>
       </mj-text>
     <% end %>
 
-    <% if work.staffs.only_kept.exists? %>
+    <% if work.staffs.only_kept.with_kept_person.exists? %>
       <mj-text font-weight="800" padding="10px 25px"><%= I18n.t("noun.staffs") %></mj-text>
       <mj-text padding-top="0" line-height="22px">
-        <% work.staffs.only_kept.major.order(:sort_number).each do |staff| %>
+        <% work.staffs.only_kept.with_kept_person.major.order(:sort_number).each do |staff| %>
           <%= staff.decorate.role_name %>: <%= staff.local_name %>
         <% end %>
       </mj-text>

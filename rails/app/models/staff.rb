@@ -41,6 +41,10 @@ class Staff < ApplicationRecord
   validates :role, presence: true
 
   scope :major, -> { where.not(role: "other") }
+  # 人物が非公開・削除済みのスタッフを除く。団体を参照するスタッフは絞り込まない
+  scope :with_kept_person, -> {
+    where.not(resource_type: "Person").or(where(resource_type: "Person", resource_id: Person.only_kept.select(:id)))
+  }
 
   before_validation :set_name
 

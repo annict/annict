@@ -7,7 +7,7 @@ module Api
       before_action :prepare_params!, only: %i[index]
 
       def index
-        @staffs = Staff.only_kept
+        @staffs = Staff.only_kept.with_kept_person
         @staffs = Deprecated::Api::V1::StaffIndexService.new(@staffs, @params).result
       end
     end

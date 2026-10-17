@@ -335,6 +335,60 @@ describe "GraphQL API Query" do
       end
     end
 
+    context "when casts and staffs of unpublished or deleted people are fetched" do
+      let!(:published_person) { create(:person) }
+      let!(:organization) { create(:organization) }
+      let!(:cast) { create(:cast, work: work1, person: published_person) }
+      let!(:person_staff) { create(:staff, work: work1, resource: published_person) }
+      let!(:organization_staff) { create(:staff, work: work1, resource: organization) }
+      let(:result) do
+        unpublished_person = create(:person, :unpublished)
+        deleted_person = create(:person, :deleted)
+        create(:cast, work: work1, person: unpublished_person)
+        create(:cast, work: work1, person: deleted_person)
+        create(:staff, work: work1, resource: unpublished_person)
+        create(:staff, work: work1, resource: deleted_person)
+
+        query_string = <<~QUERY
+          query {
+            searchWorks(annictIds: [#{work1.id}]) {
+              edges {
+                node {
+                  casts {
+                    edges {
+                      node {
+                        annictId
+                      }
+                    }
+                  }
+                  staffs {
+                    edges {
+                      node {
+                        annictId
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        QUERY
+
+        res = Beta::AnnictSchema.execute(query_string)
+        pp(res) if res["errors"]
+        res
+      end
+
+      it "人物が非公開・削除済みのキャスト・スタッフを返さないこと" do
+        work_node = result.dig("data", "searchWorks", "edges", 0, "node")
+        cast_ids = work_node.dig("casts", "edges").map { |edge| edge.dig("node", "annictId") }
+        staff_ids = work_node.dig("staffs", "edges").map { |edge| edge.dig("node", "annictId") }
+
+        expect(cast_ids).to eq([cast.id])
+        expect(staff_ids).to match_array([person_staff.id, organization_staff.id])
+      end
+    end
+
     context "when `reviews` are fetched" do
       let(:user) { create(:registered_user) }
       let(:record) { create(:record, user: user, work: work1) }
