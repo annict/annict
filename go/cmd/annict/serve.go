@@ -622,7 +622,7 @@ func runServe() {
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
 
-	// 退会 (go_account_deletionフラグを有効にした利用者にだけGo版で配信する)
+	// 退会
 	r.With(authMW.RequireAuth).Get("/settings/account/deletion/new", settingsAccountDeletionHandler.New)
 	r.With(authMW.RequireAuth).Post("/settings/account/deletion", settingsAccountDeletionHandler.Create)
 	r.Get("/settings/account/deletion/completed", settingsAccountDeletionCompletionHandler.Show)
