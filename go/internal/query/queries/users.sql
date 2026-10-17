@@ -88,6 +88,20 @@ SELECT id, username, email, role, stripe_subscriber_id, created_at, updated_at
 FROM users
 WHERE stripe_subscriber_id = $1
 LIMIT 1;
+
+-- name: ClearActiveUserStripeSubscriberID :one
+-- 解約の通知で有効なユーザーの紐付けだけを外す。退会受付との行ロック競合後にも
+-- deleted_atを再評価し、論理削除済みのユーザーの紐付けを残す。
+UPDATE users AS target
+SET stripe_subscriber_id = NULL, updated_at = NOW()
+WHERE target.id = (
+    SELECT candidate.id FROM users AS candidate
+    WHERE candidate.stripe_subscriber_id = $1 AND candidate.deleted_at IS NULL
+    LIMIT 1
+)
+  AND target.stripe_subscriber_id = $1
+  AND target.deleted_at IS NULL
+RETURNING target.id;
 -- name: AnonymizeAndSoftDeleteUser :execrows
 -- 退会を受け付けたユーザーのユーザー名とメールアドレスを再登録に使えるよう置き換え、
 -- deleted_atを立てる。すでに論理削除されたユーザーは対象にせず、同時に送られた退会の

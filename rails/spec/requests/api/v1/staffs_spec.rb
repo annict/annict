@@ -101,4 +101,18 @@ RSpec.describe "GET /v1/staffs", type: :request do
     expect(json["staffs"]).to eq([])
     expect(json["total_count"]).to eq(0)
   end
+
+  it "人物が非公開・削除済みのスタッフを返さず、団体のスタッフは返すこと" do
+    access_token = create(:oauth_access_token)
+    person_staff = create(:staff, resource: create(:person))
+    organization_staff = create(:staff, resource: create(:organization))
+    create(:staff, resource: create(:person, :unpublished))
+    create(:staff, resource: create(:person, :deleted))
+
+    get api("/v1/staffs", access_token: access_token.token)
+
+    expect(response.status).to eq(200)
+    expect(json["staffs"].pluck("id")).to match_array([person_staff.id, organization_staff.id])
+    expect(json["total_count"]).to eq(2)
+  end
 end

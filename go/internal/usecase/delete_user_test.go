@@ -1028,6 +1028,60 @@ func TestDeleteUserUsecase_Execute_DeleteUserAndSubscribers(t *testing.T) {
 	}
 }
 
+func TestDeleteUserUsecase_Execute_SubscriptionDeletedBeforeUserDeletion(t *testing.T) {
+	t.Parallel()
+
+	// 解約の通知の処理と退会の削除処理がそれぞれ開くトランザクションから見えるよう、準備した行を
+	// コミットする。いずれも削除で消えるため後片付けは要らない。
+	uc, db, tx := newCommittedDeleteUserUsecaseForTest(t, &subscriptionCancelerStub{result: annictstripe.CancelSubscriptionResultCanceled}, 0)
+	queries := query.New(db)
+	deleteStripeSubscriberUC := NewDeleteStripeSubscriberUsecase(
+		db,
+		repository.NewStripeSubscriberRepository(queries),
+		repository.NewUserRepository(queries),
+	)
+
+	subscriber := testutil.NewStripeSubscriberBuilder(t, tx).BuildWithResult()
+	userID := testutil.NewUserBuilder(t, tx).
+		WithStripeSubscriberID(&subscriber.ID).
+		WithDeletedAt(time.Now()).
+		Build()
+	if err := tx.Commit(); err != nil {
+		t.Fatalf("準備用トランザクションのコミットに失敗: %v", err)
+	}
+
+	input := DeleteStripeSubscriberInput{
+		StripeSubscriptionID: subscriber.StripeSubscriptionID,
+		StripeCanceledAt:     time.Now(),
+	}
+
+	// 解約の通知 (customer.subscription.deleted) が退会の削除処理より先に届く。
+	if _, err := deleteStripeSubscriberUC.Execute(context.Background(), input); err != nil {
+		t.Fatalf("先に届いた解約の通知の処理のエラー = %v", err)
+	}
+
+	result, err := uc.Execute(context.Background(), DeleteUserInput{UserID: userID})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if !result.Completed {
+		t.Error("Completed = false、期待値 = true")
+	}
+
+	readTx := beginReadTxForTest(t, db)
+	if got := testutil.CountRows(t, readTx, "users", "id = $1", int64(userID)); got != 0 {
+		t.Errorf("ユーザーの件数 = %d、期待値 = 0", got)
+	}
+	if got := testutil.CountRows(t, readTx, "stripe_subscribers", "id = $1", int64(subscriber.ID)); got != 0 {
+		t.Errorf("Stripeの購読情報の件数 = %d、期待値 = 0", got)
+	}
+
+	// 退会の削除処理より後に届いた解約の通知は、記録が無いためWebhook層でスキップされる。
+	if _, err := deleteStripeSubscriberUC.Execute(context.Background(), input); !errors.Is(err, ErrStripeSubscriberNotFound) {
+		t.Errorf("後に届いた解約の通知の処理のエラー = %v、期待値 = %v", err, ErrStripeSubscriberNotFound)
+	}
+}
+
 func TestDeleteUserUsecase_Execute_DeleteProfileImages(t *testing.T) {
 	t.Parallel()
 

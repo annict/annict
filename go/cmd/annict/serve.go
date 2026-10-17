@@ -22,6 +22,10 @@ import (
 	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/handler/db_episode"
 	"github.com/annict/annict/go/internal/handler/db_episode_archive"
+	"github.com/annict/annict/go/internal/handler/db_person"
+	"github.com/annict/annict/go/internal/handler/db_person_archive"
+	"github.com/annict/annict/go/internal/handler/db_person_deletion"
+	"github.com/annict/annict/go/internal/handler/db_person_unarchive"
 	"github.com/annict/annict/go/internal/handler/db_work"
 	"github.com/annict/annict/go/internal/handler/db_work_archive"
 	"github.com/annict/annict/go/internal/handler/db_work_deletion"
@@ -29,6 +33,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/health"
 	"github.com/annict/annict/go/internal/handler/home"
 	"github.com/annict/annict/go/internal/handler/ics"
+	"github.com/annict/annict/go/internal/handler/legal_document"
 	"github.com/annict/annict/go/internal/handler/manifest"
 	"github.com/annict/annict/go/internal/handler/password"
 	"github.com/annict/annict/go/internal/handler/password_reset"
@@ -49,6 +54,7 @@ import (
 	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
 	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/image"
+	"github.com/annict/annict/go/internal/legaldoc"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/ratelimit"
@@ -165,8 +171,10 @@ func runServe() {
 	// sqlcのクエリーインスタンスを作成
 	queries := query.New(db)
 
-	// Redisクライアントの初期化 (Rate Limiting用とデータストア用)
-	var limiter *ratelimit.Limiter
+	// レート制限の限定器はPostgreSQLの `rate_limits` テーブルで数える
+	limiter := ratelimit.NewLimiter(repository.NewRateLimitRepository(queries))
+
+	// Redisクライアントの初期化 (新規登録の途中の状態を置くデータストア用)
 	var redisClient *redis.Client
 	if cfg.RedisURL != "" {
 		opt, err := redis.ParseURL(cfg.RedisURL)
@@ -183,14 +191,13 @@ func runServe() {
 		redisClient = redis.NewClient(opt)
 		// Redis接続確認
 		if err := redisClient.Ping(context.Background()).Err(); err != nil {
-			slog.Warn("Redisへの接続に失敗しました (Rate Limitingは無効化されます)", "error", err)
+			slog.Warn("Redisへの接続に失敗しました", "error", err)
 			redisClient = nil
 		} else {
 			slog.Info("Redisに正常に接続しました")
-			limiter = ratelimit.NewLimiter(redisClient)
 		}
 	} else {
-		slog.Warn("Redis URLが設定されていません (Rate Limitingは無効化されます)")
+		slog.Warn("Redis URLが設定されていません")
 	}
 
 	// 下で登録する定期ジョブが使うクリーンアップUseCaseを組み立てる。いずれも対応する
@@ -198,6 +205,7 @@ func runServe() {
 	// 配線を共有できる。
 	cleanupExpiredTokensUC := newCleanupExpiredTokensUsecase(queries)
 	cleanupExpiredSignInCodesUC := newCleanupExpiredSignInCodesUsecase(queries)
+	cleanupExpiredRateLimitsUC := newCleanupExpiredRateLimitsUsecase(queries)
 	cleanupExpiredSessionsUC := newCleanupExpiredSessionsUsecase(queries)
 	cleanupAnonymousSessionsUC := newCleanupAnonymousSessionsUsecase(queries)
 
@@ -229,6 +237,7 @@ func runServe() {
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
 		CleanupExpiredTokens:      cleanupExpiredTokensUC,
 		CleanupExpiredSignInCodes: cleanupExpiredSignInCodesUC,
+		CleanupExpiredRateLimits:  cleanupExpiredRateLimitsUC,
 		CleanupExpiredSessions:    cleanupExpiredSessionsUC,
 		CleanupAnonymousSessions:  cleanupAnonymousSessionsUC,
 		SyncAnimes:                syncAnimesUC,
@@ -279,6 +288,22 @@ func runServe() {
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobSignInCodeCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "ログインコードクリーンアップ", "schedule", "毎日深夜2時")
+
+	// レート制限のカウンターのクリーンアップを毎時15分の定期実行ジョブとして登録する。
+	// 窓は最長1時間のため、毎時消せばテーブルには直近2時間ほどの窓だけが残る。
+	// 毎時0分のanimes同期バッチ、30分と45分のセッションのクリーンアップと重ならないよう15分にずらす。
+	periodicJobRateLimitCleanup := river.NewPeriodicJob(
+		hourlySchedule{minute: 15},
+		func() (river.JobArgs, *river.InsertOpts) {
+			args := dispatcher.CleanupExpiredRateLimitsArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
+		},
+		nil,
+	)
+
+	riverClient.Client().PeriodicJobs().Add(periodicJobRateLimitCleanup)
+	slog.Info("定期実行ジョブを登録しました", "job", "レート制限のカウンターのクリーンアップ", "schedule", "毎時15分")
 
 	// セッションクリーンアップを毎時30分の定期実行ジョブとして登録する。1回の実行は
 	// UseCaseの上限時間で打ち切るため、滞留があっても毎時少しずつ削除して負荷を一定に抑える。
@@ -357,7 +382,7 @@ func runServe() {
 	r := chi.NewRouter()
 
 	// ミドルウェア
-	r.Use(middleware.Logger)
+	r.Use(authMiddleware.AccessLog)
 	r.Use(middleware.RequestID)
 
 	// リクエストボディサイズ制限 (10MB)
@@ -369,6 +394,12 @@ func runServe() {
 	// 登録順はIP取得に影響しない。
 	maintenanceMW := authMiddleware.NewMaintenanceMiddleware(cfg)
 	r.Use(maintenanceMW.Middleware)
+
+	// Webサイトのレート制限ミドルウェア。リバースプロキシより前に置き、Go版が描画する
+	// ページとRails版へ中継するページの両方を接続元IP単位で数える。メンテナンス中は
+	// メンテナンスページを返すだけのため、メンテナンスミドルウェアの内側に置く。
+	rateLimitMW := authMiddleware.NewRateLimitMiddleware(cfg, limiter, sessionManager)
+	r.Use(rateLimitMW.Middleware)
 
 	// リバースプロキシミドルウェア
 	// Go版で処理するかRails版にプロキシするかを判定
@@ -520,7 +551,7 @@ func runServe() {
 	// パスワードログインハンドラーの初期化
 	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(userRepo)
 	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
-	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, flashMgr, authenticateByPasswordUC)
+	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, flashMgr, limiter, authenticateByPasswordUC)
 
 	// ログアウトハンドラーの初期化
 	signOutHandler := sign_out.NewHandler(sessionManager)
@@ -558,6 +589,9 @@ func runServe() {
 	createAccountDeletionUC := usecase.NewCreateAccountDeletionUsecase(db, userRepo, stripeSubscriberRepo, d, validator.NewSettingsAccountDeletionCreateValidator(oauthApplicationRepo))
 	settingsAccountDeletionHandler := settings_account_deletion.NewHandler(cfg, sessionManager, imageHelper, getAccountDeletionNewUC, createAccountDeletionUC)
 	settingsAccountDeletionCompletionHandler := settings_account_deletion_completion.NewHandler(cfg, imageHelper)
+
+	// 法的文書のページハンドラーの初期化
+	legalDocumentHandler := legal_document.NewHandler(cfg, imageHelper)
 
 	// Stripe Checkoutハンドラーの初期化
 	createSupportersCheckoutValidator := validator.NewSupportersCheckoutCreateValidator()
@@ -622,10 +656,16 @@ func runServe() {
 	// Stripe Webhook
 	r.Post("/webhooks/stripe", stripeWebhookHandler.Create)
 
-	// 退会 (go_account_deletionフラグを有効にした利用者にだけGo版で配信する)
+	// 退会
 	r.With(authMW.RequireAuth).Get("/settings/account/deletion/new", settingsAccountDeletionHandler.New)
 	r.With(authMW.RequireAuth).Post("/settings/account/deletion", settingsAccountDeletionHandler.Create)
 	r.Get("/settings/account/deletion/completed", settingsAccountDeletionCompletionHandler.Show)
+
+	// 法的文書 (利用規約・プライバシーポリシーなど)。配信するパスは文書の一覧表で決まり、
+	// 英語版や改定前の版のアーカイブページは一覧表に登録した時点でルートになる
+	for _, path := range legaldoc.Paths() {
+		r.Get(path, legalDocumentHandler.Show)
+	}
 
 	// DB管理画面
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
@@ -713,6 +753,45 @@ func runServe() {
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireAdmin)
 		r.Delete("/db/episodes/{id}", dbEpisodeHandler.Delete)
+	})
+
+	// 人物一覧は公開 (RailsのDb::PeopleController#indexと同じ)。非公開の人物を
+	// committerにだけ表示する出し分けはUseCaseで行う。
+	// 人物の一括登録・編集・非公開・再公開はcommitterロールを要するため、フォームとその送信、
+	// 非公開・再公開の確認画面とその送信をRequireCommitterでゲートする。人物の削除はadmin専用の
+	// ため (作品と同じくADR 0009の権限分離に揃える)、削除とその確認画面はRequireAdminで別途
+	// ゲートする。
+	personRepo := repository.NewPersonRepository(queries)
+	prefectureRepo := repository.NewPrefectureRepository(queries)
+	getDBPeopleUC := usecase.NewGetDBPeopleUsecase(personRepo)
+	getDBPersonNewUC := usecase.NewGetDBPersonNewUsecase()
+	createPeopleUC := usecase.NewCreatePeopleUsecase(db, personRepo, validator.NewDBPersonCreateValidator(personRepo))
+	getDBPersonEditUC := usecase.NewGetDBPersonEditUsecase(personRepo, prefectureRepo)
+	updatePersonUC := usecase.NewUpdatePersonUsecase(personRepo, validator.NewDBPersonUpdateValidator(personRepo, prefectureRepo))
+	deletePersonUC := usecase.NewDeletePersonUsecase(personRepo)
+	dbPersonHandler := db_person.NewHandler(cfg, sessionManager, flashMgr, getDBPeopleUC, getDBPersonNewUC, createPeopleUC, getDBPersonEditUC, updatePersonUC, deletePersonUC)
+	getDBPersonArchiveNewUC := usecase.NewGetDBPersonArchiveNewUsecase(personRepo)
+	archivePersonUC := usecase.NewArchivePersonUsecase(personRepo)
+	unarchivePersonUC := usecase.NewUnarchivePersonUsecase(personRepo)
+	dbPersonArchiveHandler := db_person_archive.NewHandler(cfg, sessionManager, flashMgr, getDBPersonArchiveNewUC, archivePersonUC, unarchivePersonUC)
+	dbPersonUnarchiveHandler := db_person_unarchive.NewHandler(cfg, sessionManager, usecase.NewGetDBPersonUnarchiveNewUsecase(personRepo))
+	dbPersonDeletionHandler := db_person_deletion.NewHandler(cfg, sessionManager, usecase.NewGetDBPersonDeletionNewUsecase(personRepo))
+	r.Get("/db/people", dbPersonHandler.Index)
+	r.Group(func(r chi.Router) {
+		r.Use(authMiddleware.RequireCommitter)
+		r.Get("/db/people/new", dbPersonHandler.New)
+		r.Post("/db/people", dbPersonHandler.Create)
+		r.Get("/db/people/{id}/edit", dbPersonHandler.Edit)
+		r.Patch("/db/people/{id}", dbPersonHandler.Update)
+		r.Get("/db/people/{id}/archive/new", dbPersonArchiveHandler.New)
+		r.Post("/db/people/{id}/archive", dbPersonArchiveHandler.Create)
+		r.Get("/db/people/{id}/unarchive/new", dbPersonUnarchiveHandler.New)
+		r.Delete("/db/people/{id}/archive", dbPersonArchiveHandler.Delete)
+	})
+	r.Group(func(r chi.Router) {
+		r.Use(authMiddleware.RequireAdmin)
+		r.Get("/db/people/{id}/deletion/new", dbPersonDeletionHandler.New)
+		r.Delete("/db/people/{id}", dbPersonHandler.Delete)
 	})
 
 	// iCalendar配信

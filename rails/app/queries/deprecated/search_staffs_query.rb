@@ -3,7 +3,7 @@
 
 class Deprecated::SearchStaffsQuery
   def initialize(collection = Staff.all, order_by: nil)
-    @collection = collection.only_kept.preload(:resource)
+    @collection = collection.only_kept.with_kept_person.preload(:resource)
     @args = {
       order_by: order_by
     }

@@ -35,6 +35,9 @@ module Beta
     def self.object_from_id(id, _query_ctx)
       type_name, item_id = decode_id(id)
 
+      # 非公開・削除済みの人物は、存在しない人物と同じく見つからない扱いにする
+      return Person.only_kept.find(item_id) if type_name == "Person"
+
       Object.const_get(type_name).find(item_id)
     end
 

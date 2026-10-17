@@ -234,6 +234,13 @@ func TestPeriodicJobArgs(t *testing.T) {
 			wantMaxAttempts: 3,
 		},
 		{
+			name:            "CleanupExpiredRateLimitsArgs",
+			args:            CleanupExpiredRateLimitsArgs{},
+			wantKind:        "cleanup_expired_rate_limits",
+			wantQueue:       river.QueueDefault,
+			wantMaxAttempts: 3,
+		},
+		{
 			name:            "CleanupExpiredSessionsArgs",
 			args:            CleanupExpiredSessionsArgs{},
 			wantKind:        "cleanup_expired_sessions",

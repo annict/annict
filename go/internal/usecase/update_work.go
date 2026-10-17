@@ -48,6 +48,8 @@ func NewUpdateWorkUsecase(
 // を埋め込み、フィールド集合・バリデーター入力・文字列→型変換を作成と共有する。
 type UpdateWorkInput struct {
 	WorkID model.WorkID
+	// Userは更新を認可するユーザー。
+	User *model.User
 	// UpdatedAtはフォームを開いた時点の版で、hiddenフィールドが運ぶ形のまま。
 	// WorkFormInputの中ではなく外に置くのは、作成フローには示すべき版が無いため。非競合の
 	// 却下では送信された版を保ち、競合時は保存済みの内容を示してからその版へ載せ替える。
@@ -60,6 +62,18 @@ type UpdateWorkOutput struct {
 }
 
 func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput) (*UpdateWorkOutput, error) {
+	// 更新はcommitterに限られるため、ユーザーを伴わない呼び出しと一般ユーザーの呼び出しは
+	// バリデーションと読み込みより先に拒否する。webのルートはcommitterのミドルウェアで
+	// 塞がれていてここには来ないが、この確認によりルールが呼び出し元の1つではなくUseCase側に
+	// 残る。
+	if input.User == nil || !input.User.IsCommitter() {
+		return nil, &model.AppError{
+			Code:     model.AppErrCodeForbidden,
+			UserMsg:  i18n.T(ctx, "error_forbidden"),
+			Metadata: map[string]string{"work_id": input.WorkID.String()},
+		}
+	}
+
 	version, err := uc.validator.Validate(ctx, input.toValidatorInput(&input.WorkID, &input.UpdatedAt))
 	if err != nil {
 		return nil, err

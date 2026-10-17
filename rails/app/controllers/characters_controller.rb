@@ -7,6 +7,7 @@ class CharactersController < ApplicationV6Controller
     @casts_with_year = @character
       .casts
       .only_kept
+      .with_kept_person
       .preload(:person, work: :work_image)
       .joins(:work)
       .where(works: {deleted_at: nil})

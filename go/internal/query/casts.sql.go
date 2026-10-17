@@ -19,14 +19,20 @@ SELECT
     c.name,
     c.name_en,
     c.sort_number,
+    c.person_id,
+    ch.id as character_id,
     ch.name as character_name,
     ch.name_en as character_name_en,
     p.name as person_name,
     p.name_en as person_name_en
 FROM casts c
 LEFT JOIN characters ch ON c.character_id = ch.id
-LEFT JOIN people p ON c.person_id = p.id
+INNER JOIN people p ON c.person_id = p.id
 WHERE c.work_id = ANY($1::bigint[])
+  AND c.deleted_at IS NULL
+  AND c.unpublished_at IS NULL
+  AND p.deleted_at IS NULL
+  AND p.unpublished_at IS NULL
 ORDER BY c.work_id, c.sort_number
 `
 
@@ -36,12 +42,15 @@ type GetCastsByWorkIDsRow struct {
 	Name            string         `db:"name"`
 	NameEn          string         `db:"name_en"`
 	SortNumber      int32          `db:"sort_number"`
+	PersonID        int64          `db:"person_id"`
+	CharacterID     sql.NullInt64  `db:"character_id"`
 	CharacterName   sql.NullString `db:"character_name"`
 	CharacterNameEn sql.NullString `db:"character_name_en"`
-	PersonName      sql.NullString `db:"person_name"`
-	PersonNameEn    sql.NullString `db:"person_name_en"`
+	PersonName      string         `db:"person_name"`
+	PersonNameEn    string         `db:"person_name_en"`
 }
 
+// キャスト自身と人物がともに公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す
 func (q *Queries) GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getCastsByWorkIDs, pq.Array(dollar_1))
 	if err != nil {
@@ -57,6 +66,8 @@ func (q *Queries) GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]Ge
 			&i.Name,
 			&i.NameEn,
 			&i.SortNumber,
+			&i.PersonID,
+			&i.CharacterID,
 			&i.CharacterName,
 			&i.CharacterNameEn,
 			&i.PersonName,

@@ -145,6 +145,18 @@ CREATE TYPE public.language AS ENUM (
 
 
 --
+-- Name: person_status; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.person_status AS ENUM (
+    'published',
+    'archived',
+    'delisted',
+    'deleted'
+);
+
+
+--
 -- Name: release_status; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -2139,7 +2151,10 @@ CREATE TABLE public.people (
     casts_count integer DEFAULT 0 NOT NULL,
     staffs_count integer DEFAULT 0 NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    status public.person_status DEFAULT 'published'::public.person_status NOT NULL,
+    archive_message character varying,
+    delist_message character varying
 );
 
 
@@ -2332,6 +2347,18 @@ CREATE TABLE public.providers (
     created_at timestamp with time zone,
     updated_at timestamp with time zone
 );
+
+
+--
+-- Name: rate_limits; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE UNLOGGED TABLE public.rate_limits (
+    key character varying NOT NULL,
+    window_start timestamp with time zone NOT NULL,
+    count integer DEFAULT 1 NOT NULL
+)
+WITH (fillfactor='50');
 
 
 --
@@ -4780,6 +4807,14 @@ ALTER TABLE ONLY public.providers
 
 
 --
+-- Name: rate_limits rate_limits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rate_limits
+    ADD CONSTRAINT rate_limits_pkey PRIMARY KEY (key, window_start);
+
+
+--
 -- Name: reactions reactions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -6368,7 +6403,7 @@ CREATE INDEX index_people_on_favorite_users_count ON public.people USING btree (
 -- Name: index_people_on_name; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE UNIQUE INDEX index_people_on_name ON public.people USING btree (name);
+CREATE UNIQUE INDEX index_people_on_name ON public.people USING btree (name) WHERE (status <> 'deleted'::public.person_status);
 
 
 --
@@ -8676,4 +8711,9 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20261008100100'),
     ('20261008100200'),
     ('20261008100300'),
-    ('20261012072250');
+    ('20261012072250'),
+    ('20261012095110'),
+    ('20261013084107'),
+    ('20261014154243'),
+    ('20261016165628'),
+    ('20261016173859');

@@ -54,6 +54,8 @@ type Config struct {
 
 	// Rate Limiting設定
 	DisableRateLimit bool
+	// Webサイト (Go版が受けるホスト) に接続元IP単位で掛ける1分あたりのリクエスト数の上限
+	WebRateLimitPerMinute int
 
 	// Rails版アプリのURL (リバースプロキシ用)
 	RailsAppURL string
@@ -175,6 +177,7 @@ func Load() (*Config, error) {
 
 	// Rate Limiting設定 (オプショナル - 開発環境でRate Limitingを無効化)
 	cfg.DisableRateLimit = os.Getenv("ANNICT_DISABLE_RATE_LIMIT") == "true"
+	cfg.WebRateLimitPerMinute = parseWebRateLimitPerMinute(os.Getenv("ANNICT_WEB_RATE_LIMIT_PER_MINUTE"))
 
 	// Rails版アプリのURL (オプショナル - リバースプロキシ機能で使用)
 	cfg.RailsAppURL = os.Getenv("ANNICT_RAILS_APP_URL")
@@ -312,6 +315,24 @@ func parseAdminIPs(s string) []string {
 		}
 	}
 	return ips
+}
+
+// defaultWebRateLimitPerMinuteはWebサイトのレート制限の既定値。
+// 開発者向けドキュメント (Annictのレート制限) に載せている値と揃える。
+const defaultWebRateLimitPerMinute = 300
+
+// parseWebRateLimitPerMinuteはWebサイトのレート制限の上限を解釈する。
+// 未設定・数値でない・0以下の場合は既定値を返す。
+func parseWebRateLimitPerMinute(s string) int {
+	if s == "" {
+		return defaultWebRateLimitPerMinute
+	}
+	limit, err := strconv.Atoi(s)
+	if err != nil || limit <= 0 {
+		slog.Warn("ANNICT_WEB_RATE_LIMIT_PER_MINUTEが不正なため既定値を使います", "value", s, "default", defaultWebRateLimitPerMinute)
+		return defaultWebRateLimitPerMinute
+	}
+	return limit
 }
 
 // parseSentryTracesSampleRateは文字列からトレースサンプリングレートをパースします

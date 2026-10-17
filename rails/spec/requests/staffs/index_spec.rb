@@ -59,7 +59,8 @@ RSpec.describe "GET /works/:work_id/staffs", type: :request do
   it "削除されたスタッフは表示されないこと" do
     work = FactoryBot.create(:work)
     staff1 = FactoryBot.create(:staff, work:)
-    staff2 = FactoryBot.create(:staff, work:, deleted_at: Time.current)
+    deleted_person = FactoryBot.create(:person, name: "削除済みのスタッフ")
+    staff2 = FactoryBot.create(:staff, work:, deleted_at: Time.current, resource: deleted_person, name: deleted_person.name)
 
     get "/works/#{work.id}/staffs"
 
@@ -71,12 +72,33 @@ RSpec.describe "GET /works/:work_id/staffs", type: :request do
   it "非公開のスタッフは表示されないこと" do
     work = FactoryBot.create(:work)
     staff1 = FactoryBot.create(:staff, work:)
-    staff2 = FactoryBot.create(:staff, work:, unpublished_at: Time.current)
+    unpublished_person = FactoryBot.create(:person, name: "非公開のスタッフ")
+    staff2 = FactoryBot.create(:staff, work:, unpublished_at: Time.current, resource: unpublished_person, name: unpublished_person.name)
 
     get "/works/#{work.id}/staffs"
 
     expect(response.status).to eq(200)
     expect(response.body).to include(staff1.resource.name)
     expect(response.body).not_to include(staff2.resource.name)
+  end
+
+  it "人物が非公開・削除済みのスタッフは表示されず、団体のスタッフは表示されること" do
+    work = FactoryBot.create(:work)
+    published_person = FactoryBot.create(:person, name: "公開中の人物")
+    unpublished_person = FactoryBot.create(:person, :unpublished, name: "非公開の人物")
+    deleted_person = FactoryBot.create(:person, :deleted, name: "削除済みの人物")
+    organization = FactoryBot.create(:organization, name: "テスト団体")
+    FactoryBot.create(:staff, work:, resource: published_person, name: published_person.name)
+    FactoryBot.create(:staff, work:, resource: unpublished_person, name: unpublished_person.name)
+    FactoryBot.create(:staff, work:, resource: deleted_person, name: deleted_person.name)
+    FactoryBot.create(:staff, work:, resource: organization, name: organization.name)
+
+    get "/works/#{work.id}/staffs"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include("公開中の人物")
+    expect(response.body).to include("テスト団体")
+    expect(response.body).not_to include("非公開の人物")
+    expect(response.body).not_to include("削除済みの人物")
   end
 end

@@ -44,7 +44,7 @@ func TestCreate_ValidationError(t *testing.T) {
 	form := url.Values{}
 	form.Set("title", "")
 	form.Set("media", "")
-	req := httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode()))
+	req := withCommitterUser(httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode())))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
 
@@ -89,7 +89,7 @@ func TestCreate_ValidationError_PreservesFormValues(t *testing.T) {
 	form.Set("title", "テスト作品")
 	form.Set("media", "")
 	form.Set("title_kana", "てすとさくひん")
-	req := httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode()))
+	req := withCommitterUser(httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode())))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
 
@@ -122,7 +122,7 @@ func TestCreate_Success(t *testing.T) {
 	form := url.Values{}
 	form.Set("title", "新しいアニメ作品")
 	form.Set("media", "1") // tv
-	req := httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode()))
+	req := withCommitterUser(httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode())))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
 
@@ -201,4 +201,20 @@ func TestCreate_RequiresCommitter(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestCreate_ForbiddenWithoutMiddlewareは有効な送信でもUseCaseが拒否し、403ページに
+// 変換されることを検証する。
+func TestCreate_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	handler := newTestHandler(t, db, tx)
+	form := url.Values{"title": {"作成認可境界テスト"}, "media": {"1"}}
+	req := httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	rr := httptest.NewRecorder()
+	handler.Create(rr, req)
+
+	assertForbiddenPage(t, rr)
 }

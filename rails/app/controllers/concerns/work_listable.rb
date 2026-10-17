@@ -22,8 +22,8 @@ module WorkListable
     @work_ids = works.map(&:id)
 
     if @display_option == "grid"
-      @casts_data = Cast.only_kept.where(work: works).order(:sort_number).group_by(&:work_id)
-      @staffs_data = Staff.only_kept.major.where(work: works).order(:sort_number).group_by(&:work_id)
+      @casts_data = Cast.only_kept.with_kept_person.where(work: works).order(:sort_number).group_by(&:work_id)
+      @staffs_data = Staff.only_kept.with_kept_person.major.where(work: works).order(:sort_number).group_by(&:work_id)
     end
   end
 end

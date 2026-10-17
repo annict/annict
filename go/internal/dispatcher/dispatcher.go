@@ -125,6 +125,17 @@ func (CleanupExpiredSignInCodesArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
 }
 
+// CleanupExpiredRateLimitsArgsは終わった窓のレート制限のカウンターのクリーンアップジョブの引数。
+type CleanupExpiredRateLimitsArgs struct{}
+
+// Kindはジョブの種類を返す。
+func (CleanupExpiredRateLimitsArgs) Kind() string { return "cleanup_expired_rate_limits" }
+
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。
+func (CleanupExpiredRateLimitsArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
+}
+
 // CleanupExpiredSessionsArgsは期限切れセッションのクリーンアップジョブの引数。
 type CleanupExpiredSessionsArgs struct{}
 

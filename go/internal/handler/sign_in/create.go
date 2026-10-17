@@ -83,10 +83,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 	} else {
 		// パスワードが存在しない場合 → 6桁コード入力画面へリダイレクト
-		slog.InfoContext(ctx, "6桁コードを送信しました",
-			"user_id", output.UserID,
-			"email", output.Email,
-		)
+		slog.InfoContext(ctx, "6桁コードを送信しました", "user_id", output.UserID)
 
 		// フラッシュメッセージを設定
 		message := i18n.T(ctx, "sign_in_code_sent_to", map[string]any{"Email": output.Email})

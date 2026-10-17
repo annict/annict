@@ -112,4 +112,24 @@ RSpec.describe "GET /@:username", type: :request do
 
     expect(response.status).to eq(200)
   end
+
+  it "人物が非公開のお気に入り声優・スタッフは表示されないこと" do
+    user = create(:registered_user)
+    published_person = create(:person, name: "公開中の声優")
+    unpublished_cast_person = create(:person, :unpublished, name: "非公開の声優")
+    unpublished_staff_person = create(:person, :unpublished, name: "非公開のスタッフ")
+    create(:cast, person: published_person, name: published_person.name)
+    create(:cast, person: unpublished_cast_person, name: unpublished_cast_person.name)
+    create(:staff, resource: unpublished_staff_person, name: unpublished_staff_person.name)
+    create(:person_favorite, user:, person: published_person)
+    create(:person_favorite, user:, person: unpublished_cast_person)
+    create(:person_favorite, user:, person: unpublished_staff_person)
+
+    get "/@#{user.username}"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include("公開中の声優")
+    expect(response.body).not_to include("非公開の声優")
+    expect(response.body).not_to include("非公開のスタッフ")
+  end
 end

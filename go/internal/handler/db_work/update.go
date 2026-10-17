@@ -31,6 +31,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	input := usecase.UpdateWorkInput{
 		WorkID:        model.WorkID(id),
+		User:          middleware.GetUserFromContext(ctx),
 		UpdatedAt:     r.FormValue("updated_at"),
 		WorkFormInput: parseWorkForm(r),
 	}
@@ -48,6 +49,8 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 			switch ae.Code {
 			case model.AppErrCodeResourceNotFound:
 				httperror.NotFound(w, r)
+			case model.AppErrCodeForbidden:
+				httperror.Forbidden(w, r)
 			case model.AppErrCodeConflict:
 				// フォームを開いてから本送信までの間に、他者がその作品を書いた。送信された
 				// 値と、冒頭に述べた競合の説明、そして保存済みの値を並べてフォームが返るため、
@@ -151,7 +154,7 @@ func (h *Handler) editFormRejectionData(
 	ctx := r.Context()
 
 	if !state.Conflict {
-		optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
+		optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx, usecase.GetDBWorkFormOptionsInput{User: input.User})
 		if err != nil {
 			slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
 			httperror.InternalServerError(w, r)
@@ -161,7 +164,7 @@ func (h *Handler) editFormRejectionData(
 		return viewmodel.NewDBWorkFormOptions(ctx, optionsResult.NumberFormats), nil, true
 	}
 
-	output, err := h.getDBWorkEditUC.Execute(ctx, usecase.GetDBWorkEditInput{WorkID: input.WorkID})
+	output, err := h.getDBWorkEditUC.Execute(ctx, usecase.GetDBWorkEditInput{User: input.User, WorkID: input.WorkID})
 	if err != nil {
 		// 競合を報告する時点でworkが失われている。送信と見比べる対象も、送信し直す先の
 		// ページも残っていない。

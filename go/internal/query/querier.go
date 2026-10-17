@@ -49,8 +49,17 @@ type Querier interface {
 	// 更新側が必要なエピソードをNOWAITで先取りし、待たずに試行を中断するため。一括作成も作品を
 	// 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
 	ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error)
+	// 公開中の人物をアーカイブする。archivedは閲覧できる状態のため、Rails版の表示から除外する
+	// 橋渡し (unpublished_at) は書かない。状態の確認と書き込みを1文で行うため、確認画面を開いた
+	// 後に他者が状態を変えた場合も、1行も返らない (not found) になる。時刻はCreatePersonと同じく
+	// UTCに変換してから書く。
+	ArchiveDBPerson(ctx context.Context, id int64) (int64, error)
+	// 解約の通知で有効なユーザーの紐付けだけを外す。退会受付との行ロック競合後にも
+	// deleted_atを再評価し、論理削除済みのユーザーの紐付けを残す。
+	ClearActiveUserStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (int64, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
 	CountDBEpisodes(ctx context.Context, workID int64) (int64, error)
+	CountDBPeople(ctx context.Context) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
@@ -74,6 +83,14 @@ type Querier interface {
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
 	CreatePasswordResetToken(ctx context.Context, arg CreatePasswordResetTokenParams) (PasswordResetToken, error)
+	// データ変更CTEで、Railsのsave_and_create_activity! と同じpeople.createの編集履歴を、
+	// 挿入した行をparameters.newとして記録する (CreateEpisodeと同じ形)。人物は自身が
+	// root_resourceになる (RailsのDbActivityMethods#root_resource)。
+	//
+	// people・db_activitiesの時刻カラムはtimestamp without time zoneで、Rails版はUTCの時刻を
+	// 書いている。NOW() をそのまま書くと接続のTimeZone設定で壁時計の値が変わるため、UTCに
+	// 変換してから書く (UpdateDBPersonも同じ)。
+	CreatePerson(ctx context.Context, arg CreatePersonParams) (int64, error)
 	CreateProfile(ctx context.Context, arg CreateProfileParams) (CreateProfileRow, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateSetting(ctx context.Context, userID int64) (CreateSettingRow, error)
@@ -171,6 +188,11 @@ type Querier interface {
 	// 理由はUpdateDBEpisodeの張り替えが述べるものと同じ。削除するエピソード自身の
 	// prev_episode_idはそのままにする。削除済みの行は何も表示しないため。
 	DeleteDBEpisode(ctx context.Context, arg DeleteDBEpisodeParams) (DeleteDBEpisodeRow, error)
+	// 人物を論理削除する。Rails版の物理削除 (destroy_in_batches) と異なり、キャスト・スタッフ・
+	// 編集履歴は残す。Rails版はperson_statusを読まないため、Rails版の表示から除外されるよう
+	// deleted_atにも時刻を書く (Rails版への橋渡し)。削除できるのは一覧に表示する公開中と
+	// アーカイブの人物で、削除済み・掲載停止の人物は対象にしない。
+	DeleteDBPerson(ctx context.Context, id int64) (int64, error)
 	// ユーザーが行ったAnnict DBの編集履歴を最大batch_size件削除し、削除した件数を返す。
 	DeleteDbActivitiesByUserID(ctx context.Context, arg DeleteDbActivitiesByUserIDParams) (int64, error)
 	// ユーザーが書いたAnnict DBのコメントを最大batch_size件削除し、削除した件数を返す。
@@ -188,6 +210,7 @@ type Querier interface {
 	// 残さないよう先の段階で削除しておく。
 	DeleteEpisodeRecordsByUserID(ctx context.Context, arg DeleteEpisodeRecordsByUserIDParams) (int64, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
+	DeleteExpiredRateLimits(ctx context.Context, windowStart time.Time) error
 	// updated_atがlower_bound以上かつcutoffより古いセッションを最大batch_size件削除し、
 	// 削除した件数と、削除した行のupdated_atの最大値を返す。PostgreSQLのDELETEはLIMITを
 	// 取れないため、対象はupdated_atで並べたサブクエリで選び、
@@ -316,6 +339,10 @@ type Querier interface {
 	ExistsKeptOAuthApplicationByOwnerID(ctx context.Context, userID int64) (bool, error)
 	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
 	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
+	// 編集の名前の重複確認に使う。ListTakenPersonNamesと同じく、people.nameの一意インデックス
+	// に揃えてdeletedの人物を除き、編集中の人物自身も除く。
+	ExistsPersonByNameExcludingID(ctx context.Context, arg ExistsPersonByNameExcludingIDParams) (bool, error)
+	ExistsPrefectureByID(ctx context.Context, id int64) (bool, error)
 	// RailsアクションのWork.without_deleted.findと同じ順序で、送信行をパースする前に親作品を
 	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
 	// 判断には使わない。
@@ -344,6 +371,7 @@ type Querier interface {
 	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
 	// カレンダー用の作品 (放送開始日) を取得します
 	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
+	// キャスト自身と人物がともに公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
 	// 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
@@ -397,12 +425,22 @@ type Querier interface {
 	// トークンの発行後に退会・利用停止したユーザーのトークンは無効として扱う。
 	GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error)
 	GetPasswordResetTokensByUserID(ctx context.Context, userID int64) ([]PasswordResetToken, error)
+	// 編集フォームは、Rails版の編集フォームと同じ16項目と、hiddenで持ち回る版 (updated_at)
+	// を読む。編集できるのは一覧に表示する公開中とアーカイブの人物だけで、削除と掲載停止の
+	// 人物は除く。
+	GetPersonForEditByID(ctx context.Context, id int64) (GetPersonForEditByIDRow, error)
+	// アーカイブ・アーカイブ解除・削除の確認画面が、対象の名前と現在の状態を読む。その画面が
+	// 操作できない人物を呼び出し側で弾けるよう、状態で絞り込まずに返す
+	// (GetWorkForStateChangeByIDと同じ)。
+	GetPersonForStateChangeByID(ctx context.Context, id int64) (GetPersonForStateChangeByIDRow, error)
 	GetPopularWorks(ctx context.Context) ([]GetPopularWorksRow, error)
 	GetProfileByUserID(ctx context.Context, userID int64) (GetProfileByUserIDRow, error)
 	GetRecordByID(ctx context.Context, id int64) (GetRecordByIDRow, error)
 	GetRecordByUserAndWork(ctx context.Context, arg GetRecordByUserAndWorkParams) (GetRecordByUserAndWorkRow, error)
 	GetSessionByID(ctx context.Context, sessionID string) (Session, error)
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
+	// スタッフ自身が公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す。
+	// 人物を参照する行 (resource_type = 'Person') は、人物も公開状態のものに限る
 	GetStaffsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetStaffsByWorkIDsRow, error)
 	GetStripeSubscriberByID(ctx context.Context, id int64) (StripeSubscriber, error)
 	GetStripeSubscriberByStripeCustomerID(ctx context.Context, stripeCustomerID string) (StripeSubscriber, error)
@@ -452,6 +490,9 @@ type Querier interface {
 	// 作品状態のsourceを運ぶ。3つの画面が受け付ける状態はそれぞれ異なるため、ここでは状態を
 	// 絞り込まない。
 	GetWorkForStateChangeByID(ctx context.Context, id int64) (GetWorkForStateChangeByIDRow, error)
+	// キーと窓の組のカウンターを1つ増やし、増やした後の値を返す。
+	// 窓の最初のリクエストでは行を作り、以降は同じ行のcountを増やす。
+	IncrementRateLimit(ctx context.Context, arg IncrementRateLimitParams) (int32, error)
 	IncrementSignInCodeAttempts(ctx context.Context, id int64) error
 	IncrementSignUpCodeAttempts(ctx context.Context, id int64) error
 	// RailsのEpisode.createは公開話数のカウンターキャッシュを加算し、親作品をtouchする。
@@ -479,6 +520,9 @@ type Querier interface {
 	// NULLになる。母集団を案内の「公開中のエピソード数」と揃え、公開中の最大の連番がその件数と
 	// 一致するようにするため。
 	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
+	// 公開中とアーカイブの人物を、IDの降順に並べる。archivedは閲覧を保つ凍結のため、誰にでも
+	// 表示する。削除 (deleted) と掲載停止 (delisted) の人物は、名義を出さないため返さない。
+	ListDBPeople(ctx context.Context, arg ListDBPeopleParams) ([]ListDBPeopleRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
 	// UpdateDBEpisodeがこの後に書く行と、隣接行として参照する行をid昇順で列挙する。編集対象
@@ -493,9 +537,15 @@ type Querier interface {
 	ListEpisodeIDsForEpisodeUpdateByID(ctx context.Context, arg ListEpisodeIDsForEpisodeUpdateByIDParams) ([]int64, error)
 	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
+	// 人物の編集フォームの出身地の選択肢。都道府県の順 (北海道から沖縄県、最後に海外) は
+	// IDの順と一致するため、IDで並べる。
+	ListPrefectures(ctx context.Context) ([]ListPrefecturesRow, error)
 	// 退会の削除処理でストレージから消す画像を求めるため、ユーザーのプロフィール画像と背景画像の
 	// Shrineの添付データを取得する。
 	ListProfileImageDataByUserID(ctx context.Context, userID int64) ([]ListProfileImageDataByUserIDRow, error)
+	// 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
+	// 同じく、deletedの人物だけを除いて照合する。
+	ListTakenPersonNames(ctx context.Context, names []string) ([]string, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
@@ -564,6 +614,8 @@ type Querier interface {
 	//
 	// 書き込みがepisodes先・works後なのはArchiveDBEpisodeが述べる理由による。
 	UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisodeParams) (UnarchiveDBEpisodeRow, error)
+	// アーカイブの人物を公開中に戻す。ArchiveDBPersonの逆で、アーカイブの人物だけを対象にする。
+	UnarchiveDBPerson(ctx context.Context, id int64) (int64, error)
 	UpdateAnime(ctx context.Context, arg UpdateAnimeParams) error
 	UpdateAnimeClassificationByAnimeID(ctx context.Context, arg UpdateAnimeClassificationByAnimeIDParams) error
 	UpdateAnimeEvent(ctx context.Context, arg UpdateAnimeEventParams) error
@@ -614,6 +666,24 @@ type Querier interface {
 	// 本ステートメントが書く行を、自身のスナップショットが隣接と判断した行に一致させるため。
 	// ここでも作品idを条件にすることで、ロック・事前読み取りした親に書き込みを束縛する。
 	UpdateDBEpisode(ctx context.Context, arg UpdateDBEpisodeParams) (int64, error)
+	// 送信が名乗る版の照合は、UPDATEの中で行う (UpdateDBEpisodeと同じ)。people.updated_atは
+	// timestamp without time zoneのため、版もtimestampにキャストして照合する。1行も返らない
+	// ことは、フォームを開いた後に他者が行を書いたか、人物が編集できない状態 (削除・掲載停止)
+	// になったことを意味する。
+	//
+	// 編集履歴のpeople.updateは、内容が実際に変わったときにだけ記録する (Railsの
+	// save_and_create_activity! と同じ)。NULL許容の文字列カラムは、Rails版が空欄を空文字列で、
+	// Go版がNULLで保存するため、比較ではNULLIFで両者を同じ値とみなす。Rails版が保存した空文字列の
+	// 欄を触らずに送信しただけで、変更として記録されないようにするため。parametersの形 (old /
+	// newに行の全カラム) はRails版と揃え、/db/activitiesがそのまま差分を表示できるようにする。
+	// created_activityは最後のSELECTにjoinしない。joinすると、変更の無い送信で返すべきidが
+	// 落ちてしまうため。
+	//
+	// Rails版は保存時にキャスト・スタッフのupdated_atも更新していた (touch_children) が、Go版
+	// では再現しない。それらのupdated_atを読むキャッシュは無く、Rails版のtouchはキャストから作品の
+	// updated_atまで連鎖するため、再現すると人物の編集が、開いている作品の編集フォームを競合させて
+	// しまうため。
+	UpdateDBPerson(ctx context.Context, arg UpdateDBPersonParams) (int64, error)
 	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error

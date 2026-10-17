@@ -339,6 +339,114 @@ func TestUserRepository_GetByStripeSubscriberID_NotFound(t *testing.T) {
 	}
 }
 
+func TestUserRepository_ClearActiveUserStripeSubscriberID_AccountDeletionRace(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	setupTx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("準備用トランザクションの開始に失敗: %v", err)
+	}
+	t.Cleanup(func() { _ = setupTx.Rollback() })
+	subscriberID := testutil.NewStripeSubscriberBuilder(t, setupTx).Build()
+	userID := testutil.NewUserBuilder(t, setupTx).WithStripeSubscriberID(&subscriberID).Build()
+	if err := setupTx.Commit(); err != nil {
+		t.Fatalf("準備用トランザクションのコミットに失敗: %v", err)
+	}
+	repo := repository.NewUserRepository(query.New(db))
+	t.Cleanup(func() {
+		cleanupTx, err := db.Begin()
+		if err != nil {
+			t.Errorf("後片付けのトランザクションの開始に失敗: %v", err)
+			return
+		}
+		defer func() { _ = cleanupTx.Rollback() }()
+		if _, err := repo.WithTx(cleanupTx).DeleteByID(context.Background(), userID); err != nil {
+			t.Errorf("後片付けでユーザーを削除できない: %v", err)
+			return
+		}
+		if err := cleanupTx.Commit(); err != nil {
+			t.Errorf("後片付けのコミットに失敗: %v", err)
+		}
+	})
+
+	deletionTx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("退会受付トランザクションの開始に失敗: %v", err)
+	}
+	t.Cleanup(func() { _ = deletionTx.Rollback() })
+	webhookTx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("Webhookトランザクションの開始に失敗: %v", err)
+	}
+	t.Cleanup(func() { _ = webhookTx.Rollback() })
+	var webhookPID int
+	if err := webhookTx.QueryRow("SELECT pg_backend_pid()").Scan(&webhookPID); err != nil {
+		t.Fatalf("Webhook接続のPID取得に失敗: %v", err)
+	}
+	if _, err := deletionTx.Exec("UPDATE users SET deleted_at = NOW() WHERE id = $1", int64(userID)); err != nil {
+		t.Fatalf("退会受付の更新に失敗: %v", err)
+	}
+
+	type clearResult struct {
+		userID *model.UserID
+		err    error
+	}
+	resultCh := make(chan clearResult, 1)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+	go func() {
+		id, err := repo.WithTx(webhookTx).ClearActiveUserStripeSubscriberID(ctx, subscriberID)
+		resultCh <- clearResult{userID: id, err: err}
+	}()
+
+	// 解除の更新が退会受付の行ロックを待つまで確認してから、退会をコミットする。
+	deadline := time.Now().Add(5 * time.Second)
+	for {
+		select {
+		case result := <-resultCh:
+			t.Fatalf("退会受付のコミット前に紐付け解除が終わった: %v", result.err)
+		default:
+		}
+		var waitEvent sql.NullString
+		if err := db.QueryRow("SELECT wait_event_type FROM pg_stat_activity WHERE pid = $1", webhookPID).Scan(&waitEvent); err != nil {
+			t.Fatalf("Webhook接続の待機状態の取得に失敗: %v", err)
+		}
+		if waitEvent.Valid && waitEvent.String == "Lock" {
+			break
+		}
+		if time.Now().After(deadline) {
+			t.Fatal("Webhookの紐付け解除が退会受付の行ロックを待たなかった")
+		}
+		time.Sleep(10 * time.Millisecond)
+	}
+	if err := deletionTx.Commit(); err != nil {
+		t.Fatalf("退会受付のコミットに失敗: %v", err)
+	}
+	var result clearResult
+	select {
+	case result = <-resultCh:
+	case <-ctx.Done():
+		t.Fatalf("退会受付のコミット後も紐付け解除が終了しなかった: %v", ctx.Err())
+	}
+	if result.err != nil {
+		t.Fatalf("紐付け解除のエラー = %v", result.err)
+	}
+	if result.userID != nil {
+		t.Errorf("解除されたユーザーID = %d、期待値 = nil", *result.userID)
+	}
+	if err := webhookTx.Commit(); err != nil {
+		t.Fatalf("Webhookのコミットに失敗: %v", err)
+	}
+	var retainedSubscriberID sql.NullInt64
+	if err := db.QueryRow("SELECT stripe_subscriber_id FROM users WHERE id = $1", int64(userID)).Scan(&retainedSubscriberID); err != nil {
+		t.Fatalf("退会後のユーザー取得に失敗: %v", err)
+	}
+	if !retainedSubscriberID.Valid || retainedSubscriberID.Int64 != int64(subscriberID) {
+		t.Errorf("退会後の購読情報ID = %v、期待値 = %d", retainedSubscriberID, subscriberID)
+	}
+}
+
 // TestUserRepository_IsSupporter_StripeActiveはStripeサポーター (アクティブ) の場合trueを返すことをテスト
 func TestUserRepository_IsSupporter_StripeActive(t *testing.T) {
 	t.Parallel()

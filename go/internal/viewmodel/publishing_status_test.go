@@ -8,7 +8,7 @@ import (
 
 // TestPublishingStatus_MirrorsDomainConstantsは各ドメインのstatus定数が、同名の
 // PublishingStatus定数へ射影されることを検証する。Presentation層は導出した状態を直接変換
-// する (PublishingStatus(work.DerivedStatus()) / PublishingStatus(episode.DerivedStatus()))
+// する (PublishingStatus(work.DerivedStatus()) / PublishingStatus(episode.DerivedStatus()) など)
 // ため、この共有型から値がずれたドメイン定数は、components.StatusLabelが描画しない値に
 // 黙って着地してしまう。
 func TestPublishingStatus_MirrorsDomainConstants(t *testing.T) {

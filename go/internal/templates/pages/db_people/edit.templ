@@ -1,0 +1,324 @@
+package db_people
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// EditPageDataは人物編集ページが描画するデータ (編集対象の人物、選択欄の選択肢、および
+// 送信されたフォームの状態)。
+type EditPageData struct {
+	Person      viewmodel.DBPersonEditTarget
+	CSRFToken   string
+	FormOptions viewmodel.DBPersonFormOptions
+	FormErrors  *viewmodel.FormErrors
+	FormInput   viewmodel.DBPersonFormInput
+	// ConflictCurrentは、本フォームを開いてから送信するまでの間に他者が書いた人物の
+	// 保存済みの値を持ち、それ以外の場合はnilになる。ページは、却下された送信の値と異なる
+	// ものを表示する。どちらを残すかを決めるのは編集者であり、何を上書きするのかを見なければ
+	// 決められないため。フォームが運ぶhiddenの版はこれらの値の版のため、もう一度送信すると
+	// ここに表示された内容だけを上書きし、その後に届いた変更は上書きしない。
+	ConflictCurrent *viewmodel.DBPersonFormInput
+}
+
+// editFieldKindは入力欄の種類。種類ごとに描画する要素と属性が決まる。
+type editFieldKind int
+
+const (
+	editFieldText editFieldKind = iota
+	editFieldURL
+	editFieldDate
+	editFieldInteger
+	editFieldSelect
+)
+
+// editFieldは本フォームの入力欄1つ。Nameはフォームのname属性で、id・エラー要約の項目・
+// エラーメッセージのidもこの名前から決まる。
+type editField struct {
+	Name     string
+	Label    string
+	Kind     editFieldKind
+	Required bool
+	Options  []viewmodel.SelectOption
+}
+
+// editFieldsは本フォームが書き込むフィールドを、Rails版の編集フォームと同じ順で、表示中の
+// ラベルと対にしてすべて並べる。入力欄・エラー要約・競合の案内がいずれもここから項目を
+// 名指しするため、同じフィールドが三者で異なる順やラベルで並ぶことがない。ラベルはフィールド
+// 名から組み立てたキーではなく直書きのキーで引く。翻訳キーを使用箇所からgrepで追える状態に
+// 保つため。
+func (d EditPageData) editFields(ctx context.Context) []editField {
+	return []editField{
+		{Name: "name", Label: templates.T(ctx, "db_people_edit_name_label"), Kind: editFieldText, Required: true},
+		{Name: "name_kana", Label: templates.T(ctx, "db_people_edit_name_kana_label"), Kind: editFieldText},
+		{Name: "name_en", Label: templates.T(ctx, "db_people_edit_name_en_label"), Kind: editFieldText},
+		{Name: "nickname", Label: templates.T(ctx, "db_people_edit_nickname_label"), Kind: editFieldText},
+		{Name: "nickname_en", Label: templates.T(ctx, "db_people_edit_nickname_en_label"), Kind: editFieldText},
+		{Name: "gender", Label: templates.T(ctx, "db_people_edit_gender_label"), Kind: editFieldSelect, Options: d.FormOptions.GenderOptions},
+		{Name: "blood_type", Label: templates.T(ctx, "db_people_edit_blood_type_label"), Kind: editFieldSelect, Options: d.FormOptions.BloodTypeOptions},
+		{Name: "prefecture_id", Label: templates.T(ctx, "db_people_edit_prefecture_label"), Kind: editFieldSelect, Options: d.FormOptions.PrefectureOptions},
+		{Name: "birthday", Label: templates.T(ctx, "db_people_edit_birthday_label"), Kind: editFieldDate},
+		{Name: "height", Label: templates.T(ctx, "db_people_edit_height_label"), Kind: editFieldInteger},
+		{Name: "url", Label: templates.T(ctx, "db_people_edit_url_label"), Kind: editFieldURL},
+		{Name: "url_en", Label: templates.T(ctx, "db_people_edit_url_en_label"), Kind: editFieldURL},
+		{Name: "wikipedia_url", Label: templates.T(ctx, "db_people_edit_wikipedia_url_label"), Kind: editFieldURL},
+		{Name: "wikipedia_url_en", Label: templates.T(ctx, "db_people_edit_wikipedia_url_en_label"), Kind: editFieldURL},
+		{Name: "twitter_username", Label: templates.T(ctx, "db_people_edit_twitter_username_label"), Kind: editFieldText},
+		{Name: "twitter_username_en", Label: templates.T(ctx, "db_people_edit_twitter_username_en_label"), Kind: editFieldText},
+	}
+}
+
+// editSummaryFieldsはエラー要約が名指しできるフィールドを、本フォームが表示する順で並べる。
+func (d EditPageData) editSummaryFields(ctx context.Context) []components.FormErrorField {
+	fields := d.editFields(ctx)
+	summaryFields := make([]components.FormErrorField, len(fields))
+	for i, field := range fields {
+		summaryFields[i] = components.FormErrorField{Name: field.Name, Label: field.Label}
+	}
+
+	return summaryFields
+}
+
+func (d EditPageData) hasFieldError(field string) bool {
+	return d.FormErrors != nil && d.FormErrors.HasFieldError(field)
+}
+
+// hasErrorsは送信が失敗したかどうかを返す。ページの初期フォーカス位置の判断に使う。
+// 編集のために開いたフォームでは名前の欄が、送信が失敗した後はエラー要約がフォーカスを
+// 受け取り、両者が同時にautofocusを主張しないようにする。
+func (d EditPageData) hasErrors() bool {
+	return d.FormErrors.HasErrors()
+}
+
+// autofocusはフィールドが読み込み時にフォーカスを受け取るかを返す。
+func (d EditPageData) autofocus(field editField) bool {
+	return field.Name == "name" && !d.hasErrors()
+}
+
+// enterKeyHintはモバイルのキーボードのEnterキーの表示を返す。最後の欄では送信に移ることを、
+// それ以外では次の欄に進むことを示す。
+func (d EditPageData) enterKeyHint(ctx context.Context, field editField) string {
+	fields := d.editFields(ctx)
+	if field.Name == fields[len(fields)-1].Name {
+		return "done"
+	}
+
+	return "next"
+}
+
+// editConflictFieldは競合の案内が述べる保存済みの値1つと、同じフィールドについてフォーム
+// が表示するラベルの組。
+type editConflictField struct {
+	Label string
+	Value string
+}
+
+// conflictFieldsは、却下された送信が運んだ値と異なる保存済みの値を、フォームが各フィールド
+// を表示する順で並べる。異なるものだけを並べるのは、それが再送信で上書きされる対象であるため
+// (作品の編集と同じ)。選択欄の値は、編集者が目にする選択肢のラベルに解決する。
+func (d EditPageData) conflictFields(ctx context.Context) []editConflictField {
+	if d.ConflictCurrent == nil {
+		return nil
+	}
+
+	var fields []editConflictField
+	for _, field := range d.editFields(ctx) {
+		stored := d.ConflictCurrent.Val(field.Name)
+		if stored == d.FormInput.Val(field.Name) {
+			continue
+		}
+		value := stored
+		if field.Kind == editFieldSelect {
+			value = selectOptionLabel(field.Options, stored)
+		}
+		fields = append(fields, editConflictField{Label: field.Label, Value: value})
+	}
+
+	return fields
+}
+
+// selectOptionLabelは選択欄がある値に対して表示するラベルを返し、その値を持つ選択肢が
+// 無い場合は値そのものを返す。選択欄がもはや提示できない保存済みの値も、未設定として報告せず
+// そのまま見せるため。
+func selectOptionLabel(options []viewmodel.SelectOption, value string) string {
+	for _, option := range options {
+		if option.Value == value {
+			return option.Label
+		}
+	}
+
+	return value
+}
+
+templ Edit(data EditPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   data.Person.Name,
+					Actions: editPersonPageLink(data.Person.ID),
+				})
+			</div>
+		</div>
+
+		@components.ContentCard("") {
+			<div class="flex flex-col gap-4">
+				@components.FormErrors(components.FormErrorsData{
+					Errors: data.FormErrors,
+					Fields: data.editSummaryFields(ctx),
+				})
+
+				if data.ConflictCurrent != nil {
+					<div class="alert">
+						<h2>{ templates.T(ctx, "db_people_edit_conflict_heading") }</h2>
+						<section class="grid gap-2">
+							if len(data.conflictFields(ctx)) > 0 {
+								<dl class="grid gap-1">
+									for _, field := range data.conflictFields(ctx) {
+										<div class="flex flex-wrap gap-x-2">
+											<dt>{ field.Label }</dt>
+											<dd class="text-card-foreground [overflow-wrap:anywhere]">{ valueOrDash(field.Value) }</dd>
+										</div>
+									}
+								</dl>
+							} else {
+								<p>{ templates.T(ctx, "db_people_edit_conflict_no_field_changes") }</p>
+							}
+							<p>{ templates.T(ctx, "db_people_edit_conflict_help") }</p>
+						</section>
+					</div>
+				}
+
+				<form
+					action={ templates.DBPersonPath(data.Person.ID).SafeURL() }
+					class="max-w-2xl flex flex-col gap-6"
+					method="POST"
+				>
+					<input type="hidden" name="_method" value="PATCH"/>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					// フォームを開いた時点の版を送信と一緒に運ぶ。古い読み取りからの更新を、
+					// 間に書いた人の変更を黙って上書きせずに却下できるようにするため。
+					<input type="hidden" name="updated_at" value={ data.FormInput.UpdatedAt }/>
+
+					for _, field := range data.editFields(ctx) {
+						@editFieldGroup(data, field)
+					}
+
+					<div role="group" class="field" data-orientation="horizontal">
+						<button type="submit" class="btn rounded-full">
+							@templates.DecorativeInlineIcon("floppy-disk-regular", templates.InlineIconStart)
+							{ templates.T(ctx, "db_people_edit_submit") }
+						</button>
+					</div>
+				</form>
+			</div>
+		}
+	</div>
+}
+
+// editFieldGroupは入力欄1つを、ラベルとエラーメッセージと一緒に描画する。
+templ editFieldGroup(data EditPageData, field editField) {
+	<div
+		role="group"
+		class="field"
+		if data.hasFieldError(field.Name) {
+			data-invalid
+		}
+	>
+		<label for={ field.Name } class="label">
+			{ field.Label }
+			if field.Required {
+				@components.RequiredBadge()
+			}
+		</label>
+		switch field.Kind {
+			case editFieldSelect:
+				<select
+					id={ field.Name }
+					name={ field.Name }
+					class="select w-full"
+					if data.hasFieldError(field.Name) {
+						aria-invalid="true"
+						aria-describedby={ components.FieldErrorIDs(data.FormErrors, field.Name) }
+					}
+				>
+					<option value=""></option>
+					for _, opt := range field.Options {
+						if opt.Value == data.FormInput.Val(field.Name) {
+							<option value={ opt.Value } selected>{ opt.Label }</option>
+						} else {
+							<option value={ opt.Value }>{ opt.Label }</option>
+						}
+					}
+				</select>
+			default:
+				<input
+					type={ editFieldInputType(field.Kind) }
+					if field.Kind == editFieldInteger {
+						inputmode="numeric"
+					}
+					if field.Kind != editFieldDate {
+						enterkeyhint={ data.enterKeyHint(ctx, field) }
+					}
+					id={ field.Name }
+					name={ field.Name }
+					class="input"
+					if field.Required {
+						required
+					}
+					if data.autofocus(field) {
+						autofocus
+					}
+					if data.hasFieldError(field.Name) {
+						aria-invalid="true"
+						aria-describedby={ components.FieldErrorIDs(data.FormErrors, field.Name) }
+					}
+					value={ data.FormInput.Val(field.Name) }
+				/>
+		}
+		if data.hasFieldError(field.Name) {
+			for i, errorMsg := range data.FormErrors.Fields[field.Name] {
+				<p id={ components.FieldErrorID(field.Name, i) } role="alert">{ errorMsg }</p>
+			}
+		}
+	</div>
+}
+
+// editFieldInputTypeは入力欄の種類に対応するtype属性を返す。身長は整数だが、type="number"
+// ではなくtextのまま数字キーパッドを要求する。却下された送信は入力された内容のまま再描画するが、
+// type="number" はブラウザーがパースできない値を空の欄として表示し、編集者が直すべき入力が
+// 失われてしまうため (エピソードのソート番号と同じ)。
+func editFieldInputType(kind editFieldKind) string {
+	switch kind {
+	case editFieldURL:
+		return "url"
+	case editFieldDate:
+		return "date"
+	default:
+		return "text"
+	}
+}
+
+// editPersonPageLinkは編集フォームの見出しの横に表示する操作を描画する。公開サイト側の
+// 人物ページへのリンクで、編集途中の内容をフォームに残したまま開けるよう新しいタブで開く
+// (作品の編集と同じ)。可視ラベルとアイコンだけでは新しいタブで開くことが伝わらないため、
+// アクセシブルネームでそれを伝える。
+templ editPersonPageLink(personID viewmodel.PersonID) {
+	<a
+		href={ templates.PersonPath(personID).SafeURL() }
+		target="_blank"
+		rel="noopener"
+		aria-label={ templates.T(ctx, "db_people_edit_person_page_link_aria_label") }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		{ templates.T(ctx, "db_people_edit_person_page_link") }
+		@templates.DecorativeInlineIcon("arrow-square-out-regular", templates.InlineIconEnd, "w-[18px] h-[18px]")
+	</a>
+}

@@ -59,9 +59,7 @@ en:
         hidden: Hidden
       created: Person created
       deleted: Person deleted
-      go_to_person: Go to Person
       new_person: New Person
-      twitter_hashtag_placeholder: e.g. nazukakaori
       unpublished: Person unpublished
       updated: Person updated
       person_list: Person List

@@ -30,6 +30,7 @@ type Client struct {
 type NewClientParams struct {
 	CleanupExpiredTokens      ExpiredTokenCleaner
 	CleanupExpiredSignInCodes ExpiredSignInCodeCleaner
+	CleanupExpiredRateLimits  ExpiredRateLimitCleaner
 	CleanupExpiredSessions    ExpiredSessionCleaner
 	CleanupAnonymousSessions  AnonymousSessionCleaner
 	SyncAnimes                AnimesSyncer
@@ -103,6 +104,10 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	// ログインコードクリーンアップワーカーを登録
 	river.AddWorker(workers, NewCleanupExpiredSignInCodesWorker(params.CleanupExpiredSignInCodes))
 	slog.InfoContext(ctx, "CleanupExpiredSignInCodesWorkerを登録しました")
+
+	// レート制限のカウンターのクリーンアップワーカーを登録する。
+	river.AddWorker(workers, NewCleanupExpiredRateLimitsWorker(params.CleanupExpiredRateLimits))
+	slog.InfoContext(ctx, "CleanupExpiredRateLimitsWorkerを登録しました")
 
 	// セッションクリーンアップワーカーを登録する。
 	river.AddWorker(workers, NewCleanupExpiredSessionsWorker(params.CleanupExpiredSessions))

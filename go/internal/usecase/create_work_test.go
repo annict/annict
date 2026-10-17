@@ -66,6 +66,7 @@ func newSyncSatellitesUsecase(db *sql.DB) *SyncWorkSatellitesUsecase {
 // 並行テストがworks行を共有しないようにする。
 func validCreateWorkInput(title string) CreateWorkInput {
 	return CreateWorkInput{
+		User: &model.User{ID: 1, Role: model.RoleEditor},
 		WorkFormInput: WorkFormInput{
 			Title:                 title,
 			TitleKana:             "さくせいてすとあにめ",
@@ -318,6 +319,47 @@ func TestCreateWorkUsecase_Execute_ReturnsValidationError(t *testing.T) {
 	}
 	if len(ve.GetFieldErrors("title")) == 0 {
 		t.Error("titleフィールドのバリデーションエラーを期待したが、無かった")
+	}
+}
+
+// TestCreateWorkUsecase_Execute_RequiresCommitterはロールの規則をルートではなく
+// UseCase側に置いていることを検証する。後から増える経路がロール確認を経ずに到達できないように
+// するため。拒否された呼び出しは作品を作らない。
+func TestCreateWorkUsecase_Execute_RequiresCommitter(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newCreateWorkUsecase(db)
+
+	for _, tt := range []struct {
+		name string
+		user *model.User
+	}{
+		{name: "ユーザーを伴わない呼び出し", user: nil},
+		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			title := "認可テストアニメ_" + t.Name()
+			input := validCreateWorkInput(title)
+			input.User = tt.user
+
+			output, err := uc.Execute(context.Background(), input)
+			if output != nil {
+				t.Errorf("output = %+v、期待値 = nil (権限の無いユーザーのため)", output)
+			}
+			ae := model.AsAppError(err)
+			if ae == nil || ae.Code != model.AppErrCodeForbidden {
+				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeForbidden", err)
+			}
+
+			var count int
+			if err := db.QueryRow(`SELECT COUNT(*) FROM works WHERE title = $1`, title).Scan(&count); err != nil {
+				t.Fatalf("作品件数の読み込みに失敗: %v", err)
+			}
+			if count != 0 {
+				t.Errorf("作品 = %d件、期待値 = 0 (拒否された呼び出しは行を書かない)", count)
+			}
+		})
 	}
 }
 

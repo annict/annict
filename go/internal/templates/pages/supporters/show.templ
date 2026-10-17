@@ -4,6 +4,7 @@ import (
 	"context"
 	"time"
 
+	"github.com/annict/annict/go/internal/legaldoc"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
@@ -121,6 +122,10 @@ templ checkoutSection(ctx context.Context, csrfToken string) {
 					<p class="text-3xl font-bold">
 						¥290<span class="text-sm text-muted-foreground">/{ templates.T(ctx, "supporters_month") }</span>
 					</p>
+
+					<p class="text-sm text-muted-foreground">
+						{ templates.T(ctx, "supporters_monthly_yearly_total") }
+					</p>
 				</div>
 
 				<form
@@ -169,10 +174,68 @@ templ checkoutSection(ctx context.Context, csrfToken string) {
 			</div>
 		</div>
 
-		<p class="text-sm text-muted-foreground">
-			{ templates.T(ctx, "supporters_payment_method") }
-		</p>
+		// 特定商取引法12条の6が申込みの最終確認画面に求める表示事項。
+		// 決済情報の入力はStripe Checkoutで行うため、遷移前のこの画面に表示する。
+		<div class="flex flex-col gap-2">
+			<h3 class="font-bold antialiased">
+				{ templates.T(ctx, "supporters_conditions_title") }
+			</h3>
+
+			<ul class="list-disc pl-5 text-sm flex flex-col gap-1">
+				<li>{ templates.T(ctx, "supporters_conditions_renewal") }</li>
+				<li>{ templates.T(ctx, "supporters_payment_method") }</li>
+				<li>{ templates.T(ctx, "supporters_conditions_start") }</li>
+				<li>{ templates.T(ctx, "supporters_conditions_cancellation") }</li>
+				<li>{ templates.T(ctx, "supporters_conditions_refund") }</li>
+				<li>{ templates.T(ctx, "supporters_conditions_account_deletion") }</li>
+			</ul>
+
+			<p class="text-sm">
+				{ templates.T(ctx, "supporters_conditions_details") }
+			</p>
+
+			<p class="text-sm">
+				@conditionsDocumentLink(ctx, legaldoc.KeySpecifiedCommercialTransactions, nil, "supporters_conditions_legal_notice")
+			</p>
+
+			<p class="text-sm">
+				@conditionsDocumentLink(ctx, legaldoc.KeyTerms, supporterArticleAnchor, "supporters_conditions_terms")
+			</p>
+		</div>
 	</div>
+}
+
+// conditionsDocumentLinkは契約条件の詳細として法的文書へのリンクを生成する。
+// フッターの文書リンクと同じく、リクエストのロケールの言語版を指し、その言語版が無い文書 (特定商取引法に基づく表記) は日本語版を指す。
+// ページと異なる言語の版を指すときは、リンク先の言語をhreflangで示す。
+// anchorsは言語ごとのリンク先の見出しIDで、空のときは文書の先頭を指す
+templ conditionsDocumentLink(ctx context.Context, key legaldoc.Key, anchors map[string]string, labelKey string) {
+	{{ doc, ok := legaldoc.LocalizedVersion(key, templates.Locale(ctx)) }}
+	if ok {
+		<a
+			href={ templ.SafeURL(documentURL(doc, anchors)) }
+			class="link"
+			if doc.Lang != templates.Locale(ctx) {
+				hreflang={ doc.Lang }
+			}
+		>
+			{ templates.T(ctx, labelKey) }
+		</a>
+	}
+}
+
+// supporterArticleAnchorは利用規約のサポーターの条の見出しIDで、言語版ごとに異なる
+var supporterArticleAnchor = map[string]string{
+	legaldoc.LangJa: "第11条-サポーター",
+	legaldoc.LangEn: "article-11-annict-supporters",
+}
+
+func documentURL(doc legaldoc.Document, anchors map[string]string) string {
+	if anchor, ok := anchors[doc.Lang]; ok {
+		return doc.Path + "#" + anchor
+	}
+
+	return doc.Path
 }
 
 // gumroadSectionはGumroadサポーター向けセクション

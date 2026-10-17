@@ -457,6 +457,33 @@ func TestParseSentryTracesSampleRate(t *testing.T) {
 	}
 }
 
+func TestParseWebRateLimitPerMinute(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		input    string
+		expected int
+	}{
+		{name: "空文字列は既定値300", input: "", expected: 300},
+		{name: "有効な値", input: "120", expected: 120},
+		{name: "数値でない場合は既定値300", input: "abc", expected: 300},
+		{name: "0は既定値300", input: "0", expected: 300},
+		{name: "負の値は既定値300", input: "-1", expected: 300},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			result := parseWebRateLimitPerMinute(tt.input)
+			if result != tt.expected {
+				t.Errorf("parseWebRateLimitPerMinute(%q) = %d、期待値 = %d", tt.input, result, tt.expected)
+			}
+		})
+	}
+}
+
 func TestLoad_MaintenanceMode(t *testing.T) {
 	// 元のワーキングディレクトリを保存
 	originalWd, err := os.Getwd()

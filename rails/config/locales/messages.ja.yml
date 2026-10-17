@@ -104,6 +104,8 @@ ja:
     db:
       comments:
         created: 投稿しました
+      people:
+        action_target_label: "人物 %{id}"
       works:
         action_target_label: "作品 %{id}"
     episode_records:
@@ -194,9 +196,8 @@ ja:
     reviews:
       n_people_changed_status_to_wanna_watch: "%{count}人がこのレビューを見て視聴ステータスを「見たい」にしました"
     sayonara:
-      are_you_sure_really: 後戻りできませんがよろしいですか？
       delete_account: アカウントを削除する
-      description: アカウント情報や見たアニメの記録、ステータス変更など、あなたに紐付くデータが全て削除されます。
+      description: アカウント情報や見たアニメの記録など、あなたに紐付くデータが削除されます。削除されるものと退会後も残るものは、次のページで確認できます。
     settings:
       apps:
         disconnected: 接続解除しました
@@ -228,10 +229,7 @@ ja:
         expired: メールアドレス確認リンクの有効期限が切れました。再度やり直してください
         updated: メールアドレスを更新しました
     users:
-      _validators:
-        exists_active_oauth_applications: が存在するため、退会できません
       allowed_locales_description: "サイト内に投稿された文書 (感想やレビューなど) の中で、どの言語で書かれたものを表示するかを設定することができます。"
-      bye_bye: "退会しました。(´・ω;:.."
       no_works: 作品はありません
     welcome:
       show:

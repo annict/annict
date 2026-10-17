@@ -32,7 +32,7 @@ func JaText(isStripeSupporter bool) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Annictの退会を受け付けました。 アカウントに紐づくデータは、これから順次削除します。 ")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Annictの退会を受け付けました。 アカウントに紐づくデータは、これから順次削除します。退会したアカウントとデータは元に戻せません。 ")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -42,7 +42,7 @@ func JaText(isStripeSupporter bool) templ.Component {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "これまでAnnictを使っていただき、ありがとうございました。 この退会に心当たりがない場合は、hello@annict.com までお問い合わせください。")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "同じユーザー名とメールアドレスで、新しいアカウントとして登録し直すこともできます。 これまでAnnictを使っていただき、ありがとうございました。 この退会に心当たりがない場合は、第三者があなたのアカウントを使った可能性があります。メールアカウントのパスワードを見直し、Annictで使っていたパスワードを他のサービスでも使い回している場合は、そちらも変更してください。そのうえで、調査のため hello@annict.com までお知らせください。")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

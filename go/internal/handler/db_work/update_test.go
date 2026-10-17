@@ -107,7 +107,7 @@ func TestUpdate_ValidationError(t *testing.T) {
 	form.Set("title_kana", "ほぞんされるかな")
 	form.Set("updated_at", validator.FormNullVersion)
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, patchRequest(t, 123, form))
+	r.ServeHTTP(rr, withCommitterUser(patchRequest(t, 123, form)))
 
 	if status := rr.Code; status != http.StatusUnprocessableEntity {
 		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusUnprocessableEntity)
@@ -148,7 +148,7 @@ func TestUpdate_Success(t *testing.T) {
 
 	newTitle := "更新後作品_" + t.Name()
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, patchRequest(t, int64(workID), validUpdateForm(newTitle, readWorkVersion(t, db, workID))))
+	r.ServeHTTP(rr, withCommitterUser(patchRequest(t, int64(workID), validUpdateForm(newTitle, readWorkVersion(t, db, workID)))))
 
 	if status := rr.Code; status != http.StatusSeeOther {
 		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusSeeOther)
@@ -179,7 +179,7 @@ func TestUpdate_VersionConflict(t *testing.T) {
 	// フォームが運ぶものである。
 	staleVersion := time.Now().Add(-time.Hour).UTC().Format(validator.FormVersionLayout)
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, patchRequest(t, int64(workID), validUpdateForm("衝突後タイトル", staleVersion)))
+	r.ServeHTTP(rr, withCommitterUser(patchRequest(t, int64(workID), validUpdateForm("衝突後タイトル", staleVersion))))
 
 	if status := rr.Code; status != http.StatusConflict {
 		t.Fatalf("ステータスコード = %d、期待値 = %d", status, http.StatusConflict)
@@ -226,7 +226,7 @@ func TestUpdate_VersionMissing(t *testing.T) {
 	form := validUpdateForm("版なし更新後", "")
 	form.Del("updated_at")
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, patchRequest(t, int64(workID), form))
+	r.ServeHTTP(rr, withCommitterUser(patchRequest(t, int64(workID), form)))
 
 	if status := rr.Code; status != http.StatusUnprocessableEntity {
 		t.Fatalf("ステータスコード = %d、期待値 = %d", status, http.StatusUnprocessableEntity)
@@ -251,7 +251,7 @@ func TestUpdate_NotFound(t *testing.T) {
 	r.Patch("/db/works/{id}", handler.Update)
 
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, patchRequest(t, 999999999, validUpdateForm("存在しない作品の更新", validator.FormNullVersion)))
+	r.ServeHTTP(rr, withCommitterUser(patchRequest(t, 999999999, validUpdateForm("存在しない作品の更新", validator.FormNullVersion))))
 
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
@@ -329,4 +329,22 @@ func TestUpdate_RequiresCommitter(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestUpdate_ForbiddenWithoutMiddlewareは有効な送信でもUseCaseが拒否し、403ページに
+// 変換されることを検証する。
+func TestUpdate_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := insertUpdateTargetWork(t, db, "更新認可境界テスト_"+t.Name())
+	handler := newTestHandler(t, db, tx)
+	r := chi.NewRouter()
+	r.Patch("/db/works/{id}", handler.Update)
+
+	form := validUpdateForm("更新認可境界テスト変更後", readWorkVersion(t, db, workID))
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, patchRequest(t, int64(workID), form))
+
+	assertForbiddenPage(t, rr)
 }

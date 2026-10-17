@@ -23,7 +23,7 @@ func (r *CastRepository) WithTx(tx *sql.Tx) *CastRepository {
 	return &CastRepository{queries: r.queries.WithTx(tx)}
 }
 
-// GetByWorkIDsは作品IDのリストに紐づくキャストを取得します
+// GetByWorkIDsは作品IDのリストに紐づくキャストを取得します (キャスト・人物が非公開または削除済みのものは除外)
 func (r *CastRepository) GetByWorkIDs(ctx context.Context, workIDs []model.WorkID) ([]*model.Cast, error) {
 	if len(workIDs) == 0 {
 		return []*model.Cast{}, nil
@@ -53,18 +53,19 @@ func castFromRow(row query.GetCastsByWorkIDsRow) *model.Cast {
 		WorkID: model.WorkID(row.WorkID),
 		Name:   row.Name,
 		NameEn: row.NameEn,
+		Person: &model.Person{
+			ID:     model.PersonID(row.PersonID),
+			Name:   row.PersonName,
+			NameEn: row.PersonNameEn,
+		},
 	}
-	if row.CharacterName.Valid {
-		cast.CharacterName = row.CharacterName.String
-	}
-	if row.CharacterNameEn.Valid {
-		cast.CharacterNameEn = row.CharacterNameEn.String
-	}
-	if row.PersonName.Valid {
-		cast.PersonName = row.PersonName.String
-	}
-	if row.PersonNameEn.Valid {
-		cast.PersonNameEn = row.PersonNameEn.String
+	// charactersはLEFT JOINのため、キャラクターのレコードが見つからない行ではNULLになる
+	if row.CharacterID.Valid {
+		cast.Character = &model.Character{
+			ID:     model.CharacterID(row.CharacterID.Int64),
+			Name:   row.CharacterName.String,
+			NameEn: row.CharacterNameEn.String,
+		}
 	}
 	return cast
 }

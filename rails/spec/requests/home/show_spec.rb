@@ -2,6 +2,18 @@
 # frozen_string_literal: true
 
 RSpec.describe "GET /", type: :request do
+  it "ログインしているとき、法的文書へのフッターリンクを表示すること" do
+    user = FactoryBot.create(:registered_user)
+    login_as(user, scope: :user)
+
+    get "/"
+
+    document = Nokogiri::HTML(response.body)
+    ["/terms", "/privacy", "/legal"].each do |path|
+      expect(document.at_css(".c-footer a[href='#{path}']")).not_to be_nil
+    end
+  end
+
   it "ログインしているとき、アクティビティが存在しないとき、アクティビティが無い旨を表示すること" do
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)

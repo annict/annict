@@ -20,6 +20,9 @@ class Cast < ApplicationRecord
   validates :person_id, presence: true
   validates :work_id, presence: true
 
+  # 人物が非公開・削除済みのキャストを除く。人物単位で非公開にしたときに、作品ページなどから名義を消すため
+  scope :with_kept_person, -> { joins(:person).merge(Person.only_kept) }
+
   before_validation :set_name
 
   localized_method :name

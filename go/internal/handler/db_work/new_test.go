@@ -22,7 +22,7 @@ func TestNew(t *testing.T) {
 
 	handler := newTestHandler(t, db, tx)
 
-	req := httptest.NewRequest("GET", "/db/works/new", nil)
+	req := withCommitterUser(httptest.NewRequest("GET", "/db/works/new", nil))
 	rr := httptest.NewRecorder()
 
 	handler.New(rr, req)
@@ -114,4 +114,16 @@ func TestNew_RequiresCommitter(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestNew_ForbiddenWithoutMiddlewareはUseCaseの認可失敗が403ページになることを検証する。
+func TestNew_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	handler := newTestHandler(t, db, tx)
+	rr := httptest.NewRecorder()
+	handler.New(rr, httptest.NewRequest("GET", "/db/works/new", nil))
+
+	assertForbiddenPage(t, rr)
 }

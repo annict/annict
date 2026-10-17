@@ -35,14 +35,20 @@ func TestNewWorkFromModel(t *testing.T) {
 			SeasonName:    &seasonName,
 			Casts: []*model.Cast{
 				{
-					ID:              1,
-					WorkID:          123,
-					Name:            "キャラクター名",
-					NameEn:          "Character Name",
-					CharacterName:   "田中太郎",
-					CharacterNameEn: "Taro Tanaka",
-					PersonName:      "声優名",
-					PersonNameEn:    "Voice Actor",
+					ID:     1,
+					WorkID: 123,
+					Name:   "キャラクター名",
+					NameEn: "Character Name",
+					Character: &model.Character{
+						ID:     10,
+						Name:   "田中太郎",
+						NameEn: "Taro Tanaka",
+					},
+					Person: &model.Person{
+						ID:     20,
+						Name:   "声優名",
+						NameEn: "Voice Actor",
+					},
 				},
 			},
 			Staffs: []*model.Staff{
@@ -105,6 +111,18 @@ func TestNewWorkFromModel(t *testing.T) {
 		if work.Casts[0].Name != "キャラクター名" {
 			t.Errorf("Cast Name = %s、期待値 = キャラクター名", work.Casts[0].Name)
 		}
+		if work.Casts[0].CharacterName != "田中太郎" {
+			t.Errorf("Cast CharacterName = %s、期待値 = 田中太郎", work.Casts[0].CharacterName)
+		}
+		if work.Casts[0].CharacterNameEn != "Taro Tanaka" {
+			t.Errorf("Cast CharacterNameEn = %s、期待値 = Taro Tanaka", work.Casts[0].CharacterNameEn)
+		}
+		if work.Casts[0].PersonName != "声優名" {
+			t.Errorf("Cast PersonName = %s、期待値 = 声優名", work.Casts[0].PersonName)
+		}
+		if work.Casts[0].PersonNameEn != "Voice Actor" {
+			t.Errorf("Cast PersonNameEn = %s、期待値 = Voice Actor", work.Casts[0].PersonNameEn)
+		}
 
 		// スタッフの検証
 		if len(work.Staffs) != 1 {
@@ -155,6 +173,35 @@ func TestNewWorkFromModel(t *testing.T) {
 		}
 		if work.SeasonName != nil {
 			t.Errorf("SeasonName = %v、期待値 = nil", work.SeasonName)
+		}
+	})
+
+	t.Run("キャストのキャラクターがnilの場合はキャラクター名を空にする", func(t *testing.T) {
+		t.Parallel()
+
+		m := &model.Work{
+			ID:    123,
+			Title: "テストアニメ",
+			Casts: []*model.Cast{
+				{
+					ID:     1,
+					WorkID: 123,
+					Name:   "キャスト名",
+					Person: &model.Person{ID: 20, Name: "声優名", NameEn: "Voice Actor"},
+				},
+			},
+		}
+
+		work := NewWorkFromModel(m, helper)
+
+		if len(work.Casts) != 1 {
+			t.Fatalf("Castsの件数 = %d、期待値 = 1", len(work.Casts))
+		}
+		if work.Casts[0].CharacterName != "" {
+			t.Errorf("Cast CharacterName = %s、期待値 = 空", work.Casts[0].CharacterName)
+		}
+		if work.Casts[0].PersonName != "声優名" {
+			t.Errorf("Cast PersonName = %s、期待値 = 声優名", work.Casts[0].PersonName)
 		}
 	})
 

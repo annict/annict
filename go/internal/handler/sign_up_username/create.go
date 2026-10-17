@@ -68,7 +68,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	slog.InfoContext(ctx, "ユーザー登録成功",
 		"user_id", output.User.ID,
 		"username", output.User.Username,
-		"email", output.User.Email,
 		"ip_address", clientip.GetClientIP(r),
 	)
 

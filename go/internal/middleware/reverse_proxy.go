@@ -38,17 +38,10 @@ type featureFlaggedPattern struct {
 }
 
 // Rails版からGo版へ移す画面のうち、フラグを有効にした利用者にだけGo版を公開するもの (ADR 0002)。
-var featureFlaggedPatterns = []featureFlaggedPattern{
-	{pattern: regexp.MustCompile(`^/settings/account/deletion(/.*)?$`), flag: model.FeatureFlagGoAccountDeletion},
-}
-
-// フラグでゲートしている画面のうち、フラグの判定に必要なセッションが無い状態で開かれるため、
-// フラグに関係なくGo版で処理するパス。isGoHandledPathが完全一致で判定する。
-// TODO: go_account_deletionフラグを削除して退会の画面をgoHandledPathsへ移すときに一覧から外す。
-var goHandledFlagExemptPaths = []string{
-	// 退会の受付でセッションを破棄した直後にリダイレクトされる完了ページ。
-	"/settings/account/deletion/completed",
-}
+// パターンに一致してフラグが無効なリクエストは、goSharedPathsの配下でGo版にルートがあっても
+// Rails版へ送る。フラグを削除するときは一覧から外し、goSharedPathsなどの判定に戻す。
+// 一覧が空になってもこの仕組みは次の移行で使うため、変数は削除せず残す。
+var featureFlaggedPatterns []featureFlaggedPattern
 
 // ReverseProxyMiddlewareはRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
@@ -59,6 +52,10 @@ type ReverseProxyMiddleware struct {
 	featureFlagRepo featureFlagChecker
 	// nil許容。テスト時やセッション不要時はnil
 	sessionMgr *session.Manager
+	// フラグでゲートするパスの一覧。NewReverseProxyMiddlewareがパッケージ変数の
+	// featureFlaggedPatternsで初期化する。テストはパッケージ変数を書き換えずにこの
+	// フィールドへ差し込むことで、ほかのテストと並行に走らせられる。
+	featureFlaggedPatterns []featureFlaggedPattern
 	// nil許容。SetRouterで設定する。Go版とRails版で分け合っているパスが
 	// 登録済みのGoルートにマッチするかをミドルウェアが判定できるようにする。
 	// nilのときはそれらのパスをGoチェーンに委ねる。
@@ -68,20 +65,30 @@ type ReverseProxyMiddleware struct {
 // Go版で処理するパス (ホワイトリスト)
 // これらのパスはRails版にプロキシせず、Go版のハンドラーで処理する
 var goHandledPaths = []string{
-	"/static",           // 静的ファイル (CSS、JS、画像など)
-	"/health",           // ヘルスチェックエンドポイント
-	"/manifest.json",    // Web App Manifest
-	"/sign_in/password", // パスワードログインページ・処理
-	"/sign_in/code",     // 6桁コード入力・検証・再送信
-	"/sign_in",          // メールアドレス入力・ログイン方法自動判定
-	"/sign_out",         // ログアウト処理
-	"/sign_up",          // 新規登録 (メールアドレス入力・確認コード送信)
-	"/password/reset",   // パスワードリセット申請
-	"/password/edit",    // パスワードリセット実行
-	"/password",         // パスワード更新
-	"/supporters",       // サポーターページ
-	"/webhooks/stripe",  // Stripe Webhook受信
-	"/ics",              // iCalendar配信 (Appleカレンダー互換パス)
+	"/static",                    // 静的ファイル (CSS、JS、画像など)
+	"/health",                    // ヘルスチェックエンドポイント
+	"/manifest.json",             // Web App Manifest
+	"/sign_in/password",          // パスワードログインページ・処理
+	"/sign_in/code",              // 6桁コード入力・検証・再送信
+	"/sign_in",                   // メールアドレス入力・ログイン方法自動判定
+	"/sign_out",                  // ログアウト処理
+	"/sign_up",                   // 新規登録 (メールアドレス入力・確認コード送信)
+	"/password/reset",            // パスワードリセット申請
+	"/password/edit",             // パスワードリセット実行
+	"/password",                  // パスワード更新
+	"/supporters",                // サポーターページ
+	"/webhooks/stripe",           // Stripe Webhook受信
+	"/ics",                       // iCalendar配信 (Appleカレンダー互換パス)
+	"/settings/account/deletion", // 退会 (確認ページ・受付・完了ページ)
+	// 法的文書。英語版 (/en/ 前置)・API利用規約・改定前の版のアーカイブページ (/archive/{施行日} 後置) も、
+	// 文書の一覧表 (legaldoc) に登録した時点でGo版に届くよう、接頭辞で含めておく。
+	// 一覧表に無いパスはGo版の404になるが、Rails版にもこれらのルートは無い。
+	// 特定商取引法に基づく表記は日本語版だけを配信するため、/en/legalは含めない。
+	"/terms",      // 利用規約・API利用規約
+	"/privacy",    // プライバシーポリシー
+	"/legal",      // 特定商取引法に基づく表記
+	"/en/terms",   // 利用規約・API利用規約 (英語版)
+	"/en/privacy", // プライバシーポリシー (英語版)
 }
 
 // Goが配信する全画面エラーページ。isGoHandledPathが完全一致で判定する。
@@ -101,6 +108,7 @@ var goHandledErrorPaths = []string{
 //
 // /db/ がこの接頭辞にあたる。作品とエピソードのCRUD画面はGo版にあるが、キャスト・
 // スタッフ・放送枠・作品画像・シリーズなどAnnict DBの残りはRails版にしかない。
+// 配下のうちfeatureFlaggedPatternsに一致するパスは、この判定より前にフラグで振り分ける。
 var goSharedPaths = []string{
 	"/db/",
 }
@@ -215,11 +223,12 @@ func NewReverseProxyMiddleware(railsURL string, cfg *config.Config, featureFlagR
 	}
 
 	return &ReverseProxyMiddleware{
-		railsURL:        parsedURL,
-		proxy:           proxy,
-		cfg:             cfg,
-		featureFlagRepo: featureFlagRepo,
-		sessionMgr:      sessionMgr,
+		railsURL:               parsedURL,
+		proxy:                  proxy,
+		cfg:                    cfg,
+		featureFlagRepo:        featureFlagRepo,
+		sessionMgr:             sessionMgr,
+		featureFlaggedPatterns: featureFlaggedPatterns,
 	}, nil
 }
 
@@ -241,13 +250,14 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
-		if m.isFeatureFlagEnabled(r, deviceToken) {
-			// パスは有効な移行フラグでゲートされている。Goルートにマッチするときだけ
-			// Goチェーンに渡し、マッチしない場合はその画面がGo未実装のため、ここで
-			// Railsへプロキシする (下のフラグ無効時と同じレイヤー)。chiのNotFound
-			// ハンドラー (Rails行きのリクエストがスキップすべきSentry / CSRF
-			// ミドルウェアチェーンの内側で走る) へ流さないためにこうする。
-			if m.matchesGoRoute(r) {
+		if _, gated := m.featureFlagFor(r.URL.Path); gated {
+			// パスは移行フラグでゲートされている。フラグが有効でGoルートにマッチするときだけ
+			// Goチェーンに渡し、それ以外はここでRailsへプロキシする。フラグが無効なら、
+			// goSharedPathsの配下でGo版にルートがあってもRails版が処理する。フラグが有効でも
+			// Goルートにマッチしない画面はGo未実装のため、chiのNotFoundハンドラー (Rails行きの
+			// リクエストがスキップすべきSentry / CSRFミドルウェアチェーンの内側で走る) へ
+			// 流さずにここでプロキシする。
+			if m.isFeatureFlagEnabled(r, deviceToken) && m.matchesGoRoute(r) {
 				next.ServeHTTP(w, r)
 				return
 			}
@@ -347,15 +357,7 @@ func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceTok
 		return false
 	}
 
-	var flagName model.FeatureFlagName
-	matched := false
-	for _, fp := range featureFlaggedPatterns {
-		if fp.pattern.MatchString(r.URL.Path) {
-			flagName = fp.flag
-			matched = true
-			break
-		}
-	}
+	flagName, matched := m.featureFlagFor(r.URL.Path)
 	if !matched {
 		return false
 	}
@@ -382,14 +384,20 @@ func (m *ReverseProxyMiddleware) isFeatureFlagEnabled(r *http.Request, deviceTok
 	return enabled
 }
 
-// isGoHandledPathはGo版で処理するパスかどうかを判定
-func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
-	for _, p := range goHandledFlagExemptPaths {
-		if path == p {
-			return true
+// featureFlagForはパスをゲートするフィーチャーフラグを返す。どのパターンにも一致しない場合は
+// falseを返す。
+func (m *ReverseProxyMiddleware) featureFlagFor(path string) (model.FeatureFlagName, bool) {
+	for _, fp := range m.featureFlaggedPatterns {
+		if fp.pattern.MatchString(path) {
+			return fp.flag, true
 		}
 	}
 
+	return "", false
+}
+
+// isGoHandledPathはGo版で処理するパスかどうかを判定
+func (m *ReverseProxyMiddleware) isGoHandledPath(path string) bool {
 	// goHandledPathsは前方一致で判定するため、一覧に入れると /errors配下すべてを
 	// Go側が引き取ることになる。Goが持つエラーページは下記の一覧だけなので完全一致で判定する。
 	for _, p := range goHandledErrorPaths {
@@ -433,6 +441,12 @@ func (m *ReverseProxyMiddleware) isGoSharedPath(path string) bool {
 
 // isAPISubdomainはAPIサブドメイン (api.annict.comまたはapi.annict-dev.page) かどうかを判定
 func (m *ReverseProxyMiddleware) isAPISubdomain(host string) bool {
+	return isAPIHost(host, m.cfg.Domain)
+}
+
+// isAPIHostはHostがAPIサブドメイン (api.{domain}) かどうかを判定する。
+// リバースプロキシとレート制限のミドルウェアが同じ判定を使う。
+func isAPIHost(host string, domain string) bool {
 	// ポート番号を除去 (開発環境では :8080などのポートが含まれる場合がある)
 	hostWithoutPort := host
 	if idx := strings.Index(host, ":"); idx != -1 {
@@ -441,8 +455,8 @@ func (m *ReverseProxyMiddleware) isAPISubdomain(host string) bool {
 
 	// APIサブドメインのパターン
 	apiSubdomains := []string{
-		"api." + m.cfg.Domain,           // 例: api.annict.com, api.annict-dev.page
-		"api." + m.cfg.Domain + ":8080", // 開発環境でポート付きの場合
+		"api." + domain,           // 例: api.annict.com, api.annict-dev.page
+		"api." + domain + ":8080", // 開発環境でポート付きの場合
 	}
 
 	for _, apiSubdomain := range apiSubdomains {
