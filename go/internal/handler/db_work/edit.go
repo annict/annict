@@ -50,11 +50,20 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	output, err := h.getDBWorkEditUC.Execute(ctx, usecase.GetDBWorkEditInput{WorkID: model.WorkID(id)})
+	output, err := h.getDBWorkEditUC.Execute(ctx, usecase.GetDBWorkEditInput{
+		User:   middleware.GetUserFromContext(ctx),
+		WorkID: model.WorkID(id),
+	})
 	if err != nil {
-		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
-			httperror.NotFound(w, r)
-			return
+		if ae := model.AsAppError(err); ae != nil {
+			switch ae.Code {
+			case model.AppErrCodeResourceNotFound:
+				httperror.NotFound(w, r)
+				return
+			case model.AppErrCodeForbidden:
+				httperror.Forbidden(w, r)
+				return
+			}
 		}
 		slog.ErrorContext(ctx, "DB作品編集フォームの取得に失敗", "error", err)
 		httperror.InternalServerError(w, r)

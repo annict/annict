@@ -41,18 +41,25 @@ type newFormState struct {
 func (h *Handler) renderNew(w http.ResponseWriter, r *http.Request, workID model.WorkID, state newFormState) {
 	ctx := r.Context()
 
-	output, err := h.getDBEpisodeNewUC.Execute(ctx, usecase.GetDBEpisodeNewInput{WorkID: workID})
+	user := middleware.GetUserFromContext(ctx)
+
+	output, err := h.getDBEpisodeNewUC.Execute(ctx, usecase.GetDBEpisodeNewInput{User: user, WorkID: workID})
 	if err != nil {
-		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
-			httperror.NotFound(w, r)
-			return
+		if ae := model.AsAppError(err); ae != nil {
+			switch ae.Code {
+			case model.AppErrCodeResourceNotFound:
+				httperror.NotFound(w, r)
+				return
+			case model.AppErrCodeForbidden:
+				httperror.Forbidden(w, r)
+				return
+			}
 		}
 		slog.ErrorContext(ctx, "DBエピソード一括作成フォームの取得に失敗", "error", err)
 		httperror.InternalServerError(w, r)
 		return
 	}
 
-	user := middleware.GetUserFromContext(ctx)
 	workName := viewmodel.DBEpisodeListWorkName(output.Work.Title)
 
 	meta := viewmodel.DefaultPageMeta(ctx, h.cfg, newPath(output.Work.ID))

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/validator"
@@ -37,9 +38,10 @@ func NewCreateWorkUsecase(
 	}
 }
 
-// CreateWorkInputは作品作成フォームの入力値を保持する。追加フィールドを持たない
-// 共有WorkFormInputそのもので、型名で作成UseCaseの意図を明示する。
+// CreateWorkInputは作品作成フォームの入力値と、作成を認可するユーザーを保持する。
+// フォームの入力値は更新と共有するWorkFormInputを埋め込む。
 type CreateWorkInput struct {
+	User *model.User
 	WorkFormInput
 }
 
@@ -48,6 +50,16 @@ type CreateWorkOutput struct {
 }
 
 func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput) (*CreateWorkOutput, error) {
+	// 作成はcommitterに限られるため、ユーザーを伴わない呼び出しと一般ユーザーの呼び出しは
+	// バリデーションより先に拒否する。webのルートはcommitterのミドルウェアで塞がれていて
+	// ここには来ないが、この確認によりルールが呼び出し元の1つではなくUseCase側に残る。
+	if input.User == nil || !input.User.IsCommitter() {
+		return nil, &model.AppError{
+			Code:    model.AppErrCodeForbidden,
+			UserMsg: i18n.T(ctx, "error_forbidden"),
+		}
+	}
+
 	// 作成フローは版を示さない。送信が古くなり得る保存済みの行が無いため、バリデーターは
 	// 版を返さず、捨てている戻り値は取りこぼしではない。
 	if _, err := uc.validator.Validate(ctx, input.toValidatorInput(nil, nil)); err != nil {
