@@ -191,6 +191,7 @@ type Querier interface {
 	// 残さないよう先の段階で削除しておく。
 	DeleteEpisodeRecordsByUserID(ctx context.Context, arg DeleteEpisodeRecordsByUserIDParams) (int64, error)
 	DeleteExpiredPasswordResetTokens(ctx context.Context, expiresAt time.Time) error
+	DeleteExpiredRateLimits(ctx context.Context, windowStart time.Time) error
 	// updated_atがlower_bound以上かつcutoffより古いセッションを最大batch_size件削除し、
 	// 削除した件数と、削除した行のupdated_atの最大値を返す。PostgreSQLのDELETEはLIMITを
 	// 取れないため、対象はupdated_atで並べたサブクエリで選び、
@@ -455,6 +456,9 @@ type Querier interface {
 	// 作品状態のsourceを運ぶ。3つの画面が受け付ける状態はそれぞれ異なるため、ここでは状態を
 	// 絞り込まない。
 	GetWorkForStateChangeByID(ctx context.Context, id int64) (GetWorkForStateChangeByIDRow, error)
+	// キーと窓の組のカウンターを1つ増やし、増やした後の値を返す。
+	// 窓の最初のリクエストでは行を作り、以降は同じ行のcountを増やす。
+	IncrementRateLimit(ctx context.Context, arg IncrementRateLimitParams) (int32, error)
 	IncrementSignInCodeAttempts(ctx context.Context, id int64) error
 	IncrementSignUpCodeAttempts(ctx context.Context, id int64) error
 	// RailsのEpisode.createは公開話数のカウンターキャッシュを加算し、親作品をtouchする。

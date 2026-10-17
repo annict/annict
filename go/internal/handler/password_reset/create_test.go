@@ -36,9 +36,8 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	rdb := testutil.SetupTestRedis(t)
 	queries := query.New(db).WithTx(tx)
-	limiter := ratelimit.NewLimiter(rdb)
+	limiter := ratelimit.NewLimiter(repository.NewRateLimitRepository(queries))
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -55,23 +54,12 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
 
-	// 共有Redis DBに対する並列実行で他テストと衝突しないよう、
+	// 並列に走る他テストとrate_limitsの一意制約で待ち合わないよう、
 	// 本テスト固有のキー構成値を組み立てる。
 	prefix := testutil.UniqueRateLimitPrefix(t)
 	primaryIP := prefix + "-ip1"
 	altIP := prefix + "-ip2"
 	emailFor := func(i int) string { return fmt.Sprintf("%s-%d@example.com", prefix, i) }
-
-	ctx := context.Background()
-	resetKeys := func() {
-		_ = limiter.Reset(ctx, "password_reset:ip:"+primaryIP)
-		_ = limiter.Reset(ctx, "password_reset:ip:"+altIP)
-		for i := 0; i < 7; i++ {
-			_ = limiter.Reset(ctx, "password_reset:email:"+emailFor(i))
-		}
-	}
-	resetKeys()
-	t.Cleanup(resetKeys)
 
 	for i := 0; i < 5; i++ {
 		form := url.Values{}
@@ -126,9 +114,8 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	rdb := testutil.SetupTestRedis(t)
 	queries := query.New(db).WithTx(tx)
-	limiter := ratelimit.NewLimiter(rdb)
+	limiter := ratelimit.NewLimiter(repository.NewRateLimitRepository(queries))
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -145,25 +132,13 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	createPasswordResetTokenUC := usecase.NewCreatePasswordResetTokenUsecase(db, repository.NewUserRepository(queries), repository.NewPasswordResetTokenRepository(queries), nil, nil, v)
 	handler := NewHandler(cfg, sessionManager, limiter, mockClient, createPasswordResetTokenUC)
 
-	// 共有Redis DBに対する並列実行で他テストと衝突しないよう、
+	// 並列に走る他テストとrate_limitsの一意制約で待ち合わないよう、
 	// 本テスト固有のキー構成値を組み立てる。
 	prefix := testutil.UniqueRateLimitPrefix(t)
 	primaryEmail := prefix + "@example.com"
 	altEmail := prefix + "-alt@example.com"
 	ipFor := func(i int) string { return prefix + "-ip" + strconv.Itoa(i) }
 	altIP := prefix + "-ip-alt"
-
-	ctx := context.Background()
-	resetKeys := func() {
-		_ = limiter.Reset(ctx, "password_reset:email:"+primaryEmail)
-		_ = limiter.Reset(ctx, "password_reset:email:"+altEmail)
-		for i := 0; i < 3; i++ {
-			_ = limiter.Reset(ctx, "password_reset:ip:"+ipFor(i))
-		}
-		_ = limiter.Reset(ctx, "password_reset:ip:"+altIP)
-	}
-	resetKeys()
-	t.Cleanup(resetKeys)
 
 	for i := 0; i < 3; i++ {
 		form := url.Values{}

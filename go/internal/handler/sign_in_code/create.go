@@ -11,6 +11,7 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/ratelimit"
 	"github.com/annict/annict/go/internal/redirect"
 	"github.com/annict/annict/go/internal/usecase"
 )
@@ -81,12 +82,12 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// Rate Limitingチェック (1分間に5回まで)
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		emailKey := fmt.Sprintf("sign_in:verify:%s", email)
-		allowed, err := h.limiter.Check(ctx, emailKey, 5, 1*time.Minute)
+		result, err := h.limiter.Check(ctx, ratelimit.CheckInput{Key: emailKey, Limit: 5, Window: 1 * time.Minute})
 		if err != nil {
 			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
-		} else if !allowed {
+		} else if !result.Allowed {
 			slog.WarnContext(ctx, "6桁コード検証がRate Limitingにより制限されました",
-				"email", email,
+				"user_id", userID,
 				"ip_address", clientip.GetClientIP(r),
 			)
 			ve := model.NewValidationError()
@@ -113,7 +114,6 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			if errors.Is(err, ce.usecaseErr) {
 				slog.WarnContext(ctx, "ログインコード検証失敗",
 					"reason", ce.usecaseErr.Error(),
-					"email", email,
 					"user_id", userID,
 				)
 				codeErr := model.NewValidationError()

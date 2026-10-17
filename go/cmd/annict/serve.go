@@ -167,8 +167,10 @@ func runServe() {
 	// sqlcのクエリーインスタンスを作成
 	queries := query.New(db)
 
-	// Redisクライアントの初期化 (Rate Limiting用とデータストア用)
-	var limiter *ratelimit.Limiter
+	// レート制限の限定器はPostgreSQLの `rate_limits` テーブルで数える
+	limiter := ratelimit.NewLimiter(repository.NewRateLimitRepository(queries))
+
+	// Redisクライアントの初期化 (新規登録の途中の状態を置くデータストア用)
 	var redisClient *redis.Client
 	if cfg.RedisURL != "" {
 		opt, err := redis.ParseURL(cfg.RedisURL)
@@ -185,14 +187,13 @@ func runServe() {
 		redisClient = redis.NewClient(opt)
 		// Redis接続確認
 		if err := redisClient.Ping(context.Background()).Err(); err != nil {
-			slog.Warn("Redisへの接続に失敗しました (Rate Limitingは無効化されます)", "error", err)
+			slog.Warn("Redisへの接続に失敗しました", "error", err)
 			redisClient = nil
 		} else {
 			slog.Info("Redisに正常に接続しました")
-			limiter = ratelimit.NewLimiter(redisClient)
 		}
 	} else {
-		slog.Warn("Redis URLが設定されていません (Rate Limitingは無効化されます)")
+		slog.Warn("Redis URLが設定されていません")
 	}
 
 	// 下で登録する定期ジョブが使うクリーンアップUseCaseを組み立てる。いずれも対応する
@@ -200,6 +201,7 @@ func runServe() {
 	// 配線を共有できる。
 	cleanupExpiredTokensUC := newCleanupExpiredTokensUsecase(queries)
 	cleanupExpiredSignInCodesUC := newCleanupExpiredSignInCodesUsecase(queries)
+	cleanupExpiredRateLimitsUC := newCleanupExpiredRateLimitsUsecase(queries)
 	cleanupExpiredSessionsUC := newCleanupExpiredSessionsUsecase(queries)
 	cleanupAnonymousSessionsUC := newCleanupAnonymousSessionsUsecase(queries)
 
@@ -231,6 +233,7 @@ func runServe() {
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
 		CleanupExpiredTokens:      cleanupExpiredTokensUC,
 		CleanupExpiredSignInCodes: cleanupExpiredSignInCodesUC,
+		CleanupExpiredRateLimits:  cleanupExpiredRateLimitsUC,
 		CleanupExpiredSessions:    cleanupExpiredSessionsUC,
 		CleanupAnonymousSessions:  cleanupAnonymousSessionsUC,
 		SyncAnimes:                syncAnimesUC,
@@ -281,6 +284,22 @@ func runServe() {
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobSignInCodeCleanup)
 	slog.Info("定期実行ジョブを登録しました", "job", "ログインコードクリーンアップ", "schedule", "毎日深夜2時")
+
+	// レート制限のカウンターのクリーンアップを毎時15分の定期実行ジョブとして登録する。
+	// 窓は最長1時間のため、毎時消せばテーブルには直近2時間ほどの窓だけが残る。
+	// 毎時0分のanimes同期バッチ、30分と45分のセッションのクリーンアップと重ならないよう15分にずらす。
+	periodicJobRateLimitCleanup := river.NewPeriodicJob(
+		hourlySchedule{minute: 15},
+		func() (river.JobArgs, *river.InsertOpts) {
+			args := dispatcher.CleanupExpiredRateLimitsArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
+		},
+		nil,
+	)
+
+	riverClient.Client().PeriodicJobs().Add(periodicJobRateLimitCleanup)
+	slog.Info("定期実行ジョブを登録しました", "job", "レート制限のカウンターのクリーンアップ", "schedule", "毎時15分")
 
 	// セッションクリーンアップを毎時30分の定期実行ジョブとして登録する。1回の実行は
 	// UseCaseの上限時間で打ち切るため、滞留があっても毎時少しずつ削除して負荷を一定に抑える。

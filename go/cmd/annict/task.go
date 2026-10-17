@@ -48,6 +48,10 @@ var tasks = newTasks(map[string]taskDef{
 		desc: "最終アクセスから1日を過ぎた未ログインのセッションを削除する",
 		body: cleanupAnonymousSessions,
 	},
+	"cleanup-expired-rate-limits": {
+		desc: "1時間以上前に始まった窓のレート制限のカウンターを削除する",
+		body: cleanupExpiredRateLimits,
+	},
 	"cleanup-expired-sessions": {
 		desc: "最終アクセスから30日を過ぎたセッションを削除する",
 		body: cleanupExpiredSessions,

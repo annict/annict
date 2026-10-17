@@ -2335,6 +2335,18 @@ CREATE TABLE public.providers (
 
 
 --
+-- Name: rate_limits; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE UNLOGGED TABLE public.rate_limits (
+    key character varying NOT NULL,
+    window_start timestamp with time zone NOT NULL,
+    count integer DEFAULT 1 NOT NULL
+)
+WITH (fillfactor='50');
+
+
+--
 -- Name: reactions; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4777,6 +4789,14 @@ ALTER TABLE ONLY public.providers
 
 ALTER TABLE ONLY public.providers
     ADD CONSTRAINT providers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: rate_limits rate_limits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.rate_limits
+    ADD CONSTRAINT rate_limits_pkey PRIMARY KEY (key, window_start);
 
 
 --
@@ -8678,4 +8698,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20261008100300'),
     ('20261012072250'),
     ('20261012095110'),
-    ('20261013084107');
+    ('20261013084107'),
+    ('20261014154243');

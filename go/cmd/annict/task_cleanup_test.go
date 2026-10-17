@@ -14,6 +14,7 @@ import (
 var cleanupTaskBodies = map[string]taskBody{
 	"cleanup-expired-tokens":        cleanupExpiredTokens,
 	"cleanup-expired-sign-in-codes": cleanupExpiredSignInCodes,
+	"cleanup-expired-rate-limits":   cleanupExpiredRateLimits,
 	"cleanup-expired-sessions":      cleanupExpiredSessions,
 	"cleanup-anonymous-sessions":    cleanupAnonymousSessions,
 }

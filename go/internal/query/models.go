@@ -1284,6 +1284,12 @@ type Provider struct {
 	UpdatedAt      sql.NullTime   `db:"updated_at"`
 }
 
+type RateLimit struct {
+	Key         string    `db:"key"`
+	WindowStart time.Time `db:"window_start"`
+	Count       int32     `db:"count"`
+}
+
 type Reaction struct {
 	ID               int64         `db:"id"`
 	UserID           int64         `db:"user_id"`
