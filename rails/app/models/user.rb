@@ -262,15 +262,6 @@ class User < ApplicationRecord
     ((Time.zone.now.in_time_zone(time_zone) - created_at.in_time_zone(time_zone)) / 86_400).ceil
   end
 
-  def validate_to_destroy
-    if oauth_applications.where(deleted_at: nil).exists?
-      errors.add(:oauth_applications, I18n.t("messages.users._validators.exists_active_oauth_applications"))
-      return false
-    end
-
-    true
-  end
-
   def registered_after_email_confirmation_required?
     # After 2020-04-07, registered users must confirm email before sign in
     created_at > Time.zone.parse("2020-04-07 0:00:00")

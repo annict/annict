@@ -195,9 +195,8 @@ en:
       n_people_changed_status_to_wanna_watch: "%{count} people changed their status to 'Plan to Watch'."
       view_review_with_words_count: View Review
     sayonara:
-      are_you_sure_really: Are you sure? Really??
       delete_account: Delete Account
-      description: Clicking "Delete Account" will delete all your data.
+      description: Deleting your account will delete your data, including your account information and anime records. You can review what will be deleted and what will remain on the next page.
     settings:
       apps:
         disconnected: Application has been disconnected
@@ -229,10 +228,7 @@ en:
         expired: Email confirmation link has expired. Please try again.
         updated: Email has been updated.
     users:
-      _validators:
-        exists_active_oauth_applications: which you created are active.
       allowed_locales_description: "This setting which languages you are more likely to see throughout the site, but you may still see other languages, especially english."
-      bye_bye: "Bye Bye... (´・ω;:.."
       no_works: No works
     welcome:
       show:
