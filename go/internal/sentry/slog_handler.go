@@ -3,6 +3,7 @@ package sentry
 import (
 	"context"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
 	"strings"
@@ -35,8 +36,28 @@ const ReverseProxySource = "reverse_proxy"
 // バックグラウンドロガーはNewBaseHandlerを直接使う (例: 自己回復する接続の
 // 瞬断をErrorレベルで出力するRiverの内部ロガー)。コンストラクタを共有する
 // ことで両者の形式と詳細度が一致し、将来レベルを変更してもドリフトしない。
+//
+// メールアドレスなどの値は、Sentryへ送るタグと同じキーの規則 (sensitiveAttrKeys) で
+// 伏せてから書き出す。プライバシーポリシーで「ログでは伏せる」と書ける状態を、
+// 呼び出し側が属性を載せるかどうかに依らず保つため。
 func NewBaseHandler() slog.Handler {
-	return slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo})
+	return newBaseHandler(os.Stderr)
+}
+
+// newBaseHandlerは書き込み先をwにしたNewBaseHandlerを返す。テストで出力を読むために分けている。
+func newBaseHandler(w io.Writer) slog.Handler {
+	return slog.NewTextHandler(w, &slog.HandlerOptions{
+		Level:       slog.LevelInfo,
+		ReplaceAttr: maskSensitiveAttr,
+	})
+}
+
+// maskSensitiveAttrはキーがsensitiveAttrKeysに当たる属性の値をmaskedValueに置き換える。
+func maskSensitiveAttr(_ []string, a slog.Attr) slog.Attr {
+	if isSensitiveAttrKey(a.Key) {
+		return slog.String(a.Key, maskedValue)
+	}
+	return a
 }
 
 // NewSlogHandlerはbaseハンドラーをアプリケーション固有のSentryイベントハンドラーと

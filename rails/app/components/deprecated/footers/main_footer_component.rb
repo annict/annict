@@ -124,9 +124,9 @@ module Deprecated::Footers
         [view_context.community_path, t("noun.community"), true],
         [view_context.faq_path, t("noun.faq"), true],
         ["https://wikino.app/s/annict/topics/5", t("noun.developer_help"), false],
-        [view_context.terms_path, t("noun.terms_of_use"), true],
-        [view_context.privacy_path, t("noun.privacy_policy"), true],
-        [view_context.legal_path, t("head.title.pages.legal"), true]
+        ["/terms", t("noun.terms_of_use"), true],
+        ["/privacy", t("noun.privacy_policy"), true],
+        ["/legal", t("head.title.pages.legal"), true]
       ]
     end
   end

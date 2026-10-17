@@ -50,6 +50,11 @@ func TestDBSidebar_MarksCurrentPage(t *testing.T) {
 			wantCurrent: "/db/works",
 		},
 		{
+			name:        "人物の一覧パス",
+			currentPath: "/db/people",
+			wantCurrent: "/db/people",
+		},
+		{
 			name:        "他の画面",
 			currentPath: "/db/characters",
 			wantCurrent: "/db/characters",

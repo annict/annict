@@ -77,6 +77,18 @@ func TestParseSeasonSlugs(t *testing.T) {
 		}
 	})
 
+	t.Run("季節未登録のスラッグは季節を番兵値の0にする", func(t *testing.T) {
+		t.Parallel()
+
+		years, names := ParseSeasonSlugs([]string{"2026-none", "2024-spring"})
+		if want := []int32{2026, 2024}; !reflect.DeepEqual(years, want) {
+			t.Errorf("years = %v、期待値 = %v", years, want)
+		}
+		if want := []int32{0, 2}; !reflect.DeepEqual(names, want) {
+			t.Errorf("names = %v、期待値 = %v", names, want)
+		}
+	})
+
 	t.Run("不正・範囲外のスラッグはスキップする", func(t *testing.T) {
 		t.Parallel()
 
@@ -87,6 +99,8 @@ func TestParseSeasonSlugs(t *testing.T) {
 			"9999-spring",  // 年が範囲外 (> now+5)
 			"1889-winter",  // 年が下限未満 (< 1890)
 			"abc-spring",   // 年が数値でない
+			"9999-none",    // 季節未登録でも年が範囲外 (> now+5)
+			"1889-none",    // 季節未登録でも年が下限未満 (< 1890)
 		})
 		if want := []int32{2024}; !reflect.DeepEqual(years, want) {
 			t.Errorf("years = %v、期待値 = %v", years, want)
@@ -110,7 +124,7 @@ func TestNewSeasonFilterOptions(t *testing.T) {
 	t.Parallel()
 
 	ctx := i18n.SetLocale(context.Background(), "ja")
-	options := NewSeasonFilterOptions(ctx, []string{"2024-spring"})
+	options := NewSeasonFilterOptions(ctx, []string{"2024-spring", "2024-none"})
 
 	byslug := make(map[string]SeasonFilterOption, len(options))
 	for _, opt := range options {
@@ -144,6 +158,40 @@ func TestNewSeasonFilterOptions(t *testing.T) {
 		}
 	})
 
+	t.Run("季節未登録の選択肢にSelectedとjaラベルが付く", func(t *testing.T) {
+		t.Parallel()
+
+		opt, ok := byslug["2024-none"]
+		if !ok {
+			t.Fatal("2024-noneの選択肢が無い")
+		}
+		if !opt.Selected {
+			t.Error("2024-noneが選択済みになっていない")
+		}
+		if opt.Label != "2024年 (季節未登録)" {
+			t.Errorf("Label = %q、期待値 = %q", opt.Label, "2024年 (季節未登録)")
+		}
+		if byslug["2023-none"].Selected {
+			t.Error("2023-noneが選択済みになっている")
+		}
+	})
+
+	t.Run("季節未登録の選択肢にenラベルが付く", func(t *testing.T) {
+		t.Parallel()
+
+		enCtx := i18n.SetLocale(context.Background(), "en")
+		for _, opt := range NewSeasonFilterOptions(enCtx, nil) {
+			if opt.Slug != "2024-none" {
+				continue
+			}
+			if opt.Label != "2024 (No Season)" {
+				t.Errorf("Label = %q、期待値 = %q", opt.Label, "2024 (No Season)")
+			}
+			return
+		}
+		t.Fatal("2024-noneの選択肢が無い")
+	})
+
 	t.Run("年は降順・年内は季節のenum降順で並ぶ", func(t *testing.T) {
 		t.Parallel()
 
@@ -152,9 +200,10 @@ func TestNewSeasonFilterOptions(t *testing.T) {
 			idx[opt.Slug] = i
 		}
 
-		// 年内の季節はautumn→summer→spring→winter (enum値の降順)、新しい年が古い年より
-		// 前に来るため2024-winterは2023-autumnより前。各スラッグは次のものより厳密に前に並ぶ。
-		ordered := []string{"2024-autumn", "2024-summer", "2024-spring", "2024-winter", "2023-autumn"}
+		// 年内の季節はautumn→summer→spring→winter (enum値の降順) で、季節未登録は
+		// 年内の末尾に並ぶ。新しい年が古い年より前に来るため2024-noneは2023-autumnより前。
+		// 各スラッグは次のものより厳密に前に並ぶ。
+		ordered := []string{"2024-autumn", "2024-summer", "2024-spring", "2024-winter", "2024-none", "2023-autumn"}
 		for i := 1; i < len(ordered); i++ {
 			if idx[ordered[i-1]] >= idx[ordered[i]] {
 				t.Errorf("%sは%sより前に並ぶべき", ordered[i-1], ordered[i])

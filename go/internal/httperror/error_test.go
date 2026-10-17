@@ -476,8 +476,75 @@ func TestInternalServerError_HTMXRequestOnPageIsNotRedirected(t *testing.T) {
 	)
 }
 
-// TestBadGateway_HTMXRequestIsNotRedirectedは、502が専用のページを持たない唯一のエラーで
-// あることを固定する。HTMXリクエストの送り先となるルートを持たないため、その場で応答し、他の
+func TestTooManyRequests(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name          string
+		locale        string
+		wantTitle     string
+		wantMessage   string
+		wantBackLabel string
+	}{
+		{
+			name:          "日本語",
+			locale:        "ja",
+			wantTitle:     "アクセスが集中しています",
+			wantMessage:   "短い時間に多くのリクエストが送られたため、一時的にアクセスを制限しています。1分ほど待ってから、もう一度お試しください。",
+			wantBackLabel: "ホームに戻る",
+		},
+		{
+			name:          "英語",
+			locale:        "en",
+			wantTitle:     "Too many requests",
+			wantMessage:   "Access is temporarily limited because too many requests were sent in a short time. Please wait about a minute and try again.",
+			wantBackLabel: "Back to Home",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			req := httptest.NewRequest(http.MethodGet, "/works", nil)
+			req = req.WithContext(i18n.SetLocale(req.Context(), tt.locale))
+			rr := httptest.NewRecorder()
+
+			TooManyRequests(rr, req)
+
+			assertErrorResponse(t, rr, http.StatusTooManyRequests, tt.locale, tt.wantTitle, tt.wantMessage, tt.wantBackLabel)
+			if got := rr.Header().Get("HX-Refresh"); got != "" {
+				t.Errorf("HTMXでないリクエストのHX-Refresh = %q、期待値 = 空", got)
+			}
+		})
+	}
+}
+
+// TestTooManyRequests_HTMXRefreshは、HTMXリクエストには遷移ではなく再読み込みを指示することを
+// 固定する。429は専用ルートを持たず、遷移先へのリクエストも同じ制限で数えられるため。
+func TestTooManyRequests_HTMXRefresh(t *testing.T) {
+	t.Parallel()
+
+	req := httptest.NewRequest(http.MethodPost, "/sign_in", nil)
+	req.Header.Set("HX-Request", "true")
+	req = req.WithContext(i18n.SetLocale(req.Context(), "ja"))
+	rr := httptest.NewRecorder()
+
+	TooManyRequests(rr, req)
+
+	if rr.Code != http.StatusTooManyRequests {
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusTooManyRequests)
+	}
+	if got := rr.Header().Get("HX-Refresh"); got != "true" {
+		t.Errorf("HX-Refresh = %q、期待値 = %q", got, "true")
+	}
+	if got := rr.Header().Get("HX-Redirect"); got != "" {
+		t.Errorf("HX-Redirect = %q、期待値 = 空", got)
+	}
+}
+
+// TestBadGateway_HTMXRequestIsNotRedirectedは、502が専用のページを持たず、HTMXリクエストにも
+// 何も指示しないことを固定する。HTMXリクエストの送り先となるルートを持たないため、その場で応答し、他の
 // レスポンスと同じようにスワップされる。これは漏れではなく意図した線引きで、502が返るのは
 // Railsの配信するパスに対するリバースプロキシの失敗であるのに対し、リクエスト元自身へ
 // スワップしてしまう要求はGoの配信するページから発行されるため。
@@ -512,6 +579,7 @@ func TestNoindexIsDeclaredOnEveryResponse(t *testing.T) {
 		{name: "認可の403", render: Forbidden},
 		{name: "CSRFの403", render: InvalidCSRFToken},
 		{name: "502", render: BadGateway},
+		{name: "429", render: TooManyRequests},
 		{name: "500", render: InternalServerError},
 	}
 

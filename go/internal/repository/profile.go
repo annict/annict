@@ -43,3 +43,22 @@ func (r *ProfileRepository) Create(ctx context.Context, userID model.UserID, nam
 		UpdatedAt:   row.UpdatedAt,
 	}, nil
 }
+
+// ListImageDataByUserIDはユーザーのプロフィール画像と背景画像のShrineの添付データのうち、
+// 空でないものを返します。
+func (r *ProfileRepository) ListImageDataByUserID(ctx context.Context, userID model.UserID) ([]string, error) {
+	rows, err := r.queries.ListProfileImageDataByUserID(ctx, int64(userID))
+	if err != nil {
+		return nil, err
+	}
+
+	var imageData []string
+	for _, row := range rows {
+		for _, data := range []sql.NullString{row.ImageData, row.BackgroundImageData} {
+			if data.Valid && data.String != "" {
+				imageData = append(imageData, data.String)
+			}
+		}
+	}
+	return imageData, nil
+}

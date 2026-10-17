@@ -1,9 +1,11 @@
 package sentry
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"log/slog"
+	"strings"
 	"sync"
 	"testing"
 	"time"
@@ -303,8 +305,9 @@ func TestSlogHandler_MasksSensitiveTagsEndToEnd(t *testing.T) {
 	t.Parallel()
 
 	// End-to-Endの確認: slog属性として載せたメールアドレスはbeforeSend
-	// でマスクされてからtransportに届くこと。baseハンドラーには元の値が
-	// 届き、標準エラー出力でのデバッグには引き続き使えること。
+	// でマスクされてからtransportに届くこと。baseハンドラーには元の値の
+	// レコードが届き、標準エラー出力で伏せるのはNewBaseHandlerの書き出し
+	// (TestNewBaseHandler_MasksSensitiveAttrs) が受け持つこと。
 	hub, transport := newSlogTestHubWithBeforeSend(t)
 	base := newRecordingHandler()
 	logger := slog.New(NewSlogHandler(base))
@@ -335,6 +338,42 @@ func TestSlogHandler_MasksSensitiveTagsEndToEnd(t *testing.T) {
 	}
 	if recs[0].attrs["email"] != "user@example.com" {
 		t.Errorf("ベースレコードのattrs[email] = %q、期待値 = %q", recs[0].attrs["email"], "user@example.com")
+	}
+}
+
+func TestNewBaseHandler_MasksSensitiveAttrs(t *testing.T) {
+	t.Parallel()
+
+	var buf bytes.Buffer
+	logger := slog.New(newBaseHandler(&buf))
+	logger.Info("確認コードを再送信しました",
+		"email", "user@example.com",
+		"token_digest", "digest-value",
+		"user_id", "u123",
+		"ip_address", "203.0.113.10",
+	)
+	// WithAttrsで先に載せた属性とグループ内の属性も伏せること。
+	logger.With("sign_up_email", "group@example.com").WithGroup("form").Info("フォームを受け付けました",
+		"password", "plain-password",
+	)
+
+	out := buf.String()
+	for _, secret := range []string{"user@example.com", "digest-value", "group@example.com", "plain-password"} {
+		if strings.Contains(out, secret) {
+			t.Errorf("標準エラー出力に %qが含まれている: %s", secret, out)
+		}
+	}
+	for _, want := range []string{
+		"email=[FILTERED]",
+		"token_digest=[FILTERED]",
+		"sign_up_email=[FILTERED]",
+		"form.password=[FILTERED]",
+		"user_id=u123",
+		"ip_address=203.0.113.10",
+	} {
+		if !strings.Contains(out, want) {
+			t.Errorf("標準エラー出力に %qが含まれていない: %s", want, out)
+		}
 	}
 }
 

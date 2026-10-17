@@ -29,28 +29,25 @@ WHERE w.deleted_at IS NULL
         SELECT 1 FROM slots s
         WHERE s.work_id = w.id AND s.deleted_at IS NULL AND s.unpublished_at IS NULL
     ))
-    AND ($5::int IS NULL OR w.season_year = $5)
-    AND ($6::int IS NULL OR w.season_name = $6)
     AND (
-        coalesce(cardinality($7::int[]), 0) = 0
+        coalesce(cardinality($5::int[]), 0) = 0
         OR EXISTS (
             SELECT 1
-            FROM generate_subscripts($7::int[], 1) AS i
-            WHERE w.season_year = ($7::int[])[i]
-                AND w.season_name = ($8::int[])[i]
+            FROM generate_subscripts($5::int[], 1) AS i
+            WHERE w.season_year = ($5::int[])[i]
+                -- 季節の0は「季節未登録」を表し、season_nameがNULLの作品に一致させる
+                AND w.season_name IS NOT DISTINCT FROM NULLIF(($6::int[])[i], 0)
         )
     )
 `
 
 type CountDBWorksParams struct {
-	FilterNoEpisodes sql.NullBool  `db:"filter_no_episodes"`
-	FilterNoImage    sql.NullBool  `db:"filter_no_image"`
-	FilterNoSeason   sql.NullBool  `db:"filter_no_season"`
-	FilterNoSlots    sql.NullBool  `db:"filter_no_slots"`
-	SeasonYear       sql.NullInt32 `db:"season_year"`
-	SeasonName       sql.NullInt32 `db:"season_name"`
-	SeasonYears      []int32       `db:"season_years"`
-	SeasonNames      []int32       `db:"season_names"`
+	FilterNoEpisodes sql.NullBool `db:"filter_no_episodes"`
+	FilterNoImage    sql.NullBool `db:"filter_no_image"`
+	FilterNoSeason   sql.NullBool `db:"filter_no_season"`
+	FilterNoSlots    sql.NullBool `db:"filter_no_slots"`
+	SeasonYears      []int32      `db:"season_years"`
+	SeasonNames      []int32      `db:"season_names"`
 }
 
 func (q *Queries) CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error) {
@@ -59,8 +56,6 @@ func (q *Queries) CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int
 		arg.FilterNoImage,
 		arg.FilterNoSeason,
 		arg.FilterNoSlots,
-		arg.SeasonYear,
-		arg.SeasonName,
 		pq.Array(arg.SeasonYears),
 		pq.Array(arg.SeasonNames),
 	)
@@ -716,33 +711,30 @@ WHERE w.deleted_at IS NULL
         SELECT 1 FROM slots s
         WHERE s.work_id = w.id AND s.deleted_at IS NULL AND s.unpublished_at IS NULL
     ))
-    AND ($5::int IS NULL OR w.season_year = $5)
-    AND ($6::int IS NULL OR w.season_name = $6)
     AND (
-        coalesce(cardinality($7::int[]), 0) = 0
+        coalesce(cardinality($5::int[]), 0) = 0
         OR EXISTS (
             SELECT 1
-            FROM generate_subscripts($7::int[], 1) AS i
-            WHERE w.season_year = ($7::int[])[i]
-                AND w.season_name = ($8::int[])[i]
+            FROM generate_subscripts($5::int[], 1) AS i
+            WHERE w.season_year = ($5::int[])[i]
+                -- 季節の0は「季節未登録」を表し、season_nameがNULLの作品に一致させる
+                AND w.season_name IS NOT DISTINCT FROM NULLIF(($6::int[])[i], 0)
         )
     )
 ORDER BY w.id DESC
-LIMIT $10
-OFFSET $9::bigint
+LIMIT $8
+OFFSET $7::bigint
 `
 
 type ListDBWorksParams struct {
-	FilterNoEpisodes sql.NullBool  `db:"filter_no_episodes"`
-	FilterNoImage    sql.NullBool  `db:"filter_no_image"`
-	FilterNoSeason   sql.NullBool  `db:"filter_no_season"`
-	FilterNoSlots    sql.NullBool  `db:"filter_no_slots"`
-	SeasonYear       sql.NullInt32 `db:"season_year"`
-	SeasonName       sql.NullInt32 `db:"season_name"`
-	SeasonYears      []int32       `db:"season_years"`
-	SeasonNames      []int32       `db:"season_names"`
-	PageOffset       int64         `db:"page_offset"`
-	PerPage          int32         `db:"per_page"`
+	FilterNoEpisodes sql.NullBool `db:"filter_no_episodes"`
+	FilterNoImage    sql.NullBool `db:"filter_no_image"`
+	FilterNoSeason   sql.NullBool `db:"filter_no_season"`
+	FilterNoSlots    sql.NullBool `db:"filter_no_slots"`
+	SeasonYears      []int32      `db:"season_years"`
+	SeasonNames      []int32      `db:"season_names"`
+	PageOffset       int64        `db:"page_offset"`
+	PerPage          int32        `db:"per_page"`
 }
 
 type ListDBWorksRow struct {
@@ -767,8 +759,6 @@ func (q *Queries) ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]Lis
 		arg.FilterNoImage,
 		arg.FilterNoSeason,
 		arg.FilterNoSlots,
-		arg.SeasonYear,
-		arg.SeasonName,
 		pq.Array(arg.SeasonYears),
 		pq.Array(arg.SeasonNames),
 		arg.PageOffset,

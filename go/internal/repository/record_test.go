@@ -187,3 +187,60 @@ func insertTestRecord(
 		t.Fatalf("レコードの挿入に失敗しました: %v", err)
 	}
 }
+
+func TestRecordRepository_DeleteByUserID(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewRecordRepository(query.New(db)).WithTx(tx)
+	ctx := context.Background()
+
+	userID := testutil.NewUserBuilder(t, tx).Build()
+	otherUserID := testutil.NewUserBuilder(t, tx).Build()
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	hiddenWorkID := testutil.NewWorkBuilder(t, tx).Build()
+	if _, err := tx.ExecContext(ctx,
+		"UPDATE works SET records_count = 10 WHERE id IN ($1, $2)",
+		int64(workID), int64(hiddenWorkID),
+	); err != nil {
+		t.Fatalf("作品の記録数の設定に失敗: %v", err)
+	}
+
+	watchedAt := time.Now()
+	insertTestRecord(t, tx, userID, workID, watchedAt, sql.NullTime{})
+	insertTestRecord(t, tx, userID, workID, watchedAt, sql.NullTime{})
+	// 論理削除された記録は記録数に含まれていないため、減算しない。
+	insertTestRecord(t, tx, userID, hiddenWorkID, watchedAt, sql.NullTime{Time: watchedAt, Valid: true})
+	insertTestRecord(t, tx, otherUserID, workID, watchedAt, sql.NullTime{})
+
+	// 上限を超える分は残し、次の呼び出しで削除する。
+	for i, want := range []int64{2, 1, 0} {
+		got, err := repo.DeleteByUserID(ctx, userID, 2)
+		if err != nil {
+			t.Fatalf("%d回目のDeleteByUserIDのエラー = %v", i+1, err)
+		}
+		if got != want {
+			t.Errorf("%d回目の削除件数 = %d、期待値 = %d", i+1, got, want)
+		}
+	}
+
+	if got := testutil.CountRows(t, tx, "records", "user_id = $1", int64(userID)); got != 0 {
+		t.Errorf("ユーザーの記録の件数 = %d、期待値 = 0", got)
+	}
+	if got := testutil.CountRows(t, tx, "records", "user_id = $1", int64(otherUserID)); got != 1 {
+		t.Errorf("他のユーザーの記録の件数 = %d、期待値 = 1", got)
+	}
+
+	for workID, want := range map[model.WorkID]int32{
+		workID:       8,
+		hiddenWorkID: 10,
+	} {
+		var recordsCount int32
+		if err := tx.QueryRowContext(ctx, "SELECT records_count FROM works WHERE id = $1", int64(workID)).Scan(&recordsCount); err != nil {
+			t.Fatalf("作品の記録数の取得に失敗: %v", err)
+		}
+		if recordsCount != want {
+			t.Errorf("作品 %d の記録数 = %d、期待値 = %d", workID, recordsCount, want)
+		}
+	}
+}

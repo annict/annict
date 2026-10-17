@@ -61,6 +61,7 @@ func validUpdateWorkInput(t *testing.T, db *sql.DB, workID model.WorkID, title s
 
 	return UpdateWorkInput{
 		WorkID:    workID,
+		User:      &model.User{ID: 1, Role: model.RoleEditor},
 		UpdatedAt: readWorkVersion(t, db, workID),
 		WorkFormInput: WorkFormInput{
 			Title:                 title,
@@ -565,5 +566,44 @@ func TestUpdateWorkUsecase_Execute_RejectsDuplicateTitle(t *testing.T) {
 	}
 	if len(ve.GetFieldErrors("title")) == 0 {
 		t.Error("titleフィールドのバリデーションエラーを期待したが、無かった")
+	}
+}
+
+// TestUpdateWorkUsecase_Execute_RequiresCommitterはロールの規則をルートではなく
+// UseCase側に置いていることを検証する。後から増える経路がロール確認を経ずに到達できないように
+// するため。拒否された呼び出しは作品を書き換えない。
+func TestUpdateWorkUsecase_Execute_RequiresCommitter(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newUpdateWorkUsecase(db)
+
+	originalTitle := "認可テスト更新前_" + t.Name()
+	workID := createMappedWork(t, db, originalTitle)
+
+	for _, tt := range []struct {
+		name string
+		user *model.User
+	}{
+		{name: "ユーザーを伴わない呼び出し", user: nil},
+		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			input := validUpdateWorkInput(t, db, workID, "認可テスト更新後_"+t.Name())
+			input.User = tt.user
+
+			output, err := uc.Execute(context.Background(), input)
+			if output != nil {
+				t.Errorf("output = %+v、期待値 = nil (権限の無いユーザーのため)", output)
+			}
+			ae := model.AsAppError(err)
+			if ae == nil || ae.Code != model.AppErrCodeForbidden {
+				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeForbidden", err)
+			}
+		})
+	}
+
+	if got := reloadSyncWork(t, db, workID).Title; got != originalTitle {
+		t.Errorf("Title = %q、期待値 = %q (拒否された呼び出しは行を書かない)", got, originalTitle)
 	}
 }

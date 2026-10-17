@@ -42,8 +42,7 @@ task: ## 運用タスクを1回実行 (例: make task NAME=sync-animes / make ta
 
 .PHONY: templ-generate
 templ-generate: ## templファイルからGoコードを生成し、import文を整理
-	@which templ > /dev/null || (echo "Installing templ from go.mod..." && go install github.com/a-h/templ/cmd/templ)
-	templ generate
+	go tool templ generate
 	@$(MAKE) goimports
 
 .PHONY: goimports

@@ -52,7 +52,7 @@ func TestSeedTask_RejectsNonSeedableEnvBeforeDBConnection(t *testing.T) {
 	t.Setenv("ANNICT_IMGPROXY_KEY", "00")
 	t.Setenv("ANNICT_IMGPROXY_SALT", "00")
 
-	err := tasks["seed"].run(context.Background())
+	err := tasks["seed"].run(context.Background(), nil)
 	if err == nil {
 		t.Fatal(`tasks["seed"].run() = nil、期待値 = エラーあり`)
 	}
@@ -69,7 +69,7 @@ func TestSeedTask_RejectsNonSeedableEnvBeforeDBConnection(t *testing.T) {
 func TestSeed_RejectsNonSeedableEnv(t *testing.T) {
 	t.Parallel()
 
-	if err := seed(context.Background(), &config.Config{Env: "prod"}, nil, nil); err == nil {
+	if err := seed(context.Background(), &config.Config{Env: "prod"}, nil, nil, nil); err == nil {
 		t.Fatal("seed() = nil、期待値 = エラーあり")
 	}
 }

@@ -150,6 +150,53 @@ func TestRequireAuth_RedirectsWhenNotAuthenticated(t *testing.T) {
 	}
 }
 
+func TestRequireAuth_RedirectsWhenUserDeleted(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	// 退会・利用停止したユーザーのセッションが他の端末に残っているケース
+	userID := testutil.NewUserBuilder(t, tx).
+		WithDeletedAt(time.Now()).
+		Build()
+
+	queries := query.New(db).WithTx(tx)
+	publicID := testutil.NewSessionBuilder(t, tx).
+		WithSessionID("test-session-id-deleted-user").
+		WithUserID(userID).
+		Build()
+
+	cfg := &config.Config{
+		CookieDomain:    ".test.example.com",
+		SessionSecure:   "false",
+		SessionHTTPOnly: "true",
+	}
+
+	sessionRepo := repository.NewSessionRepository(queries)
+	sessionManager := session.NewManager(sessionRepo, cfg)
+	authMW := middleware.NewAuthMiddleware(sessionManager)
+
+	testHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
+
+	req := httptest.NewRequest("GET", "/test", nil)
+	req.AddCookie(&http.Cookie{
+		Name:  session.SessionKey,
+		Value: publicID,
+	})
+	rr := httptest.NewRecorder()
+
+	authMW.Middleware(authMW.RequireAuth(testHandler)).ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
+	}
+	if location := rr.Header().Get("Location"); location != "/sign_in?back=%2Ftest" {
+		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in?back=%2Ftest")
+	}
+}
+
 func TestRequireAuth_RedirectsWhenSessionIDNotFound(t *testing.T) {
 	// テストDBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)

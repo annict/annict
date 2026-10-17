@@ -64,8 +64,8 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 		return nil, err
 	}
 
-	// 2. ユーザー検索
-	user, err := uc.userRepo.GetByEmailForSignIn(ctx, input.Email)
+	// 2. ユーザー検索 (削除済みユーザーは存在しないユーザーと同じ応答にする)
+	user, err := uc.userRepo.GetActiveByEmailForSignIn(ctx, input.Email)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			ve := model.NewValidationError()
@@ -77,10 +77,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 
 	// 3. パスワードの有無を確認
 	if user.EncryptedPassword != "" {
-		slog.InfoContext(ctx, "ユーザーはパスワードログインを使用します",
-			"user_id", user.ID,
-			"email", user.Email,
-		)
+		slog.InfoContext(ctx, "ユーザーはパスワードログインを使用します", "user_id", user.ID)
 		return &SendSignInCodeOutput{
 			UserID:      model.UserID(user.ID),
 			Email:       user.Email,
@@ -89,10 +86,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 	}
 
 	// 4. パスワードなしの場合: コードを生成・送信
-	slog.InfoContext(ctx, "ユーザーはメールログインを使用します",
-		"user_id", user.ID,
-		"email", user.Email,
-	)
+	slog.InfoContext(ctx, "ユーザーはメールログインを使用します", "user_id", user.ID)
 
 	code, err := uc.generateAndSendCode(ctx, model.UserID(user.ID), user.Email)
 	if err != nil {
@@ -155,7 +149,7 @@ func (uc *SendSignInCodeUsecase) generateAndSendCode(ctx context.Context, userID
 
 	// メール送信ジョブをエンキュー
 	if uc.dispatcher != nil {
-		user, err := uc.userRepo.GetByID(ctx, userID)
+		user, err := uc.userRepo.GetActiveByID(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "ユーザー情報の取得に失敗しました",
 				"user_id", userID,

@@ -3,7 +3,7 @@
 
 class Deprecated::SearchCastsQuery
   def initialize(collection = Cast.all, order_by: nil)
-    @collection = collection.only_kept.preload(:person, :character)
+    @collection = collection.only_kept.with_kept_person.preload(:person, :character)
     @args = {
       order_by: order_by
     }

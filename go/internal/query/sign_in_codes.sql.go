@@ -57,10 +57,16 @@ SELECT id, user_id, code_digest, attempts, expires_at, used_at, created_at, upda
 WHERE user_id = $1
 AND used_at IS NULL
 AND expires_at > NOW()
+AND EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = sign_in_codes.user_id
+    AND users.deleted_at IS NULL
+)
 ORDER BY created_at DESC
 LIMIT 1
 `
 
+// コードの発行後に退会・利用停止したユーザーのコードは無効として扱う。
 func (q *Queries) GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error) {
 	row := q.db.QueryRowContext(ctx, getValidSignInCode, userID)
 	var i SignInCode

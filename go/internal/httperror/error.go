@@ -77,11 +77,25 @@ func redirectHTMXToPage(w http.ResponseWriter, r *http.Request, pagePath string)
 // 場合に使う。再試行について述べる内容は500ページと同じ。読み手にはどちらも打つ手が無く、
 // 違うのはアプリケーションのどちら側が失敗したかだけであるため。
 //
-// ここで唯一専用のページを持たないのは、本関数が応じるのがRailsの配信するパスに対する
+// 専用のページを持たず、HTMXリクエストにも何も指示しないのは、本関数が応じるのがRailsの配信するパスに対する
 // リバースプロキシの失敗だけであるのに対し、文書をリクエスト元の要素へスワップしてしまう
 // HTMXリクエストはGoの配信するページから発行されるものだけであるため。
 func BadGateway(w http.ResponseWriter, r *http.Request) {
 	render(w, r, http.StatusBadGateway, "error_bad_gateway_title", "error_bad_gateway_message")
+}
+
+// TooManyRequestsは共通の429ページを描画する。レート制限を超えたリクエストに使う。
+// 窓が終わるまでの待ち時間 (Retry-After) は制限の判定結果を持つ呼び出し元が付ける。
+//
+// 専用ルートを持たないのは、遷移先のページへのリクエストも同じ制限で数えられ、
+// 429になるため。HTMXリクエストには代わりにページの再読み込みを指示する。htmxは204と304以外の
+// レスポンスをスワップするため、指示しなければ完全な文書が押したボタンの中へ挿入される。
+// 再読み込みしたページも窓が終わるまでは本ページになり、全画面で表示される。
+func TooManyRequests(w http.ResponseWriter, r *http.Request) {
+	if r.Header.Get("HX-Request") == "true" {
+		w.Header().Set("HX-Refresh", "true")
+	}
+	render(w, r, http.StatusTooManyRequests, "error_too_many_requests_title", "error_too_many_requests_message")
 }
 
 // InternalServerErrorは内部エラーを公開せず、共通の500ページを描画する。失敗した要求

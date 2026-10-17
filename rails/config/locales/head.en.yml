@@ -110,10 +110,6 @@ en:
           edit: "%{name}"
           index: Organizations
           new: New Organizations
-        people:
-          edit: "%{name}"
-          index: People
-          new: New People
         person_fans:
           index: Fans of %{person_name}
         slots:
@@ -198,8 +194,6 @@ en:
         show: "%{name}"
       pages:
         legal: Legal
-        privacy: Privacy policy
-        terms: Terms of Service
       passwords:
         edit: Forgot your password?
         new: Forgot your password?

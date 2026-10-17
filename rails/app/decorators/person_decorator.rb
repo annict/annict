@@ -10,7 +10,7 @@ module PersonDecorator
 
   def db_detail_link(options = {})
     name = options.delete(:name).presence || self.name
-    link_to name, db_edit_person_path(self), options
+    link_to name, "/db/people/#{id}/edit", options
   end
 
   def grid_description(resource)

@@ -280,3 +280,54 @@ func TestDefault_I18n(t *testing.T) {
 		})
 	}
 }
+
+// TestDefault_LanguageMetaDefaultsはURLが言語を持たないページの <head> が、
+// リクエストのロケールによらず従来どおりの言語のメタ情報を出力することを検証する。
+// og:localeは既定言語のまま、hreflangとrobotsは出力せず、canonicalは出力する。
+func TestDefault_LanguageMetaDefaults(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "annict.test",
+	}
+
+	for _, acceptLanguage := range []string{"ja", "en"} {
+		t.Run(acceptLanguage, func(t *testing.T) {
+			t.Parallel()
+
+			req := httptest.NewRequest("GET", "/works/popular", nil)
+			req.Header.Set("Accept-Language", acceptLanguage)
+
+			ctx := i18n.SetLocale(req.Context(), i18n.DetectLanguage(req))
+			meta := viewmodel.DefaultPageMeta(ctx, cfg, req.URL.Path)
+
+			var buf bytes.Buffer
+			if err := Default(ctx, meta, nil, viewmodel.Seasons{}, "v1.0.0", templ.NopComponent).Render(ctx, &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
+
+			html := buf.String()
+
+			wantContains := []string{
+				`<meta property="og:locale" content="ja_JP">`,
+				`<link rel="canonical" href="https://annict.test/works/popular">`,
+			}
+			for _, want := range wantContains {
+				if !strings.Contains(html, want) {
+					t.Errorf("期待する文字列が含まれていません: %q", want)
+				}
+			}
+
+			wantNotContains := []string{
+				`rel="alternate"`,
+				`name="robots"`,
+			}
+			for _, notWant := range wantNotContains {
+				if strings.Contains(html, notWant) {
+					t.Errorf("含まれてはいけない文字列が含まれています: %q", notWant)
+				}
+			}
+		})
+	}
+}

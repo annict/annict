@@ -3,7 +3,6 @@ package usecase
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
 	"log/slog"
 	"time"
@@ -59,17 +58,17 @@ func (uc *CreatePasswordResetTokenUsecase) Execute(ctx context.Context, input Cr
 		return nil, err
 	}
 
-	// 2. ユーザー検索 (存在しない場合もエラーを返さない - セキュリティ対策)
-	user, err := uc.userRepo.GetByEmail(ctx, input.Email)
+	// 2. ユーザー検索 (存在しない場合・削除済みの場合もエラーを返さない - セキュリティ対策)
+	userID, err := uc.userRepo.FindActiveIDByEmail(ctx, input.Email)
 	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, nil
-		}
 		return nil, fmt.Errorf("ユーザーの検索に失敗: %w", err)
+	}
+	if userID == nil {
+		return nil, nil
 	}
 
 	// 3. トークンを生成
-	return uc.createToken(ctx, model.UserID(user.ID))
+	return uc.createToken(ctx, *userID)
 }
 
 // createTokenはパスワードリセットトークンを生成します
@@ -113,7 +112,7 @@ func (uc *CreatePasswordResetTokenUsecase) createToken(ctx context.Context, user
 
 	// メール送信ジョブをエンキュー
 	if uc.dispatcher != nil {
-		user, err := uc.userRepo.GetByID(ctx, userID)
+		user, err := uc.userRepo.GetActiveByID(ctx, userID)
 		if err != nil {
 			slog.ErrorContext(ctx, "ユーザー情報の取得に失敗しました",
 				"user_id", userID,

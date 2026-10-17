@@ -9,19 +9,30 @@ templ Head(meta viewmodel.PageMeta, assetVersion string) {
 	// プレビュー・インストール済みPWA) に向けたもので、DBHeadではこのうち最小限の
 	// Open Graphだけを出力する。
 	<meta name="description" content={ meta.Description }/>
+	if meta.Robots() != "" {
+		<meta name="robots" content={ meta.Robots() }/>
+	}
 	<meta property="og:title" content={ meta.Title }/>
 	<meta property="og:type" content={ meta.OGType }/>
 	<meta property="og:url" content={ meta.CanonicalURL }/>
 	<meta property="og:description" content={ meta.Description }/>
 	<meta property="og:site_name" content="Annict (アニクト)"/>
 	<meta property="og:image" content={ meta.OGImage }/>
-	<meta property="og:locale" content="ja_JP"/>
+	<meta property="og:locale" content={ meta.OGLocale() }/>
 	<meta name="twitter:card" content="summary"/>
 	<meta name="twitter:site" content="@AnnictJP"/>
 	<meta name="twitter:title" content={ meta.Title }/>
 	<meta name="twitter:description" content={ meta.Description }/>
 	<meta name="twitter:image" content={ meta.OGImage }/>
-	<link rel="canonical" href={ meta.CanonicalURL }/>
+	// noindexのページに正規URLを宣言すると「インデックスするな」と「正規はこのURL」が
+	// 矛盾したシグナルになるため、canonicalを出力しない。og:urlはSNSのプレビューが共有先の
+	// URLを決めるのに使うため、noindexでも残す。
+	if !meta.NoIndex {
+		<link rel="canonical" href={ meta.CanonicalURL }/>
+	}
+	for _, link := range meta.AlternateLinks() {
+		<link rel="alternate" hreflang={ link.HrefLang } href={ link.URL }/>
+	}
 	<link rel="manifest" href="/manifest.json"/>
 }
 

@@ -15,6 +15,98 @@ RSpec.describe "POST /oauth/applications", type: :request do
     expect(response.location).to start_with("http://api.annict.test:3000/sign_in")
   end
 
+  it "退会済みのユーザーがアプリケーションを作成できないこと" do
+    user = FactoryBot.create(:registered_user)
+    login_as(user, scope: :user)
+    user.update_column(:deleted_at, Time.current)
+
+    expect {
+      post "/oauth/applications", params: {
+        oauth_application: {
+          name: "Test App",
+          redirect_uri: "http://example.com/callback",
+          scopes: "read"
+        }
+      }
+    }.not_to change(Oauth::Application, :count)
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
+  describe "退会受付と同時にアプリケーションを作成するとき" do
+    self.use_transactional_tests = false
+
+    it "ユーザー行のロック解除後に削除状態を読み直し、作成を拒否すること" do
+      # セッションストアの行はユーザーと結び付かないため、テスト中に作られた行をidの範囲で消す。
+      last_session_id = ActiveRecord::SessionStore::Session.maximum(:id) || 0
+      locked = Queue.new
+      release = Queue.new
+
+      begin
+        user = FactoryBot.create(:registered_user)
+        login_as(user, scope: :user)
+        get "/oauth/applications"
+        expect(response).to have_http_status(:ok)
+
+        blocker = Thread.new do
+          ActiveRecord::Base.connection_pool.with_connection do |connection|
+            connection.transaction do
+              connection.exec_query("SELECT id FROM users WHERE id = #{user.id} FOR UPDATE")
+              locked << connection.select_value("SELECT pg_backend_pid()")
+              release.pop
+              connection.exec_update("UPDATE users SET deleted_at = NOW() WHERE id = #{user.id}", "退会済みへ変更")
+            end
+          end
+        end
+
+        blocker_pid = locked.pop
+        request_pid = ActiveRecord::Base.connection.select_value("SELECT pg_backend_pid()")
+        waiting = Thread.new do
+          ActiveRecord::Base.connection_pool.with_connection do |connection|
+            Timeout.timeout(5, Timeout::Error, "アプリケーションの作成がユーザー行のロックを待機しなかった") do
+              loop do
+                blocked = connection.select_value(<<~SQL)
+                  SELECT EXISTS (
+                    SELECT 1 FROM pg_stat_activity
+                    WHERE pid = #{request_pid}
+                      AND #{blocker_pid} = ANY(pg_blocking_pids(pid))
+                  )
+                SQL
+                break if blocked
+
+                sleep 0.01
+              end
+            end
+          end
+        ensure
+          release << true
+        end
+
+        post "/oauth/applications", params: {
+          oauth_application: {
+            name: "Test App",
+            redirect_uri: "http://example.com/callback",
+            scopes: "read"
+          }
+        }
+
+        waiting.value
+        blocker.value
+        expect(response).to have_http_status(:forbidden)
+        expect(Oauth::Application.where(owner: user)).not_to exist
+      ensure
+        release << true
+        blocker&.join
+        waiting&.join
+        if user
+          Oauth::Application.where(owner: user).delete_all
+          user.destroy!
+        end
+        ActiveRecord::SessionStore::Session.where("id > ?", last_session_id).delete_all
+      end
+    end
+  end
+
   it "管理者でないユーザーがアプリケーションを作成したとき、アプリケーションが作成されること" do
     user = FactoryBot.create(:registered_user)
     login_as(user, scope: :user)

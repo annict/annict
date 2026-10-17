@@ -131,11 +131,11 @@ func (m *Manager) GetCurrentUser(ctx context.Context, r *http.Request) (*model.U
 		return nil, nil // ログインしていない
 	}
 
-	// ユーザー情報を取得
-	user, err := m.sessionRepo.GetUserByID(ctx, *sessionData.UserID)
+	// 退会・利用停止したユーザーのセッションは、他の端末に残っていても未ログインとして扱う
+	user, err := m.sessionRepo.GetActiveUserByID(ctx, *sessionData.UserID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			return nil, nil // ユーザーが見つからない
+			return nil, nil
 		}
 		return nil, fmt.Errorf("ユーザー取得エラー: %w", err)
 	}

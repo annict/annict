@@ -12,4 +12,4 @@ package worker
 // Riverバージョンに固定したCLI、version 1は除外) でclean SQLを生成し、末尾に
 // `INSERT INTO river_migration (line, version) VALUES ('main', N);` を追記する
 // (downではDELETE) 新しいdbmateマイグレーションを追加し、この定数をNに更新する。
-const appliedRiverMigrationVersion = 7
+const appliedRiverMigrationVersion = 8

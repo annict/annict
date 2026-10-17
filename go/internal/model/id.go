@@ -26,6 +26,24 @@ type CastID int64
 // Stringは文字列表現を返す
 func (id CastID) String() string { return strconv.FormatInt(int64(id), 10) }
 
+// PersonIDは人物のID型
+type PersonID int64
+
+// Stringは文字列表現を返す
+func (id PersonID) String() string { return strconv.FormatInt(int64(id), 10) }
+
+// PrefectureIDは出身地 (都道府県と「海外」) のID型
+type PrefectureID int64
+
+// Stringは文字列表現を返す
+func (id PrefectureID) String() string { return strconv.FormatInt(int64(id), 10) }
+
+// CharacterIDはキャラクターのID型
+type CharacterID int64
+
+// Stringは文字列表現を返す
+func (id CharacterID) String() string { return strconv.FormatInt(int64(id), 10) }
+
 // StaffIDはスタッフのID型
 type StaffID int64
 

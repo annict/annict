@@ -16,11 +16,11 @@
   ],
   "ignorePatterns": [
     "**/node_modules/",
+    "go/internal/legaldoc/documents/",
     "go/internal/query/*.go",
     "go/internal/templates/*_templ.go",
     "go/static/",
     "rails/app/assets/builds/",
-    "rails/app/docs/",
     "rails/app/views/",
     "rails/db/",
     "rails/public/",

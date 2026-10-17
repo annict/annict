@@ -16,14 +16,16 @@ import (
 )
 
 // newNewRequestはある作品の一括作成フォームへのGETリクエストを、chiがルートパターン
-// から取り出すwork_idのURLパラメータ付きで組み立てる。
+// から取り出すwork_idのURLパラメータと、ルートのミドルウェアを通過したcommitterのユーザー
+// 付きで組み立てる。
 func newNewRequest(workID model.WorkID) *http.Request {
 	req := httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/episodes/new", int64(workID)), nil)
 
 	routeCtx := chi.NewRouteContext()
 	routeCtx.URLParams.Add("work_id", fmt.Sprintf("%d", int64(workID)))
 
-	return req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, routeCtx))
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, routeCtx))
+	return withCreateTestUser(req, &model.User{ID: 1, Role: model.RoleEditor})
 }
 
 func TestNew(t *testing.T) {
@@ -210,4 +212,21 @@ func TestNew_RequiresCommitter(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestNew_ForbiddenWithoutMiddlewareは既存作品の一括作成フォームをUseCaseが拒否し、
+// Handlerが403ページに変換することを検証する。
+func TestNew_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("一括作成フォーム認可境界テスト").Build()
+	handler := newTestHandler(t, db, tx)
+	r := chi.NewRouter()
+	r.Get("/db/works/{work_id}/episodes/new", handler.New)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/episodes/new", int64(workID)), nil))
+
+	assertForbiddenPage(t, rr)
 }

@@ -14,11 +14,14 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/legaldoc"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 )
 
 func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -84,6 +87,8 @@ func TestReverseProxyMiddleware_GoHandledPaths(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_RailsProxiedPaths(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// X-Forwarded-*ヘッダーが設定されていることを確認
@@ -159,6 +164,8 @@ func TestReverseProxyMiddleware_RailsProxiedPaths(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_HeaderForwarding(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成 (ヘッダーチェック)
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// 各種ヘッダーが転送されていることを確認
@@ -219,6 +226,8 @@ func TestReverseProxyMiddleware_HeaderForwarding(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_ErrorHandling(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成 (常にエラーを返す)
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// 接続を即座に閉じる (エラーをシミュレート)
@@ -339,6 +348,8 @@ func assertBadGatewayPage(t *testing.T, rr *httptest.ResponseRecorder, wantTitle
 }
 
 func TestIsGoHandledPath(t *testing.T) {
+	t.Parallel()
+
 	cfg := &config.Config{Domain: "annict-test.page"}
 	proxyMiddleware, _ := NewReverseProxyMiddleware("http://localhost:3000", cfg, nil, nil)
 
@@ -362,6 +373,24 @@ func TestIsGoHandledPath(t *testing.T) {
 		{"/password/edit", true},
 		{"/password", true},
 		{"/sign_in", true},
+		{"/settings/account/deletion/new", true},
+		{"/settings/account/deletion", true},
+		// 退会の受付でセッションを破棄した直後に開かれるため、未ログインでもGo版で処理する必要がある。
+		{"/settings/account/deletion/completed", true},
+		{"/settings/account", false},
+		{"/terms", true},
+		{"/privacy", true},
+		{"/legal", true},
+		// 文書の一覧表に登録した時点でGo版が配信する英語版・API利用規約・改定前の版のアーカイブページ
+		{"/en/terms", true},
+		{"/en/privacy", true},
+		{"/terms/api", true},
+		{"/en/terms/api", true},
+		{"/terms/archive/20140310", true},
+		{"/en/terms/archive/20140310", true},
+		// 特定商取引法に基づく表記は日本語版だけを配信する
+		{"/en/legal", false},
+		{"/ja/terms", false},
 		{"/works/popular", false},
 		{"/works", false},
 		{"/", false},
@@ -386,6 +415,8 @@ func TestIsGoHandledPath(t *testing.T) {
 }
 
 func TestIsAPISubdomain(t *testing.T) {
+	t.Parallel()
+
 	cfg := &config.Config{Domain: "annict-test.page"}
 	proxyMiddleware, _ := NewReverseProxyMiddleware("http://localhost:3000", cfg, nil, nil)
 
@@ -412,6 +443,8 @@ func TestIsAPISubdomain(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_APISubdomain(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -472,6 +505,8 @@ func TestReverseProxyMiddleware_APISubdomain(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_PreserveExistingHeaders(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// X-Forwarded-Forヘッダーの確認
@@ -528,6 +563,8 @@ func TestReverseProxyMiddleware_PreserveExistingHeaders(t *testing.T) {
 }
 
 func TestGetClientIP(t *testing.T) {
+	t.Parallel()
+
 	testCases := []struct {
 		name             string
 		cfConnectingIP   string
@@ -592,6 +629,8 @@ func TestGetClientIP(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_CFConnectingIP(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// CF-Connecting-IPヘッダーがそのまま転送されていることを確認
@@ -638,6 +677,8 @@ func TestReverseProxyMiddleware_CFConnectingIP(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_ResponseHeaderTimeout(t *testing.T) {
+	t.Parallel()
+
 	// レスポンスヘッダーの送信を遅延させるモックRailsサーバーを作成
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// 200ms遅延 (テスト用のタイムアウトは100msに設定)
@@ -688,6 +729,8 @@ func TestReverseProxyMiddleware_ResponseHeaderTimeout(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_HTTPMethods(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成 (HTTPメソッドを確認)
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// HTTPメソッドをレスポンスボディに含める
@@ -747,6 +790,8 @@ func TestReverseProxyMiddleware_HTTPMethods(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_RequestBodyForwarding(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成 (リクエストボディを確認)
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// リクエストボディを読み取り
@@ -799,6 +844,8 @@ func TestReverseProxyMiddleware_RequestBodyForwarding(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_MultipleHostnames(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -898,6 +945,8 @@ func TestReverseProxyMiddleware_MultipleHostnames(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_LargeRequestBody(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバーを作成 (大きなリクエストボディを処理)
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		// リクエストボディのサイズを確認
@@ -959,7 +1008,15 @@ func (m *mockFeatureFlagChecker) IsEnabledByDeviceOrUser(_ context.Context, _ st
 	return m.enabled, m.err
 }
 
+// testFeatureFlaggedPatternsは、フラグでゲートするパスとしてテストがミドルウェアに差し込む一覧。
+// 本番の一覧 (featureFlaggedPatterns) は空のことがあるため、テスト専用のパスを使う。
+var testFeatureFlaggedPatterns = []featureFlaggedPattern{
+	{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
+}
+
 func TestEnsureDeviceToken_GeneratesNewToken(t *testing.T) {
+	t.Parallel()
+
 	cfg := &config.Config{
 		Domain: "annict-test.page",
 		Env:    "production",
@@ -1013,6 +1070,8 @@ func TestEnsureDeviceToken_GeneratesNewToken(t *testing.T) {
 }
 
 func TestEnsureDeviceToken_PreservesExistingToken(t *testing.T) {
+	t.Parallel()
+
 	cfg := &config.Config{
 		Domain: "annict-test.page",
 		Env:    "production",
@@ -1040,6 +1099,8 @@ func TestEnsureDeviceToken_PreservesExistingToken(t *testing.T) {
 }
 
 func TestEnsureDeviceToken_DevelopmentNotSecure(t *testing.T) {
+	t.Parallel()
+
 	cfg := &config.Config{
 		Domain: "annict-test.page",
 		Env:    "development",
@@ -1065,6 +1126,8 @@ func TestEnsureDeviceToken_DevelopmentNotSecure(t *testing.T) {
 }
 
 func TestIsFeatureFlagEnabled_NilRepo(t *testing.T) {
+	t.Parallel()
+
 	mw := &ReverseProxyMiddleware{
 		featureFlagRepo: nil,
 	}
@@ -1077,12 +1140,14 @@ func TestIsFeatureFlagEnabled_NilRepo(t *testing.T) {
 }
 
 func TestIsFeatureFlagEnabled_NoMatchingPattern(t *testing.T) {
+	t.Parallel()
+
 	checker := &mockFeatureFlagChecker{enabled: true}
 	mw := &ReverseProxyMiddleware{
 		featureFlagRepo: checker,
 	}
 
-	// featureFlaggedPatternsが空なのでマッチしない
+	// どのフラグ付きパターンにもマッチしないパス
 	req := httptest.NewRequest("GET", "/some-path", nil)
 
 	if mw.isFeatureFlagEnabled(req, "some-token") {
@@ -1091,17 +1156,13 @@ func TestIsFeatureFlagEnabled_NoMatchingPattern(t *testing.T) {
 }
 
 func TestIsFeatureFlagEnabled_MatchingPatternEnabled(t *testing.T) {
+	t.Parallel()
+
 	checker := &mockFeatureFlagChecker{enabled: true}
 	mw := &ReverseProxyMiddleware{
-		featureFlagRepo: checker,
+		featureFlagRepo:        checker,
+		featureFlaggedPatterns: testFeatureFlaggedPatterns,
 	}
-
-	// テスト用にパターンを一時的に追加
-	original := featureFlaggedPatterns
-	featureFlaggedPatterns = []featureFlaggedPattern{
-		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
-	}
-	defer func() { featureFlaggedPatterns = original }()
 
 	req := httptest.NewRequest("GET", "/test-feature/page", nil)
 
@@ -1111,16 +1172,13 @@ func TestIsFeatureFlagEnabled_MatchingPatternEnabled(t *testing.T) {
 }
 
 func TestIsFeatureFlagEnabled_MatchingPatternDisabled(t *testing.T) {
+	t.Parallel()
+
 	checker := &mockFeatureFlagChecker{enabled: false}
 	mw := &ReverseProxyMiddleware{
-		featureFlagRepo: checker,
+		featureFlagRepo:        checker,
+		featureFlaggedPatterns: testFeatureFlaggedPatterns,
 	}
-
-	original := featureFlaggedPatterns
-	featureFlaggedPatterns = []featureFlaggedPattern{
-		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
-	}
-	defer func() { featureFlaggedPatterns = original }()
 
 	req := httptest.NewRequest("GET", "/test-feature/page", nil)
 
@@ -1130,16 +1188,13 @@ func TestIsFeatureFlagEnabled_MatchingPatternDisabled(t *testing.T) {
 }
 
 func TestIsFeatureFlagEnabled_ErrorFallsBackToFalse(t *testing.T) {
+	t.Parallel()
+
 	checker := &mockFeatureFlagChecker{enabled: false, err: errors.New("db error")}
 	mw := &ReverseProxyMiddleware{
-		featureFlagRepo: checker,
+		featureFlagRepo:        checker,
+		featureFlaggedPatterns: testFeatureFlaggedPatterns,
 	}
-
-	original := featureFlaggedPatterns
-	featureFlaggedPatterns = []featureFlaggedPattern{
-		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
-	}
-	defer func() { featureFlaggedPatterns = original }()
 
 	req := httptest.NewRequest("GET", "/test-feature/page", nil)
 
@@ -1149,6 +1204,8 @@ func TestIsFeatureFlagEnabled_ErrorFallsBackToFalse(t *testing.T) {
 }
 
 func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
+	t.Parallel()
+
 	// モックRailsサーバー
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
@@ -1161,19 +1218,13 @@ func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
 		Env:    "production",
 	}
 
-	// テスト用にパターンを一時的に追加
-	original := featureFlaggedPatterns
-	featureFlaggedPatterns = []featureFlaggedPattern{
-		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
-	}
-	defer func() { featureFlaggedPatterns = original }()
-
 	t.Run("フラグ有効: Go版で処理される", func(t *testing.T) {
 		checker := &mockFeatureFlagChecker{enabled: true}
 		proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, checker, nil)
 		if err != nil {
 			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 		}
+		proxyMiddleware.featureFlaggedPatterns = testFeatureFlaggedPatterns
 
 		goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write([]byte("Go response"))
@@ -1196,6 +1247,7 @@ func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
 		if err != nil {
 			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 		}
+		proxyMiddleware.featureFlaggedPatterns = testFeatureFlaggedPatterns
 
 		goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write([]byte("Go response"))
@@ -1217,6 +1269,7 @@ func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
 		if err != nil {
 			t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 		}
+		proxyMiddleware.featureFlaggedPatterns = testFeatureFlaggedPatterns
 
 		goHandler := http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			_, _ = w.Write([]byte("Go response"))
@@ -1234,7 +1287,25 @@ func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
 	})
 }
 
-// TestReverseProxyMiddleware_AnnictDBRoutingは、フラグでゲートされなくなった /db/ の
+// TestIsGoHandledPath_LegalDocumentsは、文書の一覧表に登録した全パスがGo版で処理されることを検証する。
+// 一覧表に文書や改定前の版を足したときに、goHandledPathsの接頭辞から漏れてRails版へ流れるのを防ぐ。
+func TestIsGoHandledPath_LegalDocuments(t *testing.T) {
+	t.Parallel()
+
+	mw := &ReverseProxyMiddleware{}
+
+	for _, path := range legaldoc.Paths() {
+		t.Run(path, func(t *testing.T) {
+			t.Parallel()
+
+			if !mw.isGoHandledPath(path) {
+				t.Errorf("isGoHandledPath(%q) = false、期待値 = true", path)
+			}
+		})
+	}
+}
+
+// TestReverseProxyMiddleware_AnnictDBRoutingは、フラグでゲートしていない /db/ の
 // 振り分けを固定する。Go版はルートを登録したAnnict DBの画面を処理し、残りはRails版が
 // 処理する。フラグに依存しないことを示すため、フィーチャーフラグのリポジトリ無しで
 // ミドルウェアを組み立てる。
@@ -1262,6 +1333,7 @@ func TestReverseProxyMiddleware_AnnictDBRouting(t *testing.T) {
 	router.Get("/db/works", goResponse)
 	router.Get("/db/works/{work_id}/episodes", goResponse)
 	router.Get("/db/episodes/{id}/edit", goResponse)
+	router.Get("/db/people", goResponse)
 	proxyMiddleware.SetRouter(router)
 
 	handler := proxyMiddleware.Middleware(http.HandlerFunc(goResponse))
@@ -1273,6 +1345,7 @@ func TestReverseProxyMiddleware_AnnictDBRouting(t *testing.T) {
 	}{
 		{"作品一覧はGo版が処理する", "/db/works", "Go response"},
 		{"エピソード編集はGo版が処理する", "/db/episodes/1/edit", "Go response"},
+		{"人物一覧はGo版が処理する", "/db/people", "Go response"},
 		{"Annict DBのトップはRails版へプロキシする", "/db", "Rails response"},
 		{"Go版に無いキャスト一覧はRails版へプロキシする", "/db/works/1/casts", "Rails response"},
 	}
@@ -1352,13 +1425,13 @@ func TestReverseProxyMiddleware_DBFallback_ThroughMiddlewareChain(t *testing.T) 
 		{"実装済み編集フォームはGo版が処理する", "GET", "/db/works/42/edit", http.StatusOK, "Go response"},
 
 		// Go未実装の /db/* のGETはRails版へフォールバックする (ステータスもRails側を透過)。
-		{"未実装の/db直下はRails版へフォールバック", "GET", "/db/people", http.StatusOK, "Rails response"},
+		{"未実装の/db直下はRails版へフォールバック", "GET", "/db/characters", http.StatusOK, "Rails response"},
 		{"未実装のネストパスもRails版へフォールバック", "GET", "/db/works/123/episodes", http.StatusOK, "Rails response"},
 		{"未実装の作品詳細もRails版へフォールバック", "GET", "/db/works/123", http.StatusOK, "Rails response"},
 
 		// Go未実装の /db/* の非GETも、内側のCSRFに403で弾かれずRailsへフォールバックする。
 		// フォールバックがCSRFより前のMiddlewareレイヤーで起きること (影響Bの回帰防止) を担保する。
-		{"未実装POSTはCSRF403にならずRailsへフォールバック", "POST", "/db/people", http.StatusOK, "Rails response"},
+		{"未実装POSTはCSRF403にならずRailsへフォールバック", "POST", "/db/characters", http.StatusOK, "Rails response"},
 		{"未実装PATCH(作品詳細)もRailsへフォールバック", "PATCH", "/db/works/123", http.StatusOK, "Rails response"},
 
 		// 登録済みの /db/worksへのメソッド不一致 (GET/POSTは登録済みだがPATCHは未登録) も、
@@ -1413,6 +1486,8 @@ func TestReverseProxyMiddleware_DBFallback_MatchedGoRouteStillHitsInnerChain(t *
 }
 
 func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {
+	t.Parallel()
+
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("Rails response"))
@@ -1463,6 +1538,8 @@ func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {
 // HTMLフォームはPOSTしか送れないため、生のメソッドだけで判定すると実装済みのGo画面がRailsへ
 // プロキシされ、Rails側のCSRF検証で失敗する。
 func TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo(t *testing.T) {
+	t.Parallel()
+
 	tests := []struct {
 		name          string
 		method        string
@@ -1516,6 +1593,7 @@ func TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
+	proxyMiddleware.featureFlaggedPatterns = testFeatureFlaggedPatterns
 
 	// ルーターはDB作品画面の登録の仕方を写したもの。フォームのページはGETで、書き込みは
 	// PATCH / DELETEとして登録され、フォームからは _method経由で到達する。
@@ -1524,12 +1602,6 @@ func TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo(t *testing.T) {
 	router.Patch("/test-feature/{id}", func(http.ResponseWriter, *http.Request) {})
 	router.Delete("/test-feature/{id}/archive", func(http.ResponseWriter, *http.Request) {})
 	proxyMiddleware.SetRouter(router)
-
-	original := featureFlaggedPatterns
-	featureFlaggedPatterns = []featureFlaggedPattern{
-		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
-	}
-	defer func() { featureFlaggedPatterns = original }()
 
 	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte("Go response"))
@@ -1558,6 +1630,8 @@ func TestReverseProxyMiddleware_MethodOverriddenRouteReachesGo(t *testing.T) {
 // ボディを消費しないことを検証する。_methodはボディにあるため、この層でそれを読むと、プロキシ
 // するリクエストがRailsへ転送すべき内容を使い切ってしまう。
 func TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails(t *testing.T) {
+	t.Parallel()
+
 	received := make(chan string, 1)
 	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		body := make([]byte, r.ContentLength)
@@ -1576,14 +1650,9 @@ func TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails(t *testing.T) {
 	if err != nil {
 		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
 	}
+	proxyMiddleware.featureFlaggedPatterns = testFeatureFlaggedPatterns
 
 	proxyMiddleware.SetRouter(chi.NewRouter())
-
-	original := featureFlaggedPatterns
-	featureFlaggedPatterns = []featureFlaggedPattern{
-		{pattern: regexp.MustCompile(`^/test-feature(/.*)?$`), flag: "test_feature"},
-	}
-	defer func() { featureFlaggedPatterns = original }()
 
 	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(http.ResponseWriter, *http.Request) {}))
 

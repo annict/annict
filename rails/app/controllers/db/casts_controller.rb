@@ -10,6 +10,7 @@ module Db
       @casts = @work
         .casts
         .without_deleted
+        .with_kept_person
         .includes(:person, :character)
         .order(:sort_number)
       @casts_csv = @casts.map { |cast| "#{cast.character.name},#{cast.person.name}" }.join("\n")

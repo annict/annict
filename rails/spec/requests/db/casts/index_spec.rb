@@ -118,4 +118,21 @@ RSpec.describe "GET /db/works/:work_id/casts", type: :request do
     expect(response.body).to include("&lt;script&gt;alert(&quot;XSS&quot;)&lt;/script&gt;")
     expect(response.body).to include("&quot;テスト&quot; &amp; テスト")
   end
+
+  it "人物が非公開・削除済みのキャストは、一覧とCSVに表示されないこと" do
+    work = FactoryBot.create(:work)
+    published_person = FactoryBot.create(:person, name: "公開中の人物")
+    unpublished_person = FactoryBot.create(:person, :unpublished, name: "非公開の人物")
+    deleted_person = FactoryBot.create(:person, :deleted, name: "削除済みの人物")
+    FactoryBot.create(:cast, work:, person: published_person)
+    FactoryBot.create(:cast, work:, person: unpublished_person)
+    FactoryBot.create(:cast, work:, person: deleted_person)
+
+    get "/db/works/#{work.id}/casts"
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include("公開中の人物")
+    expect(response.body).not_to include("非公開の人物")
+    expect(response.body).not_to include("削除済みの人物")
+  end
 end

@@ -36,4 +36,35 @@ describe "GraphQL API Query" do
       expect(result.to_h.deep_stringify_keys).to include(expected.deep_stringify_keys)
     end
   end
+
+  describe "node (Person)" do
+    def execute_node_query(person)
+      id = Beta::AnnictSchema.id_from_object(person, person.class)
+      query_string = <<~GRAPHQL
+        query {
+          node(id: "#{id}") {
+            ... on Person {
+              name
+            }
+          }
+        }
+      GRAPHQL
+
+      Beta::AnnictSchema.execute(query_string)
+    end
+
+    it "公開中の人物を返すこと" do
+      person = create(:person)
+
+      expect(execute_node_query(person).dig("data", "node", "name")).to eq(person.name)
+    end
+
+    it "非公開・削除済みの人物は、存在しない人物と同じく見つからない扱いになること" do
+      unpublished_person = create(:person, :unpublished)
+      deleted_person = create(:person, :deleted)
+
+      expect { execute_node_query(unpublished_person) }.to raise_error(ActiveRecord::RecordNotFound)
+      expect { execute_node_query(deleted_person) }.to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
 end

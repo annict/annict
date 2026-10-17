@@ -33,17 +33,10 @@ func TestCreate_ErrorMessageUnification(t *testing.T) {
 	// テスト用Redisをセットアップ
 	rdb := testutil.SetupTestRedis(t)
 
-	// ハンドラーが組み立てるrate limitキー (sign_up:verify:<ip>) が
-	// 共有Redis DBの並列実行で他テストと衝突しないよう、本テスト固有の
-	// IPを使う。テスト終了時に該当キーをResetし、繰り返し実行でも
-	// カウンタが0から始まるようにする。
+	// ハンドラーが組み立てるrate limitキー (sign_up:verify:<ip>) が、並列に走る
+	// 他テストとrate_limitsの一意制約で待ち合わないよう、本テスト固有のIPを使う。
 	clientIP := testutil.UniqueRateLimitPrefix(t) + "-ip"
-	limiter := ratelimit.NewLimiter(rdb)
-	cleanupCtx := context.Background()
-	_ = limiter.Reset(cleanupCtx, "sign_up:verify:"+clientIP)
-	t.Cleanup(func() {
-		_ = limiter.Reset(cleanupCtx, "sign_up:verify:"+clientIP)
-	})
+	limiter := ratelimit.NewLimiter(repository.NewRateLimitRepository(testutil.NewQueriesWithTx(db, tx)))
 
 	// 設定を読み込む
 	cfg, err := config.Load()

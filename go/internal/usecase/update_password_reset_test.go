@@ -87,7 +87,7 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 	}
 
 	// パスワードが更新されているか確認
-	user, err := queriesWithoutTx.GetUserByID(ctx, int64(userID))
+	user, err := queriesWithoutTx.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -442,7 +442,7 @@ func TestUpdatePasswordResetUsecase_Execute_TransactionRollback(t *testing.T) {
 	}
 
 	// 元のパスワードハッシュを取得
-	user, err := queries.GetUserByID(context.Background(), int64(userID))
+	user, err := queries.GetActiveUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -482,7 +482,7 @@ func TestUpdatePasswordResetUsecase_Execute_TransactionRollback(t *testing.T) {
 	}
 
 	// パスワードが更新されていないことを確認
-	user2, err := queriesWithoutTx.GetUserByID(ctx, int64(userID))
+	user2, err := queriesWithoutTx.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}

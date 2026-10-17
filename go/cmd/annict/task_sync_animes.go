@@ -47,7 +47,7 @@ func newSyncAnimesUsecase(db *sql.DB, queries *query.Queries) *usecase.SyncAnime
 // SyncAnimesUsecaseを組み立てて直接Executeを呼ぶ。これにより運用者は (データ修正後など)
 // スケジュールを待たずに任意のタイミングで再同期できる。テーブルごとの件数はExecute内で
 // ログ出力されるため、本関数は失敗の報告のみを扱う。
-func syncAnimes(ctx context.Context, _ *config.Config, db *sql.DB, queries *query.Queries) error {
+func syncAnimes(ctx context.Context, _ *config.Config, db *sql.DB, queries *query.Queries, _ []string) error {
 	if _, err := newSyncAnimesUsecase(db, queries).Execute(ctx); err != nil {
 		return fmt.Errorf("animes同期バッチの実行に失敗しました: %w", err)
 	}

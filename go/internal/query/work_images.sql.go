@@ -7,6 +7,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 	"time"
 )
 
@@ -26,14 +27,14 @@ INSERT INTO work_images (
 `
 
 type CreateWorkImageParams struct {
-	WorkID    int64     `db:"work_id"`
-	UserID    int64     `db:"user_id"`
-	ImageData string    `db:"image_data"`
-	Copyright string    `db:"copyright"`
-	Asin      string    `db:"asin"`
-	ColorRgb  string    `db:"color_rgb"`
-	CreatedAt time.Time `db:"created_at"`
-	UpdatedAt time.Time `db:"updated_at"`
+	WorkID    int64         `db:"work_id"`
+	UserID    sql.NullInt64 `db:"user_id"`
+	ImageData string        `db:"image_data"`
+	Copyright string        `db:"copyright"`
+	Asin      string        `db:"asin"`
+	ColorRgb  string        `db:"color_rgb"`
+	CreatedAt time.Time     `db:"created_at"`
+	UpdatedAt time.Time     `db:"updated_at"`
 }
 
 func (q *Queries) CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error) {

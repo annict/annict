@@ -14,7 +14,9 @@ import (
 var cleanupTaskBodies = map[string]taskBody{
 	"cleanup-expired-tokens":        cleanupExpiredTokens,
 	"cleanup-expired-sign-in-codes": cleanupExpiredSignInCodes,
+	"cleanup-expired-rate-limits":   cleanupExpiredRateLimits,
 	"cleanup-expired-sessions":      cleanupExpiredSessions,
+	"cleanup-anonymous-sessions":    cleanupAnonymousSessions,
 }
 
 // TestCleanupTaskBodies_Registeredは、各タスク名がそれぞれのタスク本体に解決すること
@@ -55,7 +57,7 @@ func TestCleanupTaskBodies_Wiring(t *testing.T) {
 
 	for name, body := range cleanupTaskBodies {
 		t.Run(name, func(t *testing.T) {
-			if err := body(context.Background(), nil, db, testutil.NewQueriesWithTx(db, tx)); err != nil {
+			if err := body(context.Background(), nil, db, testutil.NewQueriesWithTx(db, tx), nil); err != nil {
 				t.Errorf("%s()のエラー = %v", name, err)
 			}
 		})
@@ -75,7 +77,7 @@ func TestCleanupTaskBodies_Error(t *testing.T) {
 
 	for name, body := range cleanupTaskBodies {
 		t.Run(name, func(t *testing.T) {
-			if err := body(context.Background(), nil, db, testutil.NewQueriesWithTx(db, tx)); err == nil {
+			if err := body(context.Background(), nil, db, testutil.NewQueriesWithTx(db, tx), nil); err == nil {
 				t.Errorf("%s()のエラー = nil、期待値 = エラーあり", name)
 			}
 		})

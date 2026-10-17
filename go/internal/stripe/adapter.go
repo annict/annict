@@ -3,6 +3,7 @@ package stripe
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	stripego "github.com/stripe/stripe-go/v84"
@@ -47,8 +48,8 @@ type PortalSessionParams struct {
 
 // Adapterはstripe-goクライアントをラップし、各Stripe操作を呼び出し側
 // (UseCase) のinterfaceに適合させて、stripe-goの型をUseCaseシグネチャから
-// 締め出す。1つのadapterがUseCaseごとに定義された3つの小さなinterface
-// (SubscriptionRetriever / CheckoutSessionCreator / PortalSessionCreator) を
+// 締め出す。1つのadapterがUseCaseごとに定義された小さなinterface
+// (SubscriptionRetriever / CheckoutSessionCreator / PortalSessionCreatorなど) を
 // 実装するが、各UseCaseは自分のinterfaceのみに依存する。
 type Adapter struct {
 	client *stripego.Client
@@ -129,4 +130,63 @@ func (a *Adapter) CreatePortalSession(ctx context.Context, params PortalSessionP
 		return "", err
 	}
 	return session.URL, nil
+}
+
+// CancelSubscriptionResultはCancelSubscriptionがどの状態で終えたかを表す。
+// 退会時の解約は再試行されるため、呼び出し側は解約済み・存在しない場合も
+// 成功として扱える。
+type CancelSubscriptionResult int
+
+const (
+	// CancelSubscriptionResultCanceledは今回の呼び出しで解約したことを表す。
+	CancelSubscriptionResultCanceled CancelSubscriptionResult = iota + 1
+	// CancelSubscriptionResultAlreadyEndedは呼び出し前に解約済み (または
+	// 支払いが完了せず失効済み) だったことを表す。
+	CancelSubscriptionResultAlreadyEnded
+	// CancelSubscriptionResultNotFoundはStripe上にサブスクリプションが
+	// 存在しなかったことを表す。
+	CancelSubscriptionResultNotFound
+)
+
+// CancelSubscriptionはサブスクリプションを即時解約する。残りの期間の日割り
+// 返金と、未請求分の即時請求は行わない。
+// 終了済みのサブスクリプションに解約を送るとStripeはエラーを返すため、
+// 先に取得して状態を確かめる。
+func (a *Adapter) CancelSubscription(ctx context.Context, subscriptionID string) (CancelSubscriptionResult, error) {
+	sub, err := a.client.V1Subscriptions.Retrieve(ctx, subscriptionID, nil)
+	if err != nil {
+		if isResourceMissing(err) {
+			return CancelSubscriptionResultNotFound, nil
+		}
+		return 0, err
+	}
+	if isSubscriptionEnded(sub.Status) {
+		return CancelSubscriptionResultAlreadyEnded, nil
+	}
+
+	params := &stripego.SubscriptionCancelParams{
+		InvoiceNow: stripego.Bool(false),
+		Prorate:    stripego.Bool(false),
+	}
+	if _, err := a.client.V1Subscriptions.Cancel(ctx, subscriptionID, params); err != nil {
+		// 取得から解約までの間に削除された場合も、存在しないものとして扱う。
+		if isResourceMissing(err) {
+			return CancelSubscriptionResultNotFound, nil
+		}
+		return 0, err
+	}
+	return CancelSubscriptionResultCanceled, nil
+}
+
+// isSubscriptionEndedはサブスクリプションがこれ以上課金されない終了状態かを返す。
+func isSubscriptionEnded(status stripego.SubscriptionStatus) bool {
+	return status == stripego.SubscriptionStatusCanceled ||
+		status == stripego.SubscriptionStatusIncompleteExpired
+}
+
+// isResourceMissingはStripe APIのエラーが対象のリソースが存在しないことを
+// 示すかを返す。
+func isResourceMissing(err error) bool {
+	var stripeErr *stripego.Error
+	return errors.As(err, &stripeErr) && stripeErr.Code == stripego.ErrorCodeResourceMissing
 }

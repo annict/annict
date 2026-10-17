@@ -36,7 +36,7 @@ func TestCreate_Success(t *testing.T) {
 
 	// ユーザー情報を取得
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, int64(userID))
+	user, err := queries.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
@@ -193,7 +193,7 @@ func TestCreate_InvalidCode(t *testing.T) {
 
 	// ユーザー情報を取得
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, int64(userID))
+	user, err := queries.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
@@ -345,7 +345,7 @@ func TestCreate_CodeExpired(t *testing.T) {
 
 	// ユーザー情報を取得
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, int64(userID))
+	user, err := queries.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}
@@ -447,7 +447,7 @@ func TestCreate_ValidationError(t *testing.T) {
 
 	// ユーザー情報を取得
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, int64(userID))
+	user, err := queries.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}

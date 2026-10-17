@@ -4,6 +4,7 @@ package viewmodel
 import (
 	"context"
 	"path"
+	"slices"
 	"strings"
 
 	"github.com/annict/annict/go/internal/config"
@@ -24,10 +25,34 @@ type PageMeta struct {
 	// ブラウザがDNS解決とTCP / TLSのハンドシェイクを済ませられるようにする。宣言するのは
 	// 実際にリクエストするページだけ。接触しないオリジンへのヒントは接続を無駄に使うため。
 	PreconnectOrigins []string
+	// LocaleはURLを代表する言語 (i18nの言語コード) で、og:localeに出力する。
+	// URLで言語が決まるページでは、その言語を設定する。
+	Locale string
+	// LanguageVersionsは同じ内容の言語版の一覧で、ページ自身の版も含める。
+	// AlternateLinksを通して <link rel="alternate" hreflang> に出力する。
+	LanguageVersions []AlternateLink
+	// NoIndexがtrueのとき <meta name="robots"> にnoindexを出力し、
+	// 検索エンジンにページをインデックスさせない。canonicalも出力しない。
+	NoIndex bool
+	// NoFollowがtrueのとき <meta name="robots"> にnofollowを出力し、
+	// 検索エンジンにページ内のリンクをたどらせない。
+	NoFollow bool
+	// NoArchiveがtrueのとき <meta name="robots"> にnoarchiveを出力し、
+	// 検索エンジンにページのキャッシュを表示させない。
+	NoArchive bool
+}
+
+// AlternateLinkは <link rel="alternate" hreflang> の1件を表す。
+type AlternateLink struct {
+	HrefLang string // hreflangの値 (BCP 47の言語タグ、またはx-default)
+	URL      string // 言語版の絶対URL
 }
 
 // turnstileOriginはcomponents.Turnstileがウィジェットのスクリプトを読み込むオリジン。
 const turnstileOrigin = "https://challenges.cloudflare.com"
+
+// xDefaultHrefLangは、どの言語版にも合致しない利用者に向けた版を示すhreflangの値。
+const xDefaultHrefLang = "x-default"
 
 const (
 	// TitleSuffixはすべての文書タイトルの末尾に付き、ブラウザのタブがどのサイトの
@@ -50,6 +75,10 @@ const (
 // 自前で組み立てるのは2つの場合。ページ自身のGETパスがリクエストパスと異なる場合 (POST
 // やPATCHのエンドポイントが再描画するフォーム) と、既知のクエリパラメータが内容を変える
 // 場合 (フィルタやページネーション) で、後者は呼び出し側がパース・正規化した値だけを付ける。
+//
+// Localeはリクエストのロケールではなく既定言語にする。URLが言語を持たないページは、
+// Accept-Languageを送らないクローラーには既定言語で描画されるため、そのURLを代表する内容の
+// 言語は既定言語になる。URLで言語が決まるページは、呼び出し側でその言語に上書きする。
 func DefaultPageMeta(ctx context.Context, cfg *config.Config, requestPath string) PageMeta {
 	ogImageURL := cfg.AppURL() + "/static/images/og-image.png"
 	title := i18n.T(ctx, "default_title") + TitleSuffix
@@ -59,7 +88,66 @@ func DefaultPageMeta(ctx context.Context, cfg *config.Config, requestPath string
 		OGType:       "website",
 		CanonicalURL: cfg.AppURL() + canonicalPath(requestPath),
 		OGImage:      ogImageURL,
+		Locale:       i18n.DefaultLang,
 	}
+}
+
+// OGLocaleはLocaleをog:localeの値 (言語_地域の形) にして返す。翻訳を持たない言語や
+// 未設定のときは既定言語の値を返す。
+func (p PageMeta) OGLocale() string {
+	switch p.Locale {
+	case i18n.LangEn:
+		return "en_US"
+	default:
+		return "ja_JP"
+	}
+}
+
+// RobotsはNoIndex・NoFollow・NoArchiveのうちtrueのものを、<meta name="robots"> のcontentの
+// 形 (カンマ区切り) にして返す。どれもfalseのときは空文字を返し、<meta name="robots"> を出力しない。
+func (p PageMeta) Robots() string {
+	var directives []string
+	if p.NoIndex {
+		directives = append(directives, "noindex")
+	}
+	if p.NoFollow {
+		directives = append(directives, "nofollow")
+	}
+	if p.NoArchive {
+		directives = append(directives, "noarchive")
+	}
+
+	return strings.Join(directives, ",")
+}
+
+// AddLanguageVersionは同じ内容の言語版をhreflangの対象に加える。pathはDefaultPageMetaの
+// requestPathと同じ規則で正規化してから絶対URLにする。hreflangの指す先はcanonicalと同じ
+// 正規URLでなければ、検索エンジンが言語版どうしを結び付けられないため。
+func (p *PageMeta) AddLanguageVersion(cfg *config.Config, lang, path string) {
+	p.LanguageVersions = append(p.LanguageVersions, AlternateLink{
+		HrefLang: lang,
+		URL:      cfg.AppURL() + canonicalPath(path),
+	})
+}
+
+// AlternateLinksは <link rel="alternate" hreflang> として出力するリンクを、言語版の一覧の
+// 末尾にx-defaultを加えて返す。x-defaultは日本語版を正本とする方針に合わせて既定言語の版を
+// 指す。言語版が1つしかないページでは何も返さない。結び付ける相手の言語版が無いhreflangは
+// 検索結果の出し分けに使われず、意味を持たないため。
+func (p PageMeta) AlternateLinks() []AlternateLink {
+	if len(p.LanguageVersions) < 2 {
+		return nil
+	}
+
+	links := slices.Clone(p.LanguageVersions)
+	for _, version := range p.LanguageVersions {
+		if version.HrefLang == i18n.DefaultLang {
+			links = append(links, AlternateLink{HrefLang: xDefaultHrefLang, URL: version.URL})
+			break
+		}
+	}
+
+	return links
 }
 
 // canonicalPathはrequestPathのパス部分を正規化し、末尾スラッシュなど同じページを表す

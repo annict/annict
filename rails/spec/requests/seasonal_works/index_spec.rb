@@ -136,6 +136,23 @@ RSpec.describe "GET /works/:season_slug", type: :request do
     end
   end
 
+  it "grid表示モードのとき、人物が非公開のキャスト・スタッフは表示されないこと" do
+    work = create(:work, season_year: 2023, season_name: "spring")
+    published_person = create(:person, name: "公開中の声優")
+    unpublished_cast_person = create(:person, :unpublished, name: "非公開の声優")
+    unpublished_staff_person = create(:person, :unpublished, name: "非公開のスタッフ")
+    create(:cast, work:, person: published_person, name: published_person.name)
+    create(:cast, work:, person: unpublished_cast_person, name: unpublished_cast_person.name)
+    create(:staff, work:, resource: unpublished_staff_person, name: unpublished_staff_person.name)
+
+    get "/works/2023-spring", params: {display: "grid"}
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include("公開中の声優")
+    expect(response.body).not_to include("非公開の声優")
+    expect(response.body).not_to include("非公開のスタッフ")
+  end
+
   it "存在しないシーズンが指定されたとき、エラーになること" do
     # 9999年はYEAR_LISTに含まれないため、Season.find_by_slugがnilを返す
     expect {
