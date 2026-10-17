@@ -1985,6 +1985,67 @@ other = "Web"
 description = "メディア種別 - その他"
 other = "Other"
 
+# 法的文書のページ
+[legal_document_show_terms_title]
+description = "利用規約のページのタイトル"
+other = "Terms of Service"
+
+[legal_document_show_terms_heading]
+description = "利用規約のページの見出し"
+other = "Terms of Service"
+
+[legal_document_show_api_terms_title]
+description = "API利用規約のページのタイトル"
+other = "API Terms of Use"
+
+[legal_document_show_api_terms_heading]
+description = "API利用規約のページの見出し"
+other = "API Terms of Use"
+
+[legal_document_show_privacy_policy_title]
+description = "プライバシーポリシーのページのタイトル"
+other = "Privacy Policy"
+
+[legal_document_show_privacy_policy_heading]
+description = "プライバシーポリシーのページの見出し"
+other = "Privacy Policy"
+
+[legal_document_show_specified_commercial_transactions_title]
+description = "特定商取引法に基づく表記のページのタイトル"
+other = "Legal Notice under the Act on Specified Commercial Transactions"
+
+[legal_document_show_specified_commercial_transactions_heading]
+description = "特定商取引法に基づく表記のページの見出し"
+other = "Legal Notice under the Act on Specified Commercial Transactions"
+
+[legal_document_show_language_switcher_label]
+description = "法的文書のページの言語切替リンクのナビゲーションのラベル"
+other = "Language"
+
+[legal_document_show_date]
+description = "法的文書のページの日付の表示形式 (施行日・適用期間)"
+other = "{{.MonthName}} {{.Day}}, {{.Year}}"
+
+[legal_document_show_archive_title]
+description = "法的文書の改定前の版のページのタイトル"
+other = "{{.Title}} (Version Effective {{.EffectiveOn}})"
+
+[legal_document_show_archive_heading]
+description = "法的文書の改定前の版のページの見出し"
+other = "{{.Heading}} (Version Effective {{.EffectiveOn}})"
+
+[legal_document_show_archive_notice_heading]
+description = "法的文書の改定前の版のページの注意書きの見出し"
+other = "This is a previous version of this document"
+
+[legal_document_show_archive_notice_period]
+description = "法的文書の改定前の版のページの注意書き - 版の適用期間"
+other = "This version applies from {{.EffectiveOn}} through {{.EndedOn}}."
+
+[legal_document_show_archive_current_version_link]
+description = "法的文書の改定前の版のページの注意書き - 現行の版へのリンク"
+other = "View the current version"
+
 # フッター関連
 [footer_terms]
 description = "フッター - 利用規約"

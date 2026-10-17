@@ -80,6 +80,15 @@ var goHandledPaths = []string{
 	"/webhooks/stripe",           // Stripe Webhook受信
 	"/ics",                       // iCalendar配信 (Appleカレンダー互換パス)
 	"/settings/account/deletion", // 退会 (確認ページ・受付・完了ページ)
+	// 法的文書。英語版 (/en/ 前置)・API利用規約・改定前の版のアーカイブページ (/archive/{施行日} 後置) も、
+	// 文書の一覧表 (legaldoc) に登録した時点でGo版に届くよう、接頭辞で含めておく。
+	// 一覧表に無いパスはGo版の404になるが、Rails版にもこれらのルートは無い。
+	// 特定商取引法に基づく表記は日本語版だけを配信するため、/en/legalは含めない。
+	"/terms",      // 利用規約・API利用規約
+	"/privacy",    // プライバシーポリシー
+	"/legal",      // 特定商取引法に基づく表記
+	"/en/terms",   // 利用規約・API利用規約 (英語版)
+	"/en/privacy", // プライバシーポリシー (英語版)
 }
 
 // Goが配信する全画面エラーページ。isGoHandledPathが完全一致で判定する。

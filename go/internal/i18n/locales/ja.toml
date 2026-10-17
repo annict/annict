@@ -1984,6 +1984,67 @@ other = "Web"
 description = "メディア種別 - その他"
 other = "その他"
 
+# 法的文書のページ
+[legal_document_show_terms_title]
+description = "利用規約のページのタイトル"
+other = "利用規約"
+
+[legal_document_show_terms_heading]
+description = "利用規約のページの見出し"
+other = "利用規約"
+
+[legal_document_show_api_terms_title]
+description = "API利用規約のページのタイトル"
+other = "API利用規約"
+
+[legal_document_show_api_terms_heading]
+description = "API利用規約のページの見出し"
+other = "API利用規約"
+
+[legal_document_show_privacy_policy_title]
+description = "プライバシーポリシーのページのタイトル"
+other = "プライバシーポリシー"
+
+[legal_document_show_privacy_policy_heading]
+description = "プライバシーポリシーのページの見出し"
+other = "プライバシーポリシー"
+
+[legal_document_show_specified_commercial_transactions_title]
+description = "特定商取引法に基づく表記のページのタイトル"
+other = "特定商取引法に基づく表記"
+
+[legal_document_show_specified_commercial_transactions_heading]
+description = "特定商取引法に基づく表記のページの見出し"
+other = "特定商取引法に基づく表記"
+
+[legal_document_show_language_switcher_label]
+description = "法的文書のページの言語切替リンクのナビゲーションのラベル"
+other = "言語"
+
+[legal_document_show_date]
+description = "法的文書のページの日付の表示形式 (施行日・適用期間)"
+other = "{{.Year}}年{{.Month}}月{{.Day}}日"
+
+[legal_document_show_archive_title]
+description = "法的文書の改定前の版のページのタイトル"
+other = "{{.Title}} ({{.EffectiveOn}}施行版)"
+
+[legal_document_show_archive_heading]
+description = "法的文書の改定前の版のページの見出し"
+other = "{{.Heading}} ({{.EffectiveOn}}施行版)"
+
+[legal_document_show_archive_notice_heading]
+description = "法的文書の改定前の版のページの注意書きの見出し"
+other = "この文書は改定前の版です"
+
+[legal_document_show_archive_notice_period]
+description = "法的文書の改定前の版のページの注意書き - 版の適用期間"
+other = "この版の適用期間は{{.EffectiveOn}}から{{.EndedOn}}までです。"
+
+[legal_document_show_archive_current_version_link]
+description = "法的文書の改定前の版のページの注意書き - 現行の版へのリンク"
+other = "現行の版を見る"
+
 # フッター関連
 [footer_terms]
 description = "フッター - 利用規約"

@@ -14,6 +14,7 @@ import (
 
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/legaldoc"
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/session"
 )
@@ -377,6 +378,19 @@ func TestIsGoHandledPath(t *testing.T) {
 		// 退会の受付でセッションを破棄した直後に開かれるため、未ログインでもGo版で処理する必要がある。
 		{"/settings/account/deletion/completed", true},
 		{"/settings/account", false},
+		{"/terms", true},
+		{"/privacy", true},
+		{"/legal", true},
+		// 文書の一覧表に登録した時点でGo版が配信する英語版・API利用規約・改定前の版のアーカイブページ
+		{"/en/terms", true},
+		{"/en/privacy", true},
+		{"/terms/api", true},
+		{"/en/terms/api", true},
+		{"/terms/archive/20140310", true},
+		{"/en/terms/archive/20140310", true},
+		// 特定商取引法に基づく表記は日本語版だけを配信する
+		{"/en/legal", false},
+		{"/ja/terms", false},
 		{"/works/popular", false},
 		{"/works", false},
 		{"/", false},
@@ -1273,7 +1287,25 @@ func TestReverseProxyMiddleware_FeatureFlagRouting(t *testing.T) {
 	})
 }
 
-// TestReverseProxyMiddleware_AnnictDBRoutingは、フラグでゲートされなくなった /db/ の
+// TestIsGoHandledPath_LegalDocumentsは、文書の一覧表に登録した全パスがGo版で処理されることを検証する。
+// 一覧表に文書や改定前の版を足したときに、goHandledPathsの接頭辞から漏れてRails版へ流れるのを防ぐ。
+func TestIsGoHandledPath_LegalDocuments(t *testing.T) {
+	t.Parallel()
+
+	mw := &ReverseProxyMiddleware{}
+
+	for _, path := range legaldoc.Paths() {
+		t.Run(path, func(t *testing.T) {
+			t.Parallel()
+
+			if !mw.isGoHandledPath(path) {
+				t.Errorf("isGoHandledPath(%q) = false、期待値 = true", path)
+			}
+		})
+	}
+}
+
+// TestReverseProxyMiddleware_AnnictDBRoutingは、フラグでゲートしていない /db/ の
 // 振り分けを固定する。Go版はルートを登録したAnnict DBの画面を処理し、残りはRails版が
 // 処理する。フラグに依存しないことを示すため、フィーチャーフラグのリポジトリ無しで
 // ミドルウェアを組み立てる。

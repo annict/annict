@@ -29,6 +29,7 @@ import (
 	"github.com/annict/annict/go/internal/handler/health"
 	"github.com/annict/annict/go/internal/handler/home"
 	"github.com/annict/annict/go/internal/handler/ics"
+	"github.com/annict/annict/go/internal/handler/legal_document"
 	"github.com/annict/annict/go/internal/handler/manifest"
 	"github.com/annict/annict/go/internal/handler/password"
 	"github.com/annict/annict/go/internal/handler/password_reset"
@@ -49,6 +50,7 @@ import (
 	stripewebhook "github.com/annict/annict/go/internal/handler/webhooks/stripe"
 	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/image"
+	"github.com/annict/annict/go/internal/legaldoc"
 	authMiddleware "github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/ratelimit"
@@ -559,6 +561,9 @@ func runServe() {
 	settingsAccountDeletionHandler := settings_account_deletion.NewHandler(cfg, sessionManager, imageHelper, getAccountDeletionNewUC, createAccountDeletionUC)
 	settingsAccountDeletionCompletionHandler := settings_account_deletion_completion.NewHandler(cfg, imageHelper)
 
+	// 法的文書のページハンドラーの初期化
+	legalDocumentHandler := legal_document.NewHandler(cfg, imageHelper)
+
 	// Stripe Checkoutハンドラーの初期化
 	createSupportersCheckoutValidator := validator.NewSupportersCheckoutCreateValidator()
 	createCheckoutSessionUC := usecase.NewCreateCheckoutSessionUsecase(cfg, stripeSubscriberRepo, annictStripeCfg, stripeAdapter, createSupportersCheckoutValidator)
@@ -626,6 +631,12 @@ func runServe() {
 	r.With(authMW.RequireAuth).Get("/settings/account/deletion/new", settingsAccountDeletionHandler.New)
 	r.With(authMW.RequireAuth).Post("/settings/account/deletion", settingsAccountDeletionHandler.Create)
 	r.Get("/settings/account/deletion/completed", settingsAccountDeletionCompletionHandler.Show)
+
+	// 法的文書 (利用規約・プライバシーポリシーなど)。配信するパスは文書の一覧表で決まり、
+	// 英語版や改定前の版のアーカイブページは一覧表に登録した時点でルートになる
+	for _, path := range legaldoc.Paths() {
+		r.Get(path, legalDocumentHandler.Show)
+	}
 
 	// DB管理画面
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
