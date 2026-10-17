@@ -77,10 +77,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 
 	// 3. パスワードの有無を確認
 	if user.EncryptedPassword != "" {
-		slog.InfoContext(ctx, "ユーザーはパスワードログインを使用します",
-			"user_id", user.ID,
-			"email", user.Email,
-		)
+		slog.InfoContext(ctx, "ユーザーはパスワードログインを使用します", "user_id", user.ID)
 		return &SendSignInCodeOutput{
 			UserID:      model.UserID(user.ID),
 			Email:       user.Email,
@@ -89,10 +86,7 @@ func (uc *SendSignInCodeUsecase) Execute(ctx context.Context, input SendSignInCo
 	}
 
 	// 4. パスワードなしの場合: コードを生成・送信
-	slog.InfoContext(ctx, "ユーザーはメールログインを使用します",
-		"user_id", user.ID,
-		"email", user.Email,
-	)
+	slog.InfoContext(ctx, "ユーザーはメールログインを使用します", "user_id", user.ID)
 
 	code, err := uc.generateAndSendCode(ctx, model.UserID(user.ID), user.Email)
 	if err != nil {
