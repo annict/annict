@@ -371,7 +371,8 @@ type Querier interface {
 	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
 	// カレンダー用の作品 (放送開始日) を取得します
 	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
-	// キャスト自身と人物がともに公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す
+	// キャスト自身が公開状態 (unpublished_atとdeleted_atがともにNULL) で、人物が閲覧できる状態
+	// (published / archived) の行だけを返す。掲載停止 (delisted) と削除 (deleted) の人物の行は除外する
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
 	// 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
@@ -440,7 +441,8 @@ type Querier interface {
 	GetSessionByID(ctx context.Context, sessionID string) (Session, error)
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
 	// スタッフ自身が公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す。
-	// 人物を参照する行 (resource_type = 'Person') は、人物も公開状態のものに限る
+	// 人物を参照する行 (resource_type = 'Person') は、人物が閲覧できる状態 (published / archived) のものに限り、
+	// 掲載停止 (delisted) と削除 (deleted) の人物の行は除外する
 	GetStaffsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetStaffsByWorkIDsRow, error)
 	GetStripeSubscriberByID(ctx context.Context, id int64) (StripeSubscriber, error)
 	GetStripeSubscriberByStripeCustomerID(ctx context.Context, stripeCustomerID string) (StripeSubscriber, error)
