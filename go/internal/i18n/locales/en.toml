@@ -1160,6 +1160,10 @@ other = "Published"
 description = "人物一覧の状態のバッジ - アーカイブ"
 other = "Archived"
 
+[db_people_index_status_delisted]
+description = "人物一覧の状態のバッジ - 掲載停止 (管理者にだけ表示)"
+other = "Delisted"
+
 [db_people_index_table_actions_label]
 description = "人物一覧のテーブルヘッダー - 操作"
 other = "Actions"
@@ -1187,6 +1191,14 @@ other = "Unarchive"
 [db_people_index_unarchive_confirm]
 description = "人物一覧のアーカイブ解除ボタンの確認ダイアログ"
 other = "Unarchive person {{.ID}}?"
+
+[db_people_index_delist_link]
+description = "人物一覧から掲載停止確認画面へのリンク (管理者に表示)"
+other = "Delist"
+
+[db_people_index_undelist_link]
+description = "人物一覧から掲載停止解除確認画面へのリンク (掲載停止の人物に表示)"
+other = "Undelist"
 
 [db_people_index_delete_button]
 description = "人物一覧の削除ボタン (管理者に表示)"
@@ -1318,7 +1330,7 @@ other = "Your input is kept in the form below. Compare it with the currently sav
 description = "人物編集ページの送信ボタン"
 other = "Update"
 
-# DB人物のアーカイブ・アーカイブ解除・削除の確認ページ
+# DB人物のアーカイブ・アーカイブ解除・削除・掲載停止・掲載停止解除の確認ページ
 [db_people_archive_new_document_title]
 description = "人物を識別できるアーカイブ確認ページの文書タイトル"
 other = "Archive Person | {{.Name}}"
@@ -1373,6 +1385,70 @@ other = "Delete"
 
 [db_people_deletion_new_cancel_link]
 description = "人物削除確認ページのキャンセルリンク"
+other = "Cancel"
+
+[db_people_delisting_new_document_title]
+description = "人物を識別できる掲載停止確認ページの文書タイトル"
+other = "Delist Person | {{.Name}}"
+
+[db_people_delisting_new_confirm_message]
+description = "人物掲載停止確認ページの確認メッセージ"
+other = "Delist “{{.Name}}”?"
+
+[db_people_delisting_new_help]
+description = "人物掲載停止確認ページで、掲載を停止すると何が起きるかを述べる説明"
+other = "A delisted person no longer appears on the person page, in the cast and staff of works, in the Web API, or on the Annict DB list (except for administrators), and no person with the same name can be registered. You can restore it later with “Undelist” on the person list."
+
+[db_people_delisting_new_delist_message_label]
+description = "人物掲載停止確認ページの対応記録の入力欄のラベル"
+other = "Record of Handling"
+
+[db_people_delisting_new_delist_message_hint]
+description = "人物掲載停止確認ページの対応記録の入力欄の説明"
+other = "Record how the request was received and when it was handled. Only administrators can see this."
+
+[db_people_delisting_new_saved_delist_message_heading]
+description = "人物掲載停止確認ページで、競合した送信と異なる保存済みの対応記録の見出し"
+other = "Saved Record of Handling"
+
+[db_people_delisting_new_saved_delist_message_empty]
+description = "人物掲載停止確認ページで、競合した送信と比べる保存済みの対応記録が無いときの表示"
+other = "No saved record of handling."
+
+[db_people_delisting_new_submit]
+description = "人物掲載停止確認ページの実行ボタン"
+other = "Delist"
+
+[db_people_delisting_new_cancel_link]
+description = "人物掲載停止確認ページのキャンセルリンク"
+other = "Cancel"
+
+[db_people_undelisting_new_document_title]
+description = "人物を識別できる掲載停止解除確認ページの文書タイトル"
+other = "Undelist Person | {{.Name}}"
+
+[db_people_undelisting_new_confirm_message]
+description = "人物掲載停止解除確認ページの確認メッセージ"
+other = "Undelist “{{.Name}}”?"
+
+[db_people_undelisting_new_help]
+description = "人物掲載停止解除確認ページで、解除すると何が起きるかを述べる説明"
+other = "An undelisted person becomes published again and reappears on the person page and in the cast and staff of works. The record of handling is kept."
+
+[db_people_undelisting_new_delist_message_heading]
+description = "人物掲載停止解除確認ページの対応記録の見出し"
+other = "Record of Handling"
+
+[db_people_undelisting_new_delist_message_empty]
+description = "人物掲載停止解除確認ページで、対応記録が無いときの表示"
+other = "No record of handling."
+
+[db_people_undelisting_new_submit]
+description = "人物掲載停止解除確認ページの実行ボタン"
+other = "Undelist"
+
+[db_people_undelisting_new_cancel_link]
+description = "人物掲載停止解除確認ページのキャンセルリンク"
 other = "Cancel"
 
 # DB作品一覧ページ
@@ -2184,6 +2260,14 @@ other = "Person has been unarchived successfully"
 description = "人物削除成功メッセージ"
 other = "Person has been deleted successfully"
 
+[flash_db_person_delisted]
+description = "人物掲載停止成功メッセージ"
+other = "Person has been delisted successfully"
+
+[flash_db_person_undelisted]
+description = "人物掲載停止解除成功メッセージ"
+other = "Person has been undelisted successfully"
+
 # バリデーション共通メッセージ
 [validation_required]
 description = "必須フィールドのバリデーションエラー"
@@ -2304,6 +2388,10 @@ other = "A person with this name already exists"
 [validation_person_name_already_taken]
 description = "編集した人物の名前が、別の人物の名前として既に登録されている"
 other = "A person with this name already exists"
+
+[validation_person_name_delisted]
+description = "登録・編集した人物の名前が、掲載を停止した人物の名前と重複している"
+other = "We have stopped listing this person. Because the circumstances involve the people concerned, we are unable to share the details. Thank you for your understanding."
 
 [validation_person_gender_invalid]
 description = "人物の性別が許可値の範囲外"
