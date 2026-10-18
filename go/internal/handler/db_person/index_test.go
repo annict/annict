@@ -13,8 +13,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestIndexはDB人物一覧ページを描画し、公開中とアーカイブの人物を誰にでも表示し、閲覧者の
-// ロールに応じて操作を出し分けることを、リクエストコンテキストのユーザーからend-to-endで検証する。
+// TestIndexはDB人物一覧ページを描画し、公開中とアーカイブの人物を誰にでも、掲載停止の人物を
+// 管理者にだけ表示し、閲覧者のロールに応じて操作を出し分けることを、リクエストコンテキストのユーザーからend-to-endで検証する。
 func TestIndex(t *testing.T) {
 	t.Parallel()
 
@@ -29,7 +29,7 @@ func TestIndex(t *testing.T) {
 		WithName("アーカイブの人物-" + t.Name()).
 		WithStatus(model.PersonStatusArchived).
 		Build()
-	testutil.NewPersonBuilder(t, tx).
+	delistedID := testutil.NewPersonBuilder(t, tx).
 		WithName("掲載停止の人物-" + t.Name()).
 		WithStatus(model.PersonStatusDelisted).
 		Build()
@@ -50,6 +50,9 @@ func TestIndex(t *testing.T) {
 	archiveLink := fmt.Sprintf(`href="/db/people/%d/archive/new"`, int64(publishedID))
 	unarchiveButton := fmt.Sprintf(`hx-delete="/db/people/%d/archive"`, int64(archivedID))
 	deleteButton := fmt.Sprintf(`hx-delete="/db/people/%d"`, int64(publishedID))
+	delistLink := fmt.Sprintf(`href="/db/people/%d/delisting/new"`, int64(publishedID))
+	undelistLink := fmt.Sprintf(`href="/db/people/%d/undelisting/new"`, int64(delistedID))
+	delistedEditLink := fmt.Sprintf(`href="/db/people/%d/edit"`, int64(delistedID))
 
 	tests := []struct {
 		name        string
@@ -58,16 +61,16 @@ func TestIndex(t *testing.T) {
 		wantAbsent  []string
 	}{
 		{
-			name:        "管理者: 削除を含む操作を表示",
+			name:        "管理者: 掲載停止の人物と、掲載停止・削除を含む操作を表示",
 			user:        &model.User{ID: 1, Role: model.RoleAdmin},
-			wantPresent: []string{publishedName, archivedName, newLink, editLink, archivedEditLink, archiveLink, unarchiveButton, deleteButton},
-			wantAbsent:  []string{delistedName, deletedName},
+			wantPresent: []string{publishedName, archivedName, delistedName, newLink, editLink, archivedEditLink, archiveLink, unarchiveButton, deleteButton, delistLink, undelistLink},
+			wantAbsent:  []string{deletedName, delistedEditLink},
 		},
 		{
 			name:        "編集者: 削除を除く操作を表示",
 			user:        &model.User{ID: 1, Role: model.RoleEditor},
 			wantPresent: []string{publishedName, archivedName, newLink, editLink, archivedEditLink, archiveLink, unarchiveButton},
-			wantAbsent:  []string{delistedName, deletedName, deleteButton},
+			wantAbsent:  []string{delistedName, deletedName, deleteButton, delistLink, undelistLink},
 		},
 		{
 			name:        "一般ユーザー: 操作なし",

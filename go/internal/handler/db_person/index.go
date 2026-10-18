@@ -23,10 +23,11 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 
 	page := parsePageParam(r)
 
-	// 人物一覧は公開のため、閲覧者のロールで操作列を出し分ける。
+	// 人物一覧は公開のため、閲覧者のロールで表示する人物と操作列を出し分ける。
 	user := middleware.GetUserFromContext(ctx)
 
 	result, err := h.getDBPeopleUC.Execute(ctx, usecase.GetDBPeopleInput{
+		User:    user,
 		Page:    page,
 		PerPage: perPage,
 	})

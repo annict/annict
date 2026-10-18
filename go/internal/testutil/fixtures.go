@@ -1783,6 +1783,7 @@ type PersonBuilder struct {
 	unpublishedAt *time.Time
 	deletedAt     *time.Time
 	updatedAt     *time.Time
+	delistMessage *string
 }
 
 // NewPersonBuilderは新しいPersonBuilderを作成します。people.nameは一意制約の対象の
@@ -1848,11 +1849,18 @@ func (b *PersonBuilder) WithDeletedAt(deletedAt time.Time) *PersonBuilder {
 	return b
 }
 
+// WithDelistMessageはpeople.delist_message (掲載停止の対応記録) を設定します。既定ではNULLの
+// ままにします。
+func (b *PersonBuilder) WithDelistMessage(delistMessage string) *PersonBuilder {
+	b.delistMessage = &delistMessage
+	return b
+}
+
 // Buildはテスト用の人物データをデータベースに作成します
 func (b *PersonBuilder) Build() model.PersonID {
 	b.t.Helper()
 
-	var nickname, status, unpublishedAt, deletedAt, updatedAt interface{}
+	var nickname, status, unpublishedAt, deletedAt, updatedAt, delistMessage interface{}
 	if b.nickname != nil {
 		nickname = *b.nickname
 	}
@@ -1870,13 +1878,16 @@ func (b *PersonBuilder) Build() model.PersonID {
 		// 読み捨てられるため、Rails版と同じくUTCの時刻で書く。
 		updatedAt = b.updatedAt.UTC()
 	}
+	if b.delistMessage != nil {
+		delistMessage = *b.delistMessage
+	}
 
 	var id int64
 	err := b.tx.QueryRow(`
-		INSERT INTO people (name, name_kana, name_en, nickname, status, unpublished_at, deleted_at, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, COALESCE($5::person_status, 'published'), $6, $7, NOW(), COALESCE($8::timestamp, NOW()))
+		INSERT INTO people (name, name_kana, name_en, nickname, status, unpublished_at, deleted_at, created_at, updated_at, delist_message)
+		VALUES ($1, $2, $3, $4, COALESCE($5::person_status, 'published'), $6, $7, NOW(), COALESCE($8::timestamp, NOW()), $9)
 		RETURNING id
-	`, b.name, b.nameKana, b.nameEn, nickname, status, unpublishedAt, deletedAt, updatedAt).Scan(&id)
+	`, b.name, b.nameKana, b.nameEn, nickname, status, unpublishedAt, deletedAt, updatedAt, delistMessage).Scan(&id)
 	if err != nil {
 		b.t.Fatalf("人物データの作成に失敗しました: %v", err)
 	}

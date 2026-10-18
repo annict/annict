@@ -95,10 +95,15 @@ type Person struct {
 	TwitterUsernameEn string
 
 	// Statusは人物の状態の正本。値が入るのはAnnict DB管理画面のローダー (ListForDB・
-	// GetForEditByID・GetForStateChangeByID) のみ。
+	// GetForEditByID・GetForStateChangeByID・GetForDelistingByID・ListNameHolders・
+	// GetNameHolderExcludingID) のみ。
 	Status PersonStatus
 
-	// UpdatedAtは編集フォームがhiddenで持ち回る版。値が入るのは編集用のローダー
-	// (GetForEditByID) のみ。
+	// DelistMessageは掲載停止 (delisted) の対応記録で、管理者だけが参照する。値が入るのは掲載停止・
+	// 掲載停止の解除の確認画面のローダー (GetForDelistingByID) のみ。
+	DelistMessage *string
+
+	// UpdatedAtは編集フォームと掲載停止・解除の確認画面がhiddenで持ち回る版。値が入るのは
+	// 編集用と掲載停止用のローダー (GetForEditByID・GetForDelistingByID) のみ。
 	UpdatedAt time.Time
 }

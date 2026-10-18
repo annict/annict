@@ -112,6 +112,40 @@ func TestUpdate_ValidationError(t *testing.T) {
 	}
 }
 
+// TestUpdate_DelistedNameは、名前を掲載停止の人物と同じ名前に変える送信が422で、掲載停止の
+// 文言を伴ってフォームに返り、申出によることを伝えないことを検証する。
+func TestUpdate_DelistedName(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+
+	personID := testutil.NewPersonBuilder(t, tx).WithUpdatedAt(updateTestVersion).Build()
+	delistedName := "掲載停止の人物-" + t.Name()
+	testutil.NewPersonBuilder(t, tx).WithName(delistedName).WithStatus(model.PersonStatusDelisted).Build()
+	handler := newTestHandler(t, db, tx)
+
+	form := url.Values{}
+	form.Set("name", delistedName)
+	form.Set("updated_at", updateTestFormVersion)
+
+	rr := httptest.NewRecorder()
+	handler.Update(rr, newUpdateRequest(personID, &model.User{ID: 1, Role: model.RoleEditor}, form))
+
+	if status := rr.Code; status != http.StatusUnprocessableEntity {
+		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusUnprocessableEntity)
+	}
+
+	body := rr.Body.String()
+	if !strings.Contains(body, "この人物は掲載を停止しています。") {
+		t.Errorf("掲載停止のエラーが表示されていません: %s", body)
+	}
+	for _, unexpected := range []string{"この名前の人物は既に登録されています", "申出"} {
+		if strings.Contains(body, unexpected) {
+			t.Errorf("レスポンスに%qが含まれています", unexpected)
+		}
+	}
+}
+
 // TestUpdate_Conflictは、フォームを開いた後に他者が書いた人物への送信が409で、送信した
 // 値と保存済みの値を並べ、保存済みの版を運ぶフォームに返ることを検証する。
 func TestUpdate_Conflict(t *testing.T) {

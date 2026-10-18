@@ -34,18 +34,21 @@ func (r *PersonRepository) WithTx(tx *sql.Tx) *PersonRepository {
 type DBPersonListParams struct {
 	Page    int32
 	PerPage int32
+	// IncludeDelistedは掲載停止 (delisted) の人物も一覧に含めるかを表します。
+	IncludeDelisted bool
 }
 
-// ListForDBはAnnict DB管理画面の人物一覧 (公開中とアーカイブの人物) を、IDの降順に
-// 1ページ分取得します。
+// ListForDBはAnnict DB管理画面の人物一覧 (公開中とアーカイブの人物と、IncludeDelistedの
+// ときは掲載停止の人物) を、IDの降順に1ページ分取得します。
 func (r *PersonRepository) ListForDB(ctx context.Context, params DBPersonListParams) ([]*model.Person, error) {
 	// 乗算の前に幅を広げる。ページ番号がint32の範囲で大きいとint32同士の積が負に折り返し、
 	// PostgreSQLがそのOFFSETを拒否するため (WorkRepository.ListForDBと同じ)。
 	offset := int64(params.Page-1) * int64(params.PerPage)
 
 	rows, err := r.queries.ListDBPeople(ctx, query.ListDBPeopleParams{
-		PerPage:    params.PerPage,
-		PageOffset: offset,
+		PerPage:         params.PerPage,
+		PageOffset:      offset,
+		IncludeDelisted: params.IncludeDelisted,
 	})
 	if err != nil {
 		return nil, err
@@ -64,19 +67,32 @@ func (r *PersonRepository) ListForDB(ctx context.Context, params DBPersonListPar
 	return people, nil
 }
 
-// CountForDBはAnnict DB管理画面の人物一覧の総件数を取得します。
-func (r *PersonRepository) CountForDB(ctx context.Context) (int64, error) {
-	return r.queries.CountDBPeople(ctx)
+// CountForDBはAnnict DB管理画面の人物一覧の総件数を取得します。includeDelistedは
+// ListForDBのDBPersonListParams.IncludeDelistedと同じ意味です。
+func (r *PersonRepository) CountForDB(ctx context.Context, includeDelisted bool) (int64, error) {
+	return r.queries.CountDBPeople(ctx, includeDelisted)
 }
 
-// ListTakenNamesはnamesのうち、すでに人物の名前として使われているものを返します。
-// people.nameの一意インデックスと同じく、削除した人物の名前は含めません。
-func (r *PersonRepository) ListTakenNames(ctx context.Context, names []string) ([]string, error) {
+// ListNameHoldersはnamesのいずれかを名前に持つ人物を、名前と状態 (Name・Status) だけを
+// 読み込んで返します。people.nameの一意インデックスと同じく、削除した人物は含めません。
+func (r *PersonRepository) ListNameHolders(ctx context.Context, names []string) ([]*model.Person, error) {
 	if len(names) == 0 {
 		return nil, nil
 	}
 
-	return r.queries.ListTakenPersonNames(ctx, names)
+	rows, err := r.queries.ListPersonNameHolders(ctx, names)
+	if err != nil {
+		return nil, err
+	}
+
+	people := make([]*model.Person, len(rows))
+	for i, row := range rows {
+		people[i] = &model.Person{
+			Name:   row.Name,
+			Status: model.PersonStatus(row.Status),
+		}
+	}
+	return people, nil
 }
 
 // CreatePersonParamsは人物の作成に使うパラメータを保持します。
@@ -150,13 +166,25 @@ func (r *PersonRepository) GetForEditByID(ctx context.Context, id model.PersonID
 	return person, nil
 }
 
-// ExistsByNameExcludingIDは、excludeIDの人物以外に、nameを名前に持つ人物がいるかを返します。
-// people.nameの一意インデックスと同じく、削除した人物は含めません。
-func (r *PersonRepository) ExistsByNameExcludingID(ctx context.Context, name string, excludeID model.PersonID) (bool, error) {
-	return r.queries.ExistsPersonByNameExcludingID(ctx, query.ExistsPersonByNameExcludingIDParams{
+// GetNameHolderExcludingIDは、excludeIDの人物以外でnameを名前に持つ人物を、名前と状態
+// (Name・Status) だけを読み込んで返します。people.nameの一意インデックスと同じく、削除した
+// 人物は含めません。該当する人物がいなければnilを返します。
+func (r *PersonRepository) GetNameHolderExcludingID(ctx context.Context, name string, excludeID model.PersonID) (*model.Person, error) {
+	row, err := r.queries.GetPersonNameHolderExcludingID(ctx, query.GetPersonNameHolderExcludingIDParams{
 		Name:      name,
 		ExcludeID: int64(excludeID),
 	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &model.Person{
+		Name:   row.Name,
+		Status: model.PersonStatus(row.Status),
+	}, nil
 }
 
 // UpdatePersonParamsは人物の更新に使うパラメータを保持します。NULL許容のカラムは
@@ -269,6 +297,45 @@ func (r *PersonRepository) Unarchive(ctx context.Context, id model.PersonID) (bo
 // 公開中とアーカイブのどちらでもない場合は何も書かずにfalseを返します。
 func (r *PersonRepository) Delete(ctx context.Context, id model.PersonID) (bool, error) {
 	return rowAffected(r.queries.DeleteDBPerson(ctx, int64(id)))
+}
+
+// GetForDelistingByIDはAnnict DB管理画面の人物の掲載停止・掲載停止の解除の確認画面が必要と
+// するカラム (表示する名前と状態、対応記録、版) を読み込みます。GetForStateChangeByIDと同じく
+// どの状態の人物も返し、存在しない人物ではnilを返します。
+func (r *PersonRepository) GetForDelistingByID(ctx context.Context, id model.PersonID) (*model.Person, error) {
+	row, err := r.queries.GetPersonForDelistingByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	return &model.Person{
+		ID:            model.PersonID(row.ID),
+		Name:          row.Name,
+		Status:        model.PersonStatus(row.Status),
+		DelistMessage: stringPtrFromNull(row.DelistMessage),
+		UpdatedAt:     row.UpdatedAt,
+	}, nil
+}
+
+// Delistは公開中またはアーカイブの人物の掲載を停止し、対応記録を書きます。確認時の版が
+// 進んでいた場合も書き込みません。delistMessageが
+// nilなら対応記録をNULLにします。人物が存在しないか、どちらの状態でもない場合は何も書かずに
+// falseを返します。
+func (r *PersonRepository) Delist(ctx context.Context, id model.PersonID, version time.Time, delistMessage *string) (bool, error) {
+	return rowAffected(r.queries.DelistDBPerson(ctx, query.DelistDBPersonParams{
+		ID:            int64(id),
+		Version:       version.UTC(),
+		DelistMessage: nullStringFromPtr(delistMessage),
+	}))
+}
+
+// Undelistは掲載停止の人物を公開中に戻します。対応記録は残します。人物が存在しないか、掲載停止
+// でない場合、および確認時の版が進んでいた場合は何も書かずにfalseを返します。
+func (r *PersonRepository) Undelist(ctx context.Context, id model.PersonID, version time.Time) (bool, error) {
+	return rowAffected(r.queries.UndelistDBPerson(ctx, query.UndelistDBPersonParams{ID: int64(id), Version: version.UTC()}))
 }
 
 // rowAffectedは条件付きの更新文 (RETURNING id) の結果を、行を書いたかどうかに変換します。

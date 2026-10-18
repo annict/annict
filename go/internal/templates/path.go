@@ -68,6 +68,24 @@ func DBPersonArchiveNewPath(id viewmodel.PersonID) Path {
 	return Path(fmt.Sprintf("/db/people/%s/archive/new", id))
 }
 
+// DBPersonDelistingPathはDB管理画面で人物の掲載を停止するパスを生成します。掲載停止確認
+// フォームのPOST先、および掲載停止の解除のDELETE先として使います。
+func DBPersonDelistingPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/delisting", id))
+}
+
+// DBPersonDelistingNewPathはDB管理画面の人物の掲載停止確認画面のパスを生成します。人物一覧の
+// 掲載停止の操作からリンクします。
+func DBPersonDelistingNewPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/delisting/new", id))
+}
+
+// DBPersonUndelistingNewPathはDB管理画面の人物の掲載停止解除確認画面のパスを生成します。人物一覧の
+// 掲載停止の解除の操作からリンクします。
+func DBPersonUndelistingNewPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/undelisting/new", id))
+}
+
 // DBWorksPathはDB管理画面の作品一覧のパスを生成します
 func DBWorksPath() Path {
 	return Path("/db/works")

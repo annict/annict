@@ -25,7 +25,7 @@ func personIndexes(people []*model.Person) map[model.PersonID]int {
 }
 
 // TestPersonRepository_ListForDBは、公開中とアーカイブの人物を状態付きでIDの降順に返し、
-// 削除と掲載停止の人物を返さないことを検証する。
+// 削除と掲載停止の人物を返さないことを検証する。掲載停止の人物はIncludeDelistedのときだけ返す。
 func TestPersonRepository_ListForDB(t *testing.T) {
 	t.Parallel()
 
@@ -77,6 +77,30 @@ func TestPersonRepository_ListForDB(t *testing.T) {
 	if archived := people[indexes[archivedID]]; archived.Status != model.PersonStatusArchived {
 		t.Errorf("アーカイブの人物のStatus = %q", archived.Status)
 	}
+
+	withDelisted, err := repo.ListForDB(context.Background(), repository.DBPersonListParams{
+		Page:            1,
+		PerPage:         100,
+		IncludeDelisted: true,
+	})
+	if err != nil {
+		t.Fatalf("ListForDB()のエラー = %v", err)
+	}
+	indexes = personIndexes(withDelisted)
+	delistedIndex, ok := indexes[delistedID]
+	if !ok {
+		t.Fatalf("IncludeDelistedのとき、掲載停止の人物 %d が一覧に含まれていません", delistedID)
+	}
+	// 掲載停止の人物はアーカイブの人物の後、最新の人物の前に作ったため、その間に並ぶ。
+	if delistedIndex <= indexes[newestID] || delistedIndex >= indexes[archivedID] {
+		t.Errorf("掲載停止の人物 %d がIDの降順に並んでいません", delistedID)
+	}
+	if got := withDelisted[delistedIndex].Status; got != model.PersonStatusDelisted {
+		t.Errorf("掲載停止の人物のStatus = %q", got)
+	}
+	if _, ok := indexes[deletedID]; ok {
+		t.Errorf("IncludeDelistedのときも、削除した人物 %d が一覧に含まれてはいけません", deletedID)
+	}
 }
 
 // TestPersonRepository_ListForDB_Paginationは、PerPageとPageでオフセットを取ることを検証する。
@@ -116,15 +140,16 @@ func TestPersonRepository_CountForDB(t *testing.T) {
 	repo := repository.NewPersonRepository(query.New(db).WithTx(tx))
 	ctx := context.Background()
 
-	count := func() int64 {
+	count := func(includeDelisted bool) int64 {
 		t.Helper()
-		count, err := repo.CountForDB(ctx)
+		count, err := repo.CountForDB(ctx, includeDelisted)
 		if err != nil {
 			t.Fatalf("CountForDB()のエラー = %v", err)
 		}
 		return count
 	}
-	before := count()
+	before := count(false)
+	beforeWithDelisted := count(true)
 
 	testutil.NewPersonBuilder(t, tx).Build()
 	testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusArchived).Build()
@@ -133,14 +158,17 @@ func TestPersonRepository_CountForDB(t *testing.T) {
 
 	// 同じトランザクションの中で前後の差を取ることで、他のテストがコミットした人物の
 	// 影響を受けずに増分だけを検証する。
-	if got := count() - before; got != 2 {
+	if got := count(false) - before; got != 2 {
 		t.Errorf("増分 = %d、期待値 = 2", got)
+	}
+	if got := count(true) - beforeWithDelisted; got != 3 {
+		t.Errorf("掲載停止を含めた増分 = %d、期待値 = 3", got)
 	}
 }
 
-// TestPersonRepository_ListTakenNamesは、一意インデックスと同じく削除した人物を除き、
-// アーカイブ・掲載停止の人物の名前も使用中として返すことを検証する。
-func TestPersonRepository_ListTakenNames(t *testing.T) {
+// TestPersonRepository_ListNameHoldersは、一意インデックスと同じく削除した人物を除き、
+// アーカイブ・掲載停止の人物も名前を占有する人物として、状態とともに返すことを検証する。
+func TestPersonRepository_ListNameHolders(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
@@ -156,44 +184,44 @@ func TestPersonRepository_ListTakenNames(t *testing.T) {
 	testutil.NewPersonBuilder(t, tx).WithName(delistedName).WithStatus(model.PersonStatusDelisted).Build()
 	testutil.NewPersonBuilder(t, tx).WithName(deletedName).WithStatus(model.PersonStatusDeleted).Build()
 
-	taken, err := repo.ListTakenNames(context.Background(), []string{publishedName, archivedName, delistedName, deletedName, unusedName})
+	holders, err := repo.ListNameHolders(context.Background(), []string{publishedName, archivedName, delistedName, deletedName, unusedName})
 	if err != nil {
-		t.Fatalf("ListTakenNamesでエラー: %v", err)
+		t.Fatalf("ListNameHoldersでエラー: %v", err)
 	}
 
-	got := make(map[string]bool, len(taken))
-	for _, name := range taken {
-		got[name] = true
+	got := make(map[string]model.PersonStatus, len(holders))
+	for _, holder := range holders {
+		got[holder.Name] = holder.Status
 	}
-	for _, name := range []string{publishedName, archivedName, delistedName} {
-		if !got[name] {
-			t.Errorf("%qが使用中として返されていません", name)
+	want := map[string]model.PersonStatus{
+		publishedName: model.PersonStatusPublished,
+		archivedName:  model.PersonStatusArchived,
+		delistedName:  model.PersonStatusDelisted,
+	}
+	if len(got) != len(want) || len(holders) != len(want) {
+		t.Errorf("名前を占有する人物 = %v、期待値 = %v", got, want)
+	}
+	for name, wantStatus := range want {
+		if status, ok := got[name]; !ok || status != wantStatus {
+			t.Errorf("%qの状態 = %q (返された = %v)、期待値 = %q", name, status, ok, wantStatus)
 		}
-	}
-	for _, name := range []string{deletedName, unusedName} {
-		if got[name] {
-			t.Errorf("%qが使用中として返されました", name)
-		}
-	}
-	if len(taken) != 3 {
-		t.Errorf("使用中の名前 = %d件、期待値 = 3", len(taken))
 	}
 }
 
-// TestPersonRepository_ListTakenNames_Emptyは、照合する名前が無いときにクエリを
+// TestPersonRepository_ListNameHolders_Emptyは、照合する名前が無いときにクエリを
 // 発行せず空を返すことを検証する。
-func TestPersonRepository_ListTakenNames_Empty(t *testing.T) {
+func TestPersonRepository_ListNameHolders_Empty(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
 	repo := repository.NewPersonRepository(query.New(db).WithTx(tx))
 
-	taken, err := repo.ListTakenNames(context.Background(), nil)
+	holders, err := repo.ListNameHolders(context.Background(), nil)
 	if err != nil {
-		t.Fatalf("ListTakenNamesでエラー: %v", err)
+		t.Fatalf("ListNameHoldersでエラー: %v", err)
 	}
-	if len(taken) != 0 {
-		t.Errorf("使用中の名前 = %v、期待値 = 空", taken)
+	if len(holders) != 0 {
+		t.Errorf("名前を占有する人物 = %v、期待値 = 空", holders)
 	}
 }
 
@@ -564,9 +592,9 @@ func TestPersonRepository_Update_NoChange(t *testing.T) {
 	}
 }
 
-// TestPersonRepository_ExistsByNameExcludingIDは、編集中の人物と削除した人物を除き、
-// アーカイブ・掲載停止の人物も含めて名前の重複を判定することを検証する。
-func TestPersonRepository_ExistsByNameExcludingID(t *testing.T) {
+// TestPersonRepository_GetNameHolderExcludingIDは、編集中の人物と削除した人物を除き、
+// アーカイブ・掲載停止の人物も名前を占有する人物として、状態とともに返すことを検証する。
+func TestPersonRepository_GetNameHolderExcludingID(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
@@ -583,25 +611,35 @@ func TestPersonRepository_ExistsByNameExcludingID(t *testing.T) {
 	testutil.NewPersonBuilder(t, tx).WithName(deletedName).WithStatus(model.PersonStatusDeleted).Build()
 
 	tests := []struct {
-		name string
-		arg  string
-		want bool
+		name       string
+		arg        string
+		wantHolder bool
+		wantStatus model.PersonStatus
 	}{
-		{name: "自分自身の名前は重複しない", arg: selfName, want: false},
-		{name: "アーカイブの人物の名前は重複する", arg: archivedName, want: true},
-		{name: "掲載停止の人物の名前は重複する", arg: delistedName, want: true},
-		{name: "削除済みの人物の名前は重複しない", arg: deletedName, want: false},
-		{name: "未使用の名前は重複しない", arg: "未使用の名前-" + t.Name(), want: false},
+		{name: "自分自身の名前は重複しない", arg: selfName, wantHolder: false},
+		{name: "アーカイブの人物の名前は重複する", arg: archivedName, wantHolder: true, wantStatus: model.PersonStatusArchived},
+		{name: "掲載停止の人物の名前は重複する", arg: delistedName, wantHolder: true, wantStatus: model.PersonStatusDelisted},
+		{name: "削除済みの人物の名前は重複しない", arg: deletedName, wantHolder: false},
+		{name: "未使用の名前は重複しない", arg: "未使用の名前-" + t.Name(), wantHolder: false},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			got, err := repo.ExistsByNameExcludingID(ctx, tt.arg, selfID)
+			got, err := repo.GetNameHolderExcludingID(ctx, tt.arg, selfID)
 			if err != nil {
-				t.Fatalf("ExistsByNameExcludingIDでエラー: %v", err)
+				t.Fatalf("GetNameHolderExcludingIDでエラー: %v", err)
 			}
-			if got != tt.want {
-				t.Errorf("ExistsByNameExcludingID(%q) = %v、期待値 = %v", tt.arg, got, tt.want)
+			if !tt.wantHolder {
+				if got != nil {
+					t.Errorf("GetNameHolderExcludingID(%q) = %+v、期待値 = nil", tt.arg, got)
+				}
+				return
+			}
+			if got == nil {
+				t.Fatalf("GetNameHolderExcludingID(%q) = nil、期待値 = 状態%qの人物", tt.arg, tt.wantStatus)
+			}
+			if got.Name != tt.arg || got.Status != tt.wantStatus {
+				t.Errorf("GetNameHolderExcludingID(%q) = {Name: %q, Status: %q}、期待値 = {Name: %q, Status: %q}", tt.arg, got.Name, got.Status, tt.arg, tt.wantStatus)
 			}
 		})
 	}
@@ -677,6 +715,13 @@ func TestPersonRepository_StateChanges(t *testing.T) {
 	deletePerson := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
 		return repo.Delete(context.Background(), id)
 	}
+	delist := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
+		message := "対応記録"
+		return repo.Delist(context.Background(), id, personTestVersion, &message)
+	}
+	undelist := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
+		return repo.Undelist(context.Background(), id, personTestVersion)
+	}
 
 	published := model.PersonStatusPublished
 	archived := model.PersonStatusArchived
@@ -702,6 +747,14 @@ func TestPersonRepository_StateChanges(t *testing.T) {
 		{name: "アーカイブの人物を削除する", op: deletePerson, status: archived, wantWritten: true, wantState: personState{status: deleted, deleted: true}},
 		{name: "掲載停止の人物は削除しない", op: deletePerson, status: delisted, wantState: personState{status: delisted}},
 		{name: "削除済みの人物は削除しない", op: deletePerson, status: deleted, wantState: personState{status: deleted}},
+		{name: "公開中の人物の掲載を停止する", op: delist, status: published, wantWritten: true, wantState: personState{status: delisted, unpublished: true}},
+		{name: "アーカイブの人物の掲載を停止する", op: delist, status: archived, wantWritten: true, wantState: personState{status: delisted, unpublished: true}},
+		{name: "掲載停止の人物は掲載を停止しない", op: delist, status: delisted, wantState: personState{status: delisted}},
+		{name: "削除済みの人物は掲載を停止しない", op: delist, status: deleted, wantState: personState{status: deleted}},
+		{name: "掲載停止の人物の掲載停止を解除する", op: undelist, status: delisted, wantWritten: true, wantState: personState{status: published}},
+		{name: "公開中の人物は掲載停止を解除しない", op: undelist, status: published, wantState: personState{status: published}},
+		{name: "アーカイブの人物は掲載停止を解除しない", op: undelist, status: archived, wantState: personState{status: archived}},
+		{name: "削除済みの人物は掲載停止を解除しない", op: undelist, status: deleted, wantState: personState{status: deleted}},
 	}
 
 	for _, tt := range tests {
@@ -741,7 +794,7 @@ func TestPersonRepository_StateChanges(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		repo := repository.NewPersonRepository(query.New(db).WithTx(tx))
 
-		for _, op := range []operation{archive, unarchive, deletePerson} {
+		for _, op := range []operation{archive, unarchive, deletePerson, delist, undelist} {
 			written, err := op(repo, model.PersonID(999999999))
 			if err != nil {
 				t.Fatalf("状態の変更でエラー: %v", err)
@@ -751,6 +804,131 @@ func TestPersonRepository_StateChanges(t *testing.T) {
 			}
 		}
 	})
+}
+
+// TestPersonRepository_DelistAndUndelistは、掲載停止がRails版への橋渡しのunpublished_atと
+// 対応記録を書き、解除がunpublished_atだけを戻して対応記録を残すこと、古い版からの掲載停止・解除は
+// 何も書かないことを検証する。
+func TestPersonRepository_DelistAndUndelist(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewPersonRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+	id := testutil.NewPersonBuilder(t, tx).Build()
+
+	readMessage := func() *string {
+		t.Helper()
+		person, err := repo.GetForDelistingByID(ctx, id)
+		if err != nil {
+			t.Fatalf("GetForDelistingByIDでエラー: %v", err)
+		}
+		return person.DelistMessage
+	}
+
+	message := "2026-10-18に本人から申出"
+	version := func() time.Time {
+		t.Helper()
+		person, err := repo.GetForDelistingByID(ctx, id)
+		if err != nil {
+			t.Fatalf("GetForDelistingByIDでエラー: %v", err)
+		}
+		return person.UpdatedAt
+	}
+	if written, err := repo.Delist(ctx, id, version(), &message); err != nil || !written {
+		t.Fatalf("Delist() = %v, %v、期待値 = true, nil", written, err)
+	}
+	if got := readPersonState(t, tx, id); got != (personState{status: model.PersonStatusDelisted, unpublished: true}) {
+		t.Errorf("掲載停止後の状態 = %+v", got)
+	}
+	if got := readMessage(); got == nil || *got != message {
+		t.Errorf("掲載停止後のDelistMessage = %v、期待値 = %q", got, message)
+	}
+
+	if written, err := repo.Undelist(ctx, id, version()); err != nil || !written {
+		t.Fatalf("Undelist() = %v, %v、期待値 = true, nil", written, err)
+	}
+	if got := readPersonState(t, tx, id); got != (personState{status: model.PersonStatusPublished}) {
+		t.Errorf("解除後の状態 = %+v", got)
+	}
+	if got := readMessage(); got == nil || *got != message {
+		t.Errorf("解除後のDelistMessage = %v、期待値 = %q", got, message)
+	}
+
+	// 対応記録を空にして掲載を停止し直すと、NULLを書く。
+	if written, err := repo.Delist(ctx, id, version(), nil); err != nil || !written {
+		t.Fatalf("Delist() = %v, %v、期待値 = true, nil", written, err)
+	}
+	if got := readMessage(); got != nil {
+		t.Errorf("対応記録なしで掲載を停止した後のDelistMessage = %q、期待値 = nil", *got)
+	}
+
+	t.Run("古い版からの解除はfalseで、何も書かない", func(t *testing.T) {
+		stale := version().Add(-time.Second)
+		if written, err := repo.Undelist(ctx, id, stale); err != nil || written {
+			t.Fatalf("Undelist() = %v, %v、期待値 = false, nil", written, err)
+		}
+		if got := readPersonState(t, tx, id); got != (personState{status: model.PersonStatusDelisted, unpublished: true}) {
+			t.Errorf("古い版からの解除後の状態 = %+v", got)
+		}
+	})
+
+	t.Run("古い版からの掲載停止はfalseで、何も書かない", func(t *testing.T) {
+		if written, err := repo.Undelist(ctx, id, version()); err != nil || !written {
+			t.Fatalf("Undelist() = %v, %v、期待値 = true, nil", written, err)
+		}
+		stale := version().Add(-time.Second)
+		staleMessage := "古い版からの対応記録"
+		if written, err := repo.Delist(ctx, id, stale, &staleMessage); err != nil || written {
+			t.Fatalf("Delist() = %v, %v、期待値 = false, nil", written, err)
+		}
+		if got := readPersonState(t, tx, id); got != (personState{status: model.PersonStatusPublished}) {
+			t.Errorf("古い版からの掲載停止後の状態 = %+v", got)
+		}
+		if got := readMessage(); got != nil {
+			t.Errorf("古い版からの掲載停止後のDelistMessage = %q、期待値 = nil", *got)
+		}
+	})
+}
+
+// TestPersonRepository_GetForDelistingByIDは、掲載停止の確認画面が使う名前・状態・対応記録・版を
+// 返し、存在しない人物ではnilを返すことを検証する。
+func TestPersonRepository_GetForDelistingByID(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewPersonRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	name := "掲載停止の人物-" + t.Name()
+	id := testutil.NewPersonBuilder(t, tx).
+		WithName(name).
+		WithStatus(model.PersonStatusDelisted).
+		WithDelistMessage("対応記録").
+		WithUpdatedAt(personTestVersion).
+		Build()
+
+	person, err := repo.GetForDelistingByID(ctx, id)
+	if err != nil {
+		t.Fatalf("GetForDelistingByIDでエラー: %v", err)
+	}
+	if person == nil || person.ID != id || person.Name != name || person.Status != model.PersonStatusDelisted {
+		t.Fatalf("人物 = %+v、期待値 = ID %d の掲載停止の %q", person, id, name)
+	}
+	if person.DelistMessage == nil || *person.DelistMessage != "対応記録" {
+		t.Errorf("DelistMessage = %v、期待値 = 対応記録", person.DelistMessage)
+	}
+	if !person.UpdatedAt.Equal(personTestVersion) {
+		t.Errorf("UpdatedAt = %v、期待値 = %v", person.UpdatedAt, personTestVersion)
+	}
+
+	missing, err := repo.GetForDelistingByID(ctx, model.PersonID(999999999))
+	if err != nil {
+		t.Fatalf("GetForDelistingByIDでエラー: %v", err)
+	}
+	if missing != nil {
+		t.Errorf("存在しない人物 = %+v、期待値 = nil", missing)
+	}
 }
 
 // TestPersonRepository_Delete_KeepsRecordは、削除が論理削除で、人物の行を残すことを

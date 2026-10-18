@@ -10,14 +10,15 @@ import (
 
 // DBPersonStatusはAnnict DB管理画面の人物一覧に表示する人物の状態。人物のarchivedは閲覧を
 // 保つ凍結で、閲覧できなくなる作品・エピソードの非公開 (PublishingStatusのarchived) と表示名が
-// 異なるため、PublishingStatusとは別の型にする。一覧は公開中とアーカイブの人物だけを表示する
-// ため、その2値だけを持つ。射影が保たれていることは、ドメイン定数を変換して比較するテストで
-// 担保する。
+// 異なるため、PublishingStatusとは別の型にする。一覧は公開中とアーカイブの人物と、管理者には
+// 掲載停止の人物を表示するため、その3値を持つ。射影が保たれていることは、ドメイン定数を変換して
+// 比較するテストで担保する。
 type DBPersonStatus string
 
 const (
 	DBPersonStatusPublished DBPersonStatus = "published"
 	DBPersonStatusArchived  DBPersonStatus = "archived"
+	DBPersonStatusDelisted  DBPersonStatus = "delisted"
 )
 
 // DBPersonListItemはAnnict DB管理画面の人物一覧で1行ごとに表示する整形済みデータ。
@@ -65,6 +66,28 @@ func NewDBPersonEditTarget(person *model.Person) DBPersonEditTarget {
 		ID:   PersonID(person.ID),
 		Name: person.Name,
 	}
+}
+
+// DBPersonDelistingTargetは人物の掲載停止・掲載停止の解除の確認画面が名指しする人物と、
+// その対応記録。対応記録は管理者だけが参照する内部記録で、未記録なら空文字列になる。
+type DBPersonDelistingTarget struct {
+	ID            PersonID
+	Name          string
+	DelistMessage string
+	UpdatedAt     string
+}
+
+// NewDBPersonDelistingTargetは人物を、掲載停止・掲載停止の解除の確認画面が名指しする対象に変換する。
+func NewDBPersonDelistingTarget(person *model.Person) DBPersonDelistingTarget {
+	target := DBPersonDelistingTarget{
+		ID:        PersonID(person.ID),
+		Name:      person.Name,
+		UpdatedAt: formatFormVersion(&person.UpdatedAt),
+	}
+	if person.DelistMessage != nil {
+		target.DelistMessage = *person.DelistMessage
+	}
+	return target
 }
 
 // DBPersonFormOptionsは人物編集フォームの選択欄が示す選択肢。

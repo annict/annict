@@ -1,0 +1,73 @@
+package db_people
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// UndelistingNewPageDataは掲載停止解除確認ページが描画するデータ (CSRFトークン、対象の人物と
+// その対応記録、キャンセルリンクと送信の戻り先にする一覧)。
+type UndelistingNewPageData struct {
+	CSRFToken string
+	Person    viewmodel.DBPersonDelistingTarget
+	ReturnTo  string
+	Conflict  bool
+	InvalidVersion bool
+}
+
+// 解除してよいかを申出の経緯に照らして判断できるよう、対応記録を確認文の下に示す。人物の掲載停止の
+// 解除はその掲載停止の削除であるため、フォームは人物の掲載停止のエンドポイントへ、メソッド
+// オーバーライドでDELETEを運んで送信する (アーカイブ解除と同じ)。
+templ UndelistingNew(data UndelistingNewPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: data.Person.Name,
+				})
+			</div>
+		</div>
+
+		@components.ContentCard("") {
+			<div class="max-w-2xl flex flex-col gap-6">
+				<div class="flex flex-col gap-2">
+					if data.Conflict {
+						<p role="alert" class="text-destructive">{ templates.T(ctx, "validation_version_conflict") }</p>
+					}
+					if data.InvalidVersion {
+						<p role="alert" class="text-destructive">{ templates.T(ctx, "validation_version_missing") }</p>
+					}
+					<p>{ templates.T(ctx, "db_people_undelisting_new_confirm_message", map[string]any{"Name": data.Person.Name}) }</p>
+					<p class="text-sm text-muted-foreground">{ templates.T(ctx, "db_people_undelisting_new_help") }</p>
+				</div>
+
+				<section class="flex flex-col gap-2" aria-labelledby="delist_message-heading">
+					<h2 id="delist_message-heading" class="text-sm font-medium">
+						{ templates.T(ctx, "db_people_undelisting_new_delist_message_heading") }
+					</h2>
+					if data.Person.DelistMessage != "" {
+						<p class="text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">{ data.Person.DelistMessage }</p>
+					} else {
+						<p class="text-sm text-muted-foreground">{ templates.T(ctx, "db_people_undelisting_new_delist_message_empty") }</p>
+					}
+				</section>
+
+				<form method="POST" action={ templates.DBPersonDelistingPath(data.Person.ID).SafeURL() } class="flex items-center gap-2">
+					<input type="hidden" name="_method" value="DELETE"/>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					<input type="hidden" name="updated_at" value={ data.Person.UpdatedAt }/>
+					<input type="hidden" name="return_to" value={ data.ReturnTo }/>
+					<button type="submit" class="btn rounded-full" data-variant="success">
+						{ templates.T(ctx, "db_people_undelisting_new_submit") }
+					</button>
+					<a href={ data.ReturnTo } class="btn rounded-full" data-variant="outline">
+						{ templates.T(ctx, "db_people_undelisting_new_cancel_link") }
+					</a>
+				</form>
+			</div>
+		}
+	</div>
+}

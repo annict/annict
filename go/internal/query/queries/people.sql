@@ -1,6 +1,7 @@
 -- name: ListDBPeople :many
 -- 公開中とアーカイブの人物を、IDの降順に並べる。archivedは閲覧を保つ凍結のため、誰にでも
--- 表示する。削除 (deleted) と掲載停止 (delisted) の人物は、名義を出さないため返さない。
+-- 表示する。掲載停止 (delisted) の人物は、掲載停止を解除する管理者のためにinclude_delisted
+-- のときだけ返す。削除 (deleted) の人物は誰にも返さない。
 SELECT
     p.id,
     p.name,
@@ -9,6 +10,7 @@ SELECT
     p.status
 FROM people p
 WHERE p.status IN ('published', 'archived')
+    OR (sqlc.arg('include_delisted')::boolean AND p.status = 'delisted')
 ORDER BY p.id DESC
 LIMIT sqlc.arg('per_page')
 OFFSET sqlc.arg('page_offset')::bigint;
@@ -16,12 +18,16 @@ OFFSET sqlc.arg('page_offset')::bigint;
 -- name: CountDBPeople :one
 SELECT COUNT(*)
 FROM people p
-WHERE p.status IN ('published', 'archived');
+WHERE p.status IN ('published', 'archived')
+    OR (sqlc.arg('include_delisted')::boolean AND p.status = 'delisted');
 
--- name: ListTakenPersonNames :many
+-- name: ListPersonNameHolders :many
 -- 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
--- 同じく、deletedの人物だけを除いて照合する。
-SELECT p.name
+-- 同じく、deletedの人物だけを除いて照合する。掲載停止 (delisted) の人物との重複を別の
+-- エラーで伝えるため、名前を占有している人物の状態も返す。
+SELECT
+    p.name,
+    p.status
 FROM people p
 WHERE p.name = ANY(sqlc.arg('names')::varchar[])
     AND p.status <> 'deleted';
@@ -104,16 +110,16 @@ FROM people p
 WHERE p.id = sqlc.arg('id')
     AND p.status IN ('published', 'archived');
 
--- name: ExistsPersonByNameExcludingID :one
--- 編集の名前の重複確認に使う。ListTakenPersonNamesと同じく、people.nameの一意インデックス
--- に揃えてdeletedの人物を除き、編集中の人物自身も除く。
-SELECT EXISTS (
-    SELECT 1
-    FROM people p
-    WHERE p.name = sqlc.arg('name')
-        AND p.id <> sqlc.arg('exclude_id')
-        AND p.status <> 'deleted'
-);
+-- name: GetPersonNameHolderExcludingID :one
+-- 編集の名前の重複確認に使う。ListPersonNameHoldersと同じく、people.nameの一意インデックス
+-- に揃えてdeletedの人物を除き、編集中の人物自身も除く。一意インデックスにより該当は高々1行。
+SELECT
+    p.name,
+    p.status
+FROM people p
+WHERE p.name = sqlc.arg('name')
+    AND p.id <> sqlc.arg('exclude_id')
+    AND p.status <> 'deleted';
 
 -- name: UpdateDBPerson :one
 -- 送信が名乗る版の照合は、UPDATEの中で行う (UpdateDBEpisodeと同じ)。people.updated_atは
@@ -277,4 +283,47 @@ SET
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = sqlc.arg('id')
     AND status IN ('published', 'archived')
+RETURNING id;
+
+-- name: GetPersonForDelistingByID :one
+-- 掲載停止・掲載停止の解除の確認画面が、対象の名前と現在の状態、対応記録 (delist_message)、
+-- 確認時の版を読む。対応記録は管理者だけが参照する内部記録のため、ほかの確認画面が使う
+-- GetPersonForStateChangeByIDには含めず、このクエリでだけ読む。
+SELECT
+    p.id,
+    p.name,
+    p.status,
+    p.delist_message,
+    p.updated_at
+FROM people p
+WHERE p.id = sqlc.arg('id');
+
+-- name: DelistDBPerson :one
+-- 公開中またはアーカイブの人物の掲載を停止し、対応記録を書く。Rails版はperson_statusを読まない
+-- ため、Rails版の表示とAPIから除外されるようunpublished_atにも時刻を書く (Rails版への橋渡し)。
+-- キャスト・スタッフは書き換えない。削除済みの人物は対象にしない。削除済みの人物は名前の一意性の
+-- 対象から外れており、掲載停止にすると一意インデックスに戻って同じ名前の別人と衝突しうるため。
+-- 確認後に人物が変わった送信を止めるため、updated_atも照合する。
+UPDATE people
+SET
+    status = 'delisted',
+    delist_message = sqlc.narg('delist_message'),
+    unpublished_at = (NOW() AT TIME ZONE 'UTC'),
+    updated_at = (NOW() AT TIME ZONE 'UTC')
+WHERE id = sqlc.arg('id')
+    AND status IN ('published', 'archived')
+    AND updated_at = sqlc.arg('version')::timestamp
+RETURNING id;
+
+-- name: UndelistDBPerson :one
+-- 掲載停止の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。対応記録
+-- (delist_message) は、申出に応じた経緯として残す。確認後の変更はupdated_atで検出する。
+UPDATE people
+SET
+    status = 'published',
+    unpublished_at = NULL,
+    updated_at = (NOW() AT TIME ZONE 'UTC')
+WHERE id = sqlc.arg('id')
+    AND status = 'delisted'
+    AND updated_at = sqlc.arg('version')::timestamp
 RETURNING id;
