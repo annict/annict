@@ -69,7 +69,7 @@ func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 		}
 	})
 
-	t.Run("正常系: スタッフや人物が非公開・削除済みのスタッフは除外される", func(t *testing.T) {
+	t.Run("正常系: スタッフが非公開・削除済みか、人物が掲載停止・削除のスタッフは除外される", func(t *testing.T) {
 		t.Parallel()
 
 		now := time.Now()
@@ -79,8 +79,12 @@ func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 		}{
 			{"スタッフが非公開", func(b *testutil.StaffBuilder) *testutil.StaffBuilder { return b.WithUnpublishedAt(now) }},
 			{"スタッフが削除済み", func(b *testutil.StaffBuilder) *testutil.StaffBuilder { return b.WithDeletedAt(now) }},
-			{"人物が非公開", func(b *testutil.StaffBuilder) *testutil.StaffBuilder { return b.WithPersonUnpublishedAt(now) }},
-			{"人物が削除済み", func(b *testutil.StaffBuilder) *testutil.StaffBuilder { return b.WithPersonDeletedAt(now) }},
+			{"人物が掲載停止", func(b *testutil.StaffBuilder) *testutil.StaffBuilder {
+				return b.WithPersonStatus(model.PersonStatusDelisted)
+			}},
+			{"人物が削除", func(b *testutil.StaffBuilder) *testutil.StaffBuilder {
+				return b.WithPersonStatus(model.PersonStatusDeleted)
+			}},
 		}
 
 		for _, tt := range tests {
@@ -106,6 +110,31 @@ func TestStaffRepository_GetByWorkIDs(t *testing.T) {
 					t.Errorf("Name = %q、期待値 = %q", staffs[0].Name, "公開状態テスト-公開スタッフ-"+tt.name)
 				}
 			})
+		}
+	})
+
+	t.Run("正常系: アーカイブした人物のスタッフは取得できる", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		queries := query.New(db).WithTx(tx)
+		repo := repository.NewStaffRepository(queries)
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("作品F").Build()
+		testutil.NewStaffBuilder(t, tx, workID).
+			WithName("アーカイブテスト-監督F").
+			WithPersonStatus(model.PersonStatusArchived).
+			Build()
+
+		staffs, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{workID})
+		if err != nil {
+			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
+		}
+
+		if len(staffs) != 1 {
+			t.Fatalf("len(staffs) = %d、期待値 = 1", len(staffs))
+		}
+		if staffs[0].Name != "アーカイブテスト-監督F" {
+			t.Errorf("Name = %q、期待値 = %q", staffs[0].Name, "アーカイブテスト-監督F")
 		}
 	})
 

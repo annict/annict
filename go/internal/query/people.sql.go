@@ -37,10 +37,11 @@ const countDBPeople = `-- name: CountDBPeople :one
 SELECT COUNT(*)
 FROM people p
 WHERE p.status IN ('published', 'archived')
+    OR ($1::boolean AND p.status = 'delisted')
 `
 
-func (q *Queries) CountDBPeople(ctx context.Context) (int64, error) {
-	row := q.db.QueryRowContext(ctx, countDBPeople)
+func (q *Queries) CountDBPeople(ctx context.Context, includeDelisted bool) (int64, error) {
+	row := q.db.QueryRowContext(ctx, countDBPeople, includeDelisted)
 	var count int64
 	err := row.Scan(&count)
 	return count, err
@@ -131,28 +132,70 @@ func (q *Queries) DeleteDBPerson(ctx context.Context, id int64) (int64, error) {
 	return id, err
 }
 
-const existsPersonByNameExcludingID = `-- name: ExistsPersonByNameExcludingID :one
-SELECT EXISTS (
-    SELECT 1
-    FROM people p
-    WHERE p.name = $1
-        AND p.id <> $2
-        AND p.status <> 'deleted'
-)
+const delistDBPerson = `-- name: DelistDBPerson :one
+UPDATE people
+SET
+    status = 'delisted',
+    delist_message = $1,
+    unpublished_at = (NOW() AT TIME ZONE 'UTC'),
+    updated_at = (NOW() AT TIME ZONE 'UTC')
+WHERE id = $2
+    AND status IN ('published', 'archived')
+    AND updated_at = $3::timestamp
+RETURNING id
 `
 
-type ExistsPersonByNameExcludingIDParams struct {
-	Name      string `db:"name"`
-	ExcludeID int64  `db:"exclude_id"`
+type DelistDBPersonParams struct {
+	DelistMessage sql.NullString `db:"delist_message"`
+	ID            int64          `db:"id"`
+	Version       time.Time      `db:"version"`
 }
 
-// 編集の名前の重複確認に使う。ListTakenPersonNamesと同じく、people.nameの一意インデックス
-// に揃えてdeletedの人物を除き、編集中の人物自身も除く。
-func (q *Queries) ExistsPersonByNameExcludingID(ctx context.Context, arg ExistsPersonByNameExcludingIDParams) (bool, error) {
-	row := q.db.QueryRowContext(ctx, existsPersonByNameExcludingID, arg.Name, arg.ExcludeID)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
+// 公開中またはアーカイブの人物の掲載を停止し、対応記録を書く。Rails版はperson_statusを読まない
+// ため、Rails版の表示とAPIから除外されるようunpublished_atにも時刻を書く (Rails版への橋渡し)。
+// キャスト・スタッフは書き換えない。削除済みの人物は対象にしない。削除済みの人物は名前の一意性の
+// 対象から外れており、掲載停止にすると一意インデックスに戻って同じ名前の別人と衝突しうるため。
+// 確認後に人物が変わった送信を止めるため、updated_atも照合する。
+func (q *Queries) DelistDBPerson(ctx context.Context, arg DelistDBPersonParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, delistDBPerson, arg.DelistMessage, arg.ID, arg.Version)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
+const getPersonForDelistingByID = `-- name: GetPersonForDelistingByID :one
+SELECT
+    p.id,
+    p.name,
+    p.status,
+    p.delist_message,
+    p.updated_at
+FROM people p
+WHERE p.id = $1
+`
+
+type GetPersonForDelistingByIDRow struct {
+	ID            int64          `db:"id"`
+	Name          string         `db:"name"`
+	Status        PersonStatus   `db:"status"`
+	DelistMessage sql.NullString `db:"delist_message"`
+	UpdatedAt     time.Time      `db:"updated_at"`
+}
+
+// 掲載停止・掲載停止の解除の確認画面が、対象の名前と現在の状態、対応記録 (delist_message)、
+// 確認時の版を読む。対応記録は管理者だけが参照する内部記録のため、ほかの確認画面が使う
+// GetPersonForStateChangeByIDには含めず、このクエリでだけ読む。
+func (q *Queries) GetPersonForDelistingByID(ctx context.Context, id int64) (GetPersonForDelistingByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getPersonForDelistingByID, id)
+	var i GetPersonForDelistingByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.Status,
+		&i.DelistMessage,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const getPersonForEditByID = `-- name: GetPersonForEditByID :one
@@ -258,6 +301,35 @@ func (q *Queries) GetPersonForStateChangeByID(ctx context.Context, id int64) (Ge
 	return i, err
 }
 
+const getPersonNameHolderExcludingID = `-- name: GetPersonNameHolderExcludingID :one
+SELECT
+    p.name,
+    p.status
+FROM people p
+WHERE p.name = $1
+    AND p.id <> $2
+    AND p.status <> 'deleted'
+`
+
+type GetPersonNameHolderExcludingIDParams struct {
+	Name      string `db:"name"`
+	ExcludeID int64  `db:"exclude_id"`
+}
+
+type GetPersonNameHolderExcludingIDRow struct {
+	Name   string       `db:"name"`
+	Status PersonStatus `db:"status"`
+}
+
+// 編集の名前の重複確認に使う。ListPersonNameHoldersと同じく、people.nameの一意インデックス
+// に揃えてdeletedの人物を除き、編集中の人物自身も除く。一意インデックスにより該当は高々1行。
+func (q *Queries) GetPersonNameHolderExcludingID(ctx context.Context, arg GetPersonNameHolderExcludingIDParams) (GetPersonNameHolderExcludingIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getPersonNameHolderExcludingID, arg.Name, arg.ExcludeID)
+	var i GetPersonNameHolderExcludingIDRow
+	err := row.Scan(&i.Name, &i.Status)
+	return i, err
+}
+
 const listDBPeople = `-- name: ListDBPeople :many
 SELECT
     p.id,
@@ -267,14 +339,16 @@ SELECT
     p.status
 FROM people p
 WHERE p.status IN ('published', 'archived')
+    OR ($1::boolean AND p.status = 'delisted')
 ORDER BY p.id DESC
-LIMIT $2
-OFFSET $1::bigint
+LIMIT $3
+OFFSET $2::bigint
 `
 
 type ListDBPeopleParams struct {
-	PageOffset int64 `db:"page_offset"`
-	PerPage    int32 `db:"per_page"`
+	IncludeDelisted bool  `db:"include_delisted"`
+	PageOffset      int64 `db:"page_offset"`
+	PerPage         int32 `db:"per_page"`
 }
 
 type ListDBPeopleRow struct {
@@ -286,9 +360,10 @@ type ListDBPeopleRow struct {
 }
 
 // 公開中とアーカイブの人物を、IDの降順に並べる。archivedは閲覧を保つ凍結のため、誰にでも
-// 表示する。削除 (deleted) と掲載停止 (delisted) の人物は、名義を出さないため返さない。
+// 表示する。掲載停止 (delisted) の人物は、掲載停止を解除する管理者のためにinclude_delisted
+// のときだけ返す。削除 (deleted) の人物は誰にも返さない。
 func (q *Queries) ListDBPeople(ctx context.Context, arg ListDBPeopleParams) ([]ListDBPeopleRow, error) {
-	rows, err := q.db.QueryContext(ctx, listDBPeople, arg.PageOffset, arg.PerPage)
+	rows, err := q.db.QueryContext(ctx, listDBPeople, arg.IncludeDelisted, arg.PageOffset, arg.PerPage)
 	if err != nil {
 		return nil, err
 	}
@@ -316,28 +391,36 @@ func (q *Queries) ListDBPeople(ctx context.Context, arg ListDBPeopleParams) ([]L
 	return items, nil
 }
 
-const listTakenPersonNames = `-- name: ListTakenPersonNames :many
-SELECT p.name
+const listPersonNameHolders = `-- name: ListPersonNameHolders :many
+SELECT
+    p.name,
+    p.status
 FROM people p
 WHERE p.name = ANY($1::varchar[])
     AND p.status <> 'deleted'
 `
 
+type ListPersonNameHoldersRow struct {
+	Name   string       `db:"name"`
+	Status PersonStatus `db:"status"`
+}
+
 // 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
-// 同じく、deletedの人物だけを除いて照合する。
-func (q *Queries) ListTakenPersonNames(ctx context.Context, names []string) ([]string, error) {
-	rows, err := q.db.QueryContext(ctx, listTakenPersonNames, pq.Array(names))
+// 同じく、deletedの人物だけを除いて照合する。掲載停止 (delisted) の人物との重複を別の
+// エラーで伝えるため、名前を占有している人物の状態も返す。
+func (q *Queries) ListPersonNameHolders(ctx context.Context, names []string) ([]ListPersonNameHoldersRow, error) {
+	rows, err := q.db.QueryContext(ctx, listPersonNameHolders, pq.Array(names))
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	items := []string{}
+	items := []ListPersonNameHoldersRow{}
 	for rows.Next() {
-		var name string
-		if err := rows.Scan(&name); err != nil {
+		var i ListPersonNameHoldersRow
+		if err := rows.Scan(&i.Name, &i.Status); err != nil {
 			return nil, err
 		}
-		items = append(items, name)
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
@@ -361,6 +444,32 @@ RETURNING id
 // アーカイブの人物を公開中に戻す。ArchiveDBPersonの逆で、アーカイブの人物だけを対象にする。
 func (q *Queries) UnarchiveDBPerson(ctx context.Context, id int64) (int64, error) {
 	row := q.db.QueryRowContext(ctx, unarchiveDBPerson, id)
+	err := row.Scan(&id)
+	return id, err
+}
+
+const undelistDBPerson = `-- name: UndelistDBPerson :one
+UPDATE people
+SET
+    status = 'published',
+    unpublished_at = NULL,
+    updated_at = (NOW() AT TIME ZONE 'UTC')
+WHERE id = $1
+    AND status = 'delisted'
+    AND updated_at = $2::timestamp
+RETURNING id
+`
+
+type UndelistDBPersonParams struct {
+	ID      int64     `db:"id"`
+	Version time.Time `db:"version"`
+}
+
+// 掲載停止の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。対応記録
+// (delist_message) は、申出に応じた経緯として残す。確認後の変更はupdated_atで検出する。
+func (q *Queries) UndelistDBPerson(ctx context.Context, arg UndelistDBPersonParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, undelistDBPerson, arg.ID, arg.Version)
+	var id int64
 	err := row.Scan(&id)
 	return id, err
 }

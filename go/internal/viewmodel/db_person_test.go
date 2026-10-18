@@ -45,11 +45,43 @@ func TestDBPersonStatus_MirrorsDomainConstants(t *testing.T) {
 	}{
 		{name: "公開中", got: DBPersonStatus(model.PersonStatusPublished), want: DBPersonStatusPublished},
 		{name: "アーカイブ", got: DBPersonStatus(model.PersonStatusArchived), want: DBPersonStatusArchived},
+		{name: "掲載停止", got: DBPersonStatus(model.PersonStatusDelisted), want: DBPersonStatusDelisted},
 	}
 
 	for _, tt := range tests {
 		if tt.got != tt.want {
 			t.Errorf("%s: DBPersonStatus = %q、期待値 = %q", tt.name, tt.got, tt.want)
+		}
+	}
+}
+
+// TestNewDBPersonDelistingTargetは人物を確認画面の対象へ詰め替え、未記録の対応記録を空文字列に
+// することを検証する。
+func TestNewDBPersonDelistingTarget(t *testing.T) {
+	t.Parallel()
+
+	message := "本人から申出"
+	updatedAt := time.Date(2026, 10, 18, 12, 34, 56, 123456789, time.UTC)
+	tests := []struct {
+		name   string
+		person *model.Person
+		want   DBPersonDelistingTarget
+	}{
+		{
+			name:   "対応記録あり",
+			person: &model.Person{ID: 1, Name: "人物1", DelistMessage: &message, UpdatedAt: updatedAt},
+			want:   DBPersonDelistingTarget{ID: 1, Name: "人物1", DelistMessage: "本人から申出", UpdatedAt: "2026-10-18T12:34:56.123456789Z"},
+		},
+		{
+			name:   "対応記録なし",
+			person: &model.Person{ID: 2, Name: "人物2", UpdatedAt: updatedAt},
+			want:   DBPersonDelistingTarget{ID: 2, Name: "人物2", UpdatedAt: "2026-10-18T12:34:56.123456789Z"},
+		},
+	}
+
+	for _, tt := range tests {
+		if got := NewDBPersonDelistingTarget(tt.person); got != tt.want {
+			t.Errorf("%s: NewDBPersonDelistingTarget() = %+v、期待値 = %+v", tt.name, got, tt.want)
 		}
 	}
 }

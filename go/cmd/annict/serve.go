@@ -25,7 +25,9 @@ import (
 	"github.com/annict/annict/go/internal/handler/db_person"
 	"github.com/annict/annict/go/internal/handler/db_person_archive"
 	"github.com/annict/annict/go/internal/handler/db_person_deletion"
+	"github.com/annict/annict/go/internal/handler/db_person_delisting"
 	"github.com/annict/annict/go/internal/handler/db_person_unarchive"
+	"github.com/annict/annict/go/internal/handler/db_person_undelisting"
 	"github.com/annict/annict/go/internal/handler/db_work"
 	"github.com/annict/annict/go/internal/handler/db_work_archive"
 	"github.com/annict/annict/go/internal/handler/db_work_deletion"
@@ -755,12 +757,12 @@ func runServe() {
 		r.Delete("/db/episodes/{id}", dbEpisodeHandler.Delete)
 	})
 
-	// 人物一覧は公開 (RailsのDb::PeopleController#indexと同じ)。非公開の人物を
-	// committerにだけ表示する出し分けはUseCaseで行う。
+	// 人物一覧は公開 (RailsのDb::PeopleController#indexと同じ)。掲載停止の人物を
+	// adminにだけ表示する出し分けはUseCaseで行う。
 	// 人物の一括登録・編集・非公開・再公開はcommitterロールを要するため、フォームとその送信、
 	// 非公開・再公開の確認画面とその送信をRequireCommitterでゲートする。人物の削除はadmin専用の
 	// ため (作品と同じくADR 0009の権限分離に揃える)、削除とその確認画面はRequireAdminで別途
-	// ゲートする。
+	// ゲートする。掲載停止とその解除、それらの確認画面も同じくadmin専用とする。
 	personRepo := repository.NewPersonRepository(queries)
 	prefectureRepo := repository.NewPrefectureRepository(queries)
 	getDBPeopleUC := usecase.NewGetDBPeopleUsecase(personRepo)
@@ -776,6 +778,12 @@ func runServe() {
 	dbPersonArchiveHandler := db_person_archive.NewHandler(cfg, sessionManager, flashMgr, getDBPersonArchiveNewUC, archivePersonUC, unarchivePersonUC)
 	dbPersonUnarchiveHandler := db_person_unarchive.NewHandler(cfg, sessionManager, usecase.NewGetDBPersonUnarchiveNewUsecase(personRepo))
 	dbPersonDeletionHandler := db_person_deletion.NewHandler(cfg, sessionManager, usecase.NewGetDBPersonDeletionNewUsecase(personRepo))
+	getDBPersonDelistingNewUC := usecase.NewGetDBPersonDelistingNewUsecase(personRepo)
+	getDBPersonUndelistingNewUC := usecase.NewGetDBPersonUndelistingNewUsecase(personRepo)
+	delistPersonUC := usecase.NewDelistPersonUsecase(personRepo)
+	undelistPersonUC := usecase.NewUndelistPersonUsecase(personRepo)
+	dbPersonDelistingHandler := db_person_delisting.NewHandler(cfg, sessionManager, flashMgr, getDBPersonDelistingNewUC, getDBPersonUndelistingNewUC, delistPersonUC, undelistPersonUC)
+	dbPersonUndelistingHandler := db_person_undelisting.NewHandler(cfg, sessionManager, getDBPersonUndelistingNewUC)
 	r.Get("/db/people", dbPersonHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
@@ -792,6 +800,10 @@ func runServe() {
 		r.Use(authMiddleware.RequireAdmin)
 		r.Get("/db/people/{id}/deletion/new", dbPersonDeletionHandler.New)
 		r.Delete("/db/people/{id}", dbPersonHandler.Delete)
+		r.Get("/db/people/{id}/delisting/new", dbPersonDelistingHandler.New)
+		r.Post("/db/people/{id}/delisting", dbPersonDelistingHandler.Create)
+		r.Get("/db/people/{id}/undelisting/new", dbPersonUndelistingHandler.New)
+		r.Delete("/db/people/{id}/delisting", dbPersonDelistingHandler.Delete)
 	})
 
 	// iCalendar配信

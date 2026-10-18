@@ -31,8 +31,7 @@ INNER JOIN people p ON c.person_id = p.id
 WHERE c.work_id = ANY($1::bigint[])
   AND c.deleted_at IS NULL
   AND c.unpublished_at IS NULL
-  AND p.deleted_at IS NULL
-  AND p.unpublished_at IS NULL
+  AND p.status IN ('published', 'archived')
 ORDER BY c.work_id, c.sort_number
 `
 
@@ -50,7 +49,8 @@ type GetCastsByWorkIDsRow struct {
 	PersonNameEn    string         `db:"person_name_en"`
 }
 
-// キャスト自身と人物がともに公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す
+// キャスト自身が公開状態 (unpublished_atとdeleted_atがともにNULL) で、人物が閲覧できる状態
+// (published / archived) の行だけを返す。掲載停止 (delisted) と削除 (deleted) の人物の行は除外する
 func (q *Queries) GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getCastsByWorkIDs, pq.Array(dollar_1))
 	if err != nil {

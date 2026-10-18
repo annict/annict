@@ -17,7 +17,7 @@ type IndexPageData struct {
 	// ため、未ログインや一般ユーザーではfalseになり、そのときは見出しの操作コンテナと
 	// 操作列自体を描画しない。
 	IsCommitter bool
-	// IsAdminは操作列の削除ボタンの出し分けに使う (削除は管理者に限る)。
+	// IsAdminは操作列の掲載停止と削除の操作の出し分けに使う (どちらも管理者に限る)。
 	IsAdmin bool
 	// CSRFTokenは操作列のアーカイブ解除・削除ボタンがhtmxのリクエストヘッダーで送る。
 	CSRFToken string
@@ -95,7 +95,10 @@ templ Index(data IndexPageData) {
 								for _, person := range data.People {
 									<tr>
 										<td>
-											<a
+								if person.Status == viewmodel.DBPersonStatusDelisted {
+									<span>{ person.ID.String() }</span>
+								} else {
+								<a
 												href={ templates.PersonPath(person.ID).SafeURL() }
 												target="_blank"
 												rel="noopener"
@@ -105,6 +108,7 @@ templ Index(data IndexPageData) {
 												{ person.ID.String() }
 												@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
 											</a>
+								}
 										</td>
 										<td class="whitespace-normal [overflow-wrap:anywhere]">
 											<div>{ person.Name }</div>
@@ -153,14 +157,21 @@ templ statusLabel(status viewmodel.DBPersonStatus) {
 			<span class="badge" data-variant="success">{ templates.T(ctx, "db_people_index_status_published") }</span>
 		case viewmodel.DBPersonStatusArchived:
 			<span class="badge" data-variant="warning">{ templates.T(ctx, "db_people_index_status_archived") }</span>
+		case viewmodel.DBPersonStatusDelisted:
+			<span class="badge" data-variant="destructive">{ templates.T(ctx, "db_people_index_status_delisted") }</span>
 	}
 }
 
 // actionButtonsは人物一覧の行ごとの操作列を描画する。committerにだけ呼ばれる。編集リンクと、
 // アーカイブ (公開中の行) またはアーカイブ解除 (アーカイブの行) の操作を出し、管理者にはさらに
-// 削除の操作を出す。作品一覧と同じく、アーカイブは確認画面への素のリンクで、アーカイブ解除・
+// 掲載停止と削除の操作を出す。作品一覧と同じく、アーカイブは確認画面への素のリンクで、アーカイブ解除・
 // 削除は確認ダイアログ付きのhtmx DELETEボタンにする。CSRFトークンはX-CSRF-Tokenヘッダーで送り、ハンドラーがHX-Redirectを
-// 返してhtmxが一覧へ遷移する。
+// 返してhtmxが一覧へ遷移する。掲載停止は対応記録を入力させるため、確認画面への素のリンクにする。
+//
+// 掲載停止の行 (管理者にだけ表示される) には、掲載停止の解除の確認画面へのリンクだけを出す。
+// 解除するかを対応記録に照らして判断できるよう、ダイアログではなく記録を示す確認画面に送る。
+// 編集・アーカイブ・削除を出さないのは、名前を変えると掲載停止が同じ名前での再登録を防げなくなり、
+// 削除すると名前の一意性の対象から外れるため。
 //
 // 作品一覧と同じく、各コントロールは視覚的に隠したテキストで対象の人物をIDで名指しし、
 // アーカイブ解除・削除では確認文でも名指しする。スクリーンリーダーが行から切り離してコントロールを
@@ -168,55 +179,81 @@ templ statusLabel(status viewmodel.DBPersonStatus) {
 // かを述べるようにするため。名指しには行のIDリンクと同じくIDを使う。
 templ actionButtons(data IndexPageData, person viewmodel.DBPersonListItem) {
 	<div class="flex flex-col items-stretch gap-1.5">
-		<a
-			href={ templates.DBPersonEditPath(person.ID).SafeURL() }
-			class="btn rounded-full"
-			data-variant="outline"
-			data-size="sm"
-		>
-			{ templates.T(ctx, "db_people_index_edit_link") }
-			@actionTarget(person)
-		</a>
-		switch person.Status {
-			case viewmodel.DBPersonStatusPublished:
-				<a
-					href={ templates.DBPersonArchiveNewPath(person.ID).SafeURL() }
-					class="btn rounded-full"
-					data-variant="warning"
-					data-size="sm"
-				>
-					{ templates.T(ctx, "db_people_index_archive_link") }
-					@actionTarget(person)
-				</a>
-			case viewmodel.DBPersonStatusArchived:
-				<button
-					type="button"
-					class="btn rounded-full"
-					data-variant="success"
-					data-size="sm"
-					hx-delete={ templates.DBPersonArchivePath(person.ID).String() }
-					hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
-					hx-confirm={ templates.T(ctx, "db_people_index_unarchive_confirm", map[string]any{"ID": person.ID.String()}) }
-				>
-					{ templates.T(ctx, "db_people_index_unarchive_button") }
-					@actionTarget(person)
-				</button>
+		if person.Status == viewmodel.DBPersonStatusDelisted {
+			<a
+				href={ templates.DBPersonUndelistingNewPath(person.ID).SafeURL() }
+				class="btn rounded-full"
+				data-variant="success"
+				data-size="sm"
+			>
+				{ templates.T(ctx, "db_people_index_undelist_link") }
+				@actionTarget(person)
+			</a>
+		} else {
+			@viewableActionButtons(data, person)
 		}
-		if data.IsAdmin {
+	</div>
+}
+
+// viewableActionButtonsは閲覧できる状態 (公開中とアーカイブ) の行の操作を描画する。
+templ viewableActionButtons(data IndexPageData, person viewmodel.DBPersonListItem) {
+	<a
+		href={ templates.DBPersonEditPath(person.ID).SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		{ templates.T(ctx, "db_people_index_edit_link") }
+		@actionTarget(person)
+	</a>
+	switch person.Status {
+		case viewmodel.DBPersonStatusPublished:
+			<a
+				href={ templates.DBPersonArchiveNewPath(person.ID).SafeURL() }
+				class="btn rounded-full"
+				data-variant="warning"
+				data-size="sm"
+			>
+				{ templates.T(ctx, "db_people_index_archive_link") }
+				@actionTarget(person)
+			</a>
+		case viewmodel.DBPersonStatusArchived:
 			<button
 				type="button"
 				class="btn rounded-full"
-				data-variant="destructive"
+				data-variant="success"
 				data-size="sm"
-				hx-delete={ templates.DBPersonPath(person.ID).String() }
+				hx-delete={ templates.DBPersonArchivePath(person.ID).String() }
 				hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
-				hx-confirm={ templates.T(ctx, "db_people_index_delete_confirm", map[string]any{"ID": person.ID.String()}) }
+				hx-confirm={ templates.T(ctx, "db_people_index_unarchive_confirm", map[string]any{"ID": person.ID.String()}) }
 			>
-				{ templates.T(ctx, "db_people_index_delete_button") }
+				{ templates.T(ctx, "db_people_index_unarchive_button") }
 				@actionTarget(person)
 			</button>
-		}
-	</div>
+	}
+	if data.IsAdmin {
+		<a
+			href={ templates.DBPersonDelistingNewPath(person.ID).SafeURL() }
+			class="btn rounded-full"
+			data-variant="destructive"
+			data-size="sm"
+		>
+			{ templates.T(ctx, "db_people_index_delist_link") }
+			@actionTarget(person)
+		</a>
+		<button
+			type="button"
+			class="btn rounded-full"
+			data-variant="destructive"
+			data-size="sm"
+			hx-delete={ templates.DBPersonPath(person.ID).String() }
+			hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+			hx-confirm={ templates.T(ctx, "db_people_index_delete_confirm", map[string]any{"ID": person.ID.String()}) }
+		>
+			{ templates.T(ctx, "db_people_index_delete_button") }
+			@actionTarget(person)
+		</button>
+	}
 }
 
 // actionTargetは操作コントロールの対象の人物を、支援技術にのみ向けて描画する (作品一覧の

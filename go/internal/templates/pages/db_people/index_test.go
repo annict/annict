@@ -191,3 +191,63 @@ func TestIndex_StateActions(t *testing.T) {
 		})
 	}
 }
+
+// TestIndex_DelistedRowは、管理者に表示する掲載停止の行が、掲載停止のバッジと掲載停止の解除の
+// 確認画面へのリンクだけを持ち、編集・アーカイブ・掲載停止・削除の操作を持たないことを検証する。
+// 閲覧できる状態の行には、管理者にだけ掲載停止の確認画面へのリンクを出す。
+func TestIndex_DelistedRow(t *testing.T) {
+	t.Parallel()
+
+	html := renderIndex(t, i18n.SetLocale(context.Background(), "ja"), IndexPageData{
+		People: []viewmodel.DBPersonListItem{
+			{ID: 1, Name: "公開中の人物", Status: viewmodel.DBPersonStatusPublished},
+			{ID: 3, Name: "掲載停止の人物", Status: viewmodel.DBPersonStatusDelisted},
+		},
+		Pagination:  viewmodel.NewPagination(1, 2, 100, "/db/people"),
+		IsCommitter: true,
+		IsAdmin:     true,
+		CSRFToken:   "test-csrf",
+	})
+
+	for _, s := range []string{
+		`<span class="badge" data-variant="destructive">掲載停止</span>`,
+		`href="/people/1"`,
+		`href="/db/people/3/undelisting/new"`,
+		`href="/db/people/1/delisting/new"`,
+	} {
+		if !strings.Contains(html, s) {
+			t.Errorf("レスポンスに含まれていない文字列 = %q", s)
+		}
+	}
+	for _, s := range []string{
+		`href="/people/3"`,
+		`href="/db/people/3/edit"`,
+		`href="/db/people/3/archive/new"`,
+		`href="/db/people/3/delisting/new"`,
+		`hx-delete="/db/people/3"`,
+		`href="/db/people/1/undelisting/new"`,
+	} {
+		if strings.Contains(html, s) {
+			t.Errorf("行の状態に合わない操作%qが含まれています", s)
+		}
+	}
+}
+
+// TestIndex_DelistLinkRequiresAdminは、編集者には掲載停止の確認画面へのリンクを出さないことを
+// 検証する。
+func TestIndex_DelistLinkRequiresAdmin(t *testing.T) {
+	t.Parallel()
+
+	html := renderIndex(t, i18n.SetLocale(context.Background(), "ja"), IndexPageData{
+		People: []viewmodel.DBPersonListItem{
+			{ID: 1, Name: "公開中の人物", Status: viewmodel.DBPersonStatusPublished},
+		},
+		Pagination:  viewmodel.NewPagination(1, 1, 100, "/db/people"),
+		IsCommitter: true,
+		CSRFToken:   "test-csrf",
+	})
+
+	if strings.Contains(html, `href="/db/people/1/delisting/new"`) {
+		t.Error("編集者に掲載停止の確認画面へのリンクが表示されています")
+	}
+}

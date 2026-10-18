@@ -1159,6 +1159,10 @@ other = "公開"
 description = "人物一覧の状態のバッジ - アーカイブ"
 other = "アーカイブ"
 
+[db_people_index_status_delisted]
+description = "人物一覧の状態のバッジ - 掲載停止 (管理者にだけ表示)"
+other = "掲載停止"
+
 [db_people_index_table_actions_label]
 description = "人物一覧のテーブルヘッダー - 操作"
 other = "操作"
@@ -1186,6 +1190,14 @@ other = "アーカイブ解除"
 [db_people_index_unarchive_confirm]
 description = "人物一覧のアーカイブ解除ボタンの確認ダイアログ"
 other = "人物 {{.ID}} のアーカイブを解除しますか？"
+
+[db_people_index_delist_link]
+description = "人物一覧から掲載停止確認画面へのリンク (管理者に表示)"
+other = "掲載停止"
+
+[db_people_index_undelist_link]
+description = "人物一覧から掲載停止解除確認画面へのリンク (掲載停止の人物に表示)"
+other = "掲載停止を解除"
 
 [db_people_index_delete_button]
 description = "人物一覧の削除ボタン (管理者に表示)"
@@ -1317,7 +1329,7 @@ other = "入力した内容は下のフォームにそのまま残していま�
 description = "人物編集ページの送信ボタン"
 other = "更新する"
 
-# DB人物のアーカイブ・アーカイブ解除・削除の確認ページ
+# DB人物のアーカイブ・アーカイブ解除・削除・掲載停止・掲載停止解除の確認ページ
 [db_people_archive_new_document_title]
 description = "人物を識別できるアーカイブ確認ページの文書タイトル"
 other = "人物アーカイブ | {{.Name}}"
@@ -1372,6 +1384,70 @@ other = "削除する"
 
 [db_people_deletion_new_cancel_link]
 description = "人物削除確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_people_delisting_new_document_title]
+description = "人物を識別できる掲載停止確認ページの文書タイトル"
+other = "人物掲載停止 | {{.Name}}"
+
+[db_people_delisting_new_confirm_message]
+description = "人物掲載停止確認ページの確認メッセージ"
+other = "「{{.Name}}」の掲載を停止しますか？"
+
+[db_people_delisting_new_help]
+description = "人物掲載停止確認ページで、掲載を停止すると何が起きるかを述べる説明"
+other = "掲載を停止すると、この人物は人物ページ・作品のキャストとスタッフ・Web API・Annict DBの一覧 (管理者を除く) に表示されなくなり、同じ名前の人物は登録できなくなります。あとから一覧の「掲載停止を解除」で元に戻せます。"
+
+[db_people_delisting_new_delist_message_label]
+description = "人物掲載停止確認ページの対応記録の入力欄のラベル"
+other = "対応記録"
+
+[db_people_delisting_new_delist_message_hint]
+description = "人物掲載停止確認ページの対応記録の入力欄の説明"
+other = "申出の経緯や対応日などを記録します。管理者だけが参照できます。"
+
+[db_people_delisting_new_saved_delist_message_heading]
+description = "人物掲載停止確認ページで、競合した送信と異なる保存済みの対応記録の見出し"
+other = "保存済みの対応記録"
+
+[db_people_delisting_new_saved_delist_message_empty]
+description = "人物掲載停止確認ページで、競合した送信と比べる保存済みの対応記録が無いときの表示"
+other = "保存済みの対応記録はありません。"
+
+[db_people_delisting_new_submit]
+description = "人物掲載停止確認ページの実行ボタン"
+other = "掲載を停止する"
+
+[db_people_delisting_new_cancel_link]
+description = "人物掲載停止確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_people_undelisting_new_document_title]
+description = "人物を識別できる掲載停止解除確認ページの文書タイトル"
+other = "人物掲載停止解除 | {{.Name}}"
+
+[db_people_undelisting_new_confirm_message]
+description = "人物掲載停止解除確認ページの確認メッセージ"
+other = "「{{.Name}}」の掲載停止を解除しますか？"
+
+[db_people_undelisting_new_help]
+description = "人物掲載停止解除確認ページで、解除すると何が起きるかを述べる説明"
+other = "解除すると、この人物は公開中に戻り、人物ページや作品のキャスト・スタッフに再び表示されます。対応記録は残ります。"
+
+[db_people_undelisting_new_delist_message_heading]
+description = "人物掲載停止解除確認ページの対応記録の見出し"
+other = "対応記録"
+
+[db_people_undelisting_new_delist_message_empty]
+description = "人物掲載停止解除確認ページで、対応記録が無いときの表示"
+other = "対応記録はありません。"
+
+[db_people_undelisting_new_submit]
+description = "人物掲載停止解除確認ページの実行ボタン"
+other = "掲載停止を解除する"
+
+[db_people_undelisting_new_cancel_link]
+description = "人物掲載停止解除確認ページのキャンセルリンク"
 other = "キャンセル"
 
 # DB作品一覧ページ
@@ -2183,6 +2259,14 @@ other = "人物のアーカイブを解除しました"
 description = "人物削除成功メッセージ"
 other = "人物を削除しました"
 
+[flash_db_person_delisted]
+description = "人物掲載停止成功メッセージ"
+other = "人物の掲載を停止しました"
+
+[flash_db_person_undelisted]
+description = "人物掲載停止解除成功メッセージ"
+other = "人物の掲載停止を解除しました"
+
 # バリデーション共通メッセージ
 [validation_required]
 description = "必須フィールドのバリデーションエラー"
@@ -2303,6 +2387,10 @@ other = "この名前の人物は既に登録されています"
 [validation_person_name_already_taken]
 description = "編集した人物の名前が、別の人物の名前として既に登録されている"
 other = "この名前の人物は既に登録されています"
+
+[validation_person_name_delisted]
+description = "登録・編集した人物の名前が、掲載を停止した人物の名前と重複している"
+other = "この人物は掲載を停止しています。関係者に関わる事情のため、停止の詳細はお伝えできません。ご理解いただけますと幸いです。"
 
 [validation_person_gender_invalid]
 description = "人物の性別が許可値の範囲外"

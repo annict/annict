@@ -62,3 +62,48 @@ func TestGetDBPeopleUsecase_Execute(t *testing.T) {
 		t.Errorf("TotalCount = %d が1ページ分の件数 %d より少ない", output.TotalCount, len(output.People))
 	}
 }
+
+// TestGetDBPeopleUsecase_Execute_Delistedは、掲載停止の人物を管理者にだけ返し、編集者・一般
+// ユーザー・未ログインの閲覧者には返さないことを検証する。削除済みの人物は管理者にも返さない。
+func TestGetDBPeopleUsecase_Execute_Delisted(t *testing.T) {
+	t.Parallel()
+
+	uc, tx := newGetDBPeopleUsecase(t)
+	delistedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDelisted).Build()
+	deletedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDeleted).Build()
+
+	tests := []struct {
+		name         string
+		user         *model.User
+		wantDelisted bool
+	}{
+		{name: "管理者", user: &model.User{ID: 1, Role: model.RoleAdmin}, wantDelisted: true},
+		{name: "編集者", user: &model.User{ID: 1, Role: model.RoleEditor}},
+		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
+		{name: "未ログイン", user: nil},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			output, err := uc.Execute(context.Background(), GetDBPeopleInput{
+				User:    tt.user,
+				Page:    1,
+				PerPage: 100,
+			})
+			if err != nil {
+				t.Fatalf("Execute()のエラー = %v", err)
+			}
+
+			ids := make(map[model.PersonID]bool, len(output.People))
+			for _, p := range output.People {
+				ids[p.ID] = true
+			}
+			if ids[delistedID] != tt.wantDelisted {
+				t.Errorf("掲載停止の人物を含む = %v、期待値 = %v", ids[delistedID], tt.wantDelisted)
+			}
+			if ids[deletedID] {
+				t.Error("削除済みの人物が含まれてはいけません")
+			}
+		})
+	}
+}

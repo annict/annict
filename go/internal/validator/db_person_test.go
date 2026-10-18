@@ -173,7 +173,7 @@ func TestDBPersonCreateValidatorValidateErrors(t *testing.T) {
 
 // TestDBPersonCreateValidatorValidateTakenNamesは、既存の人物と名前が重なる行を、
 // 一意インデックスと同じくアーカイブ・掲載停止の人物も含めて報告し、削除済みの人物の名前は
-// 報告しないことを検証する。
+// 報告しないことを検証する。掲載停止の人物との重複は、通常の重複と別の文言で報告する。
 func TestDBPersonCreateValidatorValidateTakenNames(t *testing.T) {
 	t.Parallel()
 
@@ -199,7 +199,7 @@ func TestDBPersonCreateValidatorValidateTakenNames(t *testing.T) {
 	assertPersonRowsErrors(t, err, []string{
 		"1 行目: この名前の人物は既に登録されています",
 		"2 行目: この名前の人物は既に登録されています",
-		"4 行目: この名前の人物は既に登録されています",
+		"4 行目: この人物は掲載を停止しています。関係者に関わる事情のため、停止の詳細はお伝えできません。ご理解いただけますと幸いです。",
 		"6 行目: 同じ名前が1 行目にもあります",
 	})
 }
@@ -517,6 +517,8 @@ func TestDBPersonUpdateValidatorValidateDatabase(t *testing.T) {
 	selfID := testutil.NewPersonBuilder(t, tx).WithName(selfName).Build()
 	takenName := uniquePersonName("別の人物")
 	testutil.NewPersonBuilder(t, tx).WithName(takenName).Build()
+	delistedName := uniquePersonName("掲載停止の人物")
+	testutil.NewPersonBuilder(t, tx).WithName(delistedName).WithStatus(model.PersonStatusDelisted).Build()
 
 	t.Run("名前を変えない送信は自分自身と重複しない", func(t *testing.T) {
 		fields := &DBPersonUpdateValidateOutput{Name: selfName, PrefectureID: &prefectureID}
@@ -542,6 +544,12 @@ func TestDBPersonUpdateValidatorValidateDatabase(t *testing.T) {
 			fields:    DBPersonUpdateValidateOutput{Name: takenName},
 			wantField: "name",
 			wantMsg:   "この名前の人物は既に登録されています",
+		},
+		{
+			name:      "異常系: 名前が掲載停止の人物と重複",
+			fields:    DBPersonUpdateValidateOutput{Name: delistedName},
+			wantField: "name",
+			wantMsg:   "この人物は掲載を停止しています。関係者に関わる事情のため、停止の詳細はお伝えできません。ご理解いただけますと幸いです。",
 		},
 		{
 			name:      "異常系: 出身地が登録されていない",

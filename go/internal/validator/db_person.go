@@ -107,21 +107,21 @@ func (v *DBPersonCreateValidator) Validate(ctx context.Context, input DBPersonCr
 		return nil, ve
 	}
 
-	takenNames, err := v.personRepo.ListTakenNames(ctx, names)
+	holders, err := v.personRepo.ListNameHolders(ctx, names)
 	if err != nil {
 		return nil, fmt.Errorf("人物名の重複確認に失敗: %w", err)
 	}
-	taken := make(map[string]bool, len(takenNames))
-	for _, name := range takenNames {
-		taken[name] = true
+	holderStatusByName := make(map[string]model.PersonStatus, len(holders))
+	for _, holder := range holders {
+		holderStatusByName[holder.Name] = holder.Status
 	}
 
 	rows := make([]DBPersonRow, 0, len(parsedRows))
 	for _, parsed := range parsedRows {
 		// 既存の人物と重なる名前は、その名前が最初に現れた行にだけ報告する。2回目以降の行は
 		// 入力の中での重複として報告済みのため。
-		if taken[parsed.row.Name] && firstLineByName[parsed.row.Name] == parsed.line {
-			parsed.messages = append(parsed.messages, i18n.T(ctx, "validation_person_row_name_already_taken"))
+		if status, taken := holderStatusByName[parsed.row.Name]; taken && firstLineByName[parsed.row.Name] == parsed.line {
+			parsed.messages = append(parsed.messages, personNameTakenMessage(ctx, status, "validation_person_row_name_already_taken"))
 		}
 
 		for _, message := range parsed.messages {
@@ -333,12 +333,12 @@ func (v *DBPersonUpdateValidator) ValidateFormat(ctx context.Context, input DBPe
 // ようにするため。
 func (v *DBPersonUpdateValidator) ValidateDatabase(ctx context.Context, personID model.PersonID, output *DBPersonUpdateValidateOutput) (*DBPersonUpdateValidateOutput, error) {
 	ve := model.NewValidationError()
-	taken, err := v.personRepo.ExistsByNameExcludingID(ctx, output.Name, personID)
+	holder, err := v.personRepo.GetNameHolderExcludingID(ctx, output.Name, personID)
 	if err != nil {
 		return nil, fmt.Errorf("人物名の重複確認に失敗: %w", err)
 	}
-	if taken {
-		ve.AddField("name", i18n.T(ctx, "validation_person_name_already_taken"))
+	if holder != nil {
+		ve.AddField("name", personNameTakenMessage(ctx, holder.Status, "validation_person_name_already_taken"))
 	}
 	if output.PrefectureID != nil {
 		exists, err := v.prefectureRepo.ExistsByID(ctx, *output.PrefectureID)
@@ -353,6 +353,16 @@ func (v *DBPersonUpdateValidator) ValidateDatabase(ctx context.Context, personID
 		return nil, ve
 	}
 	return output, nil
+}
+
+// personNameTakenMessageは、名前がholderStatusの人物と重複したときのエラーメッセージを返す。
+// 掲載停止 (delisted) の人物は一覧に出ないため、通常の重複のメッセージでは編集者が理由を
+// 掴めず登録を試し続ける。掲載停止であることだけを伝え、申出の有無などの経緯は伏せる。
+func personNameTakenMessage(ctx context.Context, holderStatus model.PersonStatus, takenMessageID string) string {
+	if holderStatus == model.PersonStatusDelisted {
+		return i18n.T(ctx, "validation_person_name_delisted")
+	}
+	return i18n.T(ctx, takenMessageID)
 }
 
 // PersonFormDateLayoutは人物編集フォームの誕生日の入力欄が送信する日付形式。作品フォームの

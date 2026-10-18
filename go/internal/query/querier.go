@@ -59,7 +59,7 @@ type Querier interface {
 	ClearActiveUserStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (int64, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
 	CountDBEpisodes(ctx context.Context, workID int64) (int64, error)
-	CountDBPeople(ctx context.Context) (int64, error)
+	CountDBPeople(ctx context.Context, includeDelisted bool) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
@@ -319,6 +319,12 @@ type Querier interface {
 	// ユーザーが作品に付けたタグを最大batch_size件削除し、削除した件数を返す。
 	// タグのwork_tags.work_taggings_countを削除した件数だけ減算する。updated_atは変えない。
 	DeleteWorkTaggingsByUserID(ctx context.Context, arg DeleteWorkTaggingsByUserIDParams) (int64, error)
+	// 公開中またはアーカイブの人物の掲載を停止し、対応記録を書く。Rails版はperson_statusを読まない
+	// ため、Rails版の表示とAPIから除外されるようunpublished_atにも時刻を書く (Rails版への橋渡し)。
+	// キャスト・スタッフは書き換えない。削除済みの人物は対象にしない。削除済みの人物は名前の一意性の
+	// 対象から外れており、掲載停止にすると一意インデックスに戻って同じ名前の別人と衝突しうるため。
+	// 確認後に人物が変わった送信を止めるため、updated_atも照合する。
+	DelistDBPerson(ctx context.Context, arg DelistDBPersonParams) (int64, error)
 	// ユーザーが持つ論理削除済みのアプリケーションから投稿された他人のエピソードの記録を最大batch_size件、
 	// アプリケーションとの紐づきを外し、外した件数を返す。投稿元のアプリケーションは表示に
 	// 使われないため、エピソードの記録そのものと更新日時は変えない。
@@ -339,9 +345,6 @@ type Querier interface {
 	ExistsKeptOAuthApplicationByOwnerID(ctx context.Context, userID int64) (bool, error)
 	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
 	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
-	// 編集の名前の重複確認に使う。ListTakenPersonNamesと同じく、people.nameの一意インデックス
-	// に揃えてdeletedの人物を除き、編集中の人物自身も除く。
-	ExistsPersonByNameExcludingID(ctx context.Context, arg ExistsPersonByNameExcludingIDParams) (bool, error)
 	ExistsPrefectureByID(ctx context.Context, id int64) (bool, error)
 	// RailsアクションのWork.without_deleted.findと同じ順序で、送信行をパースする前に親作品を
 	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
@@ -371,7 +374,8 @@ type Querier interface {
 	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
 	// カレンダー用の作品 (放送開始日) を取得します
 	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
-	// キャスト自身と人物がともに公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す
+	// キャスト自身が公開状態 (unpublished_atとdeleted_atがともにNULL) で、人物が閲覧できる状態
+	// (published / archived) の行だけを返す。掲載停止 (delisted) と削除 (deleted) の人物の行は除外する
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
 	// 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
@@ -425,6 +429,10 @@ type Querier interface {
 	// トークンの発行後に退会・利用停止したユーザーのトークンは無効として扱う。
 	GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error)
 	GetPasswordResetTokensByUserID(ctx context.Context, userID int64) ([]PasswordResetToken, error)
+	// 掲載停止・掲載停止の解除の確認画面が、対象の名前と現在の状態、対応記録 (delist_message)、
+	// 確認時の版を読む。対応記録は管理者だけが参照する内部記録のため、ほかの確認画面が使う
+	// GetPersonForStateChangeByIDには含めず、このクエリでだけ読む。
+	GetPersonForDelistingByID(ctx context.Context, id int64) (GetPersonForDelistingByIDRow, error)
 	// 編集フォームは、Rails版の編集フォームと同じ16項目と、hiddenで持ち回る版 (updated_at)
 	// を読む。編集できるのは一覧に表示する公開中とアーカイブの人物だけで、削除と掲載停止の
 	// 人物は除く。
@@ -433,6 +441,9 @@ type Querier interface {
 	// 操作できない人物を呼び出し側で弾けるよう、状態で絞り込まずに返す
 	// (GetWorkForStateChangeByIDと同じ)。
 	GetPersonForStateChangeByID(ctx context.Context, id int64) (GetPersonForStateChangeByIDRow, error)
+	// 編集の名前の重複確認に使う。ListPersonNameHoldersと同じく、people.nameの一意インデックス
+	// に揃えてdeletedの人物を除き、編集中の人物自身も除く。一意インデックスにより該当は高々1行。
+	GetPersonNameHolderExcludingID(ctx context.Context, arg GetPersonNameHolderExcludingIDParams) (GetPersonNameHolderExcludingIDRow, error)
 	GetPopularWorks(ctx context.Context) ([]GetPopularWorksRow, error)
 	GetProfileByUserID(ctx context.Context, userID int64) (GetProfileByUserIDRow, error)
 	GetRecordByID(ctx context.Context, id int64) (GetRecordByIDRow, error)
@@ -440,7 +451,8 @@ type Querier interface {
 	GetSessionByID(ctx context.Context, sessionID string) (Session, error)
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
 	// スタッフ自身が公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す。
-	// 人物を参照する行 (resource_type = 'Person') は、人物も公開状態のものに限る
+	// 人物を参照する行 (resource_type = 'Person') は、人物が閲覧できる状態 (published / archived) のものに限り、
+	// 掲載停止 (delisted) と削除 (deleted) の人物の行は除外する
 	GetStaffsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetStaffsByWorkIDsRow, error)
 	GetStripeSubscriberByID(ctx context.Context, id int64) (StripeSubscriber, error)
 	GetStripeSubscriberByStripeCustomerID(ctx context.Context, stripeCustomerID string) (StripeSubscriber, error)
@@ -521,7 +533,8 @@ type Querier interface {
 	// 一致するようにするため。
 	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
 	// 公開中とアーカイブの人物を、IDの降順に並べる。archivedは閲覧を保つ凍結のため、誰にでも
-	// 表示する。削除 (deleted) と掲載停止 (delisted) の人物は、名義を出さないため返さない。
+	// 表示する。掲載停止 (delisted) の人物は、掲載停止を解除する管理者のためにinclude_delisted
+	// のときだけ返す。削除 (deleted) の人物は誰にも返さない。
 	ListDBPeople(ctx context.Context, arg ListDBPeopleParams) ([]ListDBPeopleRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
@@ -537,15 +550,16 @@ type Querier interface {
 	ListEpisodeIDsForEpisodeUpdateByID(ctx context.Context, arg ListEpisodeIDsForEpisodeUpdateByIDParams) ([]int64, error)
 	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
+	// 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
+	// 同じく、deletedの人物だけを除いて照合する。掲載停止 (delisted) の人物との重複を別の
+	// エラーで伝えるため、名前を占有している人物の状態も返す。
+	ListPersonNameHolders(ctx context.Context, names []string) ([]ListPersonNameHoldersRow, error)
 	// 人物の編集フォームの出身地の選択肢。都道府県の順 (北海道から沖縄県、最後に海外) は
 	// IDの順と一致するため、IDで並べる。
 	ListPrefectures(ctx context.Context) ([]ListPrefecturesRow, error)
 	// 退会の削除処理でストレージから消す画像を求めるため、ユーザーのプロフィール画像と背景画像の
 	// Shrineの添付データを取得する。
 	ListProfileImageDataByUserID(ctx context.Context, userID int64) ([]ListProfileImageDataByUserIDRow, error)
-	// 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
-	// 同じく、deletedの人物だけを除いて照合する。
-	ListTakenPersonNames(ctx context.Context, names []string) ([]string, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
@@ -616,6 +630,9 @@ type Querier interface {
 	UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisodeParams) (UnarchiveDBEpisodeRow, error)
 	// アーカイブの人物を公開中に戻す。ArchiveDBPersonの逆で、アーカイブの人物だけを対象にする。
 	UnarchiveDBPerson(ctx context.Context, id int64) (int64, error)
+	// 掲載停止の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。対応記録
+	// (delist_message) は、申出に応じた経緯として残す。確認後の変更はupdated_atで検出する。
+	UndelistDBPerson(ctx context.Context, arg UndelistDBPersonParams) (int64, error)
 	UpdateAnime(ctx context.Context, arg UpdateAnimeParams) error
 	UpdateAnimeClassificationByAnimeID(ctx context.Context, arg UpdateAnimeClassificationByAnimeIDParams) error
 	UpdateAnimeEvent(ctx context.Context, arg UpdateAnimeEventParams) error
