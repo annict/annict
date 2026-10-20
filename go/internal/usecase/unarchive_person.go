@@ -9,9 +9,10 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// UnarchivePersonUsecaseはAnnict DB管理画面から人物のアーカイブを解除する。
-// ArchivePersonUsecaseの逆で、people.statusをpublishedに戻す。アーカイブ解除できるのは
-// アーカイブの人物だけで、それ以外の状態の人物への送信はnot foundになる。編集履歴には記録しない。
+// UnarchivePersonUsecaseはAnnict DB管理画面から非公開の人物を公開に戻す。
+// ArchivePersonUsecaseの逆で、people.statusをpublishedに戻し、unpublished_atをNULLに戻す。
+// 公開に戻せるのは非公開の人物だけで、それ以外の状態の人物への送信はnot foundになる。編集履歴
+// には記録しない。
 //
 // 認可 (committer) は書き込みより先に本UseCaseで行い、ルートのRequireCommitter middlewareも同じ
 // リクエストを手前で拒否する。UseCase側に検査を残すことで、そのルート以外から到達した呼び出し元

@@ -33,7 +33,7 @@ WHERE s.work_id = ANY($1::bigint[])
           SELECT 1
           FROM people p
           WHERE p.id = s.resource_id
-            AND p.status IN ('published', 'archived')
+            AND p.status = 'published'
       )
   )
 ORDER BY s.work_id, s.sort_number
@@ -51,8 +51,8 @@ type GetStaffsByWorkIDsRow struct {
 }
 
 // スタッフ自身が公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す。
-// 人物を参照する行 (resource_type = 'Person') は、人物が閲覧できる状態 (published / archived) のものに限り、
-// 掲載停止 (delisted) と削除 (deleted) の人物の行は除外する
+// 人物を参照する行 (resource_type = 'Person') は、人物が公開中 (published) のものに限り、
+// 非公開 (archived)・掲載停止 (delisted)・削除 (deleted) の人物の行は、Rails版の作品ページと同じく除外する
 func (q *Queries) GetStaffsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetStaffsByWorkIDsRow, error) {
 	rows, err := q.db.QueryContext(ctx, getStaffsByWorkIDs, pq.Array(dollar_1))
 	if err != nil {

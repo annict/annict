@@ -49,10 +49,10 @@ type Querier interface {
 	// 更新側が必要なエピソードをNOWAITで先取りし、待たずに試行を中断するため。一括作成も作品を
 	// 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
 	ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error)
-	// 公開中の人物をアーカイブする。archivedは閲覧できる状態のため、Rails版の表示から除外する
-	// 橋渡し (unpublished_at) は書かない。状態の確認と書き込みを1文で行うため、確認画面を開いた
-	// 後に他者が状態を変えた場合も、1行も返らない (not found) になる。時刻はCreatePersonと同じく
-	// UTCに変換してから書く。
+	// 公開中の人物を非公開 (archived) にする。Rails版はperson_statusを読まないため、Rails版の表示と
+	// APIから除外されるようunpublished_atにも時刻を書く (作品の非公開と同じRails版への橋渡し)。
+	// 状態の確認と書き込みを1文で行うため、確認画面を開いた後に他者が状態を変えた場合も、1行も
+	// 返らない (not found) になる。時刻はCreatePersonと同じくUTCに変換してから書く。
 	ArchiveDBPerson(ctx context.Context, id int64) (int64, error)
 	// 解約の通知で有効なユーザーの紐付けだけを外す。退会受付との行ロック競合後にも
 	// deleted_atを再評価し、論理削除済みのユーザーの紐付けを残す。
@@ -374,8 +374,9 @@ type Querier interface {
 	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
 	// カレンダー用の作品 (放送開始日) を取得します
 	GetCalendarWorks(ctx context.Context, userID int64) ([]GetCalendarWorksRow, error)
-	// キャスト自身が公開状態 (unpublished_atとdeleted_atがともにNULL) で、人物が閲覧できる状態
-	// (published / archived) の行だけを返す。掲載停止 (delisted) と削除 (deleted) の人物の行は除外する
+	// キャスト自身が公開状態 (unpublished_atとdeleted_atがともにNULL) で、人物が公開中 (published)
+	// の行だけを返す。非公開 (archived)・掲載停止 (delisted)・削除 (deleted) の人物の行は、Rails版の
+	// 作品ページと同じく除外する
 	GetCastsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetCastsByWorkIDsRow, error)
 	GetEmailNotificationByUserID(ctx context.Context, userID int64) (GetEmailNotificationByUserIDRow, error)
 	// 非公開の確認ページと、それに続く送信は同じ行を読む。画面上でエピソードを名指しする
@@ -451,8 +452,8 @@ type Querier interface {
 	GetSessionByID(ctx context.Context, sessionID string) (Session, error)
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
 	// スタッフ自身が公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す。
-	// 人物を参照する行 (resource_type = 'Person') は、人物が閲覧できる状態 (published / archived) のものに限り、
-	// 掲載停止 (delisted) と削除 (deleted) の人物の行は除外する
+	// 人物を参照する行 (resource_type = 'Person') は、人物が公開中 (published) のものに限り、
+	// 非公開 (archived)・掲載停止 (delisted)・削除 (deleted) の人物の行は、Rails版の作品ページと同じく除外する
 	GetStaffsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]GetStaffsByWorkIDsRow, error)
 	GetStripeSubscriberByID(ctx context.Context, id int64) (StripeSubscriber, error)
 	GetStripeSubscriberByStripeCustomerID(ctx context.Context, stripeCustomerID string) (StripeSubscriber, error)
@@ -532,9 +533,9 @@ type Querier interface {
 	// NULLになる。母集団を案内の「公開中のエピソード数」と揃え、公開中の最大の連番がその件数と
 	// 一致するようにするため。
 	ListDBEpisodes(ctx context.Context, arg ListDBEpisodesParams) ([]ListDBEpisodesRow, error)
-	// 公開中とアーカイブの人物を、IDの降順に並べる。archivedは閲覧を保つ凍結のため、誰にでも
-	// 表示する。掲載停止 (delisted) の人物は、掲載停止を解除する管理者のためにinclude_delisted
-	// のときだけ返す。削除 (deleted) の人物は誰にも返さない。
+	// 公開中と非公開 (archived) の人物を、IDの降順に並べる。非公開の人物は、公開に戻す編集者の
+	// ために誰にでも表示する。掲載停止 (delisted) の人物は、掲載停止を解除する管理者のために
+	// include_delistedのときだけ返す。削除 (deleted) の人物は誰にも返さない。
 	ListDBPeople(ctx context.Context, arg ListDBPeopleParams) ([]ListDBPeopleRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
@@ -628,7 +629,8 @@ type Querier interface {
 	//
 	// 書き込みがepisodes先・works後なのはArchiveDBEpisodeが述べる理由による。
 	UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisodeParams) (UnarchiveDBEpisodeRow, error)
-	// アーカイブの人物を公開中に戻す。ArchiveDBPersonの逆で、アーカイブの人物だけを対象にする。
+	// 非公開の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。ArchiveDBPersonの
+	// 逆で、非公開の人物だけを対象にする。
 	UnarchiveDBPerson(ctx context.Context, id int64) (int64, error)
 	// 掲載停止の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。対応記録
 	// (delist_message) は、申出に応じた経緯として残す。確認後の変更はupdated_atで検出する。

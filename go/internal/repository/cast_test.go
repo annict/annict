@@ -61,7 +61,7 @@ func TestCastRepository_GetByWorkIDs(t *testing.T) {
 		}
 	})
 
-	t.Run("正常系: キャストが非公開・削除済みか、人物が掲載停止・削除のキャストは除外される", func(t *testing.T) {
+	t.Run("正常系: キャストが非公開・削除済みか、人物が非公開・掲載停止・削除のキャストは除外される", func(t *testing.T) {
 		t.Parallel()
 
 		now := time.Now()
@@ -71,6 +71,9 @@ func TestCastRepository_GetByWorkIDs(t *testing.T) {
 		}{
 			{"キャストが非公開", func(b *testutil.CastBuilder) *testutil.CastBuilder { return b.WithUnpublishedAt(now) }},
 			{"キャストが削除済み", func(b *testutil.CastBuilder) *testutil.CastBuilder { return b.WithDeletedAt(now) }},
+			{"人物が非公開", func(b *testutil.CastBuilder) *testutil.CastBuilder {
+				return b.WithPersonStatus(model.PersonStatusArchived)
+			}},
 			{"人物が掲載停止", func(b *testutil.CastBuilder) *testutil.CastBuilder {
 				return b.WithPersonStatus(model.PersonStatusDelisted)
 			}},
@@ -111,35 +114,6 @@ func TestCastRepository_GetByWorkIDs(t *testing.T) {
 					t.Errorf("Person.Name = %q、期待値 = %q", casts[0].Person.Name, "公開状態テスト-公開声優-"+tt.name)
 				}
 			})
-		}
-	})
-
-	t.Run("正常系: アーカイブした人物のキャストは取得できる", func(t *testing.T) {
-		t.Parallel()
-		db, tx := testutil.SetupTx(t)
-		queries := query.New(db).WithTx(tx)
-		repo := repository.NewCastRepository(queries)
-
-		workID := testutil.NewWorkBuilder(t, tx).WithTitle("作品D").Build()
-		testutil.NewCastBuilder(t, tx, workID).
-			WithCharacterName("キャラクターD").
-			WithPersonName("アーカイブテスト-声優D").
-			WithPersonStatus(model.PersonStatusArchived).
-			Build()
-
-		casts, err := repo.GetByWorkIDs(context.Background(), []model.WorkID{workID})
-		if err != nil {
-			t.Fatalf("GetByWorkIDs()のエラー = %v", err)
-		}
-
-		if len(casts) != 1 {
-			t.Fatalf("len(casts) = %d、期待値 = 1", len(casts))
-		}
-		if casts[0].Person == nil {
-			t.Fatal("Personがnilです")
-		}
-		if casts[0].Person.Name != "アーカイブテスト-声優D" {
-			t.Errorf("Person.Name = %q、期待値 = %q", casts[0].Person.Name, "アーカイブテスト-声優D")
 		}
 	})
 

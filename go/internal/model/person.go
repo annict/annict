@@ -3,8 +3,9 @@ package model
 import "time"
 
 // PersonStatusは人物のライフサイクル状態で、PostgreSQLのperson_status enumと対応する。
-// archivedは閲覧を保つ凍結で編集者も設定でき、閲覧できなくなるdelisted (本人の申出による
-// 掲載停止) とdeletedは管理者に限る (AnimeStatusのarchivedと同じ考え方)。
+// archived (非公開) は編集者も設定でき、delisted (本人の申出による掲載停止) とdeletedは管理者に
+// 限る。Rails版の人物ページをGo版に移すまでは、archivedの人物も作品の非公開と同じく
+// unpublished_atを立て、Rails版の表示から除外する。
 type PersonStatus string
 
 const (
@@ -17,7 +18,8 @@ const (
 // Stringはステータスの文字列表現を返す。
 func (s PersonStatus) String() string { return string(s) }
 
-// IsViewableは人物を閲覧できる状態 (公開中とアーカイブ) かを返す。
+// IsViewableは人物がAnnict DB管理画面の一覧に誰にでも表示される状態 (公開中と非公開) かを返す。
+// 編集・削除・掲載停止ができるのも、この状態の人物に限る。
 func (s PersonStatus) IsViewable() bool {
 	switch s {
 	case PersonStatusPublished, PersonStatusArchived:

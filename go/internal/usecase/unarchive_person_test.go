@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -20,7 +21,7 @@ func newUnarchivePersonUsecase(t *testing.T) (*UnarchivePersonUsecase, *sql.Tx) 
 	return NewUnarchivePersonUsecase(repository.NewPersonRepository(query.New(db).WithTx(tx))), tx
 }
 
-// TestUnarchivePersonUsecase_Executeは、アーカイブ解除できる状態の人物をアーカイブを解除することを検証する。
+// TestUnarchivePersonUsecase_Executeは、非公開の人物を公開に戻し、unpublished_atをNULLに戻すことを検証する。
 func TestUnarchivePersonUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
@@ -28,8 +29,8 @@ func TestUnarchivePersonUsecase_Execute(t *testing.T) {
 		name    string
 		prepare func(b *testutil.PersonBuilder) *testutil.PersonBuilder
 	}{
-		{name: "アーカイブの人物", prepare: func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
-			return b.WithStatus(model.PersonStatusArchived)
+		{name: "非公開の人物", prepare: func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+			return b.WithStatus(model.PersonStatusArchived).WithUnpublishedAt(time.Now())
 		}},
 	}
 
@@ -52,11 +53,11 @@ func TestUnarchivePersonUsecase_Execute(t *testing.T) {
 			}
 
 			var published bool
-			if err := tx.QueryRow(`SELECT status = 'published' FROM people WHERE id = $1`, int64(personID)).Scan(&published); err != nil {
+			if err := tx.QueryRow(`SELECT status = 'published' AND unpublished_at IS NULL FROM people WHERE id = $1`, int64(personID)).Scan(&published); err != nil {
 				t.Fatalf("人物の取得に失敗: %v", err)
 			}
 			if !published {
-				t.Errorf("statusがpublishedに戻っていません")
+				t.Errorf("statusがpublishedに戻っていないか、unpublished_atが残っています")
 			}
 		})
 	}

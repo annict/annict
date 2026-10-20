@@ -125,10 +125,7 @@ func (v *DBPersonCreateValidator) Validate(ctx context.Context, input DBPersonCr
 		}
 
 		for _, message := range parsed.messages {
-			ve.AddField("rows", i18n.T(ctx, "validation_person_row_error", map[string]any{
-				"Line":    parsed.line,
-				"Message": message,
-			}))
+			ve.AddField("rows", personRowErrorMessage(ctx, parsed, message))
 		}
 		rows = append(rows, parsed.row)
 	}
@@ -138,6 +135,23 @@ func (v *DBPersonCreateValidator) Validate(ctx context.Context, input DBPersonCr
 	}
 
 	return rows, nil
+}
+
+// personRowErrorMessageは1行のエラーに行番号を添え、名前を入力した行には名前も添える。
+// textareaには行番号が出ないため、行番号だけではどの人物の行かを数えないと分からない。
+// 行番号も残すのは、入力の中での重複のように同じ名前の行が複数あるため。
+func personRowErrorMessage(ctx context.Context, parsed *parsedPersonRow, message string) string {
+	if parsed.row.Name == "" {
+		return i18n.T(ctx, "validation_person_row_error", map[string]any{
+			"Line":    parsed.line,
+			"Message": message,
+		})
+	}
+	return i18n.T(ctx, "validation_person_row_error_with_name", map[string]any{
+		"Line":    parsed.line,
+		"Name":    parsed.row.Name,
+		"Message": message,
+	})
 }
 
 // parsePersonRowは1行を列に分けて検査し、パース結果と失敗したチェックのメッセージを

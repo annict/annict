@@ -1157,7 +1157,7 @@ description = "人物一覧の状態のバッジ - 公開中"
 other = "Published"
 
 [db_people_index_status_archived]
-description = "人物一覧の状態のバッジ - アーカイブ"
+description = "人物一覧の状態のバッジ - 非公開"
 other = "Archived"
 
 [db_people_index_status_delisted]
@@ -1181,16 +1181,16 @@ description = "人物一覧から編集フォームへのリンク"
 other = "Edit"
 
 [db_people_index_archive_link]
-description = "人物一覧からアーカイブ確認画面へのリンク (公開中の人物に表示)"
-other = "Archive"
+description = "人物一覧から非公開確認画面へのリンク (公開中の人物に表示)"
+other = "Unpublish"
 
 [db_people_index_unarchive_button]
-description = "人物一覧のアーカイブ解除ボタン (アーカイブの人物に表示)"
-other = "Unarchive"
+description = "人物一覧の公開ボタン (非公開の人物に表示)"
+other = "Publish"
 
 [db_people_index_unarchive_confirm]
-description = "人物一覧のアーカイブ解除ボタンの確認ダイアログ"
-other = "Unarchive person {{.ID}}?"
+description = "人物一覧の公開ボタンの確認ダイアログ"
+other = "Publish person {{.ID}}?"
 
 [db_people_index_delist_link]
 description = "人物一覧から掲載停止確認画面へのリンク (管理者に表示)"
@@ -1330,41 +1330,41 @@ other = "Your input is kept in the form below. Compare it with the currently sav
 description = "人物編集ページの送信ボタン"
 other = "Update"
 
-# DB人物のアーカイブ・アーカイブ解除・削除・掲載停止・掲載停止解除の確認ページ
+# DB人物の非公開・公開・削除・掲載停止・掲載停止解除の確認ページ
 [db_people_archive_new_document_title]
-description = "人物を識別できるアーカイブ確認ページの文書タイトル"
+description = "人物を識別できる非公開確認ページの文書タイトル"
 other = "Archive Person | {{.Name}}"
 
 [db_people_archive_new_confirm_message]
-description = "人物アーカイブ確認ページの確認メッセージ"
+description = "人物非公開確認ページの確認メッセージ"
 other = "Archive “{{.Name}}”?"
 
 [db_people_archive_new_help]
-description = "人物アーカイブ確認ページで、アーカイブすると何が起きるかを述べる説明"
-other = "An archived person still appears on the person page and in the cast and staff of works. You can restore it later with “Unarchive” on the person list."
+description = "人物非公開確認ページで、非公開にすると何が起きるかを述べる説明"
+other = "An archived person no longer appears on the person page or in the cast and staff of works. You can restore it later with “Publish” on the person list."
 
 [db_people_archive_new_submit]
-description = "人物アーカイブ確認ページの実行ボタン"
+description = "人物非公開確認ページの実行ボタン"
 other = "Archive"
 
 [db_people_archive_new_cancel_link]
-description = "人物アーカイブ確認ページのキャンセルリンク"
+description = "人物非公開確認ページのキャンセルリンク"
 other = "Cancel"
 
 [db_people_unarchive_new_document_title]
-description = "人物を識別できるアーカイブ解除確認ページの文書タイトル"
-other = "Unarchive Person | {{.Name}}"
+description = "人物を識別できる公開確認ページの文書タイトル"
+other = "Publish Person | {{.Name}}"
 
 [db_people_unarchive_new_confirm_message]
-description = "人物アーカイブ解除確認ページの確認メッセージ"
-other = "Unarchive “{{.Name}}”?"
+description = "人物公開確認ページの確認メッセージ"
+other = "Publish “{{.Name}}”?"
 
 [db_people_unarchive_new_submit]
-description = "人物アーカイブ解除確認ページの実行ボタン"
-other = "Unarchive"
+description = "人物公開確認ページの実行ボタン"
+other = "Publish"
 
 [db_people_unarchive_new_cancel_link]
-description = "人物アーカイブ解除確認ページのキャンセルリンク"
+description = "人物公開確認ページのキャンセルリンク"
 other = "Cancel"
 
 [db_people_deletion_new_document_title]
@@ -2249,12 +2249,12 @@ description = "人物更新成功メッセージ"
 other = "Person has been updated successfully"
 
 [flash_db_person_archived]
-description = "人物アーカイブ成功メッセージ"
+description = "人物非公開成功メッセージ"
 other = "Person has been archived successfully"
 
 [flash_db_person_unarchived]
-description = "人物アーカイブ解除成功メッセージ"
-other = "Person has been unarchived successfully"
+description = "人物公開成功メッセージ"
+other = "Person has been published successfully"
 
 [flash_db_person_deleted]
 description = "人物削除成功メッセージ"
@@ -2364,6 +2364,10 @@ other = "Please enter a numeric value for the number"
 [validation_person_row_error]
 description = "人物の行入力のエラーに行番号を添える書式"
 other = "Line {{.Line}}: {{.Message}}"
+
+[validation_person_row_error_with_name]
+description = "人物の行入力のエラーに行番号と、その行に入力された名前を添える書式"
+other = "Line {{.Line}} (\"{{.Name}}\"): {{.Message}}"
 
 [validation_person_rows_too_many]
 description = "人物一括登録フォームの行数が1回の上限を超えている"

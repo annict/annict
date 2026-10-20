@@ -18,9 +18,9 @@ ALTER TABLE public.people
     ADD COLUMN archive_message character varying,
     ADD COLUMN delist_message character varying;
 
--- 既存の状態をstatusに移す。移した後のunpublished_atは、Rails版の表示から人物を除外する
--- 掲載停止の橋渡しにだけ使うため、移し替えた行ではNULLに戻す。Rails版はdeleted_atでも人物を
--- 除外するため、deletedに移す行はdeleted_atを立てたままにする。
+-- 既存の状態をstatusに移す。unpublished_atは、Rails版の表示から人物を除外する非公開 (archived) と
+-- 掲載停止 (delisted) の橋渡しに使うため、archivedに移す行では残し、deletedに移す行ではNULLに戻す。
+-- Rails版はdeleted_atでも人物を除外するため、deletedに移す行はdeleted_atを立てたままにする。
 
 -- 削除済みの人物 (aasm_stateがhiddenの行は必ずdeleted_atを伴う)。
 UPDATE public.people
@@ -29,12 +29,10 @@ SET
     unpublished_at = NULL
 WHERE deleted_at IS NOT NULL;
 
--- 非公開の人物のうち、お気に入りが付いている人物。archivedは閲覧できる状態のため、
--- お気に入りを付けた利用者がその人物のページに再び到達できる。
+-- 非公開の人物のうち、お気に入りが付いている人物。お気に入りを付けた利用者との関係を保つため、
+-- 削除せずに非公開 (archived) に移す。unpublished_atを残すため、Rails版では引き続き非公開として扱う。
 UPDATE public.people p
-SET
-    status = 'archived',
-    unpublished_at = NULL
+SET status = 'archived'
 WHERE p.deleted_at IS NULL
     AND p.unpublished_at IS NOT NULL
     AND EXISTS (
@@ -43,15 +41,17 @@ WHERE p.deleted_at IS NULL
         WHERE pf.person_id = p.id
     );
 
--- 残りの非公開の人物。大半は編集者が整理した古い一括登録の人物で、閲覧できる状態に戻すと
--- 中身の無い人物ページが公開されるため削除に移す。Rails版の表示から引き続き除外されるよう、
--- 非公開にした時刻をdeleted_atに移す。
+-- 残りの非公開の人物。大半は編集者が整理した古い一括登録の人物で、archivedを閲覧できる状態として
+-- Go版で実装したときに中身の無い人物ページが公開されないよう、削除に移す。Rails版の表示から
+-- 引き続き除外されるよう、非公開にした時刻をdeleted_atに移す。archivedに移した行もunpublished_atを
+-- 残しているため、statusでまだ移していない行に絞る。
 UPDATE public.people
 SET
     status = 'deleted',
     deleted_at = unpublished_at,
     unpublished_at = NULL
-WHERE deleted_at IS NULL
+WHERE status = 'published'
+    AND deleted_at IS NULL
     AND unpublished_at IS NOT NULL;
 
 -- 削除した人物が名前を占有し続けないよう、名前の一意性の対象からdeletedの人物を外す。
@@ -68,14 +68,6 @@ SET LOCAL lock_timeout = '5s';
 -- 作れずにロールバックが失敗する。その場合はどちらかの人物の名前を変えてから戻す。
 DROP INDEX public.index_people_on_name;
 CREATE UNIQUE INDEX index_people_on_name ON public.people USING btree (name);
-
--- archivedの人物はunpublished_atをNULLに戻しているため、非公開として扱われるよう時刻を書き戻す。
--- deletedの人物はdeleted_at、delistedの人物はunpublished_atを立てたままにしているため、
--- 書き戻しは要らない。
-UPDATE public.people
-SET unpublished_at = (NOW() AT TIME ZONE 'UTC')
-WHERE status = 'archived'
-    AND unpublished_at IS NULL;
 
 ALTER TABLE public.people
     DROP COLUMN delist_message,

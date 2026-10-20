@@ -418,7 +418,7 @@ func valueOrDash(value string) string {
 }
 
 // statusLabelは人物の状態をバッジとして描画する。components.StatusLabelと同じ見た目にし、
-// アーカイブだけを人物の語彙 (閲覧を保つ凍結) で表示する。未知の値では何も描画しない。
+// 作品一覧に無い掲載停止も表示する。未知の値では何も描画しない。
 func statusLabel(status viewmodel.DBPersonStatus) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -589,7 +589,7 @@ func actionButtons(data IndexPageData, person viewmodel.DBPersonListItem) templ.
 	})
 }
 
-// viewableActionButtonsは閲覧できる状態 (公開中とアーカイブ) の行の操作を描画する。
+// viewableActionButtonsは公開中と非公開の行の操作を描画する。
 func viewableActionButtons(data IndexPageData, person viewmodel.DBPersonListItem) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context

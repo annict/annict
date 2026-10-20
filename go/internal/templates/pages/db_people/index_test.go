@@ -81,7 +81,7 @@ func TestIndex_WithPeople(t *testing.T) {
 		// 読み・英語名の無い人物はプレースホルダーを表示する。
 		`<div class="text-muted-foreground">-</div>`,
 		`<span class="badge" data-variant="success">公開</span>`,
-		`<span class="badge" data-variant="warning">アーカイブ</span>`,
+		`<span class="badge" data-variant="warning">非公開</span>`,
 	} {
 		if !strings.Contains(html, expected) {
 			t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
@@ -134,16 +134,16 @@ func TestIndex_ActionsByRole(t *testing.T) {
 	}
 }
 
-// TestIndex_StateActionsは、操作列が行の状態とロールに応じて、公開中の行にアーカイブの確認画面
-// へのリンクを、アーカイブの行にアーカイブ解除のhtmxボタンを、管理者にだけ削除のhtmxボタンを
-// 描画することを検証する。アーカイブ解除・削除のボタンは確認ダイアログとCSRFヘッダーを持ち、
+// TestIndex_StateActionsは、操作列が行の状態とロールに応じて、公開中の行に非公開の確認画面
+// へのリンクを、非公開の行に公開のhtmxボタンを、管理者にだけ削除のhtmxボタンを
+// 描画することを検証する。公開・削除のボタンは確認ダイアログとCSRFヘッダーを持ち、
 // 確認文で人物を名指しする。
 func TestIndex_StateActions(t *testing.T) {
 	t.Parallel()
 
 	archiveLink := `href="/db/people/1/archive/new"`
 	unarchiveButton := `hx-delete="/db/people/2/archive"`
-	unarchiveConfirm := `hx-confirm="人物 2 のアーカイブを解除しますか？"`
+	unarchiveConfirm := `hx-confirm="人物 2 を公開しますか？"`
 	deleteButtons := []string{`hx-delete="/db/people/1"`, `hx-delete="/db/people/2"`}
 	deleteConfirm := `hx-confirm="人物 1 を削除しますか？"`
 	csrfHeader := `hx-headers="{&#34;X-CSRF-Token&#34;:&#34;test-csrf&#34;}"`
@@ -164,7 +164,7 @@ func TestIndex_StateActions(t *testing.T) {
 			html := renderIndex(t, i18n.SetLocale(context.Background(), "ja"), IndexPageData{
 				People: []viewmodel.DBPersonListItem{
 					{ID: 1, Name: "公開中の人物", Status: viewmodel.DBPersonStatusPublished},
-					{ID: 2, Name: "アーカイブの人物", Status: viewmodel.DBPersonStatusArchived},
+					{ID: 2, Name: "非公開の人物", Status: viewmodel.DBPersonStatusArchived},
 				},
 				Pagination:  viewmodel.NewPagination(1, 2, 100, "/db/people"),
 				IsCommitter: true,
@@ -177,7 +177,7 @@ func TestIndex_StateActions(t *testing.T) {
 					t.Errorf("レスポンスに含まれていない文字列 = %q", s)
 				}
 			}
-			// アーカイブの行にアーカイブの操作を、公開中の行にアーカイブ解除の操作を出さない。
+			// 非公開の行に非公開の操作を、公開中の行に公開の操作を出さない。
 			for _, s := range []string{`href="/db/people/2/archive/new"`, `hx-delete="/db/people/1/archive"`} {
 				if strings.Contains(html, s) {
 					t.Errorf("行の状態に合わない操作%qが含まれています", s)
