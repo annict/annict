@@ -136,20 +136,20 @@ func TestDBPersonCreateValidatorValidateErrors(t *testing.T) {
 		{
 			name: "3列目以降に値のある行",
 			rows: ieyasu + ",とくがわいえやす,Tokugawa Ieyasu",
-			want: []string{"1 行目: 入力できるのは名前と読みの2列までです"},
+			want: []string{"1 行目「" + ieyasu + "」: 入力できるのは名前と読みの2列までです"},
 		},
 		{
 			name: "入力の中で名前が重複する行は後の行に報告する",
 			rows: ieyasu + "\n" + nobunaga + "\n\n" + ieyasu + ",とくがわ",
-			want: []string{"4 行目: 同じ名前が1 行目にもあります"},
+			want: []string{"4 行目「" + ieyasu + "」: 同じ名前が1 行目にもあります"},
 		},
 		{
-			name: "1行に複数の問題があればすべて報告し、行の順に並べる",
+			name: "1行に複数の問題があればすべて報告し、行の順に並べる。名前の無い行には名前を添えない",
 			rows: ",,余分な列\n" + ieyasu + ",,余分な列",
 			want: []string{
 				"1 行目: 名前を入力してください",
 				"1 行目: 入力できるのは名前と読みの2列までです",
-				"2 行目: 入力できるのは名前と読みの2列までです",
+				"2 行目「" + ieyasu + "」: 入力できるのは名前と読みの2列までです",
 			},
 		},
 	}
@@ -197,10 +197,10 @@ func TestDBPersonCreateValidatorValidateTakenNames(t *testing.T) {
 	})
 
 	assertPersonRowsErrors(t, err, []string{
-		"1 行目: この名前の人物は既に登録されています",
-		"2 行目: この名前の人物は既に登録されています",
-		"4 行目: この人物は掲載を停止しています。関係者に関わる事情のため、停止の詳細はお伝えできません。ご理解いただけますと幸いです。",
-		"6 行目: 同じ名前が1 行目にもあります",
+		"1 行目「" + published + "」: この名前の人物は既に登録されています",
+		"2 行目「" + archived + "」: この名前の人物は既に登録されています",
+		"4 行目「" + delisted + "」: この人物は掲載を停止しています。関係者に関わる事情のため、停止の詳細はお伝えできません。ご理解いただけますと幸いです。",
+		"6 行目「" + published + "」: 同じ名前が1 行目にもあります",
 	})
 }
 
@@ -219,8 +219,8 @@ func TestDBPersonCreateValidatorValidateTakenNamesAfterMalformedRow(t *testing.T
 	})
 
 	assertPersonRowsErrors(t, err, []string{
-		"1 行目: 入力できるのは名前と読みの2列までです",
-		"2 行目: この名前の人物は既に登録されています",
+		"1 行目「" + name + "」: 入力できるのは名前と読みの2列までです",
+		"2 行目「" + name + "」: この名前の人物は既に登録されています",
 	})
 }
 
@@ -253,12 +253,26 @@ func TestDBPersonCreateValidatorValidateRowLimit(t *testing.T) {
 func TestDBPersonCreateValidatorValidateLocalizesMessages(t *testing.T) {
 	t.Parallel()
 
+	ieyasu := uniquePersonName("徳川家康")
+
 	tests := []struct {
 		locale string
-		want   string
+		want   []string
 	}{
-		{locale: "ja", want: "2 行目: 名前を入力してください"},
-		{locale: "en", want: "Line 2: Enter a name"},
+		{
+			locale: "ja",
+			want: []string{
+				"1 行目「" + ieyasu + "」: 入力できるのは名前と読みの2列までです",
+				"2 行目: 名前を入力してください",
+			},
+		},
+		{
+			locale: "en",
+			want: []string{
+				`Line 1 ("` + ieyasu + `"): Only the name and its reading (2 columns) can be entered`,
+				"Line 2: Enter a name",
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -268,9 +282,9 @@ func TestDBPersonCreateValidatorValidateLocalizesMessages(t *testing.T) {
 			v, _ := newTestDBPersonValidator(t)
 			ctx := i18n.SetLocale(context.Background(), tt.locale)
 
-			_, err := v.Validate(ctx, DBPersonCreateValidatorInput{Rows: uniquePersonName("徳川家康") + "\n,よみだけ"})
+			_, err := v.Validate(ctx, DBPersonCreateValidatorInput{Rows: ieyasu + ",よみ,余分な列\n,よみだけ"})
 
-			assertPersonRowsErrors(t, err, []string{tt.want})
+			assertPersonRowsErrors(t, err, tt.want)
 		})
 	}
 }

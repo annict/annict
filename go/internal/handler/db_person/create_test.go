@@ -114,11 +114,12 @@ func TestCreate_ValidationError(t *testing.T) {
 
 	user := &model.User{ID: 1, Role: model.RoleEditor}
 	valid := "正しい行の人物-" + t.Name()
-	cleanupCommittedPeople(t, db, valid)
+	extraColumn := "列の多い行の人物-" + t.Name()
+	cleanupCommittedPeople(t, db, valid, extraColumn)
 	handler := newTestHandler(t, db, tx)
 
 	rr := httptest.NewRecorder()
-	handler.Create(rr, withTestUser(newCreateRequest(valid+",ただしい\n,よみだけ"), user))
+	handler.Create(rr, withTestUser(newCreateRequest(valid+",ただしい\n,よみだけ\n"+extraColumn+",よみ,余分な列"), user))
 
 	if status := rr.Code; status != http.StatusUnprocessableEntity {
 		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusUnprocessableEntity)
@@ -132,7 +133,9 @@ func TestCreate_ValidationError(t *testing.T) {
 		`<meta property="og:url" content="https://test.annict.com/db/people/new">`,
 		`action="/db/people"`,
 		`role="alert"`,
+		// 名前の無い行は行番号だけで、名前のある行は名前も添えて名指しする。
 		"2 行目: 名前を入力してください",
+		"3 行目「" + extraColumn + "」: 入力できるのは名前と読みの2列までです",
 		// 送信された行はtextareaに書き戻される。
 		valid + ",ただしい",
 	}
@@ -143,7 +146,7 @@ func TestCreate_ValidationError(t *testing.T) {
 		}
 	}
 
-	if count := countPeopleByNames(t, db, valid); count != 0 {
+	if count := countPeopleByNames(t, db, valid, extraColumn); count != 0 {
 		t.Errorf("作成された人物 = %d件、期待値 = 0 (送信全体が失敗するため)", count)
 	}
 }
