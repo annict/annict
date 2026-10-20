@@ -20,7 +20,7 @@ func newArchivePersonUsecase(t *testing.T) (*ArchivePersonUsecase, *sql.Tx) {
 	return NewArchivePersonUsecase(repository.NewPersonRepository(query.New(db).WithTx(tx))), tx
 }
 
-// TestArchivePersonUsecase_Executeは、アーカイブできる状態の人物をアーカイブすることを検証する。
+// TestArchivePersonUsecase_Executeは、公開中の人物を非公開にし、Rails版への橋渡しのunpublished_atを書くことを検証する。
 func TestArchivePersonUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
@@ -50,11 +50,11 @@ func TestArchivePersonUsecase_Execute(t *testing.T) {
 			}
 
 			var archived bool
-			if err := tx.QueryRow(`SELECT status = 'archived' AND unpublished_at IS NULL FROM people WHERE id = $1`, int64(personID)).Scan(&archived); err != nil {
+			if err := tx.QueryRow(`SELECT status = 'archived' AND unpublished_at IS NOT NULL FROM people WHERE id = $1`, int64(personID)).Scan(&archived); err != nil {
 				t.Fatalf("人物の取得に失敗: %v", err)
 			}
 			if !archived {
-				t.Errorf("statusがarchivedでないか、unpublished_atが書かれています")
+				t.Errorf("statusがarchivedでないか、unpublished_atが書かれていません")
 			}
 		})
 	}

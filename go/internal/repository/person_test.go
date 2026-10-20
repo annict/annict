@@ -698,10 +698,10 @@ func TestPersonRepository_GetForStateChangeByID(t *testing.T) {
 	}
 }
 
-// TestPersonRepository_StateChangesは、アーカイブ・アーカイブ解除・削除が、その操作を受け付ける
+// TestPersonRepository_StateChangesは、非公開・公開・削除が、その操作を受け付ける
 // 状態の人物だけを書き換え、それ以外の状態 (と存在しない人物) ではfalseを返して何も書かないことを
 // 検証する。状態の確認と書き込みを1文で行うため、古い確認画面からの送信が状態を打ち直さない。
-// アーカイブは閲覧できる状態のため橋渡しのunpublished_atを書かず、削除は橋渡しのdeleted_atを書く。
+// 非公開は橋渡しのunpublished_atを書き、公開はそれをNULLに戻し、削除は橋渡しのdeleted_atを書く。
 func TestPersonRepository_StateChanges(t *testing.T) {
 	t.Parallel()
 
@@ -735,25 +735,25 @@ func TestPersonRepository_StateChanges(t *testing.T) {
 		wantWritten bool
 		wantState   personState
 	}{
-		{name: "公開中の人物をアーカイブする", op: archive, status: published, wantWritten: true, wantState: personState{status: archived}},
-		{name: "アーカイブの人物はアーカイブしない", op: archive, status: archived, wantState: personState{status: archived}},
-		{name: "掲載停止の人物はアーカイブしない", op: archive, status: delisted, wantState: personState{status: delisted}},
-		{name: "削除済みの人物はアーカイブしない", op: archive, status: deleted, wantState: personState{status: deleted}},
-		{name: "アーカイブの人物のアーカイブを解除する", op: unarchive, status: archived, wantWritten: true, wantState: personState{status: published}},
-		{name: "公開中の人物はアーカイブ解除しない", op: unarchive, status: published, wantState: personState{status: published}},
-		{name: "掲載停止の人物はアーカイブ解除しない", op: unarchive, status: delisted, wantState: personState{status: delisted}},
-		{name: "削除済みの人物はアーカイブ解除しない", op: unarchive, status: deleted, wantState: personState{status: deleted}},
+		{name: "公開中の人物を非公開にする", op: archive, status: published, wantWritten: true, wantState: personState{status: archived, unpublished: true}},
+		{name: "非公開の人物は非公開にしない", op: archive, status: archived, wantState: personState{status: archived, unpublished: true}},
+		{name: "掲載停止の人物は非公開にしない", op: archive, status: delisted, wantState: personState{status: delisted}},
+		{name: "削除済みの人物は非公開にしない", op: archive, status: deleted, wantState: personState{status: deleted}},
+		{name: "非公開の人物を公開する", op: unarchive, status: archived, wantWritten: true, wantState: personState{status: published}},
+		{name: "公開中の人物は公開しない", op: unarchive, status: published, wantState: personState{status: published}},
+		{name: "掲載停止の人物は公開しない", op: unarchive, status: delisted, wantState: personState{status: delisted}},
+		{name: "削除済みの人物は公開しない", op: unarchive, status: deleted, wantState: personState{status: deleted}},
 		{name: "公開中の人物を削除する", op: deletePerson, status: published, wantWritten: true, wantState: personState{status: deleted, deleted: true}},
-		{name: "アーカイブの人物を削除する", op: deletePerson, status: archived, wantWritten: true, wantState: personState{status: deleted, deleted: true}},
+		{name: "非公開の人物を削除する", op: deletePerson, status: archived, wantWritten: true, wantState: personState{status: deleted, unpublished: true, deleted: true}},
 		{name: "掲載停止の人物は削除しない", op: deletePerson, status: delisted, wantState: personState{status: delisted}},
 		{name: "削除済みの人物は削除しない", op: deletePerson, status: deleted, wantState: personState{status: deleted}},
 		{name: "公開中の人物の掲載を停止する", op: delist, status: published, wantWritten: true, wantState: personState{status: delisted, unpublished: true}},
-		{name: "アーカイブの人物の掲載を停止する", op: delist, status: archived, wantWritten: true, wantState: personState{status: delisted, unpublished: true}},
+		{name: "非公開の人物の掲載を停止する", op: delist, status: archived, wantWritten: true, wantState: personState{status: delisted, unpublished: true}},
 		{name: "掲載停止の人物は掲載を停止しない", op: delist, status: delisted, wantState: personState{status: delisted}},
 		{name: "削除済みの人物は掲載を停止しない", op: delist, status: deleted, wantState: personState{status: deleted}},
 		{name: "掲載停止の人物の掲載停止を解除する", op: undelist, status: delisted, wantWritten: true, wantState: personState{status: published}},
 		{name: "公開中の人物は掲載停止を解除しない", op: undelist, status: published, wantState: personState{status: published}},
-		{name: "アーカイブの人物は掲載停止を解除しない", op: undelist, status: archived, wantState: personState{status: archived}},
+		{name: "非公開の人物は掲載停止を解除しない", op: undelist, status: archived, wantState: personState{status: archived, unpublished: true}},
 		{name: "削除済みの人物は掲載停止を解除しない", op: undelist, status: deleted, wantState: personState{status: deleted}},
 	}
 
@@ -764,7 +764,12 @@ func TestPersonRepository_StateChanges(t *testing.T) {
 			db, tx := testutil.SetupTx(t)
 			repo := repository.NewPersonRepository(query.New(db).WithTx(tx))
 
-			id := testutil.NewPersonBuilder(t, tx).WithStatus(tt.status).WithUpdatedAt(personTestVersion).Build()
+			builder := testutil.NewPersonBuilder(t, tx).WithStatus(tt.status).WithUpdatedAt(personTestVersion)
+			// 非公開の人物は、ArchiveDBPersonが書くのと同じく橋渡しのunpublished_atを持つ状態で作る。
+			if tt.status == archived {
+				builder = builder.WithUnpublishedAt(personTestVersion)
+			}
+			id := builder.Build()
 
 			written, err := tt.op(repo, id)
 			if err != nil {

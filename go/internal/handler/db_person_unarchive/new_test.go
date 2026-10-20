@@ -48,7 +48,7 @@ func TestNew(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithName("アーカイブ解除確認の人物").WithStatus(model.PersonStatusArchived).Build()
+	personID := testutil.NewPersonBuilder(t, tx).WithName("公開確認の人物").WithStatus(model.PersonStatusArchived).Build()
 	handler := newTestHandler(t, db, tx)
 
 	r := chi.NewRouter()
@@ -67,8 +67,8 @@ func TestNew(t *testing.T) {
 		`name="_method" value="DELETE"`,
 		"csrf_token",
 		`name="return_to" value="/db/people"`,
-		"「アーカイブ解除確認の人物」のアーカイブを解除しますか？",
-		"<title>人物アーカイブ解除 | アーカイブ解除確認の人物 | Annict DB</title>",
+		"「公開確認の人物」を公開しますか？",
+		"<title>人物公開 | 公開確認の人物 | Annict DB</title>",
 		fmt.Sprintf(`<meta property="og:url" content="https://test.annict.com/db/people/%d/unarchive/new">`, int64(personID)),
 	} {
 		if !strings.Contains(body, expected) {

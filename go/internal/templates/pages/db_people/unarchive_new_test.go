@@ -32,7 +32,7 @@ func TestUnarchiveNew(t *testing.T) {
 		`name="_method" value="DELETE"`,
 		`name="csrf_token" value="test-csrf"`,
 		">確認対象の人物</h1>",
-		"「確認対象の人物」のアーカイブを解除しますか？",
+		"「確認対象の人物」を公開しますか？",
 		`class="btn rounded-full" data-variant="success"`,
 		`<a href="/db/search?q=test"`,
 		`name="return_to" value="/db/search?q=test"`,

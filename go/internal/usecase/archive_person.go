@@ -9,11 +9,11 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// ArchivePersonUsecaseはAnnict DB管理画面から人物をアーカイブする。people.statusを
-// archivedにするだけで、キャスト・スタッフは書き換えず、編集履歴にも記録しない。archivedは
-// 閲覧を保つ凍結のため、Rails版への橋渡し (unpublished_at) も書かない。アーカイブできるのは
-// 公開中の人物だけで、状態の確認と書き込みはリポジトリの1文の更新で行う。確認画面を開いた後に
-// 他者が状態を変えた人物への送信は、何も書かずにnot foundになる。
+// ArchivePersonUsecaseはAnnict DB管理画面から人物を非公開にする。people.statusをarchivedにし、
+// Rails版の表示から除外されるようRails版への橋渡し (unpublished_at) も書く。キャスト・スタッフは
+// 書き換えず、編集履歴にも記録しない。非公開にできるのは公開中の人物だけで、状態の確認と
+// 書き込みはリポジトリの1文の更新で行う。確認画面を開いた後に他者が状態を変えた人物への送信は、
+// 何も書かずにnot foundになる。
 //
 // 認可 (committer) は書き込みより先に本UseCaseで行い、ルートのRequireCommitter middlewareも同じ
 // リクエストを手前で拒否する。UseCase側に検査を残すことで、そのルート以外から到達した呼び出し元

@@ -1,7 +1,7 @@
 -- name: ListDBPeople :many
--- 公開中とアーカイブの人物を、IDの降順に並べる。archivedは閲覧を保つ凍結のため、誰にでも
--- 表示する。掲載停止 (delisted) の人物は、掲載停止を解除する管理者のためにinclude_delisted
--- のときだけ返す。削除 (deleted) の人物は誰にも返さない。
+-- 公開中と非公開 (archived) の人物を、IDの降順に並べる。非公開の人物は、公開に戻す編集者の
+-- ために誰にでも表示する。掲載停止 (delisted) の人物は、掲載停止を解除する管理者のために
+-- include_delistedのときだけ返す。削除 (deleted) の人物は誰にも返さない。
 SELECT
     p.id,
     p.name,
@@ -249,23 +249,26 @@ FROM people p
 WHERE p.id = sqlc.arg('id');
 
 -- name: ArchiveDBPerson :one
--- 公開中の人物をアーカイブする。archivedは閲覧できる状態のため、Rails版の表示から除外する
--- 橋渡し (unpublished_at) は書かない。状態の確認と書き込みを1文で行うため、確認画面を開いた
--- 後に他者が状態を変えた場合も、1行も返らない (not found) になる。時刻はCreatePersonと同じく
--- UTCに変換してから書く。
+-- 公開中の人物を非公開 (archived) にする。Rails版はperson_statusを読まないため、Rails版の表示と
+-- APIから除外されるようunpublished_atにも時刻を書く (作品の非公開と同じRails版への橋渡し)。
+-- 状態の確認と書き込みを1文で行うため、確認画面を開いた後に他者が状態を変えた場合も、1行も
+-- 返らない (not found) になる。時刻はCreatePersonと同じくUTCに変換してから書く。
 UPDATE people
 SET
     status = 'archived',
+    unpublished_at = (NOW() AT TIME ZONE 'UTC'),
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = sqlc.arg('id')
     AND status = 'published'
 RETURNING id;
 
 -- name: UnarchiveDBPerson :one
--- アーカイブの人物を公開中に戻す。ArchiveDBPersonの逆で、アーカイブの人物だけを対象にする。
+-- 非公開の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。ArchiveDBPersonの
+-- 逆で、非公開の人物だけを対象にする。
 UPDATE people
 SET
     status = 'published',
+    unpublished_at = NULL,
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = sqlc.arg('id')
     AND status = 'archived'

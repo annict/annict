@@ -8,10 +8,9 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// DBPersonStatusはAnnict DB管理画面の人物一覧に表示する人物の状態。人物のarchivedは閲覧を
-// 保つ凍結で、閲覧できなくなる作品・エピソードの非公開 (PublishingStatusのarchived) と表示名が
-// 異なるため、PublishingStatusとは別の型にする。一覧は公開中とアーカイブの人物と、管理者には
-// 掲載停止の人物を表示するため、その3値を持つ。射影が保たれていることは、ドメイン定数を変換して
+// DBPersonStatusはAnnict DB管理画面の人物一覧に表示する人物の状態。一覧は公開中と非公開の
+// 人物と、管理者には掲載停止の人物を表示するため、その3値を持つ。PublishingStatusに無い
+// 掲載停止を含むため、PublishingStatusとは別の型にする。射影が保たれていることは、ドメイン定数を変換して
 // 比較するテストで担保する。
 type DBPersonStatus string
 

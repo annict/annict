@@ -80,7 +80,7 @@ func TestNew(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithName("アーカイブ確認の人物").Build()
+	personID := testutil.NewPersonBuilder(t, tx).WithName("非公開確認の人物").Build()
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	rr := httptest.NewRecorder()
@@ -98,8 +98,8 @@ func TestNew(t *testing.T) {
 		fmt.Sprintf(`action="/db/people/%d/archive"`, int64(personID)),
 		`method="POST"`,
 		"csrf_token",
-		"「アーカイブ確認の人物」をアーカイブしますか？",
-		"<title>人物アーカイブ | アーカイブ確認の人物 | Annict DB</title>",
+		"「非公開確認の人物」を非公開にしますか？",
+		"<title>人物非公開 | 非公開確認の人物 | Annict DB</title>",
 		fmt.Sprintf(`<meta property="og:url" content="https://test.annict.com/db/people/%d/archive/new">`, int64(personID)),
 	} {
 		if !strings.Contains(body, expected) {
