@@ -1156,8 +1156,8 @@ description = "人物一覧の状態のバッジ - 公開中"
 other = "公開"
 
 [db_people_index_status_archived]
-description = "人物一覧の状態のバッジ - アーカイブ"
-other = "アーカイブ"
+description = "人物一覧の状態のバッジ - 非公開"
+other = "非公開"
 
 [db_people_index_status_delisted]
 description = "人物一覧の状態のバッジ - 掲載停止 (管理者にだけ表示)"
@@ -1180,16 +1180,16 @@ description = "人物一覧から編集フォームへのリンク"
 other = "編集"
 
 [db_people_index_archive_link]
-description = "人物一覧からアーカイブ確認画面へのリンク (公開中の人物に表示)"
-other = "アーカイブ"
+description = "人物一覧から非公開確認画面へのリンク (公開中の人物に表示)"
+other = "非公開"
 
 [db_people_index_unarchive_button]
-description = "人物一覧のアーカイブ解除ボタン (アーカイブの人物に表示)"
-other = "アーカイブ解除"
+description = "人物一覧の公開ボタン (非公開の人物に表示)"
+other = "公開"
 
 [db_people_index_unarchive_confirm]
-description = "人物一覧のアーカイブ解除ボタンの確認ダイアログ"
-other = "人物 {{.ID}} のアーカイブを解除しますか？"
+description = "人物一覧の公開ボタンの確認ダイアログ"
+other = "人物 {{.ID}} を公開しますか？"
 
 [db_people_index_delist_link]
 description = "人物一覧から掲載停止確認画面へのリンク (管理者に表示)"
@@ -1197,7 +1197,7 @@ other = "掲載停止"
 
 [db_people_index_undelist_link]
 description = "人物一覧から掲載停止解除確認画面へのリンク (掲載停止の人物に表示)"
-other = "掲載停止を解除"
+other = "掲載再開"
 
 [db_people_index_delete_button]
 description = "人物一覧の削除ボタン (管理者に表示)"
@@ -1329,41 +1329,41 @@ other = "入力した内容は下のフォームにそのまま残していま�
 description = "人物編集ページの送信ボタン"
 other = "更新する"
 
-# DB人物のアーカイブ・アーカイブ解除・削除・掲載停止・掲載停止解除の確認ページ
+# DB人物の非公開・公開・削除・掲載停止・掲載停止解除の確認ページ
 [db_people_archive_new_document_title]
-description = "人物を識別できるアーカイブ確認ページの文書タイトル"
-other = "人物アーカイブ | {{.Name}}"
+description = "人物を識別できる非公開確認ページの文書タイトル"
+other = "人物非公開 | {{.Name}}"
 
 [db_people_archive_new_confirm_message]
-description = "人物アーカイブ確認ページの確認メッセージ"
-other = "「{{.Name}}」をアーカイブしますか？"
+description = "人物非公開確認ページの確認メッセージ"
+other = "「{{.Name}}」を非公開にしますか？"
 
 [db_people_archive_new_help]
-description = "人物アーカイブ確認ページで、アーカイブすると何が起きるかを述べる説明"
-other = "アーカイブしても、この人物は人物ページや作品のキャスト・スタッフに引き続き表示されます。あとから一覧の「アーカイブ解除」で元に戻せます。"
+description = "人物非公開確認ページで、非公開にすると何が起きるかを述べる説明"
+other = "非公開にすると、この人物は人物ページや作品のキャスト・スタッフに表示されなくなります。あとから一覧の「公開」から元に戻せます。"
 
 [db_people_archive_new_submit]
-description = "人物アーカイブ確認ページの実行ボタン"
-other = "アーカイブする"
+description = "人物非公開確認ページの実行ボタン"
+other = "非公開にする"
 
 [db_people_archive_new_cancel_link]
-description = "人物アーカイブ確認ページのキャンセルリンク"
+description = "人物非公開確認ページのキャンセルリンク"
 other = "キャンセル"
 
 [db_people_unarchive_new_document_title]
-description = "人物を識別できるアーカイブ解除確認ページの文書タイトル"
-other = "人物アーカイブ解除 | {{.Name}}"
+description = "人物を識別できる公開確認ページの文書タイトル"
+other = "人物公開 | {{.Name}}"
 
 [db_people_unarchive_new_confirm_message]
-description = "人物アーカイブ解除確認ページの確認メッセージ"
-other = "「{{.Name}}」のアーカイブを解除しますか？"
+description = "人物公開確認ページの確認メッセージ"
+other = "「{{.Name}}」を公開しますか？"
 
 [db_people_unarchive_new_submit]
-description = "人物アーカイブ解除確認ページの実行ボタン"
-other = "アーカイブを解除する"
+description = "人物公開確認ページの実行ボタン"
+other = "公開する"
 
 [db_people_unarchive_new_cancel_link]
-description = "人物アーカイブ解除確認ページのキャンセルリンク"
+description = "人物公開確認ページのキャンセルリンク"
 other = "キャンセル"
 
 [db_people_deletion_new_document_title]
@@ -1396,7 +1396,7 @@ other = "「{{.Name}}」の掲載を停止しますか？"
 
 [db_people_delisting_new_help]
 description = "人物掲載停止確認ページで、掲載を停止すると何が起きるかを述べる説明"
-other = "掲載を停止すると、この人物は人物ページ・作品のキャストとスタッフ・Web API・Annict DBの一覧 (管理者を除く) に表示されなくなり、同じ名前の人物は登録できなくなります。あとから一覧の「掲載停止を解除」で元に戻せます。"
+other = "掲載を停止すると、この人物は人物ページ・作品のキャストとスタッフ・Web API・Annict DBの一覧 (管理者を除く) に表示されなくなり、同じ名前の人物は登録できなくなります。あとから一覧の「掲載再開」で元に戻せます。"
 
 [db_people_delisting_new_delist_message_label]
 description = "人物掲載停止確認ページの対応記録の入力欄のラベル"
@@ -2248,12 +2248,12 @@ description = "人物更新成功メッセージ"
 other = "人物を更新しました"
 
 [flash_db_person_archived]
-description = "人物アーカイブ成功メッセージ"
-other = "人物をアーカイブしました"
+description = "人物非公開成功メッセージ"
+other = "人物を非公開にしました"
 
 [flash_db_person_unarchived]
-description = "人物アーカイブ解除成功メッセージ"
-other = "人物のアーカイブを解除しました"
+description = "人物公開成功メッセージ"
+other = "人物を公開しました"
 
 [flash_db_person_deleted]
 description = "人物削除成功メッセージ"
