@@ -95,6 +95,12 @@ This includes distributing it as files, publishing it as a dataset, and re-provi
 This does not apply if the Operator individually permits it.
 Displaying work information on the screens or pages of an application does not fall under this.
 
+Including data in your application's distribution package in compliance with "Article 7 (Storing and Caching Data)" counts as storing under that article, not as distributing files prohibited here.
+Distributing data files separately from your application does count as distributing files.
+
+Placing data in bulk at a URL that anyone can access or in a public repository counts as providing it in a form that third parties can extract, even if it is part of your application's distribution package or a file meant to be loaded by your application.
+For a web application, have your server return only the data needed, for example by searching on the server side.
+
 User information is handled separately for displaying it within an application and for republishing it outside Annict.
 
 - Display: showing user information to users of the application as a feature of Annict
@@ -115,6 +121,8 @@ You can publish them freely.
 
 Developers may store and cache data retrieved through the API to the extent necessary to provide the application.
 It does not matter whether the data is stored on the Developer's servers or on users' devices.
+Including data in your application's distribution package and delivering it from your servers to your own application also count as storing.
+However, placing data in bulk at a URL that anyone can access or in a public repository is not storing; it is providing data as described in "Article 6 (Handling of Retrieved Data)".
 
 Work information may be handled as follows:
 
@@ -152,7 +160,7 @@ The Operator does not guarantee that retrieval from the website by automated mea
 If the Operator asks you to stop retrieving, stop.
 
 When retrieving by automated means, we would appreciate it if you include the name of the application and contact information (a website URL or an email address) in the `User-Agent` header.
-When the load becomes high, we may be able to contact you before blocking access.
+This is so that we can contact you before blocking access when the load becomes high.
 
 ## Article 9 (Use in AI and Machine Learning)
 
