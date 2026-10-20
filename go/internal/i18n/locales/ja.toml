@@ -2364,6 +2364,10 @@ other = "話数は数値で入力してください"
 description = "人物の行入力のエラーに行番号を添える書式"
 other = "{{.Line}} 行目: {{.Message}}"
 
+[validation_person_row_error_with_name]
+description = "人物の行入力のエラーに行番号と、その行に入力された名前を添える書式"
+other = "{{.Line}} 行目「{{.Name}}」: {{.Message}}"
+
 [validation_person_rows_too_many]
 description = "人物一括登録フォームの行数が1回の上限を超えている"
 other = "一度に登録する人物は{{.MaxRows}}件以内にしてください"
