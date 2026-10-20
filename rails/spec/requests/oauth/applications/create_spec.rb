@@ -33,6 +33,26 @@ RSpec.describe "POST /oauth/applications", type: :request do
     expect(response).to have_http_status(:forbidden)
   end
 
+  it "認証後にユーザー行が見つからないとき、アプリケーションが作成されないこと" do
+    user = FactoryBot.create(:registered_user)
+    login_as(user, scope: :user)
+    get "/oauth/applications"
+    expect(response).to have_http_status(:ok)
+    allow(User).to receive(:lock).and_return(User.none)
+
+    expect {
+      post "/oauth/applications", params: {
+        oauth_application: {
+          name: "Test App",
+          redirect_uri: "http://example.com/callback",
+          scopes: "read"
+        }
+      }
+    }.not_to change(Oauth::Application, :count)
+
+    expect(response).to have_http_status(:forbidden)
+  end
+
   describe "退会受付と同時にアプリケーションを作成するとき" do
     self.use_transactional_tests = false
 
@@ -151,6 +171,33 @@ RSpec.describe "POST /oauth/applications", type: :request do
     expect(created_app.redirect_uri).to eq("https://admin.example.com/callback")
     expect(created_app.scopes.to_s).to eq("read")
     expect(created_app.owner).to eq(user)
+  end
+
+  [nil, []].each do |allowed_locales|
+    it "allowed_localesが#{allowed_locales.inspect}のユーザーがアプリケーションを作成したとき、アプリケーションが作成されること" do
+      user = FactoryBot.create(:registered_user)
+      login_as(user, scope: :user)
+      # ログイン直後のリクエストはDeviseがユーザーを保存し、enumerizeの既定値がDBに書かれる。
+      # ログイン済みのセッションから読み込む状態にしてから値を空にする。
+      get "/oauth/applications"
+      expect(response).to have_http_status(:ok)
+      user.update_column(:allowed_locales, allowed_locales)
+
+      expect {
+        post "/oauth/applications", params: {
+          oauth_application: {
+            name: "Test App",
+            redirect_uri: "http://example.com/callback",
+            scopes: "read"
+          }
+        }
+      }.to change(Oauth::Application, :count).by(1)
+
+      expect(response.status).to eq(302)
+      created_app = Oauth::Application.last
+      expect(response.location).to eq("http://api.annict.test:3000/oauth/applications/#{created_app.id}")
+      expect(created_app.owner).to eq(user)
+    end
   end
 
   it "必須パラメータが不足しているとき、アプリケーションが作成されず、フォームが再表示されること" do
