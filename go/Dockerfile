@@ -29,8 +29,8 @@ RUN ln -sf /usr/local/lib/node_modules/corepack/dist/corepack.js /usr/local/bin/
 # `releases/latest` は使わず、バージョンとハッシュを必ず固定する。
 # DBMATE_VERSION / DBMATE_SHA256はDockerfile.devと意図的に二重定義しており
 # (各Dockerfileを自己完結に保つため)、更新時は両ファイルを揃えて変更する。
-ARG DBMATE_VERSION=v2.33.0
-ARG DBMATE_SHA256=dfd4027141b6e4357158099bdfe6c02b286af70f8e49057937744cf80b38ea1c
+ARG DBMATE_VERSION=v2.37.0
+ARG DBMATE_SHA256=f855e99a0f0a81322014bf686b1cb820d2b4d8074e4eadafd64b851b80ecb15a
 RUN curl -fsSL -o /tmp/dbmate "https://github.com/amacneil/dbmate/releases/download/${DBMATE_VERSION}/dbmate-linux-amd64" && \
     echo "${DBMATE_SHA256}  /tmp/dbmate" | sha256sum -c - && \
     mv /tmp/dbmate /usr/local/bin/dbmate && \
