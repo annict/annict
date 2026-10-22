@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"errors"
+	"fmt"
 	"log/slog"
 	"strings"
 	"sync"
@@ -412,5 +413,169 @@ func TestSlogHandler_WithAttrs_PropagatesToBothHandlers(t *testing.T) {
 	}
 	if recs[0].attrs["user_id"] != "u456" {
 		t.Errorf("ベースレコードのattrs[user_id] = %q、期待値 = %q", recs[0].attrs["user_id"], "u456")
+	}
+}
+
+func TestSlogHandler_GroupedAttrsAndBranches(t *testing.T) {
+	t.Parallel()
+
+	// グループの展開方法が変わっても、機密値のマスクと派生ロガー間の属性分離を保つ。
+	hub, transport := newSlogTestHubWithBeforeSend(t)
+	ctx := sentry.SetHubOnContext(context.Background(), hub)
+	root := slog.New(NewSlogHandler(newRecordingHandler())).With("request_id", "r1")
+	grouped := root.WithGroup("request").With("method", "POST")
+	left := grouped.WithGroup("left").With("id", "a")
+	right := grouped.WithGroup("right").With("id", "b")
+
+	var wg sync.WaitGroup
+	for _, logger := range []*slog.Logger{left, right} {
+		wg.Go(func() {
+			logger.ErrorContext(ctx, "失敗",
+				slog.Group("", slog.String("email", "private@example.com")),
+				slog.Group("payload", slog.String("token", "secret"), slog.Int("count", 2)),
+				slog.Attr{},
+			)
+		})
+	}
+	wg.Wait()
+
+	events := transport.Events()
+	if len(events) != 2 {
+		t.Fatalf("Sentryイベントの件数 = %d、期待値 = 2", len(events))
+	}
+	seenIDs := make(map[string]bool, len(events))
+	for _, event := range events {
+		prefix, other := "request.left.", "request.right."
+		wantID := "a"
+		if event.Tags[prefix+"id"] == "" {
+			prefix, other = other, prefix
+			wantID = "b"
+		}
+		if seenIDs[wantID] {
+			t.Errorf("派生ロガーのイベントが重複: id = %q", wantID)
+		}
+		seenIDs[wantID] = true
+		wantTags := map[string]string{
+			"request_id":             "r1",
+			"request.method":         "POST",
+			prefix + "id":            wantID,
+			prefix + "email":         maskedValue,
+			prefix + "payload.token": maskedValue,
+			prefix + "payload.count": "2",
+		}
+		for key, want := range wantTags {
+			if event.Tags[key] != want {
+				t.Errorf("タグ[%s] = %q、期待値 = %q", key, event.Tags[key], want)
+			}
+		}
+		if len(event.Tags) != len(wantTags) {
+			t.Errorf("タグの件数 = %d、期待値 = %d: %v", len(event.Tags), len(wantTags), event.Tags)
+		}
+		if _, ok := event.Tags[other+"id"]; ok {
+			t.Errorf("別のハンドラーの属性が混入: %v", event.Tags)
+		}
+	}
+}
+
+type mutableLogValue struct{ value string }
+
+func (v *mutableLogValue) LogValue() slog.Value { return slog.StringValue(v.value) }
+
+func TestSlogHandler_WithAttrsResolvesValues(t *testing.T) {
+	t.Parallel()
+
+	// LogValuerの値はslog標準のハンドラーと同じくLogger.Withの時点で解決する。
+	hub, transport := newSlogTestHub(t)
+	ctx := sentry.SetHubOnContext(context.Background(), hub)
+	value := &mutableLogValue{value: "追加時"}
+	logger := slog.New(NewSlogHandler(newRecordingHandler())).With("state", value)
+	value.value = "送信時"
+	logger.ErrorContext(ctx, "失敗", "current", value)
+
+	events := transport.Events()
+	if len(events) != 1 {
+		t.Fatalf("Sentryイベントの件数 = %d、期待値 = 1", len(events))
+	}
+	if events[0].Tags["state"] != "追加時" || events[0].Tags["current"] != "送信時" {
+		t.Errorf("属性の解決時点が異なる: %v", events[0].Tags)
+	}
+}
+
+func TestSlogHandler_DropsCanceledErrorsEndToEnd(t *testing.T) {
+	t.Parallel()
+
+	// slog経由のイベントでも元のエラーをヒントで渡し、beforeSendのshouldDropErrorで
+	// 中断エラーを破棄する。
+	for _, key := range []string{"error", "err"} {
+		t.Run(key, func(t *testing.T) {
+			t.Parallel()
+
+			hub, transport := newSlogTestHubWithBeforeSend(t)
+			ctx := sentry.SetHubOnContext(context.Background(), hub)
+			logger := slog.New(NewSlogHandler(newRecordingHandler()))
+
+			logger.ErrorContext(ctx, "処理中断", key, fmt.Errorf("中断: %w", context.Canceled))
+			if got := len(transport.Events()); got != 0 {
+				t.Fatalf("中断エラーのイベントは破棄されるべき: Sentryイベントの件数 = %d", got)
+			}
+
+			logger.ErrorContext(ctx, "失敗", key, errors.New("障害"))
+			events := transport.Events()
+			if len(events) != 1 {
+				t.Fatalf("Sentryイベントの件数 = %d、期待値 = 1", len(events))
+			}
+			if len(events[0].Exception) != 1 || events[0].Exception[0].Value != "障害" {
+				t.Errorf("例外 = %+v、期待値 = 障害", events[0].Exception)
+			}
+			if _, ok := events[0].Tags[key]; ok {
+				t.Errorf("例外にしたエラーがタグにも追加された: %v", events[0].Tags)
+			}
+		})
+	}
+}
+
+func TestSlogHandler_ErrorAttrsWithoutErrorValue(t *testing.T) {
+	t.Parallel()
+
+	// error型でないerror属性はタグに残し、例外にするのは最初のエラーだけにする。
+	hub, transport := newSlogTestHub(t)
+	ctx := sentry.SetHubOnContext(context.Background(), hub)
+	logger := slog.New(NewSlogHandler(newRecordingHandler()))
+	logger.ErrorContext(ctx, "失敗", "error", "文字列のエラー", "err", errors.New("一つ目"), "error", errors.New("二つ目"))
+
+	events := transport.Events()
+	if len(events) != 1 {
+		t.Fatalf("Sentryイベントの件数 = %d、期待値 = 1", len(events))
+	}
+	if events[0].Tags["error"] != "文字列のエラー" {
+		t.Errorf("event.Tags[error] = %q、期待値 = %q", events[0].Tags["error"], "文字列のエラー")
+	}
+	if len(events[0].Exception) != 1 || events[0].Exception[0].Value != "一つ目" {
+		t.Errorf("例外 = %+v、期待値 = 一つ目のみ", events[0].Exception)
+	}
+}
+
+// countingLogValueは無効なSentryで属性を解決しないことを確かめるため、解決回数を記録する。
+type countingLogValue struct{ calls int }
+
+func (v *countingLogValue) LogValue() slog.Value {
+	v.calls++
+	return slog.StringValue("解決済み")
+}
+
+func TestSlogHandler_DisabledHub(t *testing.T) {
+	t.Parallel()
+
+	// Sentryが未初期化 (noop client) のとき、基底ログを残しつつイベントの組み立てを省く。
+	base := newRecordingHandler()
+	value := &countingLogValue{}
+	ctx := sentry.SetHubOnContext(context.Background(), sentry.NewHub(nil, sentry.NewScope()))
+	slog.New(NewSlogHandler(base)).ErrorContext(ctx, "失敗", "state", value)
+
+	if got := len(base.Snapshot()); got != 1 {
+		t.Fatalf("ベースレコードの件数 = %d、期待値 = 1", got)
+	}
+	if value.calls != 0 {
+		t.Fatalf("無効なHubでの属性解決回数 = %d、期待値 = 0", value.calls)
 	}
 }
