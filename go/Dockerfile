@@ -3,7 +3,7 @@
 # ========================================
 # ビルドステージ
 # ========================================
-FROM golang:1.26.2-alpine3.22 AS builder
+FROM golang:1.26.10-alpine3.23 AS builder
 
 WORKDIR /app
 
@@ -90,7 +90,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 # ========================================
 # 実行ステージ
 # ========================================
-FROM alpine:3.22
+FROM alpine:3.23
 
 WORKDIR /app
 
