@@ -13,7 +13,7 @@ services:
       - op-config:/home/developer/.config/op
       - go-mod-cache:/go/pkg/mod
       - go-build-cache:/go/.cache/go-build
-      - app-gems-data:/mise/installs/ruby/3.3.10/lib/ruby/gems/3.3.0
+      - app-gems-data:/mise/installs/ruby/3.3.12/lib/ruby/gems/3.3.0
     ports:
       - "4004:8080" # Go
       - "4000:3000" # Rails
