@@ -19,8 +19,8 @@ RUN apk add --no-cache git libstdc++ curl
 # /usr/local/bin/corepackのsymlinkはCOPYによって実体ファイルになるため、
 # 後でsymlinkを作り直す。pnpmはcorepack経由でpackage.jsonのpackageManager
 # フィールドと同じバージョンに固定する。
-COPY --from=node:22.20.0-alpine3.22 /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:22.20.0-alpine3.22 /usr/local/lib/node_modules/corepack /usr/local/lib/node_modules/corepack
+COPY --from=node:22.23.4-alpine3.23 /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:22.23.4-alpine3.23 /usr/local/lib/node_modules/corepack /usr/local/lib/node_modules/corepack
 RUN ln -sf /usr/local/lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack && \
     corepack enable && \
     corepack prepare pnpm@10.17.1 --activate
