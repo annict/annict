@@ -16,7 +16,7 @@
   "keywords": [],
   "author": "",
   "license": "AGPL-3.0",
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@10.34.7",
   "devDependencies": {
     "@tailwindcss/cli": "^4.1.13",
     "basecoat-css": "^1.0.1",

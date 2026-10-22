@@ -3,7 +3,7 @@
 # ========================================
 # ビルドステージ
 # ========================================
-FROM golang:1.26.2-alpine3.22 AS builder
+FROM golang:1.26.10-alpine3.23 AS builder
 
 WORKDIR /app
 
@@ -19,18 +19,18 @@ RUN apk add --no-cache git libstdc++ curl
 # /usr/local/bin/corepackのsymlinkはCOPYによって実体ファイルになるため、
 # 後でsymlinkを作り直す。pnpmはcorepack経由でpackage.jsonのpackageManager
 # フィールドと同じバージョンに固定する。
-COPY --from=node:22.20.0-alpine3.22 /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:22.20.0-alpine3.22 /usr/local/lib/node_modules/corepack /usr/local/lib/node_modules/corepack
+COPY --from=node:22.23.4-alpine3.23 /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:22.23.4-alpine3.23 /usr/local/lib/node_modules/corepack /usr/local/lib/node_modules/corepack
 RUN ln -sf /usr/local/lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack && \
     corepack enable && \
-    corepack prepare pnpm@10.17.1 --activate
+    corepack prepare pnpm@10.34.7 --activate
 
 # dbmateをSHA256検証付きでインストールする。浮動参照である
 # `releases/latest` は使わず、バージョンとハッシュを必ず固定する。
 # DBMATE_VERSION / DBMATE_SHA256はDockerfile.devと意図的に二重定義しており
 # (各Dockerfileを自己完結に保つため)、更新時は両ファイルを揃えて変更する。
-ARG DBMATE_VERSION=v2.33.0
-ARG DBMATE_SHA256=dfd4027141b6e4357158099bdfe6c02b286af70f8e49057937744cf80b38ea1c
+ARG DBMATE_VERSION=v2.37.0
+ARG DBMATE_SHA256=f855e99a0f0a81322014bf686b1cb820d2b4d8074e4eadafd64b851b80ecb15a
 RUN curl -fsSL -o /tmp/dbmate "https://github.com/amacneil/dbmate/releases/download/${DBMATE_VERSION}/dbmate-linux-amd64" && \
     echo "${DBMATE_SHA256}  /tmp/dbmate" | sha256sum -c - && \
     mv /tmp/dbmate /usr/local/bin/dbmate && \
@@ -90,7 +90,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 # ========================================
 # 実行ステージ
 # ========================================
-FROM alpine:3.22
+FROM alpine:3.23
 
 WORKDIR /app
 
