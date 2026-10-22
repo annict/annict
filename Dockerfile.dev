@@ -125,14 +125,14 @@ RUN curl -fsSL https://mise.run | sh
 RUN mise install go@1.26.10 && \
     mise install ruby@3.3.12 && \
     mise install node@22.23.4 && \
-    mise install pnpm@10.17.1 && \
+    mise install pnpm@10.34.7 && \
     mise install yarn@1.22.22
 
 # グローバルデフォルトを設定する。
 RUN mise use --global go@1.26.10 && \
     mise use --global ruby@3.3.12 && \
     mise use --global node@22.23.4 && \
-    mise use --global pnpm@10.17.1
+    mise use --global pnpm@10.34.7
 
 # --- dbmate ---
 ARG DBMATE_VERSION=v2.33.0

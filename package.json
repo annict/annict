@@ -1,7 +1,7 @@
 {
   "name": "annict",
   "private": true,
-  "packageManager": "pnpm@10.17.1",
+  "packageManager": "pnpm@10.34.7",
   "scripts": {
     "fmt": "oxfmt",
     "fmt:check": "oxfmt --check"

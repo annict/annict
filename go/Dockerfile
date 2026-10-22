@@ -23,7 +23,7 @@ COPY --from=node:22.23.4-alpine3.23 /usr/local/bin/node /usr/local/bin/node
 COPY --from=node:22.23.4-alpine3.23 /usr/local/lib/node_modules/corepack /usr/local/lib/node_modules/corepack
 RUN ln -sf /usr/local/lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack && \
     corepack enable && \
-    corepack prepare pnpm@10.17.1 --activate
+    corepack prepare pnpm@10.34.7 --activate
 
 # dbmateをSHA256検証付きでインストールする。浮動参照である
 # `releases/latest` は使わず、バージョンとハッシュを必ず固定する。
