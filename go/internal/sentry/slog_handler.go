@@ -3,9 +3,9 @@ package sentry
 import (
 	"context"
 	"fmt"
+	"io"
 	"log/slog"
 	"os"
-	"strings"
 
 	"github.com/getsentry/sentry-go"
 	sentryslog "github.com/getsentry/sentry-go/slog"
@@ -35,8 +35,28 @@ const ReverseProxySource = "reverse_proxy"
 // バックグラウンドロガーはNewBaseHandlerを直接使う (例: 自己回復する接続の
 // 瞬断をErrorレベルで出力するRiverの内部ロガー)。コンストラクタを共有する
 // ことで両者の形式と詳細度が一致し、将来レベルを変更してもドリフトしない。
+//
+// メールアドレスなどの値は、Sentryへ送るタグと同じキーの規則 (sensitiveAttrKeys) で
+// 伏せてから書き出す。プライバシーポリシーで「ログでは伏せる」と書ける状態を、
+// 呼び出し側が属性を載せるかどうかに依らず保つため。
 func NewBaseHandler() slog.Handler {
-	return slog.NewTextHandler(os.Stderr, &slog.HandlerOptions{Level: slog.LevelInfo})
+	return newBaseHandler(os.Stderr)
+}
+
+// newBaseHandlerは書き込み先をwにしたNewBaseHandlerを返す。テストで出力を読むために分けている。
+func newBaseHandler(w io.Writer) slog.Handler {
+	return slog.NewTextHandler(w, &slog.HandlerOptions{
+		Level:       slog.LevelInfo,
+		ReplaceAttr: maskSensitiveAttr,
+	})
+}
+
+// maskSensitiveAttrはキーがsensitiveAttrKeysに当たる属性の値をmaskedValueに置き換える。
+func maskSensitiveAttr(_ []string, a slog.Attr) slog.Attr {
+	if isSensitiveAttrKey(a.Key) {
+		return slog.String(a.Key, maskedValue)
+	}
+	return a
 }
 
 // NewSlogHandlerはbaseハンドラーをアプリケーション固有のSentryイベントハンドラーと
@@ -48,19 +68,22 @@ func NewSlogHandler(base slog.Handler) slog.Handler {
 	return newMultiHandler(base, &sentryEventHandler{})
 }
 
-const defaultMaxErrorDepth = 100
-
 type sentryEventAttr struct {
-	groups []string
-	attr   slog.Attr
+	key       string
+	value     string
+	exception error
 }
 
 // ErrorとFatalのslogレコードだけをSentryイベントへ変換する。
 // sentry-go/slog 0.48でイベント作成機能が削除される前にAnnictが依存していた
 // 契約だけを意図的に実装する。
+//
+// 属性はslog標準のハンドラーと同じくWithAttrsの時点で解決して保持し、派生ハンドラー間で
+// 書き換えを共有しない。グループはドット区切りのキーにし、beforeSendで末端の機密キーも
+// 判定できるようにする。
 type sentryEventHandler struct {
 	attrs  []sentryEventAttr
-	groups []string
+	prefix string
 }
 
 func (h *sentryEventHandler) Enabled(_ context.Context, level slog.Level) bool {
@@ -71,6 +94,10 @@ func (h *sentryEventHandler) Handle(ctx context.Context, record slog.Record) err
 	hub := sentry.GetHubFromContext(ctx)
 	if hub == nil {
 		hub = sentry.CurrentHub()
+	}
+	client := hub.Client()
+	if !client.IsEnabled() {
+		return nil
 	}
 
 	event := sentry.NewEvent()
@@ -83,38 +110,36 @@ func (h *sentryEventHandler) Handle(ctx context.Context, record slog.Record) err
 	event.Logger = "slog"
 
 	var originalErr error
-	for _, a := range h.attrs {
-		if err := addSlogAttrToEvent(event, strings.Join(a.groups, "."), a.attr); err != nil && originalErr == nil {
-			originalErr = err
+	addAttrs := func(attrs []sentryEventAttr) {
+		for _, attr := range attrs {
+			if attr.exception != nil {
+				if originalErr == nil {
+					originalErr = attr.exception
+				}
+				continue
+			}
+			event.Tags[attr.key] = attr.value
 		}
 	}
-	record.Attrs(func(a slog.Attr) bool {
-		if err := addSlogAttrToEvent(event, strings.Join(h.groups, "."), a); err != nil && originalErr == nil {
-			originalErr = err
-		}
+	addAttrs(h.attrs)
+	record.Attrs(func(attr slog.Attr) bool {
+		addAttrs(flattenSlogAttr(h.prefix, attr))
 		return true
 	})
-
-	errorDepth := defaultMaxErrorDepth
-	if client := hub.Client(); client != nil {
-		errorDepth = client.Options().MaxErrorDepth
-	}
-	event.SetException(originalErr, errorDepth)
-	hub.CaptureEventWithHint(event, &sentry.EventHint{Context: ctx})
+	event.SetException(originalErr, client.Options().MaxErrorDepth)
+	// beforeSendのshouldDropErrorで中断エラーを判定できるよう、元のエラーをヒントで渡す。
+	hub.CaptureEventWithHint(event, &sentry.EventHint{Context: ctx, OriginalException: originalErr})
 	return nil
 }
 
 func (h *sentryEventHandler) WithAttrs(attrs []slog.Attr) slog.Handler {
 	out := &sentryEventHandler{
-		attrs:  make([]sentryEventAttr, 0, len(h.attrs)+len(attrs)),
-		groups: append([]string(nil), h.groups...),
+		attrs:  make([]sentryEventAttr, len(h.attrs), len(h.attrs)+len(attrs)),
+		prefix: h.prefix,
 	}
-	out.attrs = append(out.attrs, h.attrs...)
-	for _, a := range attrs {
-		out.attrs = append(out.attrs, sentryEventAttr{
-			groups: append([]string(nil), h.groups...),
-			attr:   a,
-		})
+	copy(out.attrs, h.attrs)
+	for _, attr := range attrs {
+		out.attrs = append(out.attrs, flattenSlogAttr(h.prefix, attr)...)
 	}
 	return out
 }
@@ -123,48 +148,30 @@ func (h *sentryEventHandler) WithGroup(name string) slog.Handler {
 	if name == "" {
 		return h
 	}
-	return &sentryEventHandler{
-		attrs:  append([]sentryEventAttr(nil), h.attrs...),
-		groups: append(append([]string(nil), h.groups...), name),
-	}
+	return &sentryEventHandler{attrs: h.attrs, prefix: h.prefix + name + "."}
 }
 
-// 1つのslog属性をイベントへ追加する。error属性はevent.Exceptionに
-// 設定できるよう、タグには追加せず呼び出し元へ返す。
-func addSlogAttrToEvent(event *sentry.Event, group string, attr slog.Attr) error {
-	attr.Value = attr.Value.Resolve()
-	if attr.Equal(slog.Attr{}) {
+// 無名グループを展開し、error / errのerror値は例外情報としてタグから分離する。
+func flattenSlogAttr(prefix string, attr slog.Attr) []sentryEventAttr {
+	value := attr.Value.Resolve()
+	if value.Kind() == slog.KindGroup {
+		if attr.Key != "" {
+			prefix += attr.Key + "."
+		}
+		var attrs []sentryEventAttr
+		for _, child := range value.Group() {
+			attrs = append(attrs, flattenSlogAttr(prefix, child)...)
+		}
+		return attrs
+	}
+	if attr.Key == "" {
 		return nil
 	}
-
-	key := attr.Key
-	if group != "" {
-		if key != "" {
-			key = group + "." + key
-		} else {
-			key = group
-		}
+	var exception error
+	if attr.Key == "error" || attr.Key == "err" {
+		exception, _ = value.Any().(error)
 	}
-
-	if attr.Value.Kind() == slog.KindGroup {
-		var firstErr error
-		for _, child := range attr.Value.Group() {
-			if err := addSlogAttrToEvent(event, key, child); err != nil && firstErr == nil {
-				firstErr = err
-			}
-		}
-		return firstErr
-	}
-
-	if (attr.Key == "error" || attr.Key == "err") && attr.Value.Kind() == slog.KindAny {
-		if err, ok := attr.Value.Any().(error); ok {
-			return err
-		}
-	}
-	if key != "" {
-		event.Tags[key] = fmt.Sprint(attr.Value.Any())
-	}
-	return nil
+	return []sentryEventAttr{{key: prefix + attr.Key, value: fmt.Sprint(value.Any()), exception: exception}}
 }
 
 // 1レコードを複数のslog.Handlerにファンアウトする。baseのテキストハンドラーを維持し、

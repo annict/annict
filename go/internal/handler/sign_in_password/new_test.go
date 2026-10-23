@@ -46,7 +46,7 @@ func newTestHandler(t *testing.T, cfg *config.Config, sessionMgr *session.Manage
 
 	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(userRepo)
 	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
-	return NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), authenticateByPasswordUC)
+	return NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, authenticateByPasswordUC)
 }
 
 // TestNew GET /sign_in/passwordのテスト

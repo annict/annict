@@ -2,9 +2,11 @@ package repository_test
 
 import (
 	"context"
+	"errors"
 	"testing"
 	"time"
 
+	"github.com/annict/annict/go/internal/password_reset"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/repository"
 	"github.com/annict/annict/go/internal/testutil"
@@ -47,6 +49,38 @@ func TestPasswordResetTokenRepository_Create(t *testing.T) {
 	}
 	if token.CreatedAt.IsZero() {
 		t.Error("CreatedAtがゼロ値です")
+	}
+}
+
+// TestPasswordResetTokenRepository_GetValidByToken_DeletedUserはトークンの発行後に削除されたユーザーのトークンが無効になることをテスト
+func TestPasswordResetTokenRepository_GetValidByToken_DeletedUser(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewPasswordResetTokenRepository(queries)
+
+	userID := testutil.NewUserBuilder(t, tx).Build()
+
+	token := "deleted-user-reset-token"
+	if _, err := repo.Create(context.Background(), userID, password_reset.HashToken(token), time.Now().Add(1*time.Hour)); err != nil {
+		t.Fatalf("Createに失敗: %v", err)
+	}
+
+	if _, err := repo.GetValidByToken(context.Background(), token); err != nil {
+		t.Fatalf("削除前のGetValidByTokenのエラー = %v", err)
+	}
+
+	if _, err := tx.Exec(`UPDATE users SET deleted_at = NOW() WHERE id = $1`, int64(userID)); err != nil {
+		t.Fatalf("ユーザーの論理削除に失敗: %v", err)
+	}
+
+	got, err := repo.GetValidByToken(context.Background(), token)
+	if !errors.Is(err, repository.ErrInvalidPasswordResetToken) {
+		t.Errorf("エラー = %v、期待値 = ErrInvalidPasswordResetToken", err)
+	}
+	if got != nil {
+		t.Errorf("トークン = %+v、期待値 = nil", got)
 	}
 }
 

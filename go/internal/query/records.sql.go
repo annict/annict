@@ -76,6 +76,49 @@ func (q *Queries) CountRecordsByUserID(ctx context.Context, userID int64) (int64
 	return count, err
 }
 
+const deleteRecordsByUserID = `-- name: DeleteRecordsByUserID :one
+WITH deleted AS (
+    DELETE FROM records
+    WHERE id IN (
+        SELECT target.id
+        FROM records AS target
+        WHERE target.user_id = $1
+        LIMIT $2
+    )
+    RETURNING records.work_id, records.deleted_at
+),
+counts AS (
+    SELECT deleted.work_id, COUNT(*) AS records_count
+    FROM deleted
+    WHERE deleted.deleted_at IS NULL
+    GROUP BY deleted.work_id
+),
+decremented AS (
+    UPDATE works
+    SET records_count = works.records_count - counts.records_count
+    FROM counts
+    WHERE works.id = counts.work_id
+    RETURNING works.id
+)
+SELECT COUNT(*) FROM deleted
+`
+
+type DeleteRecordsByUserIDParams struct {
+	UserID    int64 `db:"user_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+// ユーザーの記録を最大batch_size件削除し、削除した件数を返す。
+// 論理削除されていない記録の分だけ、同じ文の中でworks.records_countを減算する
+// (Railsの再集計タスクと同じ定義)。updated_atは変えない。記録を参照するエピソードの
+// 記録と作品の記録は先に削除しておく (外部キーがあるため)。
+func (q *Queries) DeleteRecordsByUserID(ctx context.Context, arg DeleteRecordsByUserIDParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, deleteRecordsByUserID, arg.UserID, arg.BatchSize)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getRecordByID = `-- name: GetRecordByID :one
 SELECT id, user_id, work_id, aasm_state, impressions_count, created_at, updated_at, watched_at
 FROM records

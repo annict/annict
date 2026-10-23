@@ -1,0 +1,107 @@
+package db_people
+
+import (
+	"strings"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// delistMessageDescriptionIDは対応記録の入力欄が何を記録するかを述べる説明のid。textareaの
+// aria-describedbyが参照する。
+const delistMessageDescriptionID = "delist_message-description"
+
+// DelistingNewPageDataは掲載停止確認ページが描画するデータ (CSRFトークン、対象の人物とその
+// 保存済みの対応記録、入力欄の値、キャンセルリンクと送信の戻り先にする一覧)。
+type DelistingNewPageData struct {
+	CSRFToken string
+	Person    viewmodel.DBPersonDelistingTarget
+	// DelistMessageは対応記録の入力欄の値。確認画面を開いたときは保存済みの対応記録、送信が
+	// 却下された後は送信された対応記録になる。
+	DelistMessage  string
+	ReturnTo       string
+	Conflict       bool
+	InvalidVersion bool
+}
+
+// showsSavedDelistMessageは、確認後に別の管理者が書いた保存済みの対応記録を、入力欄とは別に示すかを
+// 返す。競合で送り直す前に何を上書きするのかを見比べられるよう、送信された対応記録と異なる場合に
+// 限って示す。比較は保存時と同じく前後の空白を除いて行う。
+func (d DelistingNewPageData) showsSavedDelistMessage() bool {
+	return d.Conflict && strings.TrimSpace(d.DelistMessage) != d.Person.DelistMessage
+}
+
+// 対応記録は任意の入力にし、未記入でも掲載停止を止めない。本人からの申出に速やかに応じることを
+// 優先するため。掲載停止を解除してから停止し直す場合に以前の記録を書き足せるよう、確認画面を開いた
+// ときは保存済みの対応記録を初期値にする。
+templ DelistingNew(data DelistingNewPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: data.Person.Name,
+				})
+			</div>
+		</div>
+
+		@components.ContentCard("") {
+			<form method="POST" action={ templates.DBPersonDelistingPath(data.Person.ID).SafeURL() } class="max-w-2xl flex flex-col gap-6">
+				<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+				<input type="hidden" name="updated_at" value={ data.Person.UpdatedAt }/>
+				<input type="hidden" name="return_to" value={ data.ReturnTo }/>
+
+				<div class="flex flex-col gap-2">
+					if data.Conflict {
+						<p role="alert" class="text-destructive">{ templates.T(ctx, "validation_version_conflict") }</p>
+					}
+					if data.InvalidVersion {
+						<p role="alert" class="text-destructive">{ templates.T(ctx, "validation_version_missing") }</p>
+					}
+					<p>{ templates.T(ctx, "db_people_delisting_new_confirm_message", map[string]any{"Name": data.Person.Name}) }</p>
+					<p class="text-sm text-muted-foreground">{ templates.T(ctx, "db_people_delisting_new_help") }</p>
+				</div>
+
+				if data.showsSavedDelistMessage() {
+					<section class="flex flex-col gap-2" aria-labelledby="saved_delist_message-heading">
+						<h2 id="saved_delist_message-heading" class="text-sm font-medium">
+							{ templates.T(ctx, "db_people_delisting_new_saved_delist_message_heading") }
+						</h2>
+						if data.Person.DelistMessage != "" {
+							<p class="text-sm whitespace-pre-wrap [overflow-wrap:anywhere]">{ data.Person.DelistMessage }</p>
+						} else {
+							<p class="text-sm text-muted-foreground">{ templates.T(ctx, "db_people_delisting_new_saved_delist_message_empty") }</p>
+						}
+					</section>
+				}
+
+				<div role="group" class="field">
+					<label for="delist_message" class="label">
+						{ templates.T(ctx, "db_people_delisting_new_delist_message_label") }
+					</label>
+					<p id={ delistMessageDescriptionID } class="text-muted-foreground text-sm">
+						{ templates.T(ctx, "db_people_delisting_new_delist_message_hint") }
+					</p>
+					<textarea
+						id="delist_message"
+						name="delist_message"
+						class="textarea"
+						rows="6"
+						aria-describedby={ delistMessageDescriptionID }
+					>{ data.DelistMessage }</textarea>
+				</div>
+
+				<div class="flex items-center gap-2">
+					<button type="submit" class="btn rounded-full" data-variant="destructive">
+						{ templates.T(ctx, "db_people_delisting_new_submit") }
+					</button>
+					<a href={ data.ReturnTo } class="btn rounded-full" data-variant="outline">
+						{ templates.T(ctx, "db_people_delisting_new_cancel_link") }
+					</a>
+				</div>
+			</form>
+		}
+	</div>
+}

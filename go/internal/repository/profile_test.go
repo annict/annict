@@ -2,6 +2,8 @@ package repository_test
 
 import (
 	"context"
+	"database/sql"
+	"slices"
 	"testing"
 
 	"github.com/annict/annict/go/internal/model"
@@ -86,5 +88,53 @@ func TestProfileRepository_WithTx(t *testing.T) {
 	}
 	if profile.UserID != userID {
 		t.Errorf("UserID = %v、期待値 = %v", profile.UserID, userID)
+	}
+}
+
+func TestProfileRepository_ListImageDataByUserID(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewProfileRepository(query.New(db)).WithTx(tx)
+	ctx := context.Background()
+
+	tests := []struct {
+		name                string
+		imageData           sql.NullString
+		backgroundImageData sql.NullString
+		want                []string
+	}{
+		{
+			name:                "正常系: プロフィール画像と背景画像の添付データを返す",
+			imageData:           sql.NullString{String: `{"original":{"id":"a.png","storage":"store"}}`, Valid: true},
+			backgroundImageData: sql.NullString{String: `{"original":{"id":"b.png","storage":"store"}}`, Valid: true},
+			want:                []string{`{"original":{"id":"a.png","storage":"store"}}`, `{"original":{"id":"b.png","storage":"store"}}`},
+		},
+		{
+			name:                "正常系: NULLと空文字の添付データは含めない",
+			imageData:           sql.NullString{},
+			backgroundImageData: sql.NullString{String: "", Valid: true},
+			want:                nil,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			userID := testutil.NewUserBuilder(t, tx).Build()
+			if _, err := tx.Exec(
+				`UPDATE profiles SET image_data = $1, background_image_data = $2 WHERE user_id = $3`,
+				tt.imageData, tt.backgroundImageData, int64(userID),
+			); err != nil {
+				t.Fatalf("プロフィールの画像の設定に失敗: %v", err)
+			}
+
+			got, err := repo.ListImageDataByUserID(ctx, userID)
+			if err != nil {
+				t.Fatalf("ListImageDataByUserIDのエラー = %v", err)
+			}
+			if !slices.Equal(got, tt.want) {
+				t.Errorf("ListImageDataByUserID() = %v、期待値 = %v", got, tt.want)
+			}
+		})
 	}
 }

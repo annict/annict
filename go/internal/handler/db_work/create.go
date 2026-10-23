@@ -19,12 +19,19 @@ import (
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	input := usecase.CreateWorkInput{WorkFormInput: parseWorkForm(r)}
+	input := usecase.CreateWorkInput{
+		User:          middleware.GetUserFromContext(ctx),
+		WorkFormInput: parseWorkForm(r),
+	}
 
 	output, err := h.createWorkUC.Execute(ctx, input)
 	if err != nil {
 		if ve := model.AsValidationError(err); ve != nil {
 			h.renderNewWithErrors(w, r, input, ve)
+			return
+		}
+		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeForbidden {
+			httperror.Forbidden(w, r)
 			return
 		}
 		slog.ErrorContext(ctx, "作品の作成に失敗しました", "error", err)
@@ -44,7 +51,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) renderNewWithErrors(w http.ResponseWriter, r *http.Request, input usecase.CreateWorkInput, formErrors *model.ValidationError) {
 	ctx := r.Context()
 
-	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
+	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx, usecase.GetDBWorkFormOptionsInput{User: input.User})
 	if err != nil {
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
 		httperror.InternalServerError(w, r)

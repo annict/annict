@@ -14,8 +14,8 @@ on:
       - ".github/workflows/go-ci.yml"
 
 env:
-  GO_VERSION: "1.26.2"
-  NODE_VERSION: "22.20.0"
+  GO_VERSION: "1.26.10"
+  NODE_VERSION: "22.23.4"
 
 jobs:
   lint:

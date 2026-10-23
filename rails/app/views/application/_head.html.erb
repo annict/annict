@@ -1,4 +1,4 @@
-<% if display_ads? %>
+<% if display_ads? && !current_user&.supporter? %>
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=<%= ENV.fetch('GOOGLE_AD_CLIENT') %>" crossorigin="anonymous"></script>
 <% end %>
 

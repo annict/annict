@@ -44,16 +44,27 @@ var sensitiveQueryKeys = []string{
 	"key",
 }
 
-// マスクすべきタグのキー (部分一致、小文字)。アプリケーションのSentry
-// イベントハンドラーがslog属性をタグへ載せるため、構造化属性としてログに
-// 載せたPII (例: メール送信失敗ログの "email") がマスクされないままSentry
-// に届いてしまう。標準エラー出力側のログには元の値が残るため、デバッグは
-// そちらで行える。
-var sensitiveTagKeys = []string{
+// マスクすべきslog属性のキー (部分一致、小文字)。構造化属性としてログに載せた
+// PII (例: メール送信失敗ログの "email") は、アプリケーションのSentryイベント
+// ハンドラーがタグへ載せ、基底ハンドラーが標準エラー出力へ書き出す。どちらの
+// 経路でも同じキーの値を伏せるため、filterTagsと基底ハンドラーのReplaceAttrが
+// このリストを共有する。
+var sensitiveAttrKeys = []string{
 	"email",
 	"password",
 	"secret",
 	"token",
+}
+
+// isSensitiveAttrKeyはslog属性のキーがsensitiveAttrKeysのいずれかを含むかを返す。
+func isSensitiveAttrKey(key string) bool {
+	lowerKey := strings.ToLower(key)
+	for _, sensitive := range sensitiveAttrKeys {
+		if strings.Contains(lowerKey, sensitive) {
+			return true
+		}
+	}
+	return false
 }
 
 // メッセージレベルでSentry送信をスキップするパターン (正規表現)。
@@ -139,12 +150,8 @@ func shouldDropError(err error) bool {
 // event.Tagsに乗せて生成したイベントもカバーする。
 func filterTags(event *sentry.Event) {
 	for key := range event.Tags {
-		lowerKey := strings.ToLower(key)
-		for _, sensitive := range sensitiveTagKeys {
-			if strings.Contains(lowerKey, sensitive) {
-				event.Tags[key] = maskedValue
-				break
-			}
+		if isSensitiveAttrKey(key) {
+			event.Tags[key] = maskedValue
 		}
 	}
 }

@@ -3,6 +3,7 @@ package validator
 import (
 	"context"
 	"testing"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -114,6 +115,13 @@ func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 		WithEncryptedPassword(string(hashedPassword)).
 		Build()
 
+	testutil.NewUserBuilder(t, tx).
+		WithUsername("validator_password_deleted").
+		WithEmail("validator_password_deleted@example.com").
+		WithEncryptedPassword(string(hashedPassword)).
+		WithDeletedAt(time.Now()).
+		Build()
+
 	v := NewSignInPasswordCreateValidator(userRepo)
 
 	t.Run("正常系 (メールアドレス)", func(t *testing.T) {
@@ -165,6 +173,25 @@ func TestSignInPasswordCreateValidatorValidate_StateErrors(t *testing.T) {
 		}
 		if len(ve.Global) == 0 {
 			t.Error("グローバルエラーが期待されましたが、ありませんでした")
+		}
+	})
+
+	t.Run("削除済みユーザーは存在しないユーザーと同じエラーにする", func(t *testing.T) {
+		for _, emailOrUsername := range []string{"validator_password_deleted@example.com", "validator_password_deleted"} {
+			output, err := v.Validate(context.Background(), SignInPasswordCreateValidatorInput{
+				EmailOrUsername: emailOrUsername,
+				Password:        "correctpassword",
+			})
+			ve := model.AsValidationError(err)
+			if ve == nil {
+				t.Fatalf("%qのエラー = %v、期待値 = バリデーションエラー", emailOrUsername, err)
+			}
+			if output != nil {
+				t.Errorf("%qのoutput = %+v、期待値 = nil", emailOrUsername, output)
+			}
+			if len(ve.Global) == 0 {
+				t.Errorf("%qのグローバルエラーが1件も無い", emailOrUsername)
+			}
 		}
 	})
 

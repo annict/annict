@@ -63,3 +63,15 @@ func NewTestImageHelper() *image.Helper {
 
 	return image.NewHelper(cfg)
 }
+
+// CountRowsはtableのうちwhereの条件に一致する行数を返す。
+// 削除処理のテストで、行が消えた / 残ったことを確かめるために使う。
+func CountRows(t *testing.T, tx *sql.Tx, table, where string, args ...any) int {
+	t.Helper()
+
+	var count int
+	if err := tx.QueryRow("SELECT COUNT(*) FROM "+table+" WHERE "+where, args...).Scan(&count); err != nil {
+		t.Fatalf("%sの件数の取得に失敗しました: %v", table, err)
+	}
+	return count
+}

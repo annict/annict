@@ -8,3 +8,17 @@ LIMIT 1;
 SELECT COUNT(*)
 FROM activities
 WHERE user_id = $1;
+
+-- name: DeleteActivitiesByUserID :one
+-- ユーザーのアクティビティを最大batch_size件削除し、削除した件数を返す。
+WITH deleted AS (
+    DELETE FROM activities
+    WHERE id IN (
+        SELECT target.id
+        FROM activities AS target
+        WHERE target.user_id = sqlc.arg('user_id')
+        LIMIT sqlc.arg('batch_size')
+    )
+    RETURNING activities.id
+)
+SELECT COUNT(*) FROM deleted;

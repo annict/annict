@@ -56,7 +56,7 @@ description = "年とシーズンの表示形式"
 other = "{{.Year}}年{{.Season}}"
 
 [year_no_season]
-description = "季節が未登録のときの年のみの表示形式"
+description = "季節が未登録のときの年のみの表示形式 (作品一覧の表とリリース時期フィルタの選択肢)"
 other = "{{.Year}}年 (季節未登録)"
 
 # ログイン関連
@@ -375,6 +375,11 @@ other = "リクエストが多すぎます。しばらくしてから再度お�
 [password_reset_email_subject]
 description = "パスワードリセットメールの件名"
 other = "Annict - パスワードリセットのご案内"
+
+# 退会完了メール
+[account_deletion_email_subject]
+description = "退会完了メールの件名"
+other = "Annict - 退会を受け付けました"
 
 # ログインコードメール
 [sign_in_code_email_subject]
@@ -698,9 +703,49 @@ other = "2ヶ月分お得！"
 description = "登録ボタン"
 other = "登録する"
 
+[supporters_monthly_yearly_total]
+description = "月額プランを1年間続けた場合の支払総額の目安"
+other = "1年間続けた場合の総額の目安: ¥3,480"
+
+[supporters_conditions_title]
+description = "申込み前に確認する契約条件の見出し"
+other = "お申し込みの前にご確認ください"
+
+[supporters_conditions_renewal]
+description = "契約条件 - 初回の支払いと自動更新"
+other = "お申し込み時に初回のお支払いが行われ、解約するまで1か月 (月額プラン) または1年 (年額プラン) ごとに自動で更新・請求されます"
+
 [supporters_payment_method]
-description = "支払い方法説明"
-other = "クレジットカードでお支払いいただけます (Stripe決済)"
+description = "契約条件 - 支払い方法"
+other = "クレジットカード (JCBを含む)、Apple Pay、Linkでお支払いいただけます (Stripe決済)"
+
+[supporters_conditions_start]
+description = "契約条件 - 特典の提供時期"
+other = "お支払いが完了すると、すぐに特典をご利用いただけます"
+
+[supporters_conditions_cancellation]
+description = "契約条件 - 解約と解約後の特典"
+other = "登録後はこのページからいつでも解約でき、解約後もお支払い済みの期間が終わるまで特典をご利用いただけます"
+
+[supporters_conditions_refund]
+description = "契約条件 - 返金"
+other = "お支払い済みの料金は返金いたしません (二重に請求した場合など、運営者の責任による場合を除きます)"
+
+[supporters_conditions_account_deletion]
+description = "契約条件 - 退会したときの解約と返金"
+other = "退会すると、その時点で解約され、残りの期間の料金は返金されません"
+
+[supporters_conditions_details]
+description = "契約条件の詳細の参照先の案内"
+other = "支払時期・解約・返金などの詳しい条件は、次のページでご確認いただけます"
+
+[supporters_conditions_legal_notice]
+description = "契約条件の詳細として特定商取引法に基づく表記へ遷移するリンク"
+other = "特定商取引法に基づく表記"
+
+[supporters_conditions_terms]
+description = "契約条件の詳細として利用規約のサポーターの条へ遷移するリンク"
+other = "利用規約 (第11条 サポーター)"
 
 [supporters_gumroad_title]
 description = "Gumroadサポーターセクションタイトル"
@@ -1076,6 +1121,334 @@ other = "非公開"
 [status_deleted]
 description = "公開状態 - 削除"
 other = "削除"
+
+# DB人物一覧ページ
+[db_people_index_title]
+description = "DB人物一覧ページのタイトル"
+other = "人物"
+
+[db_people_index_table_caption]
+description = "DB人物一覧表のキャプションとスクロール領域のaria-label"
+other = "DB人物一覧"
+
+[db_people_index_new_link]
+description = "人物一覧から一括登録ページへのリンク"
+other = "新規登録"
+
+[db_people_index_empty]
+description = "人物一覧の空表示の見出し"
+other = "人物が見つかりませんでした"
+
+[db_people_index_table_id_label]
+description = "人物一覧のテーブルヘッダー - ID"
+other = "ID"
+
+[db_people_index_table_name_label]
+description = "人物一覧のテーブルヘッダー - 名前 (名前・読み・英語名)"
+other = "名前"
+
+[db_people_index_table_status_label]
+description = "人物一覧のテーブルヘッダー - ステータス"
+other = "ステータス"
+
+[db_people_index_status_published]
+description = "人物一覧の状態のバッジ - 公開中"
+other = "公開"
+
+[db_people_index_status_archived]
+description = "人物一覧の状態のバッジ - 非公開"
+other = "非公開"
+
+[db_people_index_status_delisted]
+description = "人物一覧の状態のバッジ - 掲載停止 (管理者にだけ表示)"
+other = "掲載停止"
+
+[db_people_index_table_actions_label]
+description = "人物一覧のテーブルヘッダー - 操作"
+other = "操作"
+
+[db_people_index_id_link_aria_label]
+description = "人物IDリンク (公開ページを新しいタブで開く) のaria-label"
+other = "人物 {{.ID}} を新しいタブで開く"
+
+[db_people_index_action_target_label]
+description = "人物一覧の操作リンクのアクセシブルネームに足す対象人物 (画面には表示しない)"
+other = "人物 {{.ID}}"
+
+[db_people_index_edit_link]
+description = "人物一覧から編集フォームへのリンク"
+other = "編集"
+
+[db_people_index_archive_link]
+description = "人物一覧から非公開確認画面へのリンク (公開中の人物に表示)"
+other = "非公開"
+
+[db_people_index_unarchive_button]
+description = "人物一覧の公開ボタン (非公開の人物に表示)"
+other = "公開"
+
+[db_people_index_unarchive_confirm]
+description = "人物一覧の公開ボタンの確認ダイアログ"
+other = "人物 {{.ID}} を公開しますか？"
+
+[db_people_index_delist_link]
+description = "人物一覧から掲載停止確認画面へのリンク (管理者に表示)"
+other = "掲載停止"
+
+[db_people_index_undelist_link]
+description = "人物一覧から掲載停止解除確認画面へのリンク (掲載停止の人物に表示)"
+other = "掲載再開"
+
+[db_people_index_delete_button]
+description = "人物一覧の削除ボタン (管理者に表示)"
+other = "削除"
+
+[db_people_index_delete_confirm]
+description = "人物一覧の削除ボタンの確認ダイアログ"
+other = "人物 {{.ID}} を削除しますか？"
+
+# DB人物一括登録ページ
+[db_people_new_title]
+description = "DB人物一括登録ページのタイトル"
+other = "人物登録"
+
+[db_people_new_back_to_list_link]
+description = "人物一括登録ページから人物一覧へのリンク"
+other = "一覧に戻る"
+
+[db_people_new_rows_label]
+description = "人物一括登録ページの入力欄 (1行1人) のラベル"
+other = "人物"
+
+[db_people_new_rows_description]
+description = "人物一括登録ページの入力欄の形式の説明"
+other = "1行に1人ずつ、名前と読みをカンマ (,) で区切って入力してください。読みは省略できます。"
+
+[db_people_new_rows_example_label]
+description = "人物一括登録ページの入力例の前置き"
+other = "例: "
+
+[db_people_new_rows_example]
+description = "人物一括登録ページの入力例"
+other = "徳川家康,とくがわいえやす"
+
+[db_people_new_submit]
+description = "人物一括登録ページの送信ボタン"
+other = "登録する"
+
+# DB人物編集ページ
+[db_people_edit_document_title]
+description = "人物を識別できる編集ページの文書タイトル"
+other = "人物編集 | {{.Name}}"
+
+[db_people_edit_person_page_link]
+description = "人物編集ページから公開側の人物ページへのリンク"
+other = "人物ページ"
+
+[db_people_edit_person_page_link_aria_label]
+description = "公開側の人物ページへのリンク (新しいタブで開く) のaria-label"
+other = "人物ページを新しいタブで開く"
+
+[db_people_edit_name_label]
+description = "フォームラベル - 名前"
+other = "名前"
+
+[db_people_edit_name_kana_label]
+description = "フォームラベル - 名前 (かな)"
+other = "名前 (かな)"
+
+[db_people_edit_name_en_label]
+description = "フォームラベル - 名前 (英語)"
+other = "名前 (英語)"
+
+[db_people_edit_nickname_label]
+description = "フォームラベル - ニックネーム"
+other = "ニックネーム"
+
+[db_people_edit_nickname_en_label]
+description = "フォームラベル - ニックネーム (英語)"
+other = "ニックネーム (英語)"
+
+[db_people_edit_gender_label]
+description = "フォームラベル - 性別"
+other = "性別"
+
+[db_people_edit_blood_type_label]
+description = "フォームラベル - 血液型"
+other = "血液型"
+
+[db_people_edit_prefecture_label]
+description = "フォームラベル - 出身地"
+other = "出身地"
+
+[db_people_edit_birthday_label]
+description = "フォームラベル - 誕生日"
+other = "誕生日"
+
+[db_people_edit_height_label]
+description = "フォームラベル - 身長 (cm)"
+other = "身長 (cm)"
+
+[db_people_edit_url_label]
+description = "フォームラベル - URL"
+other = "URL"
+
+[db_people_edit_url_en_label]
+description = "フォームラベル - URL (英語)"
+other = "URL (英語)"
+
+[db_people_edit_wikipedia_url_label]
+description = "フォームラベル - Wikipedia URL"
+other = "Wikipedia URL"
+
+[db_people_edit_wikipedia_url_en_label]
+description = "フォームラベル - Wikipedia URL (英語)"
+other = "Wikipedia URL (英語)"
+
+[db_people_edit_twitter_username_label]
+description = "フォームラベル - Xユーザー名"
+other = "Xユーザー名"
+
+[db_people_edit_twitter_username_en_label]
+description = "フォームラベル - Xユーザー名 (英語)"
+other = "Xユーザー名 (英語)"
+
+[db_people_edit_conflict_heading]
+description = "人物編集ページで、競合時に表示する保存済みの内容の見出し"
+other = "現在保存されている内容"
+
+[db_people_edit_conflict_no_field_changes]
+description = "人物編集ページで、競合したが本フォームの項目には違いが無かったときの説明"
+other = "このフォームで編集できる項目に違いはありません。公開状態など、フォームの外で変更された可能性があります。"
+
+[db_people_edit_conflict_help]
+description = "人物編集ページで、競合時に取りうる対処を述べる説明"
+other = "入力した内容は下のフォームにそのまま残しています。現在保存されている内容と見比べて、入力した内容で問題なければもう一度更新してください。上の内容をそのまま残す場合は、更新せずにページを離れてください。"
+
+[db_people_edit_submit]
+description = "人物編集ページの送信ボタン"
+other = "更新する"
+
+# DB人物の非公開・公開・削除・掲載停止・掲載停止解除の確認ページ
+[db_people_archive_new_document_title]
+description = "人物を識別できる非公開確認ページの文書タイトル"
+other = "人物非公開 | {{.Name}}"
+
+[db_people_archive_new_confirm_message]
+description = "人物非公開確認ページの確認メッセージ"
+other = "「{{.Name}}」を非公開にしますか？"
+
+[db_people_archive_new_help]
+description = "人物非公開確認ページで、非公開にすると何が起きるかを述べる説明"
+other = "非公開にすると、この人物は人物ページや作品のキャスト・スタッフに表示されなくなります。あとから一覧の「公開」から元に戻せます。"
+
+[db_people_archive_new_submit]
+description = "人物非公開確認ページの実行ボタン"
+other = "非公開にする"
+
+[db_people_archive_new_cancel_link]
+description = "人物非公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_people_unarchive_new_document_title]
+description = "人物を識別できる公開確認ページの文書タイトル"
+other = "人物公開 | {{.Name}}"
+
+[db_people_unarchive_new_confirm_message]
+description = "人物公開確認ページの確認メッセージ"
+other = "「{{.Name}}」を公開しますか？"
+
+[db_people_unarchive_new_submit]
+description = "人物公開確認ページの実行ボタン"
+other = "公開する"
+
+[db_people_unarchive_new_cancel_link]
+description = "人物公開確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_people_deletion_new_document_title]
+description = "人物を識別できる削除確認ページの文書タイトル"
+other = "人物削除 | {{.Name}}"
+
+[db_people_deletion_new_confirm_message]
+description = "人物削除確認ページの確認メッセージ"
+other = "「{{.Name}}」を削除しますか？"
+
+[db_people_deletion_new_help]
+description = "人物削除確認ページで、削除すると何が起きるかを述べる説明"
+other = "削除すると、この人物は一覧を含むすべてのページに表示されなくなり、画面から元に戻すことはできません。"
+
+[db_people_deletion_new_submit]
+description = "人物削除確認ページの実行ボタン"
+other = "削除する"
+
+[db_people_deletion_new_cancel_link]
+description = "人物削除確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_people_delisting_new_document_title]
+description = "人物を識別できる掲載停止確認ページの文書タイトル"
+other = "人物掲載停止 | {{.Name}}"
+
+[db_people_delisting_new_confirm_message]
+description = "人物掲載停止確認ページの確認メッセージ"
+other = "「{{.Name}}」の掲載を停止しますか？"
+
+[db_people_delisting_new_help]
+description = "人物掲載停止確認ページで、掲載を停止すると何が起きるかを述べる説明"
+other = "掲載を停止すると、この人物は人物ページ・作品のキャストとスタッフ・Web API・Annict DBの一覧 (管理者を除く) に表示されなくなり、同じ名前の人物は登録できなくなります。あとから一覧の「掲載再開」で元に戻せます。"
+
+[db_people_delisting_new_delist_message_label]
+description = "人物掲載停止確認ページの対応記録の入力欄のラベル"
+other = "対応記録"
+
+[db_people_delisting_new_delist_message_hint]
+description = "人物掲載停止確認ページの対応記録の入力欄の説明"
+other = "申出の経緯や対応日などを記録します。管理者だけが参照できます。"
+
+[db_people_delisting_new_saved_delist_message_heading]
+description = "人物掲載停止確認ページで、競合した送信と異なる保存済みの対応記録の見出し"
+other = "保存済みの対応記録"
+
+[db_people_delisting_new_saved_delist_message_empty]
+description = "人物掲載停止確認ページで、競合した送信と比べる保存済みの対応記録が無いときの表示"
+other = "保存済みの対応記録はありません。"
+
+[db_people_delisting_new_submit]
+description = "人物掲載停止確認ページの実行ボタン"
+other = "掲載を停止する"
+
+[db_people_delisting_new_cancel_link]
+description = "人物掲載停止確認ページのキャンセルリンク"
+other = "キャンセル"
+
+[db_people_undelisting_new_document_title]
+description = "人物を識別できる掲載停止解除確認ページの文書タイトル"
+other = "人物掲載停止解除 | {{.Name}}"
+
+[db_people_undelisting_new_confirm_message]
+description = "人物掲載停止解除確認ページの確認メッセージ"
+other = "「{{.Name}}」の掲載停止を解除しますか？"
+
+[db_people_undelisting_new_help]
+description = "人物掲載停止解除確認ページで、解除すると何が起きるかを述べる説明"
+other = "解除すると、この人物は公開中に戻り、人物ページや作品のキャスト・スタッフに再び表示されます。対応記録は残ります。"
+
+[db_people_undelisting_new_delist_message_heading]
+description = "人物掲載停止解除確認ページの対応記録の見出し"
+other = "対応記録"
+
+[db_people_undelisting_new_delist_message_empty]
+description = "人物掲載停止解除確認ページで、対応記録が無いときの表示"
+other = "対応記録はありません。"
+
+[db_people_undelisting_new_submit]
+description = "人物掲載停止解除確認ページの実行ボタン"
+other = "掲載停止を解除する"
+
+[db_people_undelisting_new_cancel_link]
+description = "人物掲載停止解除確認ページのキャンセルリンク"
+other = "キャンセル"
 
 # DB作品一覧ページ
 [db_works_index_title]
@@ -1866,6 +2239,34 @@ other = "エピソードを公開しました"
 description = "エピソード削除成功メッセージ"
 other = "エピソードを削除しました"
 
+[flash_db_people_created]
+description = "人物一括登録成功メッセージ"
+other = "人物を登録しました"
+
+[flash_db_person_updated]
+description = "人物更新成功メッセージ"
+other = "人物を更新しました"
+
+[flash_db_person_archived]
+description = "人物非公開成功メッセージ"
+other = "人物を非公開にしました"
+
+[flash_db_person_unarchived]
+description = "人物公開成功メッセージ"
+other = "人物を公開しました"
+
+[flash_db_person_deleted]
+description = "人物削除成功メッセージ"
+other = "人物を削除しました"
+
+[flash_db_person_delisted]
+description = "人物掲載停止成功メッセージ"
+other = "人物の掲載を停止しました"
+
+[flash_db_person_undelisted]
+description = "人物掲載停止解除成功メッセージ"
+other = "人物の掲載停止を解除しました"
+
 # バリデーション共通メッセージ
 [validation_required]
 description = "必須フィールドのバリデーションエラー"
@@ -1959,6 +2360,78 @@ other = "タイトルは{{.MaxLength}}文字以内で入力してください"
 description = "エピソードの行の話数が数値ではない"
 other = "話数は数値で入力してください"
 
+[validation_person_row_error]
+description = "人物の行入力のエラーに行番号を添える書式"
+other = "{{.Line}} 行目: {{.Message}}"
+
+[validation_person_row_error_with_name]
+description = "人物の行入力のエラーに行番号と、その行に入力された名前を添える書式"
+other = "{{.Line}} 行目「{{.Name}}」: {{.Message}}"
+
+[validation_person_rows_too_many]
+description = "人物一括登録フォームの行数が1回の上限を超えている"
+other = "一度に登録する人物は{{.MaxRows}}件以内にしてください"
+
+[validation_person_row_name_required]
+description = "人物の行に名前が入力されていない"
+other = "名前を入力してください"
+
+[validation_person_row_too_many_columns]
+description = "人物の行に名前と読みより多くの列が入力されている"
+other = "入力できるのは名前と読みの{{.MaxColumns}}列までです"
+
+[validation_person_row_name_duplicated]
+description = "人物の行の名前が、同じ送信の前の行と重複している"
+other = "同じ名前が{{.Line}} 行目にもあります"
+
+[validation_person_row_name_already_taken]
+description = "同じ名前の人物が既に登録されている"
+other = "この名前の人物は既に登録されています"
+
+[validation_person_name_already_taken]
+description = "編集した人物の名前が、別の人物の名前として既に登録されている"
+other = "この名前の人物は既に登録されています"
+
+[validation_person_name_delisted]
+description = "登録・編集した人物の名前が、掲載を停止した人物の名前と重複している"
+other = "この人物は掲載を停止しています。関係者に関わる事情のため、停止の詳細はお伝えできません。ご理解いただけますと幸いです。"
+
+[validation_person_gender_invalid]
+description = "人物の性別が許可値の範囲外"
+other = "正しい性別を選択してください"
+
+[validation_person_blood_type_invalid]
+description = "人物の血液型が許可値の範囲外"
+other = "正しい血液型を選択してください"
+
+[validation_person_prefecture_invalid]
+description = "人物の出身地が登録されていない"
+other = "正しい出身地を選択してください"
+
+[person_gender_male]
+description = "人物の性別 - 男性"
+other = "男性"
+
+[person_gender_female]
+description = "人物の性別 - 女性"
+other = "女性"
+
+[person_blood_type_a]
+description = "人物の血液型 - A型"
+other = "A型"
+
+[person_blood_type_b]
+description = "人物の血液型 - B型"
+other = "B型"
+
+[person_blood_type_ab]
+description = "人物の血液型 - AB型"
+other = "AB型"
+
+[person_blood_type_o]
+description = "人物の血液型 - O型"
+other = "O型"
+
 [media_tv]
 description = "メディア種別 - TV"
 other = "TV"
@@ -1978,6 +2451,67 @@ other = "Web"
 [media_other]
 description = "メディア種別 - その他"
 other = "その他"
+
+# 法的文書のページ
+[legal_document_show_terms_title]
+description = "利用規約のページのタイトル"
+other = "利用規約"
+
+[legal_document_show_terms_heading]
+description = "利用規約のページの見出し"
+other = "利用規約"
+
+[legal_document_show_api_terms_title]
+description = "API利用規約のページのタイトル"
+other = "API利用規約"
+
+[legal_document_show_api_terms_heading]
+description = "API利用規約のページの見出し"
+other = "API利用規約"
+
+[legal_document_show_privacy_policy_title]
+description = "プライバシーポリシーのページのタイトル"
+other = "プライバシーポリシー"
+
+[legal_document_show_privacy_policy_heading]
+description = "プライバシーポリシーのページの見出し"
+other = "プライバシーポリシー"
+
+[legal_document_show_specified_commercial_transactions_title]
+description = "特定商取引法に基づく表記のページのタイトル"
+other = "特定商取引法に基づく表記"
+
+[legal_document_show_specified_commercial_transactions_heading]
+description = "特定商取引法に基づく表記のページの見出し"
+other = "特定商取引法に基づく表記"
+
+[legal_document_show_language_switcher_label]
+description = "法的文書のページの言語切替リンクのナビゲーションのラベル"
+other = "言語"
+
+[legal_document_show_date]
+description = "法的文書のページの日付の表示形式 (施行日・適用期間)"
+other = "{{.Year}}年{{.Month}}月{{.Day}}日"
+
+[legal_document_show_archive_title]
+description = "法的文書の改定前の版のページのタイトル"
+other = "{{.Title}} ({{.EffectiveOn}}施行版)"
+
+[legal_document_show_archive_heading]
+description = "法的文書の改定前の版のページの見出し"
+other = "{{.Heading}} ({{.EffectiveOn}}施行版)"
+
+[legal_document_show_archive_notice_heading]
+description = "法的文書の改定前の版のページの注意書きの見出し"
+other = "この文書は改定前の版です"
+
+[legal_document_show_archive_notice_period]
+description = "法的文書の改定前の版のページの注意書き - 版の適用期間"
+other = "この版の適用期間は{{.EffectiveOn}}から{{.EndedOn}}までです。"
+
+[legal_document_show_archive_current_version_link]
+description = "法的文書の改定前の版のページの注意書き - 現行の版へのリンク"
+other = "現行の版を見る"
 
 # フッター関連
 [footer_terms]
@@ -2004,6 +2538,10 @@ other = "ユーザーが見つかりませんでした"
 [error_work_not_found]
 description = "作品が見つからない場合のエラーメッセージ"
 other = "作品が見つかりませんでした"
+
+[error_person_not_found]
+description = "人物が見つからない場合のエラーメッセージ"
+other = "人物が見つかりませんでした"
 
 [error_episode_not_found]
 description = "エピソードが見つからない場合のエラーメッセージ"
@@ -2033,6 +2571,14 @@ other = "サービスに接続できません"
 description = "汎用502エラーページの説明"
 other = "しばらくしてから、もう一度お試しください。"
 
+[error_too_many_requests_title]
+description = "汎用429エラーページのタイトル"
+other = "アクセスが集中しています"
+
+[error_too_many_requests_message]
+description = "汎用429エラーページの説明"
+other = "短い時間に多くのリクエストが送られたため、一時的にアクセスを制限しています。1分ほど待ってから、もう一度お試しください。"
+
 [error_internal_server_title]
 description = "汎用500エラーページのタイトル"
 other = "問題が発生しました"
@@ -2052,3 +2598,129 @@ other = "ページを開いたまま時間が経ったか、別のタブでロ�
 [error_back_to_home]
 description = "汎用エラーページからホームへ戻るリンク"
 other = "ホームに戻る"
+
+# 退会の確認ページ
+[settings_account_deletion_new_title]
+description = "退会の確認ページのタイトル"
+other = "アカウントの削除"
+
+[settings_account_deletion_new_heading]
+description = "退会の確認ページの見出し"
+other = "アカウントの削除"
+
+[settings_account_deletion_new_description]
+description = "退会の確認ページの導入文"
+other = "退会すると、アカウントと次のデータを削除します。削除したデータは元に戻せません。"
+
+[settings_account_deletion_new_deleted_heading]
+description = "退会の確認ページの削除されるものの見出し"
+other = "削除されるもの"
+
+[settings_account_deletion_new_deleted_account]
+description = "退会の確認ページの削除されるもの (アカウント情報)"
+other = "アカウント情報 (ユーザー名・メールアドレス・プロフィール・プロフィール画像・設定)"
+
+[settings_account_deletion_new_deleted_records]
+description = "退会の確認ページの削除されるもの (記録)"
+other = "記録・感想・ステータス・ライブラリ"
+
+[settings_account_deletion_new_deleted_social]
+description = "退会の確認ページの削除されるもの (交流)"
+other = "いいね・コメント・フォロー・お気に入り・コレクション・通知"
+
+[settings_account_deletion_new_deleted_forum]
+description = "退会の確認ページの削除されるもの (フォーラム)"
+other = "自分が立てたフォーラムのスレッド (ほかの人のコメントを含む)"
+
+[settings_account_deletion_new_deleted_db]
+description = "退会の確認ページの削除されるもの (Annict DB)"
+other = "Annict DBの編集履歴とコメント"
+
+[settings_account_deletion_new_deleted_api]
+description = "退会の確認ページの削除されるもの (API)"
+other = "APIのアクセストークンと、連携しているアプリケーションへの認可"
+
+[settings_account_deletion_new_kept_heading]
+description = "退会の確認ページの退会後も残るものの見出し"
+other = "退会後も残るもの"
+
+[settings_account_deletion_new_kept_mentions]
+description = "退会の確認ページの退会後も残るもの (ユーザー名の文字列)"
+other = "ほかの人の投稿の中に書かれた、あなたのユーザー名の文字列"
+
+[settings_account_deletion_new_kept_forum_comments]
+description = "退会の確認ページの退会後も残るもの (フォーラムのコメント)"
+other = "ほかの人のスレッドに書いたフォーラムのコメントの本文 (あなたのアカウントとの紐づきは外れます)"
+
+[settings_account_deletion_new_kept_db_values]
+description = "退会の確認ページの退会後も残るもの (Annict DBの作品データ)"
+other = "Annict DBで編集した作品データの内容"
+
+[settings_account_deletion_new_kept_work_images]
+description = "退会の確認ページの退会後も残るもの (作品画像)"
+other = "アップロードした作品画像 (あなたのアカウントとの紐づきは外れます)"
+
+[settings_account_deletion_new_stripe_supporter_heading]
+description = "退会の確認ページのStripeのサポーター向けの注意の見出し"
+other = "サポーター契約は即時に解約されます"
+
+[settings_account_deletion_new_stripe_supporter_description]
+description = "退会の確認ページのStripeのサポーター向けの注意"
+other = "退会すると、サポーターのサブスクリプションを即時に解約します。残りの期間の料金は返金されません。"
+
+[settings_account_deletion_new_gumroad_supporter_heading]
+description = "退会の確認ページのGumroadのサポーター向けの注意の見出し"
+other = "Gumroadでの解約が必要です"
+
+[settings_account_deletion_new_gumroad_supporter_description]
+description = "退会の確認ページのGumroadのサポーター向けの注意"
+other = "Gumroadで登録したサポーターのサブスクリプションは、Annictからは解約できません。Gumroadで解約してください。"
+
+[settings_account_deletion_new_oauth_applications_heading]
+description = "退会の確認ページのOAuthアプリケーションが残っている場合の見出し"
+other = "作成したアプリケーションが残っているため、退会できません"
+
+[settings_account_deletion_new_oauth_applications_description]
+description = "退会の確認ページのOAuthアプリケーションが残っている場合の案内"
+other = "アプリケーションの管理ページで、作成したアプリケーションをすべて削除してから、もう一度このページを開いてください。"
+
+[settings_account_deletion_new_oauth_applications]
+description = "退会の確認ページからアプリケーションの管理ページへのリンク"
+other = "アプリケーションの管理ページへ"
+
+[validation_account_deletion_oauth_applications_kept]
+description = "退会の受付でOAuthアプリケーションが残っている場合のエラー"
+other = "作成したアプリケーションが残っているため、退会できません"
+
+[validation_account_deletion_username_mismatch]
+description = "退会の受付で入力したユーザー名が一致しない場合のエラー"
+other = "ユーザー名が一致しません"
+
+[settings_account_deletion_new_username_label]
+description = "退会の確認ページのユーザー名の入力欄のラベル"
+other = "確認のため、ユーザー名「{{.Username}}」を入力してください"
+
+[settings_account_deletion_new_submit_button]
+description = "退会の確認ページの退会ボタン"
+other = "退会する"
+
+# 退会の完了ページ
+[settings_account_deletion_completion_show_title]
+description = "退会の完了ページのタイトル"
+other = "退会を受け付けました"
+
+[settings_account_deletion_completion_show_heading]
+description = "退会の完了ページの見出し"
+other = "退会を受け付けました"
+
+[settings_account_deletion_completion_show_description]
+description = "退会の完了ページの説明"
+other = "アカウントの削除を受け付けました。データの削除は順次行います。"
+
+[settings_account_deletion_completion_show_thanks]
+description = "退会の完了ページのお礼"
+other = "これまでAnnictを使っていただき、ありがとうございました。"
+
+[settings_account_deletion_completion_show_back_to_home]
+description = "退会の完了ページからトップページへのリンク"
+other = "トップページへ"

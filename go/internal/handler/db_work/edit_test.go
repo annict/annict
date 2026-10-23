@@ -42,7 +42,7 @@ func TestEdit(t *testing.T) {
 	r := chi.NewRouter()
 	r.Get("/db/works/{id}/edit", handler.Edit)
 
-	req := httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/edit", int64(workID)), nil)
+	req := withCommitterUser(httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/edit", int64(workID)), nil))
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, req)
 
@@ -91,7 +91,7 @@ func TestEdit_NotFound(t *testing.T) {
 	r := chi.NewRouter()
 	r.Get("/db/works/{id}/edit", handler.Edit)
 
-	req := httptest.NewRequest("GET", "/db/works/999999999/edit", nil)
+	req := withCommitterUser(httptest.NewRequest("GET", "/db/works/999999999/edit", nil))
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, req)
 
@@ -176,6 +176,22 @@ func TestEdit_RequiresCommitter(t *testing.T) {
 	}
 }
 
+// TestEdit_ForbiddenWithoutMiddlewareはUseCaseの認可失敗が403ページになることを検証する。
+func TestEdit_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("編集フォーム認可境界テスト").Build()
+	handler := newTestHandler(t, db, tx)
+	r := chi.NewRouter()
+	r.Get("/db/works/{id}/edit", handler.Edit)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/edit", int64(workID)), nil))
+
+	assertForbiddenPage(t, rr)
+}
+
 // TestEdit_DocumentTitleWithoutWorkNameは、タイトルが空白文字だけの作品では文書タイトルが
 // 画面名だけになることを検証する。見出しがフォールバックする名前と同じものになる。
 func TestEdit_DocumentTitleWithoutWorkName(t *testing.T) {
@@ -188,7 +204,7 @@ func TestEdit_DocumentTitleWithoutWorkName(t *testing.T) {
 	r := chi.NewRouter()
 	r.Get("/db/works/{id}/edit", handler.Edit)
 
-	req := httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/edit", int64(workID)), nil)
+	req := withCommitterUser(httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/edit", int64(workID)), nil))
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, req)
 

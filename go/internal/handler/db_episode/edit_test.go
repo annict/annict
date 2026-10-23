@@ -18,14 +18,16 @@ import (
 )
 
 // newEditRequestはエピソード編集フォームへのGETリクエストを、chiがルートパターンから
-// 取り出すidのURLパラメータ付きで組み立てる。
+// 取り出すidのURLパラメータと、ルートのミドルウェアを通過したcommitterのユーザー付きで
+// 組み立てる。
 func newEditRequest(episodeID model.EpisodeID) *http.Request {
 	req := httptest.NewRequest("GET", fmt.Sprintf("/db/episodes/%d/edit", int64(episodeID)), nil)
 
 	routeCtx := chi.NewRouteContext()
 	routeCtx.URLParams.Add("id", fmt.Sprintf("%d", int64(episodeID)))
 
-	return req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, routeCtx))
+	req = req.WithContext(context.WithValue(req.Context(), chi.RouteCtxKey, routeCtx))
+	return withCreateTestUser(req, &model.User{ID: 1, Role: model.RoleEditor})
 }
 
 func TestEdit(t *testing.T) {
@@ -263,4 +265,22 @@ func TestEdit_RequiresCommitter(t *testing.T) {
 			}
 		})
 	}
+}
+
+// TestEdit_ForbiddenWithoutMiddlewareは既存エピソードの編集フォームをUseCaseが拒否し、
+// Handlerが403ページに変換することを検証する。
+func TestEdit_ForbiddenWithoutMiddleware(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("編集フォーム認可境界テスト").Build()
+	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+	handler := newTestHandler(t, db, tx)
+	r := chi.NewRouter()
+	r.Get("/db/episodes/{id}/edit", handler.Edit)
+
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, httptest.NewRequest("GET", fmt.Sprintf("/db/episodes/%d/edit", int64(episodeID)), nil))
+
+	assertForbiddenPage(t, rr)
 }

@@ -47,9 +47,10 @@ func (r *SessionRepository) GetSessionByID(ctx context.Context, sessionID string
 	return toSessionModel(row), nil
 }
 
-// GetUserByIDはユーザーIDからユーザー情報を取得します
-func (r *SessionRepository) GetUserByID(ctx context.Context, userID model.UserID) (*model.User, error) {
-	row, err := r.queries.GetUserByID(ctx, int64(userID))
+// GetActiveUserByIDはユーザーIDから論理削除されていないユーザーの情報を取得します。
+// 削除済みのユーザーはsql.ErrNoRowsを返します。
+func (r *SessionRepository) GetActiveUserByID(ctx context.Context, userID model.UserID) (*model.User, error) {
+	row, err := r.queries.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		return nil, err
 	}
@@ -116,6 +117,22 @@ func (r *SessionRepository) DeleteSession(ctx context.Context, sessionID string)
 // time.Timeのゼロ値を渡す。削除が0件のときの最大値はlowerBoundをそのまま返す。
 func (r *SessionRepository) DeleteExpired(ctx context.Context, cutoff, lowerBound time.Time, limit int32) (int64, time.Time, error) {
 	row, err := r.queries.DeleteExpiredSessions(ctx, query.DeleteExpiredSessionsParams{
+		LowerBound: lowerBound,
+		Cutoff:     cutoff,
+		BatchSize:  limit,
+	})
+	if err != nil {
+		return 0, time.Time{}, err
+	}
+	return row.DeletedCount, row.MaxUpdatedAt, nil
+}
+
+// DeleteAnonymousはログインしていないセッションのうち、updated_atがlowerBound以上かつ
+// cutoffより古いものを最大limit件削除し、削除した件数と、削除した行のupdated_atの最大値を
+// 返す。ログイン済みのセッションは範囲内でも削除しない。limitとlowerBoundの扱いは
+// DeleteExpiredと同じで、削除が0件のときの最大値はlowerBoundをそのまま返す。
+func (r *SessionRepository) DeleteAnonymous(ctx context.Context, cutoff, lowerBound time.Time, limit int32) (int64, time.Time, error) {
+	row, err := r.queries.DeleteAnonymousSessions(ctx, query.DeleteAnonymousSessionsParams{
 		LowerBound: lowerBound,
 		Cutoff:     cutoff,
 		BatchSize:  limit,

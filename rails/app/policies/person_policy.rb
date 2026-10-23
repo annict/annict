@@ -2,10 +2,6 @@
 # frozen_string_literal: true
 
 class PersonPolicy < ApplicationPolicy
-  def create?
-    user.present? && user.committer?
-  end
-
   def update?
     user.present? && user.committer?
   end

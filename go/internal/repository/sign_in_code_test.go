@@ -2,6 +2,8 @@ package repository_test
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"testing"
 	"time"
 
@@ -98,6 +100,37 @@ func TestSignInCodeRepository_GetValidByUserID(t *testing.T) {
 	}
 	if got.CodeDigest != "valid-digest" {
 		t.Errorf("CodeDigest = %v、期待値 = valid-digest", got.CodeDigest)
+	}
+}
+
+// TestSignInCodeRepository_GetValidByUserID_DeletedUserはコードの発行後に削除されたユーザーのコードを取得できないことをテスト
+func TestSignInCodeRepository_GetValidByUserID_DeletedUser(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewSignInCodeRepository(queries)
+
+	userID := testutil.NewUserBuilder(t, tx).Build()
+
+	if _, err := repo.Create(context.Background(), repository.SignInCodeCreateParams{
+		UserID:     userID,
+		CodeDigest: "deleted-user-digest",
+		ExpiresAt:  time.Now().Add(15 * time.Minute),
+	}); err != nil {
+		t.Fatalf("Createに失敗: %v", err)
+	}
+
+	if _, err := tx.Exec(`UPDATE users SET deleted_at = NOW() WHERE id = $1`, int64(userID)); err != nil {
+		t.Fatalf("ユーザーの論理削除に失敗: %v", err)
+	}
+
+	got, err := repo.GetValidByUserID(context.Background(), userID)
+	if !errors.Is(err, sql.ErrNoRows) {
+		t.Errorf("エラー = %v、期待値 = sql.ErrNoRows", err)
+	}
+	if got != nil {
+		t.Errorf("コード = %+v、期待値 = nil", got)
 	}
 }
 

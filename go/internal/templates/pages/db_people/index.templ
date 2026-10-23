@@ -1,0 +1,280 @@
+package db_people
+
+import (
+	"context"
+
+	"github.com/a-h/templ"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+type IndexPageData struct {
+	People     []viewmodel.DBPersonListItem
+	Pagination viewmodel.Pagination
+	// IsCommitterは見出しの「新規登録」と操作列の出し分けに使う。人物一覧自体は公開の
+	// ため、未ログインや一般ユーザーではfalseになり、そのときは見出しの操作コンテナと
+	// 操作列自体を描画しない。
+	IsCommitter bool
+	// IsAdminは操作列の掲載停止と削除の操作の出し分けに使う (どちらも管理者に限る)。
+	IsAdmin bool
+	// CSRFTokenは操作列のアーカイブ解除・削除ボタンがhtmxのリクエストヘッダーで送る。
+	CSRFToken string
+}
+
+// newPersonActionは見出しの横に表示する操作を返し、操作を出さない閲覧者にはnilを
+// 返す。作品一覧と同じく、nilのときMainTitleは操作のコンテナを描画しない。
+func (d IndexPageData) newPersonAction() templ.Component {
+	if !d.IsCommitter {
+		return nil
+	}
+
+	return indexNewButton()
+}
+
+// tableMinWidthClassはコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
+// 操作列はその下限に自身の固定幅 (w-24) を上乗せし、幅指定の無い名前列が、操作を見る
+// 閲覧者にも見ない閲覧者にも同じ幅を保てるようにする。
+func (d IndexPageData) tableMinWidthClass() string {
+	if d.IsCommitter {
+		return "min-w-[480px]"
+	}
+
+	return "min-w-[384px]"
+}
+
+templ Index(data IndexPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   templates.T(ctx, "db_people_index_title"),
+					Actions: data.newPersonAction(),
+				})
+			</div>
+		</div>
+
+		@components.ContentCard("") {
+			if len(data.People) == 0 {
+				@components.Empty(templates.T(ctx, "db_people_index_empty"), "")
+			} else {
+				<div class="flex flex-col gap-4">
+					<div
+						class="overflow-x-auto"
+						role="region"
+						aria-label={ templates.T(ctx, "db_people_index_table_caption") }
+						tabindex="0"
+					>
+						<table class={ "table table-fixed [&_th]:px-1 [&_td]:px-1", data.tableMinWidthClass() }>
+							<caption class="sr-only">
+								{ templates.T(ctx, "db_people_index_table_caption") }
+							</caption>
+							// 作品一覧と同じく固定列幅にし、幅指定の無い名前列だけが残り幅を吸収する。
+							<colgroup>
+								<col class="w-24"/>
+								<col/>
+								<col class="w-24"/>
+								if data.IsCommitter {
+									<col class="w-24"/>
+								}
+							</colgroup>
+							<thead>
+								<tr>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_people_index_table_id_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_people_index_table_name_label") }</th>
+									<th scope="col" class="text-left">{ templates.T(ctx, "db_people_index_table_status_label") }</th>
+									if data.IsCommitter {
+										<th scope="col" class="text-center">{ templates.T(ctx, "db_people_index_table_actions_label") }</th>
+									}
+								</tr>
+							</thead>
+							<tbody>
+								for _, person := range data.People {
+									<tr>
+										<td>
+								if person.Status == viewmodel.DBPersonStatusDelisted {
+									<span>{ person.ID.String() }</span>
+								} else {
+								<a
+												href={ templates.PersonPath(person.ID).SafeURL() }
+												target="_blank"
+												rel="noopener"
+												aria-label={ templates.T(ctx, "db_people_index_id_link_aria_label", map[string]any{"ID": person.ID.String()}) }
+												class="text-primary hover:underline inline-flex items-center gap-1"
+											>
+												{ person.ID.String() }
+												@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
+											</a>
+								}
+										</td>
+										<td class="whitespace-normal [overflow-wrap:anywhere]">
+											<div>{ person.Name }</div>
+											<div class="text-muted-foreground">{ valueOrDash(person.NameKana) }</div>
+											<div class="text-muted-foreground">{ valueOrDash(person.NameEn) }</div>
+										</td>
+										<td>
+											@statusLabel(person.Status)
+										</td>
+										if data.IsCommitter {
+											<td class="text-center">
+												@actionButtons(data, person)
+											</td>
+										}
+									</tr>
+								}
+							</tbody>
+						</table>
+					</div>
+
+					@components.Pagination(data.Pagination)
+				</div>
+			}
+		}
+	</div>
+}
+
+// missingValuePlaceholderは人物の読み・英語名が未設定のときに表示する。空の値が
+// 描画漏れに見えず「未登録」と読めるようにするため。
+const missingValuePlaceholder = "-"
+
+// valueOrDashはvalueを、空のときはプレースホルダーを返す。
+func valueOrDash(value string) string {
+	if value == "" {
+		return missingValuePlaceholder
+	}
+
+	return value
+}
+
+// statusLabelは人物の状態をバッジとして描画する。components.StatusLabelと同じ見た目にし、
+// 作品一覧に無い掲載停止も表示する。未知の値では何も描画しない。
+templ statusLabel(status viewmodel.DBPersonStatus) {
+	switch status {
+		case viewmodel.DBPersonStatusPublished:
+			<span class="badge" data-variant="success">{ templates.T(ctx, "db_people_index_status_published") }</span>
+		case viewmodel.DBPersonStatusArchived:
+			<span class="badge" data-variant="warning">{ templates.T(ctx, "db_people_index_status_archived") }</span>
+		case viewmodel.DBPersonStatusDelisted:
+			<span class="badge" data-variant="destructive">{ templates.T(ctx, "db_people_index_status_delisted") }</span>
+	}
+}
+
+// actionButtonsは人物一覧の行ごとの操作列を描画する。committerにだけ呼ばれる。編集リンクと、
+// アーカイブ (公開中の行) またはアーカイブ解除 (アーカイブの行) の操作を出し、管理者にはさらに
+// 掲載停止と削除の操作を出す。作品一覧と同じく、アーカイブは確認画面への素のリンクで、アーカイブ解除・
+// 削除は確認ダイアログ付きのhtmx DELETEボタンにする。CSRFトークンはX-CSRF-Tokenヘッダーで送り、ハンドラーがHX-Redirectを
+// 返してhtmxが一覧へ遷移する。掲載停止は対応記録を入力させるため、確認画面への素のリンクにする。
+//
+// 掲載停止の行 (管理者にだけ表示される) には、掲載停止の解除の確認画面へのリンクだけを出す。
+// 解除するかを対応記録に照らして判断できるよう、ダイアログではなく記録を示す確認画面に送る。
+// 編集・アーカイブ・削除を出さないのは、名前を変えると掲載停止が同じ名前での再登録を防げなくなり、
+// 削除すると名前の一意性の対象から外れるため。
+//
+// 作品一覧と同じく、各コントロールは視覚的に隠したテキストで対象の人物をIDで名指しし、
+// アーカイブ解除・削除では確認文でも名指しする。スクリーンリーダーが行から切り離してコントロールを
+// 列挙したときに「編集」とだけ読めるコントロールが並ばず、確認ダイアログもどの行から押された
+// かを述べるようにするため。名指しには行のIDリンクと同じくIDを使う。
+templ actionButtons(data IndexPageData, person viewmodel.DBPersonListItem) {
+	<div class="flex flex-col items-stretch gap-1.5">
+		if person.Status == viewmodel.DBPersonStatusDelisted {
+			<a
+				href={ templates.DBPersonUndelistingNewPath(person.ID).SafeURL() }
+				class="btn rounded-full"
+				data-variant="success"
+				data-size="sm"
+			>
+				{ templates.T(ctx, "db_people_index_undelist_link") }
+				@actionTarget(person)
+			</a>
+		} else {
+			@viewableActionButtons(data, person)
+		}
+	</div>
+}
+
+// viewableActionButtonsは公開中と非公開の行の操作を描画する。
+templ viewableActionButtons(data IndexPageData, person viewmodel.DBPersonListItem) {
+	<a
+		href={ templates.DBPersonEditPath(person.ID).SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		{ templates.T(ctx, "db_people_index_edit_link") }
+		@actionTarget(person)
+	</a>
+	switch person.Status {
+		case viewmodel.DBPersonStatusPublished:
+			<a
+				href={ templates.DBPersonArchiveNewPath(person.ID).SafeURL() }
+				class="btn rounded-full"
+				data-variant="warning"
+				data-size="sm"
+			>
+				{ templates.T(ctx, "db_people_index_archive_link") }
+				@actionTarget(person)
+			</a>
+		case viewmodel.DBPersonStatusArchived:
+			<button
+				type="button"
+				class="btn rounded-full"
+				data-variant="success"
+				data-size="sm"
+				hx-delete={ templates.DBPersonArchivePath(person.ID).String() }
+				hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+				hx-confirm={ templates.T(ctx, "db_people_index_unarchive_confirm", map[string]any{"ID": person.ID.String()}) }
+			>
+				{ templates.T(ctx, "db_people_index_unarchive_button") }
+				@actionTarget(person)
+			</button>
+	}
+	if data.IsAdmin {
+		<a
+			href={ templates.DBPersonDelistingNewPath(person.ID).SafeURL() }
+			class="btn rounded-full"
+			data-variant="destructive"
+			data-size="sm"
+		>
+			{ templates.T(ctx, "db_people_index_delist_link") }
+			@actionTarget(person)
+		</a>
+		<button
+			type="button"
+			class="btn rounded-full"
+			data-variant="destructive"
+			data-size="sm"
+			hx-delete={ templates.DBPersonPath(person.ID).String() }
+			hx-headers={ templates.HXCSRFHeaders(data.CSRFToken) }
+			hx-confirm={ templates.T(ctx, "db_people_index_delete_confirm", map[string]any{"ID": person.ID.String()}) }
+		>
+			{ templates.T(ctx, "db_people_index_delete_button") }
+			@actionTarget(person)
+		</button>
+	}
+}
+
+// actionTargetは操作コントロールの対象の人物を、支援技術にのみ向けて描画する (作品一覧の
+// actionTargetと同じ)。
+templ actionTarget(person viewmodel.DBPersonListItem) {
+	<span class="sr-only">{ actionTargetLabel(ctx, person) }</span>
+}
+
+// actionTargetLabelは操作コントロールのアクセシブルネームのうち隠された側を、先頭に
+// スペースを付けて返す。スタイルシートが届かないときも可視ラベルと別の語として保つため
+// (作品一覧のactionTargetLabelと同じ)。
+func actionTargetLabel(ctx context.Context, person viewmodel.DBPersonListItem) string {
+	return " " + templates.T(ctx, "db_people_index_action_target_label", map[string]any{"ID": person.ID.String()})
+}
+
+templ indexNewButton() {
+	<a
+		class="btn rounded-full"
+		href={ templates.DBPeopleNewPath().SafeURL() }
+	>
+		@templates.Icon("plus-regular", "fill-primary-foreground")
+		{ templates.T(ctx, "db_people_index_new_link") }
+	</a>
+}

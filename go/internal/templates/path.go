@@ -31,6 +31,61 @@ func EpisodePath(workID viewmodel.WorkID, episodeID viewmodel.EpisodeID) Path {
 	return Path(fmt.Sprintf("/works/%s/episodes/%s", workID, episodeID))
 }
 
+// PersonPathは人物の公開ページ (Annict DB管理画面の外) のパスを生成します。
+func PersonPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/people/%s", id))
+}
+
+// DBPeoplePathはDB管理画面の人物一覧のパスを生成します。
+func DBPeoplePath() Path {
+	return Path("/db/people")
+}
+
+// DBPeopleNewPathはDB管理画面の人物一括登録のパスを生成します。
+func DBPeopleNewPath() Path {
+	return Path("/db/people/new")
+}
+
+// DBPersonPathはDB管理画面の単一人物のパスを生成します。編集フォームのPATCH先です。
+func DBPersonPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s", id))
+}
+
+// DBPersonEditPathはDB管理画面の人物編集のパスを生成します。
+func DBPersonEditPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/edit", id))
+}
+
+// DBPersonArchivePathはDB管理画面で人物をアーカイブするパスを生成します。アーカイブ確認
+// フォームのPOST先、およびアーカイブ解除のDELETE先として使います。
+func DBPersonArchivePath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/archive", id))
+}
+
+// DBPersonArchiveNewPathはDB管理画面の人物のアーカイブ確認画面のパスを生成します。人物一覧の
+// アーカイブ操作からリンクします。
+func DBPersonArchiveNewPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/archive/new", id))
+}
+
+// DBPersonDelistingPathはDB管理画面で人物の掲載を停止するパスを生成します。掲載停止確認
+// フォームのPOST先、および掲載停止の解除のDELETE先として使います。
+func DBPersonDelistingPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/delisting", id))
+}
+
+// DBPersonDelistingNewPathはDB管理画面の人物の掲載停止確認画面のパスを生成します。人物一覧の
+// 掲載停止の操作からリンクします。
+func DBPersonDelistingNewPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/delisting/new", id))
+}
+
+// DBPersonUndelistingNewPathはDB管理画面の人物の掲載停止解除確認画面のパスを生成します。人物一覧の
+// 掲載停止の解除の操作からリンクします。
+func DBPersonUndelistingNewPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/undelisting/new", id))
+}
+
 // DBWorksPathはDB管理画面の作品一覧のパスを生成します
 func DBWorksPath() Path {
 	return Path("/db/works")

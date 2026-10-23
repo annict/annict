@@ -102,4 +102,17 @@ RSpec.describe "GET /v1/casts", type: :request do
     expect(json["next_page"]).to eq(nil)
     expect(json["prev_page"]).to eq(nil)
   end
+
+  it "人物が非公開・削除済みのキャストを返さないこと" do
+    access_token = create(:oauth_access_token)
+    published_cast = create(:cast, person: create(:person))
+    create(:cast, person: create(:person, :unpublished))
+    create(:cast, person: create(:person, :deleted))
+
+    get api("/v1/casts", access_token: access_token.token)
+
+    expect(response.status).to eq(200)
+    expect(json["casts"].pluck("id")).to eq([published_cast.id])
+    expect(json["total_count"]).to eq(1)
+  end
 end

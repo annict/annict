@@ -387,11 +387,10 @@ type DBWorkListParams struct {
 	FilterNoImage    bool
 	FilterNoSeason   bool
 	FilterNoSlots    bool
-	SeasonYear       *int32
-	SeasonName       *int32
 	// SeasonYears / SeasonNamesはリリース時期の複数選択フィルタで照合する
 	// (年, 季節) ペアを表す並列配列。空スライスならフィルタは無効。両スライスは同じ
-	// 長さで、SeasonYearsのi番目がSeasonNamesのi番目と対になる。
+	// 長さで、SeasonYearsのi番目がSeasonNamesのi番目と対になる。SeasonNamesの0は
+	// 「季節未登録」を表し、その年でseason_nameがNULLの作品に一致する。
 	SeasonYears []int32
 	SeasonNames []int32
 	Page        int32
@@ -409,8 +408,6 @@ func (r *WorkRepository) ListForDB(ctx context.Context, params DBWorkListParams)
 		FilterNoImage:    sql.NullBool{Bool: params.FilterNoImage, Valid: params.FilterNoImage},
 		FilterNoSeason:   sql.NullBool{Bool: params.FilterNoSeason, Valid: params.FilterNoSeason},
 		FilterNoSlots:    sql.NullBool{Bool: params.FilterNoSlots, Valid: params.FilterNoSlots},
-		SeasonYear:       nullInt32FromPtr(params.SeasonYear),
-		SeasonName:       nullInt32FromPtr(params.SeasonName),
 		SeasonYears:      params.SeasonYears,
 		SeasonNames:      params.SeasonNames,
 		PerPage:          params.PerPage,
@@ -462,8 +459,6 @@ func (r *WorkRepository) CountForDB(ctx context.Context, params DBWorkListParams
 		FilterNoImage:    sql.NullBool{Bool: params.FilterNoImage, Valid: params.FilterNoImage},
 		FilterNoSeason:   sql.NullBool{Bool: params.FilterNoSeason, Valid: params.FilterNoSeason},
 		FilterNoSlots:    sql.NullBool{Bool: params.FilterNoSlots, Valid: params.FilterNoSlots},
-		SeasonYear:       nullInt32FromPtr(params.SeasonYear),
-		SeasonName:       nullInt32FromPtr(params.SeasonName),
 		SeasonYears:      params.SeasonYears,
 		SeasonNames:      params.SeasonNames,
 	})
@@ -481,6 +476,8 @@ func (r *WorkRepository) ExistsKeptByTitle(ctx context.Context, title string, ex
 	return r.queries.ExistsKeptWorkByTitle(ctx, params)
 }
 
+// CreateWorkParamsはAnnict DB管理画面の作品作成フォームが書くworksカラムを保持する。
+// NULL許容のカラムはnilでNULLを表し、sqlcのNULL許容型への変換はこのリポジトリの中で行う。
 type CreateWorkParams struct {
 	Title                 string
 	TitleKana             string
@@ -488,25 +485,25 @@ type CreateWorkParams struct {
 	TitleEn               string
 	TitleAlterEn          string
 	Media                 int32
-	SeasonYear            sql.NullInt32
-	SeasonName            sql.NullInt32
-	StartedOn             sql.NullTime
-	EndedOn               sql.NullTime
+	SeasonYear            *int32
+	SeasonName            *int32
+	StartedOn             *time.Time
+	EndedOn               *time.Time
 	OfficialSiteURL       string
 	OfficialSiteURLEn     string
 	WikipediaURL          string
 	WikipediaURLEn        string
-	TwitterUsername       sql.NullString
-	TwitterHashtag        sql.NullString
-	ScTid                 sql.NullInt32
-	MalAnimeID            sql.NullInt32
+	TwitterUsername       *string
+	TwitterHashtag        *string
+	ScTid                 *int32
+	MalAnimeID            *int32
 	Synopsis              string
 	SynopsisSource        string
 	SynopsisEn            string
 	SynopsisSourceEn      string
-	ManualEpisodesCount   sql.NullInt32
+	ManualEpisodesCount   *int32
 	StartEpisodeRawNumber float64
-	NumberFormatID        sql.NullInt64
+	NumberFormatID        *model.NumberFormatID
 	NoEpisodes            bool
 }
 
@@ -518,31 +515,39 @@ func (r *WorkRepository) Create(ctx context.Context, params CreateWorkParams) (m
 		TitleEn:               params.TitleEn,
 		TitleAlterEn:          params.TitleAlterEn,
 		Media:                 params.Media,
-		SeasonYear:            params.SeasonYear,
-		SeasonName:            params.SeasonName,
-		StartedOn:             params.StartedOn,
-		EndedOn:               params.EndedOn,
+		SeasonYear:            nullInt32FromPtr(params.SeasonYear),
+		SeasonName:            nullInt32FromPtr(params.SeasonName),
+		StartedOn:             nullTimeFromPtr(params.StartedOn),
+		EndedOn:               nullTimeFromPtr(params.EndedOn),
 		OfficialSiteUrl:       params.OfficialSiteURL,
 		OfficialSiteUrlEn:     params.OfficialSiteURLEn,
 		WikipediaUrl:          params.WikipediaURL,
 		WikipediaUrlEn:        params.WikipediaURLEn,
-		TwitterUsername:       params.TwitterUsername,
-		TwitterHashtag:        params.TwitterHashtag,
-		ScTid:                 params.ScTid,
-		MalAnimeID:            params.MalAnimeID,
+		TwitterUsername:       nullStringFromPtr(params.TwitterUsername),
+		TwitterHashtag:        nullStringFromPtr(params.TwitterHashtag),
+		ScTid:                 nullInt32FromPtr(params.ScTid),
+		MalAnimeID:            nullInt32FromPtr(params.MalAnimeID),
 		Synopsis:              params.Synopsis,
 		SynopsisSource:        params.SynopsisSource,
 		SynopsisEn:            params.SynopsisEn,
 		SynopsisSourceEn:      params.SynopsisSourceEn,
-		ManualEpisodesCount:   params.ManualEpisodesCount,
+		ManualEpisodesCount:   nullInt32FromPtr(params.ManualEpisodesCount),
 		StartEpisodeRawNumber: params.StartEpisodeRawNumber,
-		NumberFormatID:        params.NumberFormatID,
+		NumberFormatID:        nullInt64FromNumberFormatID(params.NumberFormatID),
 		NoEpisodes:            params.NoEpisodes,
 	})
 	if err != nil {
 		return 0, err
 	}
 	return model.WorkID(id), nil
+}
+
+// nullInt32FromPtrは任意の整数をsqlcのNULL許容整数に写像する。nilはNULLになる。
+func nullInt32FromPtr(value *int32) sql.NullInt32 {
+	if value == nil {
+		return sql.NullInt32{}
+	}
+	return sql.NullInt32{Int32: *value, Valid: true}
 }
 
 // UpdateWorkParamsはAnnict DB管理画面の作品編集フォームで編集可能なworks
@@ -573,25 +578,25 @@ func (r *WorkRepository) Update(ctx context.Context, params UpdateWorkParams) (b
 		TitleEn:               params.TitleEn,
 		TitleAlterEn:          params.TitleAlterEn,
 		Media:                 params.Media,
-		SeasonYear:            params.SeasonYear,
-		SeasonName:            params.SeasonName,
-		StartedOn:             params.StartedOn,
-		EndedOn:               params.EndedOn,
+		SeasonYear:            nullInt32FromPtr(params.SeasonYear),
+		SeasonName:            nullInt32FromPtr(params.SeasonName),
+		StartedOn:             nullTimeFromPtr(params.StartedOn),
+		EndedOn:               nullTimeFromPtr(params.EndedOn),
 		OfficialSiteUrl:       params.OfficialSiteURL,
 		OfficialSiteUrlEn:     params.OfficialSiteURLEn,
 		WikipediaUrl:          params.WikipediaURL,
 		WikipediaUrlEn:        params.WikipediaURLEn,
-		TwitterUsername:       params.TwitterUsername,
-		TwitterHashtag:        params.TwitterHashtag,
-		ScTid:                 params.ScTid,
-		MalAnimeID:            params.MalAnimeID,
+		TwitterUsername:       nullStringFromPtr(params.TwitterUsername),
+		TwitterHashtag:        nullStringFromPtr(params.TwitterHashtag),
+		ScTid:                 nullInt32FromPtr(params.ScTid),
+		MalAnimeID:            nullInt32FromPtr(params.MalAnimeID),
 		Synopsis:              params.Synopsis,
 		SynopsisSource:        params.SynopsisSource,
 		SynopsisEn:            params.SynopsisEn,
 		SynopsisSourceEn:      params.SynopsisSourceEn,
-		ManualEpisodesCount:   params.ManualEpisodesCount,
+		ManualEpisodesCount:   nullInt32FromPtr(params.ManualEpisodesCount),
 		StartEpisodeRawNumber: params.StartEpisodeRawNumber,
-		NumberFormatID:        params.NumberFormatID,
+		NumberFormatID:        nullInt64FromNumberFormatID(params.NumberFormatID),
 		NoEpisodes:            params.NoEpisodes,
 	})
 	if err != nil {
@@ -812,11 +817,4 @@ func workFromSatelliteSyncRow(row query.ListWorksForSatelliteSyncByIDsRow) *mode
 		work.EndedOn = &endedOn
 	}
 	return work
-}
-
-func nullInt32FromPtr(v *int32) sql.NullInt32 {
-	if v == nil {
-		return sql.NullInt32{}
-	}
-	return sql.NullInt32{Int32: *v, Valid: true}
 }

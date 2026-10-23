@@ -53,8 +53,129 @@ func TestHead(t *testing.T) {
 			},
 			// オリジンを宣言しないページにはリソースヒントを出さない。多くの公開ページは
 			// 第三者に何もリクエストしないため、接続を張っても無駄になる。
+			// 言語版とnoindexを指定しないページは、hreflangとrobotsを出さない。
 			wantNotContains: []string{
 				`rel="preconnect"`,
+				`rel="alternate"`,
+				`name="robots"`,
+			},
+		},
+		{
+			name: "英語のページではog:localeが英語になる",
+			meta: viewmodel.PageMeta{
+				Title:        "Terms of Service | Annict",
+				Description:  "説明",
+				OGType:       "website",
+				CanonicalURL: "https://annict.com/en/terms",
+				OGImage:      "https://annict.com/og-image.png",
+				Locale:       "en",
+			},
+			assetVersion: "v1.0.0",
+			wantContains: []string{
+				`<meta property="og:locale" content="en_US">`,
+			},
+			wantNotContains: []string{
+				`content="ja_JP"`,
+			},
+		},
+		{
+			name: "言語版の一覧が自己参照とx-defaultを含むhreflangとして出力される",
+			meta: viewmodel.PageMeta{
+				Title:        "Terms of Service | Annict",
+				Description:  "説明",
+				OGType:       "website",
+				CanonicalURL: "https://annict.com/en/terms",
+				OGImage:      "https://annict.com/og-image.png",
+				Locale:       "en",
+				LanguageVersions: []viewmodel.AlternateLink{
+					{HrefLang: "ja", URL: "https://annict.com/terms"},
+					{HrefLang: "en", URL: "https://annict.com/en/terms"},
+				},
+			},
+			assetVersion: "v1.0.0",
+			wantContains: []string{
+				`<link rel="alternate" hreflang="ja" href="https://annict.com/terms">` +
+					`<link rel="alternate" hreflang="en" href="https://annict.com/en/terms">` +
+					`<link rel="alternate" hreflang="x-default" href="https://annict.com/terms">`,
+				// 各言語版は自分自身をcanonicalに指す
+				`<link rel="canonical" href="https://annict.com/en/terms">`,
+			},
+		},
+		{
+			name: "言語版が1つだけのときはhreflangを出力しない",
+			meta: viewmodel.PageMeta{
+				Title:        "プライバシーポリシー | Annict",
+				Description:  "説明",
+				OGType:       "website",
+				CanonicalURL: "https://annict.com/privacy",
+				OGImage:      "https://annict.com/og-image.png",
+				Locale:       "ja",
+				LanguageVersions: []viewmodel.AlternateLink{
+					{HrefLang: "ja", URL: "https://annict.com/privacy"},
+				},
+			},
+			assetVersion: "v1.0.0",
+			wantContains: []string{
+				`<link rel="canonical" href="https://annict.com/privacy">`,
+			},
+			wantNotContains: []string{
+				`rel="alternate"`,
+			},
+		},
+		{
+			name: "noindexのときはrobotsを出力しcanonicalを出力しない",
+			meta: viewmodel.PageMeta{
+				Title:        "特定商取引法に基づく表記 | Annict",
+				Description:  "説明",
+				OGType:       "website",
+				CanonicalURL: "https://annict.com/legal",
+				OGImage:      "https://annict.com/og-image.png",
+				NoIndex:      true,
+			},
+			assetVersion: "v1.0.0",
+			wantContains: []string{
+				`<meta name="robots" content="noindex">`,
+				// og:urlはSNSのプレビューが使うため、noindexでも残す
+				`<meta property="og:url" content="https://annict.com/legal">`,
+			},
+			wantNotContains: []string{
+				`rel="canonical"`,
+			},
+		},
+		{
+			name: "nofollowとnoarchiveをnoindexとまとめて1つのrobotsに出力する",
+			meta: viewmodel.PageMeta{
+				Title:        "特定商取引法に基づく表記 | Annict",
+				Description:  "説明",
+				OGType:       "website",
+				CanonicalURL: "https://annict.com/legal",
+				OGImage:      "https://annict.com/og-image.png",
+				NoIndex:      true,
+				NoFollow:     true,
+				NoArchive:    true,
+			},
+			assetVersion: "v1.0.0",
+			wantContains: []string{
+				`<meta name="robots" content="noindex,nofollow,noarchive">`,
+			},
+			wantNotContains: []string{
+				`rel="canonical"`,
+			},
+		},
+		{
+			name: "noindexを伴わないnofollowではcanonicalを出力する",
+			meta: viewmodel.PageMeta{
+				Title:        "テストページ | Annict",
+				Description:  "説明",
+				OGType:       "website",
+				CanonicalURL: "https://annict.com/test",
+				OGImage:      "https://annict.com/og-image.png",
+				NoFollow:     true,
+			},
+			assetVersion: "v1.0.0",
+			wantContains: []string{
+				`<meta name="robots" content="nofollow">`,
+				`<link rel="canonical" href="https://annict.com/test">`,
 			},
 		},
 		{

@@ -196,7 +196,7 @@ func (uc *CreateWorkImageUsecase) createSingleWorkImage(ctx context.Context, que
 	now := time.Now()
 	workImageID, err := queries.CreateWorkImage(ctx, query.CreateWorkImageParams{
 		WorkID:    int64(param.WorkID),
-		UserID:    int64(param.UserID),
+		UserID:    sql.NullInt64{Int64: int64(param.UserID), Valid: true},
 		ImageData: imageData,
 		Copyright: "",            // デフォルト空文字
 		Asin:      "",            // デフォルト空文字

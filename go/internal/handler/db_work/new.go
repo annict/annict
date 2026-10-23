@@ -7,8 +7,10 @@ import (
 
 	"github.com/annict/annict/go/internal/httperror"
 	"github.com/annict/annict/go/internal/middleware"
+	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	"github.com/annict/annict/go/internal/templates/pages/db_works"
+	"github.com/annict/annict/go/internal/usecase"
 	"github.com/annict/annict/go/internal/viewmodel"
 )
 
@@ -21,8 +23,14 @@ const dbWorksNewPath = "/db/works/new"
 func (h *Handler) New(w http.ResponseWriter, r *http.Request) {
 	ctx := r.Context()
 
-	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx)
+	optionsResult, err := h.getDBWorkFormOptionsUC.Execute(ctx, usecase.GetDBWorkFormOptionsInput{
+		User: middleware.GetUserFromContext(ctx),
+	})
 	if err != nil {
+		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeForbidden {
+			httperror.Forbidden(w, r)
+			return
+		}
 		slog.ErrorContext(ctx, "NumberFormatの取得エラー", "error", err)
 		httperror.InternalServerError(w, r)
 		return

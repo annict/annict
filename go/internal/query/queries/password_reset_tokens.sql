@@ -8,10 +8,16 @@ INSERT INTO password_reset_tokens (
 ) RETURNING *;
 
 -- name: GetPasswordResetTokenByDigest :one
+-- トークンの発行後に退会・利用停止したユーザーのトークンは無効として扱う。
 SELECT * FROM password_reset_tokens
 WHERE token_digest = $1
 AND used_at IS NULL
 AND expires_at > NOW()
+AND EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = password_reset_tokens.user_id
+    AND users.deleted_at IS NULL
+)
 LIMIT 1;
 
 -- name: MarkPasswordResetTokenAsUsed :exec

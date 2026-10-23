@@ -23,6 +23,106 @@ func (q *Queries) CountEpisodeRecordsByUserID(ctx context.Context, userID int64)
 	return count, err
 }
 
+const deleteEpisodeRecordsByUserID = `-- name: DeleteEpisodeRecordsByUserID :one
+WITH deleted AS (
+    DELETE FROM episode_records
+    WHERE id IN (
+        SELECT target.id
+        FROM episode_records AS target
+        WHERE target.user_id = $1
+        LIMIT $2
+    )
+    RETURNING episode_records.id, episode_records.episode_id, episode_records.body, episode_records.deleted_at
+),
+deleted_likes AS (
+    DELETE FROM likes
+    WHERE likes.recipient_type = 'EpisodeRecord'
+        AND likes.recipient_id IN (SELECT deleted.id FROM deleted)
+    RETURNING likes.id
+),
+deleted_notifications AS (
+    DELETE FROM notifications
+    WHERE notifications.user_id = $1
+        AND notifications.trackable_type = 'Like'
+        AND notifications.trackable_id IN (SELECT deleted_likes.id FROM deleted_likes)
+    RETURNING notifications.id
+),
+counts AS (
+    SELECT
+        deleted.episode_id,
+        COUNT(*) AS records_count,
+        COUNT(*) FILTER (WHERE deleted.body IS NOT NULL AND deleted.body <> '') AS bodies_count
+    FROM deleted
+    WHERE deleted.deleted_at IS NULL
+    GROUP BY deleted.episode_id
+),
+decremented AS (
+    UPDATE episodes
+    SET
+        episode_records_count = episodes.episode_records_count - counts.records_count,
+        episode_record_bodies_count = episodes.episode_record_bodies_count - counts.bodies_count
+    FROM counts
+    WHERE episodes.id = counts.episode_id
+    RETURNING episodes.id
+)
+SELECT COUNT(*) FROM deleted
+`
+
+type DeleteEpisodeRecordsByUserIDParams struct {
+	UserID    int64 `db:"user_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+// ユーザーのエピソードの記録を最大batch_size件削除し、削除した件数を返す。
+// 記録に付いたいいねと、そのいいねで記録の持ち主 (削除するユーザー) に届いた通知も
+// 同じ文の中で削除する。論理削除されていない記録の分だけ、エピソードの記録数と
+// 本文のある記録数を減算する (Railsの再集計タスクと同じ定義)。updated_atは変えない。
+// 記録を参照するアクティビティは先に削除しておく (外部キーがあるため)。記録に付いた
+// コメントは外部キーのON DELETE CASCADEでも消えるが、コメントのいいね・通知を
+// 残さないよう先の段階で削除しておく。
+func (q *Queries) DeleteEpisodeRecordsByUserID(ctx context.Context, arg DeleteEpisodeRecordsByUserIDParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, deleteEpisodeRecordsByUserID, arg.UserID, arg.BatchSize)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
+const detachDeletedOAuthApplicationsFromEpisodeRecords = `-- name: DetachDeletedOAuthApplicationsFromEpisodeRecords :one
+WITH detached AS (
+    UPDATE episode_records
+    SET oauth_application_id = NULL
+    WHERE id IN (
+        SELECT target.id
+        FROM episode_records AS target
+        WHERE target.oauth_application_id IN (
+            SELECT oauth_applications.id
+            FROM oauth_applications
+            WHERE oauth_applications.owner_type = 'User'
+                AND oauth_applications.owner_id = $1::bigint
+                AND oauth_applications.deleted_at IS NOT NULL
+        )
+        LIMIT $2
+    )
+    RETURNING episode_records.id
+)
+SELECT COUNT(*) FROM detached
+`
+
+type DetachDeletedOAuthApplicationsFromEpisodeRecordsParams struct {
+	UserID    int64 `db:"user_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+// ユーザーが持つ論理削除済みのアプリケーションから投稿された他人のエピソードの記録を最大batch_size件、
+// アプリケーションとの紐づきを外し、外した件数を返す。投稿元のアプリケーションは表示に
+// 使われないため、エピソードの記録そのものと更新日時は変えない。
+func (q *Queries) DetachDeletedOAuthApplicationsFromEpisodeRecords(ctx context.Context, arg DetachDeletedOAuthApplicationsFromEpisodeRecordsParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, detachDeletedOAuthApplicationsFromEpisodeRecords, arg.UserID, arg.BatchSize)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getEpisodeRecordByID = `-- name: GetEpisodeRecordByID :one
 SELECT id, user_id, episode_id, work_id, record_id, body, rating, rating_state, created_at, updated_at
 FROM episode_records

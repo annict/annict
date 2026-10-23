@@ -293,7 +293,7 @@ func TestCreateStripeSubscriberUsecase_Execute(t *testing.T) {
 			t.Fatal("StripeSubscriberが永続化されていません")
 		}
 
-		linked, err := userRepo.GetByID(ctx, userID)
+		linked, err := userRepo.GetActiveByID(ctx, userID)
 		if err != nil {
 			t.Fatalf("ユーザー取得エラー: %v", err)
 		}
@@ -441,7 +441,7 @@ func TestCreateStripeSubscriberUsecase_Execute(t *testing.T) {
 			t.Fatal("エラーが期待されましたが、nilが返されました")
 		}
 
-		linked, err := userRepo.GetByID(ctx, userID)
+		linked, err := userRepo.GetActiveByID(ctx, userID)
 		if err != nil {
 			t.Fatalf("ユーザー取得エラー: %v", err)
 		}

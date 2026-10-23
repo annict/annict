@@ -15,9 +15,25 @@ module Oauth
 
     def create
       @application = Oauth::Application.new(application_params)
-      @application.owner = current_user
+      owner = current_user
+      @application.owner = owner
 
-      if @application.save
+      # Go版の退会受付もユーザー行をロックする。ロック後に削除状態を読み直してから
+      # 保存することで、退会とアプリケーション作成の順序を確定させる。
+      # `allowed_locales` が空のユーザーは、読み込み時にenumerizeが既定値を代入して
+      # 未保存の変更を持ち、インスタンスのままではロックできない。そのため、
+      # インスタンスを経由せずに行をロックし、行の存在と `deleted_at` を読む。
+      saved = false
+      owner_unavailable = false
+      User.transaction do
+        locked_owner = User.lock.where(id: owner.id).pick(:id, :deleted_at)
+        owner_unavailable = locked_owner.nil? || locked_owner[1].present?
+        saved = @application.save unless owner_unavailable
+      end
+
+      return head :forbidden if owner_unavailable
+
+      if saved
         flash[:notice] = t "messages.oauth.applications.created"
         redirect_to oauth_application_url(@application)
       else

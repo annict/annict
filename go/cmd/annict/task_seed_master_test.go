@@ -36,7 +36,7 @@ func TestSeedMasterTask_Registered(t *testing.T) {
 func TestSeedMaster_RejectsNonSeedableEnv(t *testing.T) {
 	t.Parallel()
 
-	if err := seedMaster(context.Background(), &config.Config{Env: "prod"}, nil, nil); err == nil {
+	if err := seedMaster(context.Background(), &config.Config{Env: "prod"}, nil, nil, nil); err == nil {
 		t.Fatal("seedMaster() = nil、期待値 = エラーあり")
 	}
 }

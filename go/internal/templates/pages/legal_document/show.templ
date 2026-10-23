@@ -1,0 +1,114 @@
+package legal_document
+
+import (
+	"github.com/annict/annict/go/internal/i18n"
+	"github.com/annict/annict/go/internal/templates"
+)
+
+// ShowPageDataは法的文書のページに渡すデータ
+type ShowPageData struct {
+	// Headingはページの見出し。文書や版ごとに異なる
+	Heading string
+	// HTMLは文書の本文を描画したHTML。リポジトリで管理するMarkdownから描画した信頼できる値
+	HTML string
+	// LanguageVersionsは同じ文書の言語版の一覧で、表示中の版も含める。
+	// 言語版が2つ以上あるときだけ言語切替リンクを表示する
+	LanguageVersions []LanguageVersion
+	// ArchiveNoticeは改定前の版のアーカイブページで本文の前に置く注意書き。現行の版ではnil
+	ArchiveNotice *ArchiveNotice
+}
+
+// ArchiveNoticeは改定前の版の適用期間と現行の版へのリンクを示す注意書き
+type ArchiveNotice struct {
+	// EffectiveOnとEndedOnは適用期間の初日と最終日。ページの言語の書式で表した日付
+	EffectiveOn string
+	EndedOn     string
+	// CurrentPathは同じ文書の現行の版のパス
+	CurrentPath string
+}
+
+// LanguageVersionは言語切替リンクの1項目
+type LanguageVersion struct {
+	Lang string
+	Path string
+	// Currentは表示中の版かどうか
+	Current bool
+}
+
+// languageNamesは言語切替リンクに表示する言語名。
+// その言語を読む人が自分の言語を見つけられるよう、ページの言語に関わらずその言語自身の表記で書く
+var languageNames = map[string]string{
+	i18n.LangJa: "日本語",
+	i18n.LangEn: "English",
+}
+
+// Showは法的文書 (利用規約・プライバシーポリシーなど) のページを表示する
+templ Show(data ShowPageData) {
+	<div class="flex flex-col gap-4 py-4">
+		<div class="flex flex-wrap items-center justify-between gap-2 px-4">
+			<h1 class="text-2xl font-bold antialiased">
+				{ data.Heading }
+			</h1>
+			if len(data.LanguageVersions) >= 2 {
+				@languageSwitcher(data.LanguageVersions)
+			}
+		</div>
+		<hr/>
+		<div class="max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0">
+			if data.ArchiveNotice != nil {
+				@archiveNotice(*data.ArchiveNotice)
+			}
+			<div class="card px-4">
+				// ページの見出しだけを <h1> にし、本文の章はMarkdownの `##` から描画した <h2> 以下で続ける
+				<div class="rendered-markdown">
+					@templ.Raw(data.HTML)
+				</div>
+			</div>
+		</div>
+	</div>
+}
+
+// languageSwitcherは同じ文書の言語版へのリンクを並べる。
+// 言語名はその言語で書くため、各項目に言語名の言語 (lang) とリンク先の言語 (hreflang) を付ける。
+// リンクだけを並べたナビゲーションのため、上下に余白を足してタップ領域の高さを24px以上にする
+templ languageSwitcher(versions []LanguageVersion) {
+	<nav aria-label={ templates.T(ctx, "legal_document_show_language_switcher_label") }>
+		<ul class="flex items-center gap-3 text-sm">
+			for _, version := range versions {
+				<li>
+					<a
+						class="inline-block py-1 link-muted aria-[current=page]:font-bold aria-[current=page]:text-foreground"
+						href={ templ.SafeURL(version.Path) }
+						lang={ version.Lang }
+						hreflang={ version.Lang }
+						if version.Current {
+							aria-current="page"
+						}
+					>
+						{ languageNames[version.Lang] }
+					</a>
+				</li>
+			}
+		</ul>
+	</nav>
+}
+
+// archiveNoticeは改定前の版を読んでいることと、その版の適用期間を示し、現行の版へ案内する
+templ archiveNotice(notice ArchiveNotice) {
+	<div class="alert" data-variant="warning">
+		<h2>{ templates.T(ctx, "legal_document_show_archive_notice_heading") }</h2>
+		<section>
+			<p>
+				{ templates.T(ctx, "legal_document_show_archive_notice_period", map[string]any{
+					"EffectiveOn": notice.EffectiveOn,
+					"EndedOn":     notice.EndedOn,
+				}) }
+			</p>
+			<p>
+				<a class="link" href={ templ.SafeURL(notice.CurrentPath) }>
+					{ templates.T(ctx, "legal_document_show_archive_current_version_link") }
+				</a>
+			</p>
+		</section>
+	</div>
+}

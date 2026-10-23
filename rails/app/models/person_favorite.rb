@@ -8,8 +8,8 @@ class PersonFavorite < ApplicationRecord
   belongs_to :person
   belongs_to :user
 
-  scope :with_cast, -> { joins(:person).where("people.casts_count > ?", 0) }
-  scope :with_staff, -> { joins(:person).where("people.staffs_count > ?", 0) }
+  scope :with_cast, -> { joins(:person).merge(Person.only_kept).where("people.casts_count > ?", 0) }
+  scope :with_staff, -> { joins(:person).merge(Person.only_kept).where("people.staffs_count > ?", 0) }
 
   def watched_work_count
     watched_works_count

@@ -72,7 +72,7 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySign
 	}
 
 	// 3. ユーザー情報を取得
-	user, err := uc.userRepo.GetByID(ctx, input.UserID)
+	user, err := uc.userRepo.GetActiveByID(ctx, input.UserID)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, fmt.Errorf("ユーザーが見つかりません (user_id=%d): %w", input.UserID, err)

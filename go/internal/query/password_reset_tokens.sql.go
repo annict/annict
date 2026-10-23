@@ -66,9 +66,15 @@ SELECT id, user_id, token_digest, expires_at, used_at, created_at FROM password_
 WHERE token_digest = $1
 AND used_at IS NULL
 AND expires_at > NOW()
+AND EXISTS (
+    SELECT 1 FROM users
+    WHERE users.id = password_reset_tokens.user_id
+    AND users.deleted_at IS NULL
+)
 LIMIT 1
 `
 
+// トークンの発行後に退会・利用停止したユーザーのトークンは無効として扱う。
 func (q *Queries) GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error) {
 	row := q.db.QueryRowContext(ctx, getPasswordResetTokenByDigest, tokenDigest)
 	var i PasswordResetToken

@@ -27,7 +27,7 @@ type GetDBWorksInput struct {
 	FilterNoSeason   bool
 	FilterNoSlots    bool
 	// SeasonYears / SeasonNamesはリリース時期の複数選択フィルタの並列 (年, 季節)
-	// ペア (空でフィルタ無効)。
+	// ペア (空でフィルタ無効)。SeasonNamesの0は「季節未登録」を表す。
 	SeasonYears []int32
 	SeasonNames []int32
 	Page        int32

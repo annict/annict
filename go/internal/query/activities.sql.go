@@ -23,6 +23,33 @@ func (q *Queries) CountActivitiesByUserID(ctx context.Context, userID int64) (in
 	return count, err
 }
 
+const deleteActivitiesByUserID = `-- name: DeleteActivitiesByUserID :one
+WITH deleted AS (
+    DELETE FROM activities
+    WHERE id IN (
+        SELECT target.id
+        FROM activities AS target
+        WHERE target.user_id = $1
+        LIMIT $2
+    )
+    RETURNING activities.id
+)
+SELECT COUNT(*) FROM deleted
+`
+
+type DeleteActivitiesByUserIDParams struct {
+	UserID    int64 `db:"user_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+// ユーザーのアクティビティを最大batch_size件削除し、削除した件数を返す。
+func (q *Queries) DeleteActivitiesByUserID(ctx context.Context, arg DeleteActivitiesByUserIDParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, deleteActivitiesByUserID, arg.UserID, arg.BatchSize)
+	var count int64
+	err := row.Scan(&count)
+	return count, err
+}
+
 const getActivityByID = `-- name: GetActivityByID :one
 SELECT id, user_id, trackable_id, trackable_type, episode_record_id, work_id, episode_id, activity_group_id, created_at, updated_at
 FROM activities

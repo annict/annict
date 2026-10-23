@@ -27,6 +27,7 @@ func NewGetDBWorkEditUsecase(
 }
 
 type GetDBWorkEditInput struct {
+	User   *model.User
 	WorkID model.WorkID
 }
 
@@ -35,9 +36,18 @@ type GetDBWorkEditOutput struct {
 	NumberFormats []model.NumberFormat
 }
 
-// Executeは編集対象のworkとフォームの選択肢を返す。workが存在しない場合は
-// AppErrCodeResourceNotFoundの *model.AppErrorを返し、Handler側で404に変換する。
+// Executeはworkを取得する前にコミッターを認可し、編集対象のworkとフォームの選択肢を
+// 返す。workが存在しない場合はAppErrCodeResourceNotFoundの *model.AppErrorを返し、
+// Handler側で404に変換する。
 func (uc *GetDBWorkEditUsecase) Execute(ctx context.Context, input GetDBWorkEditInput) (*GetDBWorkEditOutput, error) {
+	if input.User == nil || !input.User.IsCommitter() {
+		return nil, &model.AppError{
+			Code:     model.AppErrCodeForbidden,
+			UserMsg:  i18n.T(ctx, "error_forbidden"),
+			Metadata: map[string]string{"work_id": input.WorkID.String()},
+		}
+	}
+
 	work, err := uc.workRepo.GetForEditByID(ctx, input.WorkID)
 	if err != nil {
 		return nil, fmt.Errorf("作品の取得に失敗: %w", err)

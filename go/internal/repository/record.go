@@ -69,3 +69,13 @@ func (r *RecordRepository) AggregateDailyCountsByUserID(
 	}
 	return counts, nil
 }
+
+// DeleteByUserIDはユーザーの記録を最大limit件削除し、削除した件数を返す。
+// 論理削除されていない記録の分だけ、作品の記録数 (works.records_count) を同じ文の中で減算する。
+// 記録を参照するエピソードの記録と作品の記録は先に削除しておく必要がある。
+func (r *RecordRepository) DeleteByUserID(ctx context.Context, userID model.UserID, limit int32) (int64, error) {
+	return r.queries.DeleteRecordsByUserID(ctx, query.DeleteRecordsByUserIDParams{
+		UserID:    int64(userID),
+		BatchSize: limit,
+	})
+}

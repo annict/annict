@@ -13,6 +13,6 @@ import (
 // 指定したupsertで既存のデータを消さないため、日常的なセットアップ手順から繰り返し呼べる。
 // 実行してよいかどうかは、共通の前処理がデータベースを開く前にguardSeedが判定する。
 // master.Runも同じ確認を繰り返し、このCLI以外の呼び出し元を防御する。
-func seedMaster(ctx context.Context, cfg *config.Config, db *sql.DB, _ *query.Queries) error {
+func seedMaster(ctx context.Context, cfg *config.Config, db *sql.DB, _ *query.Queries, _ []string) error {
 	return master.Run(ctx, cfg, db)
 }

@@ -23,6 +23,7 @@ func NewGetDBEpisodeNewUsecase(workRepo *repository.WorkRepository) *GetDBEpisod
 
 // GetDBEpisodeNewInputはユースケースの入力。
 type GetDBEpisodeNewInput struct {
+	User   *model.User
 	WorkID model.WorkID
 }
 
@@ -34,9 +35,18 @@ type GetDBEpisodeNewOutput struct {
 	ManualCreationState model.ManualEpisodeCreationState
 }
 
-// Executeは一括作成フォームの親作品を返す。作品が存在しない、または削除済みの場合は
-// AppErrCodeResourceNotFoundの *model.AppErrorを返し、Handler側で404に変換する。
+// Executeは作品を取得する前にコミッターを認可し、一括作成フォームの親作品を返す。作品が
+// 存在しない、または削除済みの場合はAppErrCodeResourceNotFoundの *model.AppErrorを返し、
+// Handler側で404に変換する。
 func (uc *GetDBEpisodeNewUsecase) Execute(ctx context.Context, input GetDBEpisodeNewInput) (*GetDBEpisodeNewOutput, error) {
+	if input.User == nil || !input.User.IsCommitter() {
+		return nil, &model.AppError{
+			Code:     model.AppErrCodeForbidden,
+			UserMsg:  i18n.T(ctx, "error_forbidden"),
+			Metadata: map[string]string{"work_id": input.WorkID.String()},
+		}
+	}
+
 	formWork, err := uc.workRepo.GetForEpisodeFormByID(ctx, input.WorkID)
 	if err != nil {
 		return nil, fmt.Errorf("作品の取得に失敗: %w", err)

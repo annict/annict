@@ -2,6 +2,7 @@ package sentry
 
 import (
 	"context"
+	"errors"
 	"strconv"
 
 	"github.com/getsentry/sentry-go"
@@ -18,6 +19,7 @@ import (
 // shouldDropErrorに該当するエラー (context.Canceled / http.ErrAbortHandler)
 // はriverのリトライ判断を変えないようにそのままreturnするが、Sentryには
 // 送らない。シャットダウン由来のノイズやruntime中断で誤通知させないため。
+// river.JobSnoozeが返すエラーも、失敗ではなく再投入の指示のため送らない。
 func RiverWorkerMiddleware() rivertype.WorkerMiddleware {
 	return river.WorkerMiddlewareFunc(func(ctx context.Context, job *rivertype.JobRow, doInner func(ctx context.Context) error) error {
 		hub := cloneHubForJob(ctx)
@@ -26,7 +28,7 @@ func RiverWorkerMiddleware() rivertype.WorkerMiddleware {
 		ctx = sentry.SetHubOnContext(ctx, hub)
 
 		err := doInner(ctx)
-		if err != nil && !shouldDropError(err) {
+		if err != nil && !shouldDropError(err) && !isJobSnooze(err) {
 			hub.CaptureException(err)
 		}
 		return err
@@ -42,4 +44,10 @@ func cloneHubForJob(ctx context.Context) *sentry.Hub {
 		return hub.Clone()
 	}
 	return sentry.CurrentHub().Clone()
+}
+
+// isJobSnoozeはWorkerがriver.JobSnoozeで再投入を指示したエラーかを返す。
+func isJobSnooze(err error) bool {
+	var snoozeErr *river.JobSnoozeError
+	return errors.As(err, &snoozeErr)
 }

@@ -23,7 +23,8 @@ func (r *StaffRepository) WithTx(tx *sql.Tx) *StaffRepository {
 	return &StaffRepository{queries: r.queries.WithTx(tx)}
 }
 
-// GetByWorkIDsは作品IDのリストに紐づくスタッフを取得します (role='other' は除外)
+// GetByWorkIDsは作品IDのリストに紐づくスタッフを取得します
+// (role='other' と、スタッフ・人物が非公開または削除済みのものは除外)
 func (r *StaffRepository) GetByWorkIDs(ctx context.Context, workIDs []model.WorkID) ([]*model.Staff, error) {
 	if len(workIDs) == 0 {
 		return []*model.Staff{}, nil

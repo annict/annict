@@ -228,8 +228,14 @@ templ Index(data IndexPageData) {
 										//
 										// 組は1行あたり3つずつ並べる。6組すべてを1列に積むと1行が12行分の
 										// 高さになり、画面に収まる作品が2〜3件まで減ってしまうため。
+										//
+										// 長い値 (「2026年 (季節未登録)」など) は列の中で折り返させる。.table tdの
+										// whitespace-nowrapのままだと、右隣の組へはみ出して重なるため。折り返しは
+										// 空白の位置だけにし (break-keep)、各列は最長の単語より狭くしない
+										// (grid-cols-3のminmax(0,1fr) ではなく1fr) ことで、「季|節」のような語の途中で
+										// 折れたり、折れない語がはみ出したりしないようにする。
 										<td>
-											<dl class="grid grid-cols-3 gap-x-3 gap-y-1 text-sm">
+											<dl class="grid grid-cols-[repeat(3,1fr)] gap-x-3 gap-y-1 text-sm whitespace-normal break-keep">
 												<div>
 													<dt class="text-muted-foreground">{ templates.T(ctx, "db_works_index_table_media_label") }</dt>
 													<dd>{ work.Media }</dd>
