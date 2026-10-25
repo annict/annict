@@ -63,7 +63,7 @@ type DBEpisodeRow struct {
 func (v *DBEpisodeCreateValidator) Validate(ctx context.Context, input DBEpisodeCreateValidatorInput) ([]DBEpisodeRow, error) {
 	ve := model.NewValidationError()
 
-	lines := splitEpisodeRowLines(input.Rows)
+	lines := splitFormRowLines(input.Rows)
 	nonBlankRowCount := 0
 	for _, line := range lines {
 		if strings.TrimSpace(line) != "" {
@@ -106,10 +106,10 @@ func (v *DBEpisodeCreateValidator) Validate(ctx context.Context, input DBEpisode
 	return rows, nil
 }
 
-// splitEpisodeRowLinesは送信されたtextareaを行に分割する。フォーム送信ではtextarea
+// splitFormRowLinesは一括登録・一括作成フォームのtextareaを行に分割する。フォーム送信ではtextarea
 // の改行がCRLFで符号化され、貼り付けた内容から単独のCRが届くこともあるため、まず双方を
 // LFに畳む。LFだけで分割すると、各行の最後の列にCRが残ってしまう。
-func splitEpisodeRowLines(rows string) []string {
+func splitFormRowLines(rows string) []string {
 	normalized := strings.ReplaceAll(rows, "\r\n", "\n")
 	normalized = strings.ReplaceAll(normalized, "\r", "\n")
 

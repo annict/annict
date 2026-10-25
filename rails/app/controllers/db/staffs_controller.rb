@@ -10,6 +10,7 @@ module Db
       @staffs = @work
         .staffs
         .without_deleted
+        .with_kept_person
         .includes(:resource)
         .order(:sort_number)
       @staffs_csv = @staffs.map do |staff|

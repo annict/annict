@@ -9,6 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/ratelimit"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
 	"github.com/annict/annict/go/internal/usecase"
@@ -101,12 +102,12 @@ func (h *Handler) handleRateLimit(w http.ResponseWriter, r *http.Request, email,
 	}
 
 	ctx := r.Context()
-	allowed, err := h.limiter.Check(ctx, key, limit, 1*time.Hour)
+	result, err := h.limiter.Check(ctx, ratelimit.CheckInput{Key: key, Limit: limit, Window: 1 * time.Hour})
 	if err != nil {
 		slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
 		return false
 	}
-	if allowed {
+	if result.Allowed {
 		return false
 	}
 

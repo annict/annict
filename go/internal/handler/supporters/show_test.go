@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/annict/annict/go/internal/config"
+	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/image"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
@@ -197,6 +198,90 @@ func TestShow_LoggedIn_NotSupporter(t *testing.T) {
 	}
 }
 
+// TestShow_LoggedIn_NotSupporter_Conditionsは非サポーターの申込み画面に契約条件が表示されることを確認するテスト
+func TestShow_LoggedIn_NotSupporter_Conditions(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		locale   string
+		expected []string
+	}{
+		{
+			name:   "日本語",
+			locale: i18n.LangJa,
+			expected: []string{
+				"1年間続けた場合の総額の目安: ¥3,480",
+				"お申し込みの前にご確認ください",
+				"解約するまで1か月 (月額プラン) または1年 (年額プラン) ごとに自動で更新・請求されます",
+				"クレジットカード (JCBを含む)、Apple Pay、Linkでお支払いいただけます (Stripe決済)",
+				"お支払いが完了すると、すぐに特典をご利用いただけます",
+				"解約後もお支払い済みの期間が終わるまで特典をご利用いただけます",
+				"お支払い済みの料金は返金いたしません (二重に請求した場合など、運営者の責任による場合を除きます)",
+				"退会すると、その時点で解約され、残りの期間の料金は返金されません",
+				"支払時期・解約・返金などの詳しい条件は、次のページでご確認いただけます",
+				// ページと同じ言語の版を指すため、hreflangを付けない
+				`<a href="/legal" class="link">`,
+				"特定商取引法に基づく表記",
+				`<a href="/terms#第11条-サポーター" class="link">`,
+				"利用規約 (第11条 サポーター)",
+			},
+		},
+		{
+			name:   "英語",
+			locale: i18n.LangEn,
+			expected: []string{
+				"Estimated total for one year: ¥3,480",
+				"Before you subscribe",
+				"renews automatically every month (Monthly Plan) or every year (Yearly Plan)",
+				"Pay by credit card (including JCB), Apple Pay, or Link (powered by Stripe).",
+				"Benefits are available as soon as your payment is complete.",
+				"Benefits remain available until the end of the period you have already paid for.",
+				"Payments already made are non-refundable, except in cases caused by us, such as a duplicate charge.",
+				"If you delete your account, your subscription is canceled immediately and the remaining period is not refunded.",
+				"Full details on billing, cancellation, and refunds are available on the following pages.",
+				// 特定商取引法に基づく表記は日本語版だけのため、日本語版を指してhreflangと言語を添える
+				`<a href="/legal" class="link" hreflang="ja">`,
+				"Legal Notice (Specified Commercial Transactions Act, in Japanese)",
+				// 利用規約は英語版のサポーターの条を指す
+				`<a href="/en/terms#article-11-annict-supporters" class="link">`,
+				"Terms of Service (Article 11: Annict Supporters)",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db, tx := testutil.SetupTx(t)
+			handler := setupTestHandler(t, tx, db)
+
+			userID := testutil.NewUserBuilder(t, tx).Build()
+			user := getUserByID(t, tx, userID)
+
+			req := httptest.NewRequest("GET", "/supporters", nil)
+			ctx := context.WithValue(req.Context(), middleware.UserContextKey, user)
+			ctx = i18n.SetLocale(ctx, tt.locale)
+			req = req.WithContext(ctx)
+			rr := httptest.NewRecorder()
+
+			handler.Show(rr, req)
+
+			if rr.Code != http.StatusOK {
+				t.Fatalf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
+			}
+
+			body := rr.Body.String()
+			for _, expected := range tt.expected {
+				if !strings.Contains(body, expected) {
+					t.Errorf("レスポンスに含まれていない文字列 = %q", expected)
+				}
+			}
+		})
+	}
+}
+
 // TestShow_StripeSupporterはStripeサポーターの場合のテスト
 func TestShow_StripeSupporter(t *testing.T) {
 	t.Parallel()
@@ -236,6 +321,9 @@ func TestShow_StripeSupporter(t *testing.T) {
 	// 非サポーター向けのCheckoutセクションが表示されないことを確認
 	if strings.Contains(body, "action=\"/supporters/checkout\"") {
 		t.Error("Stripeのサポーターに対してレスポンスが決済フォームを含んでいる")
+	}
+	if strings.Contains(body, "お申し込みの前にご確認ください") {
+		t.Error("Stripeのサポーターに対してレスポンスが申込み前の契約条件を含んでいる")
 	}
 }
 

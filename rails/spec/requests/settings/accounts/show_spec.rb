@@ -10,6 +10,14 @@ RSpec.describe "GET /settings/account", type: :request do
 
     expect(response.status).to eq(200)
     expect(response.body).to include("基本情報")
+
+    deletion_link = Nokogiri::HTML(response.body).css("a").find do |link|
+      link.text.strip == I18n.t("messages.sayonara.delete_account")
+    end
+    expect(deletion_link).to be_present
+    expect(deletion_link["href"]).to eq("/settings/account/deletion/new")
+    expect(deletion_link["data-method"]).to be_nil
+    expect(deletion_link["data-confirm"]).to be_nil
   end
 
   it "未ログインユーザーはログインページにリダイレクトされること" do

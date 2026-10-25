@@ -126,7 +126,7 @@ func TestUpdate_Success(t *testing.T) {
 
 	// 新しいパスワードでログインできることを確認
 	ctx := req.Context()
-	user, err := queries.GetUserByID(ctx, int64(userID))
+	user, err := queries.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザーの取得に失敗: %v", err)
 	}

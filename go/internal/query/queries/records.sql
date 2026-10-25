@@ -32,3 +32,33 @@ WHERE user_id = sqlc.arg(user_id)
   AND deleted_at IS NULL
 GROUP BY day
 ORDER BY day;
+
+-- name: DeleteRecordsByUserID :one
+-- ユーザーの記録を最大batch_size件削除し、削除した件数を返す。
+-- 論理削除されていない記録の分だけ、同じ文の中でworks.records_countを減算する
+-- (Railsの再集計タスクと同じ定義)。updated_atは変えない。記録を参照するエピソードの
+-- 記録と作品の記録は先に削除しておく (外部キーがあるため)。
+WITH deleted AS (
+    DELETE FROM records
+    WHERE id IN (
+        SELECT target.id
+        FROM records AS target
+        WHERE target.user_id = sqlc.arg('user_id')
+        LIMIT sqlc.arg('batch_size')
+    )
+    RETURNING records.work_id, records.deleted_at
+),
+counts AS (
+    SELECT deleted.work_id, COUNT(*) AS records_count
+    FROM deleted
+    WHERE deleted.deleted_at IS NULL
+    GROUP BY deleted.work_id
+),
+decremented AS (
+    UPDATE works
+    SET records_count = works.records_count - counts.records_count
+    FROM counts
+    WHERE works.id = counts.work_id
+    RETURNING works.id
+)
+SELECT COUNT(*) FROM deleted;

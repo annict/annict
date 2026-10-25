@@ -23,6 +23,7 @@ func NewGetDBEpisodeEditUsecase(episodeRepo *repository.EpisodeRepository) *GetD
 
 // GetDBEpisodeEditInputはユースケースの入力。
 type GetDBEpisodeEditInput struct {
+	User      *model.User
 	EpisodeID model.EpisodeID
 }
 
@@ -32,10 +33,18 @@ type GetDBEpisodeEditOutput struct {
 	Work    *model.Work
 }
 
-// Executeは編集対象のエピソードとその親作品を返す。エピソードが存在しない、削除済み、
-// または削除済み作品に属する場合はAppErrCodeResourceNotFoundの *model.AppErrorを返し、
-// Handler側で404に変換する。
+// Executeはエピソードを取得する前にコミッターを認可し、編集対象のエピソードとその親作品を
+// 返す。エピソードが存在しない、削除済み、または削除済み作品に属する場合は
+// AppErrCodeResourceNotFoundの *model.AppErrorを返し、Handler側で404に変換する。
 func (uc *GetDBEpisodeEditUsecase) Execute(ctx context.Context, input GetDBEpisodeEditInput) (*GetDBEpisodeEditOutput, error) {
+	if input.User == nil || !input.User.IsCommitter() {
+		return nil, &model.AppError{
+			Code:     model.AppErrCodeForbidden,
+			UserMsg:  i18n.T(ctx, "error_forbidden"),
+			Metadata: map[string]string{"episode_id": input.EpisodeID.String()},
+		}
+	}
+
 	target, err := uc.episodeRepo.GetForEditByID(ctx, input.EpisodeID)
 	if err != nil {
 		return nil, fmt.Errorf("エピソードの取得に失敗: %w", err)

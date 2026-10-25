@@ -19,3 +19,10 @@ WHERE id = $2;
 SELECT id, user_id
 FROM profiles
 ORDER BY id;
+
+-- name: ListProfileImageDataByUserID :many
+-- 退会の削除処理でストレージから消す画像を求めるため、ユーザーのプロフィール画像と背景画像の
+-- Shrineの添付データを取得する。
+SELECT image_data, background_image_data
+FROM profiles
+WHERE user_id = $1;

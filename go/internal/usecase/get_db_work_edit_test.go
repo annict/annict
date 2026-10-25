@@ -36,7 +36,7 @@ func TestGetDBWorkEditUsecase_Execute_ReturnsWork(t *testing.T) {
 		t.Fatalf("worksのフィールド設定に失敗: %v", err)
 	}
 
-	output, err := uc.Execute(context.Background(), GetDBWorkEditInput{WorkID: workID})
+	output, err := uc.Execute(context.Background(), GetDBWorkEditInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -81,7 +81,7 @@ func TestGetDBWorkEditUsecase_Execute_NotFound(t *testing.T) {
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
 	uc := NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
 
-	_, err := uc.Execute(context.Background(), GetDBWorkEditInput{WorkID: model.WorkID(999999999)})
+	_, err := uc.Execute(context.Background(), GetDBWorkEditInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: model.WorkID(999999999)})
 	if err == nil {
 		t.Fatal("エラーを期待したが、nilだった")
 	}
@@ -91,5 +91,44 @@ func TestGetDBWorkEditUsecase_Execute_NotFound(t *testing.T) {
 	}
 	if ae.Code != model.AppErrCodeResourceNotFound {
 		t.Errorf("AppError.Code = %v、期待値 = %v", ae.Code, model.AppErrCodeResourceNotFound)
+	}
+}
+
+// TestGetDBWorkEditUsecase_Execute_RejectsUnauthorizedUserBeforeLookupは、認可境界が
+// 既存・未存在どちらのworkを取得するより前に、未認証と一般ユーザーを拒否することを検証する。
+func TestGetDBWorkEditUsecase_Execute_RejectsUnauthorizedUserBeforeLookup(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	uc := NewGetDBWorkEditUsecase(repository.NewWorkRepository(queries), repository.NewNumberFormatRepository(queries))
+	existingWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("編集認可テスト").Build()
+	missingWorkID := model.WorkID(1 << 62)
+
+	tests := []struct {
+		name   string
+		user   *model.User
+		workID model.WorkID
+	}{
+		{name: "未認証・既存作品", user: nil, workID: existingWorkID},
+		{name: "未認証・未存在作品", user: nil, workID: missingWorkID},
+		{name: "一般ユーザー・既存作品", user: &model.User{ID: 1, Role: model.RoleUser}, workID: existingWorkID},
+		{name: "一般ユーザー・未存在作品", user: &model.User{ID: 1, Role: model.RoleUser}, workID: missingWorkID},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			output, err := uc.Execute(context.Background(), GetDBWorkEditInput{
+				User:   tt.user,
+				WorkID: tt.workID,
+			})
+			if output != nil {
+				t.Errorf("output = %+v、期待値 = nil (権限の無いユーザーのため)", output)
+			}
+			ae := model.AsAppError(err)
+			if ae == nil || ae.Code != model.AppErrCodeForbidden {
+				t.Fatalf("エラーコード = %v、期待値 = AppErrCodeForbidden", err)
+			}
+		})
 	}
 }

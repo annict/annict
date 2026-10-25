@@ -3,7 +3,7 @@
 # ========================================
 # ビルドステージ
 # ========================================
-FROM golang:1.26.2-alpine3.22 AS builder
+FROM golang:1.26.10-alpine3.23 AS builder
 
 WORKDIR /app
 
@@ -19,18 +19,18 @@ RUN apk add --no-cache git libstdc++ curl
 # /usr/local/bin/corepackのsymlinkはCOPYによって実体ファイルになるため、
 # 後でsymlinkを作り直す。pnpmはcorepack経由でpackage.jsonのpackageManager
 # フィールドと同じバージョンに固定する。
-COPY --from=node:22.20.0-alpine3.22 /usr/local/bin/node /usr/local/bin/node
-COPY --from=node:22.20.0-alpine3.22 /usr/local/lib/node_modules/corepack /usr/local/lib/node_modules/corepack
+COPY --from=node:22.23.4-alpine3.23 /usr/local/bin/node /usr/local/bin/node
+COPY --from=node:22.23.4-alpine3.23 /usr/local/lib/node_modules/corepack /usr/local/lib/node_modules/corepack
 RUN ln -sf /usr/local/lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack && \
     corepack enable && \
-    corepack prepare pnpm@10.17.1 --activate
+    corepack prepare pnpm@10.34.7 --activate
 
 # dbmateをSHA256検証付きでインストールする。浮動参照である
 # `releases/latest` は使わず、バージョンとハッシュを必ず固定する。
 # DBMATE_VERSION / DBMATE_SHA256はDockerfile.devと意図的に二重定義しており
 # (各Dockerfileを自己完結に保つため)、更新時は両ファイルを揃えて変更する。
-ARG DBMATE_VERSION=v2.33.0
-ARG DBMATE_SHA256=dfd4027141b6e4357158099bdfe6c02b286af70f8e49057937744cf80b38ea1c
+ARG DBMATE_VERSION=v2.37.0
+ARG DBMATE_SHA256=f855e99a0f0a81322014bf686b1cb820d2b4d8074e4eadafd64b851b80ecb15a
 RUN curl -fsSL -o /tmp/dbmate "https://github.com/amacneil/dbmate/releases/download/${DBMATE_VERSION}/dbmate-linux-amd64" && \
     echo "${DBMATE_SHA256}  /tmp/dbmate" | sha256sum -c - && \
     mv /tmp/dbmate /usr/local/bin/dbmate && \
@@ -51,13 +51,12 @@ COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,target=/root/.local/share/pnpm/store \
     pnpm install --frozen-lockfile
 
-# tools.goで宣言した開発ツール (templ / goimports) をインストールする。
+# tools.goで宣言した開発ツール (goimports) をインストールする。
 # `-mod=mod` を指定してgo.modのバージョンを厳密に解決し、固定したバージョンを
-# 確実にインストールする。
+# 確実にインストールする。templはgo.modのtool宣言から `go tool` で実行する。
 COPY tools.go ./
 RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
-    go install -mod=mod github.com/a-h/templ/cmd/templ && \
     go install -mod=mod golang.org/x/tools/cmd/goimports
 
 # 残りのソースをコピーする。コミット済みの *_templ.goやテストファイルは
@@ -71,8 +70,10 @@ COPY . .
 # この組み合わせにより、古い生成ファイルが新規生成と混在したときに発生する
 # 「duplicate import of github.com/a-h/templ」ビルドエラーを防ぐ。
 # goimportsはローカルの `make templ-generate` と挙動を揃えて `-w .` で実行する。
-RUN find internal -name '*_templ.go' -delete && \
-    templ generate && \
+RUN --mount=type=cache,target=/go/pkg/mod \
+    --mount=type=cache,target=/root/.cache/go-build \
+    find internal -name '*_templ.go' -delete && \
+    go tool templ generate && \
     goimports -w .
 
 # フロントエンドアセット (CSS / JS) をビルドする。
@@ -89,7 +90,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
 # ========================================
 # 実行ステージ
 # ========================================
-FROM alpine:3.22
+FROM alpine:3.23
 
 WORKDIR /app
 

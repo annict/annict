@@ -35,7 +35,10 @@ type WorkBuilder struct {
 	seasonName int32 // enum値 (1:winter, 2:spring, 3:summer, 4:autumn)
 	seasonYear int32
 	noSeason   bool // trueの場合、season_year/season_nameをNULLにする
-	noEpisodes bool // no_episodesカラムの値
+	// noSeasonNameがtrueの場合、season_yearは残してseason_nameだけをNULLにする
+	// (公開年だけが決まっていて季節が未登録の作品)。
+	noSeasonName bool
+	noEpisodes   bool // no_episodesカラムの値
 	// 外部サービスのID (NULL許容)。nilの場合はカラムをNULLのままにする。
 	scTid      *int32
 	malAnimeID *int32
@@ -110,6 +113,15 @@ func (b *WorkBuilder) WithSeason(year int32, seasonName int32) *WorkBuilder {
 	b.seasonName = seasonName
 	b.seasonYear = year
 	b.noSeason = false
+	b.noSeasonName = false
+	return b
+}
+
+// WithSeasonYearOnlyは公開年だけを設定し、季節 (season_name) をNULLにします
+func (b *WorkBuilder) WithSeasonYearOnly(year int32) *WorkBuilder {
+	b.seasonYear = year
+	b.noSeason = false
+	b.noSeasonName = true
 	return b
 }
 
@@ -178,7 +190,9 @@ func (b *WorkBuilder) Build() model.WorkID {
 		seasonName = nil
 	} else {
 		seasonYear = b.seasonYear
-		seasonName = b.seasonName
+		if !b.noSeasonName {
+			seasonName = b.seasonName
+		}
 	}
 
 	var scTid, malAnimeID, manualEpisodesCount interface{}
@@ -333,6 +347,7 @@ type UserBuilder struct {
 	locale             string
 	role               int32
 	stripeSubscriberID *model.StripeSubscriberID
+	deletedAt          *time.Time
 }
 
 // NewUserBuilderは新しいUserBuilderを作成します
@@ -385,6 +400,12 @@ func (b *UserBuilder) WithRole(role int32) *UserBuilder {
 // WithStripeSubscriberIDはStripeサブスクライバーIDを設定します
 func (b *UserBuilder) WithStripeSubscriberID(id *model.StripeSubscriberID) *UserBuilder {
 	b.stripeSubscriberID = id
+	return b
+}
+
+// WithDeletedAtは論理削除日時を設定します (退会・利用停止したユーザー)
+func (b *UserBuilder) WithDeletedAt(deletedAt time.Time) *UserBuilder {
+	b.deletedAt = &deletedAt
 	return b
 }
 
@@ -489,6 +510,13 @@ func (b *UserBuilder) Build() model.UserID {
 		_, err = b.tx.Exec(`UPDATE users SET stripe_subscriber_id = $1 WHERE id = $2`, int64(*b.stripeSubscriberID), id)
 		if err != nil {
 			b.t.Fatalf("ユーザーのStripeSubscriberID更新に失敗しました: %v", err)
+		}
+	}
+
+	if b.deletedAt != nil {
+		_, err = b.tx.Exec(`UPDATE users SET deleted_at = $1 WHERE id = $2`, *b.deletedAt, id)
+		if err != nil {
+			b.t.Fatalf("ユーザーのdeleted_at更新に失敗しました: %v", err)
 		}
 	}
 
@@ -1490,6 +1518,12 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		b.t.Fatalf("ステータスデータの作成に失敗しました: %v", err)
 	}
 
+	// プログラムを指定しない場合は、program_idをNULLのまま作成する。
+	var programID any
+	if b.programID != 0 {
+		programID = b.programID
+	}
+
 	// ライブラリエントリを作成 (status_idを設定)
 	query := `
 		INSERT INTO library_entries (
@@ -1504,7 +1538,7 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		query,
 		int64(b.userID),
 		int64(b.workID),
-		b.programID,
+		programID,
 		kind,
 		statusID,
 		time.Now(),
@@ -1525,6 +1559,9 @@ type CastBuilder struct {
 	workID        model.WorkID
 	characterName string
 	personName    string
+	unpublishedAt *time.Time
+	deletedAt     *time.Time
+	personStatus  *model.PersonStatus
 }
 
 // NewCastBuilderは新しいCastBuilderを作成します
@@ -1550,6 +1587,27 @@ func (b *CastBuilder) WithPersonName(name string) *CastBuilder {
 	return b
 }
 
+// WithUnpublishedAtはcasts.unpublished_atを設定し、キャストを非公開とします。
+// 既定ではNULL (公開) のままにします。
+func (b *CastBuilder) WithUnpublishedAt(unpublishedAt time.Time) *CastBuilder {
+	b.unpublishedAt = &unpublishedAt
+	return b
+}
+
+// WithDeletedAtはcasts.deleted_atを設定し、キャストをソフトデリートします。
+// 既定ではNULL (未削除) のままにします。
+func (b *CastBuilder) WithDeletedAt(deletedAt time.Time) *CastBuilder {
+	b.deletedAt = &deletedAt
+	return b
+}
+
+// WithPersonStatusはキャストが参照する人物のpeople.statusを設定します。
+// 既定ではカラムの既定値 (published) のままにします。
+func (b *CastBuilder) WithPersonStatus(status model.PersonStatus) *CastBuilder {
+	b.personStatus = &status
+	return b
+}
+
 // Buildはテスト用のキャストデータをデータベースに作成します
 func (b *CastBuilder) Build() model.CastID {
 	b.t.Helper()
@@ -1564,23 +1622,36 @@ func (b *CastBuilder) Build() model.CastID {
 		b.t.Fatalf("キャラクターの作成に失敗: %v", err)
 	}
 
+	var personStatus interface{}
+	if b.personStatus != nil {
+		personStatus = string(*b.personStatus)
+	}
+
 	var personID int64
 	err = b.tx.QueryRow(`
-		INSERT INTO people (name, name_en, name_kana, created_at, updated_at)
-		VALUES ($1, $2, '', NOW(), NOW())
+		INSERT INTO people (name, name_en, name_kana, status, created_at, updated_at)
+		VALUES ($1, $2, '', COALESCE($3::person_status, 'published'), NOW(), NOW())
 		RETURNING id
-	`, b.personName, b.personName).Scan(&personID)
+	`, b.personName, b.personName, personStatus).Scan(&personID)
 	if err != nil {
 		b.t.Fatalf("人物の作成に失敗: %v", err)
+	}
+
+	var unpublishedAt, deletedAt interface{}
+	if b.unpublishedAt != nil {
+		unpublishedAt = *b.unpublishedAt
+	}
+	if b.deletedAt != nil {
+		deletedAt = *b.deletedAt
 	}
 
 	displayName := b.characterName + " as " + b.personName
 	var castID int64
 	err = b.tx.QueryRow(`
-		INSERT INTO casts (work_id, character_id, person_id, name, name_en, sort_number, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, NOW(), NOW())
+		INSERT INTO casts (work_id, character_id, person_id, name, name_en, sort_number, unpublished_at, deleted_at, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
 		RETURNING id
-	`, int64(b.workID), characterID, personID, displayName, displayName, 1).Scan(&castID)
+	`, int64(b.workID), characterID, personID, displayName, displayName, 1, unpublishedAt, deletedAt).Scan(&castID)
 	if err != nil {
 		b.t.Fatalf("キャストの作成に失敗: %v", err)
 	}
@@ -1590,11 +1661,15 @@ func (b *CastBuilder) Build() model.CastID {
 
 // StaffBuilderはスタッフテストデータのビルダー
 type StaffBuilder struct {
-	tx     *sql.Tx
-	t      *testing.T
-	workID model.WorkID
-	name   string
-	role   string
+	tx             *sql.Tx
+	t              *testing.T
+	workID         model.WorkID
+	name           string
+	role           string
+	organizationID *int64
+	unpublishedAt  *time.Time
+	deletedAt      *time.Time
+	personStatus   *model.PersonStatus
 }
 
 // NewStaffBuilderは新しいStaffBuilderを作成します
@@ -1620,29 +1695,220 @@ func (b *StaffBuilder) WithRole(role string) *StaffBuilder {
 	return b
 }
 
+// WithOrganizationはスタッフの参照先を団体 (resource_type = 'Organization') にします。
+// 既定では人物を作成して参照します。
+func (b *StaffBuilder) WithOrganization(organizationID int64) *StaffBuilder {
+	b.organizationID = &organizationID
+	return b
+}
+
+// WithUnpublishedAtはstaffs.unpublished_atを設定し、スタッフを非公開とします。
+// 既定ではNULL (公開) のままにします。
+func (b *StaffBuilder) WithUnpublishedAt(unpublishedAt time.Time) *StaffBuilder {
+	b.unpublishedAt = &unpublishedAt
+	return b
+}
+
+// WithDeletedAtはstaffs.deleted_atを設定し、スタッフをソフトデリートします。
+// 既定ではNULL (未削除) のままにします。
+func (b *StaffBuilder) WithDeletedAt(deletedAt time.Time) *StaffBuilder {
+	b.deletedAt = &deletedAt
+	return b
+}
+
+// WithPersonStatusはスタッフが参照する人物のpeople.statusを設定します。
+// 既定ではカラムの既定値 (published) のままにします。
+// WithOrganizationと併用した場合は無視されます。
+func (b *StaffBuilder) WithPersonStatus(status model.PersonStatus) *StaffBuilder {
+	b.personStatus = &status
+	return b
+}
+
 // Buildはテスト用のスタッフデータをデータベースに作成します
 func (b *StaffBuilder) Build() model.StaffID {
 	b.t.Helper()
 
-	var personID int64
-	err := b.tx.QueryRow(`
-		INSERT INTO people (name, name_en, name_kana, created_at, updated_at)
-		VALUES ($1, $2, '', NOW(), NOW())
-		RETURNING id
-	`, b.name, b.name).Scan(&personID)
-	if err != nil {
-		b.t.Fatalf("人物の作成に失敗: %v", err)
+	resourceType := "Organization"
+	var resourceID int64
+	if b.organizationID != nil {
+		resourceID = *b.organizationID
+	} else {
+		resourceType = "Person"
+
+		var personStatus interface{}
+		if b.personStatus != nil {
+			personStatus = string(*b.personStatus)
+		}
+
+		err := b.tx.QueryRow(`
+			INSERT INTO people (name, name_en, name_kana, status, created_at, updated_at)
+			VALUES ($1, $2, '', COALESCE($3::person_status, 'published'), NOW(), NOW())
+			RETURNING id
+		`, b.name, b.name, personStatus).Scan(&resourceID)
+		if err != nil {
+			b.t.Fatalf("人物の作成に失敗: %v", err)
+		}
+	}
+
+	var unpublishedAt, deletedAt interface{}
+	if b.unpublishedAt != nil {
+		unpublishedAt = *b.unpublishedAt
+	}
+	if b.deletedAt != nil {
+		deletedAt = *b.deletedAt
 	}
 
 	var staffID int64
-	err = b.tx.QueryRow(`
-		INSERT INTO staffs (work_id, name, name_en, role, role_other, role_other_en, resource_id, resource_type, sort_number, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, '', '', $5, $6, 1, NOW(), NOW())
+	err := b.tx.QueryRow(`
+		INSERT INTO staffs (work_id, name, name_en, role, role_other, role_other_en, resource_id, resource_type, sort_number, unpublished_at, deleted_at, created_at, updated_at)
+		VALUES ($1, $2, $3, $4, '', '', $5, $6, 1, $7, $8, NOW(), NOW())
 		RETURNING id
-	`, int64(b.workID), b.name, b.name, b.role, personID, "Person").Scan(&staffID)
+	`, int64(b.workID), b.name, b.name, b.role, resourceID, resourceType, unpublishedAt, deletedAt).Scan(&staffID)
 	if err != nil {
 		b.t.Fatalf("スタッフの作成に失敗: %v", err)
 	}
 
 	return model.StaffID(staffID)
+}
+
+// PersonBuilderは人物テストデータのビルダー
+type PersonBuilder struct {
+	tx            *sql.Tx
+	t             *testing.T
+	name          string
+	nameKana      string
+	nameEn        string
+	nickname      *string
+	status        *model.PersonStatus
+	unpublishedAt *time.Time
+	deletedAt     *time.Time
+	updatedAt     *time.Time
+	delistMessage *string
+}
+
+// NewPersonBuilderは新しいPersonBuilderを作成します。people.nameは一意制約の対象の
+// ため、既定の名前は並列のテストで衝突しないようUUIDから作ります。
+func NewPersonBuilder(t *testing.T, tx *sql.Tx) *PersonBuilder {
+	return &PersonBuilder{
+		tx:   tx,
+		t:    t,
+		name: "テスト人物-" + uuid.New().String(),
+	}
+}
+
+// WithNameは人物名を設定します
+func (b *PersonBuilder) WithName(name string) *PersonBuilder {
+	b.name = name
+	return b
+}
+
+// WithNameKanaは人物名の読みを設定します
+func (b *PersonBuilder) WithNameKana(nameKana string) *PersonBuilder {
+	b.nameKana = nameKana
+	return b
+}
+
+// WithNameEnは人物の英語名を設定します
+func (b *PersonBuilder) WithNameEn(nameEn string) *PersonBuilder {
+	b.nameEn = nameEn
+	return b
+}
+
+// WithNicknameはpeople.nicknameを設定します。既定ではNULLのままにします。Rails版が
+// 空欄を空文字列で保存した行を再現するため、空文字列もそのまま書きます。
+func (b *PersonBuilder) WithNickname(nickname string) *PersonBuilder {
+	b.nickname = &nickname
+	return b
+}
+
+// WithUpdatedAtはpeople.updated_atを設定します。既定ではNOW() (トランザクションの開始
+// 時刻) です。同じトランザクションの中で更新してもNOW() は進まないため、版の照合を検証する
+// テストは過去の時刻を設定します。
+func (b *PersonBuilder) WithUpdatedAt(updatedAt time.Time) *PersonBuilder {
+	b.updatedAt = &updatedAt
+	return b
+}
+
+// WithStatusはpeople.statusを設定します。既定ではカラムの既定値 (published) のままにします。
+// Rails版への橋渡しのunpublished_at / deleted_atは書かないため、必要なテストは
+// WithUnpublishedAt / WithDeletedAtを併せて使います。
+func (b *PersonBuilder) WithStatus(status model.PersonStatus) *PersonBuilder {
+	b.status = &status
+	return b
+}
+
+// WithUnpublishedAtはpeople.unpublished_atを設定します。既定ではNULLのままにします。
+func (b *PersonBuilder) WithUnpublishedAt(unpublishedAt time.Time) *PersonBuilder {
+	b.unpublishedAt = &unpublishedAt
+	return b
+}
+
+// WithDeletedAtはpeople.deleted_atを設定します。既定ではNULLのままにします。
+func (b *PersonBuilder) WithDeletedAt(deletedAt time.Time) *PersonBuilder {
+	b.deletedAt = &deletedAt
+	return b
+}
+
+// WithDelistMessageはpeople.delist_message (掲載停止の対応記録) を設定します。既定ではNULLの
+// ままにします。
+func (b *PersonBuilder) WithDelistMessage(delistMessage string) *PersonBuilder {
+	b.delistMessage = &delistMessage
+	return b
+}
+
+// Buildはテスト用の人物データをデータベースに作成します
+func (b *PersonBuilder) Build() model.PersonID {
+	b.t.Helper()
+
+	var nickname, status, unpublishedAt, deletedAt, updatedAt, delistMessage interface{}
+	if b.nickname != nil {
+		nickname = *b.nickname
+	}
+	if b.status != nil {
+		status = string(*b.status)
+	}
+	if b.unpublishedAt != nil {
+		unpublishedAt = *b.unpublishedAt
+	}
+	if b.deletedAt != nil {
+		deletedAt = *b.deletedAt
+	}
+	if b.updatedAt != nil {
+		// people.updated_atはtimestamp without time zoneで、送った値のタイムゾーンは
+		// 読み捨てられるため、Rails版と同じくUTCの時刻で書く。
+		updatedAt = b.updatedAt.UTC()
+	}
+	if b.delistMessage != nil {
+		delistMessage = *b.delistMessage
+	}
+
+	var id int64
+	err := b.tx.QueryRow(`
+		INSERT INTO people (name, name_kana, name_en, nickname, status, unpublished_at, deleted_at, created_at, updated_at, delist_message)
+		VALUES ($1, $2, $3, $4, COALESCE($5::person_status, 'published'), $6, $7, NOW(), COALESCE($8::timestamp, NOW()), $9)
+		RETURNING id
+	`, b.name, b.nameKana, b.nameEn, nickname, status, unpublishedAt, deletedAt, updatedAt, delistMessage).Scan(&id)
+	if err != nil {
+		b.t.Fatalf("人物データの作成に失敗しました: %v", err)
+	}
+
+	return model.PersonID(id)
+}
+
+// CreateTestPrefectureはテスト用の出身地 (prefectures) をデータベースに作成し、IDを返します。
+// テスト用データベースは出身地のマスターデータを持たないため、出身地を選ぶテストはこれで
+// 作ります。
+func CreateTestPrefecture(t *testing.T, tx *sql.Tx, name string) model.PrefectureID {
+	t.Helper()
+
+	var id int64
+	if err := tx.QueryRow(`
+		INSERT INTO prefectures (name, created_at, updated_at)
+		VALUES ($1, NOW(), NOW())
+		RETURNING id
+	`, name).Scan(&id); err != nil {
+		t.Fatalf("出身地データの作成に失敗しました: %v", err)
+	}
+
+	return model.PrefectureID(id)
 }

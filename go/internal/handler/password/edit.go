@@ -10,6 +10,7 @@ import (
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/middleware"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/ratelimit"
 	"github.com/annict/annict/go/internal/templates/layouts"
 	errorpages "github.com/annict/annict/go/internal/templates/pages/errors"
 	passwordpages "github.com/annict/annict/go/internal/templates/pages/password"
@@ -36,10 +37,10 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		ip := clientip.GetClientIP(r)
 		tokenVerifyKey := fmt.Sprintf("password_reset:token_verify:ip:%s", ip)
-		allowed, err := h.limiter.Check(ctx, tokenVerifyKey, 10, 1*time.Hour)
+		result, err := h.limiter.Check(ctx, ratelimit.CheckInput{Key: tokenVerifyKey, Limit: 10, Window: 1 * time.Hour})
 		if err != nil {
 			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
-		} else if !allowed {
+		} else if !result.Allowed {
 			slog.WarnContext(ctx, "トークン検証がRate Limitingにより制限されました",
 				"ip_address", ip,
 			)

@@ -23,6 +23,6 @@ func newCleanupExpiredSignInCodesUsecase(queries *query.Queries) *usecase.Cleanu
 // ジョブと違いRiverを介さず、同じUseCaseを組み立てて直接呼ぶ。これにより運用者は
 // スケジュールを待たずに、対象となる期限切れ・使用済み行を任意のタイミングで削除できる。
 // カットオフも開始・完了のログもUseCase側が持つため、こちらでは何も足さない。
-func cleanupExpiredSignInCodes(ctx context.Context, _ *config.Config, _ *sql.DB, queries *query.Queries) error {
+func cleanupExpiredSignInCodes(ctx context.Context, _ *config.Config, _ *sql.DB, queries *query.Queries, _ []string) error {
 	return newCleanupExpiredSignInCodesUsecase(queries).Execute(ctx)
 }

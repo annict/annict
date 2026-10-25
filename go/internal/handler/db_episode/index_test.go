@@ -457,6 +457,23 @@ func assertNotFoundPage(t *testing.T, rr *httptest.ResponseRecorder) {
 	}
 }
 
+// assertForbiddenPageは認可失敗が共通の403ページとして配信されることを検証する。
+func assertForbiddenPage(t *testing.T, rr *httptest.ResponseRecorder) {
+	t.Helper()
+
+	if rr.Code != http.StatusForbidden {
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusForbidden)
+	}
+	if contentType := rr.Header().Get("Content-Type"); contentType != "text/html; charset=utf-8" {
+		t.Errorf("Content-Type = %q、期待値 = text/html; charset=utf-8", contentType)
+	}
+	for _, expected := range []string{"<title>アクセスできません | Annict</title>", "この操作を行う権限がありません。", `href="/"`} {
+		if !strings.Contains(rr.Body.String(), expected) {
+			t.Errorf("403レスポンスに%qが含まれていません", expected)
+		}
+	}
+}
+
 func TestSetIndexTitle(t *testing.T) {
 	t.Parallel()
 

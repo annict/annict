@@ -32,7 +32,7 @@ func TestCreateSessionUsecase_Execute(t *testing.T) {
 
 	// ユーザー情報を取得 (encrypted_passwordが必要)
 	queries := query.New(db).WithTx(tx)
-	user, err := queries.GetUserByID(context.Background(), int64(userID))
+	user, err := queries.GetActiveUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -87,7 +87,7 @@ func TestCreateSessionUsecase_Execute_WithMultipleUsers(t *testing.T) {
 
 	// ユーザー情報を取得
 	queries := query.New(db).WithTx(tx)
-	user, err := queries.GetUserByID(context.Background(), int64(userID))
+	user, err := queries.GetActiveUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -251,7 +251,7 @@ func TestCreateSessionUsecase_Execute_WithoutTransaction(t *testing.T) {
 
 	// ユーザー情報を取得
 	queries := query.New(db).WithTx(tx)
-	user, err := queries.GetUserByID(context.Background(), int64(userID))
+	user, err := queries.GetActiveUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}
@@ -309,7 +309,7 @@ func TestCreateSessionUsecase_Execute_DuplicateSessionID(t *testing.T) {
 
 	// ユーザー情報を取得
 	queries := query.New(db).WithTx(tx)
-	user, err := queries.GetUserByID(context.Background(), int64(userID))
+	user, err := queries.GetActiveUserByID(context.Background(), int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー情報の取得に失敗: %v", err)
 	}

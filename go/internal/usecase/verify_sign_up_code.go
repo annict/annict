@@ -89,10 +89,7 @@ func (uc *VerifySignUpCodeUsecase) verifyCode(ctx context.Context, email string,
 			return fmt.Errorf("トランザクションのコミットに失敗: %w", err)
 		}
 
-		slog.WarnContext(ctx, "試行回数が上限に達したため、コードを無効化しました",
-			"email", email,
-			"sign_up_code_id", signUpCode.ID,
-		)
+		slog.WarnContext(ctx, "試行回数が上限に達したため、コードを無効化しました", "sign_up_code_id", signUpCode.ID)
 
 		return ErrCodeAttemptsExceeded
 	}
@@ -109,7 +106,6 @@ func (uc *VerifySignUpCodeUsecase) verifyCode(ctx context.Context, email string,
 		}
 
 		slog.WarnContext(ctx, "コードが正しくありません",
-			"email", email,
 			"sign_up_code_id", signUpCode.ID,
 			"attempts", signUpCode.Attempts+1,
 		)
@@ -126,10 +122,7 @@ func (uc *VerifySignUpCodeUsecase) verifyCode(ctx context.Context, email string,
 		return fmt.Errorf("トランザクションのコミットに失敗: %w", err)
 	}
 
-	slog.InfoContext(ctx, "コード検証に成功しました",
-		"email", email,
-		"sign_up_code_id", signUpCode.ID,
-	)
+	slog.InfoContext(ctx, "コード検証に成功しました", "sign_up_code_id", signUpCode.ID)
 
 	return nil
 }

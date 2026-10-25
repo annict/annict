@@ -28,6 +28,6 @@ func newCleanupExpiredSessionsUsecase(queries *query.Queries) *usecase.CleanupEx
 // 待たずに、定期実行と同じ上限の1回分を任意のタイミングで実行できる。上限で打ち切った
 // 残りを続けて消したいときは、繰り返し実行する。カットオフもバッチ分割も上限時間も
 // 開始・完了のログもUseCase側が持つため、こちらでは何も足さない。
-func cleanupExpiredSessions(ctx context.Context, _ *config.Config, _ *sql.DB, queries *query.Queries) error {
+func cleanupExpiredSessions(ctx context.Context, _ *config.Config, _ *sql.DB, queries *query.Queries, _ []string) error {
 	return newCleanupExpiredSessionsUsecase(queries).Execute(ctx)
 }

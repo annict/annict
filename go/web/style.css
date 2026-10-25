@@ -41,13 +41,18 @@
 
 /* 共通ユーティリティクラス */
 @layer components {
-  /* リンク */
+  /*
+    リンク。Markdownから描画したリンクはクラスを付けられないため、
+    `.rendered-markdown` の中の `<a>` にも同じ見た目を当てる
+  */
   .link,
-  .link-muted {
+  .link-muted,
+  .rendered-markdown a {
     @apply underline underline-offset-4 transition-colors duration-150;
   }
 
-  .link {
+  .link,
+  .rendered-markdown a {
     @apply text-blue-600 hover:text-blue-700;
     @apply dark:text-blue-400 dark:hover:text-blue-300;
   }
@@ -59,8 +64,95 @@
 
   /* フォーカス状態 */
   .link:focus,
-  .link-muted:focus {
-    @apply outline-none ring-2 ring-ring;
+  .link-muted:focus,
+  .rendered-markdown a:focus {
+    @apply ring-ring ring-2 outline-none;
+  }
+}
+
+/*
+  Markdownから描画したHTML (法的文書の本文など) のスタイル。Tailwindの
+  Preflightは見出しの大きさ・段落の余白・リストの記号・表の罫線をすべて
+  打ち消すため、ここで戻す。本文の章は `<h2>` から始まる (ページの見出しが
+  `<h1>` のため)。既定レイアウトの本文の列は内容の最小幅より狭くならない
+  ため、長いURLなども途中で折り返せるようにして (`overflow-wrap: anywhere`)
+  本文と表の最小幅を小さく保ち、狭い画面でページが横にはみ出さないようにする
+  (`break-word` は最小幅の計算に効かない)。表を横スクロールのブロック
+  (`display: block`) にする方法は採らない。一部のブラウザで表の構造が支援
+  技術に伝わらなくなり、キーボードでスクロールできない領域も生むため。
+*/
+@layer components {
+  .rendered-markdown {
+    @apply wrap-anywhere;
+
+    & > :first-child {
+      @apply mt-0;
+    }
+
+    & h2 {
+      @apply mt-8 mb-4 border-b pb-1 text-xl font-bold antialiased;
+    }
+
+    & h3 {
+      @apply mt-6 mb-2 text-lg font-bold antialiased;
+    }
+
+    & p {
+      @apply mb-4 leading-7;
+    }
+
+    & ol,
+    & ul {
+      @apply mb-4 pl-6 leading-7;
+    }
+
+    & ol {
+      @apply list-decimal;
+    }
+
+    & ul {
+      @apply list-disc;
+    }
+
+    & li + li {
+      @apply mt-1;
+    }
+
+    /* 入れ子のリストは親の項目に続けて詰めて置く */
+    & li > ol,
+    & li > ul {
+      @apply mt-1 mb-0;
+    }
+
+    & table {
+      @apply mb-4;
+    }
+
+    & th,
+    & td {
+      @apply border px-4 py-2 text-left align-top;
+    }
+
+    & th {
+      @apply font-bold;
+    }
+
+    /*
+      項目と内容の対 (特定商取引法に基づく表記など)。広い画面では項目を左の列、
+      内容を右の列に並べ、狭い画面では項目の下に内容を続ける。項目や内容が
+      複数続いても列がずれないよう、それぞれの開始列を固定する
+    */
+    & dl {
+      @apply leading-7 sm:grid sm:grid-cols-4 sm:gap-x-6;
+    }
+
+    & dt {
+      @apply font-bold sm:col-span-1 sm:col-start-1;
+    }
+
+    & dd {
+      @apply mb-4 sm:col-span-3 sm:col-start-2;
+    }
   }
 }
 

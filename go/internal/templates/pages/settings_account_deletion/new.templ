@@ -1,0 +1,125 @@
+package settings_account_deletion
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// NewPageDataは退会の確認ページに渡すデータ構造体です
+type NewPageData struct {
+	CSRFToken string
+	// Usernameは確認のために入力を求める、ログイン中のユーザーのユーザー名
+	Username                 string
+	IsStripeSupporter        bool
+	IsGumroadSupporter       bool
+	HasKeptOAuthApplications bool
+	FormErrors               *viewmodel.FormErrors
+	// InputUsernameは受付を拒否して再表示するときに入力欄へ戻す、利用者が入力した値
+	InputUsername string
+}
+
+// Newは退会の確認ページを表示します。
+// 取り消せない操作のため、削除されるもの・残るものを示したうえで、ユーザー名の入力を求める。
+// OAuthアプリケーションが残っていると退会を受け付けないため、その間はフォームを出さず削除方法を案内する。
+templ New(data NewPageData) {
+	<div class="flex flex-col gap-4 py-4">
+		<h1 class="text-2xl font-bold antialiased px-4">
+			{ templates.T(ctx, "settings_account_deletion_new_heading") }
+		</h1>
+		<hr/>
+		<div class="max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0">
+			<div class="card px-4">
+				<p>{ templates.T(ctx, "settings_account_deletion_new_description") }</p>
+				<h2 class="text-xl font-bold antialiased">
+					{ templates.T(ctx, "settings_account_deletion_new_deleted_heading") }
+				</h2>
+				<ul class="list-disc pl-6 flex flex-col gap-1">
+					<li>{ templates.T(ctx, "settings_account_deletion_new_deleted_account") }</li>
+					<li>{ templates.T(ctx, "settings_account_deletion_new_deleted_records") }</li>
+					<li>{ templates.T(ctx, "settings_account_deletion_new_deleted_social") }</li>
+					<li>{ templates.T(ctx, "settings_account_deletion_new_deleted_forum") }</li>
+					<li>{ templates.T(ctx, "settings_account_deletion_new_deleted_db") }</li>
+					<li>{ templates.T(ctx, "settings_account_deletion_new_deleted_api") }</li>
+				</ul>
+				<h2 class="text-xl font-bold antialiased">
+					{ templates.T(ctx, "settings_account_deletion_new_kept_heading") }
+				</h2>
+				<ul class="list-disc pl-6 flex flex-col gap-1">
+					<li>{ templates.T(ctx, "settings_account_deletion_new_kept_mentions") }</li>
+					<li>{ templates.T(ctx, "settings_account_deletion_new_kept_forum_comments") }</li>
+					<li>{ templates.T(ctx, "settings_account_deletion_new_kept_db_values") }</li>
+					<li>{ templates.T(ctx, "settings_account_deletion_new_kept_work_images") }</li>
+				</ul>
+			</div>
+			if data.IsStripeSupporter {
+				<div class="alert" data-variant="warning">
+					<h2>{ templates.T(ctx, "settings_account_deletion_new_stripe_supporter_heading") }</h2>
+					<section>{ templates.T(ctx, "settings_account_deletion_new_stripe_supporter_description") }</section>
+				</div>
+			}
+			if data.IsGumroadSupporter {
+				<div class="alert" data-variant="warning">
+					<h2>{ templates.T(ctx, "settings_account_deletion_new_gumroad_supporter_heading") }</h2>
+					<section>{ templates.T(ctx, "settings_account_deletion_new_gumroad_supporter_description") }</section>
+				</div>
+			}
+			if data.HasKeptOAuthApplications {
+				<div class="alert" data-variant="destructive">
+					<h2>{ templates.T(ctx, "settings_account_deletion_new_oauth_applications_heading") }</h2>
+					<section>
+						<p>{ templates.T(ctx, "settings_account_deletion_new_oauth_applications_description") }</p>
+						<p>
+							<a href="/oauth/applications" class="underline">
+								{ templates.T(ctx, "settings_account_deletion_new_oauth_applications") }
+							</a>
+						</p>
+					</section>
+				</div>
+			} else {
+				<div class="card px-4">
+					// OAuthアプリケーションが残っているエラーは上の案内と同じ内容のため、フォームを出す
+					// ときにだけ描画されるこの位置に置く。
+					@components.FormErrors(components.FormErrorsData{Errors: data.FormErrors})
+					<form
+						action="/settings/account/deletion"
+						class="grid gap-6"
+						hx-on:submit="disableSubmitButtons(this)"
+						method="POST"
+					>
+						<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+						<div role="group" class="field">
+							<label class="label" for="username">
+								{ templates.T(ctx, "settings_account_deletion_new_username_label", map[string]any{"Username": data.Username}) }
+							</label>
+							<input
+								autocapitalize="off"
+								autocomplete="off"
+								class="input"
+								id="username"
+								name="username"
+								required
+								spellcheck="false"
+								type="text"
+								value={ data.InputUsername }
+								if data.FormErrors.HasFieldError("username") {
+									aria-invalid="true"
+									aria-describedby={ components.FieldErrorIDs(data.FormErrors, "username") }
+									autofocus
+								}
+							/>
+							if data.FormErrors.HasFieldError("username") {
+								for i, errorMsg := range data.FormErrors.Fields["username"] {
+									<p id={ components.FieldErrorID("username", i) } role="alert">{ errorMsg }</p>
+								}
+							}
+						</div>
+						<button type="submit" class="btn rounded-full w-fit" data-variant="destructive">
+							{ templates.T(ctx, "settings_account_deletion_new_submit_button") }
+						</button>
+					</form>
+				</div>
+			}
+		</div>
+	</div>
+}

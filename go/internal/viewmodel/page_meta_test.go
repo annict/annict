@@ -2,6 +2,7 @@ package viewmodel
 
 import (
 	"context"
+	"slices"
 	"testing"
 
 	"github.com/annict/annict/go/internal/config"
@@ -354,6 +355,170 @@ func TestPageMeta_SetTitleWithoutSuffix(t *testing.T) {
 
 			if meta.Title != tt.expectedTitle {
 				t.Errorf("Title = %q、期待値 = %q", meta.Title, tt.expectedTitle)
+			}
+		})
+	}
+}
+
+// TestDefaultPageMeta_LanguageMetaはURLが言語を持たないページの既定値を検証する。
+// リクエストのロケールが英語でもLocaleは既定言語のままで、言語版の一覧とnoindexは持たない。
+// 既存ページのog:locale・hreflang・canonicalの出力を変えないため。
+func TestDefaultPageMeta_LanguageMeta(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "test.annict.com",
+	}
+
+	for _, locale := range []string{i18n.LangJa, i18n.LangEn} {
+		t.Run(locale, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), locale)
+			meta := DefaultPageMeta(ctx, cfg, "/works/popular")
+
+			if meta.Locale != i18n.LangJa {
+				t.Errorf("Locale = %q、期待値 = %q", meta.Locale, i18n.LangJa)
+			}
+			if meta.LanguageVersions != nil {
+				t.Errorf("LanguageVersions = %v、期待値 = nil", meta.LanguageVersions)
+			}
+			if meta.NoIndex {
+				t.Error("NoIndex = true、期待値 = false")
+			}
+		})
+	}
+}
+
+// TestPageMeta_OGLocaleはLocaleがog:localeの値 (言語_地域の形) に変換されることを検証する。
+// 未設定や翻訳を持たない言語は既定言語の値になる。
+func TestPageMeta_OGLocale(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name   string
+		locale string
+		want   string
+	}{
+		{name: "日本語", locale: i18n.LangJa, want: "ja_JP"},
+		{name: "英語", locale: i18n.LangEn, want: "en_US"},
+		{name: "未設定は既定言語", locale: "", want: "ja_JP"},
+		{name: "翻訳を持たない言語は既定言語", locale: "fr", want: "ja_JP"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			meta := PageMeta{Locale: tt.locale}
+
+			if got := meta.OGLocale(); got != tt.want {
+				t.Errorf("OGLocale() = %q、期待値 = %q", got, tt.want)
+			}
+		})
+	}
+}
+
+// TestPageMeta_Robotsは、NoIndex・NoFollow・NoArchiveのうちtrueのものだけを
+// <meta name="robots"> のcontentの形にまとめることを検証する。
+func TestPageMeta_Robots(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		meta PageMeta
+		want string
+	}{
+		{name: "どれも指定しない", meta: PageMeta{}, want: ""},
+		{name: "noindexだけ", meta: PageMeta{NoIndex: true}, want: "noindex"},
+		{name: "nofollowだけ", meta: PageMeta{NoFollow: true}, want: "nofollow"},
+		{name: "noarchiveだけ", meta: PageMeta{NoArchive: true}, want: "noarchive"},
+		{
+			name: "すべて指定する",
+			meta: PageMeta{NoIndex: true, NoFollow: true, NoArchive: true},
+			want: "noindex,nofollow,noarchive",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			if got := tt.meta.Robots(); got != tt.want {
+				t.Errorf("Robots() = %q、期待値 = %q", got, tt.want)
+			}
+		})
+	}
+}
+
+// TestPageMeta_AddLanguageVersionは言語版のURLが、canonicalと同じ規則で正規化した
+// 絶対URLになることを検証する。
+func TestPageMeta_AddLanguageVersion(t *testing.T) {
+	t.Parallel()
+
+	cfg := &config.Config{
+		Env:    "test",
+		Domain: "test.annict.com",
+	}
+
+	var meta PageMeta
+	meta.AddLanguageVersion(cfg, i18n.LangJa, "/terms")
+	meta.AddLanguageVersion(cfg, i18n.LangEn, "/en/terms/")
+
+	want := []AlternateLink{
+		{HrefLang: "ja", URL: "https://test.annict.com/terms"},
+		{HrefLang: "en", URL: "https://test.annict.com/en/terms"},
+	}
+	if !slices.Equal(meta.LanguageVersions, want) {
+		t.Errorf("LanguageVersions = %v、期待値 = %v", meta.LanguageVersions, want)
+	}
+}
+
+// TestPageMeta_AlternateLinksは言語版が2つ以上あるときだけhreflangのリンクを返し、
+// 末尾のx-defaultが既定言語の版を指すことを検証する。
+func TestPageMeta_AlternateLinks(t *testing.T) {
+	t.Parallel()
+
+	jaVersion := AlternateLink{HrefLang: "ja", URL: "https://annict.com/terms"}
+	enVersion := AlternateLink{HrefLang: "en", URL: "https://annict.com/en/terms"}
+	xDefault := AlternateLink{HrefLang: "x-default", URL: "https://annict.com/terms"}
+
+	tests := []struct {
+		name     string
+		versions []AlternateLink
+		want     []AlternateLink
+	}{
+		{
+			name:     "言語版の一覧が無いときは返さない",
+			versions: nil,
+			want:     nil,
+		},
+		{
+			name:     "言語版が1つだけのときは返さない",
+			versions: []AlternateLink{jaVersion},
+			want:     nil,
+		},
+		{
+			name:     "日本語版から見た一覧",
+			versions: []AlternateLink{jaVersion, enVersion},
+			want:     []AlternateLink{jaVersion, enVersion, xDefault},
+		},
+		{
+			name:     "英語版から見た一覧でもx-defaultは日本語版を指す",
+			versions: []AlternateLink{enVersion, jaVersion},
+			want:     []AlternateLink{enVersion, jaVersion, xDefault},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			meta := PageMeta{LanguageVersions: tt.versions}
+
+			if got := meta.AlternateLinks(); !slices.Equal(got, tt.want) {
+				t.Errorf("AlternateLinks() = %v、期待値 = %v", got, tt.want)
 			}
 		})
 	}

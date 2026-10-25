@@ -9,6 +9,7 @@ import (
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/ratelimit"
 	"github.com/annict/annict/go/internal/usecase"
 )
 
@@ -34,10 +35,10 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	// Rate Limitingチェック: メールアドレス単位 (3回/時間)
 	if h.limiter != nil && !h.cfg.DisableRateLimit {
 		emailKey := fmt.Sprintf("sign_up:send:%s", email)
-		allowed, err := h.limiter.Check(ctx, emailKey, 3, 1*time.Hour)
+		result, err := h.limiter.Check(ctx, ratelimit.CheckInput{Key: emailKey, Limit: 3, Window: 1 * time.Hour})
 		if err != nil {
 			slog.ErrorContext(ctx, "Rate Limitingチェックが失敗しました", "error", err)
-		} else if !allowed {
+		} else if !result.Allowed {
 			slog.WarnContext(ctx, "確認コード再送信がRate Limitingにより制限されました",
 				"email", email,
 				"ip_address", clientip.GetClientIP(r),

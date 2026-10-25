@@ -319,3 +319,42 @@ func TestStripeSubscriberRepository_IsActive(t *testing.T) {
 		})
 	}
 }
+
+// HasActiveSubscriptionが、IDが無い・行が無い・サブスクリプションが有効でない場合にfalseを返し、
+// 有効な場合だけtrueを返すことをテストする。
+func TestStripeSubscriberRepository_HasActiveSubscription(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewStripeSubscriberRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	activeID := testutil.CreateTestStripeSubscriberWithStatus(t, tx, "active")
+	pastDueID := testutil.CreateTestStripeSubscriberWithStatus(t, tx, "past_due")
+	canceledID := testutil.CreateTestStripeSubscriberWithStatus(t, tx, "canceled")
+	missingID := model.StripeSubscriberID(-1)
+
+	testCases := []struct {
+		name     string
+		id       *model.StripeSubscriberID
+		expected bool
+	}{
+		{name: "IDがnil", id: nil, expected: false},
+		{name: "該当行が無い", id: &missingID, expected: false},
+		{name: "active状態", id: &activeID, expected: true},
+		{name: "past_due状態", id: &pastDueID, expected: true},
+		{name: "canceled状態", id: &canceledID, expected: false},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := repo.HasActiveSubscription(ctx, tc.id)
+			if err != nil {
+				t.Fatalf("HasActiveSubscription()のエラー = %v", err)
+			}
+			if result != tc.expected {
+				t.Errorf("HasActiveSubscription() = %v、期待値 = %v", result, tc.expected)
+			}
+		})
+	}
+}

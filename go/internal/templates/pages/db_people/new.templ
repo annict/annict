@@ -1,0 +1,148 @@
+package db_people
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// rowsFieldNameは送信された行を保持するtextareaの名前。フォームのフィールド、エラー
+// 要約の項目、エラーメッセージのidがいずれもこの名前から決まるため、三者がずれない。
+const rowsFieldName = "rows"
+
+// rowsDescriptionIDは入力の形式を述べる説明のid。textareaのaria-describedbyが、
+// エラーの有無に関わらずこの説明を指す。
+const rowsDescriptionID = "rows-description"
+
+// NewPageDataは一括登録ページが描画するデータ。
+type NewPageData struct {
+	CSRFToken  string
+	FormErrors *viewmodel.FormErrors
+	// Rowsは送信された内容をそのまま返す。送信が失敗しても入力し直しではなく手直しで
+	// 済むようにするため。
+	Rows string
+}
+
+// hasRowsErrorは送信された行が受け付けられなかったかどうかを返す。
+func (d NewPageData) hasRowsError() bool {
+	return d.FormErrors != nil && d.FormErrors.HasFieldError(rowsFieldName)
+}
+
+// autofocusRowsは読み込み時にtextareaがフォーカスを受け取るかを返す。送信が失敗した
+// ときは、読み込み時にフォーカスを受け取るエラー要約に譲る。
+func (d NewPageData) autofocusRows() bool {
+	return d.FormErrors == nil || !d.FormErrors.HasErrors()
+}
+
+// rowsErrorsは送信された行が集めたメッセージを返す (問題のあった行につき1件以上)。
+func (d NewPageData) rowsErrors() []string {
+	if d.FormErrors == nil {
+		return nil
+	}
+
+	return d.FormErrors.GetFieldErrors(rowsFieldName)
+}
+
+// newSummaryFieldsはエラー要約が名指しできる唯一のフィールドを並べる。フィールドが
+// 1つでも要約を描画するのは、要約が読み込み時にフォーカスを受け取り、サーバー描画のページで
+// 送信の失敗を通知する役割を担うため (エピソードの一括作成と同じ)。
+func newSummaryFields(ctx context.Context) []components.FormErrorField {
+	return []components.FormErrorField{
+		{Name: rowsFieldName, Label: templates.T(ctx, "db_people_new_rows_label")},
+	}
+}
+
+templ New(data NewPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title:   templates.T(ctx, "db_people_new_title"),
+					Actions: newBackToListLink(),
+				})
+			</div>
+		</div>
+
+		@components.ContentCard("") {
+			<div class="flex flex-col gap-4">
+				@components.FormErrors(components.FormErrorsData{
+					Errors: data.FormErrors,
+					Fields: newSummaryFields(ctx),
+				})
+
+				<form
+					action={ templates.DBPeoplePath().SafeURL() }
+					class="max-w-2xl flex flex-col gap-6"
+					method="POST"
+				>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+
+					<div
+						role="group"
+						class="field"
+						if data.hasRowsError() {
+							data-invalid
+						}
+					>
+						<label for="rows" class="label">
+							{ templates.T(ctx, "db_people_new_rows_label") }
+							@components.RequiredBadge()
+						</label>
+						<div id={ rowsDescriptionID } class="text-muted-foreground text-sm flex flex-col gap-1">
+							<p>{ templates.T(ctx, "db_people_new_rows_description") }</p>
+							<p>
+								{ templates.T(ctx, "db_people_new_rows_example_label") }
+								// 入力例は日本語の人物名のため、英語のページでも日本語として読み上げさせる。
+								<code class="font-mono" lang="ja">{ templates.T(ctx, "db_people_new_rows_example") }</code>
+							</p>
+						</div>
+						<textarea
+							id="rows"
+							name="rows"
+							class="textarea font-mono"
+							rows="20"
+							required
+							aria-describedby={ components.FieldDescribedBy(data.FormErrors, rowsFieldName, rowsDescriptionID) }
+							if data.autofocusRows() {
+								autofocus
+							}
+							if data.hasRowsError() {
+								aria-invalid="true"
+							}
+						>{ data.Rows }</textarea>
+						if data.hasRowsError() {
+							for i, errorMsg := range data.rowsErrors() {
+								<p id={ components.FieldErrorID(rowsFieldName, i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+
+					<div role="group" class="field" data-orientation="horizontal">
+						<button type="submit" class="btn rounded-full">
+							@templates.DecorativeInlineIcon("floppy-disk-regular", templates.InlineIconStart)
+							{ templates.T(ctx, "db_people_new_submit") }
+						</button>
+					</div>
+				</form>
+			</div>
+		}
+	</div>
+}
+
+// newBackToListLinkは見出しの横に表示する操作を描画する。人物一覧へ戻るリンクで、
+// 送信が成功したときの着地点でもある。
+templ newBackToListLink() {
+	<a
+		href={ templates.DBPeoplePath().SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		@templates.DecorativeInlineIcon("arrow-bend-up-left-regular", templates.InlineIconStart)
+		{ templates.T(ctx, "db_people_new_back_to_list_link") }
+	</a>
+}

@@ -1,7 +1,6 @@
 package sign_up_test
 
 import (
-	"context"
 	"net/http"
 	"net/http/httptest"
 	"net/url"
@@ -27,10 +26,6 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	// テスト用DBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
 
-	// テスト用Redisをセットアップ
-	rdb := testutil.SetupTestRedis(t)
-	ctx := context.Background()
-
 	// 設定を読み込む
 	cfg, err := config.Load()
 	if err != nil {
@@ -50,21 +45,17 @@ func TestCreate_RateLimiting_IP(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// Rate Limiterの初期化
-	limiter := ratelimit.NewLimiter(rdb)
+	limiter := ratelimit.NewLimiter(repository.NewRateLimitRepository(queries))
 
 	// ハンドラーの初期化
 	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, sendSignUpCodeUC, turnstileClient)
 
-	// 共有Redis DBに対する並列実行で他テストと衝突しないよう、
+	// 並列に走る他テストとrate_limitsの一意制約で待ち合わないよう、
 	// 本テスト固有のキー構成値を組み立てる。
 	prefix := testutil.UniqueRateLimitPrefix(t)
 	clientIP := prefix + "-ip"
 	email := prefix + "@example.com"
-	_ = limiter.Reset(ctx, "sign_up:ip:"+clientIP)
-	_ = limiter.Reset(ctx, "sign_up:email:"+email)
 	t.Cleanup(func() {
-		_ = limiter.Reset(ctx, "sign_up:ip:"+clientIP)
-		_ = limiter.Reset(ctx, "sign_up:email:"+email)
 	})
 
 	// 同一IPから6回アクセス (制限: 5回/時間)
@@ -108,10 +99,6 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	// テスト用DBとトランザクションをセットアップ
 	db, tx := testutil.SetupTx(t)
 
-	// テスト用Redisをセットアップ
-	rdb := testutil.SetupTestRedis(t)
-	ctx := context.Background()
-
 	// 設定を読み込む
 	cfg, err := config.Load()
 	if err != nil {
@@ -131,25 +118,16 @@ func TestCreate_RateLimiting_Email(t *testing.T) {
 	turnstileClient := turnstile.NewClient("test-site-key", "test-secret-key")
 
 	// Rate Limiterの初期化
-	limiter := ratelimit.NewLimiter(rdb)
+	limiter := ratelimit.NewLimiter(repository.NewRateLimitRepository(queries))
 
 	// ハンドラーの初期化
 	handler := sign_up.NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, sendSignUpCodeUC, turnstileClient)
 
-	// 共有Redis DBに対する並列実行で他テストと衝突しないよう、
+	// 並列に走る他テストとrate_limitsの一意制約で待ち合わないよう、
 	// 本テスト固有のキー構成値を組み立てる。
 	prefix := testutil.UniqueRateLimitPrefix(t)
 	email := prefix + "@example.com"
 	ipFor := func(i int) string { return prefix + "-ip" + strconv.Itoa(i) }
-
-	resetKeys := func() {
-		_ = limiter.Reset(ctx, "sign_up:email:"+email)
-		for i := 0; i < 4; i++ {
-			_ = limiter.Reset(ctx, "sign_up:ip:"+ipFor(i))
-		}
-	}
-	resetKeys()
-	t.Cleanup(resetKeys)
 
 	for i := 0; i < 4; i++ {
 		// リクエストパラメータを作成

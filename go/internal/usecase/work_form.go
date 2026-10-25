@@ -1,7 +1,6 @@
 package usecase
 
 import (
-	"database/sql"
 	"fmt"
 	"strconv"
 	"strings"
@@ -132,11 +131,13 @@ func buildWorkFormParams(input WorkFormInput) (repository.CreateWorkParams, erro
 	}
 
 	if input.TwitterUsername != "" {
-		params.TwitterUsername = sql.NullString{String: strings.TrimSpace(input.TwitterUsername), Valid: true}
+		twitterUsername := strings.TrimSpace(input.TwitterUsername)
+		params.TwitterUsername = &twitterUsername
 	}
 
 	if input.TwitterHashtag != "" {
-		params.TwitterHashtag = sql.NullString{String: strings.TrimSpace(input.TwitterHashtag), Valid: true}
+		twitterHashtag := strings.TrimSpace(input.TwitterHashtag)
+		params.TwitterHashtag = &twitterHashtag
 	}
 
 	if params.ScTid, err = parseOptionalInt32(input.ScTid); err != nil {
@@ -164,34 +165,36 @@ func buildWorkFormParams(input WorkFormInput) (repository.CreateWorkParams, erro
 		if err != nil {
 			return repository.CreateWorkParams{}, fmt.Errorf("話数フォーマットの変換に失敗: %w", err)
 		}
-		params.NumberFormatID = sql.NullInt64{Int64: v, Valid: true}
+		numberFormatID := model.NumberFormatID(v)
+		params.NumberFormatID = &numberFormatID
 	}
 
 	return params, nil
 }
 
 // parseOptionalInt32は任意入力のフォーム値をworksのintegerカラムに変換し、空値を
-// NULLに写像する。ビット幅はバリデーターが検査するものと同じで、両者は同一の範囲を許容する。
-func parseOptionalInt32(value string) (sql.NullInt32, error) {
+// nil (NULL) に写像する。ビット幅はバリデーターが検査するものと同じで、両者は同一の範囲を許容する。
+func parseOptionalInt32(value string) (*int32, error) {
 	if value == "" {
-		return sql.NullInt32{}, nil
+		return nil, nil
 	}
 	v, err := strconv.ParseInt(value, 10, 32)
 	if err != nil {
-		return sql.NullInt32{}, err
+		return nil, err
 	}
-	return sql.NullInt32{Int32: int32(v), Valid: true}, nil
+	i := int32(v)
+	return &i, nil
 }
 
 // parseOptionalDateは任意入力の日付フォーム値をworksのdateカラムに変換し、空値を
-// NULLに写像する。
-func parseOptionalDate(value string) (sql.NullTime, error) {
+// nil (NULL) に写像する。
+func parseOptionalDate(value string) (*time.Time, error) {
 	if value == "" {
-		return sql.NullTime{}, nil
+		return nil, nil
 	}
 	t, err := time.Parse(validator.WorkFormDateLayout, value)
 	if err != nil {
-		return sql.NullTime{}, err
+		return nil, err
 	}
-	return sql.NullTime{Time: t, Valid: true}, nil
+	return &t, nil
 }

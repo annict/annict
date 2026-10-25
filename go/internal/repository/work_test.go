@@ -501,44 +501,6 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		}
 	})
 
-	t.Run("正常系: シーズン指定フィルタ", func(t *testing.T) {
-		t.Parallel()
-		db, tx := testutil.SetupTx(t)
-		ctx := context.Background()
-
-		testutil.NewWorkBuilder(t, tx).WithTitle("2024春").WithSeason(2024, testutil.SeasonSpring).Build()
-		testutil.NewWorkBuilder(t, tx).WithTitle("2024夏").WithSeason(2024, testutil.SeasonSummer).Build()
-
-		year := int32(2024)
-		season := int32(testutil.SeasonSpring)
-		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
-		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
-			SeasonYear: &year,
-			SeasonName: &season,
-			Page:       1,
-			PerPage:    100,
-		})
-		if err != nil {
-			t.Fatalf("ListForDB()のエラー = %v", err)
-		}
-
-		for _, item := range items {
-			if item.Title == "2024夏" {
-				t.Error("別のシーズンの作品が返された")
-			}
-		}
-
-		found := false
-		for _, item := range items {
-			if item.Title == "2024春" {
-				found = true
-			}
-		}
-		if !found {
-			t.Error("指定したシーズンの作品が返されなかった")
-		}
-	})
-
 	t.Run("正常系: 放送予定未登録フィルタ", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
@@ -640,6 +602,50 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		}
 		if byID[noSeason] {
 			t.Error("シーズンなしの作品は除外されるべき")
+		}
+	})
+
+	t.Run("正常系: リリース時期の季節0は季節未登録の作品に一致する", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		yearOnly2026 := testutil.NewWorkBuilder(t, tx).WithTitle("2026季節未登録").WithSeasonYearOnly(2026).Build()
+		spring2026 := testutil.NewWorkBuilder(t, tx).WithTitle("2026春").WithSeason(2026, testutil.SeasonSpring).Build()
+		yearOnly2025 := testutil.NewWorkBuilder(t, tx).WithTitle("2025季節未登録").WithSeasonYearOnly(2025).Build()
+		noSeason := testutil.NewWorkBuilder(t, tx).WithTitle("リリース時期なし").WithNoSeason().Build()
+		winter2024 := testutil.NewWorkBuilder(t, tx).WithTitle("2024冬").WithSeason(2024, testutil.SeasonWinter).Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		// 季節未登録の組と季節ありの組を同時に選び、いずれかに一致する作品が残る。
+		items, err := repo.ListForDB(ctx, repository.DBWorkListParams{
+			SeasonYears: []int32{2026, 2024},
+			SeasonNames: []int32{0, testutil.SeasonWinter},
+			Page:        1,
+			PerPage:     100,
+		})
+		if err != nil {
+			t.Fatalf("ListForDB()のエラー = %v", err)
+		}
+
+		byID := make(map[model.WorkID]bool, len(items))
+		for _, item := range items {
+			byID[item.ID] = true
+		}
+		if !byID[yearOnly2026] {
+			t.Error("2026年の季節未登録の作品は含まれるべき")
+		}
+		if !byID[winter2024] {
+			t.Error("同時に選んだ2024冬の作品は含まれるべき")
+		}
+		if byID[spring2026] {
+			t.Error("2026年でも季節ありの作品は除外されるべき")
+		}
+		if byID[yearOnly2025] {
+			t.Error("別の年の季節未登録の作品は除外されるべき")
+		}
+		if byID[noSeason] {
+			t.Error("年も季節も未登録の作品は除外されるべき")
 		}
 	})
 
@@ -778,6 +784,31 @@ func TestWorkRepository_CountForDB(t *testing.T) {
 
 		if count != 3 {
 			t.Errorf("CountForDB() = %d、期待値 = 3 (公開エピソードを持つ作品だけを除外)", count)
+		}
+	})
+
+	t.Run("正常系: リリース時期の季節未登録の組がカウントにも適用される", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		ctx := context.Background()
+
+		// GetTestDBを使うテストが共有DBにコミットする作品から隔離するため固有の年を使う。
+		const isolatedYear = 1903
+		testutil.NewWorkBuilder(t, tx).WithTitle("季節未登録A").WithSeasonYearOnly(isolatedYear).Build()
+		testutil.NewWorkBuilder(t, tx).WithTitle("季節未登録B").WithSeasonYearOnly(isolatedYear).Build()
+		testutil.NewWorkBuilder(t, tx).WithTitle("季節あり").WithSeason(isolatedYear, testutil.SeasonSpring).Build()
+
+		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
+		count, err := repo.CountForDB(ctx, repository.DBWorkListParams{
+			SeasonYears: []int32{isolatedYear},
+			SeasonNames: []int32{0},
+		})
+		if err != nil {
+			t.Fatalf("CountForDB()のエラー = %v", err)
+		}
+
+		if count != 2 {
+			t.Errorf("CountForDB() = %d、期待値 = 2", count)
 		}
 	})
 
@@ -1742,5 +1773,203 @@ func TestWorkRepository_UpdateUnpublishedAt(t *testing.T) {
 		if work.UnpublishedAt != nil {
 			t.Errorf("解除後のwork.UnpublishedAt = %v、期待値 = nil", work.UnpublishedAt)
 		}
+	})
+}
+
+// insertTestNumberFormatは話数フォーマットを挿入し、そのidを返す。number_formats.nameには
+// 一意インデックスがあるため、名前はテスト名から作る。
+func insertTestNumberFormat(t *testing.T, tx *sql.Tx) model.NumberFormatID {
+	t.Helper()
+
+	var id int64
+	err := tx.QueryRow(
+		`INSERT INTO number_formats (name, sort_number, created_at, updated_at)
+		 VALUES ($1, 0, NOW(), NOW()) RETURNING id`,
+		"話数フォーマット_"+t.Name(),
+	).Scan(&id)
+	if err != nil {
+		t.Fatalf("number_formatsの挿入に失敗: %v", err)
+	}
+	return model.NumberFormatID(id)
+}
+
+// filledCreateWorkParamsはNULL許容のカラムをすべて埋めた作成パラメータを返す。
+func filledCreateWorkParams(title string, numberFormatID model.NumberFormatID) repository.CreateWorkParams {
+	seasonYear := int32(2024)
+	seasonName := int32(2)
+	startedOn := time.Date(2024, 4, 5, 0, 0, 0, 0, time.UTC)
+	endedOn := time.Date(2024, 6, 28, 0, 0, 0, 0, time.UTC)
+	twitterUsername := "anime_official"
+	twitterHashtag := "anime2024"
+	scTid := int32(5678)
+	malAnimeID := int32(1234)
+	manualEpisodesCount := int32(12)
+	return repository.CreateWorkParams{
+		Title:                 title,
+		Media:                 1,
+		SeasonYear:            &seasonYear,
+		SeasonName:            &seasonName,
+		StartedOn:             &startedOn,
+		EndedOn:               &endedOn,
+		TwitterUsername:       &twitterUsername,
+		TwitterHashtag:        &twitterHashtag,
+		ScTid:                 &scTid,
+		MalAnimeID:            &malAnimeID,
+		ManualEpisodesCount:   &manualEpisodesCount,
+		StartEpisodeRawNumber: 1,
+		NumberFormatID:        &numberFormatID,
+	}
+}
+
+// assertWorkNullableColumnsNilはNULL許容のカラムがすべてNULLとして読み戻されることを確かめる。
+func assertWorkNullableColumnsNil(t *testing.T, work *model.Work) {
+	t.Helper()
+
+	if work.SeasonYear != nil {
+		t.Errorf("SeasonYear = %v、期待値 = nil", *work.SeasonYear)
+	}
+	if work.SeasonName != nil {
+		t.Errorf("SeasonName = %v、期待値 = nil", *work.SeasonName)
+	}
+	if work.StartedOn != nil {
+		t.Errorf("StartedOn = %v、期待値 = nil", *work.StartedOn)
+	}
+	if work.EndedOn != nil {
+		t.Errorf("EndedOn = %v、期待値 = nil", *work.EndedOn)
+	}
+	if work.TwitterUsername != nil {
+		t.Errorf("TwitterUsername = %q、期待値 = nil", *work.TwitterUsername)
+	}
+	if work.TwitterHashtag != nil {
+		t.Errorf("TwitterHashtag = %q、期待値 = nil", *work.TwitterHashtag)
+	}
+	if work.ScTid != nil {
+		t.Errorf("ScTid = %v、期待値 = nil", *work.ScTid)
+	}
+	if work.MalAnimeID != nil {
+		t.Errorf("MalAnimeID = %v、期待値 = nil", *work.MalAnimeID)
+	}
+	if work.ManualEpisodesCount != nil {
+		t.Errorf("ManualEpisodesCount = %v、期待値 = nil", *work.ManualEpisodesCount)
+	}
+	if work.NumberFormatID != nil {
+		t.Errorf("NumberFormatID = %v、期待値 = nil", *work.NumberFormatID)
+	}
+}
+
+func TestWorkRepository_Create(t *testing.T) {
+	t.Parallel()
+
+	t.Run("NULL許容のカラムに値を書き込む", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+		ctx := context.Background()
+
+		numberFormatID := insertTestNumberFormat(t, tx)
+		workID, err := repo.Create(ctx, filledCreateWorkParams("作成テスト_値あり", numberFormatID))
+		if err != nil {
+			t.Fatalf("Create()のエラー = %v", err)
+		}
+
+		work, err := repo.GetForEditByID(ctx, workID)
+		if err != nil || work == nil {
+			t.Fatalf("GetForEditByID()のwork = %v、エラー = %v", work, err)
+		}
+		if work.SeasonYear == nil || *work.SeasonYear != 2024 {
+			t.Errorf("SeasonYear = %v、期待値 = 2024", work.SeasonYear)
+		}
+		if work.SeasonName == nil || *work.SeasonName != 2 {
+			t.Errorf("SeasonName = %v、期待値 = 2", work.SeasonName)
+		}
+		if work.StartedOn == nil || work.StartedOn.Format(time.DateOnly) != "2024-04-05" {
+			t.Errorf("StartedOn = %v、期待値 = 2024-04-05", work.StartedOn)
+		}
+		if work.EndedOn == nil || work.EndedOn.Format(time.DateOnly) != "2024-06-28" {
+			t.Errorf("EndedOn = %v、期待値 = 2024-06-28", work.EndedOn)
+		}
+		if work.TwitterUsername == nil || *work.TwitterUsername != "anime_official" {
+			t.Errorf("TwitterUsername = %v、期待値 = anime_official", work.TwitterUsername)
+		}
+		if work.TwitterHashtag == nil || *work.TwitterHashtag != "anime2024" {
+			t.Errorf("TwitterHashtag = %v、期待値 = anime2024", work.TwitterHashtag)
+		}
+		if work.ScTid == nil || *work.ScTid != 5678 {
+			t.Errorf("ScTid = %v、期待値 = 5678", work.ScTid)
+		}
+		if work.MalAnimeID == nil || *work.MalAnimeID != 1234 {
+			t.Errorf("MalAnimeID = %v、期待値 = 1234", work.MalAnimeID)
+		}
+		if work.ManualEpisodesCount == nil || *work.ManualEpisodesCount != 12 {
+			t.Errorf("ManualEpisodesCount = %v、期待値 = 12", work.ManualEpisodesCount)
+		}
+		if work.NumberFormatID == nil || *work.NumberFormatID != numberFormatID {
+			t.Errorf("NumberFormatID = %v、期待値 = %d", work.NumberFormatID, numberFormatID)
+		}
+	})
+
+	t.Run("nilのカラムはNULLで書き込む", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+		ctx := context.Background()
+
+		workID, err := repo.Create(ctx, repository.CreateWorkParams{
+			Title:                 "作成テスト_空欄",
+			Media:                 1,
+			StartEpisodeRawNumber: 1,
+		})
+		if err != nil {
+			t.Fatalf("Create()のエラー = %v", err)
+		}
+
+		work, err := repo.GetForEditByID(ctx, workID)
+		if err != nil || work == nil {
+			t.Fatalf("GetForEditByID()のwork = %v、エラー = %v", work, err)
+		}
+		assertWorkNullableColumnsNil(t, work)
+	})
+}
+
+func TestWorkRepository_Update(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nilのカラムは既存の値をNULLで上書きする", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+		ctx := context.Background()
+
+		numberFormatID := insertTestNumberFormat(t, tx)
+		workID, err := repo.Create(ctx, filledCreateWorkParams("更新テスト_空欄", numberFormatID))
+		if err != nil {
+			t.Fatalf("Create()のエラー = %v", err)
+		}
+		before, err := repo.GetForEditByID(ctx, workID)
+		if err != nil || before == nil {
+			t.Fatalf("GetForEditByID()のwork = %v、エラー = %v", before, err)
+		}
+
+		updated, err := repo.Update(ctx, repository.UpdateWorkParams{
+			ID:      workID,
+			Version: before.UpdatedAt,
+			CreateWorkParams: repository.CreateWorkParams{
+				Title:                 "更新テスト_空欄",
+				Media:                 1,
+				StartEpisodeRawNumber: 1,
+			},
+		})
+		if err != nil {
+			t.Fatalf("Update()のエラー = %v", err)
+		}
+		if !updated {
+			t.Fatal("Update()の結果 = false、期待値 = true")
+		}
+
+		work, err := repo.GetForEditByID(ctx, workID)
+		if err != nil || work == nil {
+			t.Fatalf("GetForEditByID()のwork = %v、エラー = %v", work, err)
+		}
+		assertWorkNullableColumnsNil(t, work)
 	})
 }

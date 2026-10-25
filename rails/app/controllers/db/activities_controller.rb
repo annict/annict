@@ -5,6 +5,7 @@ module Db
   class ActivitiesController < Db::ApplicationController
     def index
       @activities = DbActivity
+        .with_kept_person
         .preload(:trackable, :root_resource, user: :profile)
         .order(id: :desc)
         .page(params[:page])

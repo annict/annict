@@ -48,11 +48,20 @@ type editFormState struct {
 func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, episodeID model.EpisodeID, state editFormState) {
 	ctx := r.Context()
 
-	output, err := h.getDBEpisodeEditUC.Execute(ctx, usecase.GetDBEpisodeEditInput{EpisodeID: episodeID})
+	output, err := h.getDBEpisodeEditUC.Execute(ctx, usecase.GetDBEpisodeEditInput{
+		User:      middleware.GetUserFromContext(ctx),
+		EpisodeID: episodeID,
+	})
 	if err != nil {
-		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
-			httperror.NotFound(w, r)
-			return
+		if ae := model.AsAppError(err); ae != nil {
+			switch ae.Code {
+			case model.AppErrCodeResourceNotFound:
+				httperror.NotFound(w, r)
+				return
+			case model.AppErrCodeForbidden:
+				httperror.Forbidden(w, r)
+				return
+			}
 		}
 		slog.ErrorContext(ctx, "DBエピソード編集フォームの取得に失敗", "error", err)
 		httperror.InternalServerError(w, r)

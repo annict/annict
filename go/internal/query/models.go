@@ -365,6 +365,50 @@ func (ns NullLanguage) Value() (driver.Value, error) {
 	return string(ns.Language), nil
 }
 
+type PersonStatus string
+
+const (
+	PersonStatusPublished PersonStatus = "published"
+	PersonStatusArchived  PersonStatus = "archived"
+	PersonStatusDelisted  PersonStatus = "delisted"
+	PersonStatusDeleted   PersonStatus = "deleted"
+)
+
+func (e *PersonStatus) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = PersonStatus(s)
+	case string:
+		*e = PersonStatus(s)
+	default:
+		return fmt.Errorf("unsupported scan type for PersonStatus: %T", src)
+	}
+	return nil
+}
+
+type NullPersonStatus struct {
+	PersonStatus PersonStatus
+	Valid        bool // Valid is true if PersonStatus is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullPersonStatus) Scan(value interface{}) error {
+	if value == nil {
+		ns.PersonStatus, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.PersonStatus.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullPersonStatus) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.PersonStatus), nil
+}
+
 type ReleaseStatus string
 
 const (
@@ -744,17 +788,17 @@ type CharacterFavorite struct {
 }
 
 type CharacterImage struct {
-	ID                    int64     `db:"id"`
-	CharacterID           int64     `db:"character_id"`
-	UserID                int64     `db:"user_id"`
-	AttachmentFileName    string    `db:"attachment_file_name"`
-	AttachmentFileSize    int32     `db:"attachment_file_size"`
-	AttachmentContentType string    `db:"attachment_content_type"`
-	AttachmentUpdatedAt   time.Time `db:"attachment_updated_at"`
-	Copyright             string    `db:"copyright"`
-	Asin                  string    `db:"asin"`
-	CreatedAt             time.Time `db:"created_at"`
-	UpdatedAt             time.Time `db:"updated_at"`
+	ID                    int64         `db:"id"`
+	CharacterID           int64         `db:"character_id"`
+	UserID                sql.NullInt64 `db:"user_id"`
+	AttachmentFileName    string        `db:"attachment_file_name"`
+	AttachmentFileSize    int32         `db:"attachment_file_size"`
+	AttachmentContentType string        `db:"attachment_content_type"`
+	AttachmentUpdatedAt   time.Time     `db:"attachment_updated_at"`
+	Copyright             string        `db:"copyright"`
+	Asin                  string        `db:"asin"`
+	CreatedAt             time.Time     `db:"created_at"`
+	UpdatedAt             time.Time     `db:"updated_at"`
 }
 
 type Collection struct {
@@ -1216,6 +1260,9 @@ type Person struct {
 	StaffsCount        int32          `db:"staffs_count"`
 	DeletedAt          sql.NullTime   `db:"deleted_at"`
 	UnpublishedAt      sql.NullTime   `db:"unpublished_at"`
+	Status             PersonStatus   `db:"status"`
+	ArchiveMessage     sql.NullString `db:"archive_message"`
+	DelistMessage      sql.NullString `db:"delist_message"`
 }
 
 type PersonFavorite struct {
@@ -1282,6 +1329,12 @@ type Provider struct {
 	TokenSecret    sql.NullString `db:"token_secret"`
 	CreatedAt      sql.NullTime   `db:"created_at"`
 	UpdatedAt      sql.NullTime   `db:"updated_at"`
+}
+
+type RateLimit struct {
+	Key         string    `db:"key"`
+	WindowStart time.Time `db:"window_start"`
+	Count       int32     `db:"count"`
 }
 
 type Reaction struct {
@@ -1769,7 +1822,7 @@ type WorkComment struct {
 type WorkImage struct {
 	ID                    int64          `db:"id"`
 	WorkID                int64          `db:"work_id"`
-	UserID                int64          `db:"user_id"`
+	UserID                sql.NullInt64  `db:"user_id"`
 	AttachmentFileName    sql.NullString `db:"attachment_file_name"`
 	AttachmentFileSize    sql.NullInt32  `db:"attachment_file_size"`
 	AttachmentContentType sql.NullString `db:"attachment_content_type"`

@@ -3,10 +3,11 @@ package components
 import (
 	"context"
 
+	"github.com/annict/annict/go/internal/legaldoc"
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// Footerはページフッターを表示します
+// Footerはページフッターを表示する。
 // 法的情報と著作権表示のみを含む最小限のフッター
 templ Footer(ctx context.Context) {
 	<footer
@@ -15,9 +16,9 @@ templ Footer(ctx context.Context) {
 		"
 	>
 		<ul class="flex items-center justify-center gap-4 basis-full md:basis-auto">
-			@footerLink(ctx, "/terms", "footer_terms")
-			@footerLink(ctx, "/privacy", "footer_privacy")
-			@footerLink(ctx, "/legal", "footer_legal")
+			@footerLegalDocumentLink(ctx, legaldoc.KeyTerms, "footer_terms")
+			@footerLegalDocumentLink(ctx, legaldoc.KeyPrivacyPolicy, "footer_privacy")
+			@footerLegalDocumentLink(ctx, legaldoc.KeySpecifiedCommercialTransactions, "footer_legal")
 		</ul>
 
 		<div class="text-sm text-muted-foreground order-last md:order-first">
@@ -26,11 +27,22 @@ templ Footer(ctx context.Context) {
 	</footer>
 }
 
-// footerLinkはフッターのリンク項目を生成します
-templ footerLink(ctx context.Context, path string, labelKey string) {
-	<li>
-		<a class="link-muted text-sm" href={ templ.SafeURL(path) }>
-			{ templates.T(ctx, labelKey) }
-		</a>
-	</li>
+// footerLegalDocumentLinkは法的文書へのリンク項目を生成する。
+// リクエストのロケールの言語版を指し、その言語版が無い文書は日本語版を指す。
+// ページと異なる言語の版を指すときは、リンク先の言語をhreflangで示す
+templ footerLegalDocumentLink(ctx context.Context, key legaldoc.Key, labelKey string) {
+	{{ doc, ok := legaldoc.LocalizedVersion(key, templates.Locale(ctx)) }}
+	if ok {
+		<li>
+			<a
+				class="link-muted text-sm"
+				href={ templ.SafeURL(doc.Path) }
+				if doc.Lang != templates.Locale(ctx) {
+					hreflang={ doc.Lang }
+				}
+			>
+				{ templates.T(ctx, labelKey) }
+			</a>
+		</li>
+	}
 }

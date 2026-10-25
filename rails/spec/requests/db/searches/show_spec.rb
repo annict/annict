@@ -182,4 +182,76 @@ RSpec.describe "GET /db/search", type: :request do
     expect(response.body).to include(%(href="/db/works/#{work.id}/archive/new?#{return_to}"))
     expect(response.body).to include(%(href="/db/works/#{work.id}/deletion/new?#{return_to}"))
   end
+
+  it "管理者としてログインしているとき、人物に編集・非公開・削除のリンクを Go 版の URL で表示すること" do
+    user = create(:registered_user, :with_admin_role)
+    login_as(user, scope: :user)
+
+    person = create(:person, name: "じんぶつ検索")
+
+    get "/db/search", params: {q: "検索"}
+
+    expect(response.status).to eq(200)
+    return_to = {return_to: request.fullpath}.to_query
+    expect(response.body).to include(%(href="/db/people/#{person.id}/edit"))
+    expect(response.body).to include(%(href="/db/people/#{person.id}/archive/new?#{return_to}"))
+    expect(response.body).to include(%(href="/db/people/#{person.id}/deletion/new?#{return_to}"))
+    expect(response.body).not_to include("/db/people/#{person.id}/unarchive/new")
+    expect(response.body).not_to include("/db/people/#{person.id}/publishing")
+  end
+
+  it "編集権限はあるが管理者ではないユーザーとしてログインしているとき、人物の削除のリンクを表示しないこと" do
+    user = create(:registered_user, :with_editor_role)
+    login_as(user, scope: :user)
+
+    person = create(:person, name: "じんぶつ検索")
+
+    get "/db/search", params: {q: "検索"}
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(%(href="/db/people/#{person.id}/edit"))
+    expect(response.body).to include(%(href="/db/people/#{person.id}/archive/new?return_to=))
+    expect(response.body).not_to include("/db/people/#{person.id}/deletion/new")
+  end
+
+  it "編集権限が無いユーザーとしてログインしているとき、人物の操作リンクを表示しないこと" do
+    user = create(:registered_user)
+    login_as(user, scope: :user)
+
+    person = create(:person, name: "じんぶつ検索")
+
+    get "/db/search", params: {q: "検索"}
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include(person.name)
+    expect(response.body).not_to include(%(href="/db/people/#{person.id}/edit"))
+    expect(response.body).not_to include("/db/people/#{person.id}/archive/new")
+    expect(response.body).not_to include("/db/people/#{person.id}/deletion/new")
+  end
+
+  it "人物の操作リンクのアクセシブルネームに、対象の人物を視覚的に隠したテキストとして含めること" do
+    user = create(:registered_user, :with_admin_role)
+    login_as(user, scope: :user)
+
+    person = create(:person, name: "じんぶつ検索")
+
+    get "/db/search", params: {q: "検索"}
+
+    expect(response.status).to eq(200)
+    label = %(<span class="visually-hidden">#{I18n.t("messages.db.people.action_target_label", id: person.id)}</span>)
+    expect(response.body.scan(label).size).to eq(3)
+  end
+
+  it "非公開・削除済みの人物は検索結果に表示されないこと" do
+    create(:person, name: "公開中のじんぶつ検索")
+    create(:person, :unpublished, name: "非公開のじんぶつ検索")
+    create(:person, :deleted, name: "削除済みのじんぶつ検索")
+
+    get "/db/search", params: {q: "じんぶつ検索"}
+
+    expect(response.status).to eq(200)
+    expect(response.body).to include("公開中のじんぶつ検索")
+    expect(response.body).not_to include("非公開のじんぶつ検索")
+    expect(response.body).not_to include("削除済みのじんぶつ検索")
+  end
 end

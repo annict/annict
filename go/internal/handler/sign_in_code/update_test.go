@@ -155,7 +155,7 @@ func TestUpdate_AlreadyLoggedIn(t *testing.T) {
 
 	// ログインセッションを作成
 	ctx := context.Background()
-	user, err := queries.GetUserByID(ctx, int64(userID))
+	user, err := queries.GetActiveUserByID(ctx, int64(userID))
 	if err != nil {
 		t.Fatalf("ユーザー取得エラー: %v", err)
 	}

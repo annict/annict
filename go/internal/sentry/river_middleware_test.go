@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/getsentry/sentry-go"
+	"github.com/riverqueue/river"
 	"github.com/riverqueue/river/rivertype"
 )
 
@@ -136,6 +137,10 @@ func TestRiverWorkerMiddleware_DropsIgnorableErrors(t *testing.T) {
 		{
 			name: "http.ErrAbortHandlerのラップは送らない",
 			err:  fmt.Errorf("ハンドラー中断: %w", http.ErrAbortHandler),
+		},
+		{
+			name: "river.JobSnoozeによる再投入の指示は送らない",
+			err:  river.JobSnooze(time.Minute),
 		},
 	}
 
