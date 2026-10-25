@@ -39,7 +39,7 @@ func TestShow(t *testing.T) {
 				`<meta property="og:locale" content="ja_JP">`,
 				`<h1 class="text-2xl font-bold antialiased">利用規約</h1>`,
 				// 本文の前に改定の告知ブロックを置き、境界の後に本文の条が続く
-				`<h2 id="2026年10月15日の改定について">2026年10月15日の改定について</h2>`,
+				`<h2 id="2026年10月25日の改定について">2026年10月25日の改定について</h2>`,
 				"<hr>",
 				`<h2 id="第1条-適用">第1条 (適用)</h2>`,
 				`<a href="/terms/api">API利用規約</a>`,
@@ -68,7 +68,7 @@ func TestShow(t *testing.T) {
 				`<link rel="canonical" href="https://test.annict.com/en/terms">`,
 				`<meta property="og:locale" content="en_US">`,
 				`<h1 class="text-2xl font-bold antialiased">Terms of Service</h1>`,
-				`<h2 id="about-the-revision-of-october-15-2026">About the Revision of October 15, 2026</h2>`,
+				`<h2 id="about-the-revision-of-october-25-2026">About the Revision of October 25, 2026</h2>`,
 				"<hr>",
 				`<h2 id="article-1-application">Article 1 (Application)</h2>`,
 				// 日本語版を正本とする旨と、準拠法が日本法である旨を明記する
@@ -212,7 +212,7 @@ func TestShow(t *testing.T) {
 			expected: []string{
 				"<title>利用規約 (2014年3月10日施行版) | Annict</title>",
 				`<meta name="robots" content="noindex">`,
-				"この版の適用期間は2014年3月10日から2026年11月14日までです。",
+				"この版の適用期間は2014年3月10日から2026年11月24日までです。",
 				`<a class="link" href="/terms">現行の版を見る</a>`,
 				`<h2 id="第13条-秘密保持">第13条 (秘密保持)</h2>`,
 			},
@@ -241,7 +241,7 @@ func TestShow(t *testing.T) {
 				`<html lang="ja">`,
 				"<title>プライバシーポリシー (2019年2月16日施行版) | Annict</title>",
 				`<meta name="robots" content="noindex">`,
-				"この版の適用期間は2019年2月16日から2026年10月13日までです。",
+				"この版の適用期間は2019年2月16日から2026年10月24日までです。",
 				`<a class="link" href="/privacy">現行の版を見る</a>`,
 				`<h2 id="1-収集する利用者情報および収集方法">1. 収集する利用者情報および収集方法</h2>`,
 			},

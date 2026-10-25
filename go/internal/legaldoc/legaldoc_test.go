@@ -343,14 +343,14 @@ func TestLookupVersion_Documents(t *testing.T) {
 			path:        "/privacy/archive/20190216",
 			wantOK:      true,
 			wantKey:     KeyPrivacyPolicy,
-			wantEndedOn: date(2026, time.October, 13),
+			wantEndedOn: date(2026, time.October, 24),
 		},
 		{
 			name:        "利用規約の2014年3月10日施行版",
 			path:        "/terms/archive/20140310",
 			wantOK:      true,
 			wantKey:     KeyTerms,
-			wantEndedOn: date(2026, time.November, 14),
+			wantEndedOn: date(2026, time.November, 24),
 		},
 		{
 			name:   "一覧表に登録していないプライバシーポリシーの版",

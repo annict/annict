@@ -1,6 +1,6 @@
-## About the Revision of October 14, 2026
+## About the Revision of October 25, 2026
 
-We revised this Policy on October 14, 2026, and it took effect on the same day.
+We revised this Policy on October 25, 2026, and it took effect on the same day.
 Users do not need to take any action.
 If you do not agree to how we handle information after the revision, you can stop using the Service and leave it from the [account deletion page](/settings/account/deletion/new).
 
@@ -280,8 +280,8 @@ When a change requires the principal's consent under laws and regulations, we wi
 ## Supplementary Provisions
 
 - Established: March 10, 2014
-- Revised: February 16, 2019, and October 14, 2026
-- Effective: October 14, 2026
+- Revised: February 16, 2019, and October 25, 2026
+- Effective: October 25, 2026
 
 The revision history is as follows (available in Japanese only):
 

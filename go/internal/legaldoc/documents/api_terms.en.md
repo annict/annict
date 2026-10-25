@@ -1,6 +1,6 @@
 ## About the Establishment of These Terms
 
-We established these Terms on October 15, 2026, and they take effect on November 15, 2026.
+We established these Terms on October 25, 2026, and they take effect on November 25, 2026.
 Most of those who have been using the API can continue to use it without changing how they use it.
 Please check by the effective date that your use complies with these Terms.
 If you do not agree to these Terms, stop using the API by the effective date and delete the applications and access tokens you registered.
@@ -255,8 +255,8 @@ Please send requests for individual permission and questions about these Terms t
 
 ## Supplementary Provisions
 
-- Established: October 15, 2026
-- Effective: November 15, 2026
+- Established: October 25, 2026
+- Effective: November 25, 2026
 
 Purposes for which the Operator individually permitted the use of the API before these Terms took effect will not be newly restricted on the ground that these Terms took effect.
 However, this does not include operational conditions such as rate limits.

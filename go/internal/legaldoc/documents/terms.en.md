@@ -1,6 +1,6 @@
-## About the Revision of October 15, 2026
+## About the Revision of October 25, 2026
 
-We revised these Terms on October 15, 2026, and they take effect on November 15, 2026.
+We revised these Terms on October 25, 2026, and they take effect on November 25, 2026.
 Users do not need to take any action.
 How you use the Service and the fees and benefits of Annict Supporters do not change.
 If you do not agree to the revised Terms, you can stop using the Service by the effective date and leave it from the [account deletion page](/settings/account/deletion/new).
@@ -257,8 +257,8 @@ The Tokyo District Court has exclusive jurisdiction as the court of first instan
 ## Supplementary Provisions
 
 - Established: March 10, 2014
-- Revised: October 15, 2026
-- Effective: November 15, 2026
+- Revised: October 25, 2026
+- Effective: November 25, 2026
 
 The revision history is as follows (available in Japanese only):
 
