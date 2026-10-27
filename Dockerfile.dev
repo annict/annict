@@ -173,6 +173,21 @@ RUN RCLONE_DIR="rclone-${RCLONE_VERSION}-linux-amd64" && \
     chmod +x /usr/local/bin/rclone && \
     rm -rf "/tmp/rclone.zip" "/tmp/${RCLONE_DIR}"
 
+# --- Wikino CLI ---
+# コンテナではキーチェーンを使えないため、トークンは設定ディレクトリのファイルに保存する。
+# 表示言語は既定で英語になるため、日本語を指定する。
+ENV WIKINO_TOKEN_STORE=file
+ENV WIKINO_LANG=ja
+ARG WIKINO_CLI_VERSION=v1.2.0
+ARG WIKINO_CLI_SHA256=41cd095cf97bcb03030e49d005272b2d8e743b34cc0f3651a09bad0c8883ce57
+RUN WIKINO_CLI_DIR="wikino_${WIKINO_CLI_VERSION}_linux_amd64" && \
+    curl -fsSL -o /tmp/wikino.tar.gz "https://github.com/wikinoapp/wikino/releases/download/cli/${WIKINO_CLI_VERSION}/${WIKINO_CLI_DIR}.tar.gz" && \
+    echo "${WIKINO_CLI_SHA256}  /tmp/wikino.tar.gz" | sha256sum -c - && \
+    tar -xzf /tmp/wikino.tar.gz -C /tmp && \
+    mv "/tmp/${WIKINO_CLI_DIR}/wikino" /usr/local/bin/wikino && \
+    chmod +x /usr/local/bin/wikino && \
+    rm -rf "/tmp/wikino.tar.gz" "/tmp/${WIKINO_CLI_DIR}"
+
 # --- GitHub CLI ---
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -197,12 +212,13 @@ RUN mkdir -p /go/.cache/go-build /go/pkg && \
 # --- miseのデータディレクトリの権限設定 ---
 RUN chown -R ${USER_ID}:${GROUP_ID} /mise
 
-# --- 1Password CLIの設定ディレクトリ ---
-# 名前付きボリュームop-configをここにマウントする。Dockerがイメージ側の
-# 所有権を引き継ぐのはボリュームが空で新規作成されたときだけのため、`op` が設定を
+# --- 1Password CLI・Wikino CLIの設定ディレクトリ ---
+# 名前付きボリュームop-config・wikino-cli-configをここにマウントする。Dockerがイメージ側の
+# 所有権を引き継ぐのはボリュームが空で新規作成されたときだけのため、`op`・`wikino` が設定を
 # 書き込めるよう開発者ユーザー所有のディレクトリを事前に用意しておく。
 RUN install -d -o ${USER_ID} -g ${GROUP_ID} /home/${USERNAME}/.config && \
-    install -d -o ${USER_ID} -g ${GROUP_ID} -m 0700 /home/${USERNAME}/.config/op
+    install -d -o ${USER_ID} -g ${GROUP_ID} -m 0700 /home/${USERNAME}/.config/op && \
+    install -d -o ${USER_ID} -g ${GROUP_ID} -m 0700 /home/${USERNAME}/.config/wikino
 
 WORKDIR /workspace
 USER ${USERNAME}
