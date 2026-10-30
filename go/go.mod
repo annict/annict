@@ -25,10 +25,10 @@ require (
 	github.com/mfridman/tparse v0.18.0
 	github.com/redis/go-redis/v9 v9.23.0
 	github.com/resend/resend-go/v2 v2.28.0
-	github.com/riverqueue/river v0.49.0
-	github.com/riverqueue/river/riverdriver/riverdatabasesql v0.49.0
-	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.49.0
-	github.com/riverqueue/river/rivertype v0.49.0
+	github.com/riverqueue/river v0.50.0
+	github.com/riverqueue/river/riverdriver/riverdatabasesql v0.50.0
+	github.com/riverqueue/river/riverdriver/riverpgxv5 v0.50.0
+	github.com/riverqueue/river/rivertype v0.50.0
 	github.com/schollz/progressbar/v3 v3.19.1
 	github.com/stripe/stripe-go/v84 v84.4.1
 	github.com/yuin/goldmark v1.8.6
@@ -70,7 +70,7 @@ require (
 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect
 	github.com/jackc/pgservicefile v0.0.0-20240606120523-5a60cdf6a761 // indirect
-	github.com/jackc/puddle/v2 v2.2.2 // indirect
+	github.com/jackc/puddle/v2 v2.2.3 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/korylus/tools v1.4.0 // indirect
 	github.com/lucasb-eyer/go-colorful v1.2.0 // indirect
@@ -88,15 +88,15 @@ require (
 	github.com/pingcap/log v1.1.0 // indirect
 	github.com/pingcap/tidb/pkg/parser v0.0.0-20250324122243-d51e00e5bbf0 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect
-	github.com/riverqueue/river/riverdriver v0.49.0 // indirect
-	github.com/riverqueue/river/rivershared v0.49.0 // indirect
+	github.com/riverqueue/river/riverdriver v0.50.0 // indirect
+	github.com/riverqueue/river/rivershared v0.50.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
 	github.com/riza-io/grpc-go v0.2.0 // indirect
 	github.com/spf13/cobra v1.9.1 // indirect
 	github.com/spf13/pflag v1.0.7 // indirect
 	github.com/sqlc-dev/sqlc v1.30.0 // indirect
 	github.com/tetratelabs/wazero v1.9.0 // indirect
-	github.com/tidwall/gjson v1.19.0 // indirect
+	github.com/tidwall/gjson v1.20.0 // indirect
 	github.com/tidwall/match v1.2.0 // indirect
 	github.com/tidwall/pretty v1.2.1 // indirect
 	github.com/tidwall/sjson v1.2.5 // indirect
