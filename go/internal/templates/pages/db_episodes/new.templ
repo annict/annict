@@ -68,11 +68,11 @@ func (d NewPageData) autofocusRows() bool {
 	return !d.hasFormErrors() && !d.formDisabled()
 }
 
-// showRestrictionWarningは常設の警告を描画するかを返す。却下された送信は同じ理由を
-// エラー要約 (読み込み時にフォーカスを受け取る) で伝えるため、その場合は警告を出さず二重に
-// 述べないようにする。
+// showRestrictionWarningは常設の警告を描画するかを返す。編集者の送信が制限で却下されたときは、
+// 同じ理由をエラー要約 (読み込み時にフォーカスを受け取る) で伝えるため、警告を出さず二重に
+// 述べないようにする。管理者は制限で却下されないため、ほかの理由で却下されても警告を残す。
 func (d NewPageData) showRestrictionWarning() bool {
-	return d.ManualCreation.Restricted() && !d.hasGlobalError()
+	return d.ManualCreation.Restricted() && (d.IsAdmin || !d.hasGlobalError())
 }
 
 // hasGlobalErrorは、送信が個々のフィールドではなくフォーム全体に属する理由で却下された

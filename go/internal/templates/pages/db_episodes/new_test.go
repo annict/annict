@@ -300,6 +300,41 @@ func TestNew_RestrictionReportedOnceAfterRejectedSubmit(t *testing.T) {
 	}
 }
 
+// TestNew_AdminRestrictionWarningKeptAfterOtherRejectionは、管理者の送信が制限以外の
+// 理由でフォーム全体のエラーになっても、予定エピソード数の警告を残すことを検証する。管理者は
+// 制限で却下されないため、エラー要約は制限の理由を述べていない。
+func TestNew_AdminRestrictionWarningKeptAfterOtherRejection(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	data := NewPageData{
+		WorkID:         1,
+		IsAdmin:        true,
+		ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
+		FormErrors: &viewmodel.FormErrors{
+			Global: []string{"追加するエピソードの並び順が上限を超えます。既存のエピソードの並び順を調整してから登録してください"},
+		},
+		Rows: "#2,2,つづき",
+	}
+	if err := New(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	if !strings.Contains(html, "通常は手動登録できません") {
+		t.Error("管理者の警告の見出しが描画されていない")
+	}
+	if !strings.Contains(html, "予定エピソード数を超えることになります") {
+		t.Error("管理者の警告の本文が描画されていない")
+	}
+	if !strings.Contains(html, "並び順が上限を超えます") {
+		t.Error("エラー要約に却下の理由が描画されていない")
+	}
+}
+
 // TestNew_HeadingFallsBackToPageTitleは表示できる名前が無い作品を検証する。ページには
 // 見出しが要るため、空の見出しを描画せず汎用のページタイトルにフォールバックする。
 func TestNew_HeadingFallsBackToPageTitle(t *testing.T) {
