@@ -3761,3 +3761,138 @@ func TestEpisodeRepository_GetForDeleteByID(t *testing.T) {
 		}
 	})
 }
+
+// TestEpisodeRepository_ListForEpisodeGenerationByWorkIDは、自動生成が照合と並び順に使う
+// 既存のエピソードの読み込みを検証する。
+func TestEpisodeRepository_ListForEpisodeGenerationByWorkID(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+	otherProgramID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+
+	second := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(200).WithRawNumber(2).Build()
+	first := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(100).WithRawNumber(1).Build()
+	archived := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(200).WithUnpublishedAt(time.Now()).Build()
+	testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(150).WithDeletedAt(time.Now()).Build()
+
+	// 同じ番組の放送枠 (削除済みを含む) が指すエピソードだけを紐づき済みとする。
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithEpisodeID(first).WithDeletedAt(time.Now()).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(otherProgramID).WithEpisodeID(second).Build()
+
+	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
+	got, err := repo.ListForEpisodeGenerationByWorkID(ctx, workID, model.ProgramID(programID))
+	if err != nil {
+		t.Fatalf("ListForEpisodeGenerationByWorkID()のエラー = %v", err)
+	}
+
+	if len(got) != 3 {
+		t.Fatalf("len(got) = %d、期待値 = 3", len(got))
+	}
+	// sort_number順で、同値ならid順。
+	if got[0].ID != first || got[1].ID != second || got[2].ID != archived {
+		t.Errorf("並び = [%d, %d, %d]、期待値 = [%d, %d, %d]", got[0].ID, got[1].ID, got[2].ID, first, second, archived)
+	}
+	if !got[0].LinkedToProgram || got[1].LinkedToProgram || got[2].LinkedToProgram {
+		t.Errorf("LinkedToProgram = [%v, %v, %v]、期待値 = [true, false, false]", got[0].LinkedToProgram, got[1].LinkedToProgram, got[2].LinkedToProgram)
+	}
+	if !got[0].Published || got[2].Published {
+		t.Errorf("Published = [%v, %v]、期待値 = [true, false]", got[0].Published, got[2].Published)
+	}
+	if got[1].RawNumber == nil || *got[1].RawNumber != 2 || got[2].RawNumber != nil {
+		t.Errorf("RawNumber = [%v, %v]、期待値 = [2, nil]", got[1].RawNumber, got[2].RawNumber)
+	}
+}
+
+// TestEpisodeRepository_CreateGeneratedは、自動生成のエピソードがDB活動を記録せずに作られる
+// ことを検証する。
+func TestEpisodeRepository_CreateGenerated(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	prevID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+
+	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
+	id, err := repo.CreateGenerated(ctx, repository.CreateGeneratedEpisodeParams{
+		WorkID:        workID,
+		Number:        "第2話",
+		RawNumber:     2,
+		SortNumber:    200,
+		PrevEpisodeID: &prevID,
+	})
+	if err != nil {
+		t.Fatalf("CreateGenerated()のエラー = %v", err)
+	}
+
+	var (
+		number        string
+		rawNumber     float64
+		sortNumber    int32
+		prevEpisodeID int64
+		title         sql.NullString
+	)
+	if err := tx.QueryRow(`
+		SELECT number, raw_number, sort_number, prev_episode_id, title
+		FROM episodes WHERE id = $1
+	`, int64(id)).Scan(&number, &rawNumber, &sortNumber, &prevEpisodeID, &title); err != nil {
+		t.Fatalf("作成したエピソードの読み込みに失敗: %v", err)
+	}
+	if number != "第2話" || rawNumber != 2 || sortNumber != 200 || prevEpisodeID != int64(prevID) || title.Valid {
+		t.Errorf("エピソード = (%q, %v, %d, %d, %v)、期待値 = (\"第2話\", 2, 200, %d, NULL)", number, rawNumber, sortNumber, prevEpisodeID, title, prevID)
+	}
+
+	var activityCount int
+	if err := tx.QueryRow(`SELECT COUNT(*) FROM db_activities WHERE trackable_type = 'Episode' AND trackable_id = $1`, int64(id)).Scan(&activityCount); err != nil {
+		t.Fatalf("DB活動の読み込みに失敗: %v", err)
+	}
+	if activityCount != 0 {
+		t.Errorf("DB活動 = %d件、期待値 = 0", activityCount)
+	}
+}
+
+// TestEpisodeRepository_UpdatePrevEpisodeIDは、前のエピソードの付け替えがupdated_atを
+// 進めないことと、作品の違うエピソードを書かないことを検証する。
+func TestEpisodeRepository_UpdatePrevEpisodeID(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	otherWorkID := testutil.NewWorkBuilder(t, tx).Build()
+	prevID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+	if _, err := tx.Exec(`UPDATE episodes SET updated_at = '2001-01-01' WHERE id = $1`, int64(episodeID)); err != nil {
+		t.Fatalf("updated_atの設定に失敗: %v", err)
+	}
+
+	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
+	if err := repo.UpdatePrevEpisodeID(ctx, workID, episodeID, prevID); err != nil {
+		t.Fatalf("UpdatePrevEpisodeID()のエラー = %v", err)
+	}
+
+	var (
+		prevEpisodeID int64
+		updatedAt     time.Time
+	)
+	if err := tx.QueryRow(`SELECT prev_episode_id, updated_at FROM episodes WHERE id = $1`, int64(episodeID)).Scan(&prevEpisodeID, &updatedAt); err != nil {
+		t.Fatalf("エピソードの読み込みに失敗: %v", err)
+	}
+	if prevEpisodeID != int64(prevID) {
+		t.Errorf("prev_episode_id = %d、期待値 = %d", prevEpisodeID, prevID)
+	}
+	if updatedAt.Year() != 2001 {
+		t.Errorf("updated_at = %v、期待値 = 2001年のまま", updatedAt)
+	}
+
+	if err := repo.UpdatePrevEpisodeID(ctx, otherWorkID, episodeID, prevID); err == nil {
+		t.Error("作品の違うエピソードの付け替えでエラーを期待したが、nilだった")
+	}
+}

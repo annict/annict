@@ -565,6 +565,62 @@ func (q *Queries) GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetW
 	return i, err
 }
 
+const getWorkForEpisodeGenerationByID = `-- name: GetWorkForEpisodeGenerationByID :one
+SELECT
+    w.id,
+    w.title,
+    w.anime_id,
+    w.start_episode_raw_number,
+    w.manual_episodes_count,
+    nf.id AS number_format_id,
+    COALESCE(nf.format, '')::varchar AS number_format_format,
+    COALESCE(nf.data, '{}')::varchar[] AS number_format_data,
+    COALESCE((
+        SELECT MAX(e.sort_number)
+        FROM episodes e
+        WHERE e.work_id = w.id
+    ), 0)::integer AS max_sort_number
+FROM works w
+LEFT JOIN number_formats nf ON nf.id = w.number_format_id
+WHERE w.id = $1
+    AND w.deleted_at IS NULL
+    AND w.unpublished_at IS NULL
+`
+
+type GetWorkForEpisodeGenerationByIDRow struct {
+	ID                    int64         `db:"id"`
+	Title                 string        `db:"title"`
+	AnimeID               sql.NullInt64 `db:"anime_id"`
+	StartEpisodeRawNumber float64       `db:"start_episode_raw_number"`
+	ManualEpisodesCount   sql.NullInt32 `db:"manual_episodes_count"`
+	NumberFormatID        sql.NullInt64 `db:"number_format_id"`
+	NumberFormatFormat    string        `db:"number_format_format"`
+	NumberFormatData      []string      `db:"number_format_data"`
+	MaxSortNumber         int32         `db:"max_sort_number"`
+}
+
+// 放送枠からエピソードを作るときに、作品をロックした後で読む。話数の計算 (開始話数)・予定
+// エピソード数との比較・表示の番号の書式・作品のanimeを返す。max_sort_numberは削除済み・
+// 非公開を含む全エピソードの最大値で、末尾に足すエピソードの並び順の起点になる。削除済みの行が
+// 持つ値と並び順がぶつからないようにするため。作品がエピソードを持たないあいだは0になる。
+// 一覧を読んだ後に非公開・削除にされた作品は返さず、呼び出し側はその放送枠を飛ばす。
+func (q *Queries) GetWorkForEpisodeGenerationByID(ctx context.Context, id int64) (GetWorkForEpisodeGenerationByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEpisodeGenerationByID, id)
+	var i GetWorkForEpisodeGenerationByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.AnimeID,
+		&i.StartEpisodeRawNumber,
+		&i.ManualEpisodesCount,
+		&i.NumberFormatID,
+		&i.NumberFormatFormat,
+		pq.Array(&i.NumberFormatData),
+		&i.MaxSortNumber,
+	)
+	return i, err
+}
+
 const getWorkForEpisodeListByID = `-- name: GetWorkForEpisodeListByID :one
 SELECT
     w.id,

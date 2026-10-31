@@ -540,6 +540,91 @@ func (r *EpisodeRepository) Create(ctx context.Context, params CreateEpisodePara
 	return model.EpisodeID(id), nil
 }
 
+// DBEpisodeGenerationSiblingは、放送枠からエピソードを作るときに読む作品の既存エピソード。
+// 照合 (Published・RawNumber・LinkedToProgram) と、並びのどこに入れるかの判断 (RawNumber・
+// SortNumber) に要る分だけを持つ。
+type DBEpisodeGenerationSibling struct {
+	ID         model.EpisodeID
+	RawNumber  *float64
+	SortNumber int32
+	Published  bool
+	// LinkedToProgramは、同じ番組のいずれかの放送枠 (削除済みを含む) がこのエピソードを
+	// 指しているか。
+	LinkedToProgram bool
+}
+
+// ListForEpisodeGenerationByWorkIDは作品の未削除のエピソード (非公開を含む) を、
+// sort_number順 (同値ならid順) に返す。LinkedToProgramはprogramIDの番組について求める。
+func (r *EpisodeRepository) ListForEpisodeGenerationByWorkID(ctx context.Context, workID model.WorkID, programID model.ProgramID) ([]DBEpisodeGenerationSibling, error) {
+	rows, err := r.queries.ListEpisodesForEpisodeGenerationByWorkID(ctx, query.ListEpisodesForEpisodeGenerationByWorkIDParams{
+		WorkID:    int64(workID),
+		ProgramID: sql.NullInt64{Int64: int64(programID), Valid: true},
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	siblings := make([]DBEpisodeGenerationSibling, len(rows))
+	for i, row := range rows {
+		siblings[i] = DBEpisodeGenerationSibling{
+			ID:              model.EpisodeID(row.ID),
+			SortNumber:      row.SortNumber,
+			Published:       row.Published,
+			LinkedToProgram: row.LinkedToProgram,
+		}
+		if row.RawNumber.Valid {
+			rawNumber := row.RawNumber.Float64
+			siblings[i].RawNumber = &rawNumber
+		}
+	}
+	return siblings, nil
+}
+
+// CreateGeneratedEpisodeParamsは放送枠から自動生成するエピソードの属性を保持する。
+// タイトルは空のまま作り、後でしょぼいカレンダーのサブタイトルを入れる。
+type CreateGeneratedEpisodeParams struct {
+	WorkID        model.WorkID
+	Number        string
+	RawNumber     float64
+	SortNumber    int32
+	PrevEpisodeID *model.EpisodeID
+	AnimeID       *model.AnimeID
+}
+
+// CreateGeneratedは自動生成するエピソードを、DB活動を記録せずに挿入してIDを返す。
+func (r *EpisodeRepository) CreateGenerated(ctx context.Context, params CreateGeneratedEpisodeParams) (model.EpisodeID, error) {
+	id, err := r.queries.CreateGeneratedEpisode(ctx, query.CreateGeneratedEpisodeParams{
+		WorkID:        int64(params.WorkID),
+		Number:        sql.NullString{String: params.Number, Valid: true},
+		RawNumber:     sql.NullFloat64{Float64: params.RawNumber, Valid: true},
+		SortNumber:    params.SortNumber,
+		PrevEpisodeID: nullInt64FromEpisodeID(params.PrevEpisodeID),
+		AnimeID:       nullInt64FromAnimeID(params.AnimeID),
+	})
+	if err != nil {
+		return 0, err
+	}
+
+	return model.EpisodeID(id), nil
+}
+
+// UpdatePrevEpisodeIDは作品の未削除のエピソードの前のエピソードを付け替える。並び順から
+// 導出される値の維持のため、DB活動・作品のtouch・updated_atの更新は行わない。
+func (r *EpisodeRepository) UpdatePrevEpisodeID(ctx context.Context, workID model.WorkID, episodeID model.EpisodeID, prevEpisodeID model.EpisodeID) error {
+	affected, err := r.queries.UpdateEpisodePrevEpisodeID(ctx, query.UpdateEpisodePrevEpisodeIDParams{
+		PrevEpisodeID: sql.NullInt64{Int64: int64(prevEpisodeID), Valid: true},
+		ID:            int64(episodeID),
+		WorkID:        int64(workID),
+	})
+	if err != nil {
+		return err
+	}
+	if affected != 1 {
+		return errors.New("前のエピソードを付け替えるエピソードが見つかりませんでした")
+	}
+	return nil
+}
+
 // nullStringFromPtrは任意の文字列をドライバのNULL許容文字列に写像する。編集者が空の
 // まま送ったカラムを、空文字列ではなくNULLとして書くため。
 func nullStringFromPtr(value *string) sql.NullString {

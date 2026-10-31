@@ -321,6 +321,62 @@ func (r *WorkRepository) IncrementEpisodesCount(ctx context.Context, workID mode
 	return nil
 }
 
+// DBEpisodeGenerationWorkは放送枠からエピソードを作るときの親作品を表す。作品そのもの
+// (話数の計算と予定エピソード数との比較に使う値) と、表示の番号の書式、並び順の起点になる
+// 値を持つ。起点の値はworksのカラムではなく作品のエピソードの集計であるため、model.Workに
+// 畳み込まず作品と並べて持つ。
+type DBEpisodeGenerationWork struct {
+	Work *model.Work
+	// NumberFormatは作品に設定された番号の書式で、設定が無いときはnil。
+	NumberFormat *model.NumberFormat
+	// MaxSortNumberは削除済み・非公開を含む全エピソードのsort_numberの最大値で、作品が
+	// エピソードを持たないときは0。
+	MaxSortNumber int32
+}
+
+// GetForEpisodeGenerationByIDは放送枠からエピソードを作るときの親作品を読み込む。
+// 削除済み・非公開の作品はクエリ側で除外するため、(nil, nil) はエピソードを作れる作品が
+// そのidに無いことを表す。
+func (r *WorkRepository) GetForEpisodeGenerationByID(ctx context.Context, id model.WorkID) (*DBEpisodeGenerationWork, error) {
+	row, err := r.queries.GetWorkForEpisodeGenerationByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	work := &model.Work{
+		ID:                    model.WorkID(row.ID),
+		Title:                 row.Title,
+		StartEpisodeRawNumber: row.StartEpisodeRawNumber,
+	}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		work.AnimeID = &animeID
+	}
+	if row.ManualEpisodesCount.Valid {
+		count := row.ManualEpisodesCount.Int32
+		work.ManualEpisodesCount = &count
+	}
+
+	result := &DBEpisodeGenerationWork{
+		Work:          work,
+		MaxSortNumber: row.MaxSortNumber,
+	}
+	if row.NumberFormatID.Valid {
+		numberFormatID := model.NumberFormatID(row.NumberFormatID.Int64)
+		work.NumberFormatID = &numberFormatID
+		result.NumberFormat = &model.NumberFormat{
+			ID:     numberFormatID,
+			Format: row.NumberFormatFormat,
+			Data:   row.NumberFormatData,
+		}
+	}
+
+	return result, nil
+}
+
 // GetPopularは人気作品を返す。戻り値の各 *model.Workは呼び出しごとに新規生成されるため、
 // 呼び出し側 (主にUseCase) がCasts / Staffsなどの関連エンティティを後付けで
 // 代入する用法を許容している。Repositoryでキャッシュやプール再利用を導入する

@@ -722,3 +722,60 @@ WITH created_episode AS (
 SELECT ce.id
 FROM created_episode ce
 CROSS JOIN created_activity ca;
+
+-- name: ListEpisodesForEpisodeGenerationByWorkID :many
+-- 放送枠からエピソードを作るときに、作品をロックした後で読む。既存のエピソードとの照合と、
+-- 新しいエピソードを並びのどこに入れるかの判断に使う。並びに数えるのは未削除のエピソード
+-- (非公開を含む) で、エピソードの更新が隣接行を導出するのと同じ順序 (sort_number、同値なら
+-- id) で返す。linked_to_programは、同じ番組のいずれかの放送枠 (削除済みを含む) がその
+-- エピソードを指しているか。slots(program_id, episode_id) の一意制約は削除済みの放送枠にも
+-- かかるため、照合ではこれが真の候補に紐づけない。
+SELECT
+    e.id,
+    e.raw_number,
+    e.sort_number,
+    (e.unpublished_at IS NULL)::boolean AS published,
+    EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.program_id = sqlc.arg('program_id')
+            AND s.episode_id = e.id
+    ) AS linked_to_program
+FROM episodes e
+WHERE e.work_id = sqlc.arg('work_id')
+    AND e.deleted_at IS NULL
+ORDER BY e.sort_number, e.id;
+
+-- name: CreateGeneratedEpisode :one
+-- 放送枠から自動生成するエピソードを挿入する。CreateEpisodeと違い、DB活動は記録しない。
+-- Railsの自動生成も編集者を伴わずに作成し、DB活動を残さないため。
+INSERT INTO episodes (
+    work_id,
+    number,
+    raw_number,
+    sort_number,
+    prev_episode_id,
+    anime_id,
+    created_at,
+    updated_at
+) VALUES (
+    sqlc.arg('work_id'),
+    sqlc.narg('number'),
+    sqlc.narg('raw_number'),
+    sqlc.arg('sort_number'),
+    sqlc.narg('prev_episode_id'),
+    sqlc.narg('anime_id'),
+    NOW(),
+    NOW()
+)
+RETURNING id;
+
+-- name: UpdateEpisodePrevEpisodeID :execrows
+-- 並びの途中に入れたエピソードの直後の行が、新しいエピソードを前のエピソードとして名乗るように
+-- 張り替える。UpdateDBEpisodeが移動で隣接行を張り替えるのと同じく、並び順から導出される値の
+-- 維持であって編集ではないため、DB活動・作品のtouch・updated_atの更新は行わない。
+UPDATE episodes
+SET prev_episode_id = sqlc.arg('prev_episode_id')
+WHERE id = sqlc.arg('id')
+    AND work_id = sqlc.arg('work_id')
+    AND deleted_at IS NULL;

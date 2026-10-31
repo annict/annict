@@ -80,6 +80,9 @@ type Querier interface {
 	// Railsのsave_and_create_activity! と同じepisodes.createのDB活動を、挿入行を
 	// parameters.newとして記録する。
 	CreateEpisode(ctx context.Context, arg CreateEpisodeParams) (int64, error)
+	// 放送枠から自動生成するエピソードを挿入する。CreateEpisodeと違い、DB活動は記録しない。
+	// Railsの自動生成も編集者を伴わずに作成し、DB活動を残さないため。
+	CreateGeneratedEpisode(ctx context.Context, arg CreateGeneratedEpisodeParams) (int64, error)
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
 	CreatePasswordResetToken(ctx context.Context, arg CreatePasswordResetTokenParams) (PasswordResetToken, error)
@@ -487,6 +490,12 @@ type Querier interface {
 	// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
 	// 見るが、表示層で上書きして作成できる。
 	GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error)
+	// 放送枠からエピソードを作るときに、作品をロックした後で読む。話数の計算 (開始話数)・予定
+	// エピソード数との比較・表示の番号の書式・作品のanimeを返す。max_sort_numberは削除済み・
+	// 非公開を含む全エピソードの最大値で、末尾に足すエピソードの並び順の起点になる。削除済みの行が
+	// 持つ値と並び順がぶつからないようにするため。作品がエピソードを持たないあいだは0になる。
+	// 一覧を読んだ後に非公開・削除にされた作品は返さず、呼び出し側はその放送枠を飛ばす。
+	GetWorkForEpisodeGenerationByID(ctx context.Context, id int64) (GetWorkForEpisodeGenerationByIDRow, error)
 	// published_episode_countとmax_generatable_episode_numberはエピソード一覧の自動生成の
 	// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
 	// 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも1作品について別テーブルを
@@ -516,6 +525,10 @@ type Querier interface {
 	InvalidateUserPasswordResetTokens(ctx context.Context, userID int64) error
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
 	IsFeatureFlagEnabled(ctx context.Context, arg IsFeatureFlagEnabledParams) (bool, error)
+	// 一覧を読んだ後に、編集者や別の実行が同じ放送枠へエピソードを紐づけていることがある。
+	// 紐づいていない間だけ書き、0行なら呼び出し側はその放送枠を飛ばす。Railsの自動生成と同じく
+	// update_column相当で、updated_atも作品のtouchも行わない。
+	LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
 	ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeClassification, error)
 	ListAnimeEventsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeEvent, error)
@@ -550,6 +563,13 @@ type Querier interface {
 	// UpdateDBEpisodeが自身のスナップショットで導出し直すことで開く窓と同じものである。
 	ListEpisodeIDsForEpisodeUpdateByID(ctx context.Context, arg ListEpisodeIDsForEpisodeUpdateByIDParams) ([]int64, error)
 	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
+	// 放送枠からエピソードを作るときに、作品をロックした後で読む。既存のエピソードとの照合と、
+	// 新しいエピソードを並びのどこに入れるかの判断に使う。並びに数えるのは未削除のエピソード
+	// (非公開を含む) で、エピソードの更新が隣接行を導出するのと同じ順序 (sort_number、同値なら
+	// id) で返す。linked_to_programは、同じ番組のいずれかの放送枠 (削除済みを含む) がその
+	// エピソードを指しているか。slots(program_id, episode_id) の一意制約は削除済みの放送枠にも
+	// かかるため、照合ではこれが真の候補に紐づけない。
+	ListEpisodesForEpisodeGenerationByWorkID(ctx context.Context, arg ListEpisodesForEpisodeGenerationByWorkIDParams) ([]ListEpisodesForEpisodeGenerationByWorkIDRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
 	// 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
 	// 同じく、deletedの人物だけを除いて照合する。掲載停止 (delisted) の人物との重複を別の
@@ -561,6 +581,14 @@ type Querier interface {
 	// 退会の削除処理でストレージから消す画像を求めるため、ユーザーのプロフィール画像と背景画像の
 	// Shrineの添付データを取得する。
 	ListProfileImageDataByUserID(ctx context.Context, userID int64) ([]ListProfileImageDataByUserIDRow, error)
+	// 自動生成の対象はRailsのepisode:generateと同じ条件 (未削除・公開中で、エピソードが紐づいて
+	// おらず、再放送でも不定期放送でもなく、番組と回数を持つ) の放送枠に、開始日時の範囲と作品が
+	// 未削除・公開中であることを加えたもの。
+	//
+	// preceding_irregular_countは話数の計算で回数から引く不定期放送の数。この放送枠より回数が
+	// 小さいものだけを数える。後ろの不定期放送まで数えると、すでに紐づいた放送枠と同じ話数を
+	// 求めてしまうため。
+	ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlotsForEpisodeGenerationParams) ([]ListSlotsForEpisodeGenerationRow, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
@@ -704,6 +732,10 @@ type Querier interface {
 	// しまうため。
 	UpdateDBPerson(ctx context.Context, arg UpdateDBPersonParams) (int64, error)
 	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
+	// 並びの途中に入れたエピソードの直後の行が、新しいエピソードを前のエピソードとして名乗るように
+	// 張り替える。UpdateDBEpisodeが移動で隣接行を張り替えるのと同じく、並び順から導出される値の
+	// 維持であって編集ではないため、DB活動・作品のtouch・updated_atの更新は行わない。
+	UpdateEpisodePrevEpisodeID(ctx context.Context, arg UpdateEpisodePrevEpisodeIDParams) (int64, error)
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
 	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error
