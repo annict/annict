@@ -456,7 +456,13 @@ type Querier interface {
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
 	// 作品ロック後に、現在も対象の放送枠だけを読み直す。所属作品はロックした作品に限る。
 	// 放送枠もロックし、話数の計算から紐づけまでの間に回数・番組・公開状態を変更させない。
-	// preceding_irregular_countは、この放送枠より回数が小さく、番組の下限以上の不定期放送の数。
+	// ほかのトランザクションがロックしている放送枠は待たずに飛ばし、次の実行で拾い直す。
+	// Railsは放送枠を保存すると、放送枠の行を更新してから作品をtouchするため、作品を先に
+	// ロックしたここで放送枠の行を待つと、互いの行を待ち合ってデッドロックする。
+	//
+	// preceding_irregular_countは話数の計算で回数から引く不定期放送の数。この放送枠より回数が
+	// 小さく、番組の下限以上のものだけを数える。後ろの不定期放送まで数えると、すでに紐づいた
+	// 放送枠と同じ話数を求めてしまうため。
 	GetSlotForEpisodeGenerationByID(ctx context.Context, arg GetSlotForEpisodeGenerationByIDParams) (GetSlotForEpisodeGenerationByIDRow, error)
 	// スタッフ自身が公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す。
 	// 人物を参照する行 (resource_type = 'Person') は、人物が公開中 (published) のものに限り、

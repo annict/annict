@@ -539,6 +539,53 @@ func TestCreateEpisodesFromSlotsUsecase_IgnoresAlreadyLinkedSlot(t *testing.T) {
 	}
 }
 
+// TestCreateEpisodesFromSlotsUsecase_SkipsLockedSlotは、ほかのトランザクションが更新中の
+// 放送枠を待たずに飛ばし、ロックが外れた後の実行で処理することを検証する。
+func TestCreateEpisodesFromSlotsUsecase_SkipsLockedSlot(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := generationNow()
+	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	program := insertGenerationProgram(t, db, workID, 1)
+	slotID := program.insertSlot(1, now, nil)
+	uc := newCreateEpisodesFromSlotsUsecase(db)
+	candidate := &model.Slot{ID: slotID, WorkID: workID}
+
+	// Railsが放送枠を保存している途中と同じく、放送枠の行を更新したままコミットしない。
+	lockTx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatalf("ロック用のトランザクションの開始に失敗: %v", err)
+	}
+	defer func() { _ = lockTx.Rollback() }()
+	if _, err := lockTx.Exec(`UPDATE slots SET updated_at = NOW() WHERE id = $1`, int64(slotID)); err != nil {
+		t.Fatalf("放送枠の行のロックに失敗: %v", err)
+	}
+
+	// 放送枠の行を待ってしまうと、期限切れのエラーで失敗する。
+	waitCtx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	locked, err := uc.processSlot(waitCtx, candidate, now)
+	if err != nil {
+		t.Fatalf("ロック中のprocessSlot()のエラー = %v", err)
+	}
+	if locked.created != nil || locked.linked || locked.skipped != nil || readSlotEpisodeID(t, db, slotID).Valid || countWorkEpisodes(t, db, workID) != 0 {
+		t.Errorf("ロック中の結果 = %+v、期待値 = 生成・紐づけ・報告なし", locked)
+	}
+
+	if err := lockTx.Rollback(); err != nil {
+		t.Fatalf("ロック用のトランザクションのロールバックに失敗: %v", err)
+	}
+	unlocked, err := uc.processSlot(ctx, candidate, now)
+	if err != nil {
+		t.Fatalf("ロック解除後のprocessSlot()のエラー = %v", err)
+	}
+	if unlocked.created == nil || !readSlotEpisodeID(t, db, slotID).Valid {
+		t.Errorf("ロック解除後の結果 = %+v、期待値 = 作成1件", unlocked)
+	}
+}
+
 // TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollbackは、末尾の作品件数更新を
 // 整数の上限で失敗させる。先行する両書き・隣接行・紐づけが戻り、次の放送枠は処理される。
 func TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollback(t *testing.T) {

@@ -46,7 +46,7 @@ func (r *SlotRepository) ListForEpisodeGeneration(ctx context.Context, startedFr
 
 // GetForEpisodeGenerationByIDは、作品ロック後に対象の放送枠をロックして現在の値を返す。
 // WithTxで使い、同じトランザクション内でLinkEpisodeを呼ぶ。対象外・紐づき済み・所属変更で
-// 見つからなければnilを返す。
+// 見つからないときと、ほかのトランザクションが放送枠をロックしているときはnilを返す。
 func (r *SlotRepository) GetForEpisodeGenerationByID(ctx context.Context, id model.SlotID, workID model.WorkID, startedFrom, startedBefore time.Time) (*model.Slot, error) {
 	row, err := r.queries.GetSlotForEpisodeGenerationByID(ctx, query.GetSlotForEpisodeGenerationByIDParams{
 		ID:            int64(id),
