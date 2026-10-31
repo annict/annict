@@ -454,6 +454,10 @@ type Querier interface {
 	GetRecordByUserAndWork(ctx context.Context, arg GetRecordByUserAndWorkParams) (GetRecordByUserAndWorkRow, error)
 	GetSessionByID(ctx context.Context, sessionID string) (Session, error)
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
+	// 作品ロック後に、現在も対象の放送枠だけを読み直す。所属作品はロックした作品に限る。
+	// 放送枠もロックし、話数の計算から紐づけまでの間に回数・番組・公開状態を変更させない。
+	// preceding_irregular_countは、この放送枠より回数が小さく、番組の下限以上の不定期放送の数。
+	GetSlotForEpisodeGenerationByID(ctx context.Context, arg GetSlotForEpisodeGenerationByIDParams) (GetSlotForEpisodeGenerationByIDRow, error)
 	// スタッフ自身が公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す。
 	// 人物を参照する行 (resource_type = 'Person') は、人物が公開中 (published) のものに限り、
 	// 非公開 (archived)・掲載停止 (delisted)・削除 (deleted) の人物の行は、Rails版の作品ページと同じく除外する
@@ -525,9 +529,9 @@ type Querier interface {
 	InvalidateUserPasswordResetTokens(ctx context.Context, userID int64) error
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
 	IsFeatureFlagEnabled(ctx context.Context, arg IsFeatureFlagEnabledParams) (bool, error)
-	// 一覧を読んだ後に、編集者や別の実行が同じ放送枠へエピソードを紐づけていることがある。
-	// 紐づいていない間だけ書き、0行なら呼び出し側はその放送枠を飛ばす。Railsの自動生成と同じく
-	// update_column相当で、updated_atも作品のtouchも行わない。
+	// 照合に使った所属・番組・回数・開始時刻と対象条件を満たす放送枠だけを書き込む。
+	// 0行なら呼び出し側は生成をロールバックする。Railsのupdate_column相当で、updated_atも
+	// 作品のtouchも行わない。
 	LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
 	ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeClassification, error)
@@ -584,10 +588,7 @@ type Querier interface {
 	// 自動生成の対象はRailsのepisode:generateと同じ条件 (未削除・公開中で、エピソードが紐づいて
 	// おらず、再放送でも不定期放送でもなく、番組と回数を持つ) の放送枠に、開始日時の範囲と作品が
 	// 未削除・公開中であることを加えたもの。
-	//
-	// preceding_irregular_countは話数の計算で回数から引く不定期放送の数。この放送枠より回数が
-	// 小さいものだけを数える。後ろの不定期放送まで数えると、すでに紐づいた放送枠と同じ話数を
-	// 求めてしまうため。
+	// 一覧では処理するidと所属作品だけを読み、話数の計算に使う値は作品ロック後に読み直す。
 	ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlotsForEpisodeGenerationParams) ([]ListSlotsForEpisodeGenerationRow, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)

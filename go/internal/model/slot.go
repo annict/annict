@@ -13,7 +13,7 @@ type Slot struct {
 
 	// PrecedingIrregularCountは、同じ番組の不定期放送のうち、この放送枠より回数が小さく、
 	// 番組のMinimumEpisodeGeneratableNumber以上のものの数。値が入るのは自動生成の対象を
-	// 読むローダー (ListForEpisodeGeneration) のみで、他のロード経路では0のまま残る。
+	// 読むローダー (GetForEpisodeGenerationByID) のみで、他のロード経路では0のまま残る。
 	PrecedingIrregularCount int32
 }
 

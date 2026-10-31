@@ -11,31 +11,7 @@ import (
 	"time"
 )
 
-const linkSlotEpisode = `-- name: LinkSlotEpisode :execrows
-UPDATE slots
-SET episode_id = $1
-WHERE id = $2
-    AND episode_id IS NULL
-    AND deleted_at IS NULL
-`
-
-type LinkSlotEpisodeParams struct {
-	EpisodeID sql.NullInt64 `db:"episode_id"`
-	ID        int64         `db:"id"`
-}
-
-// 一覧を読んだ後に、編集者や別の実行が同じ放送枠へエピソードを紐づけていることがある。
-// 紐づいていない間だけ書き、0行なら呼び出し側はその放送枠を飛ばす。Railsの自動生成と同じく
-// update_column相当で、updated_atも作品のtouchも行わない。
-func (q *Queries) LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error) {
-	result, err := q.db.ExecContext(ctx, linkSlotEpisode, arg.EpisodeID, arg.ID)
-	if err != nil {
-		return 0, err
-	}
-	return result.RowsAffected()
-}
-
-const listSlotsForEpisodeGeneration = `-- name: ListSlotsForEpisodeGeneration :many
+const getSlotForEpisodeGenerationByID = `-- name: GetSlotForEpisodeGenerationByID :one
 SELECT
     s.id,
     s.work_id,
@@ -56,11 +32,113 @@ SELECT
 FROM slots s
 JOIN programs p ON p.id = s.program_id
 JOIN works w ON w.id = s.work_id
+WHERE s.id = $1
+    AND s.work_id = $2
+    AND s.deleted_at IS NULL
+    AND s.unpublished_at IS NULL
+    AND s.episode_id IS NULL
+    AND NOT s.rebroadcast
+    AND NOT s.irregular
+    AND s.number IS NOT NULL
+    AND s.started_at >= $3
+    AND s.started_at < $4
+    AND w.deleted_at IS NULL
+    AND w.unpublished_at IS NULL
+FOR UPDATE OF s
+`
+
+type GetSlotForEpisodeGenerationByIDParams struct {
+	ID            int64     `db:"id"`
+	WorkID        int64     `db:"work_id"`
+	StartedFrom   time.Time `db:"started_from"`
+	StartedBefore time.Time `db:"started_before"`
+}
+
+type GetSlotForEpisodeGenerationByIDRow struct {
+	ID                              int64         `db:"id"`
+	WorkID                          int64         `db:"work_id"`
+	ProgramID                       sql.NullInt64 `db:"program_id"`
+	Number                          sql.NullInt32 `db:"number"`
+	StartedAt                       time.Time     `db:"started_at"`
+	MinimumEpisodeGeneratableNumber int32         `db:"minimum_episode_generatable_number"`
+	PrecedingIrregularCount         int32         `db:"preceding_irregular_count"`
+}
+
+// 作品ロック後に、現在も対象の放送枠だけを読み直す。所属作品はロックした作品に限る。
+// 放送枠もロックし、話数の計算から紐づけまでの間に回数・番組・公開状態を変更させない。
+// preceding_irregular_countは、この放送枠より回数が小さく、番組の下限以上の不定期放送の数。
+func (q *Queries) GetSlotForEpisodeGenerationByID(ctx context.Context, arg GetSlotForEpisodeGenerationByIDParams) (GetSlotForEpisodeGenerationByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getSlotForEpisodeGenerationByID,
+		arg.ID,
+		arg.WorkID,
+		arg.StartedFrom,
+		arg.StartedBefore,
+	)
+	var i GetSlotForEpisodeGenerationByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.WorkID,
+		&i.ProgramID,
+		&i.Number,
+		&i.StartedAt,
+		&i.MinimumEpisodeGeneratableNumber,
+		&i.PrecedingIrregularCount,
+	)
+	return i, err
+}
+
+const linkSlotEpisode = `-- name: LinkSlotEpisode :execrows
+UPDATE slots
+SET episode_id = $1
+WHERE id = $2
+    AND work_id = $3
+    AND program_id = $4
+    AND number = $5
+    AND started_at = $6
+    AND episode_id IS NULL
+    AND deleted_at IS NULL
+    AND unpublished_at IS NULL
+    AND NOT rebroadcast
+    AND NOT irregular
+`
+
+type LinkSlotEpisodeParams struct {
+	EpisodeID sql.NullInt64 `db:"episode_id"`
+	ID        int64         `db:"id"`
+	WorkID    int64         `db:"work_id"`
+	ProgramID sql.NullInt64 `db:"program_id"`
+	Number    sql.NullInt32 `db:"number"`
+	StartedAt time.Time     `db:"started_at"`
+}
+
+// 照合に使った所属・番組・回数・開始時刻と対象条件を満たす放送枠だけを書き込む。
+// 0行なら呼び出し側は生成をロールバックする。Railsのupdate_column相当で、updated_atも
+// 作品のtouchも行わない。
+func (q *Queries) LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, linkSlotEpisode,
+		arg.EpisodeID,
+		arg.ID,
+		arg.WorkID,
+		arg.ProgramID,
+		arg.Number,
+		arg.StartedAt,
+	)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
+}
+
+const listSlotsForEpisodeGeneration = `-- name: ListSlotsForEpisodeGeneration :many
+SELECT s.id, s.work_id
+FROM slots s
+JOIN works w ON w.id = s.work_id
 WHERE s.deleted_at IS NULL
     AND s.unpublished_at IS NULL
     AND s.episode_id IS NULL
     AND NOT s.rebroadcast
     AND NOT s.irregular
+    AND s.program_id IS NOT NULL
     AND s.number IS NOT NULL
     AND s.started_at >= $1
     AND s.started_at < $2
@@ -75,22 +153,14 @@ type ListSlotsForEpisodeGenerationParams struct {
 }
 
 type ListSlotsForEpisodeGenerationRow struct {
-	ID                              int64         `db:"id"`
-	WorkID                          int64         `db:"work_id"`
-	ProgramID                       sql.NullInt64 `db:"program_id"`
-	Number                          sql.NullInt32 `db:"number"`
-	StartedAt                       time.Time     `db:"started_at"`
-	MinimumEpisodeGeneratableNumber int32         `db:"minimum_episode_generatable_number"`
-	PrecedingIrregularCount         int32         `db:"preceding_irregular_count"`
+	ID     int64 `db:"id"`
+	WorkID int64 `db:"work_id"`
 }
 
 // 自動生成の対象はRailsのepisode:generateと同じ条件 (未削除・公開中で、エピソードが紐づいて
 // おらず、再放送でも不定期放送でもなく、番組と回数を持つ) の放送枠に、開始日時の範囲と作品が
 // 未削除・公開中であることを加えたもの。
-//
-// preceding_irregular_countは話数の計算で回数から引く不定期放送の数。この放送枠より回数が
-// 小さいものだけを数える。後ろの不定期放送まで数えると、すでに紐づいた放送枠と同じ話数を
-// 求めてしまうため。
+// 一覧では処理するidと所属作品だけを読み、話数の計算に使う値は作品ロック後に読み直す。
 func (q *Queries) ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlotsForEpisodeGenerationParams) ([]ListSlotsForEpisodeGenerationRow, error) {
 	rows, err := q.db.QueryContext(ctx, listSlotsForEpisodeGeneration, arg.StartedFrom, arg.StartedBefore)
 	if err != nil {
@@ -100,15 +170,7 @@ func (q *Queries) ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlo
 	items := []ListSlotsForEpisodeGenerationRow{}
 	for rows.Next() {
 		var i ListSlotsForEpisodeGenerationRow
-		if err := rows.Scan(
-			&i.ID,
-			&i.WorkID,
-			&i.ProgramID,
-			&i.Number,
-			&i.StartedAt,
-			&i.MinimumEpisodeGeneratableNumber,
-			&i.PrecedingIrregularCount,
-		); err != nil {
+		if err := rows.Scan(&i.ID, &i.WorkID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

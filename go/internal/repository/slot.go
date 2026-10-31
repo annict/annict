@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
@@ -25,8 +26,8 @@ func (r *SlotRepository) WithTx(tx *sql.Tx) *SlotRepository {
 }
 
 // ListForEpisodeGenerationは、開始日時がstartedFrom以上startedBefore未満の放送枠のうち、
-// 自動生成がエピソードを紐づける対象を開始日時の順に返す。各放送枠は番組と、話数の計算で
-// 回数から引く不定期放送の数 (PrecedingIrregularCount) を持つ。
+// 自動生成がエピソードを紐づける対象のIDと所属作品を開始日時の順に返す。
+// 話数の計算に使う値は、作品ロック後にGetForEpisodeGenerationByIDで読み直す。
 func (r *SlotRepository) ListForEpisodeGeneration(ctx context.Context, startedFrom, startedBefore time.Time) ([]*model.Slot, error) {
 	rows, err := r.queries.ListSlotsForEpisodeGeneration(ctx, query.ListSlotsForEpisodeGenerationParams{
 		StartedFrom:   startedFrom,
@@ -38,28 +39,50 @@ func (r *SlotRepository) ListForEpisodeGeneration(ctx context.Context, startedFr
 
 	slots := make([]*model.Slot, len(rows))
 	for i, row := range rows {
-		// クエリは番組と回数を持つ放送枠に絞っているため、どちらもNULLではない。
-		slots[i] = &model.Slot{
-			ID:     model.SlotID(row.ID),
-			WorkID: model.WorkID(row.WorkID),
-			Program: &model.Program{
-				ID:                              model.ProgramID(row.ProgramID.Int64),
-				MinimumEpisodeGeneratableNumber: row.MinimumEpisodeGeneratableNumber,
-			},
-			Number:                  row.Number.Int32,
-			StartedAt:               row.StartedAt,
-			PrecedingIrregularCount: row.PrecedingIrregularCount,
-		}
+		slots[i] = &model.Slot{ID: model.SlotID(row.ID), WorkID: model.WorkID(row.WorkID)}
 	}
 	return slots, nil
 }
 
-// LinkEpisodeは、エピソードが紐づいていない未削除の放送枠にエピソードを紐づける。falseは、
-// 放送枠がすでに紐づいているか削除されていて、何も書かなかったことを表す。
-func (r *SlotRepository) LinkEpisode(ctx context.Context, slotID model.SlotID, episodeID model.EpisodeID) (bool, error) {
+// GetForEpisodeGenerationByIDは、作品ロック後に対象の放送枠をロックして現在の値を返す。
+// WithTxで使い、同じトランザクション内でLinkEpisodeを呼ぶ。対象外・紐づき済み・所属変更で
+// 見つからなければnilを返す。
+func (r *SlotRepository) GetForEpisodeGenerationByID(ctx context.Context, id model.SlotID, workID model.WorkID, startedFrom, startedBefore time.Time) (*model.Slot, error) {
+	row, err := r.queries.GetSlotForEpisodeGenerationByID(ctx, query.GetSlotForEpisodeGenerationByIDParams{
+		ID:            int64(id),
+		WorkID:        int64(workID),
+		StartedFrom:   startedFrom,
+		StartedBefore: startedBefore,
+	})
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	return &model.Slot{
+		ID:     model.SlotID(row.ID),
+		WorkID: model.WorkID(row.WorkID),
+		Program: &model.Program{
+			ID:                              model.ProgramID(row.ProgramID.Int64),
+			MinimumEpisodeGeneratableNumber: row.MinimumEpisodeGeneratableNumber,
+		},
+		Number:                  row.Number.Int32,
+		StartedAt:               row.StartedAt,
+		PrecedingIrregularCount: row.PrecedingIrregularCount,
+	}, nil
+}
+
+// LinkEpisodeはGetForEpisodeGenerationByIDでロックした放送枠へエピソードを紐づける。
+// falseは、照合に使った属性や対象条件が一致せず、何も書かなかったことを表す。
+func (r *SlotRepository) LinkEpisode(ctx context.Context, slot *model.Slot, episodeID model.EpisodeID) (bool, error) {
 	affected, err := r.queries.LinkSlotEpisode(ctx, query.LinkSlotEpisodeParams{
 		EpisodeID: sql.NullInt64{Int64: int64(episodeID), Valid: true},
-		ID:        int64(slotID),
+		ID:        int64(slot.ID),
+		WorkID:    int64(slot.WorkID),
+		ProgramID: sql.NullInt64{Int64: int64(slot.Program.ID), Valid: true},
+		Number:    sql.NullInt32{Int32: slot.Number, Valid: true},
+		StartedAt: slot.StartedAt,
 	})
 	if err != nil {
 		return false, err

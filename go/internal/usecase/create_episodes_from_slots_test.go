@@ -3,9 +3,13 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"errors"
+	"math"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/lib/pq"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -413,5 +417,185 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_SkipsWhenNoSortNumberGap(t *test
 	}
 	if got := countWorkEpisodes(t, db, workID); got != 2 {
 		t.Errorf("作品のエピソード = %d件、期待値 = 2", got)
+	}
+}
+
+// TestCreateEpisodesFromSlotsUsecase_RereadsSlotは、一覧取得後に編集された放送枠を
+// 現在の条件と値で処理し、古い話数への紐づけを残さないことを検証する。
+func TestCreateEpisodesFromSlotsUsecase_RereadsSlot(t *testing.T) {
+	t.Parallel()
+
+	for _, change := range []struct {
+		name          string
+		update        string
+		wantRawNumber float64
+	}{
+		{"非公開", `UPDATE slots SET unpublished_at = NOW() WHERE id = $1`, 0},
+		{"削除", `UPDATE slots SET deleted_at = NOW() WHERE id = $1`, 0},
+		{"再放送", `UPDATE slots SET rebroadcast = true WHERE id = $1`, 0},
+		{"不定期放送", `UPDATE slots SET irregular = true WHERE id = $1`, 0},
+		{"番組なし", `UPDATE slots SET program_id = NULL WHERE id = $1`, 0},
+		{"回数なし", `UPDATE slots SET number = NULL WHERE id = $1`, 0},
+		{"対象期間外", `UPDATE slots SET started_at = started_at + INTERVAL '30 days' WHERE id = $1`, 0},
+		{"回数変更", `UPDATE slots SET number = 2 WHERE id = $1`, 2},
+		{"別作品へ移動", "", 0},
+		{"番組の変更", "", 2},
+		{"前の不定期放送の変更", "", 2},
+		{"番組の下限の変更", "", 2},
+	} {
+		t.Run(change.name, func(t *testing.T) {
+			t.Parallel()
+			db := testutil.GetTestDB()
+			ctx := context.Background()
+			now := generationNow()
+			workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+			program := insertGenerationProgram(t, db, workID, 2)
+			var precedingSlotID model.SlotID
+			number := int32(1)
+			if change.name == "前の不定期放送の変更" || change.name == "番組の下限の変更" {
+				number = 3
+				if change.name == "番組の下限の変更" {
+					precedingSlotID = program.insertSlot(1, now.Add(-time.Hour), func(b *testutil.SlotBuilder) { b.WithIrregular() })
+				} else {
+					precedingSlotID = program.insertSlot(2, now.Add(-time.Hour), nil)
+				}
+			}
+			slotID := program.insertSlot(number, now, nil)
+			uc := newCreateEpisodesFromSlotsUsecase(db)
+			candidates, err := uc.slotRepo.ListForEpisodeGeneration(ctx, now.Add(-episodeGenerationWindow), now.Add(episodeGenerationWindow))
+			if err != nil {
+				t.Fatal(err)
+			}
+			var candidate *model.Slot
+			for _, slot := range candidates {
+				if slot.ID == slotID {
+					candidate = slot
+				}
+			}
+			if candidate == nil {
+				t.Fatal("一覧に対象の放送枠が含まれていません")
+			}
+			switch change.name {
+			case "別作品へ移動":
+				otherWorkID := insertCreateTargetWork(t, db, sql.NullInt64{})
+				_, err = db.Exec(`UPDATE slots SET work_id = $2 WHERE id = $1`, int64(slotID), int64(otherWorkID))
+			case "番組の変更":
+				otherProgram := insertGenerationProgram(t, db, workID, 1)
+				_, err = db.Exec(`UPDATE slots SET program_id = $2, number = 2 WHERE id = $1`, int64(slotID), otherProgram.programID)
+			case "前の不定期放送の変更":
+				_, err = db.Exec(`UPDATE slots SET irregular = true WHERE id = $1`, int64(precedingSlotID))
+			case "番組の下限の変更":
+				_, err = db.Exec(`UPDATE programs SET minimum_episode_generatable_number = 1 WHERE id = $1`, program.programID)
+			default:
+				_, err = db.Exec(change.update, int64(slotID))
+			}
+			if err != nil {
+				t.Fatalf("放送枠の編集に失敗: %v", err)
+			}
+			result, err := uc.processSlot(ctx, candidate, now)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if change.wantRawNumber == 0 {
+				if result.created != nil || result.linked || result.skipped != nil || readSlotEpisodeID(t, db, slotID).Valid || countWorkEpisodes(t, db, workID) != 0 {
+					t.Errorf("対象外の放送枠の結果 = %+v、期待値 = 生成・紐づけ・報告なし", result)
+				}
+				return
+			}
+			if result.created == nil {
+				t.Fatalf("結果 = %+v、期待値 = 作成1件", result)
+			}
+			episode := readCreatedEpisode(t, db, result.created.EpisodeID)
+			if episode.rawNumber.Float64 != change.wantRawNumber {
+				t.Errorf("生成した話数 = %v、期待値 = %v", episode.rawNumber.Float64, change.wantRawNumber)
+			}
+		})
+	}
+}
+
+// TestCreateEpisodesFromSlotsUsecase_IgnoresAlreadyLinkedSlotは、同じ一覧を取得した別実行が
+// 先に紐づけていても、編集者の修正が必要な放送枠として報告しないことを検証する。
+func TestCreateEpisodesFromSlotsUsecase_IgnoresAlreadyLinkedSlot(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := generationNow()
+	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	program := insertGenerationProgram(t, db, workID, 1)
+	slotID := program.insertSlot(1, now, nil)
+	uc := newCreateEpisodesFromSlotsUsecase(db)
+	candidate := &model.Slot{ID: slotID, WorkID: workID}
+	first, err := uc.processSlot(ctx, candidate, now)
+	if err != nil || first.created == nil {
+		t.Fatalf("最初の結果 = %+v、エラー = %v、期待値 = 作成1件", first, err)
+	}
+	again, err := uc.processSlot(ctx, candidate, now)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if again.created != nil || again.linked || again.skipped != nil || countWorkEpisodes(t, db, workID) != 1 {
+		t.Errorf("紐づき済みの結果 = %+v、期待値 = 生成・紐づけ・報告なし", again)
+	}
+}
+
+// TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollbackは、末尾の作品件数更新を
+// 整数の上限で失敗させる。先行する両書き・隣接行・紐づけが戻り、次の放送枠は処理される。
+func TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollback(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := generationNow()
+	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
+	firstID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
+	thirdID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 3, 300))
+	if _, err := db.Exec(`UPDATE episodes SET prev_episode_id = $2, updated_at = '2001-01-01' WHERE id = $1`, int64(thirdID), int64(firstID)); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := db.Exec(`UPDATE works SET episodes_count = $2, updated_at = '2001-01-01' WHERE id = $1`, int64(workID), math.MaxInt32); err != nil {
+		t.Fatal(err)
+	}
+	failedProgram := insertGenerationProgram(t, db, workID, 1)
+	failedSlotID := failedProgram.insertSlot(2, now, nil)
+	goodWorkID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	goodProgram := insertGenerationProgram(t, db, goodWorkID, 1)
+	goodSlotID := goodProgram.insertSlot(1, now.Add(time.Hour), nil)
+
+	output, err := newCreateEpisodesFromSlotsUsecase(db).Execute(ctx, CreateEpisodesFromSlotsInput{Now: now})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(output.FailedSlots) != 1 || len(output.CreatedEpisodes) != 1 || len(output.SkippedSlots) != 0 || output.LinkedSlotCount != 0 {
+		t.Fatalf("結果 = %+v、期待値 = 失敗1件・作成1件", output)
+	}
+	var pgError *pq.Error
+	if output.FailedSlots[0].SlotID != failedSlotID || !errors.As(output.FailedSlots[0].Err, &pgError) || pgError.Code != "22003" {
+		t.Errorf("失敗 = %+v、期待値 = 放送枠%dの整数範囲外エラー", output.FailedSlots[0], failedSlotID)
+	}
+	if output.CreatedEpisodes[0].SlotID != goodSlotID || !readSlotEpisodeID(t, db, goodSlotID).Valid || countWorkEpisodes(t, db, goodWorkID) != 1 {
+		t.Error("後続の正常な放送枠が処理されていません")
+	}
+	if readSlotEpisodeID(t, db, failedSlotID).Valid || countWorkEpisodes(t, db, workID) != 2 {
+		t.Error("失敗した放送枠の紐づけ・エピソードの作成が残っています")
+	}
+	var (
+		classificationCount int
+		prevEpisodeID       int64
+		episodesCount       int32
+		workUpdatedAt       time.Time
+		episodeUpdatedAt    time.Time
+	)
+	if err := db.QueryRow(`SELECT COUNT(*) FROM anime_classifications WHERE parent_anime_id = $1`, int64(parentAnimeID)).Scan(&classificationCount); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.QueryRow(`SELECT prev_episode_id, updated_at FROM episodes WHERE id = $1`, int64(thirdID)).Scan(&prevEpisodeID, &episodeUpdatedAt); err != nil {
+		t.Fatal(err)
+	}
+	if err := db.QueryRow(`SELECT episodes_count, updated_at FROM works WHERE id = $1`, int64(workID)).Scan(&episodesCount, &workUpdatedAt); err != nil {
+		t.Fatal(err)
+	}
+	if classificationCount != 0 || prevEpisodeID != int64(firstID) || episodesCount != math.MaxInt32 || workUpdatedAt.Year() != 2001 || episodeUpdatedAt.Year() != 2001 {
+		t.Errorf("失敗後 = (分類%d件, 前の話%d, 作品件数%d, 作品更新%v, エピソード更新%v)、期待値 = 書き込み前の値", classificationCount, prevEpisodeID, episodesCount, workUpdatedAt, episodeUpdatedAt)
 	}
 }

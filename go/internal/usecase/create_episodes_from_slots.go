@@ -116,7 +116,7 @@ func (uc *CreateEpisodesFromSlotsUsecase) Execute(ctx context.Context, input Cre
 
 	output := &CreateEpisodesFromSlotsOutput{}
 	for _, slot := range slots {
-		result, err := uc.processSlot(ctx, slot)
+		result, err := uc.processSlot(ctx, slot, input.Now)
 		if err != nil {
 			output.FailedSlots = append(output.FailedSlots, FailedSlot{SlotID: slot.ID, Err: err})
 			continue
@@ -145,7 +145,7 @@ type slotResult struct {
 
 // processSlotは1件の放送枠を1トランザクションで処理する。作品の行をロックしてから、照合と
 // 並び順に使う値を読む。手動登録や別の実行と同じ話を二重に作らないため (一括作成と同じ)。
-func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, slot *model.Slot) (slotResult, error) {
+func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, candidate *model.Slot, now time.Time) (slotResult, error) {
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
 		return slotResult{}, fmt.Errorf("トランザクションの開始に失敗しました: %w", err)
@@ -156,11 +156,19 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, slot 
 	episodeRepo := uc.episodeRepo.WithTx(tx)
 	slotRepo := uc.slotRepo.WithTx(tx)
 
-	locked, err := workRepo.LockForEpisodeCreateByID(ctx, slot.WorkID)
+	locked, err := workRepo.LockForEpisodeCreateByID(ctx, candidate.WorkID)
 	if err != nil {
 		return slotResult{}, fmt.Errorf("作品のロックに失敗しました: %w", err)
 	}
 	if !locked {
+		return slotResult{}, nil
+	}
+
+	slot, err := slotRepo.GetForEpisodeGenerationByID(ctx, candidate.ID, candidate.WorkID, now.Add(-episodeGenerationWindow), now.Add(episodeGenerationWindow))
+	if err != nil {
+		return slotResult{}, fmt.Errorf("放送枠の再取得に失敗しました: %w", err)
+	}
+	if slot == nil {
 		return slotResult{}, nil
 	}
 
@@ -180,7 +188,7 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, slot 
 
 	matchedID, candidatesFound := matchGeneratedEpisode(siblings, rawNumber)
 	if matchedID != nil {
-		linked, err := slotRepo.LinkEpisode(ctx, slot.ID, *matchedID)
+		linked, err := slotRepo.LinkEpisode(ctx, slot, *matchedID)
 		if err != nil {
 			return slotResult{}, fmt.Errorf("放送枠へのエピソードの紐づけに失敗しました: %w", err)
 		}
@@ -240,12 +248,12 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, slot 
 		}
 	}
 
-	linked, err := slotRepo.LinkEpisode(ctx, slot.ID, episodeID)
+	linked, err := slotRepo.LinkEpisode(ctx, slot, episodeID)
 	if err != nil {
 		return slotResult{}, fmt.Errorf("放送枠へのエピソードの紐づけに失敗しました: %w", err)
 	}
 	if !linked {
-		// 一覧を読んだ後に放送枠が紐づけられた。作ったエピソードはロールバックで消す。
+		// 照合時の属性や対象条件と一致しなければ、作ったエピソードはロールバックで消す。
 		return slotResult{}, nil
 	}
 

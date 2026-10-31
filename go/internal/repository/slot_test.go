@@ -77,7 +77,13 @@ func TestSlotRepository_ListForEpisodeGeneration(t *testing.T) {
 		t.Errorf("放送枠の並び = [%d, %d]、期待値 = [%d, %d]", slots[0].ID, slots[1].ID, earlier, target)
 	}
 
-	got := slots[1]
+	if slots[1].WorkID != workID {
+		t.Errorf("WorkID = %d、期待値 = %d", slots[1].WorkID, workID)
+	}
+	got, err := repo.GetForEpisodeGenerationByID(ctx, target, workID, from, before)
+	if err != nil || got == nil {
+		t.Fatalf("GetForEpisodeGenerationByID() = %+v、エラー = %v", got, err)
+	}
 	if got.WorkID != workID || got.Number != 4 || !got.StartedAt.Equal(inRange.Add(time.Hour)) {
 		t.Errorf("放送枠 = %+v、期待値 = 作品%d・回数4", got, workID)
 	}
@@ -99,14 +105,20 @@ func TestSlotRepository_LinkEpisode(t *testing.T) {
 
 	workID := testutil.NewWorkBuilder(t, tx).Build()
 	channelID := testutil.NewChannelBuilder(t, tx).Build()
-	slotID := testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()
-	deletedSlotID := testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithDeletedAt(time.Now()).Build()
+	programID := testutil.NewProgramBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()
+	now := time.Now().Truncate(time.Microsecond)
+	slotID := testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithNumber(1).WithStartedAt(now).Build()
+	deletedSlotID := testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithNumber(2).WithStartedAt(now).WithDeletedAt(now).Build()
 	firstID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
 	secondID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
 
 	repo := repository.NewSlotRepository(query.New(db)).WithTx(tx)
+	slot, err := repo.GetForEpisodeGenerationByID(ctx, slotID, workID, now.Add(-time.Hour), now.Add(time.Hour))
+	if err != nil || slot == nil {
+		t.Fatalf("GetForEpisodeGenerationByID() = %+v、エラー = %v", slot, err)
+	}
 
-	linked, err := repo.LinkEpisode(ctx, slotID, firstID)
+	linked, err := repo.LinkEpisode(ctx, slot, firstID)
 	if err != nil {
 		t.Fatalf("LinkEpisode()のエラー = %v", err)
 	}
@@ -114,7 +126,7 @@ func TestSlotRepository_LinkEpisode(t *testing.T) {
 		t.Error("紐づいていない放送枠に紐づけられなかった")
 	}
 
-	linked, err = repo.LinkEpisode(ctx, slotID, secondID)
+	linked, err = repo.LinkEpisode(ctx, slot, secondID)
 	if err != nil {
 		t.Fatalf("LinkEpisode()のエラー = %v", err)
 	}
@@ -122,7 +134,10 @@ func TestSlotRepository_LinkEpisode(t *testing.T) {
 		t.Error("すでに紐づいた放送枠を書き換えた")
 	}
 
-	linked, err = repo.LinkEpisode(ctx, deletedSlotID, secondID)
+	deletedSlot := *slot
+	deletedSlot.ID = deletedSlotID
+	deletedSlot.Number = 2
+	linked, err = repo.LinkEpisode(ctx, &deletedSlot, secondID)
 	if err != nil {
 		t.Fatalf("LinkEpisode()のエラー = %v", err)
 	}
@@ -136,5 +151,63 @@ func TestSlotRepository_LinkEpisode(t *testing.T) {
 	}
 	if episodeID != int64(firstID) {
 		t.Errorf("slots.episode_id = %d、期待値 = %d", episodeID, firstID)
+	}
+}
+
+// TestSlotRepository_GenerationRejectsChangedSlotは、読み直しと紐づけの両方で対象条件と
+// 所属を検査する。紐づけには照合で読んだ番組・回数・開始時刻との一致も必要。
+func TestSlotRepository_GenerationRejectsChangedSlot(t *testing.T) {
+	t.Parallel()
+
+	for _, change := range []struct {
+		name   string
+		update string
+	}{
+		{"非公開", `UPDATE slots SET unpublished_at = NOW() WHERE id = $1`},
+		{"削除", `UPDATE slots SET deleted_at = NOW() WHERE id = $1`},
+		{"再放送", `UPDATE slots SET rebroadcast = true WHERE id = $1`},
+		{"不定期放送", `UPDATE slots SET irregular = true WHERE id = $1`},
+		{"番組なし", `UPDATE slots SET program_id = NULL WHERE id = $1`},
+		{"回数なし", `UPDATE slots SET number = NULL WHERE id = $1`},
+		{"回数変更", `UPDATE slots SET number = 2 WHERE id = $1`},
+		{"範囲外への日時変更", `UPDATE slots SET started_at = started_at + INTERVAL '30 days' WHERE id = $1`},
+	} {
+		t.Run(change.name, func(t *testing.T) {
+			t.Parallel()
+			db, tx := testutil.SetupTx(t)
+			ctx := context.Background()
+			workID := testutil.NewWorkBuilder(t, tx).Build()
+			otherWorkID := testutil.NewWorkBuilder(t, tx).Build()
+			channelID := testutil.NewChannelBuilder(t, tx).Build()
+			programID := testutil.NewProgramBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()
+			now := time.Now().Truncate(time.Microsecond)
+			slotID := testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithNumber(1).WithStartedAt(now).Build()
+			episodeID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+			repo := repository.NewSlotRepository(query.New(db)).WithTx(tx)
+			slot, err := repo.GetForEpisodeGenerationByID(ctx, slotID, workID, now.Add(-time.Hour), now.Add(time.Hour))
+			if err != nil || slot == nil {
+				t.Fatalf("放送枠の取得 = %+v、エラー = %v", slot, err)
+			}
+			if got, err := repo.GetForEpisodeGenerationByID(ctx, slotID, otherWorkID, now.Add(-time.Hour), now.Add(time.Hour)); err != nil || got != nil {
+				t.Fatalf("所属の違う放送枠の取得 = %+v、エラー = %v、期待値 = nil", got, err)
+			}
+			if _, err := tx.Exec(change.update, int64(slotID)); err != nil {
+				t.Fatalf("放送枠の変更に失敗: %v", err)
+			}
+			if linked, err := repo.LinkEpisode(ctx, slot, episodeID); err != nil || linked {
+				t.Errorf("変更後のLinkEpisode() = %v、エラー = %v、期待値 = false", linked, err)
+			}
+			got, err := repo.GetForEpisodeGenerationByID(ctx, slotID, workID, now.Add(-time.Hour), now.Add(time.Hour))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if change.name == "回数変更" {
+				if got == nil || got.Number != 2 {
+					t.Errorf("変更後の放送枠 = %+v、期待値 = 回数2", got)
+				}
+			} else if got != nil {
+				t.Errorf("変更後の放送枠 = %+v、期待値 = nil", got)
+			}
+		})
 	}
 }
