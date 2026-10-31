@@ -402,6 +402,16 @@ linters:
               desc: "syobocalはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/i18n
               desc: "syobocalはi18nに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/session
+              desc: "syobocalはPresentation層のヘルパーに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/dispatcher
+              desc: "syobocalはDispatcherに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/email
+              desc: "syobocalはemailパッケージに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/turnstile
+              desc: "syobocalはturnstileに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/ratelimit
+              desc: "syobocalはratelimitに依存できません。"
 
         # Repository層のルール: データアクセス層
         # 上位層に依存しない
