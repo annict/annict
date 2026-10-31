@@ -16,20 +16,6 @@ import (
 // 7日あれば、実行が数日止まっても残りを拾える。
 const episodeGenerationWindow = 7 * 24 * time.Hour
 
-// SlotSkipReasonは、自動生成が放送枠を飛ばした理由を表す。どれも運用上の判断が要る状況で、
-// 報告を見た編集者が紐づけや並び順を直す。
-type SlotSkipReason string
-
-const (
-	// SlotSkipReasonCandidatesLinkedは、計算した話数のエピソードがあるものの、どれも同じ
-	// 番組の別の放送枠に紐づいていることを表す。番組が途中の話数から放送していて、編集者が
-	// 紐づけを手で付け替えた場合などに起きる。
-	SlotSkipReasonCandidatesLinked SlotSkipReason = "candidates_linked"
-	// SlotSkipReasonNoSortNumberGapは、新しいエピソードを入れる位置の前後のsort_numberの間が
-	// 空いておらず、並び順を決められないことを表す。
-	SlotSkipReasonNoSortNumberGap SlotSkipReason = "no_sort_number_gap"
-)
-
 // CreateEpisodesFromSlotsUsecaseは、エピソードが紐づいていない放送枠に、対応するエピソードを
 // 紐づける。無ければエピソードを作る。
 //
@@ -92,7 +78,7 @@ type SkippedSlot struct {
 	SlotID    model.SlotID
 	WorkID    model.WorkID
 	WorkTitle string
-	Reason    SlotSkipReason
+	Reason    model.EpisodeGenerationSkipReason
 }
 
 // FailedSlotは、処理がエラーで失敗した放送枠を表す。
@@ -201,12 +187,12 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, candi
 		return slotResult{linked: true}, nil
 	}
 	if candidatesFound {
-		return slotResult{skipped: skippedSlot(slot, work.Work, SlotSkipReasonCandidatesLinked)}, nil
+		return slotResult{skipped: skippedSlot(slot, work.Work, model.EpisodeGenerationSkipReasonCandidatesLinked)}, nil
 	}
 
 	position, ok := generatedEpisodePosition(siblings, work.MaxSortNumber, rawNumber)
 	if !ok {
-		return slotResult{skipped: skippedSlot(slot, work.Work, SlotSkipReasonNoSortNumberGap)}, nil
+		return slotResult{skipped: skippedSlot(slot, work.Work, model.EpisodeGenerationSkipReasonNoSortNumberGap)}, nil
 	}
 
 	number := generatedEpisodeNumber(work.NumberFormat, rawNumber)
@@ -309,7 +295,7 @@ func generatedEpisodeNumber(numberFormat *model.NumberFormat, rawNumber float64)
 	return fmt.Sprintf("第%d話", int(rawNumber))
 }
 
-func skippedSlot(slot *model.Slot, work *model.Work, reason SlotSkipReason) *SkippedSlot {
+func skippedSlot(slot *model.Slot, work *model.Work, reason model.EpisodeGenerationSkipReason) *SkippedSlot {
 	return &SkippedSlot{
 		SlotID:    slot.ID,
 		WorkID:    work.ID,

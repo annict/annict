@@ -289,7 +289,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_SkipsWhenCandidatesLinked(t *tes
 		t.Fatalf("output = %+v、期待値 = 飛ばした放送枠1件のみ", output)
 	}
 	skipped := output.SkippedSlots[0]
-	if skipped.SlotID != skippedID || skipped.WorkID != workID || skipped.Reason != SlotSkipReasonCandidatesLinked || skipped.WorkTitle == "" {
+	if skipped.SlotID != skippedID || skipped.WorkID != workID || skipped.Reason != model.EpisodeGenerationSkipReasonCandidatesLinked || skipped.WorkTitle == "" {
 		t.Errorf("SkippedSlots[0] = %+v、期待値 = 放送枠%d・候補が紐づき済み", skipped, skippedID)
 	}
 	if got := readSlotEpisodeID(t, db, skippedID); got.Valid {
@@ -412,7 +412,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_SkipsWhenNoSortNumberGap(t *test
 	if len(output.SkippedSlots) != 1 || len(output.CreatedEpisodes) != 0 {
 		t.Fatalf("output = %+v、期待値 = 飛ばした放送枠1件のみ", output)
 	}
-	if skipped := output.SkippedSlots[0]; skipped.SlotID != slotID || skipped.Reason != SlotSkipReasonNoSortNumberGap {
+	if skipped := output.SkippedSlots[0]; skipped.SlotID != slotID || skipped.Reason != model.EpisodeGenerationSkipReasonNoSortNumberGap {
 		t.Errorf("SkippedSlots[0] = %+v、期待値 = 放送枠%d・間が空いていない", skipped, slotID)
 	}
 	if got := countWorkEpisodes(t, db, workID); got != 2 {
