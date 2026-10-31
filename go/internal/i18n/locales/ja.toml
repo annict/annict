@@ -1744,6 +1744,10 @@ other = "エピソード"
 description = "エピソード一括作成ページの送信ボタン"
 other = "登録する"
 
+[db_episodes_new_raw_number_required_help]
+description = "放送予定のある作品の一括作成フォームで、話数が必須であることの案内"
+other = "この作品には放送予定があり、自動生成されるエピソードと話数で照合するため、すべての行に話数を入力してください。総集編などは3.5のような小数で入力します。"
+
 [db_episodes_new_restriction_title]
 description = "エピソードを手動登録できないときに表示する警告の見出し"
 other = "手動登録できません"
@@ -1759,14 +1763,6 @@ other = "予定エピソード数分のエピソードがすでに登録され�
 [db_episodes_new_restricted_admin_episodes_filled]
 description = "作品の予定エピソード数までエピソードが登録済みのときに管理者へ表示する警告"
 other = "予定エピソード数分のエピソードがすでに登録されています。管理者は手動でも登録できますが、予定エピソード数を超えることになります。"
-
-[db_episodes_new_restricted_slots_exist]
-description = "放送予定からエピソードが自動生成されるときに表示する警告"
-other = "放送予定が登録されているため、手動によるエピソード登録はできません。エピソードは放送予定の情報を使って自動的に生成されます。"
-
-[db_episodes_new_restricted_admin_slots_exist]
-description = "放送予定からエピソードが自動生成されるときに管理者へ表示する警告"
-other = "放送予定が登録されているため、エピソードは放送予定の情報を使って自動的に生成されます。管理者は手動でも登録できますが、自動生成されるエピソードと重複しないか確認してください。"
 
 [db_episodes_edit_title]
 description = "エピソード編集ページのタイトル"
@@ -2345,10 +2341,6 @@ other = "一度に登録するエピソードは{{.MaxRows}}件以内にして�
 description = "予定エピソード数までエピソードが登録済みの作品にエピソードを登録しようとした"
 other = "予定エピソード数分のエピソードがすでに登録されているため、エピソードを登録できません"
 
-[validation_episode_manual_creation_slots_exist]
-description = "放送予定からエピソードが自動生成される作品にエピソードを手動で登録しようとした"
-other = "放送予定が登録されているため、エピソードを手動で登録できません"
-
 [validation_episode_row_number_or_title_required]
 description = "エピソードの行に表示用話数もタイトルも入力されていない"
 other = "表示用話数かタイトルのいずれかを入力してください"
@@ -2360,6 +2352,10 @@ other = "表示用話数は{{.MaxLength}}文字以内で入力してください
 [validation_episode_row_title_too_long]
 description = "エピソードの行のタイトルが文字数の上限を超えている"
 other = "タイトルは{{.MaxLength}}文字以内で入力してください"
+
+[validation_episode_row_raw_number_required]
+description = "エピソードの行の話数が必須なのに入力されていない"
+other = "放送予定のある作品では話数を入力してください"
 
 [validation_episode_row_raw_number_invalid]
 description = "エピソードの行の話数が数値ではない"

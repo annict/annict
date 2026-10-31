@@ -1745,6 +1745,10 @@ other = "Episodes"
 description = "エピソード一括作成ページの送信ボタン"
 other = "Register"
 
+[db_episodes_new_raw_number_required_help]
+description = "放送予定のある作品の一括作成フォームで、話数が必須であることの案内"
+other = "This work has broadcast schedules. Enter the number on every line so that episodes can be matched with automatically generated ones. Use a decimal such as 3.5 for recaps and similar episodes."
+
 [db_episodes_new_restriction_title]
 description = "エピソードを手動登録できないときに表示する警告の見出し"
 other = "Manual registration unavailable"
@@ -1760,14 +1764,6 @@ other = "Episodes cannot be registered because the expected number of episodes h
 [db_episodes_new_restricted_admin_episodes_filled]
 description = "作品の予定エピソード数までエピソードが登録済みのときに管理者へ表示する警告"
 other = "The expected number of episodes has already been registered. Administrators can register more by hand, but doing so goes beyond the expected episode count."
-
-[db_episodes_new_restricted_slots_exist]
-description = "放送予定からエピソードが自動生成されるときに表示する警告"
-other = "Episodes cannot be registered manually because broadcast schedules exist. Episodes are generated automatically from the schedule information."
-
-[db_episodes_new_restricted_admin_slots_exist]
-description = "放送予定からエピソードが自動生成されるときに管理者へ表示する警告"
-other = "Broadcast schedules exist, so episodes are generated automatically from the schedule information. Administrators can register episodes by hand, but check that they do not duplicate the generated ones."
 
 [db_episodes_edit_title]
 description = "エピソード編集ページのタイトル"
@@ -2346,10 +2342,6 @@ other = "Please enter no more than {{.MaxRows}} episodes at a time"
 description = "予定エピソード数までエピソードが登録済みの作品にエピソードを登録しようとした"
 other = "Episodes cannot be registered because the expected number of episodes has already been reached"
 
-[validation_episode_manual_creation_slots_exist]
-description = "放送予定からエピソードが自動生成される作品にエピソードを手動で登録しようとした"
-other = "Episodes cannot be registered manually because broadcast schedules exist"
-
 [validation_episode_row_number_or_title_required]
 description = "エピソードの行に表示用話数もタイトルも入力されていない"
 other = "Please enter a display number or a title"
@@ -2361,6 +2353,10 @@ other = "Please enter a display number of no more than {{.MaxLength}} characters
 [validation_episode_row_title_too_long]
 description = "エピソードの行のタイトルが文字数の上限を超えている"
 other = "Please enter a title of no more than {{.MaxLength}} characters"
+
+[validation_episode_row_raw_number_required]
+description = "エピソードの行の話数が必須なのに入力されていない"
+other = "Please enter the number for works with broadcast schedules"
 
 [validation_episode_row_raw_number_invalid]
 description = "エピソードの行の話数が数値ではない"
