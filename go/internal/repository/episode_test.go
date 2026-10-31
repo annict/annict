@@ -3907,6 +3907,8 @@ func TestEpisodeRepository_ListForTitleFill(t *testing.T) {
 
 	workID := testutil.NewWorkBuilder(t, tx).WithScTid(6309).Build()
 	noTidWorkID := testutil.NewWorkBuilder(t, tx).Build()
+	unpublishedWorkID := testutil.NewWorkBuilder(t, tx).WithScTid(6309).WithUnpublishedAt(time.Now()).Build()
+	deletedWorkID := testutil.NewWorkBuilder(t, tx).WithScTid(6309).WithDeletedAt(time.Now()).Build()
 	channelID := testutil.NewChannelBuilder(t, tx).Build()
 	programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
 
@@ -3931,6 +3933,9 @@ func TestEpisodeRepository_ListForTitleFill(t *testing.T) {
 		"TIDの無い作品":   newEpisode(noTidWorkID, 6, ""),
 		"非公開":        testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(7).WithTitle("").WithUnpublishedAt(time.Now()).Build(),
 		"7日より前に作られた": newEpisode(workID, 8, ""),
+		"削除済み":       testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(9).WithTitle("").WithDeletedAt(time.Now()).Build(),
+		"非公開の作品":     newEpisode(unpublishedWorkID, 10, ""),
+		"削除済みの作品":    newEpisode(deletedWorkID, 11, ""),
 	}
 	for name, id := range excluded {
 		if name == "放送枠なし" {
