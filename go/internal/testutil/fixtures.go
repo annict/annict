@@ -251,6 +251,8 @@ type EpisodeBuilder struct {
 	workID        model.WorkID
 	number        string
 	title         string
+	sortNumber    int32
+	rawNumber     *float64
 	unpublishedAt *time.Time
 	deletedAt     *time.Time
 }
@@ -258,12 +260,25 @@ type EpisodeBuilder struct {
 // NewEpisodeBuilderは新しいEpisodeBuilderを作成します
 func NewEpisodeBuilder(t *testing.T, tx *sql.Tx, workID model.WorkID) *EpisodeBuilder {
 	return &EpisodeBuilder{
-		tx:     tx,
-		t:      t,
-		workID: workID,
-		number: "1",
-		title:  "第1話",
+		tx:         tx,
+		t:          t,
+		workID:     workID,
+		number:     "1",
+		title:      "第1話",
+		sortNumber: 10,
 	}
+}
+
+// WithSortNumberはepisodes.sort_numberを設定します
+func (b *EpisodeBuilder) WithSortNumber(sortNumber int32) *EpisodeBuilder {
+	b.sortNumber = sortNumber
+	return b
+}
+
+// WithRawNumberはepisodes.raw_number (数値の話数) を設定します。既定ではNULLのままにします。
+func (b *EpisodeBuilder) WithRawNumber(rawNumber float64) *EpisodeBuilder {
+	b.rawNumber = &rawNumber
+	return b
 }
 
 // WithNumberはエピソード番号を設定します
@@ -300,15 +315,18 @@ func (b *EpisodeBuilder) Build() model.EpisodeID {
 		INSERT INTO episodes (
 			work_id, number, sort_number, title,
 			unpublished_at, deleted_at,
-			created_at, updated_at
+			created_at, updated_at, raw_number
 		) VALUES (
 			$1, $2, $3, $4,
 			$5, $6,
-			$7, $8
+			$7, $8, $9
 		) RETURNING id
 	`
 
-	var unpublishedAt, deletedAt interface{}
+	var unpublishedAt, deletedAt, rawNumber interface{}
+	if b.rawNumber != nil {
+		rawNumber = *b.rawNumber
+	}
 	if b.unpublishedAt != nil {
 		unpublishedAt = *b.unpublishedAt
 	}
@@ -317,17 +335,17 @@ func (b *EpisodeBuilder) Build() model.EpisodeID {
 	}
 
 	var id int64
-	sortNumber := 10 // デフォルトのソート番号
 	err := b.tx.QueryRow(
 		query,
 		int64(b.workID),
 		b.number,
-		sortNumber,
+		b.sortNumber,
 		b.title,
 		unpublishedAt,
 		deletedAt,
 		time.Now(),
 		time.Now(),
+		rawNumber,
 	).Scan(&id)
 
 	if err != nil {
@@ -1248,14 +1266,25 @@ type ProgramBuilder struct {
 	t         *testing.T
 	channelID int64
 	workID    model.WorkID
+	// minimumEpisodeGeneratableNumberはprograms.minimum_episode_generatable_number。
+	// カラムの既定値と同じ1から始めます。
+	minimumEpisodeGeneratableNumber int32
 }
 
 // NewProgramBuilderは新しいProgramBuilderを作成します
 func NewProgramBuilder(t *testing.T, tx *sql.Tx) *ProgramBuilder {
 	return &ProgramBuilder{
-		tx: tx,
-		t:  t,
+		tx:                              tx,
+		t:                               t,
+		minimumEpisodeGeneratableNumber: 1,
 	}
+}
+
+// WithMinimumEpisodeGeneratableNumberは、自動生成が不定期放送として数える回数の下限を
+// 設定します
+func (b *ProgramBuilder) WithMinimumEpisodeGeneratableNumber(number int32) *ProgramBuilder {
+	b.minimumEpisodeGeneratableNumber = number
+	return b
 }
 
 // WithChannelIDはチャンネルIDを設定します
@@ -1276,9 +1305,11 @@ func (b *ProgramBuilder) Build() int64 {
 
 	query := `
 		INSERT INTO programs (
-			channel_id, work_id, aasm_state, created_at, updated_at
+			channel_id, work_id, aasm_state, created_at, updated_at,
+			minimum_episode_generatable_number
 		) VALUES (
-			$1, $2, $3, $4, $5
+			$1, $2, $3, $4, $5,
+			$6
 		) RETURNING id
 	`
 
@@ -1290,6 +1321,7 @@ func (b *ProgramBuilder) Build() int64 {
 		"published",
 		time.Now(),
 		time.Now(),
+		b.minimumEpisodeGeneratableNumber,
 	).Scan(&id)
 
 	if err != nil {
@@ -1318,6 +1350,10 @@ type SlotBuilder struct {
 	// 設定します。nilの場合はカラムをNULL (公開中 / 未削除) のままにします。
 	unpublishedAt *time.Time
 	deletedAt     *time.Time
+	// rebroadcast / irregularはslots.rebroadcast / slots.irregular。既定ではどちらもfalse
+	// (通常の放送) です。
+	rebroadcast bool
+	irregular   bool
 }
 
 // NewSlotBuilderは新しいSlotBuilderを作成します
@@ -1380,6 +1416,19 @@ func (b *SlotBuilder) WithDeletedAt(deletedAt time.Time) *SlotBuilder {
 	return b
 }
 
+// WithRebroadcastはslots.rebroadcastを設定し、放送枠を再放送とします
+func (b *SlotBuilder) WithRebroadcast() *SlotBuilder {
+	b.rebroadcast = true
+	return b
+}
+
+// WithIrregularはslots.irregularを設定し、放送枠を不定期放送 (特番などで話が進まない回) と
+// します
+func (b *SlotBuilder) WithIrregular() *SlotBuilder {
+	b.irregular = true
+	return b
+}
+
 // Buildはテスト用の放送枠データをデータベースに作成します
 func (b *SlotBuilder) Build() model.SlotID {
 	b.t.Helper()
@@ -1388,11 +1437,11 @@ func (b *SlotBuilder) Build() model.SlotID {
 		INSERT INTO slots (
 			work_id, episode_id, channel_id, program_id, started_at,
 			number, unpublished_at, deleted_at,
-			created_at, updated_at
+			created_at, updated_at, rebroadcast, irregular
 		) VALUES (
 			$1, $2, $3, $4, $5,
 			$6, $7, $8,
-			$9, $10
+			$9, $10, $11, $12
 		) RETURNING id
 	`
 
@@ -1426,6 +1475,8 @@ func (b *SlotBuilder) Build() model.SlotID {
 		deletedAt,
 		time.Now(),
 		time.Now(),
+		b.rebroadcast,
+		b.irregular,
 	).Scan(&id)
 
 	if err != nil {
