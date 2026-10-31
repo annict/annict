@@ -1453,6 +1453,39 @@ func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
 		}
 	})
 
+	// 回数から引くのは、同じ番組の未削除・公開中の不定期放送のうち、番組の下限以上のものだけ。
+	// それぞれの条件が外れると回数5の放送枠から1件を引くよう、前の回数の不定期放送を置く。
+	t.Run("生成可能話数は下限未満・削除済み・非公開・別の番組の不定期放送を引かない", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("引かない不定期放送のある作品").Build()
+		channelID := testutil.NewChannelBuilder(t, tx).Build()
+		programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).
+			WithMinimumEpisodeGeneratableNumber(3).Build()
+		otherProgramID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+		newSlot := func(programID int64, number int32) *testutil.SlotBuilder {
+			return testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithNumber(number)
+		}
+		newSlot(programID, 5).Build()
+		newSlot(programID, 2).WithIrregular().Build()
+		newSlot(programID, 3).WithIrregular().WithDeletedAt(time.Now()).Build()
+		newSlot(programID, 4).WithIrregular().WithUnpublishedAt(time.Now()).Build()
+		newSlot(otherProgramID, 3).WithIrregular().Build()
+
+		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID()のエラー = %v", err)
+		}
+		if listWork == nil {
+			t.Fatal("listWorkがnilだった")
+		}
+		if listWork.MaxGeneratableEpisodeNumber != 5 {
+			t.Errorf("MaxGeneratableEpisodeNumber = %d、期待値 = 5", listWork.MaxGeneratableEpisodeNumber)
+		}
+	})
+
 	// スロットを1つも持たない作品には自動生成の元が無い。案内は最大話数を
 	// 欠落させず0として報告する。
 	t.Run("スロットが無い作品の生成可能話数は0", func(t *testing.T) {
