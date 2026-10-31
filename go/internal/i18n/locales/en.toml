@@ -373,6 +373,10 @@ description = "Rate Limiting - リクエスト超過エラー"
 other = "Too many requests. Please try again later."
 
 # パスワードリセットメール
+[episode_generation_report_email_subject]
+description = "エピソードの自動生成の報告メールの件名"
+other = "Annict - Episode generation report"
+
 [password_reset_email_subject]
 description = "パスワードリセットメールの件名"
 other = "Annict - Password Reset Request"
