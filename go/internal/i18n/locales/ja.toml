@@ -371,11 +371,12 @@ other = "パスワードは半角英数記号のみ使用できます"
 description = "Rate Limiting - リクエスト超過エラー"
 other = "リクエストが多すぎます。しばらくしてから再度お試しください。"
 
-# パスワードリセットメール
+# エピソードの自動生成の報告メール
 [episode_generation_report_email_subject]
 description = "エピソードの自動生成の報告メールの件名"
 other = "Annict - エピソードの自動生成の結果"
 
+# パスワードリセットメール
 [password_reset_email_subject]
 description = "パスワードリセットメールの件名"
 other = "Annict - パスワードリセットのご案内"

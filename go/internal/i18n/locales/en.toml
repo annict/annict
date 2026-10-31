@@ -372,11 +372,12 @@ other = "Password can only use alphanumeric characters and symbols"
 description = "Rate Limiting - リクエスト超過エラー"
 other = "Too many requests. Please try again later."
 
-# パスワードリセットメール
+# エピソードの自動生成の報告メール
 [episode_generation_report_email_subject]
 description = "エピソードの自動生成の報告メールの件名"
 other = "Annict - Episode generation report"
 
+# パスワードリセットメール
 [password_reset_email_subject]
 description = "パスワードリセットメールの件名"
 other = "Annict - Password Reset Request"
