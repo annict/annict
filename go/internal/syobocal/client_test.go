@@ -163,7 +163,7 @@ func TestClient_LookupSubTitles_Batches(t *testing.T) {
 			}
 			got, err := client.LookupSubTitles(context.Background(), tids)
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("LookupSubTitles()のエラー = %v", err)
 			}
 			if len(got) != count || int(calls.Load()) != (count+99)/100 {
 				t.Errorf("結果 = %d件、問い合わせ = %d回、期待値 = %d件・%d回", len(got), calls.Load(), count, (count+99)/100)

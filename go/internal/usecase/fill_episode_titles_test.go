@@ -245,7 +245,7 @@ func TestFillEpisodeTitlesUsecase_Execute_RejectsChangedTarget(t *testing.T) {
 			episodeID := insertTitleFillEpisode(t, db, program, 1)
 			animeID := insertBareAnime(t, db)
 			if _, err := db.Exec(`UPDATE episodes SET anime_id = $2 WHERE id = $1`, int64(episodeID), int64(animeID)); err != nil {
-				t.Fatal(err)
+				t.Fatalf("animeの対応付けに失敗: %v", err)
 			}
 			lookup := &fakeSubTitleLookup{
 				subTitles: map[int32]map[int32]string{tid: {1: "問い合わせ前の第1話"}},
@@ -268,13 +268,13 @@ func TestFillEpisodeTitlesUsecase_Execute_RejectsChangedTarget(t *testing.T) {
 						_, err = db.Exec(change.update, int64(episodeID))
 					}
 					if err != nil {
-						t.Fatal(err)
+						t.Fatalf("問い合わせ中の変更に失敗: %v", err)
 					}
 				},
 			}
 			output, err := newFillEpisodeTitlesUsecase(db, lookup).Execute(context.Background(), FillEpisodeTitlesInput{Now: time.Now()})
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("Execute()のエラー = %v", err)
 			}
 			if output.FilledCount != 0 || len(output.FailedEpisodes) != 0 {
 				t.Errorf("変更後の結果 = %+v、期待値 = 更新・エラーなし", output)
@@ -316,14 +316,14 @@ func TestFillEpisodeTitlesUsecase_Execute_UsesCurrentAnime(t *testing.T) {
 			if remapped {
 				oldAnimeID = insertBareAnime(t, db)
 				if _, err := db.Exec(`UPDATE episodes SET anime_id = $2 WHERE id = $1`, int64(episodeID), int64(oldAnimeID)); err != nil {
-					t.Fatal(err)
+					t.Fatalf("以前のanimeの対応付けに失敗: %v", err)
 				}
 			}
 			lookup := &fakeSubTitleLookup{
 				subTitles: map[int32]map[int32]string{tid: {1: "第1話のサブタイトル"}},
 				beforeReturn: func() {
 					if _, err := db.Exec(`UPDATE episodes SET anime_id = $2 WHERE id = $1`, int64(episodeID), int64(currentAnimeID)); err != nil {
-						t.Fatal(err)
+						t.Fatalf("問い合わせ中のanimeの対応付けに失敗: %v", err)
 					}
 				},
 			}
@@ -368,22 +368,22 @@ func TestFillEpisodeTitlesUsecase_Execute_ContinuesAfterRollback(t *testing.T) {
 			goodID := insertTitleFillEpisode(t, db, goodProgram, 2)
 			animeID := insertBareAnime(t, db)
 			if _, err := db.Exec(`UPDATE episodes SET anime_id = $2 WHERE id = $1`, int64(failedID), int64(animeID)); err != nil {
-				t.Fatal(err)
+				t.Fatalf("animeの対応付けに失敗: %v", err)
 			}
 
 			// タイムアウトはこのUseCase専用の接続に設定し、共有プールやほかのテストには適用しない。
 			timeoutDB, err := sql.Open("postgres", cmp.Or(os.Getenv("DATABASE_URL"), "postgres://postgres@postgresql:5432/annict_test?sslmode=disable"))
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("タイムアウト付きの接続の作成に失敗: %v", err)
 			}
 			t.Cleanup(func() { _ = timeoutDB.Close() })
 			timeoutDB.SetMaxOpenConns(1)
 			if _, err := timeoutDB.Exec(`SET lock_timeout = '100ms'`); err != nil {
-				t.Fatal(err)
+				t.Fatalf("lock_timeoutの設定に失敗: %v", err)
 			}
 			blocker, err := db.Begin()
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("ロック用のトランザクションの開始に失敗: %v", err)
 			}
 			defer func() { _ = blocker.Rollback() }()
 			if lockedTable == "works" {
@@ -392,7 +392,7 @@ func TestFillEpisodeTitlesUsecase_Execute_ContinuesAfterRollback(t *testing.T) {
 				_, err = blocker.Exec(`UPDATE animes SET title = title WHERE id = $1`, int64(animeID))
 			}
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("%sの行のロックに失敗: %v", lockedTable, err)
 			}
 			lookup := &fakeSubTitleLookup{subTitles: map[int32]map[int32]string{tid: {1: "失敗するタイトル"}, goodTid: {2: "後続のタイトル"}}}
 			output, err := newFillEpisodeTitlesUsecase(timeoutDB, lookup).Execute(context.Background(), FillEpisodeTitlesInput{Now: time.Now()})
@@ -429,11 +429,11 @@ func TestFillEpisodeTitlesUsecase_Execute_SkipsLockedEpisode(t *testing.T) {
 	episodeID := insertTitleFillEpisode(t, db, program, 1)
 	blocker, err := db.Begin()
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("ロック用のトランザクションの開始に失敗: %v", err)
 	}
 	defer func() { _ = blocker.Rollback() }()
 	if _, err := blocker.Exec(`UPDATE episodes SET title = title WHERE id = $1`, int64(episodeID)); err != nil {
-		t.Fatal(err)
+		t.Fatalf("エピソードの行のロックに失敗: %v", err)
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
 	defer cancel()
