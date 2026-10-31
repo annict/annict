@@ -8,6 +8,7 @@ package query
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/lib/pq"
 )
@@ -924,6 +925,71 @@ func (q *Queries) ListEpisodesForEpisodeGenerationByWorkID(ctx context.Context, 
 	return items, nil
 }
 
+const listEpisodesForTitleFill = `-- name: ListEpisodesForTitleFill :many
+SELECT
+    e.id,
+    e.raw_number,
+    e.anime_id,
+    w.sc_tid
+FROM episodes e
+JOIN works w ON w.id = e.work_id
+WHERE e.deleted_at IS NULL
+    AND e.unpublished_at IS NULL
+    AND (e.title IS NULL OR e.title = '')
+    AND e.raw_number IS NOT NULL
+    AND e.raw_number = TRUNC(e.raw_number)
+    AND e.created_at >= $1::timestamptz
+    AND w.deleted_at IS NULL
+    AND w.unpublished_at IS NULL
+    AND w.sc_tid IS NOT NULL
+    AND EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.episode_id = e.id
+            AND s.program_id IS NOT NULL
+    )
+ORDER BY e.id
+`
+
+type ListEpisodesForTitleFillRow struct {
+	ID        int64           `db:"id"`
+	RawNumber sql.NullFloat64 `db:"raw_number"`
+	AnimeID   sql.NullInt64   `db:"anime_id"`
+	ScTid     sql.NullInt32   `db:"sc_tid"`
+}
+
+// しょぼいカレンダーからタイトルを入れる対象は、RailsのSyobocalEpisodeDataFetcherServiceと
+// 同じく、未削除・公開中でタイトルが空、整数の話数を持ち、created_from以降に作られた
+// エピソードのうち、作品がしょぼいカレンダーのTIDを持ち、番組のある放送枠に紐づいているもの。
+// 作品も未削除・公開中に限る (Railsも対象の作品をWork.only_keptで引き直す)。
+func (q *Queries) ListEpisodesForTitleFill(ctx context.Context, createdFrom time.Time) ([]ListEpisodesForTitleFillRow, error) {
+	rows, err := q.db.QueryContext(ctx, listEpisodesForTitleFill, createdFrom)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListEpisodesForTitleFillRow{}
+	for rows.Next() {
+		var i ListEpisodesForTitleFillRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.RawNumber,
+			&i.AnimeID,
+			&i.ScTid,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const lockEpisodesForEpisodeUpdateByIDs = `-- name: LockEpisodesForEpisodeUpdateByIDs :exec
 SELECT e.id
 FROM episodes e
@@ -1265,6 +1331,30 @@ type UpdateEpisodeAnimeIDParams struct {
 func (q *Queries) UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error {
 	_, err := q.db.ExecContext(ctx, updateEpisodeAnimeID, arg.ID, arg.AnimeID)
 	return err
+}
+
+const updateEpisodeEmptyTitle = `-- name: UpdateEpisodeEmptyTitle :execrows
+UPDATE episodes
+SET title = $1
+WHERE id = $2
+    AND deleted_at IS NULL
+    AND (title IS NULL OR title = '')
+`
+
+type UpdateEpisodeEmptyTitleParams struct {
+	Title sql.NullString `db:"title"`
+	ID    int64          `db:"id"`
+}
+
+// しょぼいカレンダーのサブタイトルを、タイトルが空のままのエピソードにだけ入れる。対象を読んだ
+// 後に編集者がタイトルを入れていれば書かない。Railsのupdate_columnと同じく、DB活動・作品の
+// touch・updated_atの更新は行わない。
+func (q *Queries) UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisodeEmptyTitleParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, updateEpisodeEmptyTitle, arg.Title, arg.ID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 const updateEpisodePrevEpisodeID = `-- name: UpdateEpisodePrevEpisodeID :execrows

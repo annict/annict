@@ -625,6 +625,52 @@ func (r *EpisodeRepository) UpdatePrevEpisodeID(ctx context.Context, workID mode
 	return nil
 }
 
+// DBEpisodeTitleFillTargetは、しょぼいカレンダーからタイトルを入れるエピソードと、引く先の
+// 作品のTIDを表す。TIDはworksのカラムで、エピソードの属性ではないため並べて持つ。
+type DBEpisodeTitleFillTarget struct {
+	// EpisodeはID・RawNumber・AnimeIDだけを持つ。
+	Episode *model.Episode
+	ScTid   int32
+}
+
+// ListForTitleFillは、createdFrom以降に作られたエピソードのうち、しょぼいカレンダーから
+// タイトルを入れる対象をid順に返す。
+func (r *EpisodeRepository) ListForTitleFill(ctx context.Context, createdFrom time.Time) ([]DBEpisodeTitleFillTarget, error) {
+	rows, err := r.queries.ListEpisodesForTitleFill(ctx, createdFrom)
+	if err != nil {
+		return nil, err
+	}
+
+	targets := make([]DBEpisodeTitleFillTarget, len(rows))
+	for i, row := range rows {
+		// クエリは話数とTIDを持つ行に絞っているため、どちらもNULLではない。
+		rawNumber := row.RawNumber.Float64
+		episode := &model.Episode{
+			ID:        model.EpisodeID(row.ID),
+			RawNumber: &rawNumber,
+		}
+		if row.AnimeID.Valid {
+			animeID := model.AnimeID(row.AnimeID.Int64)
+			episode.AnimeID = &animeID
+		}
+		targets[i] = DBEpisodeTitleFillTarget{Episode: episode, ScTid: row.ScTid.Int32}
+	}
+	return targets, nil
+}
+
+// UpdateEmptyTitleは、タイトルが空のままの未削除のエピソードにタイトルを入れる。falseは、
+// 対象を読んだ後にタイトルが入ったか削除されていて、何も書かなかったことを表す。
+func (r *EpisodeRepository) UpdateEmptyTitle(ctx context.Context, id model.EpisodeID, title string) (bool, error) {
+	affected, err := r.queries.UpdateEpisodeEmptyTitle(ctx, query.UpdateEpisodeEmptyTitleParams{
+		ID:    int64(id),
+		Title: sql.NullString{String: title, Valid: true},
+	})
+	if err != nil {
+		return false, err
+	}
+	return affected == 1, nil
+}
+
 // nullStringFromPtrは任意の文字列をドライバのNULL許容文字列に写像する。編集者が空の
 // まま送ったカラムを、空文字列ではなくNULLとして書くため。
 func nullStringFromPtr(value *string) sql.NullString {

@@ -580,6 +580,11 @@ type Querier interface {
 	// エピソードを指しているか。slots(program_id, episode_id) の一意制約は削除済みの放送枠にも
 	// かかるため、照合ではこれが真の候補に紐づけない。
 	ListEpisodesForEpisodeGenerationByWorkID(ctx context.Context, arg ListEpisodesForEpisodeGenerationByWorkIDParams) ([]ListEpisodesForEpisodeGenerationByWorkIDRow, error)
+	// しょぼいカレンダーからタイトルを入れる対象は、RailsのSyobocalEpisodeDataFetcherServiceと
+	// 同じく、未削除・公開中でタイトルが空、整数の話数を持ち、created_from以降に作られた
+	// エピソードのうち、作品がしょぼいカレンダーのTIDを持ち、番組のある放送枠に紐づいているもの。
+	// 作品も未削除・公開中に限る (Railsも対象の作品をWork.only_keptで引き直す)。
+	ListEpisodesForTitleFill(ctx context.Context, createdFrom time.Time) ([]ListEpisodesForTitleFillRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
 	// 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
 	// 同じく、deletedの人物だけを除いて照合する。掲載停止 (delisted) の人物との重複を別の
@@ -680,6 +685,9 @@ type Querier interface {
 	// スナップショットを書き戻さず本クエリを使うことで、事前読み取り後にコミットされた無関係な
 	// 内容編集を保持する。
 	UpdateAnimeStatus(ctx context.Context, arg UpdateAnimeStatusParams) error
+	// しょぼいカレンダーのサブタイトルをエピソードに入れたときに、そのエピソードのanimeへ同じ
+	// タイトルを両書きする。ほかのカラムは書き戻さず、事前の読み取り後の編集を上書きしない。
+	UpdateAnimeTitle(ctx context.Context, arg UpdateAnimeTitleParams) error
 	// 送信が名乗る版の照合は、直前の読み取りとの比較ではなくUPDATEの中で行う。比較と書き込み
 	// の間に他の書き込みが挟まらないようにするため。共有カラムはNULL許容のためNULLも明示的な
 	// 版であり、IS NOT DISTINCT FROMなら2文に分けずに照合できる。書き込みはupdated_atを進める
@@ -739,6 +747,10 @@ type Querier interface {
 	// しまうため。
 	UpdateDBPerson(ctx context.Context, arg UpdateDBPersonParams) (int64, error)
 	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
+	// しょぼいカレンダーのサブタイトルを、タイトルが空のままのエピソードにだけ入れる。対象を読んだ
+	// 後に編集者がタイトルを入れていれば書かない。Railsのupdate_columnと同じく、DB活動・作品の
+	// touch・updated_atの更新は行わない。
+	UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisodeEmptyTitleParams) (int64, error)
 	// 並びの途中に入れたエピソードの直後の行が、新しいエピソードを前のエピソードとして名乗るように
 	// 張り替える。UpdateDBEpisodeが移動で隣接行を張り替えるのと同じく、並び順から導出される値の
 	// 維持であって編集ではないため、DB活動・作品のtouch・updated_atの更新は行わない。

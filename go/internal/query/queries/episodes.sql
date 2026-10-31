@@ -779,3 +779,42 @@ SET prev_episode_id = sqlc.arg('prev_episode_id')
 WHERE id = sqlc.arg('id')
     AND work_id = sqlc.arg('work_id')
     AND deleted_at IS NULL;
+
+-- name: ListEpisodesForTitleFill :many
+-- しょぼいカレンダーからタイトルを入れる対象は、RailsのSyobocalEpisodeDataFetcherServiceと
+-- 同じく、未削除・公開中でタイトルが空、整数の話数を持ち、created_from以降に作られた
+-- エピソードのうち、作品がしょぼいカレンダーのTIDを持ち、番組のある放送枠に紐づいているもの。
+-- 作品も未削除・公開中に限る (Railsも対象の作品をWork.only_keptで引き直す)。
+SELECT
+    e.id,
+    e.raw_number,
+    e.anime_id,
+    w.sc_tid
+FROM episodes e
+JOIN works w ON w.id = e.work_id
+WHERE e.deleted_at IS NULL
+    AND e.unpublished_at IS NULL
+    AND (e.title IS NULL OR e.title = '')
+    AND e.raw_number IS NOT NULL
+    AND e.raw_number = TRUNC(e.raw_number)
+    AND e.created_at >= sqlc.arg('created_from')::timestamptz
+    AND w.deleted_at IS NULL
+    AND w.unpublished_at IS NULL
+    AND w.sc_tid IS NOT NULL
+    AND EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.episode_id = e.id
+            AND s.program_id IS NOT NULL
+    )
+ORDER BY e.id;
+
+-- name: UpdateEpisodeEmptyTitle :execrows
+-- しょぼいカレンダーのサブタイトルを、タイトルが空のままのエピソードにだけ入れる。対象を読んだ
+-- 後に編集者がタイトルを入れていれば書かない。Railsのupdate_columnと同じく、DB活動・作品の
+-- touch・updated_atの更新は行わない。
+UPDATE episodes
+SET title = sqlc.arg('title')
+WHERE id = sqlc.arg('id')
+    AND deleted_at IS NULL
+    AND (title IS NULL OR title = '');

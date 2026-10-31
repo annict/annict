@@ -63,3 +63,12 @@ SET
     status = $2,
     updated_at = NOW()
 WHERE id = $1;
+
+-- name: UpdateAnimeTitle :exec
+-- しょぼいカレンダーのサブタイトルをエピソードに入れたときに、そのエピソードのanimeへ同じ
+-- タイトルを両書きする。ほかのカラムは書き戻さず、事前の読み取り後の編集を上書きしない。
+UPDATE animes
+SET
+    title = sqlc.arg('title'),
+    updated_at = NOW()
+WHERE id = sqlc.arg('id');
