@@ -2,6 +2,12 @@
 # frozen_string_literal: true
 
 namespace :data_care do
+  # エピソードの自動生成 (Go版) が作ったエピソードと放送枠を、見ている作品のライブラリの次の
+  # エピソード・次の放送枠に反映する。
+  task update_next_resources_on_library_entries: :environment do
+    Annict::DataCare::UpdateNextResourcesOnLibraryEntries.run!
+  end
+
   task :merge_work, %i[base_work_id work_id] => :environment do |_, args|
     base_work_id, work_id = args.values_at(:base_work_id, :work_id)
     merge_work = Annict::DataCare::MergeWork.new(base_work_id, work_id)
