@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -22,6 +23,8 @@ const (
 	resultCodeOK = 200
 	// resultCodeNotFoundは、指定したTIDの作品が1件も無いときにAPIが返すコード。
 	resultCodeNotFound = 404
+	// TitleLookupのTID指定は1リクエストにつき最大100件。
+	titleLookupLimit = 100
 )
 
 // ClientはしょぼいカレンダーのデータベースのAPI (db.php) のクライアント
@@ -58,10 +61,21 @@ type titleItem struct {
 // サブタイトルの無い作品や、しょぼいカレンダーに無いTIDは結果に含めない。
 func (c *Client) LookupSubTitles(ctx context.Context, tids []int32) (map[int32]map[int32]string, error) {
 	result := make(map[int32]map[int32]string)
-	if len(tids) == 0 {
-		return result, nil
+	for batch := range slices.Chunk(tids, titleLookupLimit) {
+		subTitles, err := c.lookupSubTitles(ctx, batch)
+		if err != nil {
+			return nil, err
+		}
+		for tid, titles := range subTitles {
+			result[tid] = titles
+		}
 	}
+	return result, nil
+}
 
+// lookupSubTitlesは件数上限内のTIDを1回のリクエストで取得する。
+func (c *Client) lookupSubTitles(ctx context.Context, tids []int32) (map[int32]map[int32]string, error) {
+	result := make(map[int32]map[int32]string)
 	ids := make([]string, len(tids))
 	for i, tid := range tids {
 		ids[i] = strconv.FormatInt(int64(tid), 10)

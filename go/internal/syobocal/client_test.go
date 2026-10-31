@@ -2,8 +2,12 @@ package syobocal
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"strconv"
+	"strings"
+	"sync/atomic"
 	"testing"
 )
 
@@ -127,5 +131,87 @@ func TestClient_LookupSubTitles_EmptyTIDs(t *testing.T) {
 	}
 	if len(got) != 0 {
 		t.Errorf("結果 = %v、期待値 = 空", got)
+	}
+}
+
+// TestClient_LookupSubTitles_Batchesは、件数上限を超えても100件以下ずつ問い合わせ、
+// すべてのバッチのサブタイトルを返すことを検証する。
+func TestClient_LookupSubTitles_Batches(t *testing.T) {
+	t.Parallel()
+
+	for _, count := range []int{100, 101, 250} {
+		t.Run(strconv.Itoa(count)+"件", func(t *testing.T) {
+			t.Parallel()
+			var calls atomic.Int32
+			client := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+				calls.Add(1)
+				ids := strings.Split(r.URL.Query().Get("TID"), ",")
+				if len(ids) > 100 {
+					t.Errorf("リクエストのTID = %d件、期待値 = 100件以下", len(ids))
+					w.WriteHeader(http.StatusBadRequest)
+					return
+				}
+				_, _ = w.Write([]byte(`<TitleLookupResponse><Result><Code>200</Code></Result><TitleItems>`))
+				for _, id := range ids {
+					_, _ = fmt.Fprintf(w, `<TitleItem><TID>%s</TID><SubTitles>*01*サブタイトル%s</SubTitles></TitleItem>`, id, id)
+				}
+				_, _ = w.Write([]byte(`</TitleItems></TitleLookupResponse>`))
+			})
+			tids := make([]int32, count)
+			for i := range tids {
+				tids[i] = int32(i + 1) // #nosec G115 -- 最大250件のテストデータ
+			}
+			got, err := client.LookupSubTitles(context.Background(), tids)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if len(got) != count || int(calls.Load()) != (count+99)/100 {
+				t.Errorf("結果 = %d件、問い合わせ = %d回、期待値 = %d件・%d回", len(got), calls.Load(), count, (count+99)/100)
+			}
+			for _, tid := range tids {
+				if got[tid][1] != "サブタイトル"+strconv.Itoa(int(tid)) {
+					t.Errorf("TID%dのサブタイトル = %q", tid, got[tid][1])
+				}
+			}
+		})
+	}
+}
+
+// TestClient_LookupSubTitles_BatchFailureは、途中のバッチが404なら残りを取得し、
+// エラーなら部分的な結果を返さず終了することを検証する。
+func TestClient_LookupSubTitles_BatchFailure(t *testing.T) {
+	t.Parallel()
+
+	for _, code := range []int{404, 500} {
+		t.Run(strconv.Itoa(code)+"の結果", func(t *testing.T) {
+			t.Parallel()
+			var calls atomic.Int32
+			client := newTestClient(t, func(w http.ResponseWriter, r *http.Request) {
+				if calls.Add(1) == 2 {
+					_, _ = fmt.Fprintf(w, `<TitleLookupResponse><Result><Code>%d</Code></Result></TitleLookupResponse>`, code)
+					return
+				}
+				ids := strings.Split(r.URL.Query().Get("TID"), ",")
+				_, _ = w.Write([]byte(`<TitleLookupResponse><Result><Code>200</Code></Result><TitleItems>`))
+				for _, id := range ids {
+					_, _ = fmt.Fprintf(w, `<TitleItem><TID>%s</TID><SubTitles>*01*サブタイトル</SubTitles></TitleItem>`, id)
+				}
+				_, _ = w.Write([]byte(`</TitleItems></TitleLookupResponse>`))
+			})
+			tids := make([]int32, 201)
+			for i := range tids {
+				tids[i] = int32(i + 1) // #nosec G115 -- 最大201件のテストデータ
+			}
+			got, err := client.LookupSubTitles(context.Background(), tids)
+			if code == 500 {
+				if err == nil || got != nil || calls.Load() != 2 {
+					t.Errorf("結果 = %v、エラー = %v、問い合わせ = %d回、期待値 = 結果なし・エラー・2回", got, err, calls.Load())
+				}
+				return
+			}
+			if err != nil || len(got) != 101 || got[201][1] != "サブタイトル" || calls.Load() != 3 {
+				t.Errorf("結果 = %d件、エラー = %v、問い合わせ = %d回、期待値 = 101件・3回", len(got), err, calls.Load())
+			}
+		})
 	}
 }
