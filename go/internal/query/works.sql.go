@@ -201,25 +201,6 @@ func (q *Queries) ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkB
 	return exists, err
 }
 
-const existsWorkForEpisodeCreateByID = `-- name: ExistsWorkForEpisodeCreateByID :one
-SELECT EXISTS (
-    SELECT 1
-    FROM works w
-    WHERE w.id = $1
-        AND w.deleted_at IS NULL
-)
-`
-
-// RailsアクションのWork.without_deleted.findと同じ順序で、送信行をパースする前に親作品を
-// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
-// 判断には使わない。
-func (q *Queries) ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error) {
-	row := q.db.QueryRowContext(ctx, existsWorkForEpisodeCreateByID, id)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
-}
-
 const getPopularWorks = `-- name: GetPopularWorks :many
 SELECT
     w.id,
@@ -450,11 +431,6 @@ const getWorkForEpisodeCreateByID = `-- name: GetWorkForEpisodeCreateByID :one
 SELECT
     w.id,
     w.anime_id,
-    (
-        SELECT COUNT(*)
-        FROM episodes e
-        WHERE e.work_id = w.id
-    )::bigint AS episode_count,
     COALESCE(latest.id, 0)::bigint AS latest_episode_id,
     COALESCE(latest.sort_number, 0)::integer AS latest_sort_number,
     w.manual_episodes_count IS NOT NULL AND (
@@ -463,13 +439,7 @@ SELECT
         WHERE kept.work_id = w.id
             AND kept.unpublished_at IS NULL
             AND kept.deleted_at IS NULL
-    ) >= w.manual_episodes_count AS episodes_filled,
-    EXISTS (
-        SELECT 1
-        FROM slots s
-        WHERE s.work_id = w.id
-            AND s.started_at IS NOT NULL
-    ) AS slots_exist
+    ) >= w.manual_episodes_count AS episodes_filled
 FROM works w
 LEFT JOIN LATERAL (
     SELECT e.id, e.sort_number
@@ -485,19 +455,17 @@ WHERE w.id = $1
 type GetWorkForEpisodeCreateByIDRow struct {
 	ID               int64         `db:"id"`
 	AnimeID          sql.NullInt64 `db:"anime_id"`
-	EpisodeCount     int64         `db:"episode_count"`
 	LatestEpisodeID  int64         `db:"latest_episode_id"`
 	LatestSortNumber int32         `db:"latest_sort_number"`
 	EpisodesFilled   sql.NullBool  `db:"episodes_filled"`
-	SlotsExist       bool          `db:"slots_exist"`
 }
 
-// episode_countとlatest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の
-// 新規エピソードはepisode_count * 100の1ステップ先から始まり、sort_numberが最大の
-// エピソードが最初に作る行のprev_episode_idになる。どちらも非公開・削除済みを除外せずに
-// 作品のエピソードを集計する (Railsのフォームのwork.episodes.countと同じ)。エピソードを
-// 非公開にした作品で、既に使われているsort_numberを振り直さないため。anime_idは作成が
-// 参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品のanimeを必要とする)。
+// latest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の新規エピソードは
+// 作品の最大のsort_numberの1ステップ先から始まり、その最大の行が最初に作る行の
+// prev_episode_idになる。非公開・削除済みを除外せずに集計する。削除済みの行が持つ値と
+// ぶつけないためと、開始話数が1でない作品で自動生成が置いたエピソードより前に並ばないように
+// するため。anime_idは作成が参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品の
+// animeを必要とする)。
 //
 // latest_episode_id / latest_sort_numberは、作品がまだエピソードを持たないとき0に
 // なる。idは正の値のため、呼び出し側は0を「直前のエピソードなし」と読む (上の
@@ -508,11 +476,9 @@ func (q *Queries) GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (Ge
 	err := row.Scan(
 		&i.ID,
 		&i.AnimeID,
-		&i.EpisodeCount,
 		&i.LatestEpisodeID,
 		&i.LatestSortNumber,
 		&i.EpisodesFilled,
-		&i.SlotsExist,
 	)
 	return i, err
 }
@@ -533,8 +499,9 @@ SELECT
         SELECT 1
         FROM slots s
         WHERE s.work_id = w.id
-            AND s.started_at IS NOT NULL
-    ) AS slots_exist
+            AND s.deleted_at IS NULL
+            AND s.unpublished_at IS NULL
+    ) AS has_active_slots
 FROM works w
 WHERE w.id = $1
     AND w.deleted_at IS NULL
@@ -545,13 +512,15 @@ type GetWorkForEpisodeFormByIDRow struct {
 	Title          string       `db:"title"`
 	NoEpisodes     bool         `db:"no_episodes"`
 	EpisodesFilled sql.NullBool `db:"episodes_filled"`
-	SlotsExist     bool         `db:"slots_exist"`
+	HasActiveSlots bool         `db:"has_active_slots"`
 }
 
 // エピソードフォームは、見出しでの名指し、共有サブナビの出し分け、およびRailsの
 // 手動作成ガードを保つために作品を取得する。公開中のエピソード数がmanual_episodes_countに
-// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
-// 見るが、表示層で上書きして作成できる。
+// 達した作品には編集者が追加できない。管理者も警告は見るが、表示層で上書きして作成できる。
+//
+// has_active_slotsは、作品が有効な放送枠 (未削除・公開中) を持つか。持つ作品では自動生成が
+// 話数でエピソードを照合するため、一括作成のすべての行に話数を求める。
 func (q *Queries) GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getWorkForEpisodeFormByID, id)
 	var i GetWorkForEpisodeFormByIDRow
@@ -560,7 +529,7 @@ func (q *Queries) GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetW
 		&i.Title,
 		&i.NoEpisodes,
 		&i.EpisodesFilled,
-		&i.SlotsExist,
+		&i.HasActiveSlots,
 	)
 	return i, err
 }

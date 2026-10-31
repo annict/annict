@@ -84,15 +84,18 @@ func (uc *CreateEpisodesUsecase) Execute(ctx context.Context, input CreateEpisod
 		}
 	}
 
-	exists, err := uc.workRepo.ExistsForEpisodeCreateByID(ctx, input.WorkID)
+	formWork, err := uc.workRepo.GetForEpisodeFormByID(ctx, input.WorkID)
 	if err != nil {
-		return nil, fmt.Errorf("作品の存在確認に失敗: %w", err)
+		return nil, fmt.Errorf("作品の取得に失敗: %w", err)
 	}
-	if !exists {
+	if formWork == nil {
 		return nil, workNotFoundError(ctx, input.WorkID)
 	}
 
-	rows, err := uc.validator.Validate(ctx, validator.DBEpisodeCreateValidatorInput{Rows: input.Rows})
+	rows, err := uc.validator.Validate(ctx, validator.DBEpisodeCreateValidatorInput{
+		Rows:              input.Rows,
+		RawNumberRequired: formWork.HasActiveSlots,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -151,19 +154,23 @@ func (uc *CreateEpisodesUsecase) createEpisodes(
 		return nil, workNotFoundError(ctx, input.WorkID)
 	}
 	if !input.User.IsAdmin() && !work.ManualCreationState.Allowed() {
-		return nil, manualCreationValidationError(ctx, work.ManualCreationState)
+		return nil, manualCreationValidationError(ctx)
 	}
 
-	// 採番はRailsのフォームと同じく、作品のエピソード数 × ステップから始める。件数が
-	// int64なのはCOUNTがそう返すためで、1作品が持ちうるエピソード数はsort_numberカラム
-	// のint32の範囲に十分収まる。
-	sortNumber := int32(work.EpisodeCount) * episodeSortNumberStep // #nosec G115
-	previous := work.LatestEpisode
+	// 最初の行は、作品の最大のsort_numberの1ステップ先に、その最大の行を前のエピソードとして
+	// 足す (自動生成が末尾に足すときと同じ関数)。2行目以降は、直前に作った行の1ステップ先に、
+	// その行を前のエピソードとして足す。
+	var maxSortNumber int32
+	var prevEpisodeID *model.EpisodeID
+	if work.LatestEpisode != nil {
+		maxSortNumber = work.LatestEpisode.SortNumber
+		prevEpisodeID = &work.LatestEpisode.ID
+	}
+	position := appendedEpisodePosition(maxSortNumber, prevEpisodeID)
 	episodeIDs := make([]model.EpisodeID, 0, len(rows))
 
 	for i, row := range rows {
-		sortNumber += episodeSortNumberStep
-		episode := episodeFromCreateRow(work.Work, row, sortNumber)
+		episode := episodeFromCreateRow(work.Work, row, position.SortNumber)
 
 		var animeID *model.AnimeID
 		if episode.ParentAnimeID != nil {
@@ -177,26 +184,22 @@ func (uc *CreateEpisodesUsecase) createEpisodes(
 			animeID = &anime.ID
 		}
 
-		params := repository.CreateEpisodeParams{
-			WorkID:     episode.WorkID,
-			Number:     episode.Number,
-			RawNumber:  episode.RawNumber,
-			Title:      episode.Title,
-			SortNumber: episode.SortNumber,
-			AnimeID:    animeID,
-			UserID:     input.User.ID,
-		}
-		if previous != nil {
-			params.PrevEpisodeID = &previous.ID
-		}
-
-		episodeID, err := episodeRepo.Create(ctx, params)
+		episodeID, err := episodeRepo.Create(ctx, repository.CreateEpisodeParams{
+			WorkID:        episode.WorkID,
+			Number:        episode.Number,
+			RawNumber:     episode.RawNumber,
+			Title:         episode.Title,
+			SortNumber:    episode.SortNumber,
+			PrevEpisodeID: position.PrevEpisodeID,
+			AnimeID:       animeID,
+			UserID:        input.User.ID,
+		})
 		if err != nil {
 			return nil, fmt.Errorf("エピソードの作成に失敗しました (%d行目): %w", i+1, err)
 		}
 		episodeIDs = append(episodeIDs, episodeID)
 
-		previous = nextSortAnchor(previous, episodeID, sortNumber)
+		position = appendedEpisodePosition(position.SortNumber, &episodeID)
 	}
 
 	createdCount := int32(len(rows)) // #nosec G115 -- 1回の送信は検証で100行までに制限される
@@ -214,14 +217,9 @@ func (uc *CreateEpisodesUsecase) createEpisodes(
 // manualCreationValidationErrorは、作品の状態が許さない送信を報告する。メッセージは
 // グローバルに積む。送信された行に問題は無く、textareaを不正と印付けると、直す必要のない
 // 入力を直すよう促すことになるため。
-func manualCreationValidationError(ctx context.Context, state model.ManualEpisodeCreationState) *model.ValidationError {
-	key := "validation_episode_manual_creation_slots_exist"
-	if state.Restriction() == model.ManualEpisodeCreationEpisodesFilled {
-		key = "validation_episode_manual_creation_episodes_filled"
-	}
-
+func manualCreationValidationError(ctx context.Context) *model.ValidationError {
 	ve := model.NewValidationError()
-	ve.AddGlobal(i18n.T(ctx, key))
+	ve.AddGlobal(i18n.T(ctx, "validation_episode_manual_creation_episodes_filled"))
 	return ve
 }
 
@@ -243,19 +241,4 @@ func episodeFromCreateRow(work *model.Work, row validator.DBEpisodeRow, sortNumb
 		SortNumber:    sortNumber,
 		ParentAnimeID: work.AnimeID,
 	}
-}
-
-// nextSortAnchorは、次に作る行が直前のエピソードとして名指しする起点を返す。作成した
-// ばかりのエピソードがそこまでで最大のsort_numberを持つならそれを、そうでなければ従来の
-// 起点を返す。同値の場合は2つのうち後の行である新規エピソードを採る。
-//
-// 採番の起点が作品の最大sort_numberではなくエピソード数であるため、この比較が要る。既存の
-// エピソードがより広い間隔で並んでいる作品では、そのエピソードが直前のエピソードとして名指し
-// され続ける。これはRailsのコールバックの挙動そのもの。
-func nextSortAnchor(previous *repository.DBEpisodeSortAnchor, episodeID model.EpisodeID, sortNumber int32) *repository.DBEpisodeSortAnchor {
-	if previous != nil && previous.SortNumber > sortNumber {
-		return previous
-	}
-
-	return &repository.DBEpisodeSortAnchor{ID: episodeID, SortNumber: sortNumber}
 }

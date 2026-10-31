@@ -219,7 +219,6 @@ type DBEpisodeManualCreationRestriction string
 const (
 	DBEpisodeManualCreationAllowed        DBEpisodeManualCreationRestriction = ""
 	DBEpisodeManualCreationEpisodesFilled DBEpisodeManualCreationRestriction = "episodes_filled"
-	DBEpisodeManualCreationSlotsExist     DBEpisodeManualCreationRestriction = "slots_exist"
 )
 
 // NewDBEpisodeManualCreationRestrictionは作品の手動作成状態を、ページが述べる理由へ

@@ -349,10 +349,6 @@ type Querier interface {
 	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
 	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
 	ExistsPrefectureByID(ctx context.Context, id int64) (bool, error)
-	// RailsアクションのWork.without_deleted.findと同じ順序で、送信行をパースする前に親作品を
-	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
-	// 判断には使わない。
-	ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error)
 	GetActiveUserByEmailForSignIn(ctx context.Context, lower string) (GetActiveUserByEmailForSignInRow, error)
 	GetActiveUserByEmailOrUsername(ctx context.Context, lower string) (GetActiveUserByEmailOrUsernameRow, error)
 	// 論理削除されていないユーザーをIDで取得する。
@@ -484,12 +480,12 @@ type Querier interface {
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
 	GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error)
-	// episode_countとlatest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の
-	// 新規エピソードはepisode_count * 100の1ステップ先から始まり、sort_numberが最大の
-	// エピソードが最初に作る行のprev_episode_idになる。どちらも非公開・削除済みを除外せずに
-	// 作品のエピソードを集計する (Railsのフォームのwork.episodes.countと同じ)。エピソードを
-	// 非公開にした作品で、既に使われているsort_numberを振り直さないため。anime_idは作成が
-	// 参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品のanimeを必要とする)。
+	// latest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の新規エピソードは
+	// 作品の最大のsort_numberの1ステップ先から始まり、その最大の行が最初に作る行の
+	// prev_episode_idになる。非公開・削除済みを除外せずに集計する。削除済みの行が持つ値と
+	// ぶつけないためと、開始話数が1でない作品で自動生成が置いたエピソードより前に並ばないように
+	// するため。anime_idは作成が参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品の
+	// animeを必要とする)。
 	//
 	// latest_episode_id / latest_sort_numberは、作品がまだエピソードを持たないとき0に
 	// なる。idは正の値のため、呼び出し側は0を「直前のエピソードなし」と読む (上の
@@ -497,8 +493,10 @@ type Querier interface {
 	GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (GetWorkForEpisodeCreateByIDRow, error)
 	// エピソードフォームは、見出しでの名指し、共有サブナビの出し分け、およびRailsの
 	// 手動作成ガードを保つために作品を取得する。公開中のエピソード数がmanual_episodes_countに
-	// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
-	// 見るが、表示層で上書きして作成できる。
+	// 達した作品には編集者が追加できない。管理者も警告は見るが、表示層で上書きして作成できる。
+	//
+	// has_active_slotsは、作品が有効な放送枠 (未削除・公開中) を持つか。持つ作品では自動生成が
+	// 話数でエピソードを照合するため、一括作成のすべての行に話数を求める。
 	GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error)
 	// 放送枠からエピソードを作るときに、作品をロックした後で読む。話数の計算 (開始話数)・予定
 	// エピソード数との比較・表示の番号の書式・作品のanimeを返す。max_sort_numberは削除済み・
@@ -507,15 +505,15 @@ type Querier interface {
 	// 一覧を読んだ後に非公開・削除にされた作品は返さず、呼び出し側はその放送枠を飛ばす。
 	GetWorkForEpisodeGenerationByID(ctx context.Context, id int64) (GetWorkForEpisodeGenerationByIDRow, error)
 	// published_episode_countとmax_generatable_episode_numberはエピソード一覧の自動生成の
-	// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
-	// 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも1作品について別テーブルを
-	// 集計する値のため、作品の行と一緒に引いてページの往復を増やさない。
+	// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者は自動生成が作品の放送枠から
+	// 作るエピソードの数を表す。どちらも1作品について別テーブルを集計する値のため、作品の行と
+	// 一緒に引いてページの往復を増やさない。
 	//
-	// max_generatable_episode_numberが使うMAXはNULLを飛ばすが、Railsの案内は作品の有効な
-	// スロットをnumber降順に並べた先頭行を読む。PostgreSQLのDESCはNULLS FIRSTのため、
-	// number未設定の有効スロットが1件でもあればRailsはその行に当たって0を報告する。
-	// MAXが報告するのは自動生成が実際に到達する話数であり、Railsと結果が分かれるのは
-	// 移植漏れではなく意図的な選択。
+	// max_generatable_episode_numberは、自動生成の対象と同じ条件 (未削除・公開中で、再放送でも
+	// 不定期放送でもなく、番組と回数を持つ) の放送枠について、作品内の順番 (回数から、その
+	// 放送枠より前にある番組の不定期放送の数を引いたもの) の最大値をとる。自動生成が話数の計算と
+	// 予定エピソード数との比較に使うのと同じ数え方で、不定期放送のある番組でも回数そのものより
+	// 実際に作られる数を表す。
 	GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error)
 	// Annict DBの作品の状態変更 (非公開・公開・削除) の確認画面が共有する射影。各画面が対象を
 	// 名指しするタイトルと、呼び出し側が現在の状態を導出してその操作を適用できない作品を弾くための

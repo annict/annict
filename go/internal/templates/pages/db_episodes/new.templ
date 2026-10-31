@@ -27,6 +27,8 @@ type NewPageData struct {
 	// ManualCreationは作品のエピソードを手動作成できない理由。1度だけ解決することで、
 	// 警告とフォームの無効化が同じ理由を見る。
 	ManualCreation viewmodel.DBEpisodeManualCreationRestriction
+	// RawNumberRequiredは、作品に有効な放送枠があり、すべての行に話数が要るか。
+	RawNumberRequired bool
 	// Rowsは送信された内容をそのまま返す。送信が失敗しても入力し直しではなく手直しで
 	// 済むようにするため。
 	Rows string
@@ -91,23 +93,29 @@ func (d NewPageData) restrictionTitleKey() string {
 }
 
 // restrictionMessageKeyは理由を述べる警告を名指しする。キーは直書きし、描画するページ
-// からgrepで追える状態に保つ。どの理由が優先されるかはドメイン側で1度だけ決まり、解決済み
-// の値として届く。管理者にはフォームが使えるままであるため、理由と、それでも手動で登録した
-// 場合に何が起きるかを述べる文言を渡す。
+// からgrepで追える状態に保つ。管理者にはフォームが使えるままであるため、理由と、それでも
+// 手動で登録した場合に何が起きるかを述べる文言を渡す。
 func (d NewPageData) restrictionMessageKey() string {
-	if d.ManualCreation == viewmodel.DBEpisodeManualCreationEpisodesFilled {
-		if d.IsAdmin {
-			return "db_episodes_new_restricted_admin_episodes_filled"
-		}
-
-		return "db_episodes_new_restricted_episodes_filled"
-	}
-
 	if d.IsAdmin {
-		return "db_episodes_new_restricted_admin_slots_exist"
+		return "db_episodes_new_restricted_admin_episodes_filled"
 	}
 
-	return "db_episodes_new_restricted_slots_exist"
+	return "db_episodes_new_restricted_episodes_filled"
+}
+
+// rawNumberRequiredHelpIDは、話数が要ることを案内する文のid。textareaのaria-describedby
+// から参照する。
+const rawNumberRequiredHelpID = "rows-raw-number-required-help"
+
+// rowsDescribedByは、行が受け付けられなかったときにtextareaを説明する要素のidを返す。
+// エラーのメッセージに加え、話数が要る作品では案内の文も読み上げに含める。
+func (d NewPageData) rowsDescribedBy() string {
+	ids := components.FieldErrorIDs(d.FormErrors, rowsFieldName)
+	if d.RawNumberRequired {
+		return ids + " " + rawNumberRequiredHelpID
+	}
+
+	return ids
 }
 
 // rowsErrorsは送信された行が集めたメッセージを返す (却下された行につき1件)。
@@ -195,12 +203,17 @@ templ New(data NewPageData) {
 							}
 							if data.hasRowsError() {
 								aria-invalid="true"
-								aria-describedby={ components.FieldErrorIDs(data.FormErrors, rowsFieldName) }
+								aria-describedby={ data.rowsDescribedBy() }
+							} else if data.RawNumberRequired {
+								aria-describedby={ rawNumberRequiredHelpID }
 							}
 							if data.formDisabled() {
 								readonly
 							}
 						>{ data.Rows }</textarea>
+						if data.RawNumberRequired {
+							<p id={ rawNumberRequiredHelpID } class="text-sm text-muted-foreground">{ templates.T(ctx, "db_episodes_new_raw_number_required_help") }</p>
+						}
 						if data.hasRowsError() {
 							for i, errorMsg := range data.rowsErrors() {
 								<p id={ components.FieldErrorID(rowsFieldName, i) } role="alert">{ errorMsg }</p>

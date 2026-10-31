@@ -198,12 +198,16 @@ func (r *WorkRepository) GetForEpisodeListByID(ctx context.Context, id model.Wor
 type DBEpisodeFormWork struct {
 	Work                *model.Work
 	ManualCreationState model.ManualEpisodeCreationState
+	// HasActiveSlotsは、作品が有効な放送枠 (未削除・公開中) を持つか。持つ作品では自動生成が
+	// 話数でエピソードを照合するため、一括作成のすべての行に話数を求める。
+	HasActiveSlots bool
 }
 
 // GetForEpisodeFormByIDはAnnict DBのエピソードフォームが親作品から必要とするもの
-// (ページ見出しに使うtitle、共有の作品サブナビが使うno_episodes、手動作成を制限する理由)
-// を読み込む。削除済みの作品はクエリ側で除外するため、(nil, nil) はフォームを出せる作品が
-// そのidに無いことを表す。
+// (ページ見出しに使うtitle、共有の作品サブナビが使うno_episodes、手動作成を制限する理由、
+// 有効な放送枠の有無) を読み込む。削除済みの作品はクエリ側で除外するため、(nil, nil) は
+// フォームを出せる作品がそのidに無いことを表す。一括作成は、入力行をパースする前の作品の確認にも
+// これを使う。
 func (r *WorkRepository) GetForEpisodeFormByID(ctx context.Context, id model.WorkID) (*DBEpisodeFormWork, error) {
 	row, err := r.queries.GetWorkForEpisodeFormByID(ctx, int64(id))
 	if err != nil {
@@ -221,8 +225,8 @@ func (r *WorkRepository) GetForEpisodeFormByID(ctx context.Context, id model.Wor
 		},
 		ManualCreationState: model.ManualEpisodeCreationState{
 			EpisodesFilled: row.EpisodesFilled.Valid && row.EpisodesFilled.Bool,
-			SlotsExist:     row.SlotsExist,
 		},
+		HasActiveSlots: row.HasActiveSlots,
 	}, nil
 }
 
@@ -233,19 +237,10 @@ func (r *WorkRepository) GetForEpisodeFormByID(ctx context.Context, id model.Wor
 type DBEpisodeCreateWork struct {
 	Work                *model.Work
 	ManualCreationState model.ManualEpisodeCreationState
-	// EpisodeCountは作品のエピソードを、非公開のものも削除済みのものも含めて数える
-	// (採番の元にしたRailsのフォームと同じ)。
-	EpisodeCount int64
-	// LatestEpisodeはsort_numberが最大のエピソードで、最初に作る行が直前の
-	// エピソードとして名指しする。作品がエピソードを持たないあいだはnil。
+	// LatestEpisodeは非公開・削除済みを含めてsort_numberが最大のエピソードで、最初に作る
+	// 行はその1ステップ先に並び、これを直前のエピソードとして名指しする。作品がエピソードを
+	// 持たないあいだはnil。
 	LatestEpisode *DBEpisodeSortAnchor
-}
-
-// ExistsForEpisodeCreateByIDは指定された未削除作品が存在するかを返す。作成ユースケースは
-// 入力行をパースする前にこの軽量な確認を行い、書き込みトランザクション内で同じ作品をロック
-// して再確認する。
-func (r *WorkRepository) ExistsForEpisodeCreateByID(ctx context.Context, id model.WorkID) (bool, error) {
-	return r.queries.ExistsWorkForEpisodeCreateByID(ctx, int64(id))
 }
 
 // LockForEpisodeCreateByIDは現在のトランザクションで対象作品をロックする。このロックで
@@ -289,11 +284,9 @@ func (r *WorkRepository) GetForEpisodeCreateByID(ctx context.Context, id model.W
 	}
 
 	result := &DBEpisodeCreateWork{
-		Work:         work,
-		EpisodeCount: row.EpisodeCount,
+		Work: work,
 		ManualCreationState: model.ManualEpisodeCreationState{
 			EpisodesFilled: row.EpisodesFilled.Valid && row.EpisodesFilled.Bool,
-			SlotsExist:     row.SlotsExist,
 		},
 	}
 	if row.LatestEpisodeID != 0 {

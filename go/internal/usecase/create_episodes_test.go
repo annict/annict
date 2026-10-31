@@ -3,8 +3,10 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -159,7 +161,7 @@ func TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification(t *
 	uc := newCreateEpisodesUsecase(db)
 
 	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
-	existingID := insertSyncEpisode(t, db, defaultSyncEpisodeInput(workID))
+	existingID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	output, err := uc.Execute(context.Background(), CreateEpisodesInput{
@@ -181,7 +183,7 @@ func TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification(t *
 	if first.rawNumber.Float64 != 2 {
 		t.Errorf("1行目のraw_number = %v、期待値 = 2", first.rawNumber)
 	}
-	// 作品は既に1件のエピソードを持つため、最初に作られる行は200に、2件目はその
+	// 作品の最大のsort_numberは100のため、最初に作られる行は200に、2件目はその
 	// 1ステップ先に着地する。
 	if first.sortNumber != 200 {
 		t.Errorf("1行目のsort_number = %d、期待値 = 200", first.sortNumber)
@@ -561,58 +563,80 @@ func TestCreateEpisodesUsecase_Execute_RequiresCommitter(t *testing.T) {
 	}
 }
 
-// TestNextSortAnchorは、次に作る行がどのエピソードを直前のエピソードとして名指しするか
-// を検証する。採番の起点が作品の最大sort_numberではなくエピソード数であるため、既存の
-// エピソードがより広い間隔で並んでいる作品ではそのエピソードが名指しされ続ける (Railsの
-// コールバックと同じ)。
-func TestNextSortAnchor(t *testing.T) {
+// TestCreateEpisodesUsecase_Execute_AppendsAfterMaxSortNumberは、作品の最大のsort_number
+// (削除済みを含む) の先から振り、その最大の行を最初の行の前のエピソードにすることを検証する。
+// 開始話数が13の作品で自動生成が1300に置いた第13話より前に並ばないようにするため。
+func TestCreateEpisodesUsecase_Execute_AppendsAfterMaxSortNumber(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name       string
-		previous   *repository.DBEpisodeSortAnchor
-		episodeID  model.EpisodeID
-		sortNumber int32
-		want       repository.DBEpisodeSortAnchor
-	}{
-		{
-			name:       "直前のエピソードが無いとき",
-			previous:   nil,
-			episodeID:  7,
-			sortNumber: 100,
-			want:       repository.DBEpisodeSortAnchor{ID: 7, SortNumber: 100},
-		},
-		{
-			name:       "新規のほうが後ろに並ぶとき",
-			previous:   &repository.DBEpisodeSortAnchor{ID: 3, SortNumber: 100},
-			episodeID:  7,
-			sortNumber: 200,
-			want:       repository.DBEpisodeSortAnchor{ID: 7, SortNumber: 200},
-		},
-		{
-			name:       "並び順が同値のときは新規を採る",
-			previous:   &repository.DBEpisodeSortAnchor{ID: 3, SortNumber: 200},
-			episodeID:  7,
-			sortNumber: 200,
-			want:       repository.DBEpisodeSortAnchor{ID: 7, SortNumber: 200},
-		},
-		{
-			name:       "既存のほうが後ろに並ぶとき",
-			previous:   &repository.DBEpisodeSortAnchor{ID: 3, SortNumber: 5000},
-			episodeID:  7,
-			sortNumber: 200,
-			want:       repository.DBEpisodeSortAnchor{ID: 3, SortNumber: 5000},
-		},
+	db := testutil.GetTestDB()
+	uc := newCreateEpisodesUsecase(db)
+	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	insertSyncEpisode(t, db, generationEpisodeInput(workID, 13, 1300))
+	deleted := generationEpisodeInput(workID, 14, 1400)
+	deleted.deletedAt = sql.NullTime{Time: time.Now(), Valid: true}
+	deletedID := insertSyncEpisode(t, db, deleted)
+	user := insertCreateActor(t, db, model.RoleEditor)
+
+	output, err := uc.Execute(context.Background(), CreateEpisodesInput{
+		WorkID: workID,
+		User:   user,
+		Rows:   "総集編,13.5,これまでのお話\n#14,14,つづき",
+	})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if len(output.EpisodeIDs) != 2 {
+		t.Fatalf("len(EpisodeIDs) = %d、期待値 = 2", len(output.EpisodeIDs))
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			t.Parallel()
+	first := readCreatedEpisode(t, db, output.EpisodeIDs[0])
+	if first.sortNumber != 1500 || first.prevEpisodeID.Int64 != int64(deletedID) {
+		t.Errorf("1行目 = (sort_number %d, prev_episode_id %+v)、期待値 = (1500, %d)", first.sortNumber, first.prevEpisodeID, deletedID)
+	}
+	second := readCreatedEpisode(t, db, output.EpisodeIDs[1])
+	if second.sortNumber != 1600 || second.prevEpisodeID.Int64 != int64(output.EpisodeIDs[0]) {
+		t.Errorf("2行目 = (sort_number %d, prev_episode_id %+v)、期待値 = (1600, %d)", second.sortNumber, second.prevEpisodeID, output.EpisodeIDs[0])
+	}
+}
 
-			got := nextSortAnchor(tt.previous, tt.episodeID, tt.sortNumber)
-			if *got != tt.want {
-				t.Errorf("nextSortAnchor() = %+v、期待値 = %+v", *got, tt.want)
-			}
+// TestCreateEpisodesUsecase_Execute_RequiresRawNumberForWorkWithSlotsは、有効な放送枠がある
+// 作品でも編集者が一括登録でき、そのときはすべての行に話数を求めることを検証する。
+func TestCreateEpisodesUsecase_Execute_RequiresRawNumberForWorkWithSlots(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newCreateEpisodesUsecase(db)
+	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	program := insertGenerationProgram(t, db, workID, 1)
+	program.insertSlot(1, time.Now().Add(24*time.Hour), nil)
+	editor := insertCreateActor(t, db, model.RoleEditor)
+	admin := insertCreateActor(t, db, model.RoleAdmin)
+
+	for _, user := range []*model.User{editor, admin} {
+		_, err := uc.Execute(context.Background(), CreateEpisodesInput{
+			WorkID: workID,
+			User:   user,
+			Rows:   "#1,1,はじまり\n総集編,,これまでのお話",
 		})
+		ve := model.AsValidationError(err)
+		if ve == nil {
+			t.Fatalf("ロール%dのExecute()のエラー = %v、期待値 = *model.ValidationError", user.Role, err)
+		}
+		if errs := ve.GetFieldErrors("rows"); len(errs) != 1 || !strings.Contains(errs[0], "2 行目") {
+			t.Errorf("ロール%dのrowsのエラー = %v、期待値 = 2行目の話数の不足", user.Role, errs)
+		}
+	}
+
+	output, err := uc.Execute(context.Background(), CreateEpisodesInput{
+		WorkID: workID,
+		User:   editor,
+		Rows:   "#1,1,はじまり\n総集編,1.5,これまでのお話",
+	})
+	if err != nil {
+		t.Fatalf("話数を入れたExecute()のエラー = %v", err)
+	}
+	if len(output.EpisodeIDs) != 2 {
+		t.Errorf("len(EpisodeIDs) = %d、期待値 = 2", len(output.EpisodeIDs))
 	}
 }

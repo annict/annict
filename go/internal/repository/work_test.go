@@ -1538,6 +1538,8 @@ func TestWorkRepository_GetForEpisodeFormByID_ManualCreationState(t *testing.T) 
 		t.Error("予定エピソード数到達作品の手動作成が許可されています")
 	}
 
+	// 有効な放送枠がある作品も手動作成でき、すべての行に話数を求める。削除済み・非公開の
+	// 放送枠しか無い作品には求めない。
 	slotWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("放送枠あり").Build()
 	channelID := testutil.NewChannelBuilder(t, tx).Build()
 	testutil.NewSlotBuilder(t, tx).
@@ -1550,11 +1552,23 @@ func TestWorkRepository_GetForEpisodeFormByID_ManualCreationState(t *testing.T) 
 	if err != nil {
 		t.Fatalf("放送枠ありGetForEpisodeFormByID()のエラー = %v", err)
 	}
-	if slotWork == nil || !slotWork.ManualCreationState.SlotsExist {
-		t.Fatalf("放送枠ありのManualCreationState = %+v、期待値 = SlotsExist", slotWork)
+	if slotWork == nil || !slotWork.HasActiveSlots {
+		t.Fatalf("放送枠ありのGetForEpisodeFormByID() = %+v、期待値 = HasActiveSlots", slotWork)
 	}
-	if slotWork.ManualCreationState.Allowed() {
-		t.Error("放送枠あり作品の手動作成が許可されています")
+	if !slotWork.ManualCreationState.Allowed() {
+		t.Error("放送枠あり作品の手動作成が許可されていません")
+	}
+
+	inactiveSlotWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("無効な放送枠だけ").Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(inactiveSlotWorkID).WithChannelID(channelID).WithDeletedAt(time.Now()).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(inactiveSlotWorkID).WithChannelID(channelID).WithUnpublishedAt(time.Now()).Build()
+
+	inactiveSlotWork, err := repo.GetForEpisodeFormByID(ctx, inactiveSlotWorkID)
+	if err != nil {
+		t.Fatalf("無効な放送枠だけGetForEpisodeFormByID()のエラー = %v", err)
+	}
+	if inactiveSlotWork == nil || inactiveSlotWork.HasActiveSlots {
+		t.Fatalf("無効な放送枠だけのGetForEpisodeFormByID() = %+v、期待値 = HasActiveSlotsがfalse", inactiveSlotWork)
 	}
 
 	plainWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("制限なし").Build()
@@ -1585,9 +1599,9 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 
 		workID := testutil.NewWorkBuilder(t, tx).WithTitle("一括作成の親作品").Build()
 		insertEpisodeWithSortNumber(t, tx, workID, "第1話", 100)
-		latestID := insertEpisodeWithSortNumber(t, tx, workID, "第2話", 200)
-		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第3話").WithUnpublishedAt(time.Now()).Build()
-		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第4話").WithDeletedAt(time.Now()).Build()
+		insertEpisodeWithSortNumber(t, tx, workID, "第2話", 200)
+		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第3話").WithSortNumber(250).WithUnpublishedAt(time.Now()).Build()
+		latestID := testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第4話").WithSortNumber(300).WithDeletedAt(time.Now()).Build()
 
 		otherWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("別の作品").Build()
 		insertEpisodeWithSortNumber(t, tx, otherWorkID, "第1話", 9999)
@@ -1602,19 +1616,16 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 		if createWork.Work.ID != workID {
 			t.Errorf("Work.ID = %d、期待値 = %d", createWork.Work.ID, workID)
 		}
-		if createWork.EpisodeCount != 4 {
-			t.Errorf("EpisodeCount = %d、期待値 = 4", createWork.EpisodeCount)
-		}
-		// ビルダーはsort_numberを0で固定するため、最新のエピソードを決めるのは
-		// 明示的な値で挿入した2行になる。
+		// sort_numberが最大なのは削除済みの第4話で、削除済みの行が持つ値とぶつけないよう
+		// 起点に数える。
 		if createWork.LatestEpisode == nil {
 			t.Fatal("LatestEpisodeがnilだった")
 		}
 		if createWork.LatestEpisode.ID != latestID {
 			t.Errorf("LatestEpisode.ID = %d、期待値 = %d", createWork.LatestEpisode.ID, latestID)
 		}
-		if createWork.LatestEpisode.SortNumber != 200 {
-			t.Errorf("LatestEpisode.SortNumber = %d、期待値 = 200", createWork.LatestEpisode.SortNumber)
+		if createWork.LatestEpisode.SortNumber != 300 {
+			t.Errorf("LatestEpisode.SortNumber = %d、期待値 = 300", createWork.LatestEpisode.SortNumber)
 		}
 	})
 
@@ -1631,9 +1642,6 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 		}
 		if createWork == nil {
 			t.Fatal("createWorkがnilだった")
-		}
-		if createWork.EpisodeCount != 0 {
-			t.Errorf("EpisodeCount = %d、期待値 = 0", createWork.EpisodeCount)
 		}
 		if createWork.LatestEpisode != nil {
 			t.Errorf("LatestEpisode = %+v、期待値 = nil", createWork.LatestEpisode)
@@ -1706,7 +1714,7 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 		}{
 			{name: "予定エピソード数到達", workID: filledWorkID, wantRestriction: model.ManualEpisodeCreationEpisodesFilled},
 			{name: "公開中だけでは予定エピソード数に届かない", workID: keptOnlyWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
-			{name: "放送枠あり", workID: slotWorkID, wantRestriction: model.ManualEpisodeCreationSlotsExist},
+			{name: "放送枠あり", workID: slotWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
 			{name: "制限なし", workID: plainWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
 		}
 
