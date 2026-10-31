@@ -1,0 +1,47 @@
+package episode_generation_report
+
+import "strconv"
+
+// JaHTMLは日本語版のエピソードの自動生成の報告メール (HTML形式) です
+templ JaHTML(data Data) {
+	<!DOCTYPE html>
+	<html lang="ja">
+		<head>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+			<title>エピソードの自動生成の結果</title>
+		</head>
+		<body style="font-family: sans-serif; line-height: 1.6; color: #333; padding: 20px;">
+			<h2>作ったエピソード ({ strconv.Itoa(len(data.CreatedEpisodes)) }件)</h2>
+			if len(data.CreatedEpisodes) > 0 {
+				<ul>
+					for _, episode := range data.CreatedEpisodes {
+						<li>{ episode.WorkTitle } { episode.EpisodeNumber } (<a href={ templ.SafeURL(episode.EpisodesURL) }>エピソード一覧</a>)</li>
+					}
+				</ul>
+			}
+			<p>既存のエピソードに紐づけた放送枠: { strconv.Itoa(data.LinkedSlotCount) }件</p>
+			<h2>飛ばした放送枠 ({ strconv.Itoa(len(data.SkippedSlots)) }件)</h2>
+			if len(data.SkippedSlots) > 0 {
+				<ul>
+					for _, slot := range data.SkippedSlots {
+						<li>放送枠{ slot.SlotID } { slot.WorkTitle }: { slot.Reason }</li>
+					}
+				</ul>
+			}
+			<p>タイトルを入れたエピソード: { strconv.Itoa(data.FilledTitleCount) }件</p>
+			<h2>エラー ({ strconv.Itoa(len(data.Errors)) }件)</h2>
+			if len(data.Errors) > 0 {
+				<ul>
+					for _, e := range data.Errors {
+						if e.Target != "" {
+							<li>{ e.Target + ": " + e.Message }</li>
+						} else {
+							<li>{ e.Message }</li>
+						}
+					}
+				</ul>
+			}
+		</body>
+	</html>
+}

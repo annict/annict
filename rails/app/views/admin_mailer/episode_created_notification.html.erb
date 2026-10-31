@@ -1,9 +1,0 @@
-「<%= link_to "#{@episode.work.title}", work_url(@episode.work, host: ENV.fetch("ANNICT_URL")) %>」のエピソードが追加されました。<br>
-<br>
-<%= @episode.number %><br>
-<% episode_list_url = "#{ENV.fetch("ANNICT_URL")}/db/works/#{@episode.work.id}/episodes" %>
-<%= link_to episode_list_url, episode_list_url %><br>
-<br>
-<br>
----<br>
-<%= ENV['ANNICT_URL'] %>

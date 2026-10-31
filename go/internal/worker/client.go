@@ -35,6 +35,11 @@ type NewClientParams struct {
 	CleanupAnonymousSessions  AnonymousSessionCleaner
 	SyncAnimes                AnimesSyncer
 	DeleteUser                UserDeleter
+	// CreateEpisodesFromSlots / FillEpisodeTitlesは、エピソードの自動生成をまとめる
+	// UseCaseに渡す。まとめるUseCaseは報告メールの送信にこのクライアントが作るメール送信
+	// クライアントを使うため、NewClientの中で組み立てる。
+	CreateEpisodesFromSlots *usecase.CreateEpisodesFromSlotsUsecase
+	FillEpisodeTitles       *usecase.FillEpisodeTitlesUsecase
 }
 
 // SoftStopTimeoutは、停止時に実行中のジョブの完了を待ち、待ちきれなければcontextを
@@ -124,6 +129,21 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	// ユーザーの削除ワーカーを登録する。
 	river.AddWorker(workers, NewDeleteUserWorker(params.DeleteUser))
 	slog.InfoContext(ctx, "DeleteUserWorkerを登録しました")
+
+	// エピソードの自動生成ワーカーを登録する。メール送信クライアントが無いときは、報告メールを
+	// 送らずにログに残す。
+	var reportSender usecase.EpisodeGenerationReportSender
+	if emailSender != nil {
+		reportSender = email.NewEpisodeGenerationReportSender(emailSender, cfg.AppURL())
+	}
+	generateEpisodesUC := usecase.NewGenerateEpisodesUsecase(
+		params.CreateEpisodesFromSlots,
+		params.FillEpisodeTitles,
+		reportSender,
+		cfg.AdminEmail,
+	)
+	river.AddWorker(workers, NewGenerateEpisodesWorker(generateEpisodesUC))
+	slog.InfoContext(ctx, "GenerateEpisodesWorkerを登録しました")
 
 	// Riverにはslog.Default() ではなく素の標準エラー出力ハンドラーで
 	// ログを取らせる。slog.Default() のハンドラーはErrorレベルをSentryへ

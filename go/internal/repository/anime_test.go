@@ -210,3 +210,31 @@ func TestAnimeRepository_UpdateStatus(t *testing.T) {
 		t.Errorf("ArchiveMessage = %q、期待値 = 保持するメッセージ", got.ArchiveMessage.String)
 	}
 }
+
+// TestAnimeRepository_UpdateTitleは、タイトルだけを更新し、ほかのカラムを書き戻さないことを
+// 検証する。
+func TestAnimeRepository_UpdateTitle(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewAnimeRepository(query.New(db).WithTx(tx))
+
+	created, err := repo.Create(context.Background(), fullCreateAnimeParams())
+	if err != nil {
+		t.Fatalf("Create()のエラー = %v", err)
+	}
+	if err := repo.UpdateTitle(context.Background(), created.ID, "妻役を確保せよ"); err != nil {
+		t.Fatalf("UpdateTitle()のエラー = %v", err)
+	}
+
+	got, err := repo.GetByID(context.Background(), created.ID)
+	if err != nil {
+		t.Fatalf("GetByID()のエラー = %v", err)
+	}
+	if got.Title.String != "妻役を確保せよ" {
+		t.Errorf("Title = %q、期待値 = 妻役を確保せよ", got.Title.String)
+	}
+	if got.TitleKana.String != "てすとあにめ" || got.Synopsis.String != "あらすじ" {
+		t.Errorf("(TitleKana, Synopsis) = (%q, %q)、期待値 = (てすとあにめ, あらすじ)", got.TitleKana.String, got.Synopsis.String)
+	}
+}

@@ -5,8 +5,8 @@
       "schedule": "0 18 * * *"
     },
     {
-      "command": "bundle exec rails episode:generate",
-      "schedule": "0 20 * * *"
+      "command": "bundle exec rails data_care:update_next_resources_on_library_entries",
+      "schedule": "30 20 * * *"
     },
     {
       "command": "bundle exec rails doorkeeper:revoke_access_tokens",

@@ -80,6 +80,9 @@ type Querier interface {
 	// Railsのsave_and_create_activity! と同じepisodes.createのDB活動を、挿入行を
 	// parameters.newとして記録する。
 	CreateEpisode(ctx context.Context, arg CreateEpisodeParams) (int64, error)
+	// 放送枠から自動生成するエピソードを挿入する。CreateEpisodeと違い、DB活動は記録しない。
+	// Railsの自動生成も編集者を伴わずに作成し、DB活動を残さないため。
+	CreateGeneratedEpisode(ctx context.Context, arg CreateGeneratedEpisodeParams) (int64, error)
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
 	CreatePasswordResetToken(ctx context.Context, arg CreatePasswordResetTokenParams) (PasswordResetToken, error)
@@ -346,10 +349,6 @@ type Querier interface {
 	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
 	ExistsNumberFormatByID(ctx context.Context, id int64) (bool, error)
 	ExistsPrefectureByID(ctx context.Context, id int64) (bool, error)
-	// RailsアクションのWork.without_deleted.findと同じ順序で、送信行をパースする前に親作品を
-	// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
-	// 判断には使わない。
-	ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error)
 	GetActiveUserByEmailForSignIn(ctx context.Context, lower string) (GetActiveUserByEmailForSignInRow, error)
 	GetActiveUserByEmailOrUsername(ctx context.Context, lower string) (GetActiveUserByEmailOrUsernameRow, error)
 	// 論理削除されていないユーザーをIDで取得する。
@@ -451,6 +450,16 @@ type Querier interface {
 	GetRecordByUserAndWork(ctx context.Context, arg GetRecordByUserAndWorkParams) (GetRecordByUserAndWorkRow, error)
 	GetSessionByID(ctx context.Context, sessionID string) (Session, error)
 	GetSettingByUserID(ctx context.Context, userID int64) (GetSettingByUserIDRow, error)
+	// 作品ロック後に、現在も対象の放送枠だけを読み直す。所属作品はロックした作品に限る。
+	// 放送枠もロックし、話数の計算から紐づけまでの間に回数・番組・公開状態を変更させない。
+	// ほかのトランザクションがロックしている放送枠は待たずに飛ばし、次の実行で拾い直す。
+	// Railsは放送枠を保存すると、放送枠の行を更新してから作品をtouchするため、作品を先に
+	// ロックしたここで放送枠の行を待つと、互いの行を待ち合ってデッドロックする。
+	//
+	// preceding_irregular_countは話数の計算で回数から引く不定期放送の数。この放送枠より回数が
+	// 小さく、番組の下限以上のものだけを数える。後ろの不定期放送まで数えると、すでに紐づいた
+	// 放送枠と同じ話数を求めてしまうため。
+	GetSlotForEpisodeGenerationByID(ctx context.Context, arg GetSlotForEpisodeGenerationByIDParams) (GetSlotForEpisodeGenerationByIDRow, error)
 	// スタッフ自身が公開状態 (unpublished_atとdeleted_atがともにNULL) の行だけを返す。
 	// 人物を参照する行 (resource_type = 'Person') は、人物が公開中 (published) のものに限り、
 	// 非公開 (archived)・掲載停止 (delisted)・削除 (deleted) の人物の行は、Rails版の作品ページと同じく除外する
@@ -471,12 +480,12 @@ type Querier interface {
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
 	GetWorkByID(ctx context.Context, id int64) (GetWorkByIDRow, error)
 	GetWorkForEditByID(ctx context.Context, id int64) (GetWorkForEditByIDRow, error)
-	// episode_countとlatest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の
-	// 新規エピソードはepisode_count * 100の1ステップ先から始まり、sort_numberが最大の
-	// エピソードが最初に作る行のprev_episode_idになる。どちらも非公開・削除済みを除外せずに
-	// 作品のエピソードを集計する (Railsのフォームのwork.episodes.countと同じ)。エピソードを
-	// 非公開にした作品で、既に使われているsort_numberを振り直さないため。anime_idは作成が
-	// 参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品のanimeを必要とする)。
+	// latest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の新規エピソードは
+	// 作品の最大のsort_numberの1ステップ先から始まり、その最大の行が最初に作る行の
+	// prev_episode_idになる。非公開・削除済みを除外せずに集計する。削除済みの行が持つ値と
+	// ぶつけないためと、開始話数が1でない作品で自動生成が置いたエピソードより前に並ばないように
+	// するため。anime_idは作成が参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品の
+	// animeを必要とする)。
 	//
 	// latest_episode_id / latest_sort_numberは、作品がまだエピソードを持たないとき0に
 	// なる。idは正の値のため、呼び出し側は0を「直前のエピソードなし」と読む (上の
@@ -484,19 +493,27 @@ type Querier interface {
 	GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (GetWorkForEpisodeCreateByIDRow, error)
 	// エピソードフォームは、見出しでの名指し、共有サブナビの出し分け、およびRailsの
 	// 手動作成ガードを保つために作品を取得する。公開中のエピソード数がmanual_episodes_countに
-	// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
-	// 見るが、表示層で上書きして作成できる。
-	GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error)
-	// published_episode_countとmax_generatable_episode_numberはエピソード一覧の自動生成の
-	// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
-	// 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも1作品について別テーブルを
-	// 集計する値のため、作品の行と一緒に引いてページの往復を増やさない。
+	// 達した作品には編集者が追加できない。管理者も警告は見るが、表示層で上書きして作成できる。
 	//
-	// max_generatable_episode_numberが使うMAXはNULLを飛ばすが、Railsの案内は作品の有効な
-	// スロットをnumber降順に並べた先頭行を読む。PostgreSQLのDESCはNULLS FIRSTのため、
-	// number未設定の有効スロットが1件でもあればRailsはその行に当たって0を報告する。
-	// MAXが報告するのは自動生成が実際に到達する話数であり、Railsと結果が分かれるのは
-	// 移植漏れではなく意図的な選択。
+	// has_active_slotsは、作品が有効な放送枠 (未削除・公開中) を持つか。持つ作品では自動生成が
+	// 話数でエピソードを照合するため、一括作成のすべての行に話数を求める。
+	GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error)
+	// 放送枠からエピソードを作るときに、作品をロックした後で読む。話数の計算 (開始話数)・予定
+	// エピソード数との比較・表示の番号の書式・作品のanimeを返す。max_sort_numberは削除済み・
+	// 非公開を含む全エピソードの最大値で、末尾に足すエピソードの並び順の起点になる。削除済みの行が
+	// 持つ値と並び順がぶつからないようにするため。作品がエピソードを持たないあいだは0になる。
+	// 一覧を読んだ後に非公開・削除にされた作品は返さず、呼び出し側はその放送枠を飛ばす。
+	GetWorkForEpisodeGenerationByID(ctx context.Context, id int64) (GetWorkForEpisodeGenerationByIDRow, error)
+	// published_episode_countとmax_generatable_episode_numberはエピソード一覧の自動生成の
+	// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者は自動生成が作品の放送枠から
+	// 作るエピソードの数を表す。どちらも1作品について別テーブルを集計する値のため、作品の行と
+	// 一緒に引いてページの往復を増やさない。
+	//
+	// max_generatable_episode_numberは、自動生成の対象と同じ条件 (未削除・公開中で、再放送でも
+	// 不定期放送でもなく、番組と回数を持つ) の放送枠について、作品内の順番 (回数から、その
+	// 放送枠より前にある番組の不定期放送の数を引いたもの) の最大値をとる。自動生成が話数の計算と
+	// 予定エピソード数との比較に使うのと同じ数え方で、不定期放送のある番組でも回数そのものより
+	// 実際に作られる数を表す。
 	GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error)
 	// Annict DBの作品の状態変更 (非公開・公開・削除) の確認画面が共有する射影。各画面が対象を
 	// 名指しするタイトルと、呼び出し側が現在の状態を導出してその操作を適用できない作品を弾くための
@@ -516,6 +533,10 @@ type Querier interface {
 	InvalidateUserPasswordResetTokens(ctx context.Context, userID int64) error
 	InvalidateUserSignInCodes(ctx context.Context, userID int64) error
 	IsFeatureFlagEnabled(ctx context.Context, arg IsFeatureFlagEnabledParams) (bool, error)
+	// 照合に使った所属・番組・回数・開始時刻と対象条件を満たす放送枠だけを書き込む。
+	// 0行なら呼び出し側は生成をロールバックする。Railsのupdate_column相当で、updated_atも
+	// 作品のtouchも行わない。
+	LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
 	ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeClassification, error)
 	ListAnimeEventsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeEvent, error)
@@ -550,6 +571,18 @@ type Querier interface {
 	// UpdateDBEpisodeが自身のスナップショットで導出し直すことで開く窓と同じものである。
 	ListEpisodeIDsForEpisodeUpdateByID(ctx context.Context, arg ListEpisodeIDsForEpisodeUpdateByIDParams) ([]int64, error)
 	ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodesForAnimeSyncByIDsRow, error)
+	// 放送枠からエピソードを作るときに、作品をロックした後で読む。既存のエピソードとの照合と、
+	// 新しいエピソードを並びのどこに入れるかの判断に使う。並びに数えるのは未削除のエピソード
+	// (非公開を含む) で、エピソードの更新が隣接行を導出するのと同じ順序 (sort_number、同値なら
+	// id) で返す。linked_to_programは、同じ番組のいずれかの放送枠 (削除済みを含む) がその
+	// エピソードを指しているか。slots(program_id, episode_id) の一意制約は削除済みの放送枠にも
+	// かかるため、照合ではこれが真の候補に紐づけない。
+	ListEpisodesForEpisodeGenerationByWorkID(ctx context.Context, arg ListEpisodesForEpisodeGenerationByWorkIDParams) ([]ListEpisodesForEpisodeGenerationByWorkIDRow, error)
+	// しょぼいカレンダーからタイトルを入れる対象は、RailsのSyobocalEpisodeDataFetcherServiceと
+	// 同じく、未削除・公開中でタイトルが空、整数の話数を持ち、created_from以降に作られた
+	// エピソードのうち、作品がしょぼいカレンダーのTIDを持ち、番組のある放送枠に紐づいているもの。
+	// 作品も未削除・公開中に限る (Railsも対象の作品をWork.only_keptで引き直す)。
+	ListEpisodesForTitleFill(ctx context.Context, createdFrom time.Time) ([]ListEpisodesForTitleFillRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
 	// 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
 	// 同じく、deletedの人物だけを除いて照合する。掲載停止 (delisted) の人物との重複を別の
@@ -561,6 +594,11 @@ type Querier interface {
 	// 退会の削除処理でストレージから消す画像を求めるため、ユーザーのプロフィール画像と背景画像の
 	// Shrineの添付データを取得する。
 	ListProfileImageDataByUserID(ctx context.Context, userID int64) ([]ListProfileImageDataByUserIDRow, error)
+	// 自動生成の対象はRailsのepisode:generateと同じ条件 (未削除・公開中で、エピソードが紐づいて
+	// おらず、再放送でも不定期放送でもなく、番組と回数を持つ) の放送枠に、開始日時の範囲と作品が
+	// 未削除・公開中であることを加えたもの。
+	// 一覧では処理するidと所属作品だけを読み、話数の計算に使う値は作品ロック後に読み直す。
+	ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlotsForEpisodeGenerationParams) ([]ListSlotsForEpisodeGenerationRow, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
@@ -645,6 +683,9 @@ type Querier interface {
 	// スナップショットを書き戻さず本クエリを使うことで、事前読み取り後にコミットされた無関係な
 	// 内容編集を保持する。
 	UpdateAnimeStatus(ctx context.Context, arg UpdateAnimeStatusParams) error
+	// しょぼいカレンダーのサブタイトルをエピソードに入れたときに、そのエピソードのanimeへ同じ
+	// タイトルを両書きする。ほかのカラムは書き戻さず、事前の読み取り後の編集を上書きしない。
+	UpdateAnimeTitle(ctx context.Context, arg UpdateAnimeTitleParams) error
 	// 送信が名乗る版の照合は、直前の読み取りとの比較ではなくUPDATEの中で行う。比較と書き込み
 	// の間に他の書き込みが挟まらないようにするため。共有カラムはNULL許容のためNULLも明示的な
 	// 版であり、IS NOT DISTINCT FROMなら2文に分けずに照合できる。書き込みはupdated_atを進める
@@ -704,6 +745,17 @@ type Querier interface {
 	// しまうため。
 	UpdateDBPerson(ctx context.Context, arg UpdateDBPersonParams) (int64, error)
 	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
+	// 問い合わせに使った作品・話数・TIDと対象条件が一致する間だけタイトルを入れる。作品を
+	// ロックしてTIDを保持し、エピソードのUPDATEによる行ロックをコミットまで保持する。
+	// Railsはエピソード行の更新後に作品をtouchするため、編集でロック中のエピソードを待つと
+	// 作品とのロック順が逆転する。その行は待たずに飛ばし、次の実行へ回す。
+	// 両書き先は更新した行の現在のanime_idを返す。DB活動・作品のtouch・updated_atの更新は
+	// Railsのupdate_columnと同じく行わない。
+	UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisodeEmptyTitleParams) (UpdateEpisodeEmptyTitleRow, error)
+	// 並びの途中に入れたエピソードの直後の行が、新しいエピソードを前のエピソードとして名乗るように
+	// 張り替える。UpdateDBEpisodeが移動で隣接行を張り替えるのと同じく、並び順から導出される値の
+	// 維持であって編集ではないため、DB活動・作品のtouch・updated_atの更新は行わない。
+	UpdateEpisodePrevEpisodeID(ctx context.Context, arg UpdateEpisodePrevEpisodeIDParams) (int64, error)
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
 	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error

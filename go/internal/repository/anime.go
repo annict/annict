@@ -126,6 +126,14 @@ func (r *AnimeRepository) UpdateStatus(ctx context.Context, id model.AnimeID, st
 	})
 }
 
+// UpdateTitleはアニメのタイトルだけを更新する。
+func (r *AnimeRepository) UpdateTitle(ctx context.Context, id model.AnimeID, title string) error {
+	return r.queries.UpdateAnimeTitle(ctx, query.UpdateAnimeTitleParams{
+		ID:    int64(id),
+		Title: sql.NullString{String: title, Valid: true},
+	})
+}
+
 // GetByIDはIDでアニメを検索する。該当行が無い場合は (nil, nil) を返し、
 // sql.ErrNoRowsをRepositoryの外へ漏らさない。
 func (r *AnimeRepository) GetByID(ctx context.Context, id model.AnimeID) (*model.Anime, error) {

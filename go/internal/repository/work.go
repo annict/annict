@@ -156,8 +156,9 @@ type DBEpisodeListWork struct {
 	// (Railsのonly_keptスコープ) の件数。一覧自体の総件数とは異なる (一覧は非公開の
 	// エピソードも表示するため総件数に含める)。
 	PublishedEpisodeCount int64
-	// MaxGeneratableEpisodeNumberは作品が持つ有効なスロットの最大numberで、しょぼい
-	// カレンダー由来の自動生成が到達する話数を表す。そのようなスロットが無い作品では0。
+	// MaxGeneratableEpisodeNumberは、自動生成の対象と同じ条件の放送枠について、作品内の
+	// 順番 (前にある不定期放送を回数から引いたもの) の最大値で、自動生成が作るエピソードの数を
+	// 表す。そのような放送枠が無い作品では0。
 	MaxGeneratableEpisodeNumber int64
 }
 
@@ -197,12 +198,16 @@ func (r *WorkRepository) GetForEpisodeListByID(ctx context.Context, id model.Wor
 type DBEpisodeFormWork struct {
 	Work                *model.Work
 	ManualCreationState model.ManualEpisodeCreationState
+	// HasActiveSlotsは、作品が有効な放送枠 (未削除・公開中) を持つか。持つ作品では自動生成が
+	// 話数でエピソードを照合するため、一括作成のすべての行に話数を求める。
+	HasActiveSlots bool
 }
 
 // GetForEpisodeFormByIDはAnnict DBのエピソードフォームが親作品から必要とするもの
-// (ページ見出しに使うtitle、共有の作品サブナビが使うno_episodes、手動作成を制限する理由)
-// を読み込む。削除済みの作品はクエリ側で除外するため、(nil, nil) はフォームを出せる作品が
-// そのidに無いことを表す。
+// (ページ見出しに使うtitle、共有の作品サブナビが使うno_episodes、手動作成を制限する理由、
+// 有効な放送枠の有無) を読み込む。削除済みの作品はクエリ側で除外するため、(nil, nil) は
+// フォームを出せる作品がそのidに無いことを表す。一括作成は、入力行をパースする前の作品の確認にも
+// これを使う。
 func (r *WorkRepository) GetForEpisodeFormByID(ctx context.Context, id model.WorkID) (*DBEpisodeFormWork, error) {
 	row, err := r.queries.GetWorkForEpisodeFormByID(ctx, int64(id))
 	if err != nil {
@@ -220,8 +225,8 @@ func (r *WorkRepository) GetForEpisodeFormByID(ctx context.Context, id model.Wor
 		},
 		ManualCreationState: model.ManualEpisodeCreationState{
 			EpisodesFilled: row.EpisodesFilled.Valid && row.EpisodesFilled.Bool,
-			SlotsExist:     row.SlotsExist,
 		},
+		HasActiveSlots: row.HasActiveSlots,
 	}, nil
 }
 
@@ -232,19 +237,12 @@ func (r *WorkRepository) GetForEpisodeFormByID(ctx context.Context, id model.Wor
 type DBEpisodeCreateWork struct {
 	Work                *model.Work
 	ManualCreationState model.ManualEpisodeCreationState
-	// EpisodeCountは作品のエピソードを、非公開のものも削除済みのものも含めて数える
-	// (採番の元にしたRailsのフォームと同じ)。
-	EpisodeCount int64
-	// LatestEpisodeはsort_numberが最大のエピソードで、最初に作る行が直前の
-	// エピソードとして名指しする。作品がエピソードを持たないあいだはnil。
+	// HasActiveSlotsは話数を必須にする、有効な放送枠の存在を表す。
+	HasActiveSlots bool
+	// LatestEpisodeは非公開・削除済みを含めてsort_numberが最大のエピソードで、最初に作る
+	// 行はその1ステップ先に並び、これを直前のエピソードとして名指しする。作品がエピソードを
+	// 持たないあいだはnil。
 	LatestEpisode *DBEpisodeSortAnchor
-}
-
-// ExistsForEpisodeCreateByIDは指定された未削除作品が存在するかを返す。作成ユースケースは
-// 入力行をパースする前にこの軽量な確認を行い、書き込みトランザクション内で同じ作品をロック
-// して再確認する。
-func (r *WorkRepository) ExistsForEpisodeCreateByID(ctx context.Context, id model.WorkID) (bool, error) {
-	return r.queries.ExistsWorkForEpisodeCreateByID(ctx, int64(id))
 }
 
 // LockForEpisodeCreateByIDは現在のトランザクションで対象作品をロックする。このロックで
@@ -288,11 +286,10 @@ func (r *WorkRepository) GetForEpisodeCreateByID(ctx context.Context, id model.W
 	}
 
 	result := &DBEpisodeCreateWork{
-		Work:         work,
-		EpisodeCount: row.EpisodeCount,
+		Work:           work,
+		HasActiveSlots: row.HasActiveSlots,
 		ManualCreationState: model.ManualEpisodeCreationState{
 			EpisodesFilled: row.EpisodesFilled.Valid && row.EpisodesFilled.Bool,
-			SlotsExist:     row.SlotsExist,
 		},
 	}
 	if row.LatestEpisodeID != 0 {
@@ -319,6 +316,62 @@ func (r *WorkRepository) IncrementEpisodesCount(ctx context.Context, workID mode
 		return errors.New("作品のエピソード件数を更新できませんでした")
 	}
 	return nil
+}
+
+// DBEpisodeGenerationWorkは放送枠からエピソードを作るときの親作品を表す。作品そのもの
+// (話数の計算と予定エピソード数との比較に使う値) と、表示の番号の書式、並び順の起点になる
+// 値を持つ。起点の値はworksのカラムではなく作品のエピソードの集計であるため、model.Workに
+// 畳み込まず作品と並べて持つ。
+type DBEpisodeGenerationWork struct {
+	Work *model.Work
+	// NumberFormatは作品に設定された番号の書式で、設定が無いときはnil。
+	NumberFormat *model.NumberFormat
+	// MaxSortNumberは削除済み・非公開を含む全エピソードのsort_numberの最大値で、作品が
+	// エピソードを持たないときは0。
+	MaxSortNumber int32
+}
+
+// GetForEpisodeGenerationByIDは放送枠からエピソードを作るときの親作品を読み込む。
+// 削除済み・非公開の作品はクエリ側で除外するため、(nil, nil) はエピソードを作れる作品が
+// そのidに無いことを表す。
+func (r *WorkRepository) GetForEpisodeGenerationByID(ctx context.Context, id model.WorkID) (*DBEpisodeGenerationWork, error) {
+	row, err := r.queries.GetWorkForEpisodeGenerationByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	work := &model.Work{
+		ID:                    model.WorkID(row.ID),
+		Title:                 row.Title,
+		StartEpisodeRawNumber: row.StartEpisodeRawNumber,
+	}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		work.AnimeID = &animeID
+	}
+	if row.ManualEpisodesCount.Valid {
+		count := row.ManualEpisodesCount.Int32
+		work.ManualEpisodesCount = &count
+	}
+
+	result := &DBEpisodeGenerationWork{
+		Work:          work,
+		MaxSortNumber: row.MaxSortNumber,
+	}
+	if row.NumberFormatID.Valid {
+		numberFormatID := model.NumberFormatID(row.NumberFormatID.Int64)
+		work.NumberFormatID = &numberFormatID
+		result.NumberFormat = &model.NumberFormat{
+			ID:     numberFormatID,
+			Format: row.NumberFormatFormat,
+			Data:   row.NumberFormatData,
+		}
+	}
+
+	return result, nil
 }
 
 // GetPopularは人気作品を返す。戻り値の各 *model.Workは呼び出しごとに新規生成されるため、
