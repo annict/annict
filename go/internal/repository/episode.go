@@ -657,7 +657,8 @@ func (r *EpisodeRepository) ListForTitleFill(ctx context.Context, createdFrom ti
 
 // UpdateEmptyTitleは、問い合わせに使った識別値と対象条件が一致するエピソードにタイトルを
 // 入れ、更新した行のIDと現在のAnimeIDを返す。WithTxで使い、animeも同じトランザクションで
-// 更新する。nilは対象が変化したかタイトルが入り、何も書かなかったことを表す。
+// 更新する。nilは、対象が変化したかタイトルが入っていたとき、またはほかのトランザクションが
+// エピソードをロックしていたときに、何も書かなかったことを表す。
 func (r *EpisodeRepository) UpdateEmptyTitle(ctx context.Context, target DBEpisodeTitleFillTarget, title string, createdFrom time.Time) (*model.Episode, error) {
 	row, err := r.queries.UpdateEpisodeEmptyTitle(ctx, query.UpdateEpisodeEmptyTitleParams{
 		ID:          int64(target.Episode.ID),
