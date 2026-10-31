@@ -2341,6 +2341,10 @@ other = "一度に登録するエピソードは{{.MaxRows}}件以内にして�
 description = "予定エピソード数までエピソードが登録済みの作品にエピソードを登録しようとした"
 other = "予定エピソード数分のエピソードがすでに登録されているため、エピソードを登録できません"
 
+[validation_episode_sort_number_overflow]
+description = "一括作成するエピソードの並び順が整数の上限を超える"
+other = "追加するエピソードの並び順が上限を超えます。既存のエピソードの並び順を調整してから登録してください"
+
 [validation_episode_row_number_or_title_required]
 description = "エピソードの行に表示用話数もタイトルも入力されていない"
 other = "表示用話数かタイトルのいずれかを入力してください"

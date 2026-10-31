@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"math"
 	"strings"
 	"sync"
 	"testing"
@@ -733,6 +734,91 @@ func TestCreateEpisodesUsecase_Execute_RechecksRawNumberAfterWorkLock(t *testing
 			}
 			if count := countWorkEpisodes(t, db, workID); count != 0 {
 				t.Errorf("作成エピソード数 = %d、期待値 = 0", count)
+			}
+		})
+	}
+}
+
+// TestCreateEpisodesUsecase_Execute_ValidatesSortNumberRangeは、途中の行で上限を超える
+// 送信も保存前に拒否し、最後の行がint32の上限に収まる場合は正しく末尾に登録することを検証する。
+func TestCreateEpisodesUsecase_Execute_ValidatesSortNumberRange(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name         string
+		maxSort      int32
+		rows         string
+		wantCount    int
+		wantOverflow bool
+	}{
+		{name: "最初の行で上限を超える", maxSort: math.MaxInt32 - 7, rows: "#2,2,つづき", wantOverflow: true},
+		{name: "2行目で上限を超える", maxSort: math.MaxInt32 - 150, rows: "#2,2,つづき\n#3,3,その後", wantOverflow: true},
+		{name: "最後の行が上限ちょうど", maxSort: math.MaxInt32 - 200, rows: "#2,2,つづき\n#3,3,その後", wantCount: 2},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db := testutil.GetTestDB()
+			workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
+			anchorID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, tt.maxSort))
+			user := insertCreateActor(t, db, model.RoleEditor)
+			var beforeCount int32
+			var beforeUpdatedAt time.Time
+			if err := db.QueryRow(`SELECT episodes_count, updated_at FROM works WHERE id = $1`, int64(workID)).Scan(&beforeCount, &beforeUpdatedAt); err != nil {
+				t.Fatalf("作品の更新前の状態の取得に失敗: %v", err)
+			}
+
+			output, err := newCreateEpisodesUsecase(db).Execute(context.Background(), CreateEpisodesInput{
+				WorkID: workID,
+				User:   user,
+				Rows:   tt.rows,
+			})
+			if tt.wantOverflow {
+				if output != nil {
+					t.Errorf("Execute()の出力 = %+v、期待値 = nil", output)
+				}
+				ve := model.AsValidationError(err)
+				if ve == nil {
+					t.Fatalf("Execute()のエラー = %v、期待値 = *model.ValidationError", err)
+				}
+				if len(ve.Global) != 1 || len(ve.GetFieldErrors("rows")) != 0 || !strings.Contains(ve.Global[0], "並び順が上限を超えます") {
+					t.Errorf("エラー = %+v、期待値 = 並び順の上限についてのグローバルエラー1件", ve)
+				}
+				if count := countWorkEpisodes(t, db, workID); count != 1 {
+					t.Errorf("エピソード数 = %d、期待値 = 既存の1件のみ", count)
+				}
+				var classificationCount, activityCount int
+				if err := db.QueryRow(`SELECT COUNT(*) FROM anime_classifications WHERE parent_anime_id = $1`, int64(parentAnimeID)).Scan(&classificationCount); err != nil {
+					t.Fatalf("分類件数の取得に失敗: %v", err)
+				}
+				if err := db.QueryRow(`SELECT COUNT(*) FROM db_activities WHERE user_id = $1`, int64(user.ID)).Scan(&activityCount); err != nil {
+					t.Fatalf("活動履歴件数の取得に失敗: %v", err)
+				}
+				var afterCount int32
+				var afterUpdatedAt time.Time
+				if err := db.QueryRow(`SELECT episodes_count, updated_at FROM works WHERE id = $1`, int64(workID)).Scan(&afterCount, &afterUpdatedAt); err != nil {
+					t.Fatalf("作品の更新後の状態の取得に失敗: %v", err)
+				}
+				if classificationCount != 0 || activityCount != 0 || afterCount != beforeCount || !afterUpdatedAt.Equal(beforeUpdatedAt) {
+					t.Errorf("拒否後 = (分類%d件, 活動%d件, 作品件数%d, 更新日時%v)、期待値 = 副作用なし (作品件数%d, 更新日時%v)", classificationCount, activityCount, afterCount, afterUpdatedAt, beforeCount, beforeUpdatedAt)
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("Execute()のエラー = %v", err)
+			}
+			if len(output.EpisodeIDs) != tt.wantCount {
+				t.Fatalf("作成エピソード数 = %d、期待値 = %d", len(output.EpisodeIDs), tt.wantCount)
+			}
+			prevID := anchorID
+			for i, id := range output.EpisodeIDs {
+				created := readCreatedEpisode(t, db, id)
+				wantSort := int64(tt.maxSort) + int64(i+1)*int64(episodeSortNumberStep)
+				if int64(created.sortNumber) != wantSort || !created.prevEpisodeID.Valid || created.prevEpisodeID.Int64 != int64(prevID) {
+					t.Errorf("%d行目 = (並び順%d, 前の話%+v)、期待値 = (並び順%d, 前の話%d)", i+1, created.sortNumber, created.prevEpisodeID, wantSort, prevID)
+				}
+				prevID = id
 			}
 		})
 	}

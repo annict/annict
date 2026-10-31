@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"math"
 
 	"github.com/annict/annict/go/internal/i18n"
 	"github.com/annict/annict/go/internal/model"
@@ -177,6 +178,12 @@ func (uc *CreateEpisodesUsecase) createEpisodes(
 		maxSortNumber = work.LatestEpisode.SortNumber
 		prevEpisodeID = &work.LatestEpisode.ID
 	}
+	// 全行の並び順を広い整数型で先に検査し、途中の行でint32の上限を超える送信も拒否する。
+	if int64(maxSortNumber)+int64(len(rows))*int64(episodeSortNumberStep) > math.MaxInt32 {
+		ve := model.NewValidationError()
+		ve.AddGlobal(i18n.T(ctx, "validation_episode_sort_number_overflow"))
+		return nil, ve
+	}
 	position := appendedEpisodePosition(maxSortNumber, prevEpisodeID)
 	episodeIDs := make([]model.EpisodeID, 0, len(rows))
 
@@ -210,7 +217,9 @@ func (uc *CreateEpisodesUsecase) createEpisodes(
 		}
 		episodeIDs = append(episodeIDs, episodeID)
 
-		position = appendedEpisodePosition(position.SortNumber, &episodeID)
+		if i+1 < len(rows) {
+			position = appendedEpisodePosition(position.SortNumber, &episodeID)
+		}
 	}
 
 	createdCount := int32(len(rows)) // #nosec G115 -- 1回の送信は検証で100行までに制限される
