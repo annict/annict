@@ -202,7 +202,7 @@ func TestSlotRepository_GenerationRejectsChangedSlot(t *testing.T) {
 			}
 			got, err := repo.GetForEpisodeGenerationByID(ctx, slotID, workID, now.Add(-time.Hour), now.Add(time.Hour))
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("変更後のGetForEpisodeGenerationByID()のエラー = %v", err)
 			}
 			if change.name == "回数変更" {
 				if got == nil || got.Number != 2 {

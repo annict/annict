@@ -464,7 +464,7 @@ func TestCreateEpisodesFromSlotsUsecase_RereadsSlot(t *testing.T) {
 			uc := newCreateEpisodesFromSlotsUsecase(db)
 			candidates, err := uc.slotRepo.ListForEpisodeGeneration(ctx, now.Add(-episodeGenerationWindow), now.Add(episodeGenerationWindow))
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("ListForEpisodeGeneration()のエラー = %v", err)
 			}
 			var candidate *model.Slot
 			for _, slot := range candidates {
@@ -494,7 +494,7 @@ func TestCreateEpisodesFromSlotsUsecase_RereadsSlot(t *testing.T) {
 			}
 			result, err := uc.processSlot(ctx, candidate, now)
 			if err != nil {
-				t.Fatal(err)
+				t.Fatalf("processSlot()のエラー = %v", err)
 			}
 			if change.wantRawNumber == 0 {
 				if result.created != nil || result.linked || result.skipped != nil || readSlotEpisodeID(t, db, slotID).Valid || countWorkEpisodes(t, db, workID) != 0 {
@@ -532,7 +532,7 @@ func TestCreateEpisodesFromSlotsUsecase_IgnoresAlreadyLinkedSlot(t *testing.T) {
 	}
 	again, err := uc.processSlot(ctx, candidate, now)
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("2回目のprocessSlot()のエラー = %v", err)
 	}
 	if again.created != nil || again.linked || again.skipped != nil || countWorkEpisodes(t, db, workID) != 1 {
 		t.Errorf("紐づき済みの結果 = %+v、期待値 = 生成・紐づけ・報告なし", again)
@@ -598,10 +598,10 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollback(t *testin
 	firstID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
 	thirdID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 3, 300))
 	if _, err := db.Exec(`UPDATE episodes SET prev_episode_id = $2, updated_at = '2001-01-01' WHERE id = $1`, int64(thirdID), int64(firstID)); err != nil {
-		t.Fatal(err)
+		t.Fatalf("第3話の前のエピソードの設定に失敗: %v", err)
 	}
 	if _, err := db.Exec(`UPDATE works SET episodes_count = $2, updated_at = '2001-01-01' WHERE id = $1`, int64(workID), math.MaxInt32); err != nil {
-		t.Fatal(err)
+		t.Fatalf("作品のエピソード件数の設定に失敗: %v", err)
 	}
 	failedProgram := insertGenerationProgram(t, db, workID, 1)
 	failedSlotID := failedProgram.insertSlot(2, now, nil)
@@ -611,7 +611,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollback(t *testin
 
 	output, err := newCreateEpisodesFromSlotsUsecase(db).Execute(ctx, CreateEpisodesFromSlotsInput{Now: now})
 	if err != nil {
-		t.Fatal(err)
+		t.Fatalf("Execute()のエラー = %v", err)
 	}
 	if len(output.FailedSlots) != 1 || len(output.CreatedEpisodes) != 1 || len(output.SkippedSlots) != 0 || output.LinkedSlotCount != 0 {
 		t.Fatalf("結果 = %+v、期待値 = 失敗1件・作成1件", output)
@@ -634,13 +634,13 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollback(t *testin
 		episodeUpdatedAt    time.Time
 	)
 	if err := db.QueryRow(`SELECT COUNT(*) FROM anime_classifications WHERE parent_anime_id = $1`, int64(parentAnimeID)).Scan(&classificationCount); err != nil {
-		t.Fatal(err)
+		t.Fatalf("分類の読み込みに失敗: %v", err)
 	}
 	if err := db.QueryRow(`SELECT prev_episode_id, updated_at FROM episodes WHERE id = $1`, int64(thirdID)).Scan(&prevEpisodeID, &episodeUpdatedAt); err != nil {
-		t.Fatal(err)
+		t.Fatalf("第3話の読み込みに失敗: %v", err)
 	}
 	if err := db.QueryRow(`SELECT episodes_count, updated_at FROM works WHERE id = $1`, int64(workID)).Scan(&episodesCount, &workUpdatedAt); err != nil {
-		t.Fatal(err)
+		t.Fatalf("作品の読み込みに失敗: %v", err)
 	}
 	if classificationCount != 0 || prevEpisodeID != int64(firstID) || episodesCount != math.MaxInt32 || workUpdatedAt.Year() != 2001 || episodeUpdatedAt.Year() != 2001 {
 		t.Errorf("失敗後 = (分類%d件, 前の話%d, 作品件数%d, 作品更新%v, エピソード更新%v)、期待値 = 書き込み前の値", classificationCount, prevEpisodeID, episodesCount, workUpdatedAt, episodeUpdatedAt)
