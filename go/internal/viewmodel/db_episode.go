@@ -209,7 +209,7 @@ func NewDBEpisodeGenerationSummary(
 
 // DBEpisodeManualCreationRestrictionは、作品のエピソードを手動作成できない理由の
 // Presentation層への射影。一括作成ページは理由ごとの警告を描画し、フォームの無効化も同じ値
-// から決めるため、複数の条件のどれが優先されるかをページ側で導出せず1つの値を読む。
+// から決めるため、ページ側で条件を導出せず1つの値を読む。
 //
 // PublishingStatusと同じく定数はリテラルで書き、テンプレートがmodelへ直接依存しないように
 // する。ドメインenumとの対応はNewDBEpisodeManualCreationRestrictionが固定し、両者を比較
