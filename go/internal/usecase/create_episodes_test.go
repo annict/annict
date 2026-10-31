@@ -640,3 +640,100 @@ func TestCreateEpisodesUsecase_Execute_RequiresRawNumberForWorkWithSlots(t *test
 		t.Errorf("len(EpisodeIDs) = %d、期待値 = 2", len(output.EpisodeIDs))
 	}
 }
+
+// TestCreateEpisodesUsecase_Execute_RechecksRawNumberAfterWorkLockは、ロック待ち中に
+// 放送枠が追加されても、元の行番号で話数の不足を報告し、一括登録全体を止めることを検証する。
+func TestCreateEpisodesUsecase_Execute_RechecksRawNumberAfterWorkLock(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name string
+		role int32
+	}{
+		{name: "編集者", role: model.RoleEditor},
+		{name: "管理者", role: model.RoleAdmin},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db := testutil.GetTestDB()
+			workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+			program := insertGenerationProgram(t, db, workID, 1)
+			user := insertCreateActor(t, db, tt.role)
+			blocker, err := db.Begin()
+			if err != nil {
+				t.Fatalf("ロック保持用トランザクションの開始に失敗: %v", err)
+			}
+			defer func() { _ = blocker.Rollback() }()
+			if _, err := blocker.Exec(`SELECT id FROM works WHERE id = $1 FOR UPDATE`, int64(workID)); err != nil {
+				t.Fatalf("作品のロックに失敗: %v", err)
+			}
+			var blockerPID int
+			if err := blocker.QueryRow(`SELECT pg_backend_pid()`).Scan(&blockerPID); err != nil {
+				t.Fatalf("ロック保持側のPID取得に失敗: %v", err)
+			}
+
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			type result struct {
+				output *CreateEpisodesOutput
+				err    error
+			}
+			done := make(chan result, 1)
+			go func() {
+				output, err := newCreateEpisodesUsecase(db).Execute(ctx, CreateEpisodesInput{
+					WorkID: workID,
+					User:   user,
+					Rows:   "#1,1,はじまり\n\n\n総集編,,これまでのお話",
+				})
+				done <- result{output: output, err: err}
+			}()
+
+			// 事前の検証が終わり、作品ロックを実際に待っていることをDBで確認する。
+			for {
+				var blocked bool
+				if err := db.QueryRowContext(ctx, `
+					SELECT EXISTS (
+						SELECT 1 FROM pg_stat_activity WHERE $1 = ANY(pg_blocking_pids(pid))
+					)
+				`, blockerPID).Scan(&blocked); err != nil {
+					t.Fatalf("作品ロック待ちの確認に失敗: %v", err)
+				}
+				if blocked {
+					break
+				}
+				select {
+				case got := <-done:
+					t.Fatalf("ロック待ち前に終了しました: %v", got.err)
+				default:
+				}
+				time.Sleep(10 * time.Millisecond)
+			}
+
+			testutil.NewSlotBuilder(t, blocker).
+				WithWorkID(workID).
+				WithChannelID(program.channelID).
+				WithProgramID(program.programID).
+				WithNumber(1).
+				WithStartedAt(time.Now()).Build()
+			if err := blocker.Commit(); err != nil {
+				t.Fatalf("放送枠追加のコミットに失敗: %v", err)
+			}
+
+			got := <-done
+			if got.output != nil {
+				t.Errorf("Execute()の出力 = %+v、期待値 = nil", got.output)
+			}
+			ve := model.AsValidationError(got.err)
+			if ve == nil {
+				t.Fatalf("Execute()のエラー = %v、期待値 = *model.ValidationError", got.err)
+			}
+			if errs := ve.GetFieldErrors("rows"); len(errs) != 1 || !strings.Contains(errs[0], "4 行目") {
+				t.Errorf("rowsのエラー = %v、期待値 = 元の4行目の話数の不足", errs)
+			}
+			if count := countWorkEpisodes(t, db, workID); count != 0 {
+				t.Errorf("作成エピソード数 = %d、期待値 = 0", count)
+			}
+		})
+	}
+}

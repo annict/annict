@@ -156,6 +156,17 @@ func (uc *CreateEpisodesUsecase) createEpisodes(
 	if !input.User.IsAdmin() && !work.ManualCreationState.Allowed() {
 		return nil, manualCreationValidationError(ctx)
 	}
+	if work.HasActiveSlots {
+		// ロック待ちの間に放送枠が追加された場合も、管理者を含め話数を必須にする。
+		// 空行を除く前の入力を使い、エラーが指す元の行番号を保つ。
+		rows, err = uc.validator.Validate(ctx, validator.DBEpisodeCreateValidatorInput{
+			Rows:              input.Rows,
+			RawNumberRequired: true,
+		})
+		if err != nil {
+			return nil, err
+		}
+	}
 
 	// 最初の行は、作品の最大のsort_numberの1ステップ先に、その最大の行を前のエピソードとして
 	// 足す (自動生成が末尾に足すときと同じ関数)。2行目以降は、直前に作った行の1ステップ先に、

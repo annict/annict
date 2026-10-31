@@ -237,6 +237,8 @@ func (r *WorkRepository) GetForEpisodeFormByID(ctx context.Context, id model.Wor
 type DBEpisodeCreateWork struct {
 	Work                *model.Work
 	ManualCreationState model.ManualEpisodeCreationState
+	// HasActiveSlotsは話数を必須にする、有効な放送枠の存在を表す。
+	HasActiveSlots bool
 	// LatestEpisodeは非公開・削除済みを含めてsort_numberが最大のエピソードで、最初に作る
 	// 行はその1ステップ先に並び、これを直前のエピソードとして名指しする。作品がエピソードを
 	// 持たないあいだはnil。
@@ -284,7 +286,8 @@ func (r *WorkRepository) GetForEpisodeCreateByID(ctx context.Context, id model.W
 	}
 
 	result := &DBEpisodeCreateWork{
-		Work: work,
+		Work:           work,
+		HasActiveSlots: row.HasActiveSlots,
 		ManualCreationState: model.ManualEpisodeCreationState{
 			EpisodesFilled: row.EpisodesFilled.Valid && row.EpisodesFilled.Bool,
 		},

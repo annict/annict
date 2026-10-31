@@ -433,6 +433,13 @@ SELECT
     w.anime_id,
     COALESCE(latest.id, 0)::bigint AS latest_episode_id,
     COALESCE(latest.sort_number, 0)::integer AS latest_sort_number,
+    EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.work_id = w.id
+            AND s.deleted_at IS NULL
+            AND s.unpublished_at IS NULL
+    ) AS has_active_slots,
     w.manual_episodes_count IS NOT NULL AND (
         SELECT COUNT(*)
         FROM episodes kept
@@ -457,6 +464,7 @@ type GetWorkForEpisodeCreateByIDRow struct {
 	AnimeID          sql.NullInt64 `db:"anime_id"`
 	LatestEpisodeID  int64         `db:"latest_episode_id"`
 	LatestSortNumber int32         `db:"latest_sort_number"`
+	HasActiveSlots   bool          `db:"has_active_slots"`
 	EpisodesFilled   sql.NullBool  `db:"episodes_filled"`
 }
 
@@ -478,6 +486,7 @@ func (q *Queries) GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (Ge
 		&i.AnimeID,
 		&i.LatestEpisodeID,
 		&i.LatestSortNumber,
+		&i.HasActiveSlots,
 		&i.EpisodesFilled,
 	)
 	return i, err

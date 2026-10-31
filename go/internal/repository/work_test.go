@@ -1706,16 +1706,23 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 			Build()
 
 		plainWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("作成側: 制限なし").Build()
+		inactiveSlotWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("作成側: 無効な放送枠のみ").Build()
+		testutil.NewSlotBuilder(t, tx).WithWorkID(inactiveSlotWorkID).WithChannelID(channelID).
+			WithStartedAt(time.Now()).WithDeletedAt(time.Now()).Build()
+		testutil.NewSlotBuilder(t, tx).WithWorkID(inactiveSlotWorkID).WithChannelID(channelID).
+			WithStartedAt(time.Now()).WithUnpublishedAt(time.Now()).Build()
 
 		tests := []struct {
 			name            string
 			workID          model.WorkID
 			wantRestriction model.ManualEpisodeCreationRestriction
+			wantActiveSlots bool
 		}{
 			{name: "予定エピソード数到達", workID: filledWorkID, wantRestriction: model.ManualEpisodeCreationEpisodesFilled},
 			{name: "公開中だけでは予定エピソード数に届かない", workID: keptOnlyWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
-			{name: "放送枠あり", workID: slotWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
+			{name: "放送枠あり", workID: slotWorkID, wantRestriction: model.ManualEpisodeCreationAllowed, wantActiveSlots: true},
 			{name: "制限なし", workID: plainWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
+			{name: "無効な放送枠のみ", workID: inactiveSlotWorkID, wantRestriction: model.ManualEpisodeCreationAllowed},
 		}
 
 		// 各ケースは1つのトランザクションを共有するため、並行ではなく順に実行する。
@@ -1730,6 +1737,9 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 				}
 				if got := createWork.ManualCreationState.Restriction(); got != tt.wantRestriction {
 					t.Errorf("Restriction() = %q、期待値 = %q", got, tt.wantRestriction)
+				}
+				if createWork.HasActiveSlots != tt.wantActiveSlots {
+					t.Errorf("HasActiveSlots = %v、期待値 = %v", createWork.HasActiveSlots, tt.wantActiveSlots)
 				}
 			})
 		}

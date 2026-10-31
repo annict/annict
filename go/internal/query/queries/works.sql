@@ -183,6 +183,13 @@ SELECT
     w.anime_id,
     COALESCE(latest.id, 0)::bigint AS latest_episode_id,
     COALESCE(latest.sort_number, 0)::integer AS latest_sort_number,
+    EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.work_id = w.id
+            AND s.deleted_at IS NULL
+            AND s.unpublished_at IS NULL
+    ) AS has_active_slots,
     w.manual_episodes_count IS NOT NULL AND (
         SELECT COUNT(*)
         FROM episodes kept
