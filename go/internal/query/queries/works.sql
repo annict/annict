@@ -83,15 +83,15 @@ WHERE id = $1;
 
 -- name: GetWorkForEpisodeListByID :one
 -- published_episode_countとmax_generatable_episode_numberはエピソード一覧の自動生成の
--- 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
--- 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも1作品について別テーブルを
--- 集計する値のため、作品の行と一緒に引いてページの往復を増やさない。
+-- 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者は自動生成が作品の放送枠から
+-- 作るエピソードの数を表す。どちらも1作品について別テーブルを集計する値のため、作品の行と
+-- 一緒に引いてページの往復を増やさない。
 --
--- max_generatable_episode_numberが使うMAXはNULLを飛ばすが、Railsの案内は作品の有効な
--- スロットをnumber降順に並べた先頭行を読む。PostgreSQLのDESCはNULLS FIRSTのため、
--- number未設定の有効スロットが1件でもあればRailsはその行に当たって0を報告する。
--- MAXが報告するのは自動生成が実際に到達する話数であり、Railsと結果が分かれるのは
--- 移植漏れではなく意図的な選択。
+-- max_generatable_episode_numberは、自動生成の対象と同じ条件 (未削除・公開中で、再放送でも
+-- 不定期放送でもなく、番組と回数を持つ) の放送枠について、作品内の順番 (回数から、その
+-- 放送枠より前にある番組の不定期放送の数を引いたもの) の最大値をとる。自動生成が話数の計算と
+-- 予定エピソード数との比較に使うのと同じ数え方で、不定期放送のある番組でも回数そのものより
+-- 実際に作られる数を表す。
 SELECT
     w.id,
     w.title,
@@ -105,11 +105,24 @@ SELECT
             AND e.unpublished_at IS NULL
     )::bigint AS published_episode_count,
     COALESCE((
-        SELECT MAX(s.number)
+        SELECT MAX(s.number - (
+            SELECT COUNT(*)
+            FROM slots i
+            WHERE i.program_id = s.program_id
+                AND i.irregular
+                AND i.deleted_at IS NULL
+                AND i.unpublished_at IS NULL
+                AND i.number >= p.minimum_episode_generatable_number
+                AND i.number < s.number
+        ))
         FROM slots s
+        JOIN programs p ON p.id = s.program_id
         WHERE s.work_id = w.id
             AND s.deleted_at IS NULL
             AND s.unpublished_at IS NULL
+            AND NOT s.rebroadcast
+            AND NOT s.irregular
+            AND s.number IS NOT NULL
     ), 0)::bigint AS max_generatable_episode_number
 FROM works w
 WHERE w.id = $1

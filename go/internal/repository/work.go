@@ -156,8 +156,9 @@ type DBEpisodeListWork struct {
 	// (Railsのonly_keptスコープ) の件数。一覧自体の総件数とは異なる (一覧は非公開の
 	// エピソードも表示するため総件数に含める)。
 	PublishedEpisodeCount int64
-	// MaxGeneratableEpisodeNumberは作品が持つ有効なスロットの最大numberで、しょぼい
-	// カレンダー由来の自動生成が到達する話数を表す。そのようなスロットが無い作品では0。
+	// MaxGeneratableEpisodeNumberは、自動生成の対象と同じ条件の放送枠について、作品内の
+	// 順番 (前にある不定期放送を回数から引いたもの) の最大値で、自動生成が作るエピソードの数を
+	// 表す。そのような放送枠が無い作品では0。
 	MaxGeneratableEpisodeNumber int64
 }
 

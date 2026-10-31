@@ -179,8 +179,8 @@ func NewDBEpisodeFormInputFromSubmit(input usecase.UpdateEpisodeInput) DBEpisode
 }
 
 // DBEpisodeGenerationSummaryは作品のエピソード一覧がテーブルの上に出す案内。作品の
-// 予定エピソード数、公開中のエピソード数、しょぼいカレンダー由来の自動生成が
-// 作品のスロットからどこまで話数を振れるかを表す。
+// 予定エピソード数、公開中のエピソード数、自動生成が作品の放送枠から作るエピソードの数を
+// 表す。
 type DBEpisodeGenerationSummary struct {
 	// PlannedCountは作品の予定エピソード数を表示用に整形したもので、作品が記録していなければ
 	// 空文字列。テンプレートはRailsの案内と同じく、その欠落に「不明」の文言を描画する。
@@ -190,7 +190,7 @@ type DBEpisodeGenerationSummary struct {
 }
 
 // NewDBEpisodeGenerationSummaryは、作品の予定エピソード数 (記録が無ければnil)、公開中の
-// エピソード数、有効なスロットから自動生成が到達できる最大話数から案内を組み立てる。
+// エピソード数、自動生成が作品の放送枠から作るエピソードの数から案内を組み立てる。
 func NewDBEpisodeGenerationSummary(
 	plannedCount *int32,
 	publishedEpisodeCount int64,

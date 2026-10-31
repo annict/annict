@@ -1365,16 +1365,20 @@ func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
 		testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第4話").WithDeletedAt(time.Now()).Build()
 
 		channelID := testutil.NewChannelBuilder(t, tx).Build()
+		programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
 		newSlot := func() *testutil.SlotBuilder {
-			return testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID)
+			return testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID)
 		}
 		newSlot().WithNumber(5).Build()
 		newSlot().WithNumber(9).WithUnpublishedAt(time.Now()).Build()
 		newSlot().WithNumber(12).WithDeletedAt(time.Now()).Build()
+		// 番組の無い放送枠は自動生成の対象にならない。
+		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithNumber(30).Build()
 
 		otherWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("別の作品").Build()
 		testutil.NewEpisodeBuilder(t, tx, otherWorkID).WithNumber("第1話").Build()
-		testutil.NewSlotBuilder(t, tx).WithWorkID(otherWorkID).WithChannelID(channelID).WithNumber(24).Build()
+		otherProgramID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(otherWorkID).Build()
+		testutil.NewSlotBuilder(t, tx).WithWorkID(otherWorkID).WithChannelID(channelID).WithProgramID(otherProgramID).WithNumber(24).Build()
 
 		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
 		if err != nil {
@@ -1391,9 +1395,8 @@ func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
 		}
 	})
 
-	// slots.numberはNULLを許容し、MAXはその行を飛ばす。一方Railsの案内はnumber
-	// 降順の先頭スロットを読むため、PostgreSQLのNULLS FIRSTにより同じ作品で0を報告する。
-	// 到達できる最大話数を保つのはクエリのコメントに記した意図的な差異なので、ここで固定する。
+	// slots.numberはNULLを許容する。回数の無い放送枠は自動生成の対象にならないため、
+	// 生成されるエピソード数を0に落とさない。
 	t.Run("話数未設定のスロットは生成可能話数を0に落とさない", func(t *testing.T) {
 		t.Parallel()
 		db, tx := testutil.SetupTx(t)
@@ -1402,8 +1405,9 @@ func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
 		workID := testutil.NewWorkBuilder(t, tx).WithTitle("話数未設定スロットを持つ作品").Build()
 
 		channelID := testutil.NewChannelBuilder(t, tx).Build()
-		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithNumber(5).Build()
-		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()
+		programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithNumber(5).Build()
+		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).Build()
 
 		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
 		if err != nil {
@@ -1414,6 +1418,38 @@ func TestWorkRepository_GetForEpisodeListByID(t *testing.T) {
 		}
 		if listWork.MaxGeneratableEpisodeNumber != 5 {
 			t.Errorf("MaxGeneratableEpisodeNumber = %d、期待値 = 5", listWork.MaxGeneratableEpisodeNumber)
+		}
+	})
+
+	// 生成されるエピソード数は自動生成と同じ数え方で、前にある不定期放送を回数から引き、
+	// 再放送と不定期放送そのものは数えない。
+	t.Run("生成可能話数は不定期放送を除いた作品内の順番で数える", func(t *testing.T) {
+		t.Parallel()
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
+
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("不定期放送のある作品").Build()
+		channelID := testutil.NewChannelBuilder(t, tx).Build()
+		programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+		newSlot := func(number int32) *testutil.SlotBuilder {
+			return testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithNumber(number)
+		}
+		newSlot(1).Build()
+		newSlot(2).WithIrregular().Build()
+		newSlot(3).Build()
+		newSlot(4).WithIrregular().Build()
+		newSlot(5).WithRebroadcast().Build()
+
+		listWork, err := repo.GetForEpisodeListByID(context.Background(), workID)
+		if err != nil {
+			t.Fatalf("GetForEpisodeListByID()のエラー = %v", err)
+		}
+		if listWork == nil {
+			t.Fatal("listWorkがnilだった")
+		}
+		// 回数3の放送枠が、前の不定期放送1件を引いた作品内の2番目にあたる。
+		if listWork.MaxGeneratableEpisodeNumber != 2 {
+			t.Errorf("MaxGeneratableEpisodeNumber = %d、期待値 = 2", listWork.MaxGeneratableEpisodeNumber)
 		}
 	})
 
