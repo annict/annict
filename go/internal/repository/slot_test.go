@@ -52,6 +52,8 @@ func TestSlotRepository_ListForEpisodeGeneration(t *testing.T) {
 	newSlot().WithNumber(8).WithDeletedAt(time.Now()).Build()
 	newSlot().WithNumber(9).WithUnpublishedAt(time.Now()).Build()
 	newSlot().WithNumber(10).WithStartedAt(before).Build()
+	newSlot().WithNumber(11).WithStartedAt(from.Add(-time.Second)).Build()
+	atFrom := newSlot().WithNumber(12).WithStartedAt(from).Build()
 	newSlot().Build()
 
 	archivedWorkID := testutil.NewWorkBuilder(t, tx).WithUnpublishedAt(time.Now()).Build()
@@ -70,15 +72,15 @@ func TestSlotRepository_ListForEpisodeGeneration(t *testing.T) {
 		t.Fatalf("ListForEpisodeGeneration()のエラー = %v", err)
 	}
 
-	if len(slots) != 2 {
-		t.Fatalf("len(slots) = %d、期待値 = 2", len(slots))
+	if len(slots) != 3 {
+		t.Fatalf("len(slots) = %d、期待値 = 3", len(slots))
 	}
-	if slots[0].ID != earlier || slots[1].ID != target {
-		t.Errorf("放送枠の並び = [%d, %d]、期待値 = [%d, %d]", slots[0].ID, slots[1].ID, earlier, target)
+	if slots[0].ID != atFrom || slots[1].ID != earlier || slots[2].ID != target {
+		t.Errorf("放送枠の並び = [%d, %d, %d]、期待値 = [%d, %d, %d]", slots[0].ID, slots[1].ID, slots[2].ID, atFrom, earlier, target)
 	}
 
-	if slots[1].WorkID != workID {
-		t.Errorf("WorkID = %d、期待値 = %d", slots[1].WorkID, workID)
+	if slots[2].WorkID != workID {
+		t.Errorf("WorkID = %d、期待値 = %d", slots[2].WorkID, workID)
 	}
 	got, err := repo.GetForEpisodeGenerationByID(ctx, target, workID, from, before)
 	if err != nil || got == nil {
@@ -171,6 +173,7 @@ func TestSlotRepository_GenerationRejectsChangedSlot(t *testing.T) {
 		{"回数なし", `UPDATE slots SET number = NULL WHERE id = $1`},
 		{"回数変更", `UPDATE slots SET number = 2 WHERE id = $1`},
 		{"範囲外への日時変更", `UPDATE slots SET started_at = started_at + INTERVAL '30 days' WHERE id = $1`},
+		{"範囲より前への日時変更", `UPDATE slots SET started_at = started_at - INTERVAL '30 days' WHERE id = $1`},
 	} {
 		t.Run(change.name, func(t *testing.T) {
 			t.Parallel()
