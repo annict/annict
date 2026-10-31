@@ -628,7 +628,7 @@ func (r *EpisodeRepository) UpdatePrevEpisodeID(ctx context.Context, workID mode
 // DBEpisodeTitleFillTargetは、しょぼいカレンダーからタイトルを入れるエピソードと、引く先の
 // 作品のTIDを表す。TIDはworksのカラムで、エピソードの属性ではないため並べて持つ。
 type DBEpisodeTitleFillTarget struct {
-	// EpisodeはID・RawNumber・AnimeIDだけを持つ。
+	// EpisodeはID・WorkID・RawNumberだけを持つ。
 	Episode *model.Episode
 	ScTid   int32
 }
@@ -647,28 +647,38 @@ func (r *EpisodeRepository) ListForTitleFill(ctx context.Context, createdFrom ti
 		rawNumber := row.RawNumber.Float64
 		episode := &model.Episode{
 			ID:        model.EpisodeID(row.ID),
+			WorkID:    model.WorkID(row.WorkID),
 			RawNumber: &rawNumber,
-		}
-		if row.AnimeID.Valid {
-			animeID := model.AnimeID(row.AnimeID.Int64)
-			episode.AnimeID = &animeID
 		}
 		targets[i] = DBEpisodeTitleFillTarget{Episode: episode, ScTid: row.ScTid.Int32}
 	}
 	return targets, nil
 }
 
-// UpdateEmptyTitleは、タイトルが空のままの未削除のエピソードにタイトルを入れる。falseは、
-// 対象を読んだ後にタイトルが入ったか削除されていて、何も書かなかったことを表す。
-func (r *EpisodeRepository) UpdateEmptyTitle(ctx context.Context, id model.EpisodeID, title string) (bool, error) {
-	affected, err := r.queries.UpdateEpisodeEmptyTitle(ctx, query.UpdateEpisodeEmptyTitleParams{
-		ID:    int64(id),
-		Title: sql.NullString{String: title, Valid: true},
+// UpdateEmptyTitleは、問い合わせに使った識別値と対象条件が一致するエピソードにタイトルを
+// 入れ、更新した行のIDと現在のAnimeIDを返す。WithTxで使い、animeも同じトランザクションで
+// 更新する。nilは対象が変化したかタイトルが入り、何も書かなかったことを表す。
+func (r *EpisodeRepository) UpdateEmptyTitle(ctx context.Context, target DBEpisodeTitleFillTarget, title string, createdFrom time.Time) (*model.Episode, error) {
+	row, err := r.queries.UpdateEpisodeEmptyTitle(ctx, query.UpdateEpisodeEmptyTitleParams{
+		ID:          int64(target.Episode.ID),
+		WorkID:      int64(target.Episode.WorkID),
+		ScTid:       sql.NullInt32{Int32: target.ScTid, Valid: true},
+		RawNumber:   nullFloat64FromPtr(target.Episode.RawNumber),
+		Title:       sql.NullString{String: title, Valid: true},
+		CreatedFrom: createdFrom,
 	})
 	if err != nil {
-		return false, err
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
 	}
-	return affected == 1, nil
+	episode := &model.Episode{ID: model.EpisodeID(row.ID)}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		episode.AnimeID = &animeID
+	}
+	return episode, nil
 }
 
 // nullStringFromPtrは任意の文字列をドライバのNULL許容文字列に写像する。編集者が空の

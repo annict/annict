@@ -3956,7 +3956,7 @@ func TestEpisodeRepository_ListForTitleFill(t *testing.T) {
 	if !ok {
 		t.Fatal("対象のエピソードが返されなかった")
 	}
-	if found.ScTid != 6309 || found.Episode.RawNumber == nil || *found.Episode.RawNumber != 2 {
+	if found.Episode.WorkID != workID || found.ScTid != 6309 || found.Episode.RawNumber == nil || *found.Episode.RawNumber != 2 {
 		t.Errorf("対象 = (TID %d, 話数 %v)、期待値 = (6309, 2)", found.ScTid, found.Episode.RawNumber)
 	}
 	for name, id := range excluded {
@@ -3974,28 +3974,37 @@ func TestEpisodeRepository_UpdateEmptyTitle(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 	ctx := context.Background()
 
-	workID := testutil.NewWorkBuilder(t, tx).Build()
-	emptyID := testutil.NewEpisodeBuilder(t, tx, workID).WithTitle("").Build()
-	titledID := testutil.NewEpisodeBuilder(t, tx, workID).WithTitle("編集者のタイトル").Build()
+	workID := testutil.NewWorkBuilder(t, tx).WithScTid(6309).Build()
+	emptyID := testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(1).WithTitle("").Build()
+	titledID := testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(1).WithTitle("編集者のタイトル").Build()
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	programID := testutil.NewProgramBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()
+	for _, id := range []model.EpisodeID{emptyID, titledID} {
+		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithEpisodeID(id).Build()
+	}
 	if _, err := tx.Exec(`UPDATE episodes SET updated_at = '2001-01-01' WHERE id = $1`, int64(emptyID)); err != nil {
 		t.Fatalf("updated_atの設定に失敗: %v", err)
 	}
 
 	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
 
-	updated, err := repo.UpdateEmptyTitle(ctx, emptyID, "妻役を確保せよ")
+	rawNumber := 1.0
+	target := repository.DBEpisodeTitleFillTarget{Episode: &model.Episode{ID: emptyID, WorkID: workID, RawNumber: &rawNumber}, ScTid: 6309}
+	createdFrom := time.Now().Add(-7 * 24 * time.Hour)
+	updated, err := repo.UpdateEmptyTitle(ctx, target, "妻役を確保せよ", createdFrom)
 	if err != nil {
 		t.Fatalf("UpdateEmptyTitle()のエラー = %v", err)
 	}
-	if !updated {
+	if updated == nil || updated.ID != emptyID || updated.AnimeID != nil {
 		t.Error("タイトルが空のエピソードを更新しなかった")
 	}
 
-	updated, err = repo.UpdateEmptyTitle(ctx, titledID, "妻役を確保せよ")
+	target.Episode.ID = titledID
+	updated, err = repo.UpdateEmptyTitle(ctx, target, "妻役を確保せよ", createdFrom)
 	if err != nil {
 		t.Fatalf("UpdateEmptyTitle()のエラー = %v", err)
 	}
-	if updated {
+	if updated != nil {
 		t.Error("タイトルのあるエピソードを上書きした")
 	}
 

@@ -1,13 +1,17 @@
 package usecase
 
 import (
+	"cmp"
 	"context"
 	"database/sql"
 	"errors"
+	"os"
 	"slices"
 	"sync/atomic"
 	"testing"
 	"time"
+
+	"github.com/lib/pq"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -17,13 +21,17 @@ import (
 
 // fakeSubTitleLookupは、しょぼいカレンダーの代わりに決まったサブタイトルを返す。
 type fakeSubTitleLookup struct {
-	subTitles map[int32]map[int32]string
-	err       error
-	tids      []int32
+	subTitles    map[int32]map[int32]string
+	err          error
+	tids         []int32
+	beforeReturn func()
 }
 
 func (f *fakeSubTitleLookup) LookupSubTitles(_ context.Context, tids []int32) (map[int32]map[int32]string, error) {
 	f.tids = tids
+	if f.beforeReturn != nil {
+		f.beforeReturn()
+	}
 	if f.err != nil {
 		return nil, f.err
 	}
@@ -200,5 +208,238 @@ func TestFillEpisodeTitlesUsecase_Execute_ReturnsLookupError(t *testing.T) {
 	}
 	if title, _ := readEpisodeTitle(t, db, episodeID); title.Valid {
 		t.Errorf("title = %q、期待値 = NULL", title.String)
+	}
+}
+
+// TestFillEpisodeTitlesUsecase_Execute_RejectsChangedTargetは、HTTP待機中に対象の識別値や
+// 公開状態が変わっても、古いサブタイトルや編集者のタイトルを上書きしないことを検証する。
+func TestFillEpisodeTitlesUsecase_Execute_RejectsChangedTarget(t *testing.T) {
+	t.Parallel()
+
+	for _, change := range []struct {
+		name   string
+		update string
+	}{
+		{"話数変更", `UPDATE episodes SET raw_number = 2 WHERE id = $1`},
+		{"話数なし", `UPDATE episodes SET raw_number = NULL WHERE id = $1`},
+		{"非公開化", `UPDATE episodes SET unpublished_at = NOW() WHERE id = $1`},
+		{"削除", `UPDATE episodes SET deleted_at = NOW() WHERE id = $1`},
+		{"古いエピソード", `UPDATE episodes SET created_at = NOW() - INTERVAL '8 days' WHERE id = $1`},
+		{"編集者のタイトル", `UPDATE episodes SET title = '編集者のタイトル' WHERE id = $1`},
+		{"TID変更", ""},
+		{"作品を非公開化", ""},
+		{"作品を削除", ""},
+		{"作品の変更", ""},
+		{"放送枠の紐づけを解除", ""},
+		{"番組の紐づけを解除", ""},
+	} {
+		t.Run(change.name, func(t *testing.T) {
+			t.Parallel()
+			db := testutil.GetTestDB()
+			workID, tid := insertTitleFillWork(t, db)
+			var otherWorkID model.WorkID
+			if change.name == "作品の変更" {
+				otherWorkID = insertCreateTargetWork(t, db, sql.NullInt64{})
+			}
+			program := insertGenerationProgram(t, db, workID, 1)
+			episodeID := insertTitleFillEpisode(t, db, program, 1)
+			animeID := insertBareAnime(t, db)
+			if _, err := db.Exec(`UPDATE episodes SET anime_id = $2 WHERE id = $1`, int64(episodeID), int64(animeID)); err != nil {
+				t.Fatal(err)
+			}
+			lookup := &fakeSubTitleLookup{
+				subTitles: map[int32]map[int32]string{tid: {1: "問い合わせ前の第1話"}},
+				beforeReturn: func() {
+					var err error
+					switch change.name {
+					case "TID変更":
+						_, err = db.Exec(`UPDATE works SET sc_tid = $2 WHERE id = $1`, int64(workID), tid+100000)
+					case "作品を非公開化":
+						_, err = db.Exec(`UPDATE works SET unpublished_at = NOW() WHERE id = $1`, int64(workID))
+					case "作品を削除":
+						_, err = db.Exec(`UPDATE works SET deleted_at = NOW() WHERE id = $1`, int64(workID))
+					case "作品の変更":
+						_, err = db.Exec(`UPDATE episodes SET work_id = $2 WHERE id = $1`, int64(episodeID), int64(otherWorkID))
+					case "放送枠の紐づけを解除":
+						_, err = db.Exec(`UPDATE slots SET episode_id = NULL WHERE episode_id = $1`, int64(episodeID))
+					case "番組の紐づけを解除":
+						_, err = db.Exec(`UPDATE slots SET program_id = NULL WHERE episode_id = $1`, int64(episodeID))
+					default:
+						_, err = db.Exec(change.update, int64(episodeID))
+					}
+					if err != nil {
+						t.Fatal(err)
+					}
+				},
+			}
+			output, err := newFillEpisodeTitlesUsecase(db, lookup).Execute(context.Background(), FillEpisodeTitlesInput{Now: time.Now()})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if output.FilledCount != 0 || len(output.FailedEpisodes) != 0 {
+				t.Errorf("変更後の結果 = %+v、期待値 = 更新・エラーなし", output)
+			}
+			title, _ := readEpisodeTitle(t, db, episodeID)
+			if change.name == "編集者のタイトル" {
+				if title.String != "編集者のタイトル" {
+					t.Errorf("タイトル = %q、期待値 = 編集者のタイトル", title.String)
+				}
+			} else if title.Valid {
+				t.Errorf("対象が変わったエピソードのタイトル = %q、期待値 = NULL", title.String)
+			}
+			anime, err := repository.NewAnimeRepository(query.New(db)).GetByID(context.Background(), animeID)
+			if err != nil || anime == nil || anime.Title.Valid {
+				t.Errorf("anime = %+v、エラー = %v、期待値 = タイトルがNULLのまま", anime, err)
+			}
+		})
+	}
+}
+
+// TestFillEpisodeTitlesUsecase_Execute_UsesCurrentAnimeは、HTTP待機中に対応付けや付け替えが
+// あっても、現在のanimeだけにタイトルを両書きすることを検証する。
+func TestFillEpisodeTitlesUsecase_Execute_UsesCurrentAnime(t *testing.T) {
+	t.Parallel()
+
+	for _, remapped := range []bool{false, true} {
+		name := "未対応から対応付け"
+		if remapped {
+			name = "別のanimeへ付け替え"
+		}
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			db := testutil.GetTestDB()
+			workID, tid := insertTitleFillWork(t, db)
+			program := insertGenerationProgram(t, db, workID, 1)
+			episodeID := insertTitleFillEpisode(t, db, program, 1)
+			currentAnimeID := insertBareAnime(t, db)
+			var oldAnimeID model.AnimeID
+			if remapped {
+				oldAnimeID = insertBareAnime(t, db)
+				if _, err := db.Exec(`UPDATE episodes SET anime_id = $2 WHERE id = $1`, int64(episodeID), int64(oldAnimeID)); err != nil {
+					t.Fatal(err)
+				}
+			}
+			lookup := &fakeSubTitleLookup{
+				subTitles: map[int32]map[int32]string{tid: {1: "第1話のサブタイトル"}},
+				beforeReturn: func() {
+					if _, err := db.Exec(`UPDATE episodes SET anime_id = $2 WHERE id = $1`, int64(episodeID), int64(currentAnimeID)); err != nil {
+						t.Fatal(err)
+					}
+				},
+			}
+			output, err := newFillEpisodeTitlesUsecase(db, lookup).Execute(context.Background(), FillEpisodeTitlesInput{Now: time.Now()})
+			if err != nil || output == nil || output.FilledCount != 1 || len(output.FailedEpisodes) != 0 {
+				t.Fatalf("結果 = %+v、エラー = %v、期待値 = 更新1件", output, err)
+			}
+			title, _ := readEpisodeTitle(t, db, episodeID)
+			repo := repository.NewAnimeRepository(query.New(db))
+			current, err := repo.GetByID(context.Background(), currentAnimeID)
+			if err != nil || current == nil || current.Title.String != "第1話のサブタイトル" || current.Title != title {
+				t.Errorf("現在のanime = %+v、エラー = %v、episodeのタイトル = %+v", current, err, title)
+			}
+			if remapped {
+				old, err := repo.GetByID(context.Background(), oldAnimeID)
+				if err != nil || old == nil || old.Title.Valid {
+					t.Errorf("以前のanime = %+v、エラー = %v、期待値 = タイトルがNULLのまま", old, err)
+				}
+			}
+		})
+	}
+}
+
+// TestFillEpisodeTitlesUsecase_Execute_ContinuesAfterRollbackは、行ロックによってDB更新を
+// 失敗させ、失敗したエピソードは戻し、次のエピソードは更新することを検証する。
+func TestFillEpisodeTitlesUsecase_Execute_ContinuesAfterRollback(t *testing.T) {
+	t.Parallel()
+
+	for _, lockedTable := range []string{"works", "animes"} {
+		name := "作品ロックの取得失敗"
+		if lockedTable == "animes" {
+			name = "anime側の更新失敗"
+		}
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			db := testutil.GetTestDB()
+			workID, tid := insertTitleFillWork(t, db)
+			program := insertGenerationProgram(t, db, workID, 1)
+			failedID := insertTitleFillEpisode(t, db, program, 1)
+			goodWorkID, goodTid := insertTitleFillWork(t, db)
+			goodProgram := insertGenerationProgram(t, db, goodWorkID, 1)
+			goodID := insertTitleFillEpisode(t, db, goodProgram, 2)
+			animeID := insertBareAnime(t, db)
+			if _, err := db.Exec(`UPDATE episodes SET anime_id = $2 WHERE id = $1`, int64(failedID), int64(animeID)); err != nil {
+				t.Fatal(err)
+			}
+
+			// タイムアウトはこのUseCase専用の接続に設定し、共有プールやほかのテストには適用しない。
+			timeoutDB, err := sql.Open("postgres", cmp.Or(os.Getenv("DATABASE_URL"), "postgres://postgres@postgresql:5432/annict_test?sslmode=disable"))
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Cleanup(func() { _ = timeoutDB.Close() })
+			timeoutDB.SetMaxOpenConns(1)
+			if _, err := timeoutDB.Exec(`SET lock_timeout = '100ms'`); err != nil {
+				t.Fatal(err)
+			}
+			blocker, err := db.Begin()
+			if err != nil {
+				t.Fatal(err)
+			}
+			defer func() { _ = blocker.Rollback() }()
+			if lockedTable == "works" {
+				_, err = blocker.Exec(`UPDATE works SET updated_at = updated_at WHERE id = $1`, int64(workID))
+			} else {
+				_, err = blocker.Exec(`UPDATE animes SET title = title WHERE id = $1`, int64(animeID))
+			}
+			if err != nil {
+				t.Fatal(err)
+			}
+			lookup := &fakeSubTitleLookup{subTitles: map[int32]map[int32]string{tid: {1: "失敗するタイトル"}, goodTid: {2: "後続のタイトル"}}}
+			output, err := newFillEpisodeTitlesUsecase(timeoutDB, lookup).Execute(context.Background(), FillEpisodeTitlesInput{Now: time.Now()})
+			if err != nil || output == nil || output.FilledCount != 1 || len(output.FailedEpisodes) != 1 {
+				t.Fatalf("結果 = %+v、エラー = %v、期待値 = 更新1件・失敗1件", output, err)
+			}
+			var pgError *pq.Error
+			failure := output.FailedEpisodes[0]
+			if failure.EpisodeID != failedID || !errors.As(failure.Err, &pgError) || pgError.Code != "55P03" {
+				t.Errorf("失敗 = %+v、期待値 = エピソード%dのロックタイムアウト", failure, failedID)
+			}
+			if title, _ := readEpisodeTitle(t, db, failedID); title.Valid {
+				t.Errorf("失敗したエピソードのタイトル = %q、期待値 = ロールバックされてNULL", title.String)
+			}
+			if title, _ := readEpisodeTitle(t, db, goodID); title.String != "後続のタイトル" {
+				t.Errorf("後続のエピソードのタイトル = %q、期待値 = 後続のタイトル", title.String)
+			}
+			anime, err := repository.NewAnimeRepository(query.New(db)).GetByID(context.Background(), animeID)
+			if err != nil || anime == nil || anime.Title.Valid {
+				t.Errorf("失敗したanime = %+v、エラー = %v、期待値 = タイトルがNULLのまま", anime, err)
+			}
+		})
+	}
+}
+
+// TestFillEpisodeTitlesUsecase_Execute_SkipsLockedEpisodeは、編集中のエピソードを待たずに
+// 飛ばし、作品とエピソードのロック順の逆転によるデッドロックを避けることを検証する。
+func TestFillEpisodeTitlesUsecase_Execute_SkipsLockedEpisode(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	workID, tid := insertTitleFillWork(t, db)
+	program := insertGenerationProgram(t, db, workID, 1)
+	episodeID := insertTitleFillEpisode(t, db, program, 1)
+	blocker, err := db.Begin()
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer func() { _ = blocker.Rollback() }()
+	if _, err := blocker.Exec(`UPDATE episodes SET title = title WHERE id = $1`, int64(episodeID)); err != nil {
+		t.Fatal(err)
+	}
+	ctx, cancel := context.WithTimeout(context.Background(), 2*time.Second)
+	defer cancel()
+	lookup := &fakeSubTitleLookup{subTitles: map[int32]map[int32]string{tid: {1: "サブタイトル"}}}
+	output, err := newFillEpisodeTitlesUsecase(db, lookup).Execute(ctx, FillEpisodeTitlesInput{Now: time.Now()})
+	if err != nil || output == nil || output.FilledCount != 0 || len(output.FailedEpisodes) != 0 {
+		t.Errorf("編集中の結果 = %+v、エラー = %v、期待値 = 更新・エラーなし", output, err)
 	}
 }

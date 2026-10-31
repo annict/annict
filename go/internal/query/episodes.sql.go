@@ -928,8 +928,8 @@ func (q *Queries) ListEpisodesForEpisodeGenerationByWorkID(ctx context.Context, 
 const listEpisodesForTitleFill = `-- name: ListEpisodesForTitleFill :many
 SELECT
     e.id,
+    e.work_id,
     e.raw_number,
-    e.anime_id,
     w.sc_tid
 FROM episodes e
 JOIN works w ON w.id = e.work_id
@@ -953,8 +953,8 @@ ORDER BY e.id
 
 type ListEpisodesForTitleFillRow struct {
 	ID        int64           `db:"id"`
+	WorkID    int64           `db:"work_id"`
 	RawNumber sql.NullFloat64 `db:"raw_number"`
-	AnimeID   sql.NullInt64   `db:"anime_id"`
 	ScTid     sql.NullInt32   `db:"sc_tid"`
 }
 
@@ -973,8 +973,8 @@ func (q *Queries) ListEpisodesForTitleFill(ctx context.Context, createdFrom time
 		var i ListEpisodesForTitleFillRow
 		if err := rows.Scan(
 			&i.ID,
+			&i.WorkID,
 			&i.RawNumber,
-			&i.AnimeID,
 			&i.ScTid,
 		); err != nil {
 			return nil, err
@@ -1333,28 +1333,72 @@ func (q *Queries) UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAni
 	return err
 }
 
-const updateEpisodeEmptyTitle = `-- name: UpdateEpisodeEmptyTitle :execrows
-UPDATE episodes
+const updateEpisodeEmptyTitle = `-- name: UpdateEpisodeEmptyTitle :one
+WITH locked_work AS (
+    SELECT w.id
+    FROM works w
+    WHERE w.id = $4
+        AND w.sc_tid = $5
+        AND w.deleted_at IS NULL
+        AND w.unpublished_at IS NULL
+    FOR UPDATE
+), locked_episode AS (
+    SELECT e.id
+    FROM episodes e
+    JOIN locked_work w ON w.id = e.work_id
+    WHERE e.id = $6
+    FOR UPDATE OF e SKIP LOCKED
+)
+UPDATE episodes e
 SET title = $1
-WHERE id = $2
-    AND deleted_at IS NULL
-    AND (title IS NULL OR title = '')
+FROM locked_episode locked
+WHERE e.id = locked.id
+    AND e.raw_number = $2
+    AND e.deleted_at IS NULL
+    AND e.unpublished_at IS NULL
+    AND e.created_at >= $3::timestamptz
+    AND (e.title IS NULL OR e.title = '')
+    AND EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.episode_id = e.id
+            AND s.program_id IS NOT NULL
+    )
+RETURNING e.id, e.anime_id
 `
 
 type UpdateEpisodeEmptyTitleParams struct {
-	Title sql.NullString `db:"title"`
-	ID    int64          `db:"id"`
+	Title       sql.NullString  `db:"title"`
+	RawNumber   sql.NullFloat64 `db:"raw_number"`
+	CreatedFrom time.Time       `db:"created_from"`
+	WorkID      int64           `db:"work_id"`
+	ScTid       sql.NullInt32   `db:"sc_tid"`
+	ID          int64           `db:"id"`
 }
 
-// しょぼいカレンダーのサブタイトルを、タイトルが空のままのエピソードにだけ入れる。対象を読んだ
-// 後に編集者がタイトルを入れていれば書かない。Railsのupdate_columnと同じく、DB活動・作品の
-// touch・updated_atの更新は行わない。
-func (q *Queries) UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisodeEmptyTitleParams) (int64, error) {
-	result, err := q.db.ExecContext(ctx, updateEpisodeEmptyTitle, arg.Title, arg.ID)
-	if err != nil {
-		return 0, err
-	}
-	return result.RowsAffected()
+type UpdateEpisodeEmptyTitleRow struct {
+	ID      int64         `db:"id"`
+	AnimeID sql.NullInt64 `db:"anime_id"`
+}
+
+// 問い合わせに使った作品・話数・TIDと対象条件が一致する間だけタイトルを入れる。作品を
+// ロックしてTIDを保持し、エピソードのUPDATEによる行ロックをコミットまで保持する。
+// Railsはエピソード行の更新後に作品をtouchするため、編集でロック中のエピソードを待つと
+// 作品とのロック順が逆転する。その行は待たずに飛ばし、次の実行へ回す。
+// 両書き先は更新した行の現在のanime_idを返す。DB活動・作品のtouch・updated_atの更新は
+// Railsのupdate_columnと同じく行わない。
+func (q *Queries) UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisodeEmptyTitleParams) (UpdateEpisodeEmptyTitleRow, error) {
+	row := q.db.QueryRowContext(ctx, updateEpisodeEmptyTitle,
+		arg.Title,
+		arg.RawNumber,
+		arg.CreatedFrom,
+		arg.WorkID,
+		arg.ScTid,
+		arg.ID,
+	)
+	var i UpdateEpisodeEmptyTitleRow
+	err := row.Scan(&i.ID, &i.AnimeID)
+	return i, err
 }
 
 const updateEpisodePrevEpisodeID = `-- name: UpdateEpisodePrevEpisodeID :execrows

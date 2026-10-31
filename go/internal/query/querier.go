@@ -747,10 +747,13 @@ type Querier interface {
 	// しまうため。
 	UpdateDBPerson(ctx context.Context, arg UpdateDBPersonParams) (int64, error)
 	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
-	// しょぼいカレンダーのサブタイトルを、タイトルが空のままのエピソードにだけ入れる。対象を読んだ
-	// 後に編集者がタイトルを入れていれば書かない。Railsのupdate_columnと同じく、DB活動・作品の
-	// touch・updated_atの更新は行わない。
-	UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisodeEmptyTitleParams) (int64, error)
+	// 問い合わせに使った作品・話数・TIDと対象条件が一致する間だけタイトルを入れる。作品を
+	// ロックしてTIDを保持し、エピソードのUPDATEによる行ロックをコミットまで保持する。
+	// Railsはエピソード行の更新後に作品をtouchするため、編集でロック中のエピソードを待つと
+	// 作品とのロック順が逆転する。その行は待たずに飛ばし、次の実行へ回す。
+	// 両書き先は更新した行の現在のanime_idを返す。DB活動・作品のtouch・updated_atの更新は
+	// Railsのupdate_columnと同じく行わない。
+	UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisodeEmptyTitleParams) (UpdateEpisodeEmptyTitleRow, error)
 	// 並びの途中に入れたエピソードの直後の行が、新しいエピソードを前のエピソードとして名乗るように
 	// 張り替える。UpdateDBEpisodeが移動で隣接行を張り替えるのと同じく、並び順から導出される値の
 	// 維持であって編集ではないため、DB活動・作品のtouch・updated_atの更新は行わない。

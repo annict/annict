@@ -89,7 +89,7 @@ func (uc *FillEpisodeTitlesUsecase) Execute(ctx context.Context, input FillEpiso
 			continue
 		}
 
-		filled, err := uc.fillTitle(ctx, target.Episode, title)
+		filled, err := uc.fillTitle(ctx, target, title, input.Now.Add(-episodeTitleFillWindow))
 		if err != nil {
 			output.FailedEpisodes = append(output.FailedEpisodes, FailedEpisode{EpisodeID: target.Episode.ID, Err: err})
 			continue
@@ -102,21 +102,21 @@ func (uc *FillEpisodeTitlesUsecase) Execute(ctx context.Context, input FillEpiso
 	return output, nil
 }
 
-// fillTitleはエピソードとそのanimeにタイトルを入れる。対象を読んだ後にタイトルが入っていた
-// エピソードは書かずにfalseを返す。Railsのupdate_columnと同じく、DB活動の記録と作品の
-// touchは行わない。
-func (uc *FillEpisodeTitlesUsecase) fillTitle(ctx context.Context, episode *model.Episode, title string) (bool, error) {
+// fillTitleは現在も問い合わせ時の作品・話数・TIDと対象条件に一致するエピソードにタイトルを
+// 入れ、更新した行が現在対応するanimeへ両書きする。条件が変わっていれば書かずにfalseを返す。
+// Railsのupdate_columnと同じく、DB活動の記録と作品のtouchは行わない。
+func (uc *FillEpisodeTitlesUsecase) fillTitle(ctx context.Context, target repository.DBEpisodeTitleFillTarget, title string, createdFrom time.Time) (bool, error) {
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
 		return false, fmt.Errorf("トランザクションの開始に失敗しました: %w", err)
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	updated, err := uc.episodeRepo.WithTx(tx).UpdateEmptyTitle(ctx, episode.ID, title)
+	episode, err := uc.episodeRepo.WithTx(tx).UpdateEmptyTitle(ctx, target, title, createdFrom)
 	if err != nil {
 		return false, fmt.Errorf("エピソードのタイトルの更新に失敗しました: %w", err)
 	}
-	if !updated {
+	if episode == nil {
 		return false, nil
 	}
 
