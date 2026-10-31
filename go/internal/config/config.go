@@ -26,6 +26,9 @@ type Config struct {
 	ResendFromEmail string
 	ResendFromName  string
 
+	// 管理者のメールアドレス (エピソードの自動生成の報告の送り先)
+	AdminEmail string
+
 	// サーバー
 	Port   string
 	Domain string
@@ -174,6 +177,9 @@ func Load() (*Config, error) {
 	if cfg.ResendFromName == "" {
 		cfg.ResendFromName = "Annict"
 	}
+
+	// 管理者のメールアドレス (オプショナル - 未設定のときはエピソードの自動生成の報告メールを送らない)
+	cfg.AdminEmail = os.Getenv("ANNICT_ADMIN_EMAIL")
 
 	// Rate Limiting設定 (オプショナル - 開発環境でRate Limitingを無効化)
 	cfg.DisableRateLimit = os.Getenv("ANNICT_DISABLE_RATE_LIMIT") == "true"

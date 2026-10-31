@@ -261,6 +261,13 @@ func TestPeriodicJobArgs(t *testing.T) {
 			wantQueue:       river.QueueDefault,
 			wantMaxAttempts: 3,
 		},
+		{
+			name:            "GenerateEpisodesArgs",
+			args:            GenerateEpisodesArgs{},
+			wantKind:        "generate_episodes",
+			wantQueue:       river.QueueDefault,
+			wantMaxAttempts: 1,
+		},
 	}
 
 	for _, tt := range tests {
