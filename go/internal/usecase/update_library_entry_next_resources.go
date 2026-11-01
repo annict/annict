@@ -13,7 +13,7 @@ import (
 const libraryEntryNextResourcesBatchSize = 1000
 
 // libraryEntryNextResourcesWindowDaysは、更新の対象にするライブラリの更新日時を、実行日から
-// さかのぼる日数 (Railsと同じ3日)。
+// さかのぼる日数。
 const libraryEntryNextResourcesWindowDays = 3
 
 // UpdateLibraryEntryNextResourcesUsecaseは、「見てる」のライブラリの次のエピソード・次の
@@ -61,8 +61,8 @@ func (uc *UpdateLibraryEntryNextResourcesUsecase) Execute(ctx context.Context, i
 }
 
 // libraryEntryNextResourcesUpdatedFromは、対象にするライブラリの更新日時の下限として、実行日
-// (UTC) のlibraryEntryNextResourcesWindowDays日前の0時 (UTC) を返す。Railsの
-// `after(Date.today - 3, field: "library_entries.updated_at")` に合わせ、時刻ではなく日付で区切る。
+// (UTC) のlibraryEntryNextResourcesWindowDays日前の0時 (UTC) を返す。時刻ではなく日付で区切るため、
+// 同じ日のうちは実行時刻によらず対象の範囲が変わらない。
 func libraryEntryNextResourcesUpdatedFrom(now time.Time) time.Time {
 	year, month, day := now.UTC().Date()
 	return time.Date(year, month, day-libraryEntryNextResourcesWindowDays, 0, 0, 0, 0, time.UTC)
