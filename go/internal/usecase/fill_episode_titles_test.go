@@ -487,9 +487,10 @@ func TestFillEpisodeTitlesUsecase_Execute_ReportsLookupDeadline(t *testing.T) {
 	program := insertGenerationProgram(t, db, workID, 1)
 	firstID := insertTitleFillEpisode(t, db, program, 1)
 	secondID := insertTitleFillEpisode(t, db, program, 2)
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	// 実装はctxの終わり方を区別しないため、待たずに偽のAPIの中で取り消してから期限切れを返す。
+	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
-	lookup := &fakeSubTitleLookup{err: context.DeadlineExceeded, beforeReturn: func() { <-ctx.Done() }}
+	lookup := &fakeSubTitleLookup{err: context.DeadlineExceeded, beforeReturn: cancel}
 	output, err := newFillEpisodeTitlesUsecase(db, lookup).Execute(ctx, FillEpisodeTitlesInput{Now: time.Now()})
 	if err != nil || output == nil {
 		t.Fatalf("結果 = %+v、エラー = %v、期待値 = 未処理件数を持つ結果", output, err)
