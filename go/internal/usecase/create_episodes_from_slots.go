@@ -62,6 +62,8 @@ type CreateEpisodesFromSlotsOutput struct {
 	LinkedSlotCount int
 	SkippedSlots    []SkippedSlot
 	FailedSlots     []FailedSlot
+	// UnprocessedSlotCountは、ctxが終わったために処理しなかった放送枠の件数。
+	UnprocessedSlotCount int
 }
 
 // GeneratedEpisodeは自動生成で作ったエピソードを表す。
@@ -89,7 +91,9 @@ type FailedSlot struct {
 
 // Executeは対象の放送枠を開始日時の順に、1件ずつ別のトランザクションで処理する。1件の
 // 失敗で残りの放送枠を止めないよう、放送枠ごとのエラーは結果に積んで次へ進む。放送枠の一覧を
-// 読めないときだけエラーを返す。
+// 読めないときだけエラーを返す。ctxが終わったら残りの放送枠に進まず、処理しなかった件数を
+// 結果に返す。ctxが終わったために失敗した放送枠は、トランザクションが戻るため処理しなかった
+// 件数に数え、放送枠ごとのエラーにしない。
 func (uc *CreateEpisodesFromSlotsUsecase) Execute(ctx context.Context, input CreateEpisodesFromSlotsInput) (*CreateEpisodesFromSlotsOutput, error) {
 	slots, err := uc.slotRepo.ListForEpisodeGeneration(
 		ctx,
@@ -101,9 +105,18 @@ func (uc *CreateEpisodesFromSlotsUsecase) Execute(ctx context.Context, input Cre
 	}
 
 	output := &CreateEpisodesFromSlotsOutput{}
-	for _, slot := range slots {
+	for i, slot := range slots {
+		if ctx.Err() != nil {
+			output.UnprocessedSlotCount = len(slots) - i
+			break
+		}
+
 		result, err := uc.processSlot(ctx, slot, input.Now)
 		if err != nil {
+			if ctx.Err() != nil {
+				output.UnprocessedSlotCount = len(slots) - i
+				break
+			}
 			output.FailedSlots = append(output.FailedSlots, FailedSlot{SlotID: slot.ID, Err: err})
 			continue
 		}

@@ -4,10 +4,15 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
 )
+
+// episodeGenerationReportSendTimeoutは報告メールの送信の上限。ジョブのctxから切り離して送るため、
+// 送信が戻らないときにジョブが終わらなくならないよう、別に上限を付ける。
+const episodeGenerationReportSendTimeout = 30 * time.Second
 
 // slotEpisodeCreatorは放送枠にエピソードを紐づけ、無ければ作る。
 // 実体は *CreateEpisodesFromSlotsUsecase。
@@ -75,36 +80,26 @@ type GenerateEpisodesOutput struct {
 
 // Executeは自動生成を実行し、結果を報告する。放送枠の処理・しょぼいカレンダー・ライブラリの
 // 更新の失敗は、残りの処理を止めずに報告とログ (Sentryにも送られる) に残す。どの処理も冪等で、
-// 翌日の実行で残りを拾えるため、これらの失敗ではエラーを返さない。エラーを返すのは報告メールの
-// 送信に失敗したときだけ。
+// 翌日の実行で残りを拾えるため、これらの失敗ではエラーを返さない。ジョブの実行上限を超えて
+// ctxが終わったときも、残りの手順を呼ばずに、処理しなかったものを1件のエラーとして報告する。
+// エラーを返すのは報告メールの送信に失敗したときだけ。
 func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEpisodesInput) (*GenerateEpisodesOutput, error) {
+	startedAt := time.Now()
 	report := &model.EpisodeGenerationReport{}
 
-	created, err := uc.creator.Execute(ctx, CreateEpisodesFromSlotsInput(input))
-	if err != nil {
-		slog.ErrorContext(ctx, "放送枠からのエピソードの自動生成に失敗しました", "error", err)
-		report.Errors = append(report.Errors, model.EpisodeGenerationError{Message: err.Error()})
-	} else {
-		addCreatedEpisodesToReport(ctx, report, created)
+	var unfinished []string
+	if u := uc.createEpisodes(ctx, input, report); u != "" {
+		unfinished = append(unfinished, u)
 	}
-
-	filled, err := uc.titleFiller.Execute(ctx, FillEpisodeTitlesInput(input))
-	if err != nil {
-		slog.ErrorContext(ctx, "しょぼいカレンダーからのエピソードのタイトルの取得に失敗しました", "error", err)
-		report.Errors = append(report.Errors, model.EpisodeGenerationError{Message: err.Error()})
-	} else {
-		addFilledTitlesToReport(ctx, report, filled)
+	if u := uc.fillTitles(ctx, input, report); u != "" {
+		unfinished = append(unfinished, u)
 	}
-
-	// 更新した件数はログにだけ残す。毎日のように更新があり、報告メールで知らせるのは失敗だけで
-	// 足りるため。
-	var updatedLibraryEntryCount int
-	updated, err := uc.libraryEntryUpdater.Execute(ctx, UpdateLibraryEntryNextResourcesInput(input))
-	if err != nil {
-		slog.ErrorContext(ctx, "ライブラリの次のエピソード・次の放送枠の更新に失敗しました", "error", err)
-		report.Errors = append(report.Errors, model.EpisodeGenerationError{Message: err.Error()})
-	} else {
-		updatedLibraryEntryCount = updated.UpdatedCount
+	updatedLibraryEntryCount, u := uc.updateLibraryEntries(ctx, input, report)
+	if u != "" {
+		unfinished = append(unfinished, u)
+	}
+	if len(unfinished) > 0 {
+		addTimeoutToReport(ctx, report, unfinished)
 	}
 
 	slog.InfoContext(ctx, "エピソードの自動生成が完了しました",
@@ -114,6 +109,7 @@ func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEp
 		"filled_titles", report.FilledTitleCount,
 		"updated_library_entries", updatedLibraryEntryCount,
 		"errors", len(report.Errors),
+		"elapsed", time.Since(startedAt),
 	)
 
 	sent, err := uc.sendReport(ctx, report)
@@ -121,6 +117,84 @@ func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEp
 		return nil, err
 	}
 	return &GenerateEpisodesOutput{Report: report, ReportSent: sent}, nil
+}
+
+// createEpisodesは放送枠へのエピソードの紐づけと作成を行い、結果を報告に積む。ctxが終わって
+// 処理しなかったものがあれば、それを表す文言を返す。
+func (uc *GenerateEpisodesUsecase) createEpisodes(ctx context.Context, input GenerateEpisodesInput, report *model.EpisodeGenerationReport) string {
+	if ctx.Err() != nil {
+		return "放送枠の処理"
+	}
+
+	created, err := uc.creator.Execute(ctx, CreateEpisodesFromSlotsInput(input))
+	if err != nil {
+		// ctxが終わったために一覧を読めなかったときは、時間切れとしてまとめて報告する。
+		if ctx.Err() != nil {
+			return "放送枠の処理"
+		}
+		slog.ErrorContext(ctx, "放送枠からのエピソードの自動生成に失敗しました", "error", err)
+		report.Errors = append(report.Errors, model.EpisodeGenerationError{Message: err.Error()})
+		return ""
+	}
+
+	addCreatedEpisodesToReport(ctx, report, created)
+	if created.UnprocessedSlotCount > 0 {
+		return fmt.Sprintf("放送枠%d件", created.UnprocessedSlotCount)
+	}
+	return ""
+}
+
+// fillTitlesはしょぼいカレンダーのサブタイトルをエピソードに入れ、結果を報告に積む。ctxが
+// 終わって処理しなかったものがあれば、それを表す文言を返す。
+func (uc *GenerateEpisodesUsecase) fillTitles(ctx context.Context, input GenerateEpisodesInput, report *model.EpisodeGenerationReport) string {
+	if ctx.Err() != nil {
+		return "タイトルの取得"
+	}
+
+	filled, err := uc.titleFiller.Execute(ctx, FillEpisodeTitlesInput(input))
+	if err != nil {
+		if ctx.Err() != nil {
+			return "タイトルの取得"
+		}
+		slog.ErrorContext(ctx, "しょぼいカレンダーからのエピソードのタイトルの取得に失敗しました", "error", err)
+		report.Errors = append(report.Errors, model.EpisodeGenerationError{Message: err.Error()})
+		return ""
+	}
+
+	addFilledTitlesToReport(ctx, report, filled)
+	if filled.UnprocessedEpisodeCount > 0 {
+		return fmt.Sprintf("タイトルを入れるエピソード%d件", filled.UnprocessedEpisodeCount)
+	}
+	return ""
+}
+
+// updateLibraryEntriesはライブラリの次のエピソード・次の放送枠を更新し、更新した件数を返す。
+// 件数は報告に積まずログにだけ残す。毎日のように更新があり、報告メールで知らせるのは失敗だけで
+// 足りるため。ctxが終わって処理しなかったものがあれば、それを表す文言も返す。
+func (uc *GenerateEpisodesUsecase) updateLibraryEntries(ctx context.Context, input GenerateEpisodesInput, report *model.EpisodeGenerationReport) (int, string) {
+	if ctx.Err() != nil {
+		return 0, "ライブラリの更新"
+	}
+
+	updated, err := uc.libraryEntryUpdater.Execute(ctx, UpdateLibraryEntryNextResourcesInput(input))
+	if err != nil {
+		slog.ErrorContext(ctx, "ライブラリの次のエピソード・次の放送枠の更新に失敗しました", "error", err)
+		report.Errors = append(report.Errors, model.EpisodeGenerationError{Message: err.Error()})
+		return 0, ""
+	}
+
+	if updated.Interrupted {
+		return updated.UpdatedCount, "ライブラリの更新の残り"
+	}
+	return updated.UpdatedCount, ""
+}
+
+// addTimeoutToReportは、実行上限を超えて処理しなかったものを1件のエラーとして報告に積む。
+// 残りの放送枠ごとにエラーを積むと、同じ原因でSentryのイベントとメールの行が件数分増えるため。
+func addTimeoutToReport(ctx context.Context, report *model.EpisodeGenerationReport, unfinished []string) {
+	message := "実行上限の時間を超えたため、次の処理をしませんでした: " + strings.Join(unfinished, "、")
+	slog.ErrorContext(ctx, "エピソードの自動生成が実行上限の時間を超えました", "unfinished", unfinished)
+	report.Errors = append(report.Errors, model.EpisodeGenerationError{Message: message})
 }
 
 // addCreatedEpisodesToReportは放送枠の処理の結果を報告に積む。放送枠ごとのエラーはSentryに
@@ -176,7 +250,11 @@ func (uc *GenerateEpisodesUsecase) sendReport(ctx context.Context, report *model
 		return false, nil
 	}
 
-	if err := uc.reportSender.Send(ctx, uc.adminEmail, report); err != nil {
+	// 実行上限を超えてジョブのctxが終わっていても、どこまで処理したかを届けるため、ジョブの
+	// ctxの期限から切り離して送る。
+	sendCtx, cancel := context.WithTimeout(context.WithoutCancel(ctx), episodeGenerationReportSendTimeout)
+	defer cancel()
+	if err := uc.reportSender.Send(sendCtx, uc.adminEmail, report); err != nil {
 		return false, fmt.Errorf("自動生成の報告メールの送信に失敗: %w", err)
 	}
 	return true, nil

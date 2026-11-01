@@ -66,3 +66,36 @@ func TestUpdateLibraryEntryNextResourcesUsecase_Execute(t *testing.T) {
 		})
 	}
 }
+
+// TestUpdateLibraryEntryNextResourcesUsecase_Execute_StopsWhenContextEndsは、ctxが終わっていたら
+// ライブラリを更新せず、エラーにしないで途中でやめたことを返すことを検証する。
+func TestUpdateLibraryEntryNextResourcesUsecase_Execute_StopsWhenContextEnds(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewLibraryEntryRepository(query.New(db)).WithTx(tx)
+	now := time.Date(2100, 1, 10, 0, 0, 0, 0, time.UTC)
+
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	testutil.NewEpisodeBuilder(t, tx, workID).Build()
+	userID := testutil.NewUserBuilder(t, tx).Build()
+	entryID := testutil.NewLibraryEntryBuilder(t, tx).WithUserID(userID).WithWorkID(workID).WithUpdatedAt(now).Build()
+
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
+	output, err := NewUpdateLibraryEntryNextResourcesUsecase(repo).Execute(ctx, UpdateLibraryEntryNextResourcesInput{Now: now})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if !output.Interrupted || output.UpdatedCount != 0 {
+		t.Errorf("output = %+v、期待値 = 更新0件で途中でやめた", output)
+	}
+
+	var nextEpisodeID sql.NullInt64
+	if err := tx.QueryRow("SELECT next_episode_id FROM library_entries WHERE id = $1", entryID).Scan(&nextEpisodeID); err != nil {
+		t.Fatalf("ライブラリエントリの取得に失敗: %v", err)
+	}
+	if nextEpisodeID.Valid {
+		t.Errorf("次のエピソード = %v、期待値 = NULLのまま", nextEpisodeID)
+	}
+}

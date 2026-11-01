@@ -33,22 +33,35 @@ type UpdateLibraryEntryNextResourcesInput struct {
 	Now time.Time
 }
 
-// UpdateLibraryEntryNextResourcesOutputは書き換えたライブラリの件数を返す。
+// UpdateLibraryEntryNextResourcesOutputは書き換えたライブラリの件数と、ctxが終わったために
+// 途中でやめたかを返す。残りの件数は、ctxが終わった後は数えられないため返さない。
 type UpdateLibraryEntryNextResourcesOutput struct {
 	UpdatedCount int
+	Interrupted  bool
 }
 
 // Executeは対象のライブラリをidの順にページに区切り、ページごとに1つのUPDATE文で更新する。
 // ページの更新に失敗したら、そこで止めてエラーを返す。ページごとに更新を確定し、
-// 翌日の実行でも値が変わる行だけを更新するため、途中までの更新は戻さない。
+// 翌日の実行でも値が変わる行だけを更新するため、途中までの更新は戻さない。ctxが終わったら
+// 次のページに進まず、途中でやめたことを結果に返す。ctxが終わったために失敗したページも
+// 同じく扱い、エラーにしない。
 func (uc *UpdateLibraryEntryNextResourcesUsecase) Execute(ctx context.Context, input UpdateLibraryEntryNextResourcesInput) (*UpdateLibraryEntryNextResourcesOutput, error) {
 	updatedFrom := libraryEntryNextResourcesUpdatedFrom(input.Now)
 
 	output := &UpdateLibraryEntryNextResourcesOutput{}
 	var afterID int64
 	for {
+		if ctx.Err() != nil {
+			output.Interrupted = true
+			return output, nil
+		}
+
 		lastID, updatedCount, err := uc.libraryEntryRepo.UpdateNextResources(ctx, afterID, updatedFrom, input.Now, libraryEntryNextResourcesBatchSize)
 		if err != nil {
+			if ctx.Err() != nil {
+				output.Interrupted = true
+				return output, nil
+			}
 			return nil, fmt.Errorf("ライブラリの次のエピソード・次の放送枠の更新に失敗 (id %dより後): %w", afterID, err)
 		}
 		if lastID == 0 {

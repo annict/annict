@@ -22,11 +22,16 @@ type fakeSlotEpisodeCreator struct {
 	err    error
 	input  *CreateEpisodesFromSlotsInput
 	calls  *[]string
+	// beforeReturnは、結果を返す前に呼ぶ。実行上限を超えた状況を作るため、ctxを終わらせるのに使う。
+	beforeReturn func()
 }
 
 func (f *fakeSlotEpisodeCreator) Execute(_ context.Context, input CreateEpisodesFromSlotsInput) (*CreateEpisodesFromSlotsOutput, error) {
 	f.input = &input
 	recordCall(f.calls, "CreateEpisodesFromSlots")
+	if f.beforeReturn != nil {
+		f.beforeReturn()
+	}
 	return f.output, f.err
 }
 
@@ -35,11 +40,16 @@ type fakeEpisodeTitleFiller struct {
 	err    error
 	input  *FillEpisodeTitlesInput
 	calls  *[]string
+	// beforeReturnは、結果を返す前に呼ぶ。実行上限を超えた状況を作るため、ctxを終わらせるのに使う。
+	beforeReturn func()
 }
 
 func (f *fakeEpisodeTitleFiller) Execute(_ context.Context, input FillEpisodeTitlesInput) (*FillEpisodeTitlesOutput, error) {
 	f.input = &input
 	recordCall(f.calls, "FillEpisodeTitles")
+	if f.beforeReturn != nil {
+		f.beforeReturn()
+	}
 	return f.output, f.err
 }
 
@@ -48,11 +58,16 @@ type fakeLibraryEntryUpdater struct {
 	err    error
 	input  *UpdateLibraryEntryNextResourcesInput
 	calls  *[]string
+	// beforeReturnは、結果を返す前に呼ぶ。実行上限を超えた状況を作るため、ctxを終わらせるのに使う。
+	beforeReturn func()
 }
 
 func (f *fakeLibraryEntryUpdater) Execute(_ context.Context, input UpdateLibraryEntryNextResourcesInput) (*UpdateLibraryEntryNextResourcesOutput, error) {
 	f.input = &input
 	recordCall(f.calls, "UpdateLibraryEntryNextResources")
+	if f.beforeReturn != nil {
+		f.beforeReturn()
+	}
 	return f.output, f.err
 }
 
@@ -65,9 +80,12 @@ type fakeReportSender struct {
 	err     error
 	to      string
 	reports []*model.EpisodeGenerationReport
+	// ctxErrは、送るときに渡されたctxのErrの値。
+	ctxErr error
 }
 
-func (f *fakeReportSender) Send(_ context.Context, to string, report *model.EpisodeGenerationReport) error {
+func (f *fakeReportSender) Send(ctx context.Context, to string, report *model.EpisodeGenerationReport) error {
+	f.ctxErr = ctx.Err()
 	f.to = to
 	f.reports = append(f.reports, report)
 	return f.err
@@ -234,5 +252,82 @@ func TestGenerateEpisodesUsecase_Execute_ReturnsSendError(t *testing.T) {
 	)
 	if _, err := uc.Execute(context.Background(), GenerateEpisodesInput{Now: time.Now()}); !errors.Is(err, sendErr) {
 		t.Fatalf("Execute()のエラー = %v、期待値 = %v をラップしたエラー", err, sendErr)
+	}
+}
+
+// TestGenerateEpisodesUsecase_Execute_ReportsTimeoutは、実行上限を超えてctxが終わったら残りの
+// 手順を呼ばず、処理しなかったものを1件のエラーにまとめ、ジョブのctxから切り離して報告メールを
+// 送ることを検証する。
+func TestGenerateEpisodesUsecase_Execute_ReportsTimeout(t *testing.T) {
+	t.Parallel()
+
+	const prefix = "実行上限の時間を超えたため、次の処理をしませんでした: "
+	tests := []struct {
+		name        string
+		setup       func(cancel context.CancelFunc, creator *fakeSlotEpisodeCreator, filler *fakeEpisodeTitleFiller, updater *fakeLibraryEntryUpdater)
+		wantCalls   []string
+		wantMessage string
+	}{
+		{
+			name: "放送枠の途中で時間切れ",
+			setup: func(cancel context.CancelFunc, creator *fakeSlotEpisodeCreator, _ *fakeEpisodeTitleFiller, _ *fakeLibraryEntryUpdater) {
+				creator.output = &CreateEpisodesFromSlotsOutput{UnprocessedSlotCount: 2}
+				creator.beforeReturn = cancel
+			},
+			wantCalls:   []string{"CreateEpisodesFromSlots"},
+			wantMessage: prefix + "放送枠2件、タイトルの取得、ライブラリの更新",
+		},
+		{
+			name: "放送枠の一覧を読む間に時間切れ",
+			setup: func(cancel context.CancelFunc, creator *fakeSlotEpisodeCreator, _ *fakeEpisodeTitleFiller, _ *fakeLibraryEntryUpdater) {
+				creator.err = context.DeadlineExceeded
+				creator.beforeReturn = cancel
+			},
+			wantCalls:   []string{"CreateEpisodesFromSlots"},
+			wantMessage: prefix + "放送枠の処理、タイトルの取得、ライブラリの更新",
+		},
+		{
+			name: "タイトルとライブラリの更新の途中で時間切れ",
+			setup: func(cancel context.CancelFunc, _ *fakeSlotEpisodeCreator, filler *fakeEpisodeTitleFiller, updater *fakeLibraryEntryUpdater) {
+				filler.output = &FillEpisodeTitlesOutput{UnprocessedEpisodeCount: 3}
+				updater.output = &UpdateLibraryEntryNextResourcesOutput{UpdatedCount: 1, Interrupted: true}
+				updater.beforeReturn = cancel
+			},
+			wantCalls:   []string{"CreateEpisodesFromSlots", "FillEpisodeTitles", "UpdateLibraryEntryNextResources"},
+			wantMessage: prefix + "タイトルを入れるエピソード3件、ライブラリの更新の残り",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx, cancel := context.WithCancel(context.Background())
+			defer cancel()
+			var calls []string
+			creator := &fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{}, calls: &calls}
+			filler := &fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}, calls: &calls}
+			updater := &fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{}, calls: &calls}
+			tt.setup(cancel, creator, filler, updater)
+			sender := &fakeReportSender{}
+
+			output, err := NewGenerateEpisodesUsecase(creator, filler, updater, sender, "admin@example.com").Execute(ctx, GenerateEpisodesInput{Now: time.Now()})
+			if err != nil {
+				t.Fatalf("Execute()のエラー = %v", err)
+			}
+
+			if !slices.Equal(calls, tt.wantCalls) {
+				t.Errorf("呼んだ手順 = %v、期待値 = %v", calls, tt.wantCalls)
+			}
+			if !output.ReportSent || len(sender.reports) != 1 {
+				t.Fatalf("送信 = (ReportSent %v, %d通)、期待値 = 1通", output.ReportSent, len(sender.reports))
+			}
+			if sender.ctxErr != nil {
+				t.Errorf("送るときのctxのErr = %v、期待値 = nil", sender.ctxErr)
+			}
+			errs := sender.reports[0].Errors
+			if len(errs) != 1 || errs[0].Message != tt.wantMessage {
+				t.Errorf("Errors = %+v、期待値 = %qの1件", errs, tt.wantMessage)
+			}
+		})
 	}
 }

@@ -443,3 +443,36 @@ func TestFillEpisodeTitlesUsecase_Execute_SkipsLockedEpisode(t *testing.T) {
 		t.Errorf("編集中の結果 = %+v、エラー = %v、期待値 = 更新・エラーなし", output, err)
 	}
 }
+
+// TestFillEpisodeTitlesUsecase_Execute_StopsWhenContextEndsは、しょぼいカレンダーへの問い合わせの
+// 間にctxが終わったら、エピソードにタイトルを入れずに、処理しなかった件数を返すことを検証する。
+func TestFillEpisodeTitlesUsecase_Execute_StopsWhenContextEnds(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	workID, tid := insertTitleFillWork(t, db)
+	program := insertGenerationProgram(t, db, workID, 1)
+	firstID := insertTitleFillEpisode(t, db, program, 1)
+	secondID := insertTitleFillEpisode(t, db, program, 2)
+
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+	lookup := &fakeSubTitleLookup{
+		subTitles:    map[int32]map[int32]string{tid: {1: "第1話のサブタイトル", 2: "第2話のサブタイトル"}},
+		beforeReturn: cancel,
+	}
+
+	output, err := newFillEpisodeTitlesUsecase(db, lookup).Execute(ctx, FillEpisodeTitlesInput{Now: time.Now()})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	// 対象はDB全体から読むため、ほかのテストのエピソードも処理しなかった件数に入る。
+	if output.FilledCount != 0 || len(output.FailedEpisodes) != 0 || output.UnprocessedEpisodeCount < 2 {
+		t.Errorf("output = %+v、期待値 = タイトルを入れず、処理しなかったエピソード2件以上", output)
+	}
+	for _, episodeID := range []model.EpisodeID{firstID, secondID} {
+		if title, _ := readEpisodeTitle(t, db, episodeID); title.Valid {
+			t.Errorf("エピソード%dのタイトル = %q、期待値 = 空のまま", episodeID, title.String)
+		}
+	}
+}
