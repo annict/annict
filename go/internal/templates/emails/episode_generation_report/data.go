@@ -3,11 +3,9 @@ package episode_generation_report
 
 // Dataは報告メールのテンプレートに渡す値
 type Data struct {
-	CreatedEpisodes  []CreatedEpisode
-	LinkedSlotCount  int
-	SkippedSlots     []SkippedSlot
-	FilledTitleCount int
-	Errors           []Error
+	CreatedEpisodes []CreatedEpisode
+	SkippedSlots    []SkippedSlot
+	Errors          []Error
 }
 
 // CreatedEpisodeは作ったエピソード

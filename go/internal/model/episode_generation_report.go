@@ -13,7 +13,8 @@ const (
 )
 
 // EpisodeGenerationReportは、エピソードの自動生成の1回の実行の結果を、管理者への報告に
-// 使う形で表す。
+// 使う形で表す。報告メールに載せるのは作ったエピソード・飛ばした放送枠・エラーで、件数だけの
+// 項目はログに使う。
 type EpisodeGenerationReport struct {
 	CreatedEpisodes []EpisodeGenerationCreatedEpisode
 	// LinkedSlotCountは、既存のエピソードに紐づけた放送枠の件数。
@@ -46,11 +47,10 @@ type EpisodeGenerationError struct {
 	Message   string
 }
 
-// IsEmptyは報告することが何も無いかを返す。
+// IsEmptyは報告メールで知らせることが何も無いかを返す。紐づけた放送枠とタイトルを入れた
+// エピソードの件数は見ない。どちらもほぼ毎日出るうえ、見て直すことの手がかりにならないため。
 func (r *EpisodeGenerationReport) IsEmpty() bool {
 	return len(r.CreatedEpisodes) == 0 &&
-		r.LinkedSlotCount == 0 &&
 		len(r.SkippedSlots) == 0 &&
-		r.FilledTitleCount == 0 &&
 		len(r.Errors) == 0
 }

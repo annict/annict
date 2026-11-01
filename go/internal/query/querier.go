@@ -756,6 +756,15 @@ type Querier interface {
 	// 張り替える。UpdateDBEpisodeが移動で隣接行を張り替えるのと同じく、並び順から導出される値の
 	// 維持であって編集ではないため、DB活動・作品のtouch・updated_atの更新は行わない。
 	UpdateEpisodePrevEpisodeID(ctx context.Context, arg UpdateEpisodePrevEpisodeIDParams) (int64, error)
+	// 「見てる」のライブラリのうち、updated_from以降に更新され、次のエピソードが無いか、番組を
+	// 選んでいて次の放送枠が無いものを、after_idより大きいidの順にbatch_size件読み、次の
+	// エピソードと次の放送枠を求めて、値が変わる行だけを書き換える。読んだ行の最後のid
+	// (読んだ行が無いときは0) と、書き換えた件数を返す。
+	// 値の変わらない行は条件を満たしたまま残るため、ページは条件ではなくidで区切る。
+	// 書き換える行は、読んだときとwatched_episode_ids・program_idが同じ行に限る。Railsの
+	// 視聴記録が同じ行を同時に書き換えたときは、UPDATEが最新の行でこの条件を確かめ直すため、
+	// 古い視聴済みのエピソードから求めた値で上書きせずに飛ばす。
+	UpdateLibraryEntryNextResources(ctx context.Context, arg UpdateLibraryEntryNextResourcesParams) (UpdateLibraryEntryNextResourcesRow, error)
 	UpdateProfileImageData(ctx context.Context, arg UpdateProfileImageDataParams) error
 	UpdateSession(ctx context.Context, arg UpdateSessionParams) error
 	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error

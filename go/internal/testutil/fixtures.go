@@ -1494,15 +1494,48 @@ type LibraryEntryBuilder struct {
 	workID    model.WorkID
 	programID int64
 	status    string
+	// watchedEpisodeIDsは視聴済みのエピソード (library_entries.watched_episode_ids)。
+	watchedEpisodeIDs []model.EpisodeID
+	// nextEpisodeID / nextSlotIDは次のエピソード・次の放送枠。nilの場合はカラムをNULLの
+	// ままにします。
+	nextEpisodeID *model.EpisodeID
+	nextSlotID    *model.SlotID
+	// updatedAtはlibrary_entries.updated_at (UTCで保存します)。
+	updatedAt time.Time
 }
 
 // NewLibraryEntryBuilderは新しいLibraryEntryBuilderを作成します
 func NewLibraryEntryBuilder(t *testing.T, tx *sql.Tx) *LibraryEntryBuilder {
 	return &LibraryEntryBuilder{
-		tx:     tx,
-		t:      t,
-		status: "watching",
+		tx:        tx,
+		t:         t,
+		status:    "watching",
+		updatedAt: time.Now(),
 	}
+}
+
+// WithWatchedEpisodeIDsは視聴済みのエピソードを設定します
+func (b *LibraryEntryBuilder) WithWatchedEpisodeIDs(episodeIDs ...model.EpisodeID) *LibraryEntryBuilder {
+	b.watchedEpisodeIDs = episodeIDs
+	return b
+}
+
+// WithNextEpisodeIDは次のエピソードを設定します
+func (b *LibraryEntryBuilder) WithNextEpisodeID(episodeID model.EpisodeID) *LibraryEntryBuilder {
+	b.nextEpisodeID = &episodeID
+	return b
+}
+
+// WithNextSlotIDは次の放送枠を設定します
+func (b *LibraryEntryBuilder) WithNextSlotID(slotID model.SlotID) *LibraryEntryBuilder {
+	b.nextSlotID = &slotID
+	return b
+}
+
+// WithUpdatedAtは更新日時を設定します
+func (b *LibraryEntryBuilder) WithUpdatedAt(updatedAt time.Time) *LibraryEntryBuilder {
+	b.updatedAt = updatedAt
+	return b
 }
 
 // WithUserIDはユーザーIDを設定します
@@ -1575,12 +1608,26 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		programID = b.programID
 	}
 
+	var nextEpisodeID, nextSlotID any
+	if b.nextEpisodeID != nil {
+		nextEpisodeID = int64(*b.nextEpisodeID)
+	}
+	if b.nextSlotID != nil {
+		nextSlotID = int64(*b.nextSlotID)
+	}
+	watchedEpisodeIDs := make([]int64, len(b.watchedEpisodeIDs))
+	for i, episodeID := range b.watchedEpisodeIDs {
+		watchedEpisodeIDs[i] = int64(episodeID)
+	}
+
 	// ライブラリエントリを作成 (status_idを設定)
 	query := `
 		INSERT INTO library_entries (
-			user_id, work_id, program_id, kind, status_id, created_at, updated_at
+			user_id, work_id, program_id, kind, status_id, created_at, updated_at,
+			watched_episode_ids, next_episode_id, next_slot_id
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7
+			$1, $2, $3, $4, $5, $6, $7,
+			$8, $9, $10
 		) RETURNING id
 	`
 
@@ -1593,7 +1640,10 @@ func (b *LibraryEntryBuilder) Build() int64 {
 		kind,
 		statusID,
 		time.Now(),
-		time.Now(),
+		b.updatedAt.UTC(),
+		pq.Array(watchedEpisodeIDs),
+		nextEpisodeID,
+		nextSlotID,
 	).Scan(&id)
 
 	if err != nil {

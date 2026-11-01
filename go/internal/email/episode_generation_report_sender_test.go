@@ -62,24 +62,41 @@ func TestEpisodeGenerationReportSender_Send(t *testing.T) {
 		t.Fatalf("TextBody.Render()のエラー = %v", err)
 	}
 
-	wants := []string{
-		"作ったエピソード (1件)",
-		"幼馴染とはラブコメにならない 第13話",
-		"https://example.com/db/works/15816/episodes",
-		"既存のエピソードに紐づけた放送枠: 3件",
-		"放送枠493202 幼馴染とはラブコメにならない",
-		"同じ番組の別の放送枠に紐づいています",
-		"タイトルを入れたエピソード: 2件",
+	// テキスト版は、件数だけの項目を載せず、生成されたエピソードをURLから書き始める。
+	wantText := `生成されたエピソード (1件)
+- https://example.com/db/works/15816/episodes 幼馴染とはラブコメにならない 第13話
+
+飛ばした放送枠 (1件)
+- 放送枠493202 幼馴染とはラブコメにならない: 計算した話数のエピソードが、同じ番組の別の放送枠に紐づいています。放送枠の紐づけを確認してください
+
+エラー (3件)
+- 放送枠493201: 作品のロックに失敗しました
+- エピソード176556: エピソードのタイトルの更新に失敗しました
+- しょぼいカレンダーからのサブタイトルの取得に失敗
+`
+	if got := bodies["TextBody"].String(); got != wantText {
+		t.Errorf("TextBody = %q、期待値 = %q", got, wantText)
+	}
+
+	// HTML版は、見出しの要素を使わず、リンクの文字をURLそのものにする。
+	html := bodies["HTMLBody"].String()
+	htmlWants := []string{
+		"生成されたエピソード (1件)",
+		`<a href="https://example.com/db/works/15816/episodes">https://example.com/db/works/15816/episodes</a> 幼馴染とはラブコメにならない 第13話`,
+		"放送枠493202 幼馴染とはラブコメにならない: 計算した話数のエピソードが、同じ番組の別の放送枠に紐づいています",
 		"エラー (3件)",
 		"放送枠493201: 作品のロックに失敗しました",
 		"エピソード176556: エピソードのタイトルの更新に失敗しました",
 		"しょぼいカレンダーからのサブタイトルの取得に失敗",
 	}
-	for name, body := range bodies {
-		for _, want := range wants {
-			if !strings.Contains(body.String(), want) {
-				t.Errorf("%sに %q が含まれていません: %s", name, want, body.String())
-			}
+	for _, want := range htmlWants {
+		if !strings.Contains(html, want) {
+			t.Errorf("HTMLBodyに %q が含まれていません: %s", want, html)
+		}
+	}
+	for _, unwanted := range []string{"<h1", "<h2", "<h3", "紐づけた放送枠", "タイトルを入れたエピソード"} {
+		if strings.Contains(html, unwanted) {
+			t.Errorf("HTMLBodyに %q が含まれています: %s", unwanted, html)
 		}
 	}
 }

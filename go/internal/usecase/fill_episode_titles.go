@@ -55,6 +55,8 @@ type FillEpisodeTitlesInput struct {
 type FillEpisodeTitlesOutput struct {
 	FilledCount    int
 	FailedEpisodes []FailedEpisode
+	// UnprocessedEpisodeCountは、ctxが終わったために処理しなかった対象のエピソードの件数。
+	UnprocessedEpisodeCount int
 }
 
 // FailedEpisodeは、タイトルの更新がエラーで失敗したエピソードを表す。
@@ -64,9 +66,10 @@ type FailedEpisode struct {
 }
 
 // Executeは対象のエピソードの作品のサブタイトルをまとめて引き、エピソードごとに1トランザクション
-// でタイトルを入れる。しょぼいカレンダーへの問い合わせはトランザクションの外で行う。対象の
-// 読み込みとしょぼいカレンダーへの問い合わせの失敗はエラーとして返し、エピソードごとの失敗は
-// 結果に積んで次へ進む。
+// でタイトルを入れる。しょぼいカレンダーへの問い合わせはトランザクションの外で行う。対象を
+// 読めないときと、ctxが生きている間に問い合わせに失敗したときはエラーを返す。エピソードごとの
+// 失敗は結果に積んで次へ進む。ctxが終わったら残りのエピソードに進まず、処理しなかった件数を
+// 結果に返す。問い合わせや更新がctxの終了で失敗したときも、処理しなかった件数に数える。
 func (uc *FillEpisodeTitlesUsecase) Execute(ctx context.Context, input FillEpisodeTitlesInput) (*FillEpisodeTitlesOutput, error) {
 	targets, err := uc.episodeRepo.ListForTitleFill(ctx, input.Now.Add(-episodeTitleFillWindow))
 	if err != nil {
@@ -80,10 +83,19 @@ func (uc *FillEpisodeTitlesUsecase) Execute(ctx context.Context, input FillEpiso
 
 	subTitles, err := uc.subTitleLookup.LookupSubTitles(ctx, scTidsOf(targets))
 	if err != nil {
+		if ctx.Err() != nil {
+			output.UnprocessedEpisodeCount = len(targets)
+			return output, nil
+		}
 		return nil, fmt.Errorf("しょぼいカレンダーからのサブタイトルの取得に失敗: %w", err)
 	}
 
-	for _, target := range targets {
+	for i, target := range targets {
+		if ctx.Err() != nil {
+			output.UnprocessedEpisodeCount = len(targets) - i
+			break
+		}
+
 		title := subTitles[target.ScTid][int32(*target.Episode.RawNumber)]
 		if title == "" {
 			continue
@@ -91,6 +103,10 @@ func (uc *FillEpisodeTitlesUsecase) Execute(ctx context.Context, input FillEpiso
 
 		filled, err := uc.fillTitle(ctx, target, title, input.Now.Add(-episodeTitleFillWindow))
 		if err != nil {
+			if ctx.Err() != nil {
+				output.UnprocessedEpisodeCount = len(targets) - i
+				break
+			}
 			output.FailedEpisodes = append(output.FailedEpisodes, FailedEpisode{EpisodeID: target.Episode.ID, Err: err})
 			continue
 		}

@@ -646,3 +646,49 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollback(t *testin
 		t.Errorf("失敗後 = (分類%d件, 前の話%d, 作品件数%d, 作品更新%v, エピソード更新%v)、期待値 = 書き込み前の値", classificationCount, prevEpisodeID, episodesCount, workUpdatedAt, episodeUpdatedAt)
 	}
 }
+
+// expiringContextは、Errをallowed回呼ばれるまではnilを返し、その後は期限切れを返すcontext。
+// Doneは親のまま閉じないため、DBの呼び出しは期限切れの影響を受けず、繰り返しの間でErrを見る
+// 箇所だけが期限切れを観測する。1件目を処理した後に実行上限を超えた状況を、時間に頼らずに作る。
+type expiringContext struct {
+	context.Context
+	allowed atomic.Int32
+}
+
+func newExpiringContext(allowed int32) *expiringContext {
+	ctx := &expiringContext{Context: context.Background()}
+	ctx.allowed.Store(allowed)
+	return ctx
+}
+
+func (c *expiringContext) Err() error {
+	if c.allowed.Add(-1) < 0 {
+		return context.DeadlineExceeded
+	}
+	return nil
+}
+
+// TestCreateEpisodesFromSlotsUsecase_Execute_StopsWhenContextEndsは、ctxが終わったら残りの
+// 放送枠に進まず、処理しなかった件数を返すことを検証する。
+func TestCreateEpisodesFromSlotsUsecase_Execute_StopsWhenContextEnds(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	now := generationNow()
+	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	program := insertGenerationProgram(t, db, workID, 1)
+	firstID := program.insertSlot(1, now, nil)
+	secondID := program.insertSlot(2, now.Add(time.Hour), nil)
+
+	// 1件目の前の確認だけを通し、2件目の前で期限切れにする。
+	output, err := newCreateEpisodesFromSlotsUsecase(db).Execute(newExpiringContext(1), CreateEpisodesFromSlotsInput{Now: now})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if len(output.CreatedEpisodes) != 1 || output.CreatedEpisodes[0].SlotID != firstID || output.UnprocessedSlotCount != 1 || len(output.FailedSlots) != 0 {
+		t.Fatalf("output = %+v、期待値 = 放送枠%dの作成1件・処理しなかった放送枠1件", output, firstID)
+	}
+	if readSlotEpisodeID(t, db, secondID).Valid {
+		t.Error("処理しなかった放送枠にエピソードが紐づいています")
+	}
+}

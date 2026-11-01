@@ -253,7 +253,8 @@ func runServe() {
 	deleteUserUC := newDeleteUserUsecase(db, queries, stripeAdapter, storageAdapter, usecase.DeleteUserTimeLimit)
 
 	// エピソードの自動生成が使うUseCaseを組み立てる (Worker用)。放送枠へのエピソードの
-	// 紐づけと作成、しょぼいカレンダーのサブタイトルの取得を、下の定期ジョブが順に呼ぶ。
+	// 紐づけと作成、しょぼいカレンダーのサブタイトルの取得、ライブラリの次のエピソード・次の
+	// 放送枠の更新を、下の定期ジョブが順に呼ぶ。
 	createEpisodesFromSlotsUC := usecase.NewCreateEpisodesFromSlotsUsecase(
 		db,
 		repository.NewSlotRepository(queries),
@@ -268,19 +269,23 @@ func runServe() {
 		repository.NewAnimeRepository(queries),
 		syobocal.NewClient(),
 	)
+	updateLibraryEntryNextResourcesUC := usecase.NewUpdateLibraryEntryNextResourcesUsecase(
+		repository.NewLibraryEntryRepository(queries),
+	)
 
 	// Riverクライアントの初期化
 	ctx := context.Background()
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
-		CleanupExpiredTokens:      cleanupExpiredTokensUC,
-		CleanupExpiredSignInCodes: cleanupExpiredSignInCodesUC,
-		CleanupExpiredRateLimits:  cleanupExpiredRateLimitsUC,
-		CleanupExpiredSessions:    cleanupExpiredSessionsUC,
-		CleanupAnonymousSessions:  cleanupAnonymousSessionsUC,
-		SyncAnimes:                syncAnimesUC,
-		DeleteUser:                deleteUserUC,
-		CreateEpisodesFromSlots:   createEpisodesFromSlotsUC,
-		FillEpisodeTitles:         fillEpisodeTitlesUC,
+		CleanupExpiredTokens:            cleanupExpiredTokensUC,
+		CleanupExpiredSignInCodes:       cleanupExpiredSignInCodesUC,
+		CleanupExpiredRateLimits:        cleanupExpiredRateLimitsUC,
+		CleanupExpiredSessions:          cleanupExpiredSessionsUC,
+		CleanupAnonymousSessions:        cleanupAnonymousSessionsUC,
+		SyncAnimes:                      syncAnimesUC,
+		DeleteUser:                      deleteUserUC,
+		CreateEpisodesFromSlots:         createEpisodesFromSlotsUC,
+		FillEpisodeTitles:               fillEpisodeTitlesUC,
+		UpdateLibraryEntryNextResources: updateLibraryEntryNextResourcesUC,
 	}, cfg)
 	if err != nil {
 		slog.Error("Riverクライアントの初期化に失敗しました", "error", err)
@@ -392,8 +397,8 @@ func runServe() {
 	riverClient.Client().PeriodicJobs().Add(periodicJobSyncAnimes)
 	slog.Info("定期実行ジョブを登録しました", "job", "animes同期バッチ", "schedule", "毎時")
 
-	// エピソードの自動生成を毎日UTCの20時 (日本時間の5時) に登録する。Rails版のcronと同じ
-	// 時刻。ライブラリの次のエピソードを更新するRails版のタスクは、この後のUTCの20時30分に動く。
+	// エピソードの自動生成を毎日UTCの20時 (日本時間の5時) に登録する。ライブラリの次の
+	// エピソード・次の放送枠の更新も、同じジョブの中で自動生成に続けて行う。
 	periodicJobGenerateEpisodes := river.NewPeriodicJob(
 		dailySchedule{hour: 20},
 		func() (river.JobArgs, *river.InsertOpts) {
