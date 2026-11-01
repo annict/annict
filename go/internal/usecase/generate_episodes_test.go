@@ -187,18 +187,21 @@ func TestGenerateEpisodesUsecase_Execute_SkipsReport(t *testing.T) {
 	t.Parallel()
 
 	withResult := func() (*fakeSlotEpisodeCreator, *fakeEpisodeTitleFiller) {
-		return &fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{LinkedSlotCount: 1}},
+		return &fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{
+				SkippedSlots: []SkippedSlot{{SlotID: 1, Reason: model.EpisodeGenerationSkipReasonCandidatesLinked}},
+			}},
 			&fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}}
 	}
 
-	// ライブラリを更新した件数は報告に含めないため、更新があっても送らない。
+	// 紐づけた放送枠・タイトルを入れたエピソード・更新したライブラリの件数は報告メールに
+	// 載せないため、件数があっても送らない。
 	t.Run("報告することが無い", func(t *testing.T) {
 		t.Parallel()
 
 		sender := &fakeReportSender{}
 		uc := NewGenerateEpisodesUsecase(
-			&fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{}},
-			&fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}},
+			&fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{LinkedSlotCount: 2}},
+			&fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{FilledCount: 4}},
 			&fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{UpdatedCount: 3}},
 			sender,
 			"admin@example.com",
@@ -245,7 +248,9 @@ func TestGenerateEpisodesUsecase_Execute_ReturnsSendError(t *testing.T) {
 
 	sendErr := errors.New("Resendへの送信に失敗")
 	uc := NewGenerateEpisodesUsecase(
-		&fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{LinkedSlotCount: 1}},
+		&fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{
+			CreatedEpisodes: []GeneratedEpisode{{SlotID: 1, WorkID: 10, WorkTitle: "作品A", Number: "第1話"}},
+		}},
 		&fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}},
 		newFakeLibraryEntryUpdater(),
 		&fakeReportSender{err: sendErr},

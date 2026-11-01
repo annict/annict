@@ -36,10 +36,7 @@ func (s *EpisodeGenerationReportSender) Send(ctx context.Context, to string, rep
 }
 
 func (s *EpisodeGenerationReportSender) reportData(report *model.EpisodeGenerationReport) episode_generation_report.Data {
-	data := episode_generation_report.Data{
-		LinkedSlotCount:  report.LinkedSlotCount,
-		FilledTitleCount: report.FilledTitleCount,
-	}
+	var data episode_generation_report.Data
 
 	for _, episode := range report.CreatedEpisodes {
 		data.CreatedEpisodes = append(data.CreatedEpisodes, episode_generation_report.CreatedEpisode{
