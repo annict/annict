@@ -107,10 +107,11 @@ func TestLibraryEntryRepository_UpdateNextResources(t *testing.T) {
 	before := updatedFrom.Add(-time.Second)
 
 	// 作品のエピソードは、削除済みと非公開のものを並び順の先頭に置き、次のエピソードに選ばれ
-	// ないことを確かめる。
+	// ないことを確かめる。2話を1話より先に作ってidの順とsort_numberの順を逆にし、次のエピソードが
+	// sort_numberの順で選ばれることも確かめる。
 	workID := testutil.NewWorkBuilder(t, tx).Build()
-	episode1 := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(10).Build()
 	episode2 := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(20).Build()
+	episode1 := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(10).Build()
 	testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(1).WithDeletedAt(now).Build()
 	testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(2).WithUnpublishedAt(now).Build()
 
@@ -121,8 +122,12 @@ func TestLibraryEntryRepository_UpdateNextResources(t *testing.T) {
 	newSlot := func(episodeID model.EpisodeID) *testutil.SlotBuilder {
 		return testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithEpisodeID(episodeID)
 	}
-	newSlot(episode1).WithUnpublishedAt(now).Build()
+	slot1 := newSlot(episode1).WithUnpublishedAt(now).Build()
 	slot2 := newSlot(episode2).Build()
+	// 別の番組の2話の放送枠は論理削除し、選んでいる番組の未削除の放送枠だけを選ぶことを確かめる。
+	otherProgramID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(otherProgramID).
+		WithEpisodeID(episode2).WithDeletedAt(now).Build()
 
 	newEntry := func() *testutil.LibraryEntryBuilder {
 		userID := testutil.NewUserBuilder(t, tx).Build()
@@ -137,15 +142,18 @@ func TestLibraryEntryRepository_UpdateNextResources(t *testing.T) {
 	wannaWatch := newEntry().WithStatus("wanna_watch").Build()
 	updatedBefore := newEntry().WithUpdatedAt(before).Build()
 	hasNextEpisode := newEntry().WithNextEpisodeID(episode1).Build()
+	otherProgram := newEntry().WithProgramID(otherProgramID).WithWatchedEpisodeIDs(episode1).Build()
+	hasNextSlot := newEntry().WithProgramID(programID).WithWatchedEpisodeIDs(episode1).
+		WithNextEpisodeID(episode1).WithNextSlotID(slot1).Build()
 
-	// 5件の対象を2件ずつ読み、最後のページの次で読んだ行が無くなる。
+	// 6件の対象を2件ずつ読み、最後のページの次で読んだ行が無くなる。
 	wantPages := []struct {
 		lastID       int64
 		updatedCount int64
 	}{
 		{lastID: withoutProgram, updatedCount: 2},
 		{lastID: allWatched, updatedCount: 0},
-		{lastID: staleNextEpisode, updatedCount: 1},
+		{lastID: otherProgram, updatedCount: 2},
 		{lastID: 0, updatedCount: 0},
 	}
 	afterID := withProgram - 1
@@ -175,6 +183,8 @@ func TestLibraryEntryRepository_UpdateNextResources(t *testing.T) {
 		{name: "見たい: 対象にしない", id: wannaWatch, want: libraryEntryNextResources{updatedAt: updatedFrom}},
 		{name: "更新日時が下限より前: 対象にしない", id: updatedBefore, want: libraryEntryNextResources{updatedAt: before}},
 		{name: "番組を選ばず次のエピソードがある: 対象にしない", id: hasNextEpisode, want: libraryEntryNextResources{nextEpisodeID: episodeID(episode1), updatedAt: updatedFrom}},
+		{name: "別の番組: 論理削除した放送枠もほかの番組の放送枠も選ばない", id: otherProgram, want: libraryEntryNextResources{nextEpisodeID: episodeID(episode2), updatedAt: now}},
+		{name: "番組を選んで次の放送枠がある: 対象にしない", id: hasNextSlot, want: libraryEntryNextResources{episodeID(episode1), slotID(slot1), updatedFrom}},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
