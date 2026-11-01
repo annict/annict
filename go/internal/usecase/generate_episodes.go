@@ -21,19 +21,27 @@ type episodeTitleFiller interface {
 	Execute(ctx context.Context, input FillEpisodeTitlesInput) (*FillEpisodeTitlesOutput, error)
 }
 
+// libraryEntryNextResourcesUpdaterは「見てる」のライブラリの次のエピソード・次の放送枠を更新する。
+// 実体は *UpdateLibraryEntryNextResourcesUsecase。
+type libraryEntryNextResourcesUpdater interface {
+	Execute(ctx context.Context, input UpdateLibraryEntryNextResourcesInput) (*UpdateLibraryEntryNextResourcesOutput, error)
+}
+
 // EpisodeGenerationReportSenderは、エピソードの自動生成の結果を報告するメールを送る。
 type EpisodeGenerationReportSender interface {
 	Send(ctx context.Context, to string, report *model.EpisodeGenerationReport) error
 }
 
 // GenerateEpisodesUsecaseはエピソードの自動生成をまとめる。放送枠へのエピソードの紐づけと作成、
-// しょぼいカレンダーのサブタイトルの取得を順に行い、1回の実行の結果を1通のメールで管理者へ
-// 報告する。
+// しょぼいカレンダーのサブタイトルの取得、ライブラリの次のエピソード・次の放送枠の更新を順に
+// 行い、1回の実行の結果を1通のメールで管理者へ報告する。ライブラリの更新を同じ実行の最後に
+// 置くのは、その日に作ったエピソードと紐づけた放送枠を、次のエピソード・次の放送枠に反映するため。
 type GenerateEpisodesUsecase struct {
-	creator      slotEpisodeCreator
-	titleFiller  episodeTitleFiller
-	reportSender EpisodeGenerationReportSender
-	adminEmail   string
+	creator             slotEpisodeCreator
+	titleFiller         episodeTitleFiller
+	libraryEntryUpdater libraryEntryNextResourcesUpdater
+	reportSender        EpisodeGenerationReportSender
+	adminEmail          string
 }
 
 // NewGenerateEpisodesUsecaseはGenerateEpisodesUsecaseを生成する。reportSenderがnilか
@@ -41,14 +49,16 @@ type GenerateEpisodesUsecase struct {
 func NewGenerateEpisodesUsecase(
 	creator slotEpisodeCreator,
 	titleFiller episodeTitleFiller,
+	libraryEntryUpdater libraryEntryNextResourcesUpdater,
 	reportSender EpisodeGenerationReportSender,
 	adminEmail string,
 ) *GenerateEpisodesUsecase {
 	return &GenerateEpisodesUsecase{
-		creator:      creator,
-		titleFiller:  titleFiller,
-		reportSender: reportSender,
-		adminEmail:   adminEmail,
+		creator:             creator,
+		titleFiller:         titleFiller,
+		libraryEntryUpdater: libraryEntryUpdater,
+		reportSender:        reportSender,
+		adminEmail:          adminEmail,
 	}
 }
 
@@ -63,9 +73,9 @@ type GenerateEpisodesOutput struct {
 	ReportSent bool
 }
 
-// Executeは自動生成を実行し、結果を報告する。放送枠の処理やしょぼいカレンダーの失敗は、
-// 残りの処理を止めずに報告とログ (Sentryにも送られる) に残す。放送枠の処理は冪等で、翌日の
-// 実行で残りを拾えるため、これらの失敗ではエラーを返さない。エラーを返すのは報告メールの
+// Executeは自動生成を実行し、結果を報告する。放送枠の処理・しょぼいカレンダー・ライブラリの
+// 更新の失敗は、残りの処理を止めずに報告とログ (Sentryにも送られる) に残す。どの処理も冪等で、
+// 翌日の実行で残りを拾えるため、これらの失敗ではエラーを返さない。エラーを返すのは報告メールの
 // 送信に失敗したときだけ。
 func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEpisodesInput) (*GenerateEpisodesOutput, error) {
 	report := &model.EpisodeGenerationReport{}
@@ -86,11 +96,23 @@ func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEp
 		addFilledTitlesToReport(ctx, report, filled)
 	}
 
+	// 更新した件数はログにだけ残す。毎日のように更新があり、報告メールで知らせるのは失敗だけで
+	// 足りるため。
+	var updatedLibraryEntryCount int
+	updated, err := uc.libraryEntryUpdater.Execute(ctx, UpdateLibraryEntryNextResourcesInput(input))
+	if err != nil {
+		slog.ErrorContext(ctx, "ライブラリの次のエピソード・次の放送枠の更新に失敗しました", "error", err)
+		report.Errors = append(report.Errors, model.EpisodeGenerationError{Message: err.Error()})
+	} else {
+		updatedLibraryEntryCount = updated.UpdatedCount
+	}
+
 	slog.InfoContext(ctx, "エピソードの自動生成が完了しました",
 		"created_episodes", len(report.CreatedEpisodes),
 		"linked_slots", report.LinkedSlotCount,
 		"skipped_slots", len(report.SkippedSlots),
 		"filled_titles", report.FilledTitleCount,
+		"updated_library_entries", updatedLibraryEntryCount,
 		"errors", len(report.Errors),
 	)
 

@@ -35,11 +35,12 @@ type NewClientParams struct {
 	CleanupAnonymousSessions  AnonymousSessionCleaner
 	SyncAnimes                AnimesSyncer
 	DeleteUser                UserDeleter
-	// CreateEpisodesFromSlots / FillEpisodeTitlesは、エピソードの自動生成をまとめる
-	// UseCaseに渡す。まとめるUseCaseは報告メールの送信にこのクライアントが作るメール送信
-	// クライアントを使うため、NewClientの中で組み立てる。
-	CreateEpisodesFromSlots *usecase.CreateEpisodesFromSlotsUsecase
-	FillEpisodeTitles       *usecase.FillEpisodeTitlesUsecase
+	// CreateEpisodesFromSlots / FillEpisodeTitles / UpdateLibraryEntryNextResourcesは、
+	// エピソードの自動生成をまとめるUseCaseに渡す。まとめるUseCaseは報告メールの送信に
+	// このクライアントが作るメール送信クライアントを使うため、NewClientの中で組み立てる。
+	CreateEpisodesFromSlots         *usecase.CreateEpisodesFromSlotsUsecase
+	FillEpisodeTitles               *usecase.FillEpisodeTitlesUsecase
+	UpdateLibraryEntryNextResources *usecase.UpdateLibraryEntryNextResourcesUsecase
 }
 
 // SoftStopTimeoutは、停止時に実行中のジョブの完了を待ち、待ちきれなければcontextを
@@ -139,6 +140,7 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 	generateEpisodesUC := usecase.NewGenerateEpisodesUsecase(
 		params.CreateEpisodesFromSlots,
 		params.FillEpisodeTitles,
+		params.UpdateLibraryEntryNextResources,
 		reportSender,
 		cfg.AdminEmail,
 	)

@@ -31,6 +31,22 @@ func (f *fakeEpisodeTitleFiller) Execute(_ context.Context, input FillEpisodeTit
 	return f.output, f.err
 }
 
+type fakeLibraryEntryUpdater struct {
+	output *UpdateLibraryEntryNextResourcesOutput
+	err    error
+	input  *UpdateLibraryEntryNextResourcesInput
+}
+
+func (f *fakeLibraryEntryUpdater) Execute(_ context.Context, input UpdateLibraryEntryNextResourcesInput) (*UpdateLibraryEntryNextResourcesOutput, error) {
+	f.input = &input
+	return f.output, f.err
+}
+
+// newFakeLibraryEntryUpdaterは、1件も更新しないライブラリの更新を返す。
+func newFakeLibraryEntryUpdater() *fakeLibraryEntryUpdater {
+	return &fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{}}
+}
+
 type fakeReportSender struct {
 	err     error
 	to      string
@@ -57,15 +73,16 @@ func TestGenerateEpisodesUsecase_Execute_SendsReport(t *testing.T) {
 		FilledCount:    5,
 		FailedEpisodes: []FailedEpisode{{EpisodeID: 200, Err: errors.New("エピソードのタイトルの更新に失敗しました")}},
 	}}
+	updater := &fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{UpdatedCount: 7}}
 	sender := &fakeReportSender{}
 
-	output, err := NewGenerateEpisodesUsecase(creator, filler, sender, "admin@example.com").Execute(context.Background(), GenerateEpisodesInput{Now: now})
+	output, err := NewGenerateEpisodesUsecase(creator, filler, updater, sender, "admin@example.com").Execute(context.Background(), GenerateEpisodesInput{Now: now})
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
-	if creator.input == nil || !creator.input.Now.Equal(now) || filler.input == nil || !filler.input.Now.Equal(now) {
-		t.Errorf("実行時刻 = (%v, %v)、期待値 = どちらも %v", creator.input, filler.input, now)
+	if creator.input == nil || !creator.input.Now.Equal(now) || filler.input == nil || !filler.input.Now.Equal(now) || updater.input == nil || !updater.input.Now.Equal(now) {
+		t.Errorf("実行時刻 = (%v, %v, %v)、期待値 = どれも %v", creator.input, filler.input, updater.input, now)
 	}
 	if !output.ReportSent || len(sender.reports) != 1 || sender.to != "admin@example.com" {
 		t.Fatalf("送信 = (ReportSent %v, %d通, 宛先 %q)、期待値 = admin@example.comへ1通", output.ReportSent, len(sender.reports), sender.to)
@@ -92,16 +109,18 @@ func TestGenerateEpisodesUsecase_Execute_SendsReport(t *testing.T) {
 	}
 }
 
-// TestGenerateEpisodesUsecase_Execute_ReportsStepErrorsは、放送枠の一覧の取得としょぼいカレンダー
-// への問い合わせが失敗しても、エラーを返さずに報告へ残すことを検証する。
+// TestGenerateEpisodesUsecase_Execute_ReportsStepErrorsは、放送枠の一覧の取得・しょぼいカレンダー
+// への問い合わせ・ライブラリの更新が失敗しても、後の手順を続け、エラーを返さずに報告へ残すことを
+// 検証する。
 func TestGenerateEpisodesUsecase_Execute_ReportsStepErrors(t *testing.T) {
 	t.Parallel()
 
 	creator := &fakeSlotEpisodeCreator{err: errors.New("自動生成の対象の放送枠の取得に失敗")}
 	filler := &fakeEpisodeTitleFiller{err: errors.New("しょぼいカレンダーからのサブタイトルの取得に失敗")}
+	updater := &fakeLibraryEntryUpdater{err: errors.New("ライブラリの次のエピソード・次の放送枠の更新に失敗")}
 	sender := &fakeReportSender{}
 
-	output, err := NewGenerateEpisodesUsecase(creator, filler, sender, "admin@example.com").Execute(context.Background(), GenerateEpisodesInput{Now: time.Now()})
+	output, err := NewGenerateEpisodesUsecase(creator, filler, updater, sender, "admin@example.com").Execute(context.Background(), GenerateEpisodesInput{Now: time.Now()})
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -109,9 +128,15 @@ func TestGenerateEpisodesUsecase_Execute_ReportsStepErrors(t *testing.T) {
 	if !output.ReportSent || len(sender.reports) != 1 {
 		t.Fatalf("送信 = (ReportSent %v, %d通)、期待値 = 1通", output.ReportSent, len(sender.reports))
 	}
+	if updater.input == nil {
+		t.Error("ライブラリの更新が呼ばれなかった")
+	}
 	errs := sender.reports[0].Errors
-	if len(errs) != 2 || errs[0].Message != "自動生成の対象の放送枠の取得に失敗" || errs[1].Message != "しょぼいカレンダーからのサブタイトルの取得に失敗" {
-		t.Errorf("Errors = %+v、期待値 = 2つの手順のエラー", errs)
+	if len(errs) != 3 ||
+		errs[0].Message != "自動生成の対象の放送枠の取得に失敗" ||
+		errs[1].Message != "しょぼいカレンダーからのサブタイトルの取得に失敗" ||
+		errs[2].Message != "ライブラリの次のエピソード・次の放送枠の更新に失敗" {
+		t.Errorf("Errors = %+v、期待値 = 3つの手順のエラー", errs)
 	}
 	if errs[0].SlotID != nil || errs[0].EpisodeID != nil {
 		t.Errorf("Errors[0] = %+v、期待値 = 放送枠もエピソードも持たないエラー", errs[0])
@@ -128,6 +153,7 @@ func TestGenerateEpisodesUsecase_Execute_SkipsReport(t *testing.T) {
 			&fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}}
 	}
 
+	// ライブラリを更新した件数は報告に含めないため、更新があっても送らない。
 	t.Run("報告することが無い", func(t *testing.T) {
 		t.Parallel()
 
@@ -135,6 +161,7 @@ func TestGenerateEpisodesUsecase_Execute_SkipsReport(t *testing.T) {
 		uc := NewGenerateEpisodesUsecase(
 			&fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{}},
 			&fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}},
+			&fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{UpdatedCount: 3}},
 			sender,
 			"admin@example.com",
 		)
@@ -152,7 +179,7 @@ func TestGenerateEpisodesUsecase_Execute_SkipsReport(t *testing.T) {
 
 		creator, filler := withResult()
 		sender := &fakeReportSender{}
-		output, err := NewGenerateEpisodesUsecase(creator, filler, sender, "").Execute(context.Background(), GenerateEpisodesInput{Now: time.Now()})
+		output, err := NewGenerateEpisodesUsecase(creator, filler, newFakeLibraryEntryUpdater(), sender, "").Execute(context.Background(), GenerateEpisodesInput{Now: time.Now()})
 		if err != nil {
 			t.Fatalf("Execute()のエラー = %v", err)
 		}
@@ -165,7 +192,7 @@ func TestGenerateEpisodesUsecase_Execute_SkipsReport(t *testing.T) {
 		t.Parallel()
 
 		creator, filler := withResult()
-		output, err := NewGenerateEpisodesUsecase(creator, filler, nil, "admin@example.com").Execute(context.Background(), GenerateEpisodesInput{Now: time.Now()})
+		output, err := NewGenerateEpisodesUsecase(creator, filler, newFakeLibraryEntryUpdater(), nil, "admin@example.com").Execute(context.Background(), GenerateEpisodesInput{Now: time.Now()})
 		if err != nil {
 			t.Fatalf("Execute()のエラー = %v", err)
 		}
@@ -182,6 +209,7 @@ func TestGenerateEpisodesUsecase_Execute_ReturnsSendError(t *testing.T) {
 	uc := NewGenerateEpisodesUsecase(
 		&fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{LinkedSlotCount: 1}},
 		&fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}},
+		newFakeLibraryEntryUpdater(),
 		&fakeReportSender{err: sendErr},
 		"admin@example.com",
 	)
