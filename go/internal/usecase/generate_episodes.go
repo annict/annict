@@ -86,9 +86,6 @@ type GenerateEpisodesOutput struct {
 // 通常のキャンセルはWorkerへ返して停止後の再実行に委ねる。報告メールの送信に失敗したときも
 // エラーを返す。
 func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEpisodesInput) (*GenerateEpisodesOutput, error) {
-	if err := ctx.Err(); errors.Is(err, context.Canceled) {
-		return nil, err
-	}
 	startedAt := time.Now()
 	report := &model.EpisodeGenerationReport{}
 
@@ -96,21 +93,17 @@ func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEp
 	if u := uc.createEpisodes(ctx, input, report); u != "" {
 		unfinished = append(unfinished, u)
 	}
-	if err := ctx.Err(); errors.Is(err, context.Canceled) {
-		return nil, err
-	}
 	if u := uc.fillTitles(ctx, input, report); u != "" {
 		unfinished = append(unfinished, u)
 	}
-	if err := ctx.Err(); errors.Is(err, context.Canceled) {
-		return nil, err
-	}
 	updatedLibraryEntryCount, u := uc.updateLibraryEntries(ctx, input, report)
-	if err := ctx.Err(); errors.Is(err, context.Canceled) {
-		return nil, err
-	}
 	if u != "" {
 		unfinished = append(unfinished, u)
+	}
+	// 各手順はctxが終わっていれば子のユースケースを呼ばないため、通常のキャンセルは
+	// 3つの手順の後にまとめて確かめる。
+	if err := ctx.Err(); errors.Is(err, context.Canceled) {
+		return nil, err
 	}
 	if len(unfinished) > 0 {
 		addTimeoutToReport(ctx, report, unfinished)
