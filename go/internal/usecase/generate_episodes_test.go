@@ -5,6 +5,7 @@ import (
 	"errors"
 	"slices"
 	"testing"
+	"testing/synctest"
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
@@ -264,69 +265,129 @@ func TestGenerateEpisodesUsecase_Execute_ReportsTimeout(t *testing.T) {
 	const prefix = "実行上限の時間を超えたため、次の処理をしませんでした: "
 	tests := []struct {
 		name        string
-		setup       func(cancel context.CancelFunc, creator *fakeSlotEpisodeCreator, filler *fakeEpisodeTitleFiller, updater *fakeLibraryEntryUpdater)
+		setup       func(expire func(), creator *fakeSlotEpisodeCreator, filler *fakeEpisodeTitleFiller, updater *fakeLibraryEntryUpdater)
 		wantCalls   []string
 		wantMessage string
 	}{
 		{
 			name: "放送枠の途中で時間切れ",
-			setup: func(cancel context.CancelFunc, creator *fakeSlotEpisodeCreator, _ *fakeEpisodeTitleFiller, _ *fakeLibraryEntryUpdater) {
+			setup: func(expire func(), creator *fakeSlotEpisodeCreator, _ *fakeEpisodeTitleFiller, _ *fakeLibraryEntryUpdater) {
 				creator.output = &CreateEpisodesFromSlotsOutput{UnprocessedSlotCount: 2}
-				creator.beforeReturn = cancel
+				creator.beforeReturn = expire
 			},
 			wantCalls:   []string{"CreateEpisodesFromSlots"},
 			wantMessage: prefix + "放送枠2件、タイトルの取得、ライブラリの更新",
 		},
 		{
 			name: "放送枠の一覧を読む間に時間切れ",
-			setup: func(cancel context.CancelFunc, creator *fakeSlotEpisodeCreator, _ *fakeEpisodeTitleFiller, _ *fakeLibraryEntryUpdater) {
+			setup: func(expire func(), creator *fakeSlotEpisodeCreator, _ *fakeEpisodeTitleFiller, _ *fakeLibraryEntryUpdater) {
 				creator.err = context.DeadlineExceeded
-				creator.beforeReturn = cancel
+				creator.beforeReturn = expire
 			},
 			wantCalls:   []string{"CreateEpisodesFromSlots"},
 			wantMessage: prefix + "放送枠の処理、タイトルの取得、ライブラリの更新",
 		},
 		{
-			name: "タイトルとライブラリの更新の途中で時間切れ",
-			setup: func(cancel context.CancelFunc, _ *fakeSlotEpisodeCreator, filler *fakeEpisodeTitleFiller, updater *fakeLibraryEntryUpdater) {
+			name: "タイトルの取得の途中で時間切れ",
+			setup: func(expire func(), _ *fakeSlotEpisodeCreator, filler *fakeEpisodeTitleFiller, _ *fakeLibraryEntryUpdater) {
 				filler.output = &FillEpisodeTitlesOutput{UnprocessedEpisodeCount: 3}
+				filler.beforeReturn = expire
+			},
+			wantCalls:   []string{"CreateEpisodesFromSlots", "FillEpisodeTitles"},
+			wantMessage: prefix + "タイトルを入れるエピソード3件、ライブラリの更新",
+		},
+		{
+			name: "ライブラリの更新の途中で時間切れ",
+			setup: func(expire func(), _ *fakeSlotEpisodeCreator, _ *fakeEpisodeTitleFiller, updater *fakeLibraryEntryUpdater) {
 				updater.output = &UpdateLibraryEntryNextResourcesOutput{UpdatedCount: 1, Interrupted: true}
-				updater.beforeReturn = cancel
+				updater.beforeReturn = expire
 			},
 			wantCalls:   []string{"CreateEpisodesFromSlots", "FillEpisodeTitles", "UpdateLibraryEntryNextResources"},
-			wantMessage: prefix + "タイトルを入れるエピソード3件、ライブラリの更新の残り",
+			wantMessage: prefix + "ライブラリの更新の残り",
+		},
+		{
+			name: "実行前から時間切れ",
+			setup: func(expire func(), _ *fakeSlotEpisodeCreator, _ *fakeEpisodeTitleFiller, _ *fakeLibraryEntryUpdater) {
+				expire()
+			},
+			wantMessage: prefix + "放送枠の処理、タイトルの取得、ライブラリの更新",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
+			synctest.Test(t, func(t *testing.T) {
+				ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+				defer cancel()
+				// 仮想時刻を進めて本物のDeadlineExceededを発生させ、実行速度に依存させない。
+				expire := func() {
+					time.Sleep(time.Second)
+					synctest.Wait()
+				}
+				var calls []string
+				creator := &fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{}, calls: &calls}
+				filler := &fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}, calls: &calls}
+				updater := &fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{}, calls: &calls}
+				tt.setup(expire, creator, filler, updater)
+				sender := &fakeReportSender{}
+
+				output, err := NewGenerateEpisodesUsecase(creator, filler, updater, sender, "admin@example.com").Execute(ctx, GenerateEpisodesInput{Now: time.Now()})
+				if err != nil {
+					t.Fatalf("Execute()のエラー = %v", err)
+				}
+
+				if !slices.Equal(calls, tt.wantCalls) {
+					t.Errorf("呼んだ手順 = %v、期待値 = %v", calls, tt.wantCalls)
+				}
+				if !output.ReportSent || len(sender.reports) != 1 {
+					t.Fatalf("送信 = (ReportSent %v, %d通)、期待値 = 1通", output.ReportSent, len(sender.reports))
+				}
+				if sender.ctxErr != nil {
+					t.Errorf("送るときのctxのErr = %v、期待値 = nil", sender.ctxErr)
+				}
+				errs := sender.reports[0].Errors
+				if len(errs) != 1 || errs[0].Message != tt.wantMessage {
+					t.Errorf("Errors = %+v、期待値 = %qの1件", errs, tt.wantMessage)
+				}
+			})
+		})
+	}
+}
+
+// TestGenerateEpisodesUsecase_Execute_PropagatesCancellationは、停止による通常キャンセルを
+// 時間切れの成功に変えず、Workerへ返してRiverの再実行の判断に委ねることを検証する。
+func TestGenerateEpisodesUsecase_Execute_PropagatesCancellation(t *testing.T) {
+	t.Parallel()
+
+	for step := 0; step < 4; step++ {
+		names := []string{"実行前", "放送枠の処理中", "タイトルの取得中", "ライブラリの更新中"}
+		t.Run(names[step], func(t *testing.T) {
+			t.Parallel()
 			ctx, cancel := context.WithCancel(context.Background())
 			defer cancel()
 			var calls []string
 			creator := &fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{}, calls: &calls}
 			filler := &fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{}, calls: &calls}
 			updater := &fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{}, calls: &calls}
-			tt.setup(cancel, creator, filler, updater)
+			switch step {
+			case 0:
+				cancel()
+			case 1:
+				creator.beforeReturn = cancel
+			case 2:
+				filler.beforeReturn = cancel
+			case 3:
+				updater.beforeReturn = cancel
+			}
 			sender := &fakeReportSender{}
-
 			output, err := NewGenerateEpisodesUsecase(creator, filler, updater, sender, "admin@example.com").Execute(ctx, GenerateEpisodesInput{Now: time.Now()})
-			if err != nil {
-				t.Fatalf("Execute()のエラー = %v", err)
+			if !errors.Is(err, context.Canceled) || output != nil {
+				t.Fatalf("結果 = %+v、エラー = %v、期待値 = 結果なし・通常キャンセル", output, err)
 			}
-
-			if !slices.Equal(calls, tt.wantCalls) {
-				t.Errorf("呼んだ手順 = %v、期待値 = %v", calls, tt.wantCalls)
-			}
-			if !output.ReportSent || len(sender.reports) != 1 {
-				t.Fatalf("送信 = (ReportSent %v, %d通)、期待値 = 1通", output.ReportSent, len(sender.reports))
-			}
-			if sender.ctxErr != nil {
-				t.Errorf("送るときのctxのErr = %v、期待値 = nil", sender.ctxErr)
-			}
-			errs := sender.reports[0].Errors
-			if len(errs) != 1 || errs[0].Message != tt.wantMessage {
-				t.Errorf("Errors = %+v、期待値 = %qの1件", errs, tt.wantMessage)
+			wantCalls := []string{"CreateEpisodesFromSlots", "FillEpisodeTitles", "UpdateLibraryEntryNextResources"}[:step]
+			if !slices.Equal(calls, wantCalls) || len(sender.reports) != 0 {
+				t.Errorf("(呼んだ手順, 送信数) = (%v, %d)、期待値 = (%v, 0)", calls, len(sender.reports), wantCalls)
 			}
 		})
 	}

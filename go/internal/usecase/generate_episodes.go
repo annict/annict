@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"log/slog"
 	"strings"
@@ -82,8 +83,12 @@ type GenerateEpisodesOutput struct {
 // 更新の失敗は、残りの処理を止めずに報告とログ (Sentryにも送られる) に残す。どの処理も冪等で、
 // 翌日の実行で残りを拾えるため、これらの失敗ではエラーを返さない。ジョブの実行上限を超えて
 // ctxが終わったときも、残りの手順を呼ばずに、処理しなかったものを1件のエラーとして報告する。
-// エラーを返すのは報告メールの送信に失敗したときだけ。
+// 通常のキャンセルはWorkerへ返して停止後の再実行に委ねる。報告メールの送信に失敗したときも
+// エラーを返す。
 func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEpisodesInput) (*GenerateEpisodesOutput, error) {
+	if err := ctx.Err(); errors.Is(err, context.Canceled) {
+		return nil, err
+	}
 	startedAt := time.Now()
 	report := &model.EpisodeGenerationReport{}
 
@@ -91,10 +96,19 @@ func (uc *GenerateEpisodesUsecase) Execute(ctx context.Context, input GenerateEp
 	if u := uc.createEpisodes(ctx, input, report); u != "" {
 		unfinished = append(unfinished, u)
 	}
+	if err := ctx.Err(); errors.Is(err, context.Canceled) {
+		return nil, err
+	}
 	if u := uc.fillTitles(ctx, input, report); u != "" {
 		unfinished = append(unfinished, u)
 	}
+	if err := ctx.Err(); errors.Is(err, context.Canceled) {
+		return nil, err
+	}
 	updatedLibraryEntryCount, u := uc.updateLibraryEntries(ctx, input, report)
+	if err := ctx.Err(); errors.Is(err, context.Canceled) {
+		return nil, err
+	}
 	if u != "" {
 		unfinished = append(unfinished, u)
 	}
