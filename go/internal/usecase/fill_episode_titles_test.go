@@ -476,3 +476,30 @@ func TestFillEpisodeTitlesUsecase_Execute_StopsWhenContextEnds(t *testing.T) {
 		}
 	}
 }
+
+// TestFillEpisodeTitlesUsecase_Execute_ReportsLookupDeadlineは、外部APIが期限切れエラーを
+// 返した場合も、取得済みの対象を未処理件数として保持することを検証する。
+func TestFillEpisodeTitlesUsecase_Execute_ReportsLookupDeadline(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	workID, _ := insertTitleFillWork(t, db)
+	program := insertGenerationProgram(t, db, workID, 1)
+	firstID := insertTitleFillEpisode(t, db, program, 1)
+	secondID := insertTitleFillEpisode(t, db, program, 2)
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	lookup := &fakeSubTitleLookup{err: context.DeadlineExceeded, beforeReturn: func() { <-ctx.Done() }}
+	output, err := newFillEpisodeTitlesUsecase(db, lookup).Execute(ctx, FillEpisodeTitlesInput{Now: time.Now()})
+	if err != nil || output == nil {
+		t.Fatalf("結果 = %+v、エラー = %v、期待値 = 未処理件数を持つ結果", output, err)
+	}
+	if output.UnprocessedEpisodeCount < 2 || output.FilledCount != 0 || len(output.FailedEpisodes) != 0 {
+		t.Errorf("結果 = %+v、期待値 = 未処理2件以上・更新と個別エラーなし", output)
+	}
+	for _, episodeID := range []model.EpisodeID{firstID, secondID} {
+		if title, _ := readEpisodeTitle(t, db, episodeID); title.Valid {
+			t.Errorf("エピソード%dのタイトル = %q、期待値 = NULL", episodeID, title.String)
+		}
+	}
+}
