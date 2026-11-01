@@ -322,9 +322,6 @@ ignore:
       - Rails/SaveBang
   - app/lib/annict/data_care/move_episode.rb:
       - Rails/Output
-  - app/lib/annict/data_care/update_next_resources_on_library_entries.rb:
-      - Rails/Output
-      - Rails/Date
   - app/lib/annict/vod_importer/amazon_video.rb:
       - Rails/Output
   - app/lib/annict/vod_importer/bandai_channel.rb:
