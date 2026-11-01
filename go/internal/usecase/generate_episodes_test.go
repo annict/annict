@@ -3,20 +3,30 @@ package usecase
 import (
 	"context"
 	"errors"
+	"slices"
 	"testing"
 	"time"
 
 	"github.com/annict/annict/go/internal/model"
 )
 
+// recordCallは、子のユースケースのフェイクが呼ばれた順をcallsに記録する。callsがnilなら記録しない。
+func recordCall(calls *[]string, name string) {
+	if calls != nil {
+		*calls = append(*calls, name)
+	}
+}
+
 type fakeSlotEpisodeCreator struct {
 	output *CreateEpisodesFromSlotsOutput
 	err    error
 	input  *CreateEpisodesFromSlotsInput
+	calls  *[]string
 }
 
 func (f *fakeSlotEpisodeCreator) Execute(_ context.Context, input CreateEpisodesFromSlotsInput) (*CreateEpisodesFromSlotsOutput, error) {
 	f.input = &input
+	recordCall(f.calls, "CreateEpisodesFromSlots")
 	return f.output, f.err
 }
 
@@ -24,10 +34,12 @@ type fakeEpisodeTitleFiller struct {
 	output *FillEpisodeTitlesOutput
 	err    error
 	input  *FillEpisodeTitlesInput
+	calls  *[]string
 }
 
 func (f *fakeEpisodeTitleFiller) Execute(_ context.Context, input FillEpisodeTitlesInput) (*FillEpisodeTitlesOutput, error) {
 	f.input = &input
+	recordCall(f.calls, "FillEpisodeTitles")
 	return f.output, f.err
 }
 
@@ -35,10 +47,12 @@ type fakeLibraryEntryUpdater struct {
 	output *UpdateLibraryEntryNextResourcesOutput
 	err    error
 	input  *UpdateLibraryEntryNextResourcesInput
+	calls  *[]string
 }
 
 func (f *fakeLibraryEntryUpdater) Execute(_ context.Context, input UpdateLibraryEntryNextResourcesInput) (*UpdateLibraryEntryNextResourcesOutput, error) {
 	f.input = &input
+	recordCall(f.calls, "UpdateLibraryEntryNextResources")
 	return f.output, f.err
 }
 
@@ -63,17 +77,18 @@ func TestGenerateEpisodesUsecase_Execute_SendsReport(t *testing.T) {
 	t.Parallel()
 
 	now := time.Date(2026, 10, 31, 20, 0, 0, 0, time.UTC)
+	var calls []string
 	creator := &fakeSlotEpisodeCreator{output: &CreateEpisodesFromSlotsOutput{
 		CreatedEpisodes: []GeneratedEpisode{{SlotID: 1, WorkID: 10, WorkTitle: "作品A", EpisodeID: 100, Number: "第2話"}},
 		LinkedSlotCount: 2,
 		SkippedSlots:    []SkippedSlot{{SlotID: 3, WorkID: 11, WorkTitle: "作品B", Reason: model.EpisodeGenerationSkipReasonCandidatesLinked}},
 		FailedSlots:     []FailedSlot{{SlotID: 4, Err: errors.New("作品のロックに失敗しました")}},
-	}}
+	}, calls: &calls}
 	filler := &fakeEpisodeTitleFiller{output: &FillEpisodeTitlesOutput{
 		FilledCount:    5,
 		FailedEpisodes: []FailedEpisode{{EpisodeID: 200, Err: errors.New("エピソードのタイトルの更新に失敗しました")}},
-	}}
-	updater := &fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{UpdatedCount: 7}}
+	}, calls: &calls}
+	updater := &fakeLibraryEntryUpdater{output: &UpdateLibraryEntryNextResourcesOutput{UpdatedCount: 7}, calls: &calls}
 	sender := &fakeReportSender{}
 
 	output, err := NewGenerateEpisodesUsecase(creator, filler, updater, sender, "admin@example.com").Execute(context.Background(), GenerateEpisodesInput{Now: now})
@@ -81,6 +96,10 @@ func TestGenerateEpisodesUsecase_Execute_SendsReport(t *testing.T) {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
+	// その日に作ったエピソードと紐づけた放送枠をライブラリに反映するため、ライブラリの更新は最後に呼ぶ。
+	if want := []string{"CreateEpisodesFromSlots", "FillEpisodeTitles", "UpdateLibraryEntryNextResources"}; !slices.Equal(calls, want) {
+		t.Errorf("子のユースケースを呼んだ順 = %v、期待値 = %v", calls, want)
+	}
 	if creator.input == nil || !creator.input.Now.Equal(now) || filler.input == nil || !filler.input.Now.Equal(now) || updater.input == nil || !updater.input.Now.Equal(now) {
 		t.Errorf("実行時刻 = (%v, %v, %v)、期待値 = どれも %v", creator.input, filler.input, updater.input, now)
 	}
