@@ -186,3 +186,161 @@ func TestLibraryEntryRepository_UpdateNextResources(t *testing.T) {
 		})
 	}
 }
+
+// TestLibraryEntryRepository_UpdateNextResources_PreservesConcurrentChangesは、更新SQLが行ロックを
+// 待つ間に視聴済み配列か番組が変わった場合、読み取り時点の次のエピソード・放送枠を書き戻さない
+// ことを検証する。
+func TestLibraryEntryRepository_UpdateNextResources_PreservesConcurrentChanges(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		changesWatched bool
+	}{
+		{name: "視聴済みのエピソードが増えた", changesWatched: true},
+		{name: "番組を変更した"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			db, setupTx := testutil.SetupTx(t)
+			// 2100年を下限にするほかのライブラリ更新テストに、このコミット済みの行が入らない
+			// ようにする。このテスト自身はidと1件の上限でも対象を絞る。
+			now := time.Date(2099, 1, 10, 12, 0, 0, 0, time.UTC)
+			updatedFrom := now.AddDate(0, 0, -3)
+			changedAt := now.Add(time.Minute)
+			userID := testutil.NewUserBuilder(t, setupTx).Build()
+			workID := testutil.NewWorkBuilder(t, setupTx).Build()
+			episode1 := testutil.NewEpisodeBuilder(t, setupTx, workID).WithSortNumber(10).Build()
+			episode2 := testutil.NewEpisodeBuilder(t, setupTx, workID).WithSortNumber(20).Build()
+			channelGroupID := testutil.NewChannelGroupBuilder(t, setupTx).Build()
+			channelID := testutil.NewChannelBuilder(t, setupTx).WithChannelGroupID(channelGroupID).Build()
+			program1 := testutil.NewProgramBuilder(t, setupTx).WithChannelID(channelID).WithWorkID(workID).Build()
+			program2 := testutil.NewProgramBuilder(t, setupTx).WithChannelID(channelID).WithWorkID(workID).Build()
+			newSlot := func(programID int64, episodeID model.EpisodeID) model.SlotID {
+				return testutil.NewSlotBuilder(t, setupTx).WithWorkID(workID).WithChannelID(channelID).
+					WithProgramID(programID).WithEpisodeID(episodeID).Build()
+			}
+			newSlot(program1, episode1)
+			slot2 := newSlot(program1, episode2)
+			otherProgramSlot := newSlot(program2, episode1)
+			entryID := testutil.NewLibraryEntryBuilder(t, setupTx).WithUserID(userID).WithWorkID(workID).
+				WithProgramID(program1).WithUpdatedAt(updatedFrom).Build()
+			// 競合する2接続から前提データが見えるようにコミットし、終了時に依存行から消す。
+			if err := setupTx.Commit(); err != nil {
+				t.Fatalf("テストデータのコミットに失敗: %v", err)
+			}
+			t.Cleanup(func() {
+				ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+				defer cancel()
+				statements := []struct {
+					query string
+					id    int64
+				}{
+					{"DELETE FROM library_entries WHERE id = $1", entryID},
+					{"DELETE FROM statuses WHERE user_id = $1", int64(userID)},
+					{"DELETE FROM slots WHERE work_id = $1", int64(workID)},
+					{"DELETE FROM programs WHERE work_id = $1", int64(workID)},
+					{"DELETE FROM episodes WHERE work_id = $1", int64(workID)},
+					{"DELETE FROM works WHERE id = $1", int64(workID)},
+					{"DELETE FROM channels WHERE id = $1", channelID},
+					{"DELETE FROM channel_groups WHERE id = $1", channelGroupID},
+				}
+				for _, statement := range statements {
+					if _, err := db.ExecContext(ctx, statement.query, statement.id); err != nil {
+						t.Errorf("競合テストの後始末に失敗 (%s): %v", statement.query, err)
+					}
+				}
+				testutil.DeleteUser(t, db, userID)
+			})
+
+			ctx, cancel := context.WithTimeout(context.Background(), 20*time.Second)
+			defer cancel()
+			updateTx, err := db.BeginTx(ctx, nil)
+			if err != nil {
+				t.Fatalf("更新用トランザクションの開始に失敗: %v", err)
+			}
+			defer func() { _ = updateTx.Rollback() }()
+			var updatePID int
+			if err := updateTx.QueryRowContext(ctx, "SELECT pg_backend_pid()").Scan(&updatePID); err != nil {
+				t.Fatalf("更新用接続のPIDの取得に失敗: %v", err)
+			}
+			changeTx, err := db.BeginTx(ctx, nil)
+			if err != nil {
+				t.Fatalf("先行する変更用トランザクションの開始に失敗: %v", err)
+			}
+			// 失敗時も行ロックを先に解放し、実行中の更新SQLを待つRollbackを止めない。
+			defer func() { _ = changeTx.Rollback() }()
+			var changePID int
+			if err := changeTx.QueryRowContext(ctx, "SELECT pg_backend_pid()").Scan(&changePID); err != nil {
+				t.Fatalf("変更用接続のPIDの取得に失敗: %v", err)
+			}
+
+			wantEpisode, wantSlot := episode1, otherProgramSlot
+			if tt.changesWatched {
+				_, err = changeTx.ExecContext(ctx, `
+					UPDATE library_entries
+					SET watched_episode_ids = ARRAY[$2::bigint], next_episode_id = $3,
+					    next_slot_id = $4, updated_at = $5
+					WHERE id = $1`, entryID, int64(episode1), int64(episode2), int64(slot2), changedAt)
+				wantEpisode, wantSlot = episode2, slot2
+			} else {
+				_, err = changeTx.ExecContext(ctx, `
+					UPDATE library_entries
+					SET program_id = $2, next_episode_id = $3, next_slot_id = $4, updated_at = $5
+					WHERE id = $1`, entryID, program2, int64(episode1), int64(otherProgramSlot), changedAt)
+			}
+			if err != nil {
+				t.Fatalf("先行するライブラリの変更に失敗: %v", err)
+			}
+
+			type updateResult struct {
+				lastID       int64
+				updatedCount int64
+				err          error
+			}
+			resultCh := make(chan updateResult, 1)
+			repo := repository.NewLibraryEntryRepository(query.New(db)).WithTx(updateTx)
+			go func() {
+				lastID, updatedCount, err := repo.UpdateNextResources(ctx, entryID-1, updatedFrom, now, 1)
+				resultCh <- updateResult{lastID: lastID, updatedCount: updatedCount, err: err}
+			}()
+
+			// CTEが変更前の行を読んでからUPDATEで待機したことを確認し、先行する変更を確定する。
+			ticker := time.NewTicker(10 * time.Millisecond)
+			defer ticker.Stop()
+			waiting := false
+			for !waiting {
+				select {
+				case result := <-resultCh:
+					t.Fatalf("先行する変更のコミット前に更新が完了: %+v", result)
+				case <-ticker.C:
+					if err := changeTx.QueryRowContext(ctx, "SELECT $1 = ANY(pg_blocking_pids($2))", changePID, updatePID).Scan(&waiting); err != nil {
+						t.Fatalf("更新SQLのロック待ちの確認に失敗: %v", err)
+					}
+				case <-ctx.Done():
+					t.Fatalf("更新SQLが行ロックを待たなかった: %v", ctx.Err())
+				}
+			}
+			if err := changeTx.Commit(); err != nil {
+				t.Fatalf("先行する変更のコミットに失敗: %v", err)
+			}
+			select {
+			case result := <-resultCh:
+				if result.err != nil {
+					t.Fatalf("UpdateNextResources()のエラー = %v", result.err)
+				}
+				if result.lastID != entryID || result.updatedCount != 0 {
+					t.Errorf("(最後のid, 更新件数) = (%d, %d)、期待値 = (%d, 0)", result.lastID, result.updatedCount, entryID)
+				}
+			case <-ctx.Done():
+				t.Fatalf("先行する変更のコミット後も更新が完了しない: %v", ctx.Err())
+			}
+			got := getLibraryEntryNextResources(t, updateTx, entryID)
+			if got.nextEpisodeID != (sql.NullInt64{Int64: int64(wantEpisode), Valid: true}) ||
+				got.nextSlotID != (sql.NullInt64{Int64: int64(wantSlot), Valid: true}) || !got.updatedAt.Equal(changedAt) {
+				t.Errorf("(次のエピソード, 次の放送枠, 更新日時) = (%v, %v, %v)、期待値 = (%d, %d, %v)",
+					got.nextEpisodeID, got.nextSlotID, got.updatedAt, wantEpisode, wantSlot, changedAt)
+			}
+		})
+	}
+}

@@ -39,8 +39,8 @@ type UpdateLibraryEntryNextResourcesOutput struct {
 }
 
 // Executeは対象のライブラリをidの順にページに区切り、ページごとに1つのUPDATE文で更新する。
-// ページの更新に失敗したら、そこで止めてエラーを返す。書き換えた行は条件を満たさなくなり、
-// 残りは翌日の実行で読み直すため、途中までの更新は戻さない。
+// ページの更新に失敗したら、そこで止めてエラーを返す。ページごとに更新を確定し、
+// 翌日の実行でも値が変わる行だけを更新するため、途中までの更新は戻さない。
 func (uc *UpdateLibraryEntryNextResourcesUsecase) Execute(ctx context.Context, input UpdateLibraryEntryNextResourcesInput) (*UpdateLibraryEntryNextResourcesOutput, error) {
 	updatedFrom := libraryEntryNextResourcesUpdatedFrom(input.Now)
 
