@@ -2743,6 +2743,10 @@ other = "二要素認証"
 description = "二要素認証の設定画面からRails版の設定画面へ戻るリンク"
 other = "設定に戻る"
 
+[settings_two_factor_auth_show_help_link]
+description = "二要素認証の設定画面から二要素認証の設定のヘルプページへのリンク"
+other = "二要素認証の設定のヘルプ"
+
 [settings_two_factor_auth_show_description]
 description = "二要素認証の設定画面の説明"
 other = "二要素認証を有効にすると、パスワードやメールで届くコードでログインしたあと認証アプリに表示されるコードの入力を求めます。パスワードやメールアカウントが他人に知られてもアカウントを守れます。"
@@ -2829,7 +2833,7 @@ other = "リカバリーコード"
 
 [settings_two_factor_auth_create_heading]
 description = "リカバリーコードの画面の見出し"
-other = "リカバリーコードを保管してください"
+other = "リカバリーコード"
 
 [settings_two_factor_auth_create_enabled]
 description = "二要素認証を有効にしたことの表示"

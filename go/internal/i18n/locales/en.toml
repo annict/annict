@@ -2744,6 +2744,10 @@ other = "Two-Factor Authentication"
 description = "二要素認証の設定画面からRails版の設定画面へ戻るリンク"
 other = "Back to Settings"
 
+[settings_two_factor_auth_show_help_link]
+description = "二要素認証の設定画面から二要素認証の設定のヘルプページへのリンク"
+other = "Two-factor authentication setup help"
+
 [settings_two_factor_auth_show_description]
 description = "二要素認証の設定画面の説明"
 other = "When two-factor authentication is enabled, you will be asked for a code from your authenticator app after signing in with your password or an emailed code. This keeps your account safe even if someone learns your password or gets into your email."
@@ -2830,7 +2834,7 @@ other = "Recovery Codes"
 
 [settings_two_factor_auth_create_heading]
 description = "リカバリーコードの画面の見出し"
-other = "Save Your Recovery Codes"
+other = "Recovery Codes"
 
 [settings_two_factor_auth_create_enabled]
 description = "二要素認証を有効にしたことの表示"
