@@ -65,6 +65,8 @@ func TestCreate_IncorrectCode(t *testing.T) {
 		`aria-invalid="true"`,
 		`value="`+wrongCode+`"`,
 		`name="back" value="/works/1"`,
+		// 文の長さで広がらないよう、ログイン画面と同じ幅に固定する
+		`min-w-full md:min-w-md md:max-w-md`,
 	)
 	for _, c := range rr.Result().Cookies() {
 		if c.Name == session.SessionKey && c.Value != cookie.Value {

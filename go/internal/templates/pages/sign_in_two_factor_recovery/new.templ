@@ -21,8 +21,9 @@ type NewPageData struct {
 //
 // コードの欄は、大文字小文字・ハイフン・空白・全角の違いをサーバーで受け付けるため、patternとmaxlengthを付けない。
 // 貼り付けや書き写しの邪魔をしないよう、自動の大文字化とスペルチェックを止める。
+// 案内の文やエラーの要約の長さで広がらないよう、最小幅と同じ最大幅を付け、ログイン画面と同じ幅に保つ。
 templ New(data NewPageData) {
-	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md md:max-w-md px-4">
 		<div class="text-center">
 			<a href="/" class="inline-block">
 				<img
