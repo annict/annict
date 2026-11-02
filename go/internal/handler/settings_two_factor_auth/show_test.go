@@ -8,7 +8,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestShow_Disabledは、二要素認証が無効なときに状態と登録画面への導線を表示し、キャッシュさせないことを検証する。
+// TestShow_Disabledは、二要素認証が無効なときに状態を警告のAlertで示し、登録画面への導線とヘルプへのリンクを表示し、
+// キャッシュさせないことを検証する。
 func TestShow_Disabled(t *testing.T) {
 	t.Parallel()
 
@@ -25,16 +26,18 @@ func TestShow_Disabled(t *testing.T) {
 	body := rr.Body.String()
 	assertContains(t, body,
 		"<title>二要素認証 | Annict</title>",
-		"二要素認証は無効です",
+		`<div class="alert" data-variant="warning"><h2>二要素認証は無効です</h2><section>有効にするには`,
 		`href="/settings/two_factor_auth/new"`,
 		`href="/settings/account"`,
+		`href="https://wikino.app/s/annict/pages/425"`,
+		"二要素認証の設定のヘルプ",
 	)
 	if strings.Contains(body, "未使用のリカバリーコード") {
 		t.Error("無効なのにリカバリーコードの数を表示している")
 	}
 }
 
-// TestShow_Enabledは、二要素認証が有効なときに状態と未使用のリカバリーコードの数を表示することを検証する。
+// TestShow_Enabledは、二要素認証が有効なときに状態を成功のAlertで示し、未使用のリカバリーコードの数を表示することを検証する。
 func TestShow_Enabled(t *testing.T) {
 	t.Parallel()
 
@@ -50,7 +53,8 @@ func TestShow_Enabled(t *testing.T) {
 	}
 	body := rr.Body.String()
 	assertContains(t, body,
-		"二要素認証は有効です", "未使用のリカバリーコード", "7個",
+		`<div class="alert" data-variant="success"><h2>二要素認証は有効です</h2></div>`,
+		"未使用のリカバリーコード", "7個",
 		"二要素認証を無効にする",
 		`name="_method" value="DELETE"`,
 		`name="csrf_token"`,

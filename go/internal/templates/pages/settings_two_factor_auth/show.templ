@@ -20,24 +20,27 @@ type ShowPageData struct {
 
 // Showは二要素認証の状態を表示します。
 // 無効のときは有効にする画面への導線を、有効のときは残りのリカバリーコードの数と無効にするフォームを出す。
+// 状態はAlertで示し、無効のときは警告、有効のときは成功の色にする。
 templ Show(data ShowPageData) {
 	<div class="flex flex-col gap-4 py-4">
 		<div class="flex flex-col gap-2 px-4">
-			<a href={ templ.SafeURL(SettingsBackPath) } class="text-sm underline w-fit">
+			<a href={ templ.SafeURL(SettingsBackPath) } class="inline-flex w-fit items-center gap-1 text-sm underline">
+				@templates.DecorativeIcon("arrow-bend-up-left-regular", "w-[18px] h-[18px]")
 				{ templates.T(ctx, "settings_two_factor_auth_show_back_to_settings") }
 			</a>
 			<h1 class="text-2xl font-bold antialiased">
 				{ templates.T(ctx, "settings_two_factor_auth_show_heading") }
 			</h1>
+			@components.GuidelineLink(templates.T(ctx, "settings_two_factor_auth_show_help_link"), viewmodel.HelpTwoFactorAuthURL())
 		</div>
 		<hr/>
 		<div class="max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0">
 			<div class="card px-4">
 				<p>{ templates.T(ctx, "settings_two_factor_auth_show_description") }</p>
 				if data.Enabled {
-					<h2 class="text-xl font-bold antialiased">
-						{ templates.T(ctx, "settings_two_factor_auth_show_enabled_status") }
-					</h2>
+					<div class="alert" data-variant="success">
+						<h2>{ templates.T(ctx, "settings_two_factor_auth_show_enabled_status") }</h2>
+					</div>
 					<dl class="flex items-center justify-between gap-2 border-t pt-3">
 						<dt>{ templates.T(ctx, "settings_two_factor_auth_show_recovery_codes_label") }</dt>
 						<dd class="font-bold">
@@ -48,12 +51,10 @@ templ Show(data ShowPageData) {
 						{ templates.T(ctx, "settings_two_factor_auth_show_recovery_codes_help") }
 					</p>
 				} else {
-					<h2 class="text-xl font-bold antialiased">
-						{ templates.T(ctx, "settings_two_factor_auth_show_disabled_status") }
-					</h2>
-					<p class="text-sm text-muted-foreground">
-						{ templates.T(ctx, "settings_two_factor_auth_show_app_required") }
-					</p>
+					<div class="alert" data-variant="warning">
+						<h2>{ templates.T(ctx, "settings_two_factor_auth_show_disabled_status") }</h2>
+						<section>{ templates.T(ctx, "settings_two_factor_auth_show_app_required") }</section>
+					</div>
 					<a href={ templ.SafeURL(NewPath) } class="btn rounded-full w-fit">
 						{ templates.T(ctx, "settings_two_factor_auth_show_enable_link") }
 					</a>

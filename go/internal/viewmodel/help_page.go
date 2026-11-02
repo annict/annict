@@ -26,6 +26,9 @@ const (
 	helpEpisodeBulkCreatePageID = "406"
 )
 
+// 二要素認証の設定画面がリンクするヘルプページのページID。
+const helpTwoFactorAuthPageID = "425"
+
 // AnnictのAPI (認証・GraphQL API・REST API V1) の開発者向けドキュメントを収めた
 // トピックのトピック番号。
 const developerHelpTopicNumber = "5"
@@ -54,4 +57,10 @@ func HelpEpisodeBulkCreateURL() string {
 // 返す。サイドバーがその入り口としてリンクする先。
 func DeveloperHelpTopicURL() string {
 	return helpTopicURL(developerHelpTopicNumber)
+}
+
+// HelpTwoFactorAuthURLは二要素認証の設定のしかたを載せたヘルプページのURLを返す。
+// 二要素認証の設定画面が見出しの下からリンクする先。
+func HelpTwoFactorAuthURL() string {
+	return helpPageURL(helpTwoFactorAuthPageID)
 }
