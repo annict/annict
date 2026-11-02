@@ -16,7 +16,7 @@ templ GuidelineLink(label string, url string) {
 		target="_blank"
 		rel="noopener"
 		aria-label={ templates.T(ctx, "guideline_link_aria_label", map[string]any{"Label": label}) }
-		class="inline-flex w-fit items-center gap-1 text-sm text-primary hover:underline"
+		class="inline-flex w-fit items-center gap-1 text-sm text-foreground underline"
 	>
 		{ label }
 		@templates.DecorativeIcon("arrow-square-out-regular", "w-[18px] h-[18px]")
