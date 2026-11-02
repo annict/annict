@@ -1109,6 +1109,19 @@ other = "入力内容にエラーがあります"
 description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
 other = "{{.Label}}: {{.Message}}"
 
+# コピーするための値の欄
+[copyable_input_copy_button_label]
+description = "コピーするための値の欄の、コピーボタンのラベル"
+other = "{{.Label}}をコピー"
+
+[copyable_input_copied]
+description = "コピーするための値の欄で、クリップボードへコピーできたときのメッセージ"
+other = "{{.Label}}をコピーしました"
+
+[copyable_input_copy_failed]
+description = "コピーするための値の欄で、クリップボードへコピーできなかったときのメッセージ"
+other = "コピーできませんでした。入力欄の値を選んでコピーしてください"
+
 # ガイドラインリンク
 [guideline_link_aria_label]
 description = "ヘルプページへのリンク (新しいタブで開く) のaria-label"
