@@ -3,8 +3,11 @@ package usecase
 import (
 	"context"
 	"database/sql"
+	"math"
+	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -159,7 +162,7 @@ func TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification(t *
 	uc := newCreateEpisodesUsecase(db)
 
 	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
-	existingID := insertSyncEpisode(t, db, defaultSyncEpisodeInput(workID))
+	existingID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
 	user := insertCreateActor(t, db, model.RoleEditor)
 
 	output, err := uc.Execute(context.Background(), CreateEpisodesInput{
@@ -181,7 +184,7 @@ func TestCreateEpisodesUsecase_Execute_CreatesRowsWithAnimeAndClassification(t *
 	if first.rawNumber.Float64 != 2 {
 		t.Errorf("1行目のraw_number = %v、期待値 = 2", first.rawNumber)
 	}
-	// 作品は既に1件のエピソードを持つため、最初に作られる行は200に、2件目はその
+	// 作品の最大のsort_numberは100のため、最初に作られる行は200に、2件目はその
 	// 1ステップ先に着地する。
 	if first.sortNumber != 200 {
 		t.Errorf("1行目のsort_number = %d、期待値 = 200", first.sortNumber)
@@ -561,57 +564,261 @@ func TestCreateEpisodesUsecase_Execute_RequiresCommitter(t *testing.T) {
 	}
 }
 
-// TestNextSortAnchorは、次に作る行がどのエピソードを直前のエピソードとして名指しするか
-// を検証する。採番の起点が作品の最大sort_numberではなくエピソード数であるため、既存の
-// エピソードがより広い間隔で並んでいる作品ではそのエピソードが名指しされ続ける (Railsの
-// コールバックと同じ)。
-func TestNextSortAnchor(t *testing.T) {
+// TestCreateEpisodesUsecase_Execute_AppendsAfterMaxSortNumberは、作品の最大のsort_number
+// (削除済みを含む) の先から振り、その最大の行を最初の行の前のエピソードにすることを検証する。
+// 開始話数が13の作品で自動生成が1300に置いた第13話より前に並ばないようにするため。
+func TestCreateEpisodesUsecase_Execute_AppendsAfterMaxSortNumber(t *testing.T) {
 	t.Parallel()
 
-	tests := []struct {
-		name       string
-		previous   *repository.DBEpisodeSortAnchor
-		episodeID  model.EpisodeID
-		sortNumber int32
-		want       repository.DBEpisodeSortAnchor
-	}{
-		{
-			name:       "直前のエピソードが無いとき",
-			previous:   nil,
-			episodeID:  7,
-			sortNumber: 100,
-			want:       repository.DBEpisodeSortAnchor{ID: 7, SortNumber: 100},
-		},
-		{
-			name:       "新規のほうが後ろに並ぶとき",
-			previous:   &repository.DBEpisodeSortAnchor{ID: 3, SortNumber: 100},
-			episodeID:  7,
-			sortNumber: 200,
-			want:       repository.DBEpisodeSortAnchor{ID: 7, SortNumber: 200},
-		},
-		{
-			name:       "並び順が同値のときは新規を採る",
-			previous:   &repository.DBEpisodeSortAnchor{ID: 3, SortNumber: 200},
-			episodeID:  7,
-			sortNumber: 200,
-			want:       repository.DBEpisodeSortAnchor{ID: 7, SortNumber: 200},
-		},
-		{
-			name:       "既存のほうが後ろに並ぶとき",
-			previous:   &repository.DBEpisodeSortAnchor{ID: 3, SortNumber: 5000},
-			episodeID:  7,
-			sortNumber: 200,
-			want:       repository.DBEpisodeSortAnchor{ID: 3, SortNumber: 5000},
-		},
+	db := testutil.GetTestDB()
+	uc := newCreateEpisodesUsecase(db)
+	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	insertSyncEpisode(t, db, generationEpisodeInput(workID, 13, 1300))
+	deleted := generationEpisodeInput(workID, 14, 1400)
+	deleted.deletedAt = sql.NullTime{Time: time.Now(), Valid: true}
+	deletedID := insertSyncEpisode(t, db, deleted)
+	user := insertCreateActor(t, db, model.RoleEditor)
+
+	output, err := uc.Execute(context.Background(), CreateEpisodesInput{
+		WorkID: workID,
+		User:   user,
+		Rows:   "総集編,13.5,これまでのお話\n#14,14,つづき",
+	})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if len(output.EpisodeIDs) != 2 {
+		t.Fatalf("len(EpisodeIDs) = %d、期待値 = 2", len(output.EpisodeIDs))
 	}
 
-	for _, tt := range tests {
+	first := readCreatedEpisode(t, db, output.EpisodeIDs[0])
+	if first.sortNumber != 1500 || first.prevEpisodeID.Int64 != int64(deletedID) {
+		t.Errorf("1行目 = (sort_number %d, prev_episode_id %+v)、期待値 = (1500, %d)", first.sortNumber, first.prevEpisodeID, deletedID)
+	}
+	second := readCreatedEpisode(t, db, output.EpisodeIDs[1])
+	if second.sortNumber != 1600 || second.prevEpisodeID.Int64 != int64(output.EpisodeIDs[0]) {
+		t.Errorf("2行目 = (sort_number %d, prev_episode_id %+v)、期待値 = (1600, %d)", second.sortNumber, second.prevEpisodeID, output.EpisodeIDs[0])
+	}
+}
+
+// TestCreateEpisodesUsecase_Execute_RequiresRawNumberForWorkWithSlotsは、有効な放送枠がある
+// 作品でも編集者が一括登録でき、そのときはすべての行に話数を求めることを検証する。
+func TestCreateEpisodesUsecase_Execute_RequiresRawNumberForWorkWithSlots(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newCreateEpisodesUsecase(db)
+	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	program := insertGenerationProgram(t, db, workID, 1)
+	program.insertSlot(1, time.Now().Add(24*time.Hour), nil)
+	editor := insertCreateActor(t, db, model.RoleEditor)
+	admin := insertCreateActor(t, db, model.RoleAdmin)
+
+	for _, user := range []*model.User{editor, admin} {
+		_, err := uc.Execute(context.Background(), CreateEpisodesInput{
+			WorkID: workID,
+			User:   user,
+			Rows:   "#1,1,はじまり\n総集編,,これまでのお話",
+		})
+		ve := model.AsValidationError(err)
+		if ve == nil {
+			t.Fatalf("ロール%dのExecute()のエラー = %v、期待値 = *model.ValidationError", user.Role, err)
+		}
+		if errs := ve.GetFieldErrors("rows"); len(errs) != 1 || !strings.Contains(errs[0], "2 行目") {
+			t.Errorf("ロール%dのrowsのエラー = %v、期待値 = 2行目の話数の不足", user.Role, errs)
+		}
+	}
+
+	output, err := uc.Execute(context.Background(), CreateEpisodesInput{
+		WorkID: workID,
+		User:   editor,
+		Rows:   "#1,1,はじまり\n総集編,1.5,これまでのお話",
+	})
+	if err != nil {
+		t.Fatalf("話数を入れたExecute()のエラー = %v", err)
+	}
+	if len(output.EpisodeIDs) != 2 {
+		t.Errorf("len(EpisodeIDs) = %d、期待値 = 2", len(output.EpisodeIDs))
+	}
+}
+
+// TestCreateEpisodesUsecase_Execute_RechecksRawNumberAfterWorkLockは、ロック待ち中に
+// 放送枠が追加されても、元の行番号で話数の不足を報告し、一括登録全体を止めることを検証する。
+func TestCreateEpisodesUsecase_Execute_RechecksRawNumberAfterWorkLock(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name string
+		role int32
+	}{
+		{name: "編集者", role: model.RoleEditor},
+		{name: "管理者", role: model.RoleAdmin},
+	} {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			got := nextSortAnchor(tt.previous, tt.episodeID, tt.sortNumber)
-			if *got != tt.want {
-				t.Errorf("nextSortAnchor() = %+v、期待値 = %+v", *got, tt.want)
+			db := testutil.GetTestDB()
+			workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+			program := insertGenerationProgram(t, db, workID, 1)
+			user := insertCreateActor(t, db, tt.role)
+			blocker, err := db.Begin()
+			if err != nil {
+				t.Fatalf("ロック保持用トランザクションの開始に失敗: %v", err)
+			}
+			defer func() { _ = blocker.Rollback() }()
+			if _, err := blocker.Exec(`SELECT id FROM works WHERE id = $1 FOR UPDATE`, int64(workID)); err != nil {
+				t.Fatalf("作品のロックに失敗: %v", err)
+			}
+			var blockerPID int
+			if err := blocker.QueryRow(`SELECT pg_backend_pid()`).Scan(&blockerPID); err != nil {
+				t.Fatalf("ロック保持側のPID取得に失敗: %v", err)
+			}
+
+			ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+			defer cancel()
+			type result struct {
+				output *CreateEpisodesOutput
+				err    error
+			}
+			done := make(chan result, 1)
+			go func() {
+				output, err := newCreateEpisodesUsecase(db).Execute(ctx, CreateEpisodesInput{
+					WorkID: workID,
+					User:   user,
+					Rows:   "#1,1,はじまり\n\n\n総集編,,これまでのお話",
+				})
+				done <- result{output: output, err: err}
+			}()
+
+			// 事前の検証が終わり、作品ロックを実際に待っていることをDBで確認する。
+			for {
+				var blocked bool
+				if err := db.QueryRowContext(ctx, `
+					SELECT EXISTS (
+						SELECT 1 FROM pg_stat_activity WHERE $1 = ANY(pg_blocking_pids(pid))
+					)
+				`, blockerPID).Scan(&blocked); err != nil {
+					t.Fatalf("作品ロック待ちの確認に失敗: %v", err)
+				}
+				if blocked {
+					break
+				}
+				select {
+				case got := <-done:
+					t.Fatalf("ロック待ち前に終了しました: %v", got.err)
+				default:
+				}
+				time.Sleep(10 * time.Millisecond)
+			}
+
+			testutil.NewSlotBuilder(t, blocker).
+				WithWorkID(workID).
+				WithChannelID(program.channelID).
+				WithProgramID(program.programID).
+				WithNumber(1).
+				WithStartedAt(time.Now()).Build()
+			if err := blocker.Commit(); err != nil {
+				t.Fatalf("放送枠追加のコミットに失敗: %v", err)
+			}
+
+			got := <-done
+			if got.output != nil {
+				t.Errorf("Execute()の出力 = %+v、期待値 = nil", got.output)
+			}
+			ve := model.AsValidationError(got.err)
+			if ve == nil {
+				t.Fatalf("Execute()のエラー = %v、期待値 = *model.ValidationError", got.err)
+			}
+			if errs := ve.GetFieldErrors("rows"); len(errs) != 1 || !strings.Contains(errs[0], "4 行目") {
+				t.Errorf("rowsのエラー = %v、期待値 = 元の4行目の話数の不足", errs)
+			}
+			if count := countWorkEpisodes(t, db, workID); count != 0 {
+				t.Errorf("作成エピソード数 = %d、期待値 = 0", count)
+			}
+		})
+	}
+}
+
+// TestCreateEpisodesUsecase_Execute_ValidatesSortNumberRangeは、途中の行で上限を超える
+// 送信も保存前に拒否し、最後の行がint32の上限に収まる場合は正しく末尾に登録することを検証する。
+func TestCreateEpisodesUsecase_Execute_ValidatesSortNumberRange(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name         string
+		maxSort      int32
+		rows         string
+		wantCount    int
+		wantOverflow bool
+	}{
+		{name: "最初の行で上限を超える", maxSort: math.MaxInt32 - 7, rows: "#2,2,つづき", wantOverflow: true},
+		{name: "2行目で上限を超える", maxSort: math.MaxInt32 - 150, rows: "#2,2,つづき\n#3,3,その後", wantOverflow: true},
+		{name: "最後の行が上限ちょうど", maxSort: math.MaxInt32 - 200, rows: "#2,2,つづき\n#3,3,その後", wantCount: 2},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db := testutil.GetTestDB()
+			workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
+			anchorID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, tt.maxSort))
+			user := insertCreateActor(t, db, model.RoleEditor)
+			var beforeCount int32
+			var beforeUpdatedAt time.Time
+			if err := db.QueryRow(`SELECT episodes_count, updated_at FROM works WHERE id = $1`, int64(workID)).Scan(&beforeCount, &beforeUpdatedAt); err != nil {
+				t.Fatalf("作品の更新前の状態の取得に失敗: %v", err)
+			}
+
+			output, err := newCreateEpisodesUsecase(db).Execute(context.Background(), CreateEpisodesInput{
+				WorkID: workID,
+				User:   user,
+				Rows:   tt.rows,
+			})
+			if tt.wantOverflow {
+				if output != nil {
+					t.Errorf("Execute()の出力 = %+v、期待値 = nil", output)
+				}
+				ve := model.AsValidationError(err)
+				if ve == nil {
+					t.Fatalf("Execute()のエラー = %v、期待値 = *model.ValidationError", err)
+				}
+				if len(ve.Global) != 1 || len(ve.GetFieldErrors("rows")) != 0 || !strings.Contains(ve.Global[0], "並び順が上限を超えます") {
+					t.Errorf("エラー = %+v、期待値 = 並び順の上限についてのグローバルエラー1件", ve)
+				}
+				if count := countWorkEpisodes(t, db, workID); count != 1 {
+					t.Errorf("エピソード数 = %d、期待値 = 既存の1件のみ", count)
+				}
+				var classificationCount, activityCount int
+				if err := db.QueryRow(`SELECT COUNT(*) FROM anime_classifications WHERE parent_anime_id = $1`, int64(parentAnimeID)).Scan(&classificationCount); err != nil {
+					t.Fatalf("分類件数の取得に失敗: %v", err)
+				}
+				if err := db.QueryRow(`SELECT COUNT(*) FROM db_activities WHERE user_id = $1`, int64(user.ID)).Scan(&activityCount); err != nil {
+					t.Fatalf("活動履歴件数の取得に失敗: %v", err)
+				}
+				var afterCount int32
+				var afterUpdatedAt time.Time
+				if err := db.QueryRow(`SELECT episodes_count, updated_at FROM works WHERE id = $1`, int64(workID)).Scan(&afterCount, &afterUpdatedAt); err != nil {
+					t.Fatalf("作品の更新後の状態の取得に失敗: %v", err)
+				}
+				if classificationCount != 0 || activityCount != 0 || afterCount != beforeCount || !afterUpdatedAt.Equal(beforeUpdatedAt) {
+					t.Errorf("拒否後 = (分類%d件, 活動%d件, 作品件数%d, 更新日時%v)、期待値 = 副作用なし (作品件数%d, 更新日時%v)", classificationCount, activityCount, afterCount, afterUpdatedAt, beforeCount, beforeUpdatedAt)
+				}
+				return
+			}
+
+			if err != nil {
+				t.Fatalf("Execute()のエラー = %v", err)
+			}
+			if len(output.EpisodeIDs) != tt.wantCount {
+				t.Fatalf("作成エピソード数 = %d、期待値 = %d", len(output.EpisodeIDs), tt.wantCount)
+			}
+			prevID := anchorID
+			for i, id := range output.EpisodeIDs {
+				created := readCreatedEpisode(t, db, id)
+				wantSort := int64(tt.maxSort) + int64(i+1)*int64(episodeSortNumberStep)
+				if int64(created.sortNumber) != wantSort || !created.prevEpisodeID.Valid || created.prevEpisodeID.Int64 != int64(prevID) {
+					t.Errorf("%d行目 = (並び順%d, 前の話%+v)、期待値 = (並び順%d, 前の話%d)", i+1, created.sortNumber, created.prevEpisodeID, wantSort, prevID)
+				}
+				prevID = id
 			}
 		})
 	}

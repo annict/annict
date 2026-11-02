@@ -268,3 +268,23 @@ func (q *Queries) UpdateAnimeStatus(ctx context.Context, arg UpdateAnimeStatusPa
 	_, err := q.db.ExecContext(ctx, updateAnimeStatus, arg.ID, arg.Status)
 	return err
 }
+
+const updateAnimeTitle = `-- name: UpdateAnimeTitle :exec
+UPDATE animes
+SET
+    title = $1,
+    updated_at = NOW()
+WHERE id = $2
+`
+
+type UpdateAnimeTitleParams struct {
+	Title sql.NullString `db:"title"`
+	ID    int64          `db:"id"`
+}
+
+// しょぼいカレンダーのサブタイトルをエピソードに入れたときに、そのエピソードのanimeへ同じ
+// タイトルを両書きする。ほかのカラムは書き戻さず、事前の読み取り後の編集を上書きしない。
+func (q *Queries) UpdateAnimeTitle(ctx context.Context, arg UpdateAnimeTitleParams) error {
+	_, err := q.db.ExecContext(ctx, updateAnimeTitle, arg.Title, arg.ID)
+	return err
+}

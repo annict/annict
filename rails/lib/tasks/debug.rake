@@ -13,8 +13,5 @@ namespace :debug do
     EmailNotificationMailer.related_works_added(user.id, works.pluck(:id)).deliver_now
 
     ForumMailer.comment_notification(user.id, ForumComment.first.id).deliver_now
-
-    AdminMailer.episode_created_notification(Episode.first.id).deliver_now
-    AdminMailer.error_in_episode_generator_notification(Slot.first.id, "テストなんだよなあ").deliver_now
   end
 end

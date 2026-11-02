@@ -80,6 +80,12 @@ type SlotID int64
 // Stringは文字列表現を返す
 func (id SlotID) String() string { return strconv.FormatInt(int64(id), 10) }
 
+// ProgramIDは番組のID型
+type ProgramID int64
+
+// Stringは文字列表現を返す
+func (id ProgramID) String() string { return strconv.FormatInt(int64(id), 10) }
+
 // ProfileIDはプロフィールのID型
 type ProfileID int64
 

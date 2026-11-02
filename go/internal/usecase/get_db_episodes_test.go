@@ -83,7 +83,8 @@ func TestGetDBEpisodesUsecase_Execute_ReturnsGenerationValues(t *testing.T) {
 		Build()
 
 	channelID := testutil.NewChannelBuilder(t, tx).Build()
-	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithNumber(9).Build()
+	programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithNumber(9).Build()
 
 	output, err := uc.Execute(context.Background(), GetDBEpisodesInput{WorkID: workID, Page: 1, PerPage: 100})
 	if err != nil {

@@ -11,6 +11,7 @@ services:
     volumes:
       - .:/workspace
       - op-config:/home/developer/.config/op
+      - wikino-cli-config:/home/developer/.config/wikino
       - go-mod-cache:/go/pkg/mod
       - go-build-cache:/go/.cache/go-build
       - app-gems-data:/mise/installs/ruby/3.3.12/lib/ruby/gems/3.3.0
@@ -66,3 +67,4 @@ volumes:
   go-mod-cache:
   op-config:
   postgresql17_data:
+  wikino-cli-config:

@@ -36,8 +36,8 @@ type GetDBEpisodesOutput struct {
 	Work *model.Work
 	// PublishedEpisodeCountとMaxGeneratableEpisodeNumberはページの
 	// 自動生成の案内に使う。
-	// 作品のエピソードのうち現在公開中の件数と、しょぼいカレンダー由来の自動生成がどこまで
-	// 話数を振れるかを表す。一方TotalCountは一覧自体の総件数で、一覧が表示する非公開の
+	// 作品のエピソードのうち現在公開中の件数と、自動生成が作品の放送枠から作るエピソードの数を
+	// 表す。一方TotalCountは一覧自体の総件数で、一覧が表示する非公開の
 	// エピソードも含む。
 	PublishedEpisodeCount       int64
 	MaxGeneratableEpisodeNumber int64

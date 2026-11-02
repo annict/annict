@@ -541,3 +541,30 @@ func TestDBEpisodeUpdateValidatorValidateReportsEveryProblem(t *testing.T) {
 		t.Errorf("報告されたエラーが不足しています: %+v", ve)
 	}
 }
+
+// TestDBEpisodeCreateValidatorValidateRawNumberRequiredは、話数を求める作品では話数の無い
+// 行を行番号つきで却下し、求めない作品では受け付けることを検証する。
+func TestDBEpisodeCreateValidatorValidateRawNumberRequired(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	rows := "#1,1,はじまり\n総集編,,これまでのお話"
+
+	got, err := NewDBEpisodeCreateValidator().Validate(ctx, DBEpisodeCreateValidatorInput{Rows: rows})
+	if err != nil {
+		t.Fatalf("話数を求めない作品のValidate()のエラー = %v", err)
+	}
+	if len(got) != 2 {
+		t.Errorf("行数 = %d、期待値 = 2", len(got))
+	}
+
+	_, err = NewDBEpisodeCreateValidator().Validate(ctx, DBEpisodeCreateValidatorInput{Rows: rows, RawNumberRequired: true})
+	ve := model.AsValidationError(err)
+	if ve == nil {
+		t.Fatalf("話数を求める作品のValidate()のエラー = %v、期待値 = *model.ValidationError", err)
+	}
+	errs := ve.GetFieldErrors("rows")
+	if len(errs) != 1 || errs[0] != "2 行目: 放送予定のある作品では話数を入力してください" {
+		t.Errorf("rowsのエラー = %q、期待値 = 2行目の話数の不足だけ", errs)
+	}
+}

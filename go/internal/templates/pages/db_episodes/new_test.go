@@ -95,7 +95,7 @@ func TestNew_DecorativeIconsAreHidden(t *testing.T) {
 	var newHTML strings.Builder
 	if err := New(NewPageData{
 		WorkID:         1,
-		ManualCreation: viewmodel.DBEpisodeManualCreationSlotsExist,
+		ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
 	}).Render(ctx, &newHTML); err != nil {
 		t.Fatalf("新規作成ページのレンダリングエラー: %v", err)
 	}
@@ -212,27 +212,6 @@ func TestNew_ManualCreationRestriction(t *testing.T) {
 			wantMessage:  "管理者は手動でも登録できますが、予定エピソード数を超える",
 			wantDisabled: false,
 		},
-		{
-			name: "放送枠がある編集者",
-			data: NewPageData{
-				WorkID:         1,
-				ManualCreation: viewmodel.DBEpisodeManualCreationSlotsExist,
-			},
-			wantTitle:    "手動登録できません",
-			wantMessage:  "手動によるエピソード登録はできません",
-			wantDisabled: true,
-		},
-		{
-			name: "放送枠がある管理者",
-			data: NewPageData{
-				WorkID:         1,
-				IsAdmin:        true,
-				ManualCreation: viewmodel.DBEpisodeManualCreationSlotsExist,
-			},
-			wantTitle:    "通常は手動登録できません",
-			wantMessage:  "管理者は手動でも登録できますが、自動生成されるエピソードと重複",
-			wantDisabled: false,
-		},
 	}
 
 	for _, tt := range tests {
@@ -318,6 +297,41 @@ func TestNew_RestrictionReportedOnceAfterRejectedSubmit(t *testing.T) {
 	// フォーカスを受け取ってグローバルエラーを通知できるようにする。
 	if count := strings.Count(html, "autofocus"); count != 1 {
 		t.Errorf("autofocusの数 = %d、期待値 = 1 (エラー要約のみ)", count)
+	}
+}
+
+// TestNew_AdminRestrictionWarningKeptAfterOtherRejectionは、管理者の送信が制限以外の
+// 理由でフォーム全体のエラーになっても、予定エピソード数の警告を残すことを検証する。管理者は
+// 制限で却下されないため、エラー要約は制限の理由を述べていない。
+func TestNew_AdminRestrictionWarningKeptAfterOtherRejection(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+
+	var buf strings.Builder
+	data := NewPageData{
+		WorkID:         1,
+		IsAdmin:        true,
+		ManualCreation: viewmodel.DBEpisodeManualCreationEpisodesFilled,
+		FormErrors: &viewmodel.FormErrors{
+			Global: []string{"追加するエピソードの並び順が上限を超えます。既存のエピソードの並び順を調整してから登録してください"},
+		},
+		Rows: "#2,2,つづき",
+	}
+	if err := New(data).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+
+	html := buf.String()
+
+	if !strings.Contains(html, "通常は手動登録できません") {
+		t.Error("管理者の警告の見出しが描画されていない")
+	}
+	if !strings.Contains(html, "予定エピソード数を超えることになります") {
+		t.Error("管理者の警告の本文が描画されていない")
+	}
+	if !strings.Contains(html, "並び順が上限を超えます") {
+		t.Error("エラー要約に却下の理由が描画されていない")
 	}
 }
 
@@ -416,6 +430,64 @@ func TestNew_GuidelineLink(t *testing.T) {
 				if !strings.Contains(html, expected) {
 					t.Errorf("期待する文字列が含まれていません: %q", expected)
 				}
+			}
+		})
+	}
+}
+
+// TestNew_RawNumberRequiredHelpは、有効な放送枠がある作品でだけ話数が要ることを案内し、
+// その案内をtextareaの説明として読み上げに含めることを検証する。
+func TestNew_RawNumberRequiredHelp(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	const help = "すべての行に話数を入力してください"
+
+	tests := []struct {
+		name     string
+		data     NewPageData
+		wantHelp bool
+		wantDesc string
+	}{
+		{
+			name:     "放送予定の無い作品には案内を出さない",
+			data:     NewPageData{WorkID: 1},
+			wantHelp: false,
+		},
+		{
+			name:     "放送予定のある作品では案内をtextareaの説明にする",
+			data:     NewPageData{WorkID: 1, RawNumberRequired: true},
+			wantHelp: true,
+			wantDesc: `aria-describedby="rows-raw-number-required-help"`,
+		},
+		{
+			name: "行が却下されたときはエラーと案内の両方を説明にする",
+			data: NewPageData{
+				WorkID:            1,
+				RawNumberRequired: true,
+				FormErrors: &viewmodel.FormErrors{Fields: map[string][]string{
+					"rows": {"1 行目: 放送予定のある作品では話数を入力してください"},
+				}},
+			},
+			wantHelp: true,
+			wantDesc: `aria-describedby="rows-error-1 rows-raw-number-required-help"`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			var buf strings.Builder
+			if err := New(tt.data).Render(ctx, &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
+			html := buf.String()
+			if got := strings.Contains(html, help); got != tt.wantHelp {
+				t.Errorf("案内の有無 = %v、期待値 = %v", got, tt.wantHelp)
+			}
+			if tt.wantDesc != "" && !strings.Contains(html, tt.wantDesc) {
+				t.Errorf("textareaに %s がありません: %s", tt.wantDesc, html)
 			}
 		})
 	}

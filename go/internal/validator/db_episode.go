@@ -42,6 +42,9 @@ func NewDBEpisodeCreateValidator() *DBEpisodeCreateValidator {
 
 type DBEpisodeCreateValidatorInput struct {
 	Rows string
+	// RawNumberRequiredは、すべての行に話数を求めるか。有効な放送枠がある作品では、自動
+	// 生成が話数でエピソードを照合するため、話数の無い行は照合から漏れて同じ話を二重に作られる。
+	RawNumberRequired bool
 }
 
 // DBEpisodeRowは送信された1行をパースした結果。各フィールドは値の格納先である
@@ -83,7 +86,7 @@ func (v *DBEpisodeCreateValidator) Validate(ctx context.Context, input DBEpisode
 			continue
 		}
 
-		row, messages := parseEpisodeRow(ctx, line)
+		row, messages := parseEpisodeRow(ctx, line, input.RawNumberRequired)
 		for _, message := range messages {
 			ve.AddField("rows", i18n.T(ctx, "validation_episode_row_error", map[string]any{
 				"Line":    i + 1,
@@ -119,7 +122,7 @@ func splitFormRowLines(rows string) []string {
 // parseEpisodeRowは1行を列に分けて検査し、パース結果と失敗したチェックのメッセージを
 // 返す。すべてのチェックを実行するため、2箇所に問題がある行は片方がもう片方の陰に隠れず
 // 両方報告される。
-func parseEpisodeRow(ctx context.Context, line string) (DBEpisodeRow, []string) {
+func parseEpisodeRow(ctx context.Context, line string, rawNumberRequired bool) (DBEpisodeRow, []string) {
 	columns := strings.SplitN(line, episodeRowSeparator, episodeRowColumnCount)
 	number := episodeRowColumn(columns, 0)
 	rawNumber := episodeRowColumn(columns, 1)
@@ -144,6 +147,9 @@ func parseEpisodeRow(ctx context.Context, line string) (DBEpisodeRow, []string) 
 	parsedRawNumber, ok := parseEpisodeRowRawNumber(rawNumber)
 	if !ok {
 		messages = append(messages, i18n.T(ctx, "validation_episode_row_raw_number_invalid"))
+	}
+	if rawNumberRequired && rawNumber == "" {
+		messages = append(messages, i18n.T(ctx, "validation_episode_row_raw_number_required"))
 	}
 
 	return DBEpisodeRow{

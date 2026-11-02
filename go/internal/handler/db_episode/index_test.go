@@ -301,7 +301,8 @@ func TestIndex_ShowsGenerationNoticeAndDerivedColumns(t *testing.T) {
 	insertEpisodeForIndex(t, tx, workID, "第2話", 200, 42)
 
 	channelID := testutil.NewChannelBuilder(t, tx).Build()
-	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithNumber(9).Build()
+	programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithNumber(9).Build()
 
 	handler := newTestHandler(t, db, tx)
 

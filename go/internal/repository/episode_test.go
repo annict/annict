@@ -3761,3 +3761,272 @@ func TestEpisodeRepository_GetForDeleteByID(t *testing.T) {
 		}
 	})
 }
+
+// TestEpisodeRepository_ListForEpisodeGenerationByWorkIDは、自動生成が照合と並び順に使う
+// 既存のエピソードの読み込みを検証する。
+func TestEpisodeRepository_ListForEpisodeGenerationByWorkID(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+	otherProgramID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+
+	second := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(200).WithRawNumber(2).Build()
+	first := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(100).WithRawNumber(1).Build()
+	archived := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(200).WithUnpublishedAt(time.Now()).Build()
+	testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(150).WithDeletedAt(time.Now()).Build()
+
+	// 同じ番組の放送枠 (削除済みを含む) が指すエピソードだけを紐づき済みとする。
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithEpisodeID(first).WithDeletedAt(time.Now()).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(otherProgramID).WithEpisodeID(second).Build()
+
+	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
+	got, err := repo.ListForEpisodeGenerationByWorkID(ctx, workID, model.ProgramID(programID))
+	if err != nil {
+		t.Fatalf("ListForEpisodeGenerationByWorkID()のエラー = %v", err)
+	}
+
+	if len(got) != 3 {
+		t.Fatalf("len(got) = %d、期待値 = 3", len(got))
+	}
+	// sort_number順で、同値ならid順。
+	if got[0].ID != first || got[1].ID != second || got[2].ID != archived {
+		t.Errorf("並び = [%d, %d, %d]、期待値 = [%d, %d, %d]", got[0].ID, got[1].ID, got[2].ID, first, second, archived)
+	}
+	if !got[0].LinkedToProgram || got[1].LinkedToProgram || got[2].LinkedToProgram {
+		t.Errorf("LinkedToProgram = [%v, %v, %v]、期待値 = [true, false, false]", got[0].LinkedToProgram, got[1].LinkedToProgram, got[2].LinkedToProgram)
+	}
+	if !got[0].Published || got[2].Published {
+		t.Errorf("Published = [%v, %v]、期待値 = [true, false]", got[0].Published, got[2].Published)
+	}
+	if got[1].RawNumber == nil || *got[1].RawNumber != 2 || got[2].RawNumber != nil {
+		t.Errorf("RawNumber = [%v, %v]、期待値 = [2, nil]", got[1].RawNumber, got[2].RawNumber)
+	}
+}
+
+// TestEpisodeRepository_CreateGeneratedは、自動生成のエピソードがDB活動を記録せずに作られる
+// ことを検証する。
+func TestEpisodeRepository_CreateGenerated(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	prevID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+
+	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
+	id, err := repo.CreateGenerated(ctx, repository.CreateGeneratedEpisodeParams{
+		WorkID:        workID,
+		Number:        "第2話",
+		RawNumber:     2,
+		SortNumber:    200,
+		PrevEpisodeID: &prevID,
+	})
+	if err != nil {
+		t.Fatalf("CreateGenerated()のエラー = %v", err)
+	}
+
+	var (
+		number        string
+		rawNumber     float64
+		sortNumber    int32
+		prevEpisodeID int64
+		title         sql.NullString
+	)
+	if err := tx.QueryRow(`
+		SELECT number, raw_number, sort_number, prev_episode_id, title
+		FROM episodes WHERE id = $1
+	`, int64(id)).Scan(&number, &rawNumber, &sortNumber, &prevEpisodeID, &title); err != nil {
+		t.Fatalf("作成したエピソードの読み込みに失敗: %v", err)
+	}
+	if number != "第2話" || rawNumber != 2 || sortNumber != 200 || prevEpisodeID != int64(prevID) || title.Valid {
+		t.Errorf("エピソード = (%q, %v, %d, %d, %v)、期待値 = (\"第2話\", 2, 200, %d, NULL)", number, rawNumber, sortNumber, prevEpisodeID, title, prevID)
+	}
+
+	var activityCount int
+	if err := tx.QueryRow(`SELECT COUNT(*) FROM db_activities WHERE trackable_type = 'Episode' AND trackable_id = $1`, int64(id)).Scan(&activityCount); err != nil {
+		t.Fatalf("DB活動の読み込みに失敗: %v", err)
+	}
+	if activityCount != 0 {
+		t.Errorf("DB活動 = %d件、期待値 = 0", activityCount)
+	}
+}
+
+// TestEpisodeRepository_UpdatePrevEpisodeIDは、前のエピソードの付け替えがupdated_atを
+// 進めないことと、作品の違うエピソードを書かないことを検証する。
+func TestEpisodeRepository_UpdatePrevEpisodeID(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	otherWorkID := testutil.NewWorkBuilder(t, tx).Build()
+	prevID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+	if _, err := tx.Exec(`UPDATE episodes SET updated_at = '2001-01-01' WHERE id = $1`, int64(episodeID)); err != nil {
+		t.Fatalf("updated_atの設定に失敗: %v", err)
+	}
+
+	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
+	if err := repo.UpdatePrevEpisodeID(ctx, workID, episodeID, prevID); err != nil {
+		t.Fatalf("UpdatePrevEpisodeID()のエラー = %v", err)
+	}
+
+	var (
+		prevEpisodeID int64
+		updatedAt     time.Time
+	)
+	if err := tx.QueryRow(`SELECT prev_episode_id, updated_at FROM episodes WHERE id = $1`, int64(episodeID)).Scan(&prevEpisodeID, &updatedAt); err != nil {
+		t.Fatalf("エピソードの読み込みに失敗: %v", err)
+	}
+	if prevEpisodeID != int64(prevID) {
+		t.Errorf("prev_episode_id = %d、期待値 = %d", prevEpisodeID, prevID)
+	}
+	if updatedAt.Year() != 2001 {
+		t.Errorf("updated_at = %v、期待値 = 2001年のまま", updatedAt)
+	}
+
+	if err := repo.UpdatePrevEpisodeID(ctx, otherWorkID, episodeID, prevID); err == nil {
+		t.Error("作品の違うエピソードの付け替えでエラーを期待したが、nilだった")
+	}
+}
+
+// TestEpisodeRepository_ListForTitleFillは、しょぼいカレンダーからタイトルを入れる対象の
+// 絞り込みを検証する。
+func TestEpisodeRepository_ListForTitleFill(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).WithScTid(6309).Build()
+	noTidWorkID := testutil.NewWorkBuilder(t, tx).Build()
+	unpublishedWorkID := testutil.NewWorkBuilder(t, tx).WithScTid(6309).WithUnpublishedAt(time.Now()).Build()
+	deletedWorkID := testutil.NewWorkBuilder(t, tx).WithScTid(6309).WithDeletedAt(time.Now()).Build()
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	programID := testutil.NewProgramBuilder(t, tx).WithChannelID(channelID).WithWorkID(workID).Build()
+
+	newEpisode := func(workID model.WorkID, rawNumber float64, title string) model.EpisodeID {
+		return testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(rawNumber).WithTitle(title).Build()
+	}
+	linkSlot := func(workID model.WorkID, episodeID model.EpisodeID, withProgram bool) {
+		builder := testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithEpisodeID(episodeID)
+		if withProgram {
+			builder = builder.WithProgramID(programID)
+		}
+		builder.Build()
+	}
+
+	target := newEpisode(workID, 2, "")
+	linkSlot(workID, target, true)
+	excluded := map[string]model.EpisodeID{
+		"タイトルあり":     newEpisode(workID, 3, "受験対策をせよ"),
+		"小数の話数":      newEpisode(workID, 3.5, ""),
+		"放送枠なし":      newEpisode(workID, 4, ""),
+		"番組の無い放送枠":   newEpisode(workID, 5, ""),
+		"TIDの無い作品":   newEpisode(noTidWorkID, 6, ""),
+		"非公開":        testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(7).WithTitle("").WithUnpublishedAt(time.Now()).Build(),
+		"7日より前に作られた": newEpisode(workID, 8, ""),
+		"削除済み":       testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(9).WithTitle("").WithDeletedAt(time.Now()).Build(),
+		"非公開の作品":     newEpisode(unpublishedWorkID, 10, ""),
+		"削除済みの作品":    newEpisode(deletedWorkID, 11, ""),
+	}
+	for name, id := range excluded {
+		if name == "放送枠なし" {
+			continue
+		}
+		linkSlot(workID, id, name != "番組の無い放送枠")
+	}
+	if _, err := tx.Exec(`UPDATE episodes SET created_at = NOW() - INTERVAL '8 days' WHERE id = $1`, int64(excluded["7日より前に作られた"])); err != nil {
+		t.Fatalf("作成日時の設定に失敗: %v", err)
+	}
+
+	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
+	got, err := repo.ListForTitleFill(ctx, time.Now().Add(-7*24*time.Hour))
+	if err != nil {
+		t.Fatalf("ListForTitleFill()のエラー = %v", err)
+	}
+
+	byID := make(map[model.EpisodeID]repository.DBEpisodeTitleFillTarget, len(got))
+	for _, item := range got {
+		byID[item.Episode.ID] = item
+	}
+	found, ok := byID[target]
+	if !ok {
+		t.Fatal("対象のエピソードが返されなかった")
+	}
+	if found.Episode.WorkID != workID || found.ScTid != 6309 || found.Episode.RawNumber == nil || *found.Episode.RawNumber != 2 {
+		t.Errorf("対象 = (TID %d, 話数 %v)、期待値 = (6309, 2)", found.ScTid, found.Episode.RawNumber)
+	}
+	for name, id := range excluded {
+		if _, ok := byID[id]; ok {
+			t.Errorf("%s: 対象外のエピソードが返された", name)
+		}
+	}
+}
+
+// TestEpisodeRepository_UpdateEmptyTitleは、タイトルが空のエピソードにだけタイトルを入れ、
+// updated_atを進めないことを検証する。
+func TestEpisodeRepository_UpdateEmptyTitle(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+
+	workID := testutil.NewWorkBuilder(t, tx).WithScTid(6309).Build()
+	emptyID := testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(1).WithTitle("").Build()
+	titledID := testutil.NewEpisodeBuilder(t, tx, workID).WithRawNumber(1).WithTitle("編集者のタイトル").Build()
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	programID := testutil.NewProgramBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()
+	for _, id := range []model.EpisodeID{emptyID, titledID} {
+		testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).WithProgramID(programID).WithEpisodeID(id).Build()
+	}
+	if _, err := tx.Exec(`UPDATE episodes SET updated_at = '2001-01-01' WHERE id = $1`, int64(emptyID)); err != nil {
+		t.Fatalf("updated_atの設定に失敗: %v", err)
+	}
+
+	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
+
+	rawNumber := 1.0
+	target := repository.DBEpisodeTitleFillTarget{Episode: &model.Episode{ID: emptyID, WorkID: workID, RawNumber: &rawNumber}, ScTid: 6309}
+	createdFrom := time.Now().Add(-7 * 24 * time.Hour)
+	updated, err := repo.UpdateEmptyTitle(ctx, target, "妻役を確保せよ", createdFrom)
+	if err != nil {
+		t.Fatalf("UpdateEmptyTitle()のエラー = %v", err)
+	}
+	if updated == nil || updated.ID != emptyID || updated.AnimeID != nil {
+		t.Error("タイトルが空のエピソードを更新しなかった")
+	}
+
+	target.Episode.ID = titledID
+	updated, err = repo.UpdateEmptyTitle(ctx, target, "妻役を確保せよ", createdFrom)
+	if err != nil {
+		t.Fatalf("UpdateEmptyTitle()のエラー = %v", err)
+	}
+	if updated != nil {
+		t.Error("タイトルのあるエピソードを上書きした")
+	}
+
+	var (
+		title     string
+		updatedAt time.Time
+	)
+	if err := tx.QueryRow(`SELECT title, updated_at FROM episodes WHERE id = $1`, int64(emptyID)).Scan(&title, &updatedAt); err != nil {
+		t.Fatalf("エピソードの読み込みに失敗: %v", err)
+	}
+	if title != "妻役を確保せよ" || updatedAt.Year() != 2001 {
+		t.Errorf("(title, updated_at) = (%q, %v)、期待値 = (妻役を確保せよ, 2001年のまま)", title, updatedAt)
+	}
+	if err := tx.QueryRow(`SELECT title FROM episodes WHERE id = $1`, int64(titledID)).Scan(&title); err != nil {
+		t.Fatalf("エピソードの読み込みに失敗: %v", err)
+	}
+	if title != "編集者のタイトル" {
+		t.Errorf("title = %q、期待値 = 編集者のタイトル", title)
+	}
+}

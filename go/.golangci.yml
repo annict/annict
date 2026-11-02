@@ -258,6 +258,8 @@ linters:
               desc: "Application層はWorker (Presentation層) に依存できません。Dispatcher経由でジョブを投入してください。"
             - pkg: github.com/annict/annict/go/internal/session
               desc: "Application層はPresentation層のヘルパーに依存できません。トークン生成はauthパッケージを使用してください。"
+            - pkg: github.com/annict/annict/go/internal/syobocal
+              desc: "Application層はsyobocalに直接依存できません。UseCase側で定義したinterfaceを通して使ってください。"
 
         # Email層のルール: メール送信とテンプレートレンダリング
         # 上位層 (Handler, UseCase, Worker等) に依存しない
@@ -370,6 +372,46 @@ linters:
               desc: "authは横断的な技術ユーティリティのため、turnstileに依存できません。"
             - pkg: github.com/annict/annict/go/internal/ratelimit
               desc: "authは横断的な技術ユーティリティのため、ratelimitに依存できません。"
+
+        # syobocal層のルール: Infrastructure層の外部APIアダプタ
+        # しょぼいカレンダーへのHTTPアクセスだけを担い、プロジェクト内部のパッケージに依存しない。
+        # 結果はプリミティブな型で返し、UseCaseはUseCase側で定義したinterfaceを通して使う。
+        syobocal-layer:
+          files:
+            - "**/internal/syobocal/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "syobocalはQueryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "syobocalはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/model
+              desc: "syobocalはModelに依存できません。結果はプリミティブな型で返してください。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "syobocalはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "syobocalはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/viewmodel
+              desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/i18n
+              desc: "syobocalはi18nに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/session
+              desc: "syobocalはPresentation層のヘルパーに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/dispatcher
+              desc: "syobocalはDispatcherに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/email
+              desc: "syobocalはemailパッケージに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/turnstile
+              desc: "syobocalはturnstileに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/ratelimit
+              desc: "syobocalはratelimitに依存できません。"
 
         # Repository層のルール: データアクセス層
         # 上位層に依存しない

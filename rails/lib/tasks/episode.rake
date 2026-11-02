@@ -2,12 +2,6 @@
 # frozen_string_literal: true
 
 namespace :episode do
-  task generate: :environment do
-    Deprecated::EpisodeGeneratorService.execute!
-    Deprecated::SyobocalEpisodeDataFetcherService.execute!
-    Annict::DataCare::UpdateNextResourcesOnLibraryEntries.run!
-  end
-
   task update_score: :environment do
     RATING_MAX = 2
 

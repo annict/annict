@@ -77,6 +77,8 @@ func (h *Handler) renderNew(w http.ResponseWriter, r *http.Request, workID model
 			Rows:           state.Rows,
 			IsAdmin:        middleware.IsAdmin(user),
 			ManualCreation: viewmodel.NewDBEpisodeManualCreationRestriction(output.ManualCreationState),
+			// 有効な放送枠がある作品では、すべての行に話数が要ることを案内する。
+			RawNumberRequired: output.RawNumberRequired,
 		}),
 	)
 	var body bytes.Buffer

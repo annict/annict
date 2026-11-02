@@ -172,6 +172,19 @@ func (SyncAnimesArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 3}
 }
 
+// GenerateEpisodesArgsは、放送枠からエピソードを作る毎日の自動生成ジョブの引数型。
+// ペイロードは持たない。対象の放送枠は実行時刻から決まるため。
+type GenerateEpisodesArgs struct{}
+
+// Kindはジョブの種類を返す。
+func (GenerateEpisodesArgs) Kind() string { return "generate_episodes" }
+
+// InsertOptsはジョブ挿入時のデフォルトオプションを返す。失敗しても再試行しない。放送枠の
+// 処理は冪等で、残りは翌日の実行で拾えるうえ、再試行すると報告メールが重ねて届くため。
+func (GenerateEpisodesArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 1}
+}
+
 // --- Dispatcher ---
 
 // JobInserterはジョブをキューに追加するインターフェース

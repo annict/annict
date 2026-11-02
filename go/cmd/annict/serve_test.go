@@ -63,3 +63,40 @@ func TestHourlySchedule_Next(t *testing.T) {
 		})
 	}
 }
+
+func TestDailySchedule_Next(t *testing.T) {
+	t.Parallel()
+
+	jst := time.FixedZone("Asia/Tokyo", 9*60*60)
+	tests := []struct {
+		name    string
+		current time.Time
+		want    time.Time
+	}{
+		{
+			name:    "UTCの20時より前なら同じ日の20時",
+			current: time.Date(2026, 10, 31, 19, 59, 0, 0, time.UTC),
+			want:    time.Date(2026, 10, 31, 20, 0, 0, 0, time.UTC),
+		},
+		{
+			name:    "ちょうどUTCの20時なら翌日の20時",
+			current: time.Date(2026, 10, 31, 20, 0, 0, 0, time.UTC),
+			want:    time.Date(2026, 11, 1, 20, 0, 0, 0, time.UTC),
+		},
+		{
+			name:    "JSTの時刻もUTCに直して数える",
+			current: time.Date(2026, 11, 1, 4, 30, 0, 0, jst),
+			want:    time.Date(2026, 10, 31, 20, 0, 0, 0, time.UTC),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			got := dailySchedule{hour: 20}.Next(tt.current)
+			if !got.Equal(tt.want) {
+				t.Errorf("Next(%v) = %v、期待値 = %v", tt.current, got, tt.want)
+			}
+		})
+	}
+}

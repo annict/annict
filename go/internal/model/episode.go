@@ -91,30 +91,21 @@ type ManualEpisodeCreationRestriction string
 const (
 	ManualEpisodeCreationAllowed        ManualEpisodeCreationRestriction = ""
 	ManualEpisodeCreationEpisodesFilled ManualEpisodeCreationRestriction = "episodes_filled"
-	ManualEpisodeCreationSlotsExist     ManualEpisodeCreationRestriction = "slots_exist"
 )
 
 // ManualEpisodeCreationStateはRailsが管理者以外の手動エピソード作成を止める条件を
-// 保持する。作品が予定エピソード数までエピソードを持っている (Work#episodes_filled?) か、
-// 開始時刻を持つ放送枠があってエピソードが自動生成される (Work#slots_exists?) かのいずれか。
+// 保持する。作品が予定エピソード数までエピソードを持っている (Work#episodes_filled?) とき。
 type ManualEpisodeCreationState struct {
 	EpisodesFilled bool
-	SlotsExist     bool
 }
 
-// Restrictionはどの理由が当てはまるかを返し、いずれも当てはまらない場合は
-// ManualEpisodeCreationAllowedを返す。両方に当てはまる作品は予定エピソード数到達を報告する
-// (Railsのフォームが理由を述べる順序と同じ)。順序をここで決めることで、送信の却下と
-// ページの警告が同じ理由を名指しする。
+// Restrictionは当てはまる理由を返し、当てはまらない場合はManualEpisodeCreationAllowedを
+// 返す。理由をここで決めることで、送信の却下とページの警告が同じ理由を名指しする。
 func (s ManualEpisodeCreationState) Restriction() ManualEpisodeCreationRestriction {
-	switch {
-	case s.EpisodesFilled:
+	if s.EpisodesFilled {
 		return ManualEpisodeCreationEpisodesFilled
-	case s.SlotsExist:
-		return ManualEpisodeCreationSlotsExist
-	default:
-		return ManualEpisodeCreationAllowed
 	}
+	return ManualEpisodeCreationAllowed
 }
 
 // Allowedは通常のコミッターがエピソードを手動作成できるかを返す。

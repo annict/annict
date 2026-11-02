@@ -48,3 +48,37 @@ func TestGetDBEpisodeNewUsecase_Execute_RejectsUnauthorizedUserBeforeLookup(t *t
 		})
 	}
 }
+
+// TestGetDBEpisodeNewUsecase_Execute_ReportsRawNumberRequiredは、有効な放送枠がある作品で
+// だけ、フォームが話数を求めるよう伝えることを検証する。
+func TestGetDBEpisodeNewUsecase_Execute_ReportsRawNumberRequired(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	uc := NewGetDBEpisodeNewUsecase(repository.NewWorkRepository(query.New(db).WithTx(tx)))
+	editor := &model.User{ID: 1, Role: model.RoleEditor}
+
+	slotWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定のある作品").Build()
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	testutil.NewSlotBuilder(t, tx).WithWorkID(slotWorkID).WithChannelID(channelID).Build()
+	plainWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定の無い作品").Build()
+
+	for name, tt := range map[string]struct {
+		workID model.WorkID
+		want   bool
+	}{
+		"放送予定のある作品": {workID: slotWorkID, want: true},
+		"放送予定の無い作品": {workID: plainWorkID, want: false},
+	} {
+		output, err := uc.Execute(context.Background(), GetDBEpisodeNewInput{User: editor, WorkID: tt.workID})
+		if err != nil {
+			t.Fatalf("%s: Execute()のエラー = %v", name, err)
+		}
+		if output.RawNumberRequired != tt.want {
+			t.Errorf("%s: RawNumberRequired = %v、期待値 = %v", name, output.RawNumberRequired, tt.want)
+		}
+		if !output.ManualCreationState.Allowed() {
+			t.Errorf("%s: 手動作成が許可されていない", name)
+		}
+	}
+}

@@ -33,6 +33,9 @@ type GetDBEpisodeNewOutput struct {
 	// ManualCreationStateは個別のフラグではなくドメインの状態のまま運ぶ。ページと
 	// 却下された送信が、述べる理由を同じ場所から取れるようにするため。
 	ManualCreationState model.ManualEpisodeCreationState
+	// RawNumberRequiredは、作品に有効な放送枠があり、一括作成のすべての行に話数を求めるか。
+	// フォームはこれを見て、話数が要ることを案内する。
+	RawNumberRequired bool
 }
 
 // Executeは作品を取得する前にコミッターを認可し、一括作成フォームの親作品を返す。作品が
@@ -62,5 +65,6 @@ func (uc *GetDBEpisodeNewUsecase) Execute(ctx context.Context, input GetDBEpisod
 	return &GetDBEpisodeNewOutput{
 		Work:                formWork.Work,
 		ManualCreationState: formWork.ManualCreationState,
+		RawNumberRequired:   formWork.HasActiveSlots,
 	}, nil
 }

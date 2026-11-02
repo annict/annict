@@ -201,25 +201,6 @@ func (q *Queries) ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkB
 	return exists, err
 }
 
-const existsWorkForEpisodeCreateByID = `-- name: ExistsWorkForEpisodeCreateByID :one
-SELECT EXISTS (
-    SELECT 1
-    FROM works w
-    WHERE w.id = $1
-        AND w.deleted_at IS NULL
-)
-`
-
-// RailsアクションのWork.without_deleted.findと同じ順序で、送信行をパースする前に親作品を
-// 確認する。バリデーション後に正本の行をロックして再取得するため、この予備確認の結果は作成時の
-// 判断には使わない。
-func (q *Queries) ExistsWorkForEpisodeCreateByID(ctx context.Context, id int64) (bool, error) {
-	row := q.db.QueryRowContext(ctx, existsWorkForEpisodeCreateByID, id)
-	var exists bool
-	err := row.Scan(&exists)
-	return exists, err
-}
-
 const getPopularWorks = `-- name: GetPopularWorks :many
 SELECT
     w.id,
@@ -450,26 +431,22 @@ const getWorkForEpisodeCreateByID = `-- name: GetWorkForEpisodeCreateByID :one
 SELECT
     w.id,
     w.anime_id,
-    (
-        SELECT COUNT(*)
-        FROM episodes e
-        WHERE e.work_id = w.id
-    )::bigint AS episode_count,
     COALESCE(latest.id, 0)::bigint AS latest_episode_id,
     COALESCE(latest.sort_number, 0)::integer AS latest_sort_number,
+    EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.work_id = w.id
+            AND s.deleted_at IS NULL
+            AND s.unpublished_at IS NULL
+    ) AS has_active_slots,
     w.manual_episodes_count IS NOT NULL AND (
         SELECT COUNT(*)
         FROM episodes kept
         WHERE kept.work_id = w.id
             AND kept.unpublished_at IS NULL
             AND kept.deleted_at IS NULL
-    ) >= w.manual_episodes_count AS episodes_filled,
-    EXISTS (
-        SELECT 1
-        FROM slots s
-        WHERE s.work_id = w.id
-            AND s.started_at IS NOT NULL
-    ) AS slots_exist
+    ) >= w.manual_episodes_count AS episodes_filled
 FROM works w
 LEFT JOIN LATERAL (
     SELECT e.id, e.sort_number
@@ -485,19 +462,18 @@ WHERE w.id = $1
 type GetWorkForEpisodeCreateByIDRow struct {
 	ID               int64         `db:"id"`
 	AnimeID          sql.NullInt64 `db:"anime_id"`
-	EpisodeCount     int64         `db:"episode_count"`
 	LatestEpisodeID  int64         `db:"latest_episode_id"`
 	LatestSortNumber int32         `db:"latest_sort_number"`
+	HasActiveSlots   bool          `db:"has_active_slots"`
 	EpisodesFilled   sql.NullBool  `db:"episodes_filled"`
-	SlotsExist       bool          `db:"slots_exist"`
 }
 
-// episode_countとlatest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の
-// 新規エピソードはepisode_count * 100の1ステップ先から始まり、sort_numberが最大の
-// エピソードが最初に作る行のprev_episode_idになる。どちらも非公開・削除済みを除外せずに
-// 作品のエピソードを集計する (Railsのフォームのwork.episodes.countと同じ)。エピソードを
-// 非公開にした作品で、既に使われているsort_numberを振り直さないため。anime_idは作成が
-// 参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品のanimeを必要とする)。
+// latest_* のカラムは、一括作成が振るsort_numberの起点になる。最初の新規エピソードは
+// 作品の最大のsort_numberの1ステップ先から始まり、その最大の行が最初に作る行の
+// prev_episode_idになる。非公開・削除済みを除外せずに集計する。削除済みの行が持つ値と
+// ぶつけないためと、開始話数が1でない作品で自動生成が置いたエピソードより前に並ばないように
+// するため。anime_idは作成が参照モデルへ両書きするかどうかを決める (エピソードの分類は親作品の
+// animeを必要とする)。
 //
 // latest_episode_id / latest_sort_numberは、作品がまだエピソードを持たないとき0に
 // なる。idは正の値のため、呼び出し側は0を「直前のエピソードなし」と読む (上の
@@ -508,11 +484,10 @@ func (q *Queries) GetWorkForEpisodeCreateByID(ctx context.Context, id int64) (Ge
 	err := row.Scan(
 		&i.ID,
 		&i.AnimeID,
-		&i.EpisodeCount,
 		&i.LatestEpisodeID,
 		&i.LatestSortNumber,
+		&i.HasActiveSlots,
 		&i.EpisodesFilled,
-		&i.SlotsExist,
 	)
 	return i, err
 }
@@ -533,8 +508,9 @@ SELECT
         SELECT 1
         FROM slots s
         WHERE s.work_id = w.id
-            AND s.started_at IS NOT NULL
-    ) AS slots_exist
+            AND s.deleted_at IS NULL
+            AND s.unpublished_at IS NULL
+    ) AS has_active_slots
 FROM works w
 WHERE w.id = $1
     AND w.deleted_at IS NULL
@@ -545,13 +521,15 @@ type GetWorkForEpisodeFormByIDRow struct {
 	Title          string       `db:"title"`
 	NoEpisodes     bool         `db:"no_episodes"`
 	EpisodesFilled sql.NullBool `db:"episodes_filled"`
-	SlotsExist     bool         `db:"slots_exist"`
+	HasActiveSlots bool         `db:"has_active_slots"`
 }
 
 // エピソードフォームは、見出しでの名指し、共有サブナビの出し分け、およびRailsの
 // 手動作成ガードを保つために作品を取得する。公開中のエピソード数がmanual_episodes_countに
-// 達した作品、または開始時刻を持つ放送枠がある作品には編集者が追加できない。管理者も警告は
-// 見るが、表示層で上書きして作成できる。
+// 達した作品には編集者が追加できない。管理者も警告は見るが、表示層で上書きして作成できる。
+//
+// has_active_slotsは、作品が有効な放送枠 (未削除・公開中) を持つか。持つ作品では自動生成が
+// 話数でエピソードを照合するため、一括作成のすべての行に話数を求める。
 func (q *Queries) GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetWorkForEpisodeFormByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getWorkForEpisodeFormByID, id)
 	var i GetWorkForEpisodeFormByIDRow
@@ -560,7 +538,63 @@ func (q *Queries) GetWorkForEpisodeFormByID(ctx context.Context, id int64) (GetW
 		&i.Title,
 		&i.NoEpisodes,
 		&i.EpisodesFilled,
-		&i.SlotsExist,
+		&i.HasActiveSlots,
+	)
+	return i, err
+}
+
+const getWorkForEpisodeGenerationByID = `-- name: GetWorkForEpisodeGenerationByID :one
+SELECT
+    w.id,
+    w.title,
+    w.anime_id,
+    w.start_episode_raw_number,
+    w.manual_episodes_count,
+    nf.id AS number_format_id,
+    COALESCE(nf.format, '')::varchar AS number_format_format,
+    COALESCE(nf.data, '{}')::varchar[] AS number_format_data,
+    COALESCE((
+        SELECT MAX(e.sort_number)
+        FROM episodes e
+        WHERE e.work_id = w.id
+    ), 0)::integer AS max_sort_number
+FROM works w
+LEFT JOIN number_formats nf ON nf.id = w.number_format_id
+WHERE w.id = $1
+    AND w.deleted_at IS NULL
+    AND w.unpublished_at IS NULL
+`
+
+type GetWorkForEpisodeGenerationByIDRow struct {
+	ID                    int64         `db:"id"`
+	Title                 string        `db:"title"`
+	AnimeID               sql.NullInt64 `db:"anime_id"`
+	StartEpisodeRawNumber float64       `db:"start_episode_raw_number"`
+	ManualEpisodesCount   sql.NullInt32 `db:"manual_episodes_count"`
+	NumberFormatID        sql.NullInt64 `db:"number_format_id"`
+	NumberFormatFormat    string        `db:"number_format_format"`
+	NumberFormatData      []string      `db:"number_format_data"`
+	MaxSortNumber         int32         `db:"max_sort_number"`
+}
+
+// 放送枠からエピソードを作るときに、作品をロックした後で読む。話数の計算 (開始話数)・予定
+// エピソード数との比較・表示の番号の書式・作品のanimeを返す。max_sort_numberは削除済み・
+// 非公開を含む全エピソードの最大値で、末尾に足すエピソードの並び順の起点になる。削除済みの行が
+// 持つ値と並び順がぶつからないようにするため。作品がエピソードを持たないあいだは0になる。
+// 一覧を読んだ後に非公開・削除にされた作品は返さず、呼び出し側はその放送枠を飛ばす。
+func (q *Queries) GetWorkForEpisodeGenerationByID(ctx context.Context, id int64) (GetWorkForEpisodeGenerationByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getWorkForEpisodeGenerationByID, id)
+	var i GetWorkForEpisodeGenerationByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.AnimeID,
+		&i.StartEpisodeRawNumber,
+		&i.ManualEpisodesCount,
+		&i.NumberFormatID,
+		&i.NumberFormatFormat,
+		pq.Array(&i.NumberFormatData),
+		&i.MaxSortNumber,
 	)
 	return i, err
 }
@@ -579,11 +613,24 @@ SELECT
             AND e.unpublished_at IS NULL
     )::bigint AS published_episode_count,
     COALESCE((
-        SELECT MAX(s.number)
+        SELECT MAX(s.number - (
+            SELECT COUNT(*)
+            FROM slots i
+            WHERE i.program_id = s.program_id
+                AND i.irregular
+                AND i.deleted_at IS NULL
+                AND i.unpublished_at IS NULL
+                AND i.number >= p.minimum_episode_generatable_number
+                AND i.number < s.number
+        ))
         FROM slots s
+        JOIN programs p ON p.id = s.program_id
         WHERE s.work_id = w.id
             AND s.deleted_at IS NULL
             AND s.unpublished_at IS NULL
+            AND NOT s.rebroadcast
+            AND NOT s.irregular
+            AND s.number IS NOT NULL
     ), 0)::bigint AS max_generatable_episode_number
 FROM works w
 WHERE w.id = $1
@@ -600,15 +647,15 @@ type GetWorkForEpisodeListByIDRow struct {
 }
 
 // published_episode_countとmax_generatable_episode_numberはエピソード一覧の自動生成の
-// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者はしょぼいカレンダー由来の
-// 自動生成が作品の有効なスロットから振れる最大話数を表す。どちらも1作品について別テーブルを
-// 集計する値のため、作品の行と一緒に引いてページの往復を増やさない。
+// 案内に使う。前者は作品のエピソードのうち現在公開中の件数、後者は自動生成が作品の放送枠から
+// 作るエピソードの数を表す。どちらも1作品について別テーブルを集計する値のため、作品の行と
+// 一緒に引いてページの往復を増やさない。
 //
-// max_generatable_episode_numberが使うMAXはNULLを飛ばすが、Railsの案内は作品の有効な
-// スロットをnumber降順に並べた先頭行を読む。PostgreSQLのDESCはNULLS FIRSTのため、
-// number未設定の有効スロットが1件でもあればRailsはその行に当たって0を報告する。
-// MAXが報告するのは自動生成が実際に到達する話数であり、Railsと結果が分かれるのは
-// 移植漏れではなく意図的な選択。
+// max_generatable_episode_numberは、自動生成の対象と同じ条件 (未削除・公開中で、再放送でも
+// 不定期放送でもなく、番組と回数を持つ) の放送枠について、作品内の順番 (回数から、その
+// 放送枠より前にある番組の不定期放送の数を引いたもの) の最大値をとる。自動生成が話数の計算と
+// 予定エピソード数との比較に使うのと同じ数え方で、不定期放送のある番組でも回数そのものより
+// 実際に作られる数を表す。
 func (q *Queries) GetWorkForEpisodeListByID(ctx context.Context, id int64) (GetWorkForEpisodeListByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getWorkForEpisodeListByID, id)
 	var i GetWorkForEpisodeListByIDRow

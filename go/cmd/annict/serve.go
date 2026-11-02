@@ -65,6 +65,7 @@ import (
 	"github.com/annict/annict/go/internal/session"
 	"github.com/annict/annict/go/internal/storage"
 	annictStripe "github.com/annict/annict/go/internal/stripe"
+	"github.com/annict/annict/go/internal/syobocal"
 	"github.com/annict/annict/go/internal/templates"
 	"github.com/annict/annict/go/internal/turnstile"
 	"github.com/annict/annict/go/internal/usecase"
@@ -81,6 +82,23 @@ func (s dailyAt2AMSchedule) Next(current time.Time) time.Time {
 
 	// 現在時刻が今日の2時の1分前以降になっていれば、翌日の2時にする。
 	if current.Hour() >= 2 || (current.Hour() == 1 && current.Minute() >= 59) {
+		next = next.Add(24 * time.Hour)
+	}
+
+	return next
+}
+
+// dailyScheduleは毎日UTCのhour時0分にジョブを実行する。サーバーのタイムゾーンに
+// 左右されないよう、時刻はUTCで解釈する。
+type dailySchedule struct {
+	hour int
+}
+
+// Nextはcurrentより後で最初に来るUTCのhour時0分を返す。
+func (s dailySchedule) Next(current time.Time) time.Time {
+	utc := current.UTC()
+	next := time.Date(utc.Year(), utc.Month(), utc.Day(), s.hour, 0, 0, 0, time.UTC)
+	if !next.After(utc) {
 		next = next.Add(24 * time.Hour)
 	}
 
@@ -234,16 +252,40 @@ func runServe() {
 	// newDeleteUserUsecase経由で `task delete-user` サブコマンドと共有する。
 	deleteUserUC := newDeleteUserUsecase(db, queries, stripeAdapter, storageAdapter, usecase.DeleteUserTimeLimit)
 
+	// エピソードの自動生成が使うUseCaseを組み立てる (Worker用)。放送枠へのエピソードの
+	// 紐づけと作成、しょぼいカレンダーのサブタイトルの取得、ライブラリの次のエピソード・次の
+	// 放送枠の更新を、下の定期ジョブが順に呼ぶ。
+	createEpisodesFromSlotsUC := usecase.NewCreateEpisodesFromSlotsUsecase(
+		db,
+		repository.NewSlotRepository(queries),
+		repository.NewWorkRepository(queries),
+		repository.NewEpisodeRepository(queries),
+		repository.NewAnimeRepository(queries),
+		repository.NewAnimeClassificationRepository(queries),
+	)
+	fillEpisodeTitlesUC := usecase.NewFillEpisodeTitlesUsecase(
+		db,
+		repository.NewEpisodeRepository(queries),
+		repository.NewAnimeRepository(queries),
+		syobocal.NewClient(),
+	)
+	updateLibraryEntryNextResourcesUC := usecase.NewUpdateLibraryEntryNextResourcesUsecase(
+		repository.NewLibraryEntryRepository(queries),
+	)
+
 	// Riverクライアントの初期化
 	ctx := context.Background()
 	riverClient, err := worker.NewClient(ctx, cfg.DatabaseDSN(), worker.NewClientParams{
-		CleanupExpiredTokens:      cleanupExpiredTokensUC,
-		CleanupExpiredSignInCodes: cleanupExpiredSignInCodesUC,
-		CleanupExpiredRateLimits:  cleanupExpiredRateLimitsUC,
-		CleanupExpiredSessions:    cleanupExpiredSessionsUC,
-		CleanupAnonymousSessions:  cleanupAnonymousSessionsUC,
-		SyncAnimes:                syncAnimesUC,
-		DeleteUser:                deleteUserUC,
+		CleanupExpiredTokens:            cleanupExpiredTokensUC,
+		CleanupExpiredSignInCodes:       cleanupExpiredSignInCodesUC,
+		CleanupExpiredRateLimits:        cleanupExpiredRateLimitsUC,
+		CleanupExpiredSessions:          cleanupExpiredSessionsUC,
+		CleanupAnonymousSessions:        cleanupAnonymousSessionsUC,
+		SyncAnimes:                      syncAnimesUC,
+		DeleteUser:                      deleteUserUC,
+		CreateEpisodesFromSlots:         createEpisodesFromSlotsUC,
+		FillEpisodeTitles:               fillEpisodeTitlesUC,
+		UpdateLibraryEntryNextResources: updateLibraryEntryNextResourcesUC,
 	}, cfg)
 	if err != nil {
 		slog.Error("Riverクライアントの初期化に失敗しました", "error", err)
@@ -354,6 +396,21 @@ func runServe() {
 
 	riverClient.Client().PeriodicJobs().Add(periodicJobSyncAnimes)
 	slog.Info("定期実行ジョブを登録しました", "job", "animes同期バッチ", "schedule", "毎時")
+
+	// エピソードの自動生成を毎日UTCの20時 (日本時間の5時) に登録する。ライブラリの次の
+	// エピソード・次の放送枠の更新も、同じジョブの中で自動生成に続けて行う。
+	periodicJobGenerateEpisodes := river.NewPeriodicJob(
+		dailySchedule{hour: 20},
+		func() (river.JobArgs, *river.InsertOpts) {
+			args := dispatcher.GenerateEpisodesArgs{}
+			opts := args.InsertOpts()
+			return args, &opts
+		},
+		nil,
+	)
+
+	riverClient.Client().PeriodicJobs().Add(periodicJobGenerateEpisodes)
+	slog.Info("定期実行ジョブを登録しました", "job", "エピソードの自動生成", "schedule", "毎日UTCの20時")
 
 	// セッションマネージャーの初期化
 	sessionRepo := repository.NewSessionRepository(queries)

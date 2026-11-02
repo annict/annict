@@ -482,16 +482,6 @@ func TestNewDBEpisodeManualCreationRestriction(t *testing.T) {
 			state: model.ManualEpisodeCreationState{EpisodesFilled: true},
 			want:  DBEpisodeManualCreationEpisodesFilled,
 		},
-		{
-			name:  "放送枠あり",
-			state: model.ManualEpisodeCreationState{SlotsExist: true},
-			want:  DBEpisodeManualCreationSlotsExist,
-		},
-		{
-			name:  "両方に当てはまるときは予定エピソード数到達",
-			state: model.ManualEpisodeCreationState{EpisodesFilled: true, SlotsExist: true},
-			want:  DBEpisodeManualCreationEpisodesFilled,
-		},
 	}
 
 	for _, tt := range tests {

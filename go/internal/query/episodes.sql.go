@@ -8,6 +8,7 @@ package query
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	"github.com/lib/pq"
 )
@@ -180,6 +181,54 @@ func (q *Queries) CreateEpisode(ctx context.Context, arg CreateEpisodeParams) (i
 		arg.PrevEpisodeID,
 		arg.AnimeID,
 		arg.UserID,
+	)
+	var id int64
+	err := row.Scan(&id)
+	return id, err
+}
+
+const createGeneratedEpisode = `-- name: CreateGeneratedEpisode :one
+INSERT INTO episodes (
+    work_id,
+    number,
+    raw_number,
+    sort_number,
+    prev_episode_id,
+    anime_id,
+    created_at,
+    updated_at
+) VALUES (
+    $1,
+    $2,
+    $3,
+    $4,
+    $5,
+    $6,
+    NOW(),
+    NOW()
+)
+RETURNING id
+`
+
+type CreateGeneratedEpisodeParams struct {
+	WorkID        int64           `db:"work_id"`
+	Number        sql.NullString  `db:"number"`
+	RawNumber     sql.NullFloat64 `db:"raw_number"`
+	SortNumber    int32           `db:"sort_number"`
+	PrevEpisodeID sql.NullInt64   `db:"prev_episode_id"`
+	AnimeID       sql.NullInt64   `db:"anime_id"`
+}
+
+// 放送枠から自動生成するエピソードを挿入する。CreateEpisodeと違い、DB活動は記録しない。
+// Railsの自動生成も編集者を伴わずに作成し、DB活動を残さないため。
+func (q *Queries) CreateGeneratedEpisode(ctx context.Context, arg CreateGeneratedEpisodeParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, createGeneratedEpisode,
+		arg.WorkID,
+		arg.Number,
+		arg.RawNumber,
+		arg.SortNumber,
+		arg.PrevEpisodeID,
+		arg.AnimeID,
 	)
 	var id int64
 	err := row.Scan(&id)
@@ -810,6 +859,137 @@ func (q *Queries) ListEpisodesForAnimeSyncByIDs(ctx context.Context, dollar_1 []
 	return items, nil
 }
 
+const listEpisodesForEpisodeGenerationByWorkID = `-- name: ListEpisodesForEpisodeGenerationByWorkID :many
+SELECT
+    e.id,
+    e.raw_number,
+    e.sort_number,
+    (e.unpublished_at IS NULL)::boolean AS published,
+    EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.program_id = $1
+            AND s.episode_id = e.id
+    ) AS linked_to_program
+FROM episodes e
+WHERE e.work_id = $2
+    AND e.deleted_at IS NULL
+ORDER BY e.sort_number, e.id
+`
+
+type ListEpisodesForEpisodeGenerationByWorkIDParams struct {
+	ProgramID sql.NullInt64 `db:"program_id"`
+	WorkID    int64         `db:"work_id"`
+}
+
+type ListEpisodesForEpisodeGenerationByWorkIDRow struct {
+	ID              int64           `db:"id"`
+	RawNumber       sql.NullFloat64 `db:"raw_number"`
+	SortNumber      int32           `db:"sort_number"`
+	Published       bool            `db:"published"`
+	LinkedToProgram bool            `db:"linked_to_program"`
+}
+
+// 放送枠からエピソードを作るときに、作品をロックした後で読む。既存のエピソードとの照合と、
+// 新しいエピソードを並びのどこに入れるかの判断に使う。並びに数えるのは未削除のエピソード
+// (非公開を含む) で、エピソードの更新が隣接行を導出するのと同じ順序 (sort_number、同値なら
+// id) で返す。linked_to_programは、同じ番組のいずれかの放送枠 (削除済みを含む) がその
+// エピソードを指しているか。slots(program_id, episode_id) の一意制約は削除済みの放送枠にも
+// かかるため、照合ではこれが真の候補に紐づけない。
+func (q *Queries) ListEpisodesForEpisodeGenerationByWorkID(ctx context.Context, arg ListEpisodesForEpisodeGenerationByWorkIDParams) ([]ListEpisodesForEpisodeGenerationByWorkIDRow, error) {
+	rows, err := q.db.QueryContext(ctx, listEpisodesForEpisodeGenerationByWorkID, arg.ProgramID, arg.WorkID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListEpisodesForEpisodeGenerationByWorkIDRow{}
+	for rows.Next() {
+		var i ListEpisodesForEpisodeGenerationByWorkIDRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.RawNumber,
+			&i.SortNumber,
+			&i.Published,
+			&i.LinkedToProgram,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listEpisodesForTitleFill = `-- name: ListEpisodesForTitleFill :many
+SELECT
+    e.id,
+    e.work_id,
+    e.raw_number,
+    w.sc_tid
+FROM episodes e
+JOIN works w ON w.id = e.work_id
+WHERE e.deleted_at IS NULL
+    AND e.unpublished_at IS NULL
+    AND (e.title IS NULL OR e.title = '')
+    AND e.raw_number IS NOT NULL
+    AND e.raw_number = TRUNC(e.raw_number)
+    AND e.created_at >= $1::timestamptz
+    AND w.deleted_at IS NULL
+    AND w.unpublished_at IS NULL
+    AND w.sc_tid IS NOT NULL
+    AND EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.episode_id = e.id
+            AND s.program_id IS NOT NULL
+    )
+ORDER BY e.id
+`
+
+type ListEpisodesForTitleFillRow struct {
+	ID        int64           `db:"id"`
+	WorkID    int64           `db:"work_id"`
+	RawNumber sql.NullFloat64 `db:"raw_number"`
+	ScTid     sql.NullInt32   `db:"sc_tid"`
+}
+
+// しょぼいカレンダーからタイトルを入れる対象は、RailsのSyobocalEpisodeDataFetcherServiceと
+// 同じく、未削除・公開中でタイトルが空、整数の話数を持ち、created_from以降に作られた
+// エピソードのうち、作品がしょぼいカレンダーのTIDを持ち、番組のある放送枠に紐づいているもの。
+// 作品も未削除・公開中に限る (Railsも対象の作品をWork.only_keptで引き直す)。
+func (q *Queries) ListEpisodesForTitleFill(ctx context.Context, createdFrom time.Time) ([]ListEpisodesForTitleFillRow, error) {
+	rows, err := q.db.QueryContext(ctx, listEpisodesForTitleFill, createdFrom)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListEpisodesForTitleFillRow{}
+	for rows.Next() {
+		var i ListEpisodesForTitleFillRow
+		if err := rows.Scan(
+			&i.ID,
+			&i.WorkID,
+			&i.RawNumber,
+			&i.ScTid,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const lockEpisodesForEpisodeUpdateByIDs = `-- name: LockEpisodesForEpisodeUpdateByIDs :exec
 SELECT e.id
 FROM episodes e
@@ -1151,4 +1331,97 @@ type UpdateEpisodeAnimeIDParams struct {
 func (q *Queries) UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error {
 	_, err := q.db.ExecContext(ctx, updateEpisodeAnimeID, arg.ID, arg.AnimeID)
 	return err
+}
+
+const updateEpisodeEmptyTitle = `-- name: UpdateEpisodeEmptyTitle :one
+WITH locked_work AS (
+    SELECT w.id
+    FROM works w
+    WHERE w.id = $4
+        AND w.sc_tid = $5
+        AND w.deleted_at IS NULL
+        AND w.unpublished_at IS NULL
+    FOR UPDATE
+), locked_episode AS (
+    SELECT e.id
+    FROM episodes e
+    JOIN locked_work w ON w.id = e.work_id
+    WHERE e.id = $6
+    FOR UPDATE OF e SKIP LOCKED
+)
+UPDATE episodes e
+SET title = $1
+FROM locked_episode locked
+WHERE e.id = locked.id
+    AND e.raw_number = $2
+    AND e.deleted_at IS NULL
+    AND e.unpublished_at IS NULL
+    AND e.created_at >= $3::timestamptz
+    AND (e.title IS NULL OR e.title = '')
+    AND EXISTS (
+        SELECT 1
+        FROM slots s
+        WHERE s.episode_id = e.id
+            AND s.program_id IS NOT NULL
+    )
+RETURNING e.id, e.anime_id
+`
+
+type UpdateEpisodeEmptyTitleParams struct {
+	Title       sql.NullString  `db:"title"`
+	RawNumber   sql.NullFloat64 `db:"raw_number"`
+	CreatedFrom time.Time       `db:"created_from"`
+	WorkID      int64           `db:"work_id"`
+	ScTid       sql.NullInt32   `db:"sc_tid"`
+	ID          int64           `db:"id"`
+}
+
+type UpdateEpisodeEmptyTitleRow struct {
+	ID      int64         `db:"id"`
+	AnimeID sql.NullInt64 `db:"anime_id"`
+}
+
+// 問い合わせに使った作品・話数・TIDと対象条件が一致する間だけタイトルを入れる。作品を
+// ロックしてTIDを保持し、エピソードのUPDATEによる行ロックをコミットまで保持する。
+// Railsはエピソード行の更新後に作品をtouchするため、編集でロック中のエピソードを待つと
+// 作品とのロック順が逆転する。その行は待たずに飛ばし、次の実行へ回す。
+// 両書き先は更新した行の現在のanime_idを返す。DB活動・作品のtouch・updated_atの更新は
+// Railsのupdate_columnと同じく行わない。
+func (q *Queries) UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisodeEmptyTitleParams) (UpdateEpisodeEmptyTitleRow, error) {
+	row := q.db.QueryRowContext(ctx, updateEpisodeEmptyTitle,
+		arg.Title,
+		arg.RawNumber,
+		arg.CreatedFrom,
+		arg.WorkID,
+		arg.ScTid,
+		arg.ID,
+	)
+	var i UpdateEpisodeEmptyTitleRow
+	err := row.Scan(&i.ID, &i.AnimeID)
+	return i, err
+}
+
+const updateEpisodePrevEpisodeID = `-- name: UpdateEpisodePrevEpisodeID :execrows
+UPDATE episodes
+SET prev_episode_id = $1
+WHERE id = $2
+    AND work_id = $3
+    AND deleted_at IS NULL
+`
+
+type UpdateEpisodePrevEpisodeIDParams struct {
+	PrevEpisodeID sql.NullInt64 `db:"prev_episode_id"`
+	ID            int64         `db:"id"`
+	WorkID        int64         `db:"work_id"`
+}
+
+// 並びの途中に入れたエピソードの直後の行が、新しいエピソードを前のエピソードとして名乗るように
+// 張り替える。UpdateDBEpisodeが移動で隣接行を張り替えるのと同じく、並び順から導出される値の
+// 維持であって編集ではないため、DB活動・作品のtouch・updated_atの更新は行わない。
+func (q *Queries) UpdateEpisodePrevEpisodeID(ctx context.Context, arg UpdateEpisodePrevEpisodeIDParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, updateEpisodePrevEpisodeID, arg.PrevEpisodeID, arg.ID, arg.WorkID)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
