@@ -38,22 +38,22 @@ func JaHTML(kind Kind) templ.Component {
 		}
 		switch kind {
 		case KindEnabled:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p>Annictのアカウントで、二要素認証を有効にしました。</p><p>これからは、パスワードやメールのコードでログインしたあとに、認証アプリのコードの入力を求めます。認証アプリを使えなくなったときは、有効にしたときに表示したリカバリーコードでログインできます。</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<p>Annictのアカウントで二要素認証を有効にしました。</p><p>これからはパスワードやメールのコードでログインしたあとに認証アプリのコードの入力を求めます。認証アプリを使えなくなったときは有効にしたときに表示したリカバリーコードでログインできます。</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		case KindDisabled:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p>Annictのアカウントで、二要素認証を無効にしました。</p><p>これからは、ログインのときに認証アプリのコードを求めません。発行していたリカバリーコードも使えなくなりました。</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<p>Annictのアカウントで二要素認証を無効にしました。</p><p>これからはログインのときに認証アプリのコードを求めません。発行していたリカバリーコードも使えなくなりました。</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		case KindDisabledByAdmin:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p>お問い合わせを受けて、管理者がAnnictのアカウントの二要素認証を無効にしました。</p><p>これからは、ログインのときに認証アプリのコードを求めません。発行していたリカバリーコードも使えなくなりました。ログインしたあとに設定画面から、二要素認証を有効にし直せます。</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<p>お問い合わせを受けて管理者がAnnictのアカウントの二要素認証を無効にしました。</p><p>これからはログインのときに認証アプリのコードを求めません。発行していたリカバリーコードも使えなくなりました。ログインしたあとに設定画面から二要素認証を有効にし直せます。</p>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>この変更に心当たりがない場合は、第三者があなたのアカウントを使った可能性があります。Annictのパスワードを変更し、調査のため <a href=\"mailto:hello@annict.com\">hello@annict.com</a> までお知らせください。</p></body></html>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<p>この変更に心当たりがない場合は第三者があなたのアカウントを使った可能性があります。Annictのパスワードを変更し、調査のため <a href=\"mailto:hello@annict.com\">hello@annict.com</a> までお知らせください。</p></body></html>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

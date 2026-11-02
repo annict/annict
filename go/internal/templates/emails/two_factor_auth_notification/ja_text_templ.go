@@ -34,22 +34,22 @@ func JaText(kind Kind) templ.Component {
 		ctx = templ.ClearChildren(ctx)
 		switch kind {
 		case KindEnabled:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Annictのアカウントで、二要素認証を有効にしました。 これからは、パスワードやメールのコードでログインしたあとに、認証アプリのコードの入力を求めます。認証アプリを使えなくなったときは、有効にしたときに表示したリカバリーコードでログインできます。 ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "Annictのアカウントで二要素認証を有効にしました。 これからはパスワードやメールのコードでログインしたあとに認証アプリのコードの入力を求めます。認証アプリを使えなくなったときは有効にしたときに表示したリカバリーコードでログインできます。 ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		case KindDisabled:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "Annictのアカウントで、二要素認証を無効にしました。 これからは、ログインのときに認証アプリのコードを求めません。発行していたリカバリーコードも使えなくなりました。 ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "Annictのアカウントで二要素認証を無効にしました。 これからはログインのときに認証アプリのコードを求めません。発行していたリカバリーコードも使えなくなりました。 ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		case KindDisabledByAdmin:
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "お問い合わせを受けて、管理者がAnnictのアカウントの二要素認証を無効にしました。 これからは、ログインのときに認証アプリのコードを求めません。発行していたリカバリーコードも使えなくなりました。ログインしたあとに設定画面から、二要素認証を有効にし直せます。 ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "お問い合わせを受けて管理者がAnnictのアカウントの二要素認証を無効にしました。 これからはログインのときに認証アプリのコードを求めません。発行していたリカバリーコードも使えなくなりました。ログインしたあとに設定画面から二要素認証を有効にし直せます。 ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "この変更に心当たりがない場合は、第三者があなたのアカウントを使った可能性があります。Annictのパスワードを変更し、調査のため hello@annict.com までお知らせください。")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "この変更に心当たりがない場合は第三者があなたのアカウントを使った可能性があります。Annictのパスワードを変更し、調査のため hello@annict.com までお知らせください。")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -2745,7 +2745,7 @@ other = "設定に戻る"
 
 [settings_two_factor_auth_show_description]
 description = "二要素認証の設定画面の説明"
-other = "二要素認証を有効にすると、パスワードやメールで届くコードでログインしたあとに、認証アプリに表示されるコードの入力を求めます。パスワードやメールアカウントが他人に知られても、アカウントを守れます。"
+other = "二要素認証を有効にすると、パスワードやメールで届くコードでログインしたあと認証アプリに表示されるコードの入力を求めます。パスワードやメールアカウントが他人に知られてもアカウントを守れます。"
 
 [settings_two_factor_auth_show_disabled_status]
 description = "二要素認証が無効なときの状態の表示"
@@ -2753,7 +2753,7 @@ other = "二要素認証は無効です"
 
 [settings_two_factor_auth_show_app_required]
 description = "二要素認証を有効にするのに認証アプリが要ることの説明"
-other = "有効にするには、スマートフォンなどにTOTPに対応した認証アプリを用意してください。"
+other = "有効にするにはスマートフォンなどにTOTPに対応した認証アプリを用意してください。"
 
 [settings_two_factor_auth_show_enable_link]
 description = "二要素認証の登録画面へのリンク"
@@ -2793,7 +2793,7 @@ other = "この端末の認証アプリで開く"
 
 [settings_two_factor_auth_new_qr_code_help]
 description = "QRコードの読み取り方の説明"
-other = "別の端末の認証アプリで、このQRコードを読み取ってください。"
+other = "別の端末の認証アプリでこのQRコードを読み取ってください。"
 
 [settings_two_factor_auth_new_qr_code_label]
 description = "QRコードの画像の代替テキスト"
@@ -2805,7 +2805,7 @@ other = "手入力用のキー"
 
 [settings_two_factor_auth_new_secret_help]
 description = "手入力用のキーの説明"
-other = "QRコードを読み取れないときは、このキーを認証アプリに入力してください。"
+other = "QRコードを読み取れないときはこのキーを認証アプリに入力してください。"
 
 [settings_two_factor_auth_new_verify_heading]
 description = "二要素認証の登録画面の手順2の見出し"
@@ -2833,7 +2833,7 @@ other = "リカバリーコードを保管してください"
 
 [settings_two_factor_auth_create_enabled]
 description = "二要素認証を有効にしたことの表示"
-other = "二要素認証を有効にしました。"
+other = "二要素認証を有効にしました"
 
 [settings_two_factor_auth_create_once_heading]
 description = "リカバリーコードが一度しか表示されないことの注意の見出し"
@@ -2849,7 +2849,7 @@ other = "リカバリーコードの一覧"
 
 [settings_two_factor_auth_create_regenerate_help]
 description = "リカバリーコードを作り直す方法の説明"
-other = "各コードは1回だけ使えます。使い切る前に作り直すには、二要素認証を無効にしてから有効にし直してください。"
+other = "各コードは1回だけ使えます。使い切る前に作り直すには二要素認証を無効にしてから有効にし直してください。"
 
 [settings_two_factor_auth_create_done]
 description = "リカバリーコードの画面から設定画面へ進むリンク"
@@ -2926,7 +2926,7 @@ other = "二要素認証"
 
 [sign_in_two_factor_new_instruction]
 description = "ログインで認証アプリのコードを入力する画面の案内"
-other = "認証アプリに表示されている6桁のコードを入力してください。"
+other = "認証アプリに表示されている6桁のコードを入力してください"
 
 [sign_in_two_factor_new_code_label]
 description = "ログインで認証アプリのコードを入力する欄のラベル"
@@ -2947,7 +2947,7 @@ other = "時間が経ったか、アカウントの状態が変わったため�
 # ログインのリカバリーコードの画面
 [sign_in_two_factor_new_use_recovery_code]
 description = "認証アプリのコードの画面からリカバリーコードの画面へのリンク"
-other = "認証アプリを使えないときは、リカバリーコードを使う"
+other = "認証アプリを使えないときのためのリカバリーコードを使う"
 
 [sign_in_two_factor_recovery_new_title]
 description = "ログインでリカバリーコードを入力する画面のタイトル"
