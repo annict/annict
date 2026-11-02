@@ -1111,7 +1111,7 @@ other = "{{.Label}}: {{.Message}}"
 
 # ガイドラインリンク
 [guideline_link_aria_label]
-description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) のaria-label"
+description = "ヘルプページへのリンク (新しいタブで開く) のaria-label"
 other = "{{.Label}} を新しいタブで開く"
 
 # 公開状態ラベル関連
