@@ -230,6 +230,8 @@ en:
         tokens:
           edit: Edit token
           new: Generate new token
+        two_factor_auths:
+          show: Two-Factor Authentication
       sign_in:
         new: Sign In
       sign_up:
