@@ -63,6 +63,7 @@ type Querier interface {
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
+	CountUnusedUserTwoFactorRecoveryCodes(ctx context.Context, userID int64) (int64, error)
 	CreateAnime(ctx context.Context, arg CreateAnimeParams) (Anime, error)
 	CreateAnimeClassification(ctx context.Context, arg CreateAnimeClassificationParams) (AnimeClassification, error)
 	CreateAnimeEvent(ctx context.Context, arg CreateAnimeEventParams) (AnimeEvent, error)
@@ -102,6 +103,8 @@ type Querier interface {
 	CreateStripeSubscriber(ctx context.Context, arg CreateStripeSubscriberParams) (StripeSubscriber, error)
 	CreateStripeWebhookEvent(ctx context.Context, arg CreateStripeWebhookEventParams) (StripeWebhookEvent, error)
 	CreateUser(ctx context.Context, arg CreateUserParams) (CreateUserRow, error)
+	// ユーザーのリカバリーコードを、渡したダイジェストの数だけ1つの文で作る。
+	CreateUserTwoFactorRecoveryCodes(ctx context.Context, arg CreateUserTwoFactorRecoveryCodesParams) error
 	CreateWork(ctx context.Context, arg CreateWorkParams) (int64, error)
 	CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error)
 	// ユーザーのアクティビティを最大batch_size件削除し、削除した件数を返す。
@@ -254,6 +257,8 @@ type Querier interface {
 	// 変えない。いいねで他人に届いた通知は先の段階 (ユーザーが起こした通知の削除) で
 	// 削除しておく。
 	DeleteLikesByUserID(ctx context.Context, arg DeleteLikesByUserIDParams) (int64, error)
+	// 本人確認で照合した設定だけを削除し、別の設定に入れ替わっていたら削除しない。
+	DeleteMatchingUserTwoFactorAuth(ctx context.Context, arg DeleteMatchingUserTwoFactorAuthParams) (int64, error)
 	// ユーザーの複数エピソードの記録を最大batch_size件削除し、削除した件数を返す。
 	// 記録に付いたいいねと、そのいいねで記録の持ち主 (削除するユーザー) に届いた通知も
 	// 同じ文の中で削除する。記録を参照するアクティビティとエピソードの記録は先に削除して
@@ -304,6 +309,9 @@ type Querier interface {
 	// 購読情報も同じ文の中で削除する。外部キーの検査は文の終わりに行われるため、ユーザー行と
 	// 参照し合う行を1つの文で削除できる。そのほかの従属データは外部キーのON DELETEに任せる。
 	DeleteUser(ctx context.Context, userID int64) (int64, error)
+	// 実際に削除した設定を返し、削除の直前に有効化されていてもその状態を取得する。
+	DeleteUserTwoFactorAuthByUserID(ctx context.Context, userID int64) (UserTwoFactorAuth, error)
+	DeleteUserTwoFactorRecoveryCodesByUserID(ctx context.Context, userID int64) error
 	// ユーザーのUserlandプロジェクトへの参加を最大batch_size件削除し、削除した件数を返す。
 	DeleteUserlandProjectMembersByUserID(ctx context.Context, arg DeleteUserlandProjectMembersByUserIDParams) (int64, error)
 	// ユーザーが書いた作品へのコメントを最大batch_size件削除し、削除した件数を返す。
@@ -344,6 +352,9 @@ type Querier interface {
 	// 外した件数を返す。スレッドの流れを保つため本文は残す。ユーザーが立てたスレッドの
 	// コメントは先に削除しておく。
 	DetachForumCommentsFromUser(ctx context.Context, arg DetachForumCommentsFromUserParams) (int64, error)
+	// 登録の途中の行だけを有効にし、照合したコードのステップを使用済みとして記録する。
+	// 照合後に秘密鍵が差し替わっていた場合は、新しい秘密鍵の行を有効にしない。
+	EnableUserTwoFactorAuth(ctx context.Context, arg EnableUserTwoFactorAuthParams) (int64, error)
 	// ユーザーが持つ論理削除されていないアプリケーションがあるかを返す。
 	ExistsKeptOAuthApplicationByOwnerID(ctx context.Context, userID int64) (bool, error)
 	ExistsKeptWorkByTitle(ctx context.Context, arg ExistsKeptWorkByTitleParams) (bool, error)
@@ -475,6 +486,7 @@ type Querier interface {
 	GetUserCalendarInfo(ctx context.Context, username string) (GetUserCalendarInfoRow, error)
 	// 退会の削除処理の対象を確かめるため、論理削除済みのユーザーも含めてIDで取得する。
 	GetUserForDeletion(ctx context.Context, id int64) (GetUserForDeletionRow, error)
+	GetUserTwoFactorAuthByUserID(ctx context.Context, userID int64) (UserTwoFactorAuth, error)
 	// コードの発行後に退会・利用停止したユーザーのコードは無効として扱う。
 	GetValidSignInCode(ctx context.Context, userID int64) (SignInCode, error)
 	GetValidSignUpCode(ctx context.Context, email string) (SignUpCode, error)
@@ -614,6 +626,9 @@ type Querier interface {
 	LockEpisodesForEpisodeUpdateByIDs(ctx context.Context, ids []int64) error
 	// 購読情報を共有するユーザーの削除を直列化する。
 	LockGumroadSubscriberForUserDeletion(ctx context.Context, id int64) (int64, error)
+	// 照合した有効な設定の行をロックする。リカバリーコードでのログインが、無効化と同じく設定の行からリカバリーコードの行の順にロックし、
+	// 照合のあとに設定が入れ替わっていればロックできた行の数で見分ける。
+	LockMatchingUserTwoFactorAuth(ctx context.Context, arg LockMatchingUserTwoFactorAuthParams) (int64, error)
 	// 購読情報を共有するユーザーの削除を直列化する。
 	LockStripeSubscriberForUserDeletion(ctx context.Context, id int64) (int64, error)
 	// OAuthアプリケーション作成と退会の受付をユーザー行のロックで直列化する。
@@ -787,6 +802,12 @@ type Querier interface {
 	// 存在確認をせずこのクエリを使い、並行削除によって両書き先のanimeだけが分類なしで残るのを
 	// 防ぐ。
 	UpsertAnimeClassification(ctx context.Context, arg UpsertAnimeClassificationParams) error
+	// 登録の途中の行を作るか、秘密鍵を差し替える。有効にした行は書き換えず、そのときは行を返さない。
+	UpsertPendingUserTwoFactorAuth(ctx context.Context, arg UpsertPendingUserTwoFactorAuthParams) (UserTwoFactorAuth, error)
+	// 照合した有効な設定に限ってステップを記録し、設定の入れ替わりとコードの使い回しを拒む。
+	UseMatchingUserTwoFactorAuthStep(ctx context.Context, arg UseMatchingUserTwoFactorAuthStepParams) (int64, error)
+	// 未使用のコードだけを使用済みにし、更新できたかどうかでコードを使えたかを判定する。
+	UseUserTwoFactorRecoveryCode(ctx context.Context, arg UseUserTwoFactorRecoveryCodeParams) (int64, error)
 }
 
 var _ Querier = (*Queries)(nil)

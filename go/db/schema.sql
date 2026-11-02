@@ -1,6 +1,6 @@
 
 -- Dumped from database version 17.5 (Debian 17.5-1.pgdg130+1)
--- Dumped by pg_dump version 17.10 (Debian 17.10-1.pgdg13+1)
+-- Dumped by pg_dump version 17.11 (Debian 17.11-1.pgdg13+2)
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -3214,6 +3214,73 @@ ALTER SEQUENCE public.twitter_watching_lists_id_seq OWNED BY public.twitter_watc
 
 
 --
+-- Name: user_two_factor_auths; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_two_factor_auths (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    secret_ciphertext bytea NOT NULL,
+    last_used_step bigint DEFAULT 0 NOT NULL,
+    enabled_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: user_two_factor_auths_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_two_factor_auths_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_two_factor_auths_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_two_factor_auths_id_seq OWNED BY public.user_two_factor_auths.id;
+
+
+--
+-- Name: user_two_factor_recovery_codes; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.user_two_factor_recovery_codes (
+    id bigint NOT NULL,
+    user_id bigint NOT NULL,
+    code_digest character varying NOT NULL,
+    used_at timestamp with time zone,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    updated_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: user_two_factor_recovery_codes_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.user_two_factor_recovery_codes_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: user_two_factor_recovery_codes_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.user_two_factor_recovery_codes_id_seq OWNED BY public.user_two_factor_recovery_codes.id;
+
+
+--
 -- Name: userland_categories; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -4169,6 +4236,20 @@ ALTER TABLE ONLY public.twitter_watching_lists ALTER COLUMN id SET DEFAULT nextv
 
 
 --
+-- Name: user_two_factor_auths id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_two_factor_auths ALTER COLUMN id SET DEFAULT nextval('public.user_two_factor_auths_id_seq'::regclass);
+
+
+--
+-- Name: user_two_factor_recovery_codes id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_two_factor_recovery_codes ALTER COLUMN id SET DEFAULT nextval('public.user_two_factor_recovery_codes_id_seq'::regclass);
+
+
+--
 -- Name: userland_categories id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5044,6 +5125,38 @@ ALTER TABLE ONLY public.twitter_watching_lists
 
 ALTER TABLE ONLY public.password_reset_tokens
     ADD CONSTRAINT unique_active_token_per_user UNIQUE (user_id, token_digest);
+
+
+--
+-- Name: user_two_factor_auths user_two_factor_auths_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_two_factor_auths
+    ADD CONSTRAINT user_two_factor_auths_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_two_factor_auths user_two_factor_auths_user_id_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_two_factor_auths
+    ADD CONSTRAINT user_two_factor_auths_user_id_key UNIQUE (user_id);
+
+
+--
+-- Name: user_two_factor_recovery_codes user_two_factor_recovery_codes_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_two_factor_recovery_codes
+    ADD CONSTRAINT user_two_factor_recovery_codes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_two_factor_recovery_codes user_two_factor_recovery_codes_user_id_code_digest_key; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_two_factor_recovery_codes
+    ADD CONSTRAINT user_two_factor_recovery_codes_user_id_code_digest_key UNIQUE (user_id, code_digest);
 
 
 --
@@ -8368,6 +8481,22 @@ ALTER TABLE ONLY public.syobocal_alerts
 
 
 --
+-- Name: user_two_factor_auths user_two_factor_auths_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_two_factor_auths
+    ADD CONSTRAINT user_two_factor_auths_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_two_factor_recovery_codes user_two_factor_recovery_codes_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.user_two_factor_recovery_codes
+    ADD CONSTRAINT user_two_factor_recovery_codes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
 -- Name: work_images work_images_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8716,4 +8845,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20261013084107'),
     ('20261014154243'),
     ('20261016165628'),
-    ('20261016173859');
+    ('20261016173859'),
+    ('20261102033056'),
+    ('20261102033057');

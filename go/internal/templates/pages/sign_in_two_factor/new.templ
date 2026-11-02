@@ -1,0 +1,121 @@
+package sign_in_two_factor
+
+import (
+	"net/url"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// NewPathは、ログインで認証アプリのコードを入力する画面のパス。フォームの送信先も兼ねる
+const NewPath = "/sign_in/two_factor"
+
+// NewURLは、ログイン後の戻り先を引き継いだ認証アプリのコードの入力画面のURLを返す。
+func NewURL(backURL string) string {
+	return withBack(NewPath, backURL)
+}
+
+// recoveryURLは、ログイン後の戻り先を引き継いだリカバリーコードの入力画面のURLを返す。
+func recoveryURL(backURL string) string {
+	return withBack(NewPath+"/recovery", backURL)
+}
+
+// withBackは、戻り先があればbackパラメーターとしてpathに付ける。
+func withBack(path string, backURL string) string {
+	if backURL == "" {
+		return path
+	}
+	return path + "?back=" + url.QueryEscape(backURL)
+}
+
+// NewPageDataは、ログインで認証アプリのコードを入力する画面に渡すデータ構造体です
+type NewPageData struct {
+	CSRFToken  string
+	FormErrors *viewmodel.FormErrors
+	// InputCodeは受け付けなかったときに入力欄へ戻す、利用者が入力したコード
+	InputCode string
+	// BackURLはログイン後の戻り先
+	BackURL string
+}
+
+// Newは、第1の要素を確かめた二要素認証のユーザーに、認証アプリのコードを入力してもらう画面を表示します。
+//
+// コードの欄は、貼り付けで混じった空白やハイフン、全角の数字もサーバーで受け付けるため、patternとmaxlengthを付けない。
+templ New(data NewPageData) {
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+		<div class="text-center">
+			<a href="/" class="inline-block">
+				<img
+					alt="Annict"
+					src="/static/images/logo-mizuho.png"
+					width="50"
+				/>
+			</a>
+		</div>
+		<div class="flex flex-col gap-2">
+			<h1 class="text-center text-3xl font-bold antialiased">
+				{ templates.T(ctx, "sign_in_two_factor_new_heading") }
+			</h1>
+			<p class="text-center text-sm text-muted-foreground">
+				{ templates.T(ctx, "sign_in_two_factor_new_instruction") }
+			</p>
+		</div>
+		@components.FormErrors(components.FormErrorsData{
+			Errors: data.FormErrors,
+			Fields: []components.FormErrorField{
+				{Name: "code", Label: templates.T(ctx, "sign_in_two_factor_new_code_label")},
+			},
+		})
+		<form
+			action={ templ.SafeURL(NewPath) }
+			class="grid gap-6"
+			hx-on:submit="disableSubmitButtons(this)"
+			method="POST"
+		>
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+			<input type="hidden" name="back" value={ data.BackURL }/>
+			<div role="group" class="field">
+				<label class="label" for="code">
+					{ templates.T(ctx, "sign_in_two_factor_new_code_label") }
+				</label>
+				<input
+					autocomplete="one-time-code"
+					class="input font-mono"
+					id="code"
+					inputmode="numeric"
+					name="code"
+					required
+					type="text"
+					value={ data.InputCode }
+					if data.FormErrors.HasFieldError("code") {
+						aria-invalid="true"
+						aria-describedby={ components.FieldErrorIDs(data.FormErrors, "code") }
+					} else if !data.FormErrors.HasErrors() {
+						autofocus
+					}
+				/>
+				if data.FormErrors.HasFieldError("code") {
+					for i, errorMsg := range data.FormErrors.Fields["code"] {
+						<p id={ components.FieldErrorID("code", i) } role="alert">{ errorMsg }</p>
+					}
+				}
+			</div>
+			<button class="btn rounded-full w-fit" type="submit">
+				@templates.Icon("sign-in-regular")
+				{ templates.T(ctx, "sign_in_two_factor_new_submit_button") }
+			</button>
+		</form>
+		<p class="text-center text-sm">
+			// リカバリーコードの画面へのリンクは、テンプレートのパッケージの循環を避けてパスを直接組み立てる。
+			<a href={ templ.SafeURL(recoveryURL(data.BackURL)) } class="underline">
+				{ templates.T(ctx, "sign_in_two_factor_new_use_recovery_code") }
+			</a>
+		</p>
+		<p class="text-center text-sm">
+			<a href="/sign_in" class="underline">
+				{ templates.T(ctx, "sign_in_two_factor_new_back_to_sign_in") }
+			</a>
+		</p>
+	</div>
+}

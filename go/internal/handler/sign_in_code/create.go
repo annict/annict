@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"net/url"
 	"strconv"
 	"time"
 
@@ -125,6 +126,22 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 		slog.ErrorContext(ctx, "コード検証エラー", "error", err)
 		http.Error(w, i18n.T(ctx, "sign_in_code_error_server"), http.StatusInternalServerError)
+		return
+	}
+
+	// 二要素認証を有効にしているときは、セッションを発行せずにログイン途中の状態にして認証アプリのコードを求める
+	if output.TwoFactorAuthRequired {
+		if err := h.sessionMgr.StartSignInTwoFactor(ctx, w, r, userID, time.Now()); err != nil {
+			slog.ErrorContext(ctx, "ログイン途中の状態の保存に失敗しました", "error", err, "user_id", userID)
+			http.Error(w, i18n.T(ctx, "sign_in_code_error_server"), http.StatusInternalServerError)
+			return
+		}
+		slog.InfoContext(ctx, "メールのコードを確かめたため、認証アプリのコードを求めます", "user_id", userID)
+		redirectURL := "/sign_in/two_factor"
+		if backURL != "" {
+			redirectURL = "/sign_in/two_factor?back=" + url.QueryEscape(backURL)
+		}
+		http.Redirect(w, r, redirectURL, http.StatusSeeOther)
 		return
 	}
 

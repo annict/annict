@@ -57,7 +57,7 @@ func TestVerifySignInCodeUsecase_Execute_Success(t *testing.T) {
 	// ユースケースを作成
 	userRepo := repository.NewUserRepository(queries)
 	v := validator.NewSignInCodeCreateValidator()
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	// Executeを実行 (正しいコード)
 	result, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
@@ -71,6 +71,9 @@ func TestVerifySignInCodeUsecase_Execute_Success(t *testing.T) {
 
 	if result.Username != "verify_code_success_user" {
 		t.Errorf("Username = %q、期待値 = %q", result.Username, "verify_code_success_user")
+	}
+	if result.TwoFactorAuthRequired {
+		t.Error("TwoFactorAuthRequired = true、二要素認証を有効にしていないユーザーにはfalseを期待")
 	}
 
 	// コードが使用済みになっていることを確認
@@ -107,7 +110,7 @@ func TestVerifySignInCodeUsecase_Execute_ValidationError(t *testing.T) {
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
 	v := validator.NewSignInCodeCreateValidator()
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	ctx := context.Background()
 
@@ -159,7 +162,7 @@ func TestVerifySignInCodeUsecase_Execute_CodeNotFound(t *testing.T) {
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	userRepo := repository.NewUserRepository(queries)
 	v := validator.NewSignInCodeCreateValidator()
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	ctx := context.Background()
 
@@ -217,7 +220,7 @@ func TestVerifySignInCodeUsecase_Execute_CodeExpired(t *testing.T) {
 	// ユースケースを作成
 	userRepo := repository.NewUserRepository(queries)
 	v := validator.NewSignInCodeCreateValidator()
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	// Executeを実行 (有効期限切れ)
 	_, err = uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
@@ -274,7 +277,7 @@ func TestVerifySignInCodeUsecase_Execute_InvalidCode(t *testing.T) {
 	// ユースケースを作成
 	userRepo := repository.NewUserRepository(queries)
 	v := validator.NewSignInCodeCreateValidator()
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	// Executeを実行 (間違ったコード)
 	_, err = uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: "999999"})
@@ -341,7 +344,7 @@ func TestVerifySignInCodeUsecase_Execute_AttemptsExceeded(t *testing.T) {
 	// ユースケースを作成
 	userRepo := repository.NewUserRepository(queries)
 	v := validator.NewSignInCodeCreateValidator()
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	// 5回間違ったコードを入力
 	for i := 0; i < 5; i++ {
@@ -436,7 +439,7 @@ func TestVerifySignInCodeUsecase_Execute_CodeUsedOnce(t *testing.T) {
 	// ユースケースを作成
 	userRepo := repository.NewUserRepository(queries)
 	v := validator.NewSignInCodeCreateValidator()
-	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v)
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	// 1回目：正しいコードで成功
 	result, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
@@ -456,5 +459,50 @@ func TestVerifySignInCodeUsecase_Execute_CodeUsedOnce(t *testing.T) {
 
 	if !errors.Is(err, ErrCodeNotFound) {
 		t.Errorf("エラーコード = %v、期待値 = ErrCodeNotFound", err)
+	}
+}
+
+// TestVerifySignInCodeUsecase_Execute_TwoFactorAuthRequiredは、二要素認証を有効にしているユーザーのコードが合ったときに、
+// セッションの発行の前に認証アプリのコードを求めることを返すことを検証する。
+func TestVerifySignInCodeUsecase_Execute_TwoFactorAuthRequired(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	queries := query.New(db)
+
+	setupTx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("トランザクションのBeginのエラー = %v", err)
+	}
+	defer func() { _ = setupTx.Rollback() }()
+	userID := testutil.NewUserBuilder(t, setupTx).Build()
+	testutil.NewUserTwoFactorAuthBuilder(t, setupTx, userID).WithEnabledAt(time.Now()).Build()
+	if err := setupTx.Commit(); err != nil {
+		t.Fatalf("Commit()のエラー = %v", err)
+	}
+	t.Cleanup(func() { _, _ = db.Exec("DELETE FROM user_two_factor_auths WHERE user_id = $1", int64(userID)) })
+
+	code := "123456"
+	codeDigest, err := auth.HashCode(code)
+	if err != nil {
+		t.Fatalf("HashCode()のエラー = %v", err)
+	}
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	ctx := context.Background()
+	if _, err := signInCodeRepo.Create(ctx, repository.SignInCodeCreateParams{
+		UserID:     userID,
+		CodeDigest: codeDigest,
+		ExpiresAt:  time.Now().Add(15 * time.Minute),
+	}); err != nil {
+		t.Fatalf("repo.Createのエラー = %v", err)
+	}
+
+	uc := NewVerifySignInCodeUsecase(db, signInCodeRepo, repository.NewUserRepository(queries), validator.NewSignInCodeCreateValidator(), repository.NewUserTwoFactorAuthRepository(queries))
+	result, err := uc.Execute(ctx, VerifySignInCodeInput{UserID: userID, Code: code})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if !result.TwoFactorAuthRequired {
+		t.Error("TwoFactorAuthRequired = false、trueを期待")
 	}
 }

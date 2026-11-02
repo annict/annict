@@ -1,0 +1,96 @@
+package sign_in_two_factor_recovery
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/templates/pages/sign_in_two_factor"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// NewPageDataは、ログインでリカバリーコードを入力する画面に渡すデータ構造体です
+type NewPageData struct {
+	CSRFToken  string
+	FormErrors *viewmodel.FormErrors
+	// InputCodeは受け付けなかったときに入力欄へ戻す、利用者が入力したコード
+	InputCode string
+	// BackURLはログイン後の戻り先
+	BackURL string
+}
+
+// Newは、認証アプリを使えない二要素認証のユーザーに、リカバリーコードを入力してもらう画面を表示します。
+//
+// コードの欄は、大文字小文字・ハイフン・空白・全角の違いをサーバーで受け付けるため、patternとmaxlengthを付けない。
+// 貼り付けや書き写しの邪魔をしないよう、自動の大文字化とスペルチェックを止める。
+templ New(data NewPageData) {
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+		<div class="text-center">
+			<a href="/" class="inline-block">
+				<img
+					alt="Annict"
+					src="/static/images/logo-mizuho.png"
+					width="50"
+				/>
+			</a>
+		</div>
+		<div class="flex flex-col gap-2">
+			<h1 class="text-center text-3xl font-bold antialiased">
+				{ templates.T(ctx, "sign_in_two_factor_recovery_new_heading") }
+			</h1>
+			<p class="text-center text-sm text-muted-foreground">
+				{ templates.T(ctx, "sign_in_two_factor_recovery_new_instruction") }
+			</p>
+		</div>
+		@components.FormErrors(components.FormErrorsData{
+			Errors: data.FormErrors,
+			Fields: []components.FormErrorField{
+				{Name: "code", Label: templates.T(ctx, "sign_in_two_factor_recovery_new_code_label")},
+			},
+		})
+		<form
+			action={ templ.SafeURL(NewPath) }
+			class="grid gap-6"
+			hx-on:submit="disableSubmitButtons(this)"
+			method="POST"
+		>
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+			<input type="hidden" name="back" value={ data.BackURL }/>
+			<div role="group" class="field">
+				<label class="label" for="code">
+					{ templates.T(ctx, "sign_in_two_factor_recovery_new_code_label") }
+				</label>
+				<input
+					autocapitalize="off"
+					autocomplete="off"
+					class="input font-mono"
+					id="code"
+					name="code"
+					placeholder="xxxx-xxxx"
+					required
+					spellcheck="false"
+					type="text"
+					value={ data.InputCode }
+					if data.FormErrors.HasFieldError("code") {
+						aria-invalid="true"
+						aria-describedby={ components.FieldErrorIDs(data.FormErrors, "code") }
+					} else if !data.FormErrors.HasErrors() {
+						autofocus
+					}
+				/>
+				if data.FormErrors.HasFieldError("code") {
+					for i, errorMsg := range data.FormErrors.Fields["code"] {
+						<p id={ components.FieldErrorID("code", i) } role="alert">{ errorMsg }</p>
+					}
+				}
+			</div>
+			<button class="btn rounded-full w-fit" type="submit">
+				@templates.Icon("sign-in-regular")
+				{ templates.T(ctx, "sign_in_two_factor_recovery_new_submit_button") }
+			</button>
+		</form>
+		<p class="text-center text-sm">
+			<a href={ templ.SafeURL(sign_in_two_factor.NewURL(data.BackURL)) } class="underline">
+				{ templates.T(ctx, "sign_in_two_factor_recovery_new_use_app") }
+			</a>
+		</p>
+	</div>
+}

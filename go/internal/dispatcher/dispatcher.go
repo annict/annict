@@ -76,6 +76,24 @@ func (SendAccountDeletionEmailArgs) InsertOpts() river.InsertOpts {
 	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 5}
 }
 
+// SendTwoFactorAuthNotificationEmailArgsは、二要素認証の設定の変更を本人に知らせるメール送信ジョブの引数。
+// Eventは有効化・本人による無効化・管理者による無効化のどれかを表す (model.TwoFactorAuthNotificationEventの値)。
+type SendTwoFactorAuthNotificationEmailArgs struct {
+	Email  string `json:"email"`
+	Locale string `json:"locale"`
+	Event  string `json:"event"`
+}
+
+// Kindはジョブの種類を返す
+func (SendTwoFactorAuthNotificationEmailArgs) Kind() string {
+	return "send_two_factor_auth_notification_email"
+}
+
+// InsertOptsはジョブのInsertオプションを返す
+func (SendTwoFactorAuthNotificationEmailArgs) InsertOpts() river.InsertOpts {
+	return river.InsertOpts{Queue: river.QueueDefault, MaxAttempts: 5}
+}
+
 // DeleteUserArgsは退会・利用停止したユーザーのデータを削除するジョブの引数。
 // メールアドレスなどの個人情報はジョブの行に残さないよう、ユーザーIDだけを持つ。
 type DeleteUserArgs struct {
@@ -230,6 +248,15 @@ func (d *Dispatcher) EnqueueSignUpCodeEmail(ctx context.Context, email, code, lo
 // EnqueuePasswordResetEmailはパスワードリセットメール送信ジョブをキューに追加する
 func (d *Dispatcher) EnqueuePasswordResetEmail(ctx context.Context, email, resetURL, locale string) error {
 	args := SendPasswordResetEmailArgs{Email: email, ResetURL: resetURL, Locale: locale}
+	opts := args.InsertOpts()
+	_, err := d.client.Insert(ctx, args, &opts)
+	return err
+}
+
+// EnqueueTwoFactorAuthNotificationEmailは、二要素認証の設定の変更を知らせるメール送信ジョブをキューに追加する。
+// 設定の変更をコミットしたあとに呼ぶ。メールの送信の失敗で設定の変更を取り消さないため。
+func (d *Dispatcher) EnqueueTwoFactorAuthNotificationEmail(ctx context.Context, email, locale, event string) error {
+	args := SendTwoFactorAuthNotificationEmailArgs{Email: email, Locale: locale, Event: event}
 	opts := args.InsertOpts()
 	_, err := d.client.Insert(ctx, args, &opts)
 	return err

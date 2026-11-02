@@ -110,6 +110,12 @@ type PasswordResetTokenID int64
 // Stringは文字列表現を返す
 func (id PasswordResetTokenID) String() string { return strconv.FormatInt(int64(id), 10) }
 
+// UserTwoFactorAuthIDはuser_two_factor_authsテーブルの主キーID型
+type UserTwoFactorAuthID int64
+
+// Stringは文字列表現を返す
+func (id UserTwoFactorAuthID) String() string { return strconv.FormatInt(int64(id), 10) }
+
 // SignInCodeIDはサインインコードのID型
 type SignInCodeID int64
 

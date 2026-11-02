@@ -19,6 +19,8 @@ type VerifySignInCodeUsecase struct {
 	signInCodeRepo *repository.SignInCodeRepository
 	userRepo       *repository.UserRepository
 	validator      *validator.SignInCodeCreateValidator
+	// userTwoFactorAuthRepoは、コードを確かめたあとに認証アプリのコードを求めるかを決めるのに使う
+	userTwoFactorAuthRepo *repository.UserTwoFactorAuthRepository
 }
 
 // NewVerifySignInCodeUsecaseは新しいVerifySignInCodeUsecaseを作成します
@@ -27,12 +29,14 @@ func NewVerifySignInCodeUsecase(
 	signInCodeRepo *repository.SignInCodeRepository,
 	userRepo *repository.UserRepository,
 	validator *validator.SignInCodeCreateValidator,
+	userTwoFactorAuthRepo *repository.UserTwoFactorAuthRepository,
 ) *VerifySignInCodeUsecase {
 	return &VerifySignInCodeUsecase{
-		db:             db,
-		signInCodeRepo: signInCodeRepo,
-		userRepo:       userRepo,
-		validator:      validator,
+		db:                    db,
+		signInCodeRepo:        signInCodeRepo,
+		userRepo:              userRepo,
+		validator:             validator,
+		userTwoFactorAuthRepo: userTwoFactorAuthRepo,
 	}
 }
 
@@ -46,6 +50,8 @@ type VerifySignInCodeInput struct {
 type VerifySignInCodeOutput struct {
 	EncryptedPassword string // ユーザーのパスワードハッシュ (セッション作成用)
 	Username          string // ユーザー名 (ログ用)
+	// TwoFactorAuthRequiredは、セッションを発行する前に認証アプリのコードを求めるかどうか
+	TwoFactorAuthRequired bool
 }
 
 var (
@@ -80,9 +86,16 @@ func (uc *VerifySignInCodeUsecase) Execute(ctx context.Context, input VerifySign
 		return nil, fmt.Errorf("ユーザー情報の取得に失敗: %w", err)
 	}
 
+	// 4. 二要素認証を有効にしているかを確かめる (セッションの発行はハンドラーが決める)
+	twoFactorAuthRequired, err := isTwoFactorAuthEnabled(ctx, uc.userTwoFactorAuthRepo, input.UserID)
+	if err != nil {
+		return nil, err
+	}
+
 	return &VerifySignInCodeOutput{
-		EncryptedPassword: user.EncryptedPassword,
-		Username:          user.Username,
+		EncryptedPassword:     user.EncryptedPassword,
+		Username:              user.Username,
+		TwoFactorAuthRequired: twoFactorAuthRequired,
 	}, nil
 }
 

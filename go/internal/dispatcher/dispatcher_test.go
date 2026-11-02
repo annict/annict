@@ -140,6 +140,30 @@ func TestEnqueuePasswordResetEmail(t *testing.T) {
 	}
 }
 
+// TestEnqueueTwoFactorAuthNotificationEmailは、二要素認証の通知メールのジョブを、
+// 送信先・ロケール・通知の種類を載せた引数と既定のオプションで投入することを検証する。
+func TestEnqueueTwoFactorAuthNotificationEmail(t *testing.T) {
+	t.Parallel()
+
+	mock := &mockJobInserter{}
+	d := NewDispatcher(mock, nil)
+
+	if err := d.EnqueueTwoFactorAuthNotificationEmail(context.Background(), "test@example.com", "en", "disabled"); err != nil {
+		t.Fatalf("EnqueueTwoFactorAuthNotificationEmail()のエラー = %v", err)
+	}
+
+	assertEnqueueInvocation(t, mock)
+
+	args, ok := mock.args.(SendTwoFactorAuthNotificationEmailArgs)
+	if !ok {
+		t.Fatalf("argsの型 = %T、期待値 = SendTwoFactorAuthNotificationEmailArgs", mock.args)
+	}
+	want := SendTwoFactorAuthNotificationEmailArgs{Email: "test@example.com", Locale: "en", Event: "disabled"}
+	if args != want {
+		t.Errorf("args = %+v、期待値 = %+v", args, want)
+	}
+}
+
 func TestArgs_Kind(t *testing.T) {
 	t.Parallel()
 
@@ -152,6 +176,7 @@ func TestArgs_Kind(t *testing.T) {
 		{"SendSignUpCodeEmailArgs", (SendSignUpCodeEmailArgs{}).Kind(), "send_sign_up_code_email"},
 		{"SendPasswordResetEmailArgs", (SendPasswordResetEmailArgs{}).Kind(), "send_password_reset_email"},
 		{"SendAccountDeletionEmailArgs", (SendAccountDeletionEmailArgs{}).Kind(), "send_account_deletion_email"},
+		{"SendTwoFactorAuthNotificationEmailArgs", (SendTwoFactorAuthNotificationEmailArgs{}).Kind(), "send_two_factor_auth_notification_email"},
 	}
 
 	for _, tt := range tests {

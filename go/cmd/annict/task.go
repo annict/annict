@@ -69,6 +69,11 @@ var tasks = newTasks(map[string]taskDef{
 		params: []string{"user_id"},
 		body:   deleteUser,
 	},
+	"disable-two-factor-auth": {
+		desc:   "本人確認をせずにユーザーの二要素認証を無効にする (認証アプリとリカバリーコードの両方を失ったユーザーの救済)",
+		params: []string{"user_id"},
+		body:   disableTwoFactorAuth,
+	},
 	"seed": {
 		desc:  "開発用のシードデータを生成する (dev / testでのみ実行できる)",
 		guard: guardSeed,

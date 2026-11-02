@@ -17,12 +17,14 @@ require (
 	github.com/aws/aws-sdk-go-v2 v1.47.5
 	github.com/aws/aws-sdk-go-v2/credentials v1.20.12
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.114.6
+	github.com/boombuler/barcode v1.1.0
 	github.com/brianvoe/gofakeit/v6 v6.28.0
 	github.com/getsentry/sentry-go v0.50.0
 	github.com/getsentry/sentry-go/slog v0.50.0
 	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.11.0
 	github.com/mfridman/tparse v0.18.0
+	github.com/pquerna/otp v1.5.0
 	github.com/redis/go-redis/v9 v9.23.0
 	github.com/resend/resend-go/v2 v2.28.0
 	github.com/riverqueue/river v0.49.0

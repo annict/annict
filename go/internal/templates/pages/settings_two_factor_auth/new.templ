@@ -1,0 +1,144 @@
+package settings_two_factor_auth
+
+import (
+	"strings"
+
+	"github.com/annict/annict/go/internal/qrcode"
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// NewPageDataは認証アプリの登録画面に渡すデータ構造体です
+type NewPageData struct {
+	CSRFToken string
+	// Secretは認証アプリへ手で入力するbase32の秘密鍵
+	Secret string
+	// OTPAuthURLは秘密鍵を認証アプリへ登録するotpauth URI
+	OTPAuthURL string
+	// QRCodeはOTPAuthURLのQRコード
+	QRCode     *qrcode.Code
+	FormErrors *viewmodel.FormErrors
+	// InputCodeは受け付けなかったときに入力欄へ戻す、利用者が入力したコード
+	InputCode string
+}
+
+// Newは、認証アプリへ秘密鍵を登録し、表示されたコードで確かめる画面を表示します。
+//
+// スマホで開いているときは画面のQRコードを同じ端末のカメラで読めないため、otpauthのリンクと
+// 手入力用のキーも示す。QRコードはダークモードでも白地に黒で描く。反転した符号を読めない端末があるため。
+templ New(data NewPageData) {
+	<div class="flex flex-col gap-4 py-4">
+		<h1 class="text-2xl font-bold antialiased px-4">
+			{ templates.T(ctx, "settings_two_factor_auth_new_heading") }
+		</h1>
+		<hr/>
+		<div class="max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0">
+			<section class="card px-4" aria-labelledby="two-factor-auth-register-heading">
+				<h2 id="two-factor-auth-register-heading" class="text-xl font-bold antialiased">
+					{ templates.T(ctx, "settings_two_factor_auth_new_register_heading") }
+				</h2>
+				<div class="flex flex-col md:flex-row md:items-center gap-4">
+					<svg
+						role="img"
+						aria-label={ templates.T(ctx, "settings_two_factor_auth_new_qr_code_label") }
+						xmlns="http://www.w3.org/2000/svg"
+						viewBox={ data.QRCode.ViewBox() }
+						class="size-48 shrink-0 rounded-lg border bg-white"
+						shape-rendering="crispEdges"
+					>
+						<path fill="#000" d={ data.QRCode.Path }></path>
+					</svg>
+					<div class="flex flex-col gap-3">
+						<p>{ templates.T(ctx, "settings_two_factor_auth_new_qr_code_help") }</p>
+						<a href={ templ.SafeURL(data.OTPAuthURL) } class="btn rounded-full w-fit" data-variant="outline">
+							{ templates.T(ctx, "settings_two_factor_auth_new_open_app") }
+						</a>
+					</div>
+				</div>
+				<div role="group" class="field">
+					<label class="label" for="secret">
+						{ templates.T(ctx, "settings_two_factor_auth_new_secret_label") }
+					</label>
+					<input
+						aria-describedby="secret-help"
+						class="input font-mono"
+						id="secret"
+						readonly
+						type="text"
+						value={ groupSecret(data.Secret) }
+					/>
+					<p id="secret-help" class="text-sm text-muted-foreground">
+						{ templates.T(ctx, "settings_two_factor_auth_new_secret_help") }
+					</p>
+				</div>
+			</section>
+			<section class="card px-4" aria-labelledby="two-factor-auth-verify-heading">
+				<h2 id="two-factor-auth-verify-heading" class="text-xl font-bold antialiased">
+					{ templates.T(ctx, "settings_two_factor_auth_new_verify_heading") }
+				</h2>
+				@components.FormErrors(components.FormErrorsData{
+					Errors: data.FormErrors,
+					Fields: []components.FormErrorField{
+						{Name: "code", Label: templates.T(ctx, "settings_two_factor_auth_new_code_label")},
+					},
+				})
+				<form
+					action={ templ.SafeURL(ShowPath) }
+					class="grid gap-6"
+					hx-on:submit="disableSubmitButtons(this)"
+					method="POST"
+				>
+					<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+					<div role="group" class="field">
+						<label class="label" for="code">
+							{ templates.T(ctx, "settings_two_factor_auth_new_code_label") }
+						</label>
+						<input
+							autocomplete="one-time-code"
+							class="input font-mono"
+							id="code"
+							inputmode="numeric"
+							name="code"
+							required
+							type="text"
+							value={ data.InputCode }
+							if data.FormErrors.HasFieldError("code") {
+								aria-invalid="true"
+								aria-describedby={ components.FieldErrorIDs(data.FormErrors, "code") }
+							}
+						/>
+						if data.FormErrors.HasFieldError("code") {
+							for i, errorMsg := range data.FormErrors.Fields["code"] {
+								<p id={ components.FieldErrorID("code", i) } role="alert">{ errorMsg }</p>
+							}
+						}
+					</div>
+					<div class="flex items-center gap-4">
+						<button type="submit" class="btn rounded-full w-fit">
+							{ templates.T(ctx, "settings_two_factor_auth_new_submit_button") }
+						</button>
+						<a href={ templ.SafeURL(ShowPath) } class="text-sm underline">
+							{ templates.T(ctx, "settings_two_factor_auth_new_cancel") }
+						</a>
+					</div>
+				</form>
+			</section>
+		</div>
+	</div>
+}
+
+// secretGroupLengthは手入力用のキーを区切る1組の文字数
+const secretGroupLength = 4
+
+// groupSecretは手入力用のキーを4文字ずつ空白で区切る。書き写すときに位置を見失わないようにするため。
+// 認証アプリは区切りの空白を読み飛ばすため、区切ったままコピーして貼り付けても登録できる。
+func groupSecret(secret string) string {
+	var groups []string
+	for len(secret) > secretGroupLength {
+		groups = append(groups, secret[:secretGroupLength])
+		secret = secret[secretGroupLength:]
+	}
+
+	return strings.Join(append(groups, secret), " ")
+}
