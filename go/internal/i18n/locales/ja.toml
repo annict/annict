@@ -2729,3 +2729,258 @@ other = "これまでAnnictを使っていただき、ありがとうござい�
 [settings_account_deletion_completion_show_back_to_home]
 description = "退会の完了ページからトップページへのリンク"
 other = "トップページへ"
+
+# 二要素認証の設定画面
+[settings_two_factor_auth_show_title]
+description = "二要素認証の設定画面のタイトル"
+other = "二要素認証"
+
+[settings_two_factor_auth_show_heading]
+description = "二要素認証の設定画面の見出し"
+other = "二要素認証"
+
+[settings_two_factor_auth_show_back_to_settings]
+description = "二要素認証の設定画面からRails版の設定画面へ戻るリンク"
+other = "設定に戻る"
+
+[settings_two_factor_auth_show_description]
+description = "二要素認証の設定画面の説明"
+other = "二要素認証を有効にすると、パスワードやメールで届くコードでログインしたあとに、認証アプリに表示されるコードの入力を求めます。パスワードやメールアカウントが他人に知られても、アカウントを守れます。"
+
+[settings_two_factor_auth_show_disabled_status]
+description = "二要素認証が無効なときの状態の表示"
+other = "二要素認証は無効です"
+
+[settings_two_factor_auth_show_app_required]
+description = "二要素認証を有効にするのに認証アプリが要ることの説明"
+other = "有効にするには、スマートフォンなどにTOTPに対応した認証アプリを用意してください。"
+
+[settings_two_factor_auth_show_enable_link]
+description = "二要素認証の登録画面へのリンク"
+other = "二要素認証を有効にする"
+
+[settings_two_factor_auth_show_enabled_status]
+description = "二要素認証が有効なときの状態の表示"
+other = "二要素認証は有効です"
+
+[settings_two_factor_auth_show_recovery_codes_label]
+description = "残りのリカバリーコードの数の見出し"
+other = "未使用のリカバリーコード"
+
+[settings_two_factor_auth_show_recovery_codes_count]
+description = "残りのリカバリーコードの数"
+other = "{{.Count}}個"
+
+[settings_two_factor_auth_show_recovery_codes_help]
+description = "リカバリーコードを作り直す方法の説明"
+other = "リカバリーコードは1つにつき1回だけ使えます。使い切る前に作り直すには、二要素認証を無効にしてから有効にし直してください。"
+
+[settings_two_factor_auth_new_title]
+description = "二要素認証の登録画面のタイトル"
+other = "認証アプリの登録"
+
+[settings_two_factor_auth_new_heading]
+description = "二要素認証の登録画面の見出し"
+other = "認証アプリの登録"
+
+[settings_two_factor_auth_new_register_heading]
+description = "二要素認証の登録画面の手順1の見出し"
+other = "1. 認証アプリにAnnictを追加する"
+
+[settings_two_factor_auth_new_open_app]
+description = "otpauthのリンクの文言 (同じ端末の認証アプリで開く)"
+other = "この端末の認証アプリで開く"
+
+[settings_two_factor_auth_new_qr_code_help]
+description = "QRコードの読み取り方の説明"
+other = "別の端末の認証アプリで、このQRコードを読み取ってください。"
+
+[settings_two_factor_auth_new_qr_code_label]
+description = "QRコードの画像の代替テキスト"
+other = "認証アプリに登録するためのQRコード"
+
+[settings_two_factor_auth_new_secret_label]
+description = "手入力用のキーのラベル"
+other = "手入力用のキー"
+
+[settings_two_factor_auth_new_secret_help]
+description = "手入力用のキーの説明"
+other = "QRコードを読み取れないときは、このキーを認証アプリに入力してください。"
+
+[settings_two_factor_auth_new_verify_heading]
+description = "二要素認証の登録画面の手順2の見出し"
+other = "2. 表示されたコードを入力する"
+
+[settings_two_factor_auth_new_code_label]
+description = "二要素認証の登録画面のコードの入力欄のラベル"
+other = "認証アプリに表示された6桁のコード"
+
+[settings_two_factor_auth_new_submit_button]
+description = "二要素認証を有効にするボタン"
+other = "有効にする"
+
+[settings_two_factor_auth_new_cancel]
+description = "二要素認証の登録画面から設定画面へ戻るリンク"
+other = "キャンセル"
+
+[settings_two_factor_auth_create_title]
+description = "リカバリーコードの画面のタイトル"
+other = "リカバリーコード"
+
+[settings_two_factor_auth_create_heading]
+description = "リカバリーコードの画面の見出し"
+other = "リカバリーコードを保管してください"
+
+[settings_two_factor_auth_create_enabled]
+description = "二要素認証を有効にしたことの表示"
+other = "二要素認証を有効にしました。"
+
+[settings_two_factor_auth_create_once_heading]
+description = "リカバリーコードが一度しか表示されないことの注意の見出し"
+other = "このコードは今しか表示されません"
+
+[settings_two_factor_auth_create_once_message]
+description = "リカバリーコードの使い方と保管の注意"
+other = "認証アプリを使えなくなったときは、認証アプリのコードの代わりにリカバリーコードでログインできます。パスワードマネージャーや印刷した紙など、他人に見られない場所に保管してください。"
+
+[settings_two_factor_auth_create_codes_label]
+description = "リカバリーコードの一覧の見出し (支援技術向け)"
+other = "リカバリーコードの一覧"
+
+[settings_two_factor_auth_create_regenerate_help]
+description = "リカバリーコードを作り直す方法の説明"
+other = "各コードは1回だけ使えます。使い切る前に作り直すには、二要素認証を無効にしてから有効にし直してください。"
+
+[settings_two_factor_auth_create_done]
+description = "リカバリーコードの画面から設定画面へ進むリンク"
+other = "保管しました"
+
+[validation_totp_code_format]
+description = "認証アプリのコードの形式のバリデーションエラー"
+other = "認証アプリに表示された6桁の数字を入力してください"
+
+[validation_totp_code_incorrect]
+description = "認証アプリのコードが一致しないときのエラー"
+other = "コードが正しくありません。認証アプリに表示されている最新のコードを入力してください"
+
+[flash_two_factor_auth_not_pending]
+description = "二要素認証を有効にしようとしたときに登録の途中の設定が無かったときのメッセージ"
+other = "二要素認証の設定が変わっていました。今の設定を確認してください。"
+
+[settings_two_factor_auth_show_disable_heading]
+description = "二要素認証を無効にするフォームの見出し"
+other = "二要素認証を無効にする"
+
+[settings_two_factor_auth_show_disable_description]
+description = "二要素認証を無効にするフォームの説明"
+other = "本人確認のため、パスワード・認証アプリのコード・リカバリーコードのいずれかを入力してください。無効にすると、リカバリーコードはすべて使えなくなります。"
+
+[settings_two_factor_auth_show_credential_label]
+description = "二要素認証を無効にするときの本人確認の入力欄のラベル"
+other = "パスワード・認証アプリのコード・リカバリーコード"
+
+[settings_two_factor_auth_show_disable_button]
+description = "二要素認証を無効にするボタン"
+other = "無効にする"
+
+[validation_two_factor_auth_credential_incorrect]
+description = "二要素認証を無効にするときの本人確認が一致しないときのエラー"
+other = "パスワードまたはコードが正しくありません"
+
+[flash_two_factor_auth_disabled]
+description = "二要素認証を無効にしたときのメッセージ"
+other = "二要素認証を無効にしました"
+
+[flash_two_factor_auth_not_enabled]
+description = "二要素認証を無効にしようとしたときに有効でなかったときのメッセージ"
+other = "二要素認証は有効になっていませんでした。今の設定を確認してください。"
+
+[flash_two_factor_auth_changed]
+description = "本人確認のあとに二要素認証の設定が変わったときのメッセージ"
+other = "二要素認証の設定がほかの操作で変わっていました。今の設定を確認してください。"
+
+[two_factor_auth_enabled_email_subject]
+description = "二要素認証を有効にしたことを知らせるメールの件名"
+other = "Annict - 二要素認証を有効にしました"
+
+[two_factor_auth_disabled_email_subject]
+description = "二要素認証を無効にしたことを知らせるメールの件名"
+other = "Annict - 二要素認証を無効にしました"
+
+[two_factor_auth_disabled_by_admin_email_subject]
+description = "管理者が二要素認証を無効にしたことを知らせるメールの件名"
+other = "Annict - 管理者が二要素認証を無効にしました"
+
+# ログインの二要素認証の画面
+[sign_in_two_factor_new_title]
+description = "ログインで認証アプリのコードを入力する画面のタイトル"
+other = "認証アプリのコードの入力"
+
+[sign_in_two_factor_new_description]
+description = "ログインで認証アプリのコードを入力する画面の説明"
+other = "二要素認証を有効にしたアカウントでログインするため、認証アプリのコードを入力します。"
+
+[sign_in_two_factor_new_heading]
+description = "ログインで認証アプリのコードを入力する画面の見出し"
+other = "二要素認証"
+
+[sign_in_two_factor_new_instruction]
+description = "ログインで認証アプリのコードを入力する画面の案内"
+other = "認証アプリに表示されている6桁のコードを入力してください。"
+
+[sign_in_two_factor_new_code_label]
+description = "ログインで認証アプリのコードを入力する欄のラベル"
+other = "認証アプリのコード"
+
+[sign_in_two_factor_new_submit_button]
+description = "ログインで認証アプリのコードを送信するボタン"
+other = "ログイン"
+
+[sign_in_two_factor_new_back_to_sign_in]
+description = "認証アプリのコードの入力画面からメールアドレスの入力へ戻るリンク"
+other = "別のアカウントでログインする"
+
+[flash_sign_in_two_factor_restart]
+description = "ログイン途中の状態が無い・期限切れ・二要素認証を使えなくなったときのメッセージ"
+other = "時間が経ったか、アカウントの状態が変わったため、もう一度ログインしてください。"
+
+# ログインのリカバリーコードの画面
+[sign_in_two_factor_new_use_recovery_code]
+description = "認証アプリのコードの画面からリカバリーコードの画面へのリンク"
+other = "認証アプリを使えないときは、リカバリーコードを使う"
+
+[sign_in_two_factor_recovery_new_title]
+description = "ログインでリカバリーコードを入力する画面のタイトル"
+other = "リカバリーコードの入力"
+
+[sign_in_two_factor_recovery_new_description]
+description = "ログインでリカバリーコードを入力する画面の説明"
+other = "認証アプリを使えないときに、二要素認証を有効にしたときに保管したリカバリーコードでログインします。"
+
+[sign_in_two_factor_recovery_new_heading]
+description = "ログインでリカバリーコードを入力する画面の見出し"
+other = "リカバリーコード"
+
+[sign_in_two_factor_recovery_new_instruction]
+description = "ログインでリカバリーコードを入力する画面の案内"
+other = "二要素認証を有効にしたときに保管したリカバリーコードを1つ入力してください。使ったコードは再び使えません。"
+
+[sign_in_two_factor_recovery_new_code_label]
+description = "ログインでリカバリーコードを入力する欄のラベル"
+other = "リカバリーコード"
+
+[sign_in_two_factor_recovery_new_submit_button]
+description = "ログインでリカバリーコードを送信するボタン"
+other = "ログイン"
+
+[sign_in_two_factor_recovery_new_use_app]
+description = "リカバリーコードの画面から認証アプリのコードの画面へ戻るリンク"
+other = "認証アプリのコードを使う"
+
+[validation_recovery_code_format]
+description = "リカバリーコードの形式のバリデーションエラー"
+other = "リカバリーコード (xxxx-xxxxの形) を入力してください"
+
+[validation_recovery_code_incorrect]
+description = "リカバリーコードが一致しない・使用済みのときのエラー"
+other = "リカバリーコードが正しくないか、すでに使われています"
