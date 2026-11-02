@@ -624,7 +624,7 @@ func runServe() {
 	// パスワード編集・更新ハンドラーの初期化
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, sessionRepo, updatePasswordValidator)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, updatePasswordValidator)
 	passwordHandler := password.NewHandler(cfg, sessionManager, flashMgr, limiter, getPasswordResetTokenUC, updatePasswordUC)
 
 	// Web App Manifestハンドラーの初期化

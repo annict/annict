@@ -58,6 +58,15 @@ func GetTestDB() *sql.DB {
 	return testDB
 }
 
+// TestDatabaseURLは、テスト用DBの接続文字列を返します。
+// 共有の接続プールとは別の設定で接続したいテストも、同じDBへ接続できるようにこの関数を使います。
+//
+// DATABASE_URLはop run / GitHub Actionsが事前にセット済み。
+// 未設定時はDev Containerのpostgresqlサービスをデフォルトとする。
+func TestDatabaseURL() string {
+	return cmp.Or(os.Getenv("DATABASE_URL"), "postgres://postgres@postgresql:5432/annict_test?sslmode=disable")
+}
+
 // initTestDBはテスト用DB接続プールの初期化をsync.Onceにより1度だけ実行します
 // SetupTestMain / SetupTx / GetTestDBのいずれから呼ばれても同じ接続を共有します
 func initTestDB() {
@@ -65,11 +74,7 @@ func initTestDB() {
 		// テスト用にbcryptコストを下げる
 		auth.SetBcryptCostForTest(bcrypt.MinCost)
 
-		// DATABASE_URLはop run / GitHub Actionsが事前にセット済み。
-		// 未設定時はDev Containerのpostgresqlサービスをデフォルトとする。
-		dsn := cmp.Or(os.Getenv("DATABASE_URL"), "postgres://postgres@postgresql:5432/annict_test?sslmode=disable")
-
-		db, err := sql.Open("postgres", dsn)
+		db, err := sql.Open("postgres", TestDatabaseURL())
 		if err != nil {
 			panic(fmt.Sprintf("テスト用データベースへの接続に失敗しました: %v", err))
 		}

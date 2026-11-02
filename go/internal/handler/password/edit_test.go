@@ -56,7 +56,7 @@ func TestEdit_ValidToken(t *testing.T) {
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
@@ -122,7 +122,7 @@ func TestEdit_InvalidToken(t *testing.T) {
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
@@ -178,7 +178,7 @@ func TestEdit_ExpiredToken(t *testing.T) {
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 

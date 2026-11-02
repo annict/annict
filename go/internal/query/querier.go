@@ -639,7 +639,8 @@ type Querier interface {
 	// LockWorkForEpisodeCreateByIDで同じロックを取る。したがって隣接行は本ステートメントの後に
 	// 導出でき、commitまで有効なままである。
 	LockWorkForEpisodeUpdateByID(ctx context.Context, id int64) (int64, error)
-	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error
+	// 未使用のトークンだけを使用済みにし、同じトークンを同時に使われても一方しか通さない。
+	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) (int64, error)
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error
 	TouchSession(ctx context.Context, sessionID string) error
@@ -770,7 +771,8 @@ type Querier interface {
 	UpdateStripeSubscriber(ctx context.Context, arg UpdateStripeSubscriberParams) error
 	UpdateStripeSubscriberStatus(ctx context.Context, arg UpdateStripeSubscriberStatusParams) error
 	UpdateStripeWebhookEventStatus(ctx context.Context, arg UpdateStripeWebhookEventStatusParams) error
-	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error
+	// 退会・利用停止と競合しても、有効なユーザーのパスワードだけを更新する。
+	UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) (int64, error)
 	UpdateUserStripeSubscriberID(ctx context.Context, arg UpdateUserStripeSubscriberIDParams) error
 	// 送信が名乗る版の照合は、直前の読み取りとの比較ではなくUPDATEの中で行う。比較と書き込み
 	// の間に他の書き込みが挟まらないようにするため。共有カラムはNULL許容のためNULLも明示的な版

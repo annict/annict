@@ -137,13 +137,18 @@ func (q *Queries) InvalidateUserPasswordResetTokens(ctx context.Context, userID 
 	return err
 }
 
-const markPasswordResetTokenAsUsed = `-- name: MarkPasswordResetTokenAsUsed :exec
+const markPasswordResetTokenAsUsed = `-- name: MarkPasswordResetTokenAsUsed :execrows
 UPDATE password_reset_tokens
 SET used_at = NOW()
 WHERE id = $1
+AND used_at IS NULL
 `
 
-func (q *Queries) MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) error {
-	_, err := q.db.ExecContext(ctx, markPasswordResetTokenAsUsed, id)
-	return err
+// 未使用のトークンだけを使用済みにし、同じトークンを同時に使われても一方しか通さない。
+func (q *Queries) MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) (int64, error) {
+	result, err := q.db.ExecContext(ctx, markPasswordResetTokenAsUsed, id)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
