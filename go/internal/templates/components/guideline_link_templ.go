@@ -11,10 +11,10 @@ import (
 	"github.com/annict/annict/go/internal/templates"
 )
 
-// GuidelineLinkはページ見出しの下に表示する編集ガイドラインへのリンクを描画する。表示する
-// テキストと、リンク先ヘルプページのURLを受け取る。ヘルプページはアプリの外にあるため、リンクは
-// tabnabbing対策付きで新しいタブに開き、そのことをアクセシブルネームで伝える。アイコンはそれを
-// 繰り返すだけなので装飾のままとする。
+// GuidelineLinkはページ見出しの下に表示する、アプリの外のヘルプページ (編集ガイドラインや
+// 設定のしかたなど) へのリンクを描画する。表示するテキストと、リンク先ヘルプページのURLを
+// 受け取る。ヘルプページはアプリの外にあるため、リンクはtabnabbing対策付きで新しいタブに開き、
+// そのことをアクセシブルネームで伝える。アイコンはそれを繰り返すだけなので装飾のままとする。
 func GuidelineLink(label string, url string) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
