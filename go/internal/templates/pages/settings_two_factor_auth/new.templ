@@ -26,7 +26,7 @@ type NewPageData struct {
 // Newは、認証アプリへ秘密鍵を登録し、表示されたコードで確かめる画面を表示します。
 //
 // スマホで開いているときは画面のQRコードを同じ端末のカメラで読めないため、otpauthのリンクと
-// 手入力用のキーも示す。QRコードはダークモードでも白地に黒で描く。反転した符号を読めない端末があるため。
+// 手入力用のキーも示す。キーは1タップで全体を選べ、ボタンでコピーできる欄に置く。QRコードはダークモードでも白地に黒で描く。反転した符号を読めない端末があるため。
 templ New(data NewPageData) {
 	<div class="flex flex-col gap-4 py-4">
 		<h1 class="text-2xl font-bold antialiased px-4">
@@ -56,22 +56,12 @@ templ New(data NewPageData) {
 						</a>
 					</div>
 				</div>
-				<div role="group" class="field">
-					<label class="label" for="secret">
-						{ templates.T(ctx, "settings_two_factor_auth_new_secret_label") }
-					</label>
-					<input
-						aria-describedby="secret-help"
-						class="input font-mono"
-						id="secret"
-						readonly
-						type="text"
-						value={ groupSecret(data.Secret) }
-					/>
-					<p id="secret-help" class="text-sm text-muted-foreground">
-						{ templates.T(ctx, "settings_two_factor_auth_new_secret_help") }
-					</p>
-				</div>
+				@components.CopyableInput(components.CopyableInputData{
+					ID:          "secret",
+					Label:       templates.T(ctx, "settings_two_factor_auth_new_secret_label"),
+					Value:       groupSecret(data.Secret),
+					Description: templates.T(ctx, "settings_two_factor_auth_new_secret_help"),
+				})
 			</section>
 			<section class="card px-4" aria-labelledby="two-factor-auth-verify-heading">
 				<h2 id="two-factor-auth-verify-heading" class="text-xl font-bold antialiased">
