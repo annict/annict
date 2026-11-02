@@ -8,8 +8,8 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// TestShow_Disabledは、二要素認証が無効なときに状態を警告のAlertで示し、登録画面への導線とヘルプへのリンクを表示し、
-// キャッシュさせないことを検証する。
+// TestShow_Disabledは、二要素認証が無効なときに状態を警告のAlertで示し、アイコン付きの戻るリンク・登録画面への導線・
+// ヘルプへのリンクを表示し、キャッシュさせないことを検証する。
 func TestShow_Disabled(t *testing.T) {
 	t.Parallel()
 
@@ -28,7 +28,9 @@ func TestShow_Disabled(t *testing.T) {
 		"<title>二要素認証 | Annict</title>",
 		`<div class="alert" data-variant="warning"><h2>二要素認証は無効です</h2><section>有効にするには`,
 		`href="/settings/two_factor_auth/new"`,
-		`href="/settings/account"`,
+		// 戻るリンクの中の装飾のアイコンは支援技術から隠し、arrow-bend-up-left-regularのパスで描く
+		`href="/settings/account" class="inline-flex w-fit items-center gap-1 text-sm underline"><svg aria-hidden="true" focusable="false"`,
+		`<path d="M232,200a8,8`,
 		`href="https://wikino.app/s/annict/pages/425"`,
 		"二要素認証の設定のヘルプ",
 	)
@@ -88,5 +90,9 @@ func TestShow_English(t *testing.T) {
 
 	rr := serve(handler, newRequest(t, http.MethodGet, "/settings/two_factor_auth", nil, user, "en"))
 
-	assertContains(t, rr.Body.String(), "<title>Two-Factor Authentication | Annict</title>", "Two-factor authentication is off")
+	assertContains(t, rr.Body.String(),
+		"<title>Two-Factor Authentication | Annict</title>",
+		"Two-factor authentication is off",
+		"Two-factor authentication setup help",
+	)
 }
