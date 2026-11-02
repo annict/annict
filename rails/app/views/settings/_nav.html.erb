@@ -13,6 +13,11 @@
     </li>
 
     <li class="c-nav__item">
+      <%# 二要素認証の設定画面はGo版が配信し、Railsのルートを持たないため、パスを直接書く %>
+      <%= link_to t("head.title.settings.two_factor_auths.show"), "/settings/two_factor_auth", class: "c-nav__link" %>
+    </li>
+
+    <li class="c-nav__item">
       <%= active_link_to t("head.title.settings.emails.show"), settings_email_path, class: "c-nav__link", class_active: "c-nav__link--active", active: [["settings/emails"], ["show", "update"]] %>
     </li>
 

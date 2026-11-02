@@ -20,6 +20,19 @@ RSpec.describe "GET /settings/account", type: :request do
     expect(deletion_link["data-confirm"]).to be_nil
   end
 
+  it "設定メニューにGo版の二要素認証の設定画面へのリンクが表示されること" do
+    user_record = create(:registered_user)
+    login_as(user_record, scope: :user)
+
+    get "/settings/account"
+
+    links = Nokogiri::HTML(response.body).css(".c-nav__link").select do |link|
+      link["href"] == "/settings/two_factor_auth"
+    end
+    expect(links.size).to eq(1)
+    expect(links.first.text.strip).to eq(I18n.t("head.title.settings.two_factor_auths.show"))
+  end
+
   it "未ログインユーザーはログインページにリダイレクトされること" do
     get "/settings/account"
 
