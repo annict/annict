@@ -29,7 +29,7 @@ func TestShow_Disabled(t *testing.T) {
 		`<div class="alert" data-variant="warning"><h2>二要素認証は無効です</h2><section>有効にするには`,
 		`href="/settings/two_factor_auth/new"`,
 		// 戻るリンクの中の装飾のアイコンは支援技術から隠し、arrow-bend-up-left-regularのパスで描く
-		`href="/settings/account" class="inline-flex w-fit items-center gap-1 text-sm underline"><svg aria-hidden="true" focusable="false"`,
+		`href="/settings/account" class="inline-flex w-fit items-center gap-1 text-sm link-muted"><svg aria-hidden="true" focusable="false"`,
 		`<path d="M232,200a8,8`,
 		`href="https://wikino.app/s/annict/pages/425"`,
 		"二要素認証の設定のヘルプ",
@@ -39,7 +39,7 @@ func TestShow_Disabled(t *testing.T) {
 	}
 }
 
-// TestShow_Enabledは、二要素認証が有効なときに状態を成功のAlertで示し、未使用のリカバリーコードの数を表示することを検証する。
+// TestShow_Enabledは、二要素認証が有効なときに状態をアイコン付きの成功のAlertで示し、未使用のリカバリーコードの数を表示することを検証する。
 func TestShow_Enabled(t *testing.T) {
 	t.Parallel()
 
@@ -55,7 +55,9 @@ func TestShow_Enabled(t *testing.T) {
 	}
 	body := rr.Body.String()
 	assertContains(t, body,
-		`<div class="alert" data-variant="success"><h2>二要素認証は有効です</h2></div>`,
+		// 状態のアイコンは装飾のため支援技術から隠す
+		`<div class="alert" data-variant="success"><svg aria-hidden="true" focusable="false"`,
+		`<h2>二要素認証は有効です</h2></div>`,
 		"未使用のリカバリーコード", "7個",
 		"二要素認証を無効にする",
 		`name="_method" value="DELETE"`,

@@ -24,7 +24,7 @@ type ShowPageData struct {
 templ Show(data ShowPageData) {
 	<div class="flex flex-col gap-4 py-4">
 		<div class="flex flex-col gap-2 px-4">
-			<a href={ templ.SafeURL(SettingsBackPath) } class="inline-flex w-fit items-center gap-1 text-sm underline">
+			<a href={ templ.SafeURL(SettingsBackPath) } class="inline-flex w-fit items-center gap-1 text-sm link-muted">
 				@templates.DecorativeIcon("arrow-bend-up-left-regular", "w-[18px] h-[18px]")
 				{ templates.T(ctx, "settings_two_factor_auth_show_back_to_settings") }
 			</a>
@@ -39,6 +39,7 @@ templ Show(data ShowPageData) {
 				<p>{ templates.T(ctx, "settings_two_factor_auth_show_description") }</p>
 				if data.Enabled {
 					<div class="alert" data-variant="success">
+						@templates.DecorativeIcon("check-circle-regular", "size-[18px]")
 						<h2>{ templates.T(ctx, "settings_two_factor_auth_show_enabled_status") }</h2>
 					</div>
 					<dl class="flex items-center justify-between gap-2 border-t pt-3">
