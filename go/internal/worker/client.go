@@ -101,6 +101,11 @@ func NewClient(ctx context.Context, databaseURL string, params NewClientParams, 
 		sendAccountDeletionEmailUC := usecase.NewSendAccountDeletionEmailUsecase(accountDeletionSender)
 		river.AddWorker(workers, NewSendAccountDeletionEmailWorker(sendAccountDeletionEmailUC))
 		slog.InfoContext(ctx, "SendAccountDeletionEmailWorkerを登録しました")
+
+		twoFactorAuthNotificationSender := email.NewTwoFactorAuthNotificationSender(emailSender)
+		sendTwoFactorAuthNotificationEmailUC := usecase.NewSendTwoFactorAuthNotificationEmailUsecase(twoFactorAuthNotificationSender)
+		river.AddWorker(workers, NewSendTwoFactorAuthNotificationEmailWorker(sendTwoFactorAuthNotificationEmailUC))
+		slog.InfoContext(ctx, "SendTwoFactorAuthNotificationEmailWorkerを登録しました")
 	}
 
 	// トークンクリーンアップワーカーを登録

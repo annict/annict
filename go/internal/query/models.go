@@ -1697,6 +1697,25 @@ type User struct {
 	StripeSubscriberID         sql.NullInt64  `db:"stripe_subscriber_id"`
 }
 
+type UserTwoFactorAuth struct {
+	ID               int64        `db:"id"`
+	UserID           int64        `db:"user_id"`
+	SecretCiphertext []byte       `db:"secret_ciphertext"`
+	LastUsedStep     int64        `db:"last_used_step"`
+	EnabledAt        sql.NullTime `db:"enabled_at"`
+	CreatedAt        time.Time    `db:"created_at"`
+	UpdatedAt        time.Time    `db:"updated_at"`
+}
+
+type UserTwoFactorRecoveryCode struct {
+	ID         int64        `db:"id"`
+	UserID     int64        `db:"user_id"`
+	CodeDigest string       `db:"code_digest"`
+	UsedAt     sql.NullTime `db:"used_at"`
+	CreatedAt  time.Time    `db:"created_at"`
+	UpdatedAt  time.Time    `db:"updated_at"`
+}
+
 type UserlandCategory struct {
 	ID                    int64     `db:"id"`
 	Name                  string    `db:"name"`

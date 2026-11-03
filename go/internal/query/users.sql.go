@@ -485,10 +485,11 @@ func (q *Queries) LockUserForAccountDeletion(ctx context.Context, id int64) (Loc
 	return i, err
 }
 
-const updateUserPassword = `-- name: UpdateUserPassword :exec
+const updateUserPassword = `-- name: UpdateUserPassword :execrows
 UPDATE users
 SET encrypted_password = $2, updated_at = NOW()
 WHERE id = $1
+AND deleted_at IS NULL
 `
 
 type UpdateUserPasswordParams struct {
@@ -496,9 +497,13 @@ type UpdateUserPasswordParams struct {
 	EncryptedPassword string `db:"encrypted_password"`
 }
 
-func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) error {
-	_, err := q.db.ExecContext(ctx, updateUserPassword, arg.ID, arg.EncryptedPassword)
-	return err
+// 退会・利用停止と競合しても、有効なユーザーのパスワードだけを更新する。
+func (q *Queries) UpdateUserPassword(ctx context.Context, arg UpdateUserPasswordParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, updateUserPassword, arg.ID, arg.EncryptedPassword)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
 const updateUserStripeSubscriberID = `-- name: UpdateUserStripeSubscriberID :exec

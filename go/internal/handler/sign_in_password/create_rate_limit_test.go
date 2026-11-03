@@ -36,7 +36,7 @@ func newRateLimitTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx, limiter *rate
 
 	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(repository.NewUserRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
-	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
+	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator, repository.NewUserTwoFactorAuthRepository(queries))
 
 	return NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), limiter, authenticateByPasswordUC), sessionMgr
 }

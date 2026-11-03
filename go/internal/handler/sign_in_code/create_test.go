@@ -86,7 +86,7 @@ func TestCreate_Success(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, repository.NewUserTwoFactorAuthRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -228,7 +228,7 @@ func TestCreate_InvalidCode(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, repository.NewUserTwoFactorAuthRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -300,7 +300,7 @@ func TestCreate_SessionExpired(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, repository.NewUserTwoFactorAuthRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -380,7 +380,7 @@ func TestCreate_CodeExpired(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, repository.NewUserTwoFactorAuthRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -466,7 +466,7 @@ func TestCreate_ValidationError(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, repository.NewUserTwoFactorAuthRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -541,7 +541,7 @@ func TestCreate_UserNotFound(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, repository.NewUserTwoFactorAuthRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -590,5 +590,84 @@ func TestCreate_UserNotFound(t *testing.T) {
 	// 422でフォーム再描画されることを確認
 	if rr.Code != http.StatusUnprocessableEntity {
 		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusUnprocessableEntity)
+	}
+}
+
+// TestCreate_TwoFactorAuthRequiredは、二要素認証を有効にしているユーザーのメールのコードが合ったときに、
+// セッションを発行せずにログイン途中の状態にし、戻り先を引き継いで認証アプリのコードの入力画面へ送ることを検証する。
+// コードの照合はトランザクションを開くため、準備した行をコミットして使う。
+func TestCreate_TwoFactorAuthRequired(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	tx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("トランザクションの開始に失敗: %v", err)
+	}
+	userID := testutil.NewUserBuilder(t, tx).WithEncryptedPassword("").Build()
+	testutil.NewUserTwoFactorAuthBuilder(t, tx, userID).WithEnabledAt(time.Now()).Build()
+	if err := tx.Commit(); err != nil {
+		t.Fatalf("トランザクションのコミットに失敗: %v", err)
+	}
+	t.Cleanup(func() {
+		_, _ = db.Exec("DELETE FROM sign_in_codes WHERE user_id = $1", int64(userID))
+		_, _ = db.Exec("DELETE FROM user_two_factor_auths WHERE user_id = $1", int64(userID))
+	})
+
+	queries := query.New(db)
+	ctx := context.Background()
+	plainCode := "123456"
+	codeDigest, err := auth.HashCode(plainCode)
+	if err != nil {
+		t.Fatalf("コードのハッシュ化エラー: %v", err)
+	}
+	signInCodeRepo := repository.NewSignInCodeRepository(queries)
+	if _, err := signInCodeRepo.Create(ctx, repository.SignInCodeCreateParams{UserID: userID, CodeDigest: codeDigest, ExpiresAt: time.Now().Add(15 * time.Minute)}); err != nil {
+		t.Fatalf("メールログインコード作成エラー: %v", err)
+	}
+
+	cfg := &config.Config{CookieDomain: ".example.com", SessionSecure: "false", SessionHTTPOnly: "true", DisableRateLimit: true}
+	sessionMgr := session.NewManager(repository.NewSessionRepository(queries), cfg)
+	userRepo := repository.NewUserRepository(queries)
+	handler := NewHandler(
+		cfg, sessionMgr, testutil.NewTestFlashManager(), nil,
+		usecase.NewSendSignInCodeUsecase(db, signInCodeRepo, userRepo, nil, validator.NewSignInCreateValidator()),
+		usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, validator.NewSignInCodeCreateValidator(), repository.NewUserTwoFactorAuthRepository(queries)),
+		usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries)),
+	)
+
+	setupRR := httptest.NewRecorder()
+	setupReq := httptest.NewRequest(http.MethodGet, "/sign_in/code", nil)
+	if err := sessionMgr.SetValue(ctx, setupRR, setupReq, "sign_in_email", "two_factor_code@example.com"); err != nil {
+		t.Fatalf("セッション値の設定エラー: %v", err)
+	}
+	sessionCookie := setupRR.Result().Cookies()[0]
+	setupReq.AddCookie(sessionCookie)
+	if err := sessionMgr.SetValue(ctx, httptest.NewRecorder(), setupReq, "sign_in_user_id", userID.String()); err != nil {
+		t.Fatalf("セッション値の設定エラー: %v", err)
+	}
+
+	form := url.Values{"code": {plainCode}, "back": {"/works/1"}}
+	req := httptest.NewRequest(http.MethodPost, "/sign_in/code", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(sessionCookie)
+	rr := httptest.NewRecorder()
+
+	handler.Create(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Fatalf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusSeeOther)
+	}
+	if location := rr.Header().Get("Location"); location != "/sign_in/two_factor?back=%2Fworks%2F1" {
+		t.Errorf("Location = %q、期待値 = %q", location, "/sign_in/two_factor?back=%2Fworks%2F1")
+	}
+	for _, cookie := range rr.Result().Cookies() {
+		if cookie.Name == session.SessionKey && cookie.Value != sessionCookie.Value {
+			t.Error("新しいセッションのCookieが設定された、二要素認証の前にはセッションを発行しないことを期待")
+		}
+	}
+	pendingUserID, ok, err := sessionMgr.SignInTwoFactorUserID(ctx, req, time.Now())
+	if err != nil || !ok || pendingUserID != userID {
+		t.Errorf("SignInTwoFactorUserID() = (%d, %t, %v)、期待値 = (%d, true, nil)", pendingUserID, ok, err, userID)
 	}
 }

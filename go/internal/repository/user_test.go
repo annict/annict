@@ -1182,3 +1182,48 @@ func TestUserRepository_LockForAccountDeletion(t *testing.T) {
 		}
 	})
 }
+
+// TestUserRepository_UpdatePasswordは、有効なユーザーだけを更新してtrueを返し、
+// 退会・利用停止済みや存在しないユーザーは更新せずfalseを返すことを検証する。
+func TestUserRepository_UpdatePassword(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+	repo := repository.NewUserRepository(query.New(db).WithTx(tx))
+	activeUserID := testutil.NewUserBuilder(t, tx).WithEncryptedPassword("old-hash").Build()
+	deletedUserID := testutil.NewUserBuilder(t, tx).WithEncryptedPassword("old-hash").Build()
+	if _, err := tx.ExecContext(ctx, "UPDATE users SET deleted_at = NOW() WHERE id = $1", int64(deletedUserID)); err != nil {
+		t.Fatalf("ユーザーの利用停止に失敗: %v", err)
+	}
+
+	for _, tt := range []struct {
+		name        string
+		userID      model.UserID
+		wantUpdated bool
+		wantHash    string
+	}{
+		{name: "有効", userID: activeUserID, wantUpdated: true, wantHash: "new-hash"},
+		{name: "利用停止済み", userID: deletedUserID, wantHash: "old-hash"},
+		{name: "存在しない", userID: 0},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			updated, err := repo.UpdatePassword(ctx, repository.UpdateUserPasswordParams{ID: int64(tt.userID), EncryptedPassword: "new-hash"})
+			if err != nil {
+				t.Fatalf("UpdatePassword()のエラー = %v", err)
+			}
+			if updated != tt.wantUpdated {
+				t.Errorf("UpdatePassword() = %t、期待値 = %t", updated, tt.wantUpdated)
+			}
+			if tt.userID != 0 {
+				var savedHash string
+				if err := tx.QueryRowContext(ctx, "SELECT encrypted_password FROM users WHERE id = $1", int64(tt.userID)).Scan(&savedHash); err != nil {
+					t.Fatalf("パスワードの取得に失敗: %v", err)
+				}
+				if savedHash != tt.wantHash {
+					t.Errorf("保存されたパスワード = %q、期待値 = %q", savedHash, tt.wantHash)
+				}
+			}
+		})
+	}
+}

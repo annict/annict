@@ -80,6 +80,7 @@ var goHandledPaths = []string{
 	"/webhooks/stripe",           // Stripe Webhook受信
 	"/ics",                       // iCalendar配信 (Appleカレンダー互換パス)
 	"/settings/account/deletion", // 退会 (確認ページ・受付・完了ページ)
+	"/settings/two_factor_auth",  // 二要素認証の設定 (状態・認証アプリの登録・有効化)
 	// 法的文書。英語版 (/en/ 前置)・API利用規約・改定前の版のアーカイブページ (/archive/{施行日} 後置) も、
 	// 文書の一覧表 (legaldoc) に登録した時点でGo版に届くよう、接頭辞で含めておく。
 	// 一覧表に無いパスはGo版の404になるが、Rails版にもこれらのルートは無い。

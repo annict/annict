@@ -227,9 +227,14 @@ func (r *UserRepository) WithGumroadSubscriberRepo(repo *GumroadSubscriberReposi
 	return r
 }
 
-// UpdatePasswordはユーザーのパスワードを更新します
-func (r *UserRepository) UpdatePassword(ctx context.Context, params query.UpdateUserPasswordParams) error {
-	return r.queries.UpdateUserPassword(ctx, params)
+// UpdatePasswordは有効なユーザーのパスワードを更新します。
+// ユーザーが退会・利用停止した場合や存在しない場合は更新せずfalseを返します。
+func (r *UserRepository) UpdatePassword(ctx context.Context, params query.UpdateUserPasswordParams) (bool, error) {
+	affected, err := r.queries.UpdateUserPassword(ctx, params)
+	if err != nil {
+		return false, err
+	}
+	return affected > 0, nil
 }
 
 // IsSupporterはユーザーがサポーターかどうかを判定します

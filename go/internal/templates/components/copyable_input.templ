@@ -1,0 +1,60 @@
+package components
+
+import "github.com/annict/annict/go/internal/templates"
+
+// CopyableInputDataはコピーするための値の欄をレンダリングする元になるデータ。
+type CopyableInputData struct {
+	ID    string
+	Label string
+	Value string
+	// Descriptionは欄の下に表示する説明。空なら表示しない
+	Description string
+}
+
+// CopyableInputは、利用者がコピーするための値を、読み取り専用の入力欄とコピーボタンで表示します。
+// 欄は送信しません。振る舞い (フォーカスで全体を選ぶ・コピーして知らせる) はweb/copyable-input.tsが
+// data属性を目印に付けます。
+templ CopyableInput(data CopyableInputData) {
+	<div role="group" class="field" data-copyable-input>
+		<label class="label" for={ data.ID }>{ data.Label }</label>
+		<div class="flex gap-2">
+			<input
+				autocomplete="off"
+				class="input font-mono"
+				data-copyable-input-value
+				id={ data.ID }
+				readonly
+				spellcheck="false"
+				type="text"
+				value={ data.Value }
+				if data.Description != "" {
+					aria-describedby={ descriptionID(data.ID) }
+				}
+			/>
+			// コピーはJSが担うため、JSが動くまでボタンを隠し、押しても何も起きない状態を見せない。
+			<button
+				type="button"
+				class="btn shrink-0"
+				hidden
+				data-variant="outline"
+				data-size="icon"
+				aria-label={ templates.T(ctx, "copyable_input_copy_button_label", map[string]any{"Label": data.Label}) }
+				data-copyable-input-button
+				data-success-message={ templates.T(ctx, "copyable_input_copied", map[string]any{"Label": data.Label}) }
+				data-failure-message={ templates.T(ctx, "copyable_input_copy_failed") }
+			>
+				@templates.DecorativeIcon("copy-regular")
+			</button>
+		</div>
+		if data.Description != "" {
+			<p id={ descriptionID(data.ID) } class="text-sm text-muted-foreground">{ data.Description }</p>
+		}
+		// トーストは表示のたびに作り直すため、読み上げは描画時からある領域で伝える。
+		<p class="sr-only" role="status" data-copyable-input-status></p>
+	</div>
+}
+
+// descriptionIDは欄の説明の要素のIDを返す。欄のaria-describedbyから参照する。
+func descriptionID(inputID string) string {
+	return inputID + "-description"
+}

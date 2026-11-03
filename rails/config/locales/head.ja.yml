@@ -228,6 +228,8 @@ ja:
         tokens:
           edit: 個人用アクセストークン編集
           new: 個人用アクセストークン作成
+        two_factor_auths:
+          show: 二要素認証
       sign_in:
         new: ログイン
       sign_up:

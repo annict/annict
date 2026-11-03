@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+// TOTPEncryptionMinimumKeyLengthはTOTPの秘密鍵を守る鍵に求める最小のバイト数。
+// HKDFで導くAES-256の鍵と同じ32バイト以上のエントロピーを持たせるため。
+const TOTPEncryptionMinimumKeyLength = 32
+
 type Config struct {
 	// 環境
 	Env string
@@ -51,6 +55,10 @@ type Config struct {
 	ImgproxyEndpoint string
 	ImgproxyKey      string
 	ImgproxySalt     string
+
+	// TOTPEncryptionKeyは、TOTPの秘密鍵の暗号化とリカバリーコードのダイジェストに使う鍵 (internal/auth.TwoFactorKey)。
+	// 値を変えると保存済みの秘密鍵もリカバリーコードも照合できなくなるため、本番の値は一度決めたら変えない。
+	TOTPEncryptionKey string
 
 	// アセットバージョン (CDNキャッシュ対策用)
 	AssetVersion string
@@ -165,6 +173,11 @@ func Load() (*Config, error) {
 	cfg.ImgproxySalt = os.Getenv("ANNICT_IMGPROXY_SALT")
 	if cfg.ImgproxySalt == "" {
 		return nil, fmt.Errorf("必須の環境変数ANNICT_IMGPROXY_SALTが設定されていません")
+	}
+
+	cfg.TOTPEncryptionKey = os.Getenv("ANNICT_TOTP_ENCRYPTION_KEY")
+	if len(cfg.TOTPEncryptionKey) < TOTPEncryptionMinimumKeyLength {
+		return nil, fmt.Errorf("必須の環境変数ANNICT_TOTP_ENCRYPTION_KEYに%dバイト以上の値を設定してください", TOTPEncryptionMinimumKeyLength)
 	}
 
 	// Redis (オプショナル - パスワードリセット機能で使用)

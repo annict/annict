@@ -6,6 +6,7 @@ import (
 	"net/url"
 	"strings"
 	"testing"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -44,10 +45,9 @@ func TestCreate_Success(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_success@example.com")
@@ -139,10 +139,9 @@ func TestCreate_InvalidCredentials(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_invalid@example.com")
@@ -190,10 +189,9 @@ func TestCreate_WithBackParam(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_back@example.com")
@@ -247,10 +245,9 @@ func TestCreate_WithInvalidBackParam(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_invalid_back@example.com")
@@ -304,10 +301,9 @@ func TestCreate_WithProtocolRelativeBackParam(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_proto_rel@example.com")
@@ -362,10 +358,9 @@ func TestCreate_GlobalError(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
 
 	// セッションにメールアドレスを設定
 	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_global_error@example.com")
@@ -414,10 +409,9 @@ func TestCreate_WithoutSessionEmail(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	userRepo := repository.NewUserRepository(queries)
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	handler := newTestHandler(t, cfg, sessionMgr, userRepo, createSessionUC)
+	handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
 
 	// セッションなしでリクエストを作成
 	form := url.Values{}
@@ -437,5 +431,59 @@ func TestCreate_WithoutSessionEmail(t *testing.T) {
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
 		t.Errorf("リダイレクト先 = %v、期待値 = %v", location, "/sign_in")
+	}
+}
+
+// TestCreate_TwoFactorAuthRequiredは、二要素認証を有効にしているユーザーのパスワードが合ったときに、
+// セッションを発行せずにログイン途中の状態にし、戻り先を引き継いで認証アプリのコードの入力画面へ送ることを検証する。
+func TestCreate_TwoFactorAuthRequired(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := testutil.NewQueriesWithTx(db, tx)
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.MinCost)
+	if err != nil {
+		t.Fatalf("パスワードハッシュ生成エラー: %v", err)
+	}
+	userID := testutil.NewUserBuilder(t, tx).
+		WithEmail("signin_two_factor@example.com").
+		WithEncryptedPassword(string(hashedPassword)).
+		Build()
+	testutil.NewUserTwoFactorAuthBuilder(t, tx, userID).WithEnabledAt(time.Now()).Build()
+
+	cfg := &config.Config{CookieDomain: ".examle.com", SessionSecure: "false", SessionHTTPOnly: "true"}
+	sessionMgr := session.NewManager(repository.NewSessionRepository(queries), cfg)
+	handler := newTestHandler(t, cfg, sessionMgr, queries, usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries)))
+	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_two_factor@example.com")
+
+	form := url.Values{"password": {"password123"}, "back": {"/works/1"}}
+	req := httptest.NewRequest(http.MethodPost, "/sign_in/password", strings.NewReader(form.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	req.AddCookie(sessionCookie)
+	rr := httptest.NewRecorder()
+
+	handler.Create(rr, req)
+
+	if rr.Code != http.StatusSeeOther {
+		t.Fatalf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusSeeOther)
+	}
+	if location := rr.Header().Get("Location"); location != "/sign_in/two_factor?back=%2Fworks%2F1" {
+		t.Errorf("Location = %q、期待値 = %q", location, "/sign_in/two_factor?back=%2Fworks%2F1")
+	}
+	for _, cookie := range rr.Result().Cookies() {
+		if cookie.Name == session.SessionKey && cookie.Value != sessionCookie.Value {
+			t.Errorf("新しいセッションのCookieが設定された、二要素認証の前にはセッションを発行しないことを期待")
+		}
+	}
+
+	pendingReq := httptest.NewRequest(http.MethodGet, "/sign_in/two_factor", nil)
+	pendingReq.AddCookie(sessionCookie)
+	pendingUserID, ok, err := sessionMgr.SignInTwoFactorUserID(pendingReq.Context(), pendingReq, time.Now())
+	if err != nil || !ok || pendingUserID != userID {
+		t.Errorf("SignInTwoFactorUserID() = (%d, %t, %v)、期待値 = (%d, true, nil)", pendingUserID, ok, err, userID)
+	}
+	if email, err := sessionMgr.GetValue(pendingReq.Context(), pendingReq, "sign_in_email"); err != nil || email != "" {
+		t.Errorf("sign_in_emailのGetValue() = (%q, %v)、消えていることを期待", email, err)
 	}
 }

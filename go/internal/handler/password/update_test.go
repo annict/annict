@@ -66,7 +66,7 @@ func TestUpdate_Success(t *testing.T) {
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
@@ -108,6 +108,13 @@ func TestUpdate_Success(t *testing.T) {
 	location := rr.Header().Get("Location")
 	if location != "/sign_in" {
 		t.Errorf("リダイレクト先 = %s、期待値 = /sign_in", location)
+	}
+
+	// ログインさせず、新しいパスワードでログインし直してもらう
+	for _, cookie := range rr.Result().Cookies() {
+		if cookie.Name == session.SessionKey {
+			t.Errorf("セッションのCookie (%q) が設定された、パスワードリセットではログインさせないことを期待", cookie.Value)
+		}
 	}
 
 	// トークンが使用済みになっていることを確認
@@ -183,7 +190,7 @@ func TestUpdate_PasswordMismatch(t *testing.T) {
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 
@@ -258,7 +265,7 @@ func TestUpdate_InvalidToken(t *testing.T) {
 	passwordResetTokenRepo := repository.NewPasswordResetTokenRepository(queries)
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), sessionRepo, updatePasswordValidator)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, repository.NewUserRepository(queries), updatePasswordValidator)
 
 	handler := NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), nil, getPasswordResetTokenUC, updatePasswordUC)
 

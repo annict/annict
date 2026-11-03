@@ -32,6 +32,7 @@ func TestLoad(t *testing.T) {
 	_ = os.Setenv("ANNICT_IMGPROXY_ENDPOINT", "http://test:8080")
 	_ = os.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
 	_ = os.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
+	_ = os.Setenv("ANNICT_TOTP_ENCRYPTION_KEY", testTOTPEncryptionKey)
 
 	// クリーンアップ処理をdeferで確実に実行
 	defer func() {
@@ -46,6 +47,7 @@ func TestLoad(t *testing.T) {
 		_ = os.Unsetenv("ANNICT_IMGPROXY_ENDPOINT")
 		_ = os.Unsetenv("ANNICT_IMGPROXY_KEY")
 		_ = os.Unsetenv("ANNICT_IMGPROXY_SALT")
+		_ = os.Unsetenv("ANNICT_TOTP_ENCRYPTION_KEY")
 		_ = os.Unsetenv("ANNICT_TURNSTILE_SITE_KEY")
 		_ = os.Unsetenv("ANNICT_TURNSTILE_SECRET_KEY")
 	}()
@@ -198,6 +200,7 @@ func TestLoad_TurnstileConfig(t *testing.T) {
 			_ = os.Setenv("ANNICT_IMGPROXY_ENDPOINT", "http://test:8080")
 			_ = os.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
 			_ = os.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
+			_ = os.Setenv("ANNICT_TOTP_ENCRYPTION_KEY", testTOTPEncryptionKey)
 
 			// ANNICT_TURNSTILE_DISABLEを未設定にして、キー設定の検証が
 			// 無効化フラグの影響を受けないようにする。本テストはsite/secret
@@ -325,6 +328,7 @@ func TestLoad_DisableTurnstile(t *testing.T) {
 			t.Setenv("ANNICT_IMGPROXY_ENDPOINT", "http://test:8080")
 			t.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
 			t.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
+			t.Setenv("ANNICT_TOTP_ENCRYPTION_KEY", testTOTPEncryptionKey)
 
 			// Turnstileキーは常にセットしておき、無効化フラグの効果だけを見る
 			t.Setenv("ANNICT_TURNSTILE_SITE_KEY", sampleSiteKey)
@@ -346,6 +350,53 @@ func TestLoad_DisableTurnstile(t *testing.T) {
 			}
 			if cfg.TurnstileSecretKey != tt.wantSecretKey {
 				t.Errorf("TurnstileSecretKey = %q、期待値 = %q", cfg.TurnstileSecretKey, tt.wantSecretKey)
+			}
+		})
+	}
+}
+
+// testTOTPEncryptionKeyはテストで設定するANNICT_TOTP_ENCRYPTION_KEYの値 (32バイト)。
+const testTOTPEncryptionKey = "test-totp-encryption-key-32bytes"
+
+// TestLoad_TOTPEncryptionKeyは、ANNICT_TOTP_ENCRYPTION_KEYが32バイト以上のときだけ読み込み、
+// 未設定や短いときは起動の時点で止めることを検証する。
+func TestLoad_TOTPEncryptionKey(t *testing.T) {
+	tests := []struct {
+		name    string
+		key     string
+		wantErr bool
+	}{
+		{name: "32バイトなら読み込む", key: testTOTPEncryptionKey, wantErr: false},
+		{name: "31バイトならエラー", key: testTOTPEncryptionKey[:31], wantErr: true},
+		{name: "未設定ならエラー", key: "", wantErr: true},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Setenv("APP_ENV", "test")
+			t.Setenv("DATABASE_URL", "postgres://test:test@localhost:5432/test")
+			t.Setenv("ANNICT_PORT", "4004")
+			t.Setenv("ANNICT_DOMAIN", "test.example.com")
+			t.Setenv("ANNICT_COOKIE_DOMAIN", ".test.example.com")
+			t.Setenv("ANNICT_SESSION_SECURE", "false")
+			t.Setenv("ANNICT_SESSION_HTTPONLY", "true")
+			t.Setenv("ANNICT_IMGPROXY_ENDPOINT", "http://test:8080")
+			t.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
+			t.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
+			t.Setenv("ANNICT_TOTP_ENCRYPTION_KEY", tt.key)
+
+			cfg, err := Load()
+			if tt.wantErr {
+				if err == nil {
+					t.Fatal("Load()のエラー = nil、エラーを期待")
+				}
+				return
+			}
+			if err != nil {
+				t.Fatalf("Load()のエラー = %v", err)
+			}
+			if cfg.TOTPEncryptionKey != tt.key {
+				t.Errorf("TOTPEncryptionKey = %q、期待値 = %q", cfg.TOTPEncryptionKey, tt.key)
 			}
 		})
 	}
@@ -570,6 +621,7 @@ func TestLoad_MaintenanceMode(t *testing.T) {
 			_ = os.Setenv("ANNICT_IMGPROXY_ENDPOINT", "http://test:8080")
 			_ = os.Setenv("ANNICT_IMGPROXY_KEY", "test-key")
 			_ = os.Setenv("ANNICT_IMGPROXY_SALT", "test-salt")
+			_ = os.Setenv("ANNICT_TOTP_ENCRYPTION_KEY", testTOTPEncryptionKey)
 
 			// メンテナンスモード環境変数を設定
 			if tt.maintenanceMode != "" {

@@ -62,9 +62,8 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 
 	// UseCaseを作成
 	queriesWithoutTx := query.New(db)
-	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
 	v := validator.NewPasswordUpdateValidator()
-	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), v)
 
 	// パスワードを更新
 	ctx := context.Background()
@@ -82,8 +81,13 @@ func TestUpdatePasswordResetUsecase_Execute(t *testing.T) {
 	if result.UserID != userID {
 		t.Errorf("ユーザーID = %d、期待値 = %d", result.UserID, userID)
 	}
-	if result.SessionID == "" {
-		t.Error("セッションIDが空です")
+	// パスワードリセットではセッションを作らず、ログインし直してもらう
+	var sessions int
+	if err := db.QueryRow(`SELECT COUNT(*) FROM sessions WHERE data->'warden.user.user.key'->0->>0 = $1`, userID.String()).Scan(&sessions); err != nil {
+		t.Fatalf("セッションの件数の取得に失敗: %v", err)
+	}
+	if sessions != 0 {
+		t.Errorf("ユーザーのセッションの件数 = %d、期待値 = 0 (パスワードリセットではセッションを作らない)", sessions)
 	}
 
 	// パスワードが更新されているか確認
@@ -120,9 +124,8 @@ func TestUpdatePasswordResetUsecase_Execute_ValidationError(t *testing.T) {
 
 	// UseCaseを作成
 	queries := query.New(db)
-	sessionRepo := repository.NewSessionRepository(queries)
 	v := validator.NewPasswordUpdateValidator()
-	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo, v)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), v)
 
 	// パスワードが一致しない入力
 	ctx := context.Background()
@@ -152,9 +155,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithInvalidToken(t *testing.T) {
 
 	// UseCaseを作成
 	queries := query.New(db)
-	sessionRepo := repository.NewSessionRepository(queries)
 	v := validator.NewPasswordUpdateValidator()
-	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), sessionRepo, v)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queries), repository.NewUserRepository(queries), v)
 
 	// 存在しないトークンでパスワード更新を試みる
 	ctx := context.Background()
@@ -211,8 +213,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithUsedToken(t *testing.T) {
 	}
 
 	// トークンを使用済みにマーク
-	if err := tokenRepo.MarkAsUsed(context.Background(), resetToken.ID); err != nil {
-		t.Fatalf("トークンの使用済みマークに失敗: %v", err)
+	if marked, err := tokenRepo.MarkAsUsed(context.Background(), resetToken.ID); err != nil || !marked {
+		t.Fatalf("トークンの使用済みマーク = (%t, %v)、期待値 = (true, nil)", marked, err)
 	}
 
 	// トランザクションをコミット
@@ -228,9 +230,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithUsedToken(t *testing.T) {
 
 	// UseCaseを作成
 	queriesWithoutTx := query.New(db)
-	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
 	v := validator.NewPasswordUpdateValidator()
-	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), v)
 
 	// 使用済みトークンでパスワード更新を試みる
 	ctx := context.Background()
@@ -297,9 +298,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithExpiredToken(t *testing.T) {
 
 	// UseCaseを作成
 	queriesWithoutTx := query.New(db)
-	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
 	v := validator.NewPasswordUpdateValidator()
-	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), v)
 
 	// 期限切れトークンでパスワード更新を試みる
 	ctx := context.Background()
@@ -390,9 +390,8 @@ func TestUpdatePasswordResetUsecase_Execute_WithNonExistentUser(t *testing.T) {
 
 	// UseCaseを作成
 	queriesWithoutTx := query.New(db)
-	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
 	v := validator.NewPasswordUpdateValidator()
-	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), v)
 
 	// 削除されたユーザーのトークンでパスワード更新を試みる
 	ctx := context.Background()
@@ -462,9 +461,8 @@ func TestUpdatePasswordResetUsecase_Execute_TransactionRollback(t *testing.T) {
 
 	// UseCaseを作成
 	queriesWithoutTx := query.New(db)
-	sessionRepo := repository.NewSessionRepository(queriesWithoutTx)
 	v := validator.NewPasswordUpdateValidator()
-	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), sessionRepo, v)
+	uc := NewUpdatePasswordResetUsecase(db, repository.NewPasswordResetTokenRepository(queriesWithoutTx), repository.NewUserRepository(queriesWithoutTx), v)
 
 	// 無効なパスワード (空文字列) でパスワード更新を試みる
 	ctx := context.Background()

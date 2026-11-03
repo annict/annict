@@ -20,10 +20,12 @@ AND EXISTS (
 )
 LIMIT 1;
 
--- name: MarkPasswordResetTokenAsUsed :exec
+-- name: MarkPasswordResetTokenAsUsed :execrows
+-- 未使用のトークンだけを使用済みにし、同じトークンを同時に使われても一方しか通さない。
 UPDATE password_reset_tokens
 SET used_at = NOW()
-WHERE id = $1;
+WHERE id = $1
+AND used_at IS NULL;
 
 -- name: DeleteUnusedPasswordResetTokensByUserID :exec
 DELETE FROM password_reset_tokens

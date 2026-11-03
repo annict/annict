@@ -1110,9 +1110,22 @@ other = "There is a problem with your input"
 description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
 other = "{{.Label}}: {{.Message}}"
 
+# コピーするための値の欄
+[copyable_input_copy_button_label]
+description = "コピーするための値の欄の、コピーボタンのラベル"
+other = "Copy {{.Label}}"
+
+[copyable_input_copied]
+description = "コピーするための値の欄で、クリップボードへコピーできたときのメッセージ"
+other = "Copied {{.Label}} to the clipboard"
+
+[copyable_input_copy_failed]
+description = "コピーするための値の欄で、クリップボードへコピーできなかったときのメッセージ"
+other = "Couldn't copy. Select the value in the field and copy it instead"
+
 # ガイドラインリンク
 [guideline_link_aria_label]
-description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) のaria-label"
+description = "ヘルプページへのリンク (新しいタブで開く) のaria-label"
 other = "Open {{.Label}} in a new tab"
 
 # 公開状態ラベル関連
@@ -2730,3 +2743,262 @@ other = "Thank you for using Annict."
 [settings_account_deletion_completion_show_back_to_home]
 description = "退会の完了ページからトップページへのリンク"
 other = "Back to Home"
+
+# 二要素認証の設定画面
+[settings_two_factor_auth_show_title]
+description = "二要素認証の設定画面のタイトル"
+other = "Two-Factor Authentication"
+
+[settings_two_factor_auth_show_heading]
+description = "二要素認証の設定画面の見出し"
+other = "Two-Factor Authentication"
+
+[settings_two_factor_auth_show_back_to_settings]
+description = "二要素認証の設定画面からRails版の設定画面へ戻るリンク"
+other = "Back to Settings"
+
+[settings_two_factor_auth_show_help_link]
+description = "二要素認証の設定画面から二要素認証の設定のヘルプページへのリンク"
+other = "Two-factor authentication setup help"
+
+[settings_two_factor_auth_show_description]
+description = "二要素認証の設定画面の説明"
+other = "When two-factor authentication is enabled, you will be asked for a code from your authenticator app after signing in with your password or an emailed code. This keeps your account safe even if someone learns your password or gets into your email."
+
+[settings_two_factor_auth_show_disabled_status]
+description = "二要素認証が無効なときの状態の表示"
+other = "Two-factor authentication is off"
+
+[settings_two_factor_auth_show_app_required]
+description = "二要素認証を有効にするのに認証アプリが要ることの説明"
+other = "To turn it on, install an authenticator app that supports TOTP on your phone or another device."
+
+[settings_two_factor_auth_show_enable_link]
+description = "二要素認証の登録画面へのリンク"
+other = "Enable Two-Factor Authentication"
+
+[settings_two_factor_auth_show_enabled_status]
+description = "二要素認証が有効なときの状態の表示"
+other = "Two-factor authentication is on"
+
+[settings_two_factor_auth_show_recovery_codes_label]
+description = "残りのリカバリーコードの数の見出し"
+other = "Unused recovery codes"
+
+[settings_two_factor_auth_show_recovery_codes_count]
+description = "残りのリカバリーコードの数"
+other = "{{.Count}}"
+
+[settings_two_factor_auth_show_recovery_codes_help]
+description = "リカバリーコードを作り直す方法の説明"
+other = "Each recovery code can be used only once. To get new codes before you run out, turn two-factor authentication off and on again."
+
+[settings_two_factor_auth_new_title]
+description = "二要素認証の登録画面のタイトル"
+other = "Set Up Authenticator App"
+
+[settings_two_factor_auth_new_heading]
+description = "二要素認証の登録画面の見出し"
+other = "Set Up Authenticator App"
+
+[settings_two_factor_auth_new_register_heading]
+description = "二要素認証の登録画面の手順1の見出し"
+other = "1. Add Annict to your authenticator app"
+
+[settings_two_factor_auth_new_open_app]
+description = "otpauthのリンクの文言 (同じ端末の認証アプリで開く)"
+other = "Open in an authenticator app on this device"
+
+[settings_two_factor_auth_new_qr_code_help]
+description = "QRコードの読み取り方の説明"
+other = "Scan this QR code with the authenticator app on another device."
+
+[settings_two_factor_auth_new_qr_code_label]
+description = "QRコードの画像の代替テキスト"
+other = "QR code for registering with your authenticator app"
+
+[settings_two_factor_auth_new_secret_label]
+description = "手入力用のキーのラベル"
+other = "Setup key"
+
+[settings_two_factor_auth_new_secret_help]
+description = "手入力用のキーの説明"
+other = "If you can't scan the QR code, enter this key in your authenticator app."
+
+[settings_two_factor_auth_new_verify_heading]
+description = "二要素認証の登録画面の手順2の見出し"
+other = "2. Enter the code shown in the app"
+
+[settings_two_factor_auth_new_code_label]
+description = "二要素認証の登録画面のコードの入力欄のラベル"
+other = "6-digit code from your authenticator app"
+
+[settings_two_factor_auth_new_submit_button]
+description = "二要素認証を有効にするボタン"
+other = "Enable"
+
+[settings_two_factor_auth_new_cancel]
+description = "二要素認証の登録画面から設定画面へ戻るリンク"
+other = "Cancel"
+
+[settings_two_factor_auth_create_title]
+description = "リカバリーコードの画面のタイトル"
+other = "Recovery Codes"
+
+[settings_two_factor_auth_create_heading]
+description = "リカバリーコードの画面の見出し"
+other = "Recovery Codes"
+
+[settings_two_factor_auth_create_enabled]
+description = "二要素認証を有効にしたことの表示"
+other = "Two-factor authentication is now on."
+
+[settings_two_factor_auth_create_once_heading]
+description = "リカバリーコードが一度しか表示されないことの注意の見出し"
+other = "These codes are shown only once"
+
+[settings_two_factor_auth_create_once_message]
+description = "リカバリーコードの使い方と保管の注意"
+other = "If you lose access to your authenticator app, you can sign in with a recovery code instead. Keep them somewhere only you can see, such as a password manager or a printed sheet."
+
+[settings_two_factor_auth_create_codes_label]
+description = "リカバリーコードの一覧の見出し (支援技術向け)"
+other = "List of recovery codes"
+
+[settings_two_factor_auth_create_regenerate_help]
+description = "リカバリーコードを作り直す方法の説明"
+other = "Each code can be used only once. To get new codes before you run out, turn two-factor authentication off and on again."
+
+[settings_two_factor_auth_create_done]
+description = "リカバリーコードの画面から設定画面へ進むリンク"
+other = "I've saved my codes"
+
+[validation_totp_code_format]
+description = "認証アプリのコードの形式のバリデーションエラー"
+other = "Enter the 6-digit number shown in your authenticator app"
+
+[validation_totp_code_incorrect]
+description = "認証アプリのコードが一致しないときのエラー"
+other = "The code is incorrect. Enter the latest code shown in your authenticator app"
+
+[flash_two_factor_auth_not_pending]
+description = "二要素認証を有効にしようとしたときに登録の途中の設定が無かったときのメッセージ"
+other = "Your two-factor authentication settings have changed. Please check your current settings."
+
+[settings_two_factor_auth_show_disable_heading]
+description = "二要素認証を無効にするフォームの見出し"
+other = "Turn Off Two-Factor Authentication"
+
+[settings_two_factor_auth_show_disable_description]
+description = "二要素認証を無効にするフォームの説明"
+other = "To confirm it's you, enter your password, a code from your authenticator app, or a recovery code. Turning it off invalidates all of your recovery codes."
+
+[settings_two_factor_auth_show_credential_label]
+description = "二要素認証を無効にするときの本人確認の入力欄のラベル"
+other = "Password, authenticator code, or recovery code"
+
+[settings_two_factor_auth_show_disable_button]
+description = "二要素認証を無効にするボタン"
+other = "Turn Off"
+
+[validation_two_factor_auth_credential_incorrect]
+description = "二要素認証を無効にするときの本人確認が一致しないときのエラー"
+other = "The password or code is incorrect"
+
+[flash_two_factor_auth_disabled]
+description = "二要素認証を無効にしたときのメッセージ"
+other = "Two-factor authentication has been turned off"
+
+[flash_two_factor_auth_not_enabled]
+description = "二要素認証を無効にしようとしたときに有効でなかったときのメッセージ"
+other = "Two-factor authentication was not turned on. Please check your current settings."
+
+[flash_two_factor_auth_changed]
+description = "本人確認のあとに二要素認証の設定が変わったときのメッセージ"
+other = "Your two-factor authentication settings were changed by another action. Please check your current settings."
+
+[two_factor_auth_enabled_email_subject]
+description = "二要素認証を有効にしたことを知らせるメールの件名"
+other = "Annict - Two-factor authentication has been turned on"
+
+[two_factor_auth_disabled_email_subject]
+description = "二要素認証を無効にしたことを知らせるメールの件名"
+other = "Annict - Two-factor authentication has been turned off"
+
+[two_factor_auth_disabled_by_admin_email_subject]
+description = "管理者が二要素認証を無効にしたことを知らせるメールの件名"
+other = "Annict - An administrator has turned off two-factor authentication"
+
+# ログインの二要素認証の画面
+[sign_in_two_factor_new_title]
+description = "ログインで認証アプリのコードを入力する画面のタイトル"
+other = "Enter Authenticator Code"
+
+[sign_in_two_factor_new_description]
+description = "ログインで認証アプリのコードを入力する画面の説明"
+other = "Enter the code from your authenticator app to sign in to an account with two-factor authentication."
+
+[sign_in_two_factor_new_heading]
+description = "ログインで認証アプリのコードを入力する画面の見出し"
+other = "Two-Factor Authentication"
+
+[sign_in_two_factor_new_instruction]
+description = "ログインで認証アプリのコードを入力する画面の案内"
+other = "Enter the 6-digit code shown in your authenticator app."
+
+[sign_in_two_factor_new_code_label]
+description = "ログインで認証アプリのコードを入力する欄のラベル"
+other = "Authenticator code"
+
+[sign_in_two_factor_new_submit_button]
+description = "ログインで認証アプリのコードを送信するボタン"
+other = "Sign In"
+
+[sign_in_two_factor_new_back_to_sign_in]
+description = "認証アプリのコードの入力画面からメールアドレスの入力へ戻るリンク"
+other = "Sign in with a different account"
+
+[flash_sign_in_two_factor_restart]
+description = "ログイン途中の状態が無い・期限切れ・二要素認証を使えなくなったときのメッセージ"
+other = "Please sign in again. The sign-in session has expired or your account settings have changed."
+
+# ログインのリカバリーコードの画面
+[sign_in_two_factor_new_use_recovery_code]
+description = "認証アプリのコードの画面からリカバリーコードの画面へのリンク"
+other = "Can't use your authenticator app? Use a recovery code"
+
+[sign_in_two_factor_recovery_new_title]
+description = "ログインでリカバリーコードを入力する画面のタイトル"
+other = "Enter Recovery Code"
+
+[sign_in_two_factor_recovery_new_description]
+description = "ログインでリカバリーコードを入力する画面の説明"
+other = "Sign in with a recovery code you saved when you turned on two-factor authentication."
+
+[sign_in_two_factor_recovery_new_heading]
+description = "ログインでリカバリーコードを入力する画面の見出し"
+other = "Recovery Code"
+
+[sign_in_two_factor_recovery_new_instruction]
+description = "ログインでリカバリーコードを入力する画面の案内"
+other = "Enter one of the recovery codes you saved when you turned on two-factor authentication. Each code can be used only once."
+
+[sign_in_two_factor_recovery_new_code_label]
+description = "ログインでリカバリーコードを入力する欄のラベル"
+other = "Recovery code"
+
+[sign_in_two_factor_recovery_new_submit_button]
+description = "ログインでリカバリーコードを送信するボタン"
+other = "Sign In"
+
+[sign_in_two_factor_recovery_new_use_app]
+description = "リカバリーコードの画面から認証アプリのコードの画面へ戻るリンク"
+other = "Use your authenticator app instead"
+
+[validation_recovery_code_format]
+description = "リカバリーコードの形式のバリデーションエラー"
+other = "Enter a recovery code in the xxxx-xxxx format"
+
+[validation_recovery_code_incorrect]
+description = "リカバリーコードが一致しない・使用済みのときのエラー"
+other = "The recovery code is incorrect or has already been used"
