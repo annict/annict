@@ -36,7 +36,7 @@ func TestShow(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, repository.NewUserTwoFactorAuthRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
@@ -119,7 +119,7 @@ func TestShow_NoEmailInSession(t *testing.T) {
 	sendSignInCodeUC := usecase.NewSendSignInCodeUsecase(db, repository.NewSignInCodeRepository(queries), userRepo, nil, validator.NewSignInCreateValidator())
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, repository.NewUserTwoFactorAuthRepository(queries))
 	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
 	handler := NewHandler(cfg, sessionMgr, testutil.NewTestFlashManager(), nil, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)

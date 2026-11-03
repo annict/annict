@@ -121,6 +121,29 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID(t *testing.T) {
 	}
 }
 
+// TestPasswordResetTokenRepository_MarkAsUsedは、未使用のトークンだけを使用済みにしてtrueを返し、
+// 既に使用済みのトークンは更新せずfalseを返すことを検証する。
+func TestPasswordResetTokenRepository_MarkAsUsed(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	repo := repository.NewPasswordResetTokenRepository(query.New(db).WithTx(tx))
+	ctx := context.Background()
+
+	userID := testutil.NewUserBuilder(t, tx).Build()
+	token, err := repo.Create(ctx, userID, "mark-as-used-digest", time.Now().Add(1*time.Hour))
+	if err != nil {
+		t.Fatalf("トークンの作成に失敗: %v", err)
+	}
+
+	for i, want := range []bool{true, false} {
+		marked, err := repo.MarkAsUsed(ctx, token.ID)
+		if err != nil || marked != want {
+			t.Errorf("%d回目のMarkAsUsed() = (%t, %v)、期待値 = (%t, nil)", i+1, marked, err, want)
+		}
+	}
+}
+
 // TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokensは使用済みトークンが残ることをテスト
 func TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens(t *testing.T) {
 	t.Parallel()
@@ -145,8 +168,8 @@ func TestPasswordResetTokenRepository_DeleteUnusedByUserID_KeepsUsedTokens(t *te
 	if err != nil {
 		t.Fatalf("使用済みトークンの作成に失敗: %v", err)
 	}
-	if err := repo.MarkAsUsed(context.Background(), usedToken.ID); err != nil {
-		t.Fatalf("トークンの使用済みマークに失敗: %v", err)
+	if marked, err := repo.MarkAsUsed(context.Background(), usedToken.ID); err != nil || !marked {
+		t.Fatalf("トークンの使用済みマーク = (%t, %v)、期待値 = (true, nil)", marked, err)
 	}
 
 	// 未使用トークンを削除

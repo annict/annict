@@ -51,6 +51,7 @@ func TestSeedTask_RejectsNonSeedableEnvBeforeDBConnection(t *testing.T) {
 	t.Setenv("ANNICT_IMGPROXY_ENDPOINT", "https://example.com")
 	t.Setenv("ANNICT_IMGPROXY_KEY", "00")
 	t.Setenv("ANNICT_IMGPROXY_SALT", "00")
+	t.Setenv("ANNICT_TOTP_ENCRYPTION_KEY", "00000000000000000000000000000000")
 
 	err := tasks["seed"].run(context.Background(), nil)
 	if err == nil {

@@ -18,6 +18,7 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/riverqueue/river"
 
+	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/dispatcher"
 	"github.com/annict/annict/go/internal/handler/db_episode"
@@ -42,9 +43,12 @@ import (
 	"github.com/annict/annict/go/internal/handler/popular_work"
 	"github.com/annict/annict/go/internal/handler/settings_account_deletion"
 	"github.com/annict/annict/go/internal/handler/settings_account_deletion_completion"
+	"github.com/annict/annict/go/internal/handler/settings_two_factor_auth"
 	"github.com/annict/annict/go/internal/handler/sign_in"
 	"github.com/annict/annict/go/internal/handler/sign_in_code"
 	"github.com/annict/annict/go/internal/handler/sign_in_password"
+	"github.com/annict/annict/go/internal/handler/sign_in_two_factor"
+	"github.com/annict/annict/go/internal/handler/sign_in_two_factor_recovery"
 	"github.com/annict/annict/go/internal/handler/sign_out"
 	"github.com/annict/annict/go/internal/handler/sign_up"
 	"github.com/annict/annict/go/internal/handler/sign_up_code"
@@ -555,6 +559,15 @@ func runServe() {
 	getTrackingHeatmapUC := usecase.NewGetTrackingHeatmapUsecase(userRepo, recordRepo)
 	trackingHeatmapHandler := tracking_heatmap.NewHandler(getTrackingHeatmapUC)
 
+	// 二要素認証の鍵とリポジトリの初期化 (設定画面とログインで共有する)
+	twoFactorKey, err := auth.NewTwoFactorKey(cfg.TOTPEncryptionKey)
+	if err != nil {
+		slog.Error("二要素認証の鍵の作成に失敗しました", "error", err)
+		os.Exit(1)
+	}
+	userTwoFactorAuthRepo := repository.NewUserTwoFactorAuthRepository(queries)
+	userTwoFactorRecoveryCodeRepo := repository.NewUserTwoFactorRecoveryCodeRepository(queries)
+
 	// サインインコードリポジトリの初期化
 	signInCodeRepo := repository.NewSignInCodeRepository(queries)
 
@@ -603,14 +616,21 @@ func runServe() {
 
 	// 6桁コード入力ハンドラーの初期化
 	signInCodeValidator := validator.NewSignInCodeCreateValidator()
-	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator)
+	verifySignInCodeUC := usecase.NewVerifySignInCodeUsecase(db, signInCodeRepo, userRepo, signInCodeValidator, userTwoFactorAuthRepo)
 	createSessionUC := usecase.NewCreateSessionUsecase(sessionRepo)
 	signInCodeHandler := sign_in_code.NewHandler(cfg, sessionManager, flashMgr, limiter, sendSignInCodeUC, verifySignInCodeUC, createSessionUC)
 
 	// パスワードログインハンドラーの初期化
 	signInPasswordValidator := validator.NewSignInPasswordCreateValidator(userRepo)
-	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator)
+	authenticateByPasswordUC := usecase.NewAuthenticateByPasswordUsecase(createSessionUC, signInPasswordValidator, userTwoFactorAuthRepo)
 	signInPasswordHandler := sign_in_password.NewHandler(cfg, sessionManager, flashMgr, limiter, authenticateByPasswordUC)
+
+	// ログインの二要素認証ハンドラーの初期化
+	getSignInTwoFactorStatusUC := usecase.NewGetSignInTwoFactorStatusUsecase(userRepo, userTwoFactorAuthRepo)
+	createSignInTwoFactorUC := usecase.NewCreateSignInTwoFactorUsecase(twoFactorKey, validator.NewSignInTwoFactorCreateValidator(), userRepo, userTwoFactorAuthRepo)
+	signInTwoFactorHandler := sign_in_two_factor.NewHandler(cfg, sessionManager, flashMgr, limiter, getSignInTwoFactorStatusUC, createSignInTwoFactorUC, createSessionUC)
+	createSignInTwoFactorRecoveryUC := usecase.NewCreateSignInTwoFactorRecoveryUsecase(db, twoFactorKey, validator.NewSignInTwoFactorRecoveryCreateValidator(), userRepo, userTwoFactorAuthRepo, userTwoFactorRecoveryCodeRepo, createSessionUC)
+	signInTwoFactorRecoveryHandler := sign_in_two_factor_recovery.NewHandler(cfg, sessionManager, flashMgr, limiter, getSignInTwoFactorStatusUC, createSignInTwoFactorRecoveryUC)
 
 	// ログアウトハンドラーの初期化
 	signOutHandler := sign_out.NewHandler(sessionManager)
@@ -624,7 +644,7 @@ func runServe() {
 	// パスワード編集・更新ハンドラーの初期化
 	updatePasswordValidator := validator.NewPasswordUpdateValidator()
 	getPasswordResetTokenUC := usecase.NewGetPasswordResetTokenUsecase(passwordResetTokenRepo)
-	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, sessionRepo, updatePasswordValidator)
+	updatePasswordUC := usecase.NewUpdatePasswordResetUsecase(db, passwordResetTokenRepo, userRepo, updatePasswordValidator)
 	passwordHandler := password.NewHandler(cfg, sessionManager, flashMgr, limiter, getPasswordResetTokenUC, updatePasswordUC)
 
 	// Web App Manifestハンドラーの初期化
@@ -648,6 +668,20 @@ func runServe() {
 	createAccountDeletionUC := usecase.NewCreateAccountDeletionUsecase(db, userRepo, stripeSubscriberRepo, d, validator.NewSettingsAccountDeletionCreateValidator(oauthApplicationRepo))
 	settingsAccountDeletionHandler := settings_account_deletion.NewHandler(cfg, sessionManager, imageHelper, getAccountDeletionNewUC, createAccountDeletionUC)
 	settingsAccountDeletionCompletionHandler := settings_account_deletion_completion.NewHandler(cfg, imageHelper)
+
+	// 二要素認証の設定画面ハンドラーの初期化
+	settingsTwoFactorAuthHandler := settings_two_factor_auth.NewHandler(
+		cfg,
+		sessionManager,
+		flashMgr,
+		imageHelper,
+		limiter,
+		usecase.NewGetTwoFactorAuthStatusUsecase(userTwoFactorAuthRepo, userTwoFactorRecoveryCodeRepo),
+		usecase.NewPrepareTwoFactorAuthUsecase(twoFactorKey, userTwoFactorAuthRepo),
+		usecase.NewGetPendingTwoFactorAuthUsecase(twoFactorKey, userTwoFactorAuthRepo),
+		usecase.NewEnableTwoFactorAuthUsecase(db, twoFactorKey, validator.NewSettingsTwoFactorAuthCreateValidator(), userTwoFactorAuthRepo, userTwoFactorRecoveryCodeRepo, userRepo, d),
+		usecase.NewDisableTwoFactorAuthUsecase(db, twoFactorKey, validator.NewSettingsTwoFactorAuthDeleteValidator(), userRepo, userTwoFactorAuthRepo, userTwoFactorRecoveryCodeRepo, d),
+	)
 
 	// 法的文書のページハンドラーの初期化
 	legalDocumentHandler := legal_document.NewHandler(cfg, imageHelper)
@@ -689,6 +723,10 @@ func runServe() {
 	r.Patch("/sign_in/code", signInCodeHandler.Update)
 	r.Get("/sign_in/password", signInPasswordHandler.New)
 	r.Post("/sign_in/password", signInPasswordHandler.Create)
+	r.Get("/sign_in/two_factor", signInTwoFactorHandler.New)
+	r.Post("/sign_in/two_factor", signInTwoFactorHandler.Create)
+	r.Get("/sign_in/two_factor/recovery", signInTwoFactorRecoveryHandler.New)
+	r.Post("/sign_in/two_factor/recovery", signInTwoFactorRecoveryHandler.Create)
 	r.Delete("/sign_out", signOutHandler.Delete) // Rails UJSからのDELETEリクエスト
 	r.Post("/sign_out", signOutHandler.Delete)   // Go版HTMLフォームからのPOST + _method=DELETE
 	r.Get("/sign_up", signUpHandler.New)
@@ -719,6 +757,10 @@ func runServe() {
 	r.With(authMW.RequireAuth).Get("/settings/account/deletion/new", settingsAccountDeletionHandler.New)
 	r.With(authMW.RequireAuth).Post("/settings/account/deletion", settingsAccountDeletionHandler.Create)
 	r.Get("/settings/account/deletion/completed", settingsAccountDeletionCompletionHandler.Show)
+	r.With(authMW.RequireAuth).Get("/settings/two_factor_auth", settingsTwoFactorAuthHandler.Show)
+	r.With(authMW.RequireAuth).Get("/settings/two_factor_auth/new", settingsTwoFactorAuthHandler.New)
+	r.With(authMW.RequireAuth).Post("/settings/two_factor_auth", settingsTwoFactorAuthHandler.Create)
+	r.With(authMW.RequireAuth).Delete("/settings/two_factor_auth", settingsTwoFactorAuthHandler.Delete)
 
 	// 法的文書 (利用規約・プライバシーポリシーなど)。配信するパスは文書の一覧表で決まり、
 	// 英語版や改定前の版のアーカイブページは一覧表に登録した時点でルートになる

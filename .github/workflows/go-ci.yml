@@ -86,6 +86,7 @@ jobs:
       ANNICT_IMGPROXY_ENDPOINT: "http://localhost:8080"
       ANNICT_IMGPROXY_KEY: "test_key"
       ANNICT_IMGPROXY_SALT: "test_salt"
+      ANNICT_TOTP_ENCRYPTION_KEY: "test_totp_encryption_key_32bytes"
       ANNICT_RAILS_APP_URL: "http://localhost:3000"
       ANNICT_DISABLE_RATE_LIMIT: "false"
       ANNICT_RESEND_FROM_EMAIL: "test@example.com"

@@ -1,0 +1,123 @@
+package settings_two_factor_auth
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// ShowPageDataは二要素認証の設定画面に渡すデータ構造体です
+type ShowPageData struct {
+	// Enabledは二要素認証を有効にしているか。登録の途中はfalse
+	Enabled bool
+	// UnusedRecoveryCodeCountはまだ使っていないリカバリーコードの数
+	UnusedRecoveryCodeCount int
+	// CSRFTokenは無効にするフォームに載せるトークン
+	CSRFToken string
+	// FormErrorsは無効にするフォームの本人確認を受け付けなかったときのエラー
+	FormErrors *viewmodel.FormErrors
+}
+
+// Showは二要素認証の状態を表示します。
+// 無効のときは有効にする画面への導線を、有効のときは残りのリカバリーコードの数と無効にするフォームを出す。
+// 状態はAlertで示し、無効のときは警告、有効のときは成功の色にする。
+templ Show(data ShowPageData) {
+	<div class="flex flex-col gap-4 py-4">
+		<div class="flex flex-col gap-2 px-4">
+			<a href={ templ.SafeURL(SettingsBackPath) } class="inline-flex w-fit items-center gap-1 text-sm link-muted">
+				@templates.DecorativeIcon("arrow-bend-up-left-regular", "w-[18px] h-[18px]")
+				{ templates.T(ctx, "settings_two_factor_auth_show_back_to_settings") }
+			</a>
+			<h1 class="text-2xl font-bold antialiased">
+				{ templates.T(ctx, "settings_two_factor_auth_show_heading") }
+			</h1>
+			@components.GuidelineLink(templates.T(ctx, "settings_two_factor_auth_show_help_link"), viewmodel.HelpTwoFactorAuthURL())
+		</div>
+		<hr/>
+		<div class="max-w-3xl w-full mx-auto flex flex-col gap-4 px-2 md:px-0">
+			<div class="card px-4">
+				<p>{ templates.T(ctx, "settings_two_factor_auth_show_description") }</p>
+				if data.Enabled {
+					<div class="alert" data-variant="success">
+						@templates.DecorativeIcon("check-circle-regular", "size-[18px]")
+						<h2>{ templates.T(ctx, "settings_two_factor_auth_show_enabled_status") }</h2>
+					</div>
+					<dl class="flex items-center justify-between gap-2 border-t pt-3">
+						<dt>{ templates.T(ctx, "settings_two_factor_auth_show_recovery_codes_label") }</dt>
+						<dd class="font-bold">
+							{ templates.T(ctx, "settings_two_factor_auth_show_recovery_codes_count", map[string]any{"Count": data.UnusedRecoveryCodeCount}) }
+						</dd>
+					</dl>
+					<p class="text-sm text-muted-foreground">
+						{ templates.T(ctx, "settings_two_factor_auth_show_recovery_codes_help") }
+					</p>
+				} else {
+					<div class="alert" data-variant="warning">
+						<h2>{ templates.T(ctx, "settings_two_factor_auth_show_disabled_status") }</h2>
+						<section>{ templates.T(ctx, "settings_two_factor_auth_show_app_required") }</section>
+					</div>
+					<a href={ templ.SafeURL(NewPath) } class="btn rounded-full w-fit">
+						{ templates.T(ctx, "settings_two_factor_auth_show_enable_link") }
+					</a>
+				}
+			</div>
+			if data.Enabled {
+				@disableForm(data)
+			}
+		</div>
+	</div>
+}
+
+// disableFormは二要素認証を無効にするフォームを表示します。
+//
+// 本人確認はパスワード・認証アプリのコード・リカバリーコードを1つの欄で受ける。
+// 欄はautocomplete="current-password"にし、パスワードマネージャーが今のパスワードを入れられるようにする。
+// HTMLのフォームはDELETEを送れないため、POSTに_methodを載せて上書きする。
+templ disableForm(data ShowPageData) {
+	<section class="card px-4" aria-labelledby="two-factor-auth-disable-heading">
+		<h2 id="two-factor-auth-disable-heading" class="text-xl font-bold antialiased">
+			{ templates.T(ctx, "settings_two_factor_auth_show_disable_heading") }
+		</h2>
+		<p>{ templates.T(ctx, "settings_two_factor_auth_show_disable_description") }</p>
+		@components.FormErrors(components.FormErrorsData{
+			Errors: data.FormErrors,
+			Fields: []components.FormErrorField{
+				{Name: "credential", Label: templates.T(ctx, "settings_two_factor_auth_show_credential_label")},
+			},
+		})
+		<form
+			action={ templ.SafeURL(ShowPath) }
+			class="grid gap-6"
+			hx-on:submit="disableSubmitButtons(this)"
+			method="POST"
+		>
+			<input type="hidden" name="csrf_token" value={ data.CSRFToken }/>
+			<input type="hidden" name="_method" value="DELETE"/>
+			<div role="group" class="field">
+				<label class="label" for="credential">
+					{ templates.T(ctx, "settings_two_factor_auth_show_credential_label") }
+				</label>
+				<input
+					autocomplete="current-password"
+					class="input"
+					id="credential"
+					name="credential"
+					required
+					type="password"
+					if data.FormErrors.HasFieldError("credential") {
+						aria-invalid="true"
+						aria-describedby={ components.FieldErrorIDs(data.FormErrors, "credential") }
+					}
+				/>
+				if data.FormErrors.HasFieldError("credential") {
+					for i, errorMsg := range data.FormErrors.Fields["credential"] {
+						<p id={ components.FieldErrorID("credential", i) } role="alert">{ errorMsg }</p>
+					}
+				}
+			</div>
+			<button type="submit" class="btn rounded-full w-fit" data-variant="destructive">
+				{ templates.T(ctx, "settings_two_factor_auth_show_disable_button") }
+			</button>
+		</form>
+	</section>
+}

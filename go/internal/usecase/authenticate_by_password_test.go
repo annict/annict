@@ -3,6 +3,7 @@ package usecase
 import (
 	"context"
 	"testing"
+	"time"
 
 	"golang.org/x/crypto/bcrypt"
 
@@ -46,7 +47,7 @@ func TestAuthenticateByPasswordUsecase_Execute_Success(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
 	v := validator.NewSignInPasswordCreateValidator(userRepo)
-	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	ctx := context.Background()
 
@@ -99,7 +100,7 @@ func TestAuthenticateByPasswordUsecase_Execute_InvalidPassword(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
 	v := validator.NewSignInPasswordCreateValidator(userRepo)
-	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	ctx := context.Background()
 
@@ -127,7 +128,7 @@ func TestAuthenticateByPasswordUsecase_Execute_UserNotFound(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
 	v := validator.NewSignInPasswordCreateValidator(userRepo)
-	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	ctx := context.Background()
 
@@ -151,7 +152,7 @@ func TestAuthenticateByPasswordUsecase_Execute_ValidationError(t *testing.T) {
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
 	v := validator.NewSignInPasswordCreateValidator(userRepo)
-	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	ctx := context.Background()
 
@@ -180,7 +181,7 @@ func TestAuthenticateByPasswordUsecase_Execute_WhitespacePassword(t *testing.T) 
 	sessionRepo := repository.NewSessionRepository(queries)
 	createSessionUC := NewCreateSessionUsecase(sessionRepo)
 	v := validator.NewSignInPasswordCreateValidator(userRepo)
-	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v)
+	uc := NewAuthenticateByPasswordUsecase(createSessionUC, v, repository.NewUserTwoFactorAuthRepository(queries))
 
 	ctx := context.Background()
 
@@ -196,5 +197,46 @@ func TestAuthenticateByPasswordUsecase_Execute_WhitespacePassword(t *testing.T) 
 
 	if !ve.HasFieldError("password") {
 		t.Error("passwordフィールドのエラーを期待したが、無かった")
+	}
+}
+
+// TestAuthenticateByPasswordUsecase_Execute_TwoFactorAuthは、二要素認証を有効にしているユーザーにはセッションを作らずに
+// 認証アプリのコードを求め、登録の途中のユーザーにはこれまでどおりセッションを作ることを検証する。
+func TestAuthenticateByPasswordUsecase_Execute_TwoFactorAuth(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.MinCost)
+	if err != nil {
+		t.Fatalf("パスワードハッシュ生成エラー: %v", err)
+	}
+
+	enabledUserID := testutil.NewUserBuilder(t, tx).WithEmail("auth_pw_two_factor@example.com").WithEncryptedPassword(string(hashedPassword)).Build()
+	testutil.NewUserTwoFactorAuthBuilder(t, tx, enabledUserID).WithEnabledAt(time.Now()).Build()
+	pendingUserID := testutil.NewUserBuilder(t, tx).WithEmail("auth_pw_two_factor_pending@example.com").WithEncryptedPassword(string(hashedPassword)).Build()
+	testutil.NewUserTwoFactorAuthBuilder(t, tx, pendingUserID).Build()
+
+	uc := NewAuthenticateByPasswordUsecase(
+		NewCreateSessionUsecase(repository.NewSessionRepository(queries)),
+		validator.NewSignInPasswordCreateValidator(repository.NewUserRepository(queries)),
+		repository.NewUserTwoFactorAuthRepository(queries),
+	)
+	ctx := context.Background()
+
+	enabled, err := uc.Execute(ctx, AuthenticateByPasswordInput{Email: "auth_pw_two_factor@example.com", Password: "password123"})
+	if err != nil {
+		t.Fatalf("有効なユーザーのExecute()のエラー = %v", err)
+	}
+	if !enabled.TwoFactorAuthRequired || enabled.PublicID != "" || enabled.UserID != enabledUserID {
+		t.Errorf("有効なユーザーのExecute() = %+v、セッションを作らず認証アプリのコードを求めることを期待", enabled)
+	}
+
+	pending, err := uc.Execute(ctx, AuthenticateByPasswordInput{Email: "auth_pw_two_factor_pending@example.com", Password: "password123"})
+	if err != nil {
+		t.Fatalf("登録の途中のユーザーのExecute()のエラー = %v", err)
+	}
+	if pending.TwoFactorAuthRequired || pending.PublicID == "" {
+		t.Errorf("登録の途中のユーザーのExecute() = %+v、セッションを作ることを期待", pending)
 	}
 }

@@ -52,10 +52,12 @@ WHERE LOWER(email) = LOWER($1)
   AND deleted_at IS NULL
 LIMIT 1;
 
--- name: UpdateUserPassword :exec
+-- name: UpdateUserPassword :execrows
+-- 退会・利用停止と競合しても、有効なユーザーのパスワードだけを更新する。
 UPDATE users
 SET encrypted_password = $2, updated_at = NOW()
-WHERE id = $1;
+WHERE id = $1
+AND deleted_at IS NULL;
 
 -- name: GetUserByUsername :one
 SELECT id, username, email, role, created_at, updated_at

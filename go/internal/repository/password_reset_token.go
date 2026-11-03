@@ -73,9 +73,14 @@ func (r *PasswordResetTokenRepository) DeleteUnusedByUserID(ctx context.Context,
 	return r.queries.DeleteUnusedPasswordResetTokensByUserID(ctx, int64(userID))
 }
 
-// MarkAsUsedはトークンを使用済みにマークします
-func (r *PasswordResetTokenRepository) MarkAsUsed(ctx context.Context, id model.PasswordResetTokenID) error {
-	return r.queries.MarkPasswordResetTokenAsUsed(ctx, int64(id))
+// MarkAsUsedは未使用のトークンを使用済みにマークします。
+// 既に使用済みのときは更新せずfalseを返します。
+func (r *PasswordResetTokenRepository) MarkAsUsed(ctx context.Context, id model.PasswordResetTokenID) (bool, error) {
+	affected, err := r.queries.MarkPasswordResetTokenAsUsed(ctx, int64(id))
+	if err != nil {
+		return false, err
+	}
+	return affected > 0, nil
 }
 
 // GetValidByTokenはトークン文字列からハッシュを計算し、有効なトークンを取得します。
