@@ -26,14 +26,14 @@ func TestTwoFactorAuthNotificationSender_Send(t *testing.T) {
 			locale:      "ja",
 			event:       model.TwoFactorAuthNotificationEventEnabled,
 			wantSubject: "Annict - 二要素認証を有効にしました",
-			wantBody:    "Annictのアカウントで、二要素認証を有効にしました。",
+			wantBody:    "Annictのアカウントで二要素認証を有効にしました。",
 		},
 		{
 			name:        "日本語の本人による無効化",
 			locale:      "ja",
 			event:       model.TwoFactorAuthNotificationEventDisabled,
 			wantSubject: "Annict - 二要素認証を無効にしました",
-			wantBody:    "Annictのアカウントで、二要素認証を無効にしました。",
+			wantBody:    "Annictのアカウントで二要素認証を無効にしました。",
 		},
 		{
 			name:        "日本語の管理者による無効化",
@@ -61,7 +61,7 @@ func TestTwoFactorAuthNotificationSender_Send(t *testing.T) {
 			locale:      "other",
 			event:       model.TwoFactorAuthNotificationEventDisabled,
 			wantSubject: "Annict - 二要素認証を無効にしました",
-			wantBody:    "Annictのアカウントで、二要素認証を無効にしました。",
+			wantBody:    "Annictのアカウントで二要素認証を無効にしました。",
 		},
 	}
 

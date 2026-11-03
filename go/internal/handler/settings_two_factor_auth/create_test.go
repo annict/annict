@@ -30,7 +30,7 @@ func TestCreate(t *testing.T) {
 	}
 	assertNoStore(t, rr)
 	body := rr.Body.String()
-	assertContains(t, body, "<title>リカバリーコード | Annict</title>", "二要素認証を有効にしました。", "このコードは今しか表示されません", `href="/settings/two_factor_auth"`)
+	assertContains(t, body, "<title>リカバリーコード | Annict</title>", `antialiased px-4">リカバリーコード</h1>`, "二要素認証を有効にしました", "このコードは今しか表示されません", `href="/settings/two_factor_auth"`)
 	if got := len(regexp.MustCompile(`<li>[a-z2-9]{4}-[a-z2-9]{4}</li>`).FindAllString(body, -1)); got != 10 {
 		t.Errorf("表示したリカバリーコードの数 = %d、期待値 = 10", got)
 	}

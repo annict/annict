@@ -1109,9 +1109,22 @@ other = "入力内容にエラーがあります"
 description = "エラー要約の1項目 (フィールドのラベルとメッセージ)"
 other = "{{.Label}}: {{.Message}}"
 
+# コピーするための値の欄
+[copyable_input_copy_button_label]
+description = "コピーするための値の欄の、コピーボタンのラベル"
+other = "{{.Label}}をコピー"
+
+[copyable_input_copied]
+description = "コピーするための値の欄で、クリップボードへコピーできたときのメッセージ"
+other = "{{.Label}}をコピーしました"
+
+[copyable_input_copy_failed]
+description = "コピーするための値の欄で、クリップボードへコピーできなかったときのメッセージ"
+other = "コピーできませんでした。入力欄の値を選んでコピーしてください"
+
 # ガイドラインリンク
 [guideline_link_aria_label]
-description = "ガイドラインのヘルプページへのリンク (新しいタブで開く) のaria-label"
+description = "ヘルプページへのリンク (新しいタブで開く) のaria-label"
 other = "{{.Label}} を新しいタブで開く"
 
 # 公開状態ラベル関連
@@ -2743,6 +2756,10 @@ other = "二要素認証"
 description = "二要素認証の設定画面からRails版の設定画面へ戻るリンク"
 other = "設定に戻る"
 
+[settings_two_factor_auth_show_help_link]
+description = "二要素認証の設定画面から二要素認証の設定のヘルプページへのリンク"
+other = "二要素認証の設定のヘルプ"
+
 [settings_two_factor_auth_show_description]
 description = "二要素認証の設定画面の説明"
 other = "二要素認証を有効にすると、パスワードやメールで届くコードでログインしたあと認証アプリに表示されるコードの入力を求めます。パスワードやメールアカウントが他人に知られてもアカウントを守れます。"
@@ -2829,7 +2846,7 @@ other = "リカバリーコード"
 
 [settings_two_factor_auth_create_heading]
 description = "リカバリーコードの画面の見出し"
-other = "リカバリーコードを保管してください"
+other = "リカバリーコード"
 
 [settings_two_factor_auth_create_enabled]
 description = "二要素認証を有効にしたことの表示"

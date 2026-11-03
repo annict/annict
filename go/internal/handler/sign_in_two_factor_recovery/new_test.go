@@ -28,6 +28,8 @@ func TestNew(t *testing.T) {
 		`name="code"`,
 		`autocomplete="off"`,
 		`href="/sign_in/two_factor?back=%2Fworks%2F1"`,
+		// 文の長さで広がらないよう、ログイン画面と同じ幅に固定する
+		`min-w-full md:min-w-md md:max-w-md`,
 	)
 }
 

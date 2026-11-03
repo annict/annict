@@ -42,8 +42,9 @@ type NewPageData struct {
 // Newは、第1の要素を確かめた二要素認証のユーザーに、認証アプリのコードを入力してもらう画面を表示します。
 //
 // コードの欄は、貼り付けで混じった空白やハイフン、全角の数字もサーバーで受け付けるため、patternとmaxlengthを付けない。
+// 案内の文やエラーの要約の長さで広がらないよう、最小幅と同じ最大幅を付け、ログイン画面と同じ幅に保つ。
 templ New(data NewPageData) {
-	<div class="flex flex-col gap-6 min-w-full md:min-w-md px-4">
+	<div class="flex flex-col gap-6 min-w-full md:min-w-md md:max-w-md px-4">
 		<div class="text-center">
 			<a href="/" class="inline-block">
 				<img

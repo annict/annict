@@ -29,6 +29,11 @@ func TestHelpPageURLs(t *testing.T) {
 			want: "https://wikino.app/s/annict/pages/" + helpEpisodeBulkCreatePageID,
 		},
 		{
+			name: "二要素認証の設定",
+			got:  HelpTwoFactorAuthURL(),
+			want: "https://wikino.app/s/annict/pages/" + helpTwoFactorAuthPageID,
+		},
+		{
 			name: "開発者向けドキュメントのトピック",
 			got:  DeveloperHelpTopicURL(),
 			want: "https://wikino.app/s/annict/topics/5",
