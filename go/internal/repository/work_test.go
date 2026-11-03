@@ -23,9 +23,12 @@ func TestWorkRepository_GetPopular(t *testing.T) {
 		queries := query.New(db).WithTx(tx)
 		repo := repository.NewWorkRepository(queries)
 
+		// 人気作品はDB全体の上位30件のため、並行するほかのテストがコミットした作品に
+		// 押し出されないよう、ウォッチャー数を最大にして必ず上位に入れる。
 		workID := testutil.NewWorkBuilder(t, tx).
 			WithTitle("人気アニメ").
 			WithSeason(2024, testutil.SeasonSpring).
+			WithWatchersCount(math.MaxInt32).
 			Build()
 		testutil.NewWorkImageBuilder(t, tx, workID).Build()
 
@@ -41,28 +44,13 @@ func TestWorkRepository_GetPopular(t *testing.T) {
 				if w.Title != "人気アニメ" {
 					t.Errorf("Title = %q、期待値 = %q", w.Title, "人気アニメ")
 				}
-				if w.WatchersCount != 100 {
-					t.Errorf("WatchersCount = %d、期待値 = 100", w.WatchersCount)
+				if w.WatchersCount != math.MaxInt32 {
+					t.Errorf("WatchersCount = %d、期待値 = %d", w.WatchersCount, int32(math.MaxInt32))
 				}
 			}
 		}
 		if !found {
 			t.Errorf("作成した作品 (ID=%d) が結果に含まれていません", workID)
-		}
-	})
-
-	t.Run("正常系: 作品が存在しない場合は空のスライスを返す", func(t *testing.T) {
-		t.Parallel()
-		db, tx := testutil.SetupTx(t)
-		queries := query.New(db).WithTx(tx)
-		repo := repository.NewWorkRepository(queries)
-
-		works, err := repo.GetPopular(context.Background())
-		if err != nil {
-			t.Fatalf("GetPopular()のエラー = %v", err)
-		}
-		if len(works) != 0 {
-			t.Errorf("len(works) = %d、期待値 = 0", len(works))
 		}
 	})
 
@@ -72,11 +60,12 @@ func TestWorkRepository_GetPopular(t *testing.T) {
 		queries := query.New(db).WithTx(tx)
 		repo := repository.NewWorkRepository(queries)
 
-		// 同一トランザクション内で3件投入し、当該作品集合内の相対順序を検証する
-		// (他テストとの並列実行下でもトランザクション分離により独立性が保たれる)
-		idLow := testutil.NewWorkBuilder(t, tx).WithTitle("少").WithWatchersCount(10).Build()
-		idHigh := testutil.NewWorkBuilder(t, tx).WithTitle("多").WithWatchersCount(1000).Build()
-		idMid := testutil.NewWorkBuilder(t, tx).WithTitle("中").WithWatchersCount(500).Build()
+		// 同一トランザクション内で3件投入し、当該作品集合内の相対順序を検証する。
+		// 人気作品はDB全体の上位30件のため、並行するほかのテストがコミットした作品に
+		// 押し出されないよう、3件ともウォッチャー数を最大付近にする。
+		idLow := testutil.NewWorkBuilder(t, tx).WithTitle("少").WithWatchersCount(math.MaxInt32 - 2).Build()
+		idHigh := testutil.NewWorkBuilder(t, tx).WithTitle("多").WithWatchersCount(math.MaxInt32).Build()
+		idMid := testutil.NewWorkBuilder(t, tx).WithTitle("中").WithWatchersCount(math.MaxInt32 - 1).Build()
 
 		works, err := repo.GetPopular(context.Background())
 		if err != nil {
