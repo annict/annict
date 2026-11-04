@@ -3002,3 +3002,15 @@ other = "Enter a recovery code in the xxxx-xxxx format"
 [validation_recovery_code_incorrect]
 description = "リカバリーコードが一致しない・使用済みのときのエラー"
 other = "The recovery code is incorrect or has already been used"
+
+[validation_api_legacy_ids_required]
+description = "REST API V2の旧IDの変換で、旧IDのパラメーターが1つも無いときのエラー"
+other = "Specify at least one legacy ID (work_ids or episode_ids)."
+
+[validation_api_legacy_ids_too_many]
+description = "REST API V2の旧IDの変換で、旧IDの合計が上限を超えたときのエラー"
+other = "You can specify up to {{.Max}} legacy IDs in total."
+
+[api_error_invalid_cursor]
+description = "REST API V2の一覧で、カーソルが読めない場合のProblem Detailsのdetail"
+other = "The cursor is invalid. Pass the next_cursor from the previous page as is, without changing the other parameters."
