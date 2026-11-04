@@ -201,6 +201,7 @@ func TestRateLimitMiddleware_ExemptRequests(t *testing.T) {
 		{name: "StripeのWebhook", method: http.MethodPost, host: "annict.test", path: "/webhooks/stripe"},
 		{name: "APIホスト", method: http.MethodGet, host: "api.annict.test", path: "/v1/works"},
 		{name: "ポート付きのAPIホスト", method: http.MethodPost, host: "api.annict.test:8080", path: "/graphql"},
+		{name: "REST API V2", method: http.MethodGet, host: "annict.test", path: "/api/v2/openapi.yaml"},
 	}
 
 	for _, tt := range tests {

@@ -122,6 +122,10 @@ func (m *RateLimitMiddleware) isExempt(r *http.Request) bool {
 	}
 
 	path := r.URL.Path
+	// REST API V2は、V1・GraphQLと共有するAPIのレート制限で数える
+	if IsAPIPath(path) {
+		return true
+	}
 	for _, exemptPath := range rateLimitExemptPaths {
 		if path == exemptPath {
 			return true

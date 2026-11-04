@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/annict/annict/go/internal/apierror"
 	"github.com/annict/annict/go/internal/config"
 )
 
@@ -26,7 +27,7 @@ func TestMaintenanceMiddleware_DisabledMode(t *testing.T) {
 		AdminIPs:        []string{},
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -51,7 +52,7 @@ func TestMaintenanceMiddleware_EnabledMode_AdminIP(t *testing.T) {
 		AdminIPs:        []string{"192.168.1.100"},
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -74,7 +75,7 @@ func TestMaintenanceMiddleware_EnabledMode_NonAdminIP(t *testing.T) {
 		AdminIPs:        []string{"192.168.1.100"},
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -132,7 +133,7 @@ func TestMaintenanceMiddleware_HTMXRequest(t *testing.T) {
 			t.Parallel()
 
 			cfg := &config.Config{MaintenanceMode: true}
-			mw := NewMaintenanceMiddleware(cfg)
+			mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 			handler := mw.Middleware(testHandler())
 
 			req := httptest.NewRequest(http.MethodDelete, "/db/episodes/1", nil)
@@ -164,7 +165,7 @@ func TestMaintenanceMiddleware_Noindex(t *testing.T) {
 	t.Parallel()
 
 	cfg := &config.Config{MaintenanceMode: true}
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	req := httptest.NewRequest(http.MethodGet, "/works", nil)
@@ -186,7 +187,7 @@ func TestMaintenanceMiddleware_MultipleAdminIPs(t *testing.T) {
 		AdminIPs:        []string{"192.168.1.100", "10.0.0.50", "172.16.0.1"},
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	testCases := []struct {
@@ -224,7 +225,7 @@ func TestMaintenanceMiddleware_XForwardedFor(t *testing.T) {
 		AdminIPs:        []string{"203.0.113.50"},
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	testCases := []struct {
@@ -289,7 +290,7 @@ func TestMaintenanceMiddleware_CFConnectingIP(t *testing.T) {
 		AdminIPs:        []string{"203.0.113.100"},
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	testCases := []struct {
@@ -341,7 +342,7 @@ func TestMaintenanceMiddleware_EmptyAdminIPs(t *testing.T) {
 		AdminIPs:        []string{},
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -365,7 +366,7 @@ func TestMaintenanceMiddleware_NilAdminIPs(t *testing.T) {
 		AdminIPs:        nil,
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	req := httptest.NewRequest(http.MethodGet, "/", nil)
@@ -389,7 +390,7 @@ func TestMaintenanceMiddleware_XRealIP(t *testing.T) {
 		AdminIPs:        []string{"203.0.113.200"},
 	}
 
-	mw := NewMaintenanceMiddleware(cfg)
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	testCases := []struct {
@@ -425,5 +426,36 @@ func TestMaintenanceMiddleware_XRealIP(t *testing.T) {
 				t.Errorf("%s: ステータスコード = %d、期待値 = %d", tc.name, rr.Code, tc.wantCode)
 			}
 		})
+	}
+}
+
+func TestMaintenanceMiddleware_EnabledMode_APIPath(t *testing.T) {
+	t.Parallel()
+
+	// APIのパスには、メンテナンスページの代わりにProblem Detailsの503を返す
+	cfg := &config.Config{
+		MaintenanceMode: true,
+		AdminIPs:        []string{},
+	}
+
+	mw := NewMaintenanceMiddleware(cfg, apierror.NewWriter("https://example.com"))
+	handler := mw.Middleware(testHandler())
+
+	req := httptest.NewRequest(http.MethodGet, "/api/v2/openapi.yaml", nil)
+	rr := httptest.NewRecorder()
+
+	handler.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusServiceUnavailable {
+		t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusServiceUnavailable)
+	}
+	if got := rr.Header().Get("Content-Type"); got != apierror.ContentType {
+		t.Errorf("Content-Type = %q、期待値 = %q", got, apierror.ContentType)
+	}
+	if got := rr.Header().Get("Retry-After"); got != "3600" {
+		t.Errorf("Retry-After = %q、期待値 = %q", got, "3600")
+	}
+	if !strings.Contains(rr.Body.String(), `"status":503`) {
+		t.Errorf("本文 = %q、Problem Detailsの503を期待", rr.Body.String())
 	}
 }

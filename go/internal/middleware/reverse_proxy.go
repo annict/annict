@@ -242,6 +242,13 @@ func (m *ReverseProxyMiddleware) Middleware(next http.Handler) http.Handler {
 			return
 		}
 
+		// REST API V2はGo版だけが処理する。Cookieを使わないため、goHandledPathsの判定より前、
+		// デバイスを識別するCookieを発行する前にGo版へ渡す
+		if IsAPIPath(r.URL.Path) {
+			next.ServeHTTP(w, r)
+			return
+		}
+
 		deviceToken := m.ensureDeviceToken(w, r)
 
 		// Go版で処理するパスかどうかをチェック
