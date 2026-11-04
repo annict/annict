@@ -2,21 +2,28 @@ package middleware
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/annict/annict/go/internal/apierror"
 	"github.com/annict/annict/go/internal/clientip"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/templates/pages/maintenance"
 )
 
+// maintenanceRetryAfterはメンテナンス中の応答で示す、再試行を勧めるまでの時間
+const maintenanceRetryAfter = time.Hour
+
 // MaintenanceMiddlewareはメンテナンスモード時にアクセスを制限するミドルウェア
 type MaintenanceMiddleware struct {
-	cfg *config.Config
+	cfg      *config.Config
+	problems *apierror.Writer
 }
 
 // NewMaintenanceMiddlewareは新しいMaintenanceMiddlewareを作成
-func NewMaintenanceMiddleware(cfg *config.Config) *MaintenanceMiddleware {
+func NewMaintenanceMiddleware(cfg *config.Config, problems *apierror.Writer) *MaintenanceMiddleware {
 	return &MaintenanceMiddleware{
-		cfg: cfg,
+		cfg:      cfg,
+		problems: problems,
 	}
 }
 
@@ -33,6 +40,12 @@ func (m *MaintenanceMiddleware) Middleware(next http.Handler) http.Handler {
 		// 管理者IPからのアクセスは通常処理
 		if m.isAdminIP(r) {
 			next.ServeHTTP(w, r)
+			return
+		}
+
+		// APIのクライアントはHTMLのページを読まないため、Problem Detailsで返す
+		if IsAPIPath(r.URL.Path) {
+			m.problems.ServiceUnavailable(w, r, maintenanceRetryAfter)
 			return
 		}
 

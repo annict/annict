@@ -728,6 +728,40 @@ func (q *Queries) IncrementWorkEpisodesCount(ctx context.Context, arg IncrementW
 	return result.RowsAffected()
 }
 
+const listAnimeIDsByWorkIDs = `-- name: ListAnimeIDsByWorkIDs :many
+SELECT id, anime_id::bigint AS anime_id FROM works
+WHERE id = ANY($1::bigint[]) AND anime_id IS NOT NULL
+`
+
+type ListAnimeIDsByWorkIDsRow struct {
+	ID      int64 `db:"id"`
+	AnimeID int64 `db:"anime_id"`
+}
+
+// 旧作品のIDから、写した先のanimeのIDを引く。animeに写していない旧作品は含めない
+func (q *Queries) ListAnimeIDsByWorkIDs(ctx context.Context, workIds []int64) ([]ListAnimeIDsByWorkIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listAnimeIDsByWorkIDs, pq.Array(workIds))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListAnimeIDsByWorkIDsRow{}
+	for rows.Next() {
+		var i ListAnimeIDsByWorkIDsRow
+		if err := rows.Scan(&i.ID, &i.AnimeID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listDBWorks = `-- name: ListDBWorks :many
 SELECT
     w.id,
@@ -872,6 +906,40 @@ func (q *Queries) ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterPara
 			return nil, err
 		}
 		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listWorkIDsByAnimeIDs = `-- name: ListWorkIDsByAnimeIDs :many
+SELECT id, anime_id::bigint AS anime_id FROM works
+WHERE anime_id = ANY($1::bigint[])
+`
+
+type ListWorkIDsByAnimeIDsRow struct {
+	ID      int64 `db:"id"`
+	AnimeID int64 `db:"anime_id"`
+}
+
+// 参照モデルのanimeに写した旧作品のIDを引く
+func (q *Queries) ListWorkIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]ListWorkIDsByAnimeIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listWorkIDsByAnimeIDs, pq.Array(dollar_1))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListWorkIDsByAnimeIDsRow{}
+	for rows.Next() {
+		var i ListWorkIDsByAnimeIDsRow
+		if err := rows.Scan(&i.ID, &i.AnimeID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

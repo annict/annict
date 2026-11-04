@@ -286,3 +286,102 @@ func TestAnimeClassificationRepository_Upsert(t *testing.T) {
 		t.Errorf("2回目のSortNumber = %+v、期待値 = {250 true}", updated.SortNumber)
 	}
 }
+
+func TestAnimeClassificationRepository_CountPublishedEpisodesByParentAnimeIDs(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	animeRepo := repository.NewAnimeRepository(queries)
+	repo := repository.NewAnimeClassificationRepository(queries)
+
+	workID := createTestAnime(t, animeRepo, "エピソードのある作品")
+	emptyWorkID := createTestAnime(t, animeRepo, "エピソードの無い作品")
+	createTestEpisodeAnime(t, queries, workID, 1, model.AnimeStatusPublished)
+	createTestEpisodeAnime(t, queries, workID, 2, model.AnimeStatusPublished)
+	createTestEpisodeAnime(t, queries, workID, 3, model.AnimeStatusArchived)
+	createTestEpisodeAnime(t, queries, workID, 4, model.AnimeStatusDeleted)
+
+	counts, err := repo.CountPublishedEpisodesByParentAnimeIDs(context.Background(), []model.AnimeID{workID, emptyWorkID})
+	if err != nil {
+		t.Fatalf("CountPublishedEpisodesByParentAnimeIDs()のエラー = %v", err)
+	}
+	if got := counts[workID]; got != 2 {
+		t.Errorf("公開中のエピソードの数 = %d、期待値 = 2", got)
+	}
+	if _, ok := counts[emptyWorkID]; ok {
+		t.Error("エピソードの無い作品がmapに含まれている")
+	}
+
+	empty, err := repo.CountPublishedEpisodesByParentAnimeIDs(context.Background(), nil)
+	if err != nil || len(empty) != 0 {
+		t.Errorf("空入力の結果 = %v、エラー = %v、期待値 = 空のmap", empty, err)
+	}
+}
+
+func TestAnimeClassificationRepository_ListPublishedEpisodeNeighbors(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	queries := query.New(db).WithTx(tx)
+	animeRepo := repository.NewAnimeRepository(queries)
+	repo := repository.NewAnimeClassificationRepository(queries)
+
+	workID := createTestAnime(t, animeRepo, "前後のエピソードの作品")
+	otherWorkID := createTestAnime(t, animeRepo, "別の作品")
+	first := createTestEpisodeAnime(t, queries, workID, 10, model.AnimeStatusPublished)
+	createTestEpisodeAnime(t, queries, workID, 20, model.AnimeStatusArchived)
+	// sort_numberが同じエピソードは、anime_idの順で前後が決まる
+	tiedA := createTestEpisodeAnime(t, queries, workID, 30, model.AnimeStatusPublished)
+	tiedB := createTestEpisodeAnime(t, queries, workID, 30, model.AnimeStatusPublished)
+	other := createTestEpisodeAnime(t, queries, otherWorkID, 25, model.AnimeStatusPublished)
+
+	neighbors, err := repo.ListPublishedEpisodeNeighbors(context.Background(),
+		[]model.AnimeID{workID, otherWorkID}, []model.AnimeID{first, tiedA, tiedB, other})
+	if err != nil {
+		t.Fatalf("ListPublishedEpisodeNeighbors()のエラー = %v", err)
+	}
+	byID := make(map[model.AnimeID]*model.EpisodeNeighbors, len(neighbors))
+	for _, n := range neighbors {
+		byID[n.AnimeID] = n
+	}
+
+	tests := []struct {
+		name     string
+		id       model.AnimeID
+		wantPrev *model.AnimeID
+		wantNext *model.AnimeID
+	}{
+		{name: "最初のエピソードには前が無く、非公開を飛ばした次を返す", id: first, wantNext: &tiedA},
+		{name: "sort_numberが同じならanime_idの小さいほうが前", id: tiedA, wantPrev: &first, wantNext: &tiedB},
+		{name: "最後のエピソードには次が無い", id: tiedB, wantPrev: &tiedA},
+		{name: "別の作品のエピソードとは前後にならない", id: other},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			n := byID[tt.id]
+			if n == nil {
+				t.Fatalf("anime %d の前後が無い", tt.id)
+			}
+			assertOptionalAnimeID(t, "前のエピソード", n.PrevAnimeID, tt.wantPrev)
+			assertOptionalAnimeID(t, "次のエピソード", n.NextAnimeID, tt.wantNext)
+		})
+	}
+
+	empty, err := repo.ListPublishedEpisodeNeighbors(context.Background(), nil, nil)
+	if err != nil || len(empty) != 0 {
+		t.Errorf("空入力の結果 = %v、エラー = %v、期待値 = 空", empty, err)
+	}
+}
+
+func assertOptionalAnimeID(t *testing.T, label string, got, want *model.AnimeID) {
+	t.Helper()
+	switch {
+	case want == nil && got != nil:
+		t.Errorf("%s = %d、期待値 = nil", label, *got)
+	case want != nil && got == nil:
+		t.Errorf("%s = nil、期待値 = %d", label, *want)
+	case want != nil && *got != *want:
+		t.Errorf("%s = %d、期待値 = %d", label, *got, *want)
+	}
+}

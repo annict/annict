@@ -3001,3 +3001,15 @@ other = "リカバリーコード (xxxx-xxxxの形) を入力してください"
 [validation_recovery_code_incorrect]
 description = "リカバリーコードが一致しない・使用済みのときのエラー"
 other = "リカバリーコードが正しくないか、すでに使われています"
+
+[validation_api_legacy_ids_required]
+description = "REST API V2の旧IDの変換で、旧IDのパラメーターが1つも無いときのエラー"
+other = "旧IDを1つ以上指定してください (work_ids・episode_ids)"
+
+[validation_api_legacy_ids_too_many]
+description = "REST API V2の旧IDの変換で、旧IDの合計が上限を超えたときのエラー"
+other = "旧IDは合計{{.Max}}件まで指定できます"
+
+[api_error_invalid_cursor]
+description = "REST API V2の一覧で、カーソルが読めない場合のProblem Detailsのdetail"
+other = "カーソルを読めません。前のページの応答のnext_cursorを、cursor以外のパラメーターを変えずにそのまま渡してください"

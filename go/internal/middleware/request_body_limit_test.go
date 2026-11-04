@@ -7,12 +7,14 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+
+	"github.com/annict/annict/go/internal/apierror"
 )
 
 func TestRequestBodyLimitMiddleware_NoBody(t *testing.T) {
 	t.Parallel()
 
-	mw := NewRequestBodyLimitMiddleware(1024) // 1KB
+	mw := NewRequestBodyLimitMiddleware(1024, apierror.NewWriter("https://example.com")) // 1KB
 	handler := mw.Middleware(testHandler())
 
 	// GETリクエスト (ボディなし)
@@ -29,7 +31,7 @@ func TestRequestBodyLimitMiddleware_NoBody(t *testing.T) {
 func TestRequestBodyLimitMiddleware_SmallBody(t *testing.T) {
 	t.Parallel()
 
-	mw := NewRequestBodyLimitMiddleware(1024) // 1KB
+	mw := NewRequestBodyLimitMiddleware(1024, apierror.NewWriter("https://example.com")) // 1KB
 
 	// 小さいボディを読み込んで成功を確認するハンドラー
 	handler := mw.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -62,7 +64,7 @@ func TestRequestBodyLimitMiddleware_ExactLimit(t *testing.T) {
 	t.Parallel()
 
 	limit := int64(1024)
-	mw := NewRequestBodyLimitMiddleware(limit) // 1KB
+	mw := NewRequestBodyLimitMiddleware(limit, apierror.NewWriter("https://example.com")) // 1KB
 
 	// ボディを読み込んで成功を確認するハンドラー
 	handler := mw.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -90,7 +92,7 @@ func TestRequestBodyLimitMiddleware_ExactLimit(t *testing.T) {
 func TestRequestBodyLimitMiddleware_ExceedsLimit_ContentLength(t *testing.T) {
 	t.Parallel()
 
-	mw := NewRequestBodyLimitMiddleware(1024) // 1KB
+	mw := NewRequestBodyLimitMiddleware(1024, apierror.NewWriter("https://example.com")) // 1KB
 	handler := mw.Middleware(testHandler())
 
 	// Content-Lengthが制限を超えている場合
@@ -114,7 +116,7 @@ func TestRequestBodyLimitMiddleware_ExceedsLimit_ReadBody(t *testing.T) {
 	t.Parallel()
 
 	limit := int64(1024)
-	mw := NewRequestBodyLimitMiddleware(limit) // 1KB
+	mw := NewRequestBodyLimitMiddleware(limit, apierror.NewWriter("https://example.com")) // 1KB
 
 	// ボディを読み込もうとしてエラーになることを確認するハンドラー
 	var readErr error
@@ -147,7 +149,7 @@ func TestRequestBodyLimitMiddleware_ExceedsLimit_ReadBody(t *testing.T) {
 func TestRequestBodyLimitMiddleware_ZeroContentLength(t *testing.T) {
 	t.Parallel()
 
-	mw := NewRequestBodyLimitMiddleware(1024) // 1KB
+	mw := NewRequestBodyLimitMiddleware(1024, apierror.NewWriter("https://example.com")) // 1KB
 	handler := mw.Middleware(testHandler())
 
 	// Content-Length = 0のリクエスト
@@ -167,7 +169,7 @@ func TestRequestBodyLimitMiddleware_10MB(t *testing.T) {
 
 	// 本番環境で使用する10MBの制限をテスト
 	limit := int64(10 * 1024 * 1024) // 10MB
-	mw := NewRequestBodyLimitMiddleware(limit)
+	mw := NewRequestBodyLimitMiddleware(limit, apierror.NewWriter("https://example.com"))
 	handler := mw.Middleware(testHandler())
 
 	testCases := []struct {
@@ -200,7 +202,7 @@ func TestRequestBodyLimitMiddleware_10MB(t *testing.T) {
 func TestRequestBodyLimitMiddleware_DifferentMethods(t *testing.T) {
 	t.Parallel()
 
-	mw := NewRequestBodyLimitMiddleware(1024) // 1KB
+	mw := NewRequestBodyLimitMiddleware(1024, apierror.NewWriter("https://example.com")) // 1KB
 	handler := mw.Middleware(testHandler())
 
 	methods := []string{

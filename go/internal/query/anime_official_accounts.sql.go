@@ -59,7 +59,7 @@ func (q *Queries) DeleteAnimeOfficialAccount(ctx context.Context, id int64) erro
 const listAnimeOfficialAccountsByAnimeIDs = `-- name: ListAnimeOfficialAccountsByAnimeIDs :many
 SELECT id, anime_id, service, account, label, label_en, sort_number, created_at, updated_at FROM anime_official_accounts
 WHERE anime_id = ANY($1::bigint[])
-ORDER BY anime_id, service
+ORDER BY anime_id, sort_number, service, id
 `
 
 func (q *Queries) ListAnimeOfficialAccountsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeOfficialAccount, error) {

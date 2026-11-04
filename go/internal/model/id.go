@@ -189,3 +189,9 @@ type FeatureFlagName string
 
 // Stringは文字列表現を返す
 func (n FeatureFlagName) String() string { return string(n) }
+
+// OAuthAccessTokenIDはアクセストークン (`oauth_access_tokens`) のID型
+type OAuthAccessTokenID int64
+
+// Stringは文字列表現を返す
+func (id OAuthAccessTokenID) String() string { return strconv.FormatInt(int64(id), 10) }

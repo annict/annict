@@ -2,17 +2,21 @@ package middleware
 
 import (
 	"net/http"
+
+	"github.com/annict/annict/go/internal/apierror"
 )
 
 // RequestBodyLimitMiddlewareはリクエストボディのサイズを制限するミドルウェア
 type RequestBodyLimitMiddleware struct {
 	maxBytes int64
+	problems *apierror.Writer
 }
 
 // NewRequestBodyLimitMiddlewareは新しいRequestBodyLimitMiddlewareを作成
-func NewRequestBodyLimitMiddleware(maxBytes int64) *RequestBodyLimitMiddleware {
+func NewRequestBodyLimitMiddleware(maxBytes int64, problems *apierror.Writer) *RequestBodyLimitMiddleware {
 	return &RequestBodyLimitMiddleware{
 		maxBytes: maxBytes,
+		problems: problems,
 	}
 }
 
@@ -31,6 +35,10 @@ func (m *RequestBodyLimitMiddleware) Middleware(next http.Handler) http.Handler 
 			// 本処理はリバースプロキシより前で走るため、その内側に登録した
 			// SecurityHeadersミドルウェアは本レスポンスを見ない。
 			setSecurityHeaders(w)
+			if IsAPIPath(r.URL.Path) {
+				m.problems.ContentTooLarge(w, r)
+				return
+			}
 			http.Error(w, "Request body too large", http.StatusRequestEntityTooLarge)
 			return
 		}

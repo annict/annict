@@ -1537,6 +1537,62 @@ func TestReverseProxyMiddleware_DeviceTokenCookieSetOnRequest(t *testing.T) {
 	}
 }
 
+// TestReverseProxyMiddleware_APIPathは、REST API V2のパスをRails版へ送らず、
+// デバイスを識別するCookieも発行せずにGo版へ渡すことを検証する
+func TestReverseProxyMiddleware_APIPath(t *testing.T) {
+	t.Parallel()
+
+	railsServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("Rails response"))
+	}))
+	defer railsServer.Close()
+
+	cfg := &config.Config{
+		Domain: "annict-test.page",
+		Env:    "production",
+	}
+
+	proxyMiddleware, err := NewReverseProxyMiddleware(railsServer.URL, cfg, nil, nil)
+	if err != nil {
+		t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+	}
+
+	handler := proxyMiddleware.Middleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		_, _ = w.Write([]byte("Go response"))
+	}))
+
+	tests := []struct {
+		name     string
+		path     string
+		wantBody string
+	}{
+		{name: "V2のエンドポイント", path: "/api/v2/openapi.yaml", wantBody: "Go response"},
+		{name: "V2の接頭辞だけ", path: "/api/v2", wantBody: "Go response"},
+		{name: "V2の接頭辞と名前の似たパスはRails版へ送る", path: "/api/v20", wantBody: "Rails response"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			req := httptest.NewRequest(http.MethodGet, tt.path, nil)
+			rr := httptest.NewRecorder()
+
+			handler.ServeHTTP(rr, req)
+
+			if rr.Body.String() != tt.wantBody {
+				t.Errorf("レスポンスボディ = %q、期待値 = %q", rr.Body.String(), tt.wantBody)
+			}
+			if tt.wantBody != "Go response" {
+				return
+			}
+			for _, c := range rr.Result().Cookies() {
+				if c.Name == DeviceTokenCookieName {
+					t.Error("APIのパスにdevice_tokenのCookieを発行している")
+				}
+			}
+		})
+	}
+}
+
 // TestReverseProxyMiddleware_MethodOverriddenRouteReachesGoは、PATCH / DELETEで登録した
 // フラグ対象ルートへフォームが _method付きでPOSTしたとき、Goチェーンへ渡されることを検証する。
 // HTMLフォームはPOSTしか送れないため、生のメソッドだけで判定すると実装済みのGo画面がRailsへ

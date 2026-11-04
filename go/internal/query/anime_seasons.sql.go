@@ -7,6 +7,7 @@ package query
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/lib/pq"
 )
@@ -59,6 +60,51 @@ WHERE id = $1
 func (q *Queries) DeleteAnimeSeason(ctx context.Context, id int64) error {
 	_, err := q.db.ExecContext(ctx, deleteAnimeSeason, id)
 	return err
+}
+
+const listAnimeIDsBySeasons = `-- name: ListAnimeIDsBySeasons :many
+SELECT DISTINCT anime_id
+FROM anime_seasons
+WHERE ($1::integer IS NULL OR year = $1::integer)
+    AND (
+        $2::text[] IS NULL
+        OR (
+            year = ANY($3::integer[])
+            AND year::text || '-' || COALESCE(name::text, 'unknown') = ANY($2::text[])
+        )
+    )
+`
+
+type ListAnimeIDsBySeasonsParams struct {
+	Year        sql.NullInt32 `db:"year"`
+	Seasons     []string      `db:"seasons"`
+	SeasonYears []int32       `db:"season_years"`
+}
+
+// 年か季節に一致する季節の行を持つanimeのIDを返す。代表の季節に限らず、どの行に一致してもよい。
+// seasonsは `2026-spring` の形の季節の配列で、季節の分からない行は `2026-unknown` で表す。
+// season_yearsはseasonsの年の配列で、年のインデックスで行を絞るために渡す
+func (q *Queries) ListAnimeIDsBySeasons(ctx context.Context, arg ListAnimeIDsBySeasonsParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listAnimeIDsBySeasons, arg.Year, pq.Array(arg.Seasons), pq.Array(arg.SeasonYears))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var anime_id int64
+		if err := rows.Scan(&anime_id); err != nil {
+			return nil, err
+		}
+		items = append(items, anime_id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const listAnimeSeasonsByAnimeIDs = `-- name: ListAnimeSeasonsByAnimeIDs :many

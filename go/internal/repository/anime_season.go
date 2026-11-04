@@ -112,3 +112,30 @@ func toAnimeSeasonModel(row query.AnimeSeason) model.AnimeSeason {
 	}
 	return season
 }
+
+// ListAnimeIDsBySeasonsは、年か季節に一致する季節の行を持つanimeのIDを返す。代表の季節に限らず、どの行に一致してもよい。
+// yearとbucketsの両方を指定すると、両方に一致する同じ行を持つanimeに限る。別の行での一致を求めるときは別々に呼ぶ
+func (r *AnimeSeasonRepository) ListAnimeIDsBySeasons(ctx context.Context, year *int32, buckets []model.SeasonBucket) ([]model.AnimeID, error) {
+	var params query.ListAnimeIDsBySeasonsParams
+	if year != nil {
+		params.Year = sql.NullInt32{Int32: *year, Valid: true}
+	}
+	if buckets != nil {
+		params.Seasons = make([]string, len(buckets))
+		params.SeasonYears = make([]int32, len(buckets))
+		for i, b := range buckets {
+			params.Seasons[i] = b.String()
+			params.SeasonYears[i] = b.Year
+		}
+	}
+
+	rows, err := r.queries.ListAnimeIDsBySeasons(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	ids := make([]model.AnimeID, len(rows))
+	for i, id := range rows {
+		ids[i] = model.AnimeID(id)
+	}
+	return ids, nil
+}

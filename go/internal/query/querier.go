@@ -62,6 +62,8 @@ type Querier interface {
 	CountDBPeople(ctx context.Context, includeDelisted bool) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
+	// 作品ごとの公開中のエピソードの数を返す。エピソードの無い作品の行は返さない
+	CountPublishedEpisodesByParentAnimeIDs(ctx context.Context, dollar_1 []int64) ([]CountPublishedEpisodesByParentAnimeIDsRow, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountUnusedUserTwoFactorRecoveryCodes(ctx context.Context, userID int64) (int64, error)
 	CreateAnime(ctx context.Context, arg CreateAnimeParams) (Anime, error)
@@ -379,6 +381,7 @@ type Querier interface {
 	GetActivityGroupByUserAndType(ctx context.Context, arg GetActivityGroupByUserAndTypeParams) (ActivityGroup, error)
 	GetAnimeByID(ctx context.Context, id int64) (Anime, error)
 	GetAnimeClassificationByAnimeID(ctx context.Context, animeID int64) (AnimeClassification, error)
+	GetAnimeRedirectByOldAnimeID(ctx context.Context, oldAnimeID int64) (AnimeRedirect, error)
 	// カレンダー用の放送枠を取得します
 	// 現在時刻から7日後までの未視聴エピソードを対象とします
 	GetCalendarSlots(ctx context.Context, arg GetCalendarSlotsParams) ([]GetCalendarSlotsRow, error)
@@ -436,6 +439,9 @@ type Querier interface {
 	GetGumroadSubscriberByID(ctx context.Context, id int64) (GumroadSubscriber, error)
 	// ユーザーの視聴リスト (見たい・見てる) からprogram_idを取得します
 	GetLibraryEntryProgramIDs(ctx context.Context, userID int64) ([]GetLibraryEntryProgramIDsRow, error)
+	// REST API V2で受け取ったアクセストークンを照合するために引く。
+	// 退会・利用停止でdeleted_atが立った利用者のトークンは返さない。
+	GetOAuthAccessTokenByToken(ctx context.Context, token string) (GetOAuthAccessTokenByTokenRow, error)
 	GetOAuthApplicationByUID(ctx context.Context, uid string) (GetOAuthApplicationByUIDRow, error)
 	// トークンの発行後に退会・利用停止したユーザーのトークンは無効として扱う。
 	GetPasswordResetTokenByDigest(ctx context.Context, tokenDigest string) (PasswordResetToken, error)
@@ -549,13 +555,35 @@ type Querier interface {
 	// 0行なら呼び出し側は生成をロールバックする。Railsのupdate_column相当で、updated_atも
 	// 作品のtouchも行わない。
 	LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error)
+	// 作品の公開中のエピソードを (sort_number, anime_id) の順に並べる
+	ListAPIEpisodeIDs(ctx context.Context, arg ListAPIEpisodeIDsParams) ([]int64, error)
+	// REST API V2の作品の一覧は、並び順ごとにクエリを分ける。並び順をCASEで切り替えると、インデックスで並べられないため。
+	// 絞り込みの条件は4つで同じにする。idsは候補のanime_id (年・季節の絞り込みは先にListAnimeIDsBySeasonsで候補にする)、
+	// title_patternはLIKEの特殊文字をエスケープした部分一致のパターン。
+	ListAPIWorkIDsOrderByID(ctx context.Context, arg ListAPIWorkIDsOrderByIDParams) ([]int64, error)
+	ListAPIWorkIDsOrderByIDDesc(ctx context.Context, arg ListAPIWorkIDsOrderByIDDescParams) ([]int64, error)
+	// 代表の季節のキー (model.AnimeSeason.SortKeyと同じ式)・anime_idの順に並べ、代表の季節の無い作品は最後に置く。
+	// 代表の季節のある作品と無い作品を別々に並べて読み、季節のキーのインデックスで先頭から読めるようにする。
+	// after_season_keyは前のページの最後の作品の季節のキーで、代表の季節の無い作品ならNULLにする
+	ListAPIWorkIDsOrderBySeason(ctx context.Context, arg ListAPIWorkIDsOrderBySeasonParams) ([]int64, error)
+	// 季節の新しい順に並べる。代表の季節の無い作品は、こちらでも最後に置く
+	ListAPIWorkIDsOrderBySeasonDesc(ctx context.Context, arg ListAPIWorkIDsOrderBySeasonDescParams) ([]int64, error)
 	ListAllProfiles(ctx context.Context) ([]ListAllProfilesRow, error)
 	ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeClassification, error)
 	ListAnimeEventsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeEvent, error)
 	ListAnimeExternalIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeExternalID, error)
 	ListAnimeHashtagsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeHashtag, error)
+	// 旧エピソードのIDから、写した先のanimeのIDを引く。animeに写していない旧エピソードは含めない
+	ListAnimeIDsByEpisodeIDs(ctx context.Context, episodeIds []int64) ([]ListAnimeIDsByEpisodeIDsRow, error)
+	// 年か季節に一致する季節の行を持つanimeのIDを返す。代表の季節に限らず、どの行に一致してもよい。
+	// seasonsは `2026-spring` の形の季節の配列で、季節の分からない行は `2026-unknown` で表す。
+	// season_yearsはseasonsの年の配列で、年のインデックスで行を絞るために渡す
+	ListAnimeIDsBySeasons(ctx context.Context, arg ListAnimeIDsBySeasonsParams) ([]int64, error)
+	// 旧作品のIDから、写した先のanimeのIDを引く。animeに写していない旧作品は含めない
+	ListAnimeIDsByWorkIDs(ctx context.Context, workIds []int64) ([]ListAnimeIDsByWorkIDsRow, error)
 	ListAnimeLinksByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeLink, error)
 	ListAnimeOfficialAccountsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeOfficialAccount, error)
+	ListAnimeRedirectsByOldAnimeIDs(ctx context.Context, oldAnimeIds []int64) ([]AnimeRedirect, error)
 	ListAnimeSeasonsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeSeason, error)
 	ListAnimesByIDs(ctx context.Context, dollar_1 []int64) ([]Anime, error)
 	// 直前のエピソードはepisodes.prev_episode_idを読まず、sort_number昇順の隣接行から
@@ -572,6 +600,8 @@ type Querier interface {
 	ListDBPeople(ctx context.Context, arg ListDBPeopleParams) ([]ListDBPeopleRow, error)
 	ListDBWorks(ctx context.Context, arg ListDBWorksParams) ([]ListDBWorksRow, error)
 	ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAfterParams) ([]int64, error)
+	// 参照モデルのanimeに写した旧エピソードのIDを引く
+	ListEpisodeIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodeIDsByAnimeIDsRow, error)
 	// UpdateDBEpisodeがこの後に書く行と、隣接行として参照する行をid昇順で列挙する。編集対象
 	// 自身・移動前の直前行・移動前の直後行・移動後の直前行・移動後の直後行の5行である。呼び出し側
 	// はこれだけをロックするため、1回の編集のロック範囲が作品のエピソード数に比例して増えない。
@@ -606,12 +636,18 @@ type Querier interface {
 	// 退会の削除処理でストレージから消す画像を求めるため、ユーザーのプロフィール画像と背景画像の
 	// Shrineの添付データを取得する。
 	ListProfileImageDataByUserID(ctx context.Context, userID int64) ([]ListProfileImageDataByUserIDRow, error)
+	// 指定したエピソードについて、同じ作品の公開中のエピソードを (sort_number, anime_id) の順に並べたときの前後を返す。
+	// 前後を作品ごとにまとめて求めるため、親の作品の公開中のエピソードをすべて並べてから絞る。
+	// 前後が無いときは0を返す (animes.idは1から始まる)
+	ListPublishedEpisodeNeighbors(ctx context.Context, arg ListPublishedEpisodeNeighborsParams) ([]ListPublishedEpisodeNeighborsRow, error)
 	// 自動生成の対象はRailsのepisode:generateと同じ条件 (未削除・公開中で、エピソードが紐づいて
 	// おらず、再放送でも不定期放送でもなく、番組と回数を持つ) の放送枠に、開始日時の範囲と作品が
 	// 未削除・公開中であることを加えたもの。
 	// 一覧では処理するidと所属作品だけを読み、話数の計算に使う値は作品ロック後に読み直す。
 	ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlotsForEpisodeGenerationParams) ([]ListSlotsForEpisodeGenerationRow, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
+	// 参照モデルのanimeに写した旧作品のIDを引く
+	ListWorkIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]ListWorkIDsByAnimeIDsRow, error)
 	ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error)
 	ListWorksForSatelliteSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForSatelliteSyncByIDsRow, error)
 	// 隣接リンクの導出・書き込み前に、列挙されたエピソードをid昇順でロックする。Railsは

@@ -1,6 +1,11 @@
 package model
 
-import "time"
+import (
+	"fmt"
+	"strconv"
+	"strings"
+	"time"
+)
 
 // SeasonNameはAnimeSeasonの季節を表し、PostgreSQLのseason_name enumと対応する。
 // 旧works.season_nameのinteger (1=winter, 2=spring, 3=summer, 4=autumn) がこれらの値に
@@ -35,4 +40,69 @@ type AnimeSeason struct {
 	IsPrimary bool
 	CreatedAt time.Time
 	UpdatedAt time.Time
+}
+
+// SortKeyは、季節の順に並べるためのキーを返す。年 * 10に、季節 (冬1・春2・夏3・秋4・不明5) を足す。
+// REST API V2の作品の一覧のクエリ (ListAPIWorkIDsOrderBySeason) とインデックスも同じ式で並べるため、
+// 式を変えるときはクエリとインデックスもあわせて変える
+func (s *AnimeSeason) SortKey() int32 {
+	return s.Year*10 + seasonNameSortOrder(s.Name)
+}
+
+func seasonNameSortOrder(name *SeasonName) int32 {
+	if name == nil {
+		return 5
+	}
+	switch *name {
+	case SeasonNameWinter:
+		return 1
+	case SeasonNameSpring:
+		return 2
+	case SeasonNameSummer:
+		return 3
+	case SeasonNameFall:
+		return 4
+	default:
+		return 5
+	}
+}
+
+// SeasonBucketは、作品を絞り込む季節 (年と季節) を表す。Nameがnilのものは、年だけが分かっていて季節の分からない作品を指す
+type SeasonBucket struct {
+	Year int32
+	Name *SeasonName
+}
+
+// seasonBucketUnknownは、季節の分からない作品を指すSeasonBucketの文字列表現の季節の部分
+const seasonBucketUnknown = "unknown"
+
+// Stringは `2026-spring`・`2026-unknown` の形の文字列を返す
+func (b SeasonBucket) String() string {
+	name := seasonBucketUnknown
+	if b.Name != nil {
+		name = string(*b.Name)
+	}
+	return strconv.FormatInt(int64(b.Year), 10) + "-" + name
+}
+
+// ParseSeasonBucketは `2026-spring`・`2026-unknown` の形の文字列を読む
+func ParseSeasonBucket(s string) (SeasonBucket, error) {
+	yearText, nameText, ok := strings.Cut(s, "-")
+	if !ok {
+		return SeasonBucket{}, fmt.Errorf("季節 %q は `{年}-{季節}` の形ではありません", s)
+	}
+	year, err := strconv.ParseInt(yearText, 10, 32)
+	if err != nil {
+		return SeasonBucket{}, fmt.Errorf("季節 %q の年を読めません: %w", s, err)
+	}
+
+	bucket := SeasonBucket{Year: int32(year)}
+	switch name := SeasonName(nameText); name {
+	case SeasonNameWinter, SeasonNameSpring, SeasonNameSummer, SeasonNameFall:
+		bucket.Name = &name
+	case seasonBucketUnknown:
+	default:
+		return SeasonBucket{}, fmt.Errorf("季節 %q の季節を読めません", s)
+	}
+	return bucket, nil
 }

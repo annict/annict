@@ -19,3 +19,19 @@ WITH deleted AS (
     RETURNING oauth_access_tokens.id
 )
 SELECT COUNT(*) FROM deleted;
+
+-- name: GetOAuthAccessTokenByToken :one
+-- REST API V2で受け取ったアクセストークンを照合するために引く。
+-- 退会・利用停止でdeleted_atが立った利用者のトークンは返さない。
+SELECT
+    oauth_access_tokens.id,
+    oauth_access_tokens.resource_owner_id,
+    oauth_access_tokens.application_id,
+    oauth_access_tokens.expires_in,
+    oauth_access_tokens.revoked_at,
+    oauth_access_tokens.created_at,
+    oauth_access_tokens.scopes
+FROM oauth_access_tokens
+INNER JOIN users ON users.id = oauth_access_tokens.resource_owner_id
+WHERE oauth_access_tokens.token = sqlc.arg('token')
+    AND users.deleted_at IS NULL;
