@@ -35,7 +35,7 @@ require (
 	github.com/riverqueue/river/rivertype v0.49.0
 	github.com/schollz/progressbar/v3 v3.19.1
 	github.com/stripe/stripe-go/v84 v84.4.1
-	github.com/yuin/goldmark v1.8.6
+	github.com/yuin/goldmark v1.8.7
 	golang.org/x/tools v0.52.0
 )
 
