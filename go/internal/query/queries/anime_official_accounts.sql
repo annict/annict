@@ -12,7 +12,7 @@ INSERT INTO anime_official_accounts (
 -- name: ListAnimeOfficialAccountsByAnimeIDs :many
 SELECT * FROM anime_official_accounts
 WHERE anime_id = ANY($1::bigint[])
-ORDER BY anime_id, service;
+ORDER BY anime_id, sort_number, service, id;
 
 -- name: UpdateAnimeOfficialAccount :exec
 UPDATE anime_official_accounts

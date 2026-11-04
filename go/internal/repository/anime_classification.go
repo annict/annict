@@ -195,3 +195,67 @@ func nullInt64FromNumberFormatID(id *model.NumberFormatID) sql.NullInt64 {
 	}
 	return sql.NullInt64{Int64: int64(*id), Valid: true}
 }
+
+// CountPublishedEpisodesByParentAnimeIDsは、指定した作品ごとの公開中のエピソードの数を返す。
+// エピソードの無い作品はmapに含めない。空入力ではクエリせず空のmapを返す
+func (r *AnimeClassificationRepository) CountPublishedEpisodesByParentAnimeIDs(ctx context.Context, parentAnimeIDs []model.AnimeID) (map[model.AnimeID]int64, error) {
+	counts := make(map[model.AnimeID]int64, len(parentAnimeIDs))
+	if len(parentAnimeIDs) == 0 {
+		return counts, nil
+	}
+
+	rawIDs := make([]int64, len(parentAnimeIDs))
+	for i, id := range parentAnimeIDs {
+		rawIDs[i] = int64(id)
+	}
+
+	rows, err := r.queries.CountPublishedEpisodesByParentAnimeIDs(ctx, rawIDs)
+	if err != nil {
+		return nil, err
+	}
+	for _, row := range rows {
+		counts[model.AnimeID(row.ParentAnimeID)] = row.EpisodesCount
+	}
+	return counts, nil
+}
+
+// ListPublishedEpisodeNeighborsは、指定したエピソードについて、同じ作品の公開中のエピソードを並べたときの前後を返す。
+// parentAnimeIDsはエピソードの親の作品。前後を作品ごとにまとめて求めるため、エピソードの数によらずクエリは1回で済む。
+// 公開中でないエピソードは結果に含めない。空入力ではクエリしない
+func (r *AnimeClassificationRepository) ListPublishedEpisodeNeighbors(ctx context.Context, parentAnimeIDs, animeIDs []model.AnimeID) ([]*model.EpisodeNeighbors, error) {
+	if len(parentAnimeIDs) == 0 || len(animeIDs) == 0 {
+		return []*model.EpisodeNeighbors{}, nil
+	}
+
+	rows, err := r.queries.ListPublishedEpisodeNeighbors(ctx, query.ListPublishedEpisodeNeighborsParams{
+		ParentAnimeIds: animeIDsToInt64s(parentAnimeIDs),
+		AnimeIds:       animeIDsToInt64s(animeIDs),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	neighbors := make([]*model.EpisodeNeighbors, len(rows))
+	for i, row := range rows {
+		n := &model.EpisodeNeighbors{AnimeID: model.AnimeID(row.AnimeID)}
+		// クエリは前後が無いときに0を返す
+		if row.PrevAnimeID != 0 {
+			prev := model.AnimeID(row.PrevAnimeID)
+			n.PrevAnimeID = &prev
+		}
+		if row.NextAnimeID != 0 {
+			next := model.AnimeID(row.NextAnimeID)
+			n.NextAnimeID = &next
+		}
+		neighbors[i] = n
+	}
+	return neighbors, nil
+}
+
+func animeIDsToInt64s(ids []model.AnimeID) []int64 {
+	raw := make([]int64, len(ids))
+	for i, id := range ids {
+		raw[i] = int64(id)
+	}
+	return raw
+}

@@ -7,6 +7,8 @@ package query
 
 import (
 	"context"
+	"database/sql"
+	"time"
 )
 
 const deleteOAuthAccessTokensByUserID = `-- name: DeleteOAuthAccessTokensByUserID :one
@@ -42,4 +44,46 @@ func (q *Queries) DeleteOAuthAccessTokensByUserID(ctx context.Context, arg Delet
 	var count int64
 	err := row.Scan(&count)
 	return count, err
+}
+
+const getOAuthAccessTokenByToken = `-- name: GetOAuthAccessTokenByToken :one
+SELECT
+    oauth_access_tokens.id,
+    oauth_access_tokens.resource_owner_id,
+    oauth_access_tokens.application_id,
+    oauth_access_tokens.expires_in,
+    oauth_access_tokens.revoked_at,
+    oauth_access_tokens.created_at,
+    oauth_access_tokens.scopes
+FROM oauth_access_tokens
+INNER JOIN users ON users.id = oauth_access_tokens.resource_owner_id
+WHERE oauth_access_tokens.token = $1
+    AND users.deleted_at IS NULL
+`
+
+type GetOAuthAccessTokenByTokenRow struct {
+	ID              int64          `db:"id"`
+	ResourceOwnerID int64          `db:"resource_owner_id"`
+	ApplicationID   sql.NullInt64  `db:"application_id"`
+	ExpiresIn       sql.NullInt32  `db:"expires_in"`
+	RevokedAt       sql.NullTime   `db:"revoked_at"`
+	CreatedAt       time.Time      `db:"created_at"`
+	Scopes          sql.NullString `db:"scopes"`
+}
+
+// REST API V2で受け取ったアクセストークンを照合するために引く。
+// 退会・利用停止でdeleted_atが立った利用者のトークンは返さない。
+func (q *Queries) GetOAuthAccessTokenByToken(ctx context.Context, token string) (GetOAuthAccessTokenByTokenRow, error) {
+	row := q.db.QueryRowContext(ctx, getOAuthAccessTokenByToken, token)
+	var i GetOAuthAccessTokenByTokenRow
+	err := row.Scan(
+		&i.ID,
+		&i.ResourceOwnerID,
+		&i.ApplicationID,
+		&i.ExpiresIn,
+		&i.RevokedAt,
+		&i.CreatedAt,
+		&i.Scopes,
+	)
+	return i, err
 }

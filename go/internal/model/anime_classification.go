@@ -38,3 +38,10 @@ type AnimeClassification struct {
 	CreatedAt             time.Time
 	UpdatedAt             time.Time
 }
+
+// EpisodeNeighborsは、エピソードと同じ作品の公開中のエピソードを並べたときの、前後のエピソード
+type EpisodeNeighbors struct {
+	AnimeID     AnimeID
+	PrevAnimeID *AnimeID
+	NextAnimeID *AnimeID
+}

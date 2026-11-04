@@ -133,6 +133,363 @@ func (q *Queries) GetAnimeByID(ctx context.Context, id int64) (Anime, error) {
 	return i, err
 }
 
+const listAPIEpisodeIDs = `-- name: ListAPIEpisodeIDs :many
+SELECT ac.anime_id
+FROM anime_classifications ac
+INNER JOIN animes a ON a.id = ac.anime_id
+WHERE ac.parent_anime_id = $1::bigint
+    AND a.status = 'published'
+    AND (
+        $2::bigint IS NULL
+        OR ac.sort_number > $3::integer
+        OR (ac.sort_number = $3::integer AND ac.anime_id > $2::bigint)
+    )
+ORDER BY ac.sort_number, ac.anime_id
+LIMIT $4
+`
+
+type ListAPIEpisodeIDsParams struct {
+	ParentAnimeID   int64         `db:"parent_anime_id"`
+	AfterAnimeID    sql.NullInt64 `db:"after_anime_id"`
+	AfterSortNumber sql.NullInt32 `db:"after_sort_number"`
+	RowLimit        int32         `db:"row_limit"`
+}
+
+// 作品の公開中のエピソードを (sort_number, anime_id) の順に並べる
+func (q *Queries) ListAPIEpisodeIDs(ctx context.Context, arg ListAPIEpisodeIDsParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listAPIEpisodeIDs,
+		arg.ParentAnimeID,
+		arg.AfterAnimeID,
+		arg.AfterSortNumber,
+		arg.RowLimit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var anime_id int64
+		if err := rows.Scan(&anime_id); err != nil {
+			return nil, err
+		}
+		items = append(items, anime_id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAPIWorkIDsOrderByID = `-- name: ListAPIWorkIDsOrderByID :many
+
+SELECT a.id
+FROM animes a
+INNER JOIN anime_classifications ac ON ac.anime_id = a.id
+WHERE ac.kind = 'work' AND a.status = 'published'
+    AND ($1::bigint[] IS NULL OR a.id = ANY($1::bigint[]))
+    AND (
+        $2::text IS NULL
+        OR a.title ILIKE $2::text
+        OR a.title_kana ILIKE $2::text
+    )
+    AND ($3::bigint IS NULL OR a.id > $3::bigint)
+ORDER BY a.id
+LIMIT $4
+`
+
+type ListAPIWorkIDsOrderByIDParams struct {
+	Ids          []int64        `db:"ids"`
+	TitlePattern sql.NullString `db:"title_pattern"`
+	AfterID      sql.NullInt64  `db:"after_id"`
+	RowLimit     int32          `db:"row_limit"`
+}
+
+// REST API V2の作品の一覧は、並び順ごとにクエリを分ける。並び順をCASEで切り替えると、インデックスで並べられないため。
+// 絞り込みの条件は4つで同じにする。idsは候補のanime_id (年・季節の絞り込みは先にListAnimeIDsBySeasonsで候補にする)、
+// title_patternはLIKEの特殊文字をエスケープした部分一致のパターン。
+func (q *Queries) ListAPIWorkIDsOrderByID(ctx context.Context, arg ListAPIWorkIDsOrderByIDParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listAPIWorkIDsOrderByID,
+		pq.Array(arg.Ids),
+		arg.TitlePattern,
+		arg.AfterID,
+		arg.RowLimit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAPIWorkIDsOrderByIDDesc = `-- name: ListAPIWorkIDsOrderByIDDesc :many
+SELECT a.id
+FROM animes a
+INNER JOIN anime_classifications ac ON ac.anime_id = a.id
+WHERE ac.kind = 'work' AND a.status = 'published'
+    AND ($1::bigint[] IS NULL OR a.id = ANY($1::bigint[]))
+    AND (
+        $2::text IS NULL
+        OR a.title ILIKE $2::text
+        OR a.title_kana ILIKE $2::text
+    )
+    AND ($3::bigint IS NULL OR a.id < $3::bigint)
+ORDER BY a.id DESC
+LIMIT $4
+`
+
+type ListAPIWorkIDsOrderByIDDescParams struct {
+	Ids          []int64        `db:"ids"`
+	TitlePattern sql.NullString `db:"title_pattern"`
+	AfterID      sql.NullInt64  `db:"after_id"`
+	RowLimit     int32          `db:"row_limit"`
+}
+
+func (q *Queries) ListAPIWorkIDsOrderByIDDesc(ctx context.Context, arg ListAPIWorkIDsOrderByIDDescParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listAPIWorkIDsOrderByIDDesc,
+		pq.Array(arg.Ids),
+		arg.TitlePattern,
+		arg.AfterID,
+		arg.RowLimit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAPIWorkIDsOrderBySeason = `-- name: ListAPIWorkIDsOrderBySeason :many
+SELECT x.id
+FROM (
+    (
+        SELECT a.id, 0 AS season_group, ps.season_key
+        FROM (
+            SELECT
+                anime_id,
+                year * 10 + CASE name
+                    WHEN 'winter' THEN 1
+                    WHEN 'spring' THEN 2
+                    WHEN 'summer' THEN 3
+                    WHEN 'fall' THEN 4
+                    ELSE 5
+                END AS season_key
+            FROM anime_seasons
+            WHERE is_primary
+        ) ps
+        INNER JOIN animes a ON a.id = ps.anime_id
+        INNER JOIN anime_classifications ac ON ac.anime_id = a.id
+        WHERE ac.kind = 'work' AND a.status = 'published'
+            AND ($1::bigint[] IS NULL OR a.id = ANY($1::bigint[]))
+            AND (
+                $2::text IS NULL
+                OR a.title ILIKE $2::text
+                OR a.title_kana ILIKE $2::text
+            )
+            AND (
+                $3::bigint IS NULL
+                OR ps.season_key > $4::integer
+                OR (ps.season_key = $4::integer AND ps.anime_id > $3::bigint)
+            )
+        ORDER BY ps.season_key ASC, ps.anime_id ASC
+        LIMIT $5
+    )
+    UNION ALL
+    (
+        SELECT a.id, 1 AS season_group, NULL::integer AS season_key
+        FROM animes a
+        INNER JOIN anime_classifications ac ON ac.anime_id = a.id
+        WHERE ac.kind = 'work' AND a.status = 'published'
+            AND NOT EXISTS (SELECT 1 FROM anime_seasons ps WHERE ps.anime_id = a.id AND ps.is_primary)
+            AND ($1::bigint[] IS NULL OR a.id = ANY($1::bigint[]))
+            AND (
+                $2::text IS NULL
+                OR a.title ILIKE $2::text
+                OR a.title_kana ILIKE $2::text
+            )
+            AND (
+                $3::bigint IS NULL
+                OR $4::integer IS NOT NULL
+                OR a.id > $3::bigint
+            )
+        ORDER BY a.id ASC
+        LIMIT $5
+    )
+) x
+ORDER BY x.season_group, x.season_key ASC, x.id ASC
+LIMIT $5
+`
+
+type ListAPIWorkIDsOrderBySeasonParams struct {
+	Ids            []int64        `db:"ids"`
+	TitlePattern   sql.NullString `db:"title_pattern"`
+	AfterID        sql.NullInt64  `db:"after_id"`
+	AfterSeasonKey sql.NullInt32  `db:"after_season_key"`
+	RowLimit       int32          `db:"row_limit"`
+}
+
+// 代表の季節のキー (model.AnimeSeason.SortKeyと同じ式)・anime_idの順に並べ、代表の季節の無い作品は最後に置く。
+// 代表の季節のある作品と無い作品を別々に並べて読み、季節のキーのインデックスで先頭から読めるようにする。
+// after_season_keyは前のページの最後の作品の季節のキーで、代表の季節の無い作品ならNULLにする
+func (q *Queries) ListAPIWorkIDsOrderBySeason(ctx context.Context, arg ListAPIWorkIDsOrderBySeasonParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listAPIWorkIDsOrderBySeason,
+		pq.Array(arg.Ids),
+		arg.TitlePattern,
+		arg.AfterID,
+		arg.AfterSeasonKey,
+		arg.RowLimit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listAPIWorkIDsOrderBySeasonDesc = `-- name: ListAPIWorkIDsOrderBySeasonDesc :many
+SELECT x.id
+FROM (
+    (
+        SELECT a.id, 0 AS season_group, ps.season_key
+        FROM (
+            SELECT
+                anime_id,
+                year * 10 + CASE name
+                    WHEN 'winter' THEN 1
+                    WHEN 'spring' THEN 2
+                    WHEN 'summer' THEN 3
+                    WHEN 'fall' THEN 4
+                    ELSE 5
+                END AS season_key
+            FROM anime_seasons
+            WHERE is_primary
+        ) ps
+        INNER JOIN animes a ON a.id = ps.anime_id
+        INNER JOIN anime_classifications ac ON ac.anime_id = a.id
+        WHERE ac.kind = 'work' AND a.status = 'published'
+            AND ($1::bigint[] IS NULL OR a.id = ANY($1::bigint[]))
+            AND (
+                $2::text IS NULL
+                OR a.title ILIKE $2::text
+                OR a.title_kana ILIKE $2::text
+            )
+            AND (
+                $3::bigint IS NULL
+                OR ps.season_key < $4::integer
+                OR (ps.season_key = $4::integer AND ps.anime_id < $3::bigint)
+            )
+        ORDER BY ps.season_key DESC, ps.anime_id DESC
+        LIMIT $5
+    )
+    UNION ALL
+    (
+        SELECT a.id, 1 AS season_group, NULL::integer AS season_key
+        FROM animes a
+        INNER JOIN anime_classifications ac ON ac.anime_id = a.id
+        WHERE ac.kind = 'work' AND a.status = 'published'
+            AND NOT EXISTS (SELECT 1 FROM anime_seasons ps WHERE ps.anime_id = a.id AND ps.is_primary)
+            AND ($1::bigint[] IS NULL OR a.id = ANY($1::bigint[]))
+            AND (
+                $2::text IS NULL
+                OR a.title ILIKE $2::text
+                OR a.title_kana ILIKE $2::text
+            )
+            AND (
+                $3::bigint IS NULL
+                OR $4::integer IS NOT NULL
+                OR a.id < $3::bigint
+            )
+        ORDER BY a.id DESC
+        LIMIT $5
+    )
+) x
+ORDER BY x.season_group, x.season_key DESC, x.id DESC
+LIMIT $5
+`
+
+type ListAPIWorkIDsOrderBySeasonDescParams struct {
+	Ids            []int64        `db:"ids"`
+	TitlePattern   sql.NullString `db:"title_pattern"`
+	AfterID        sql.NullInt64  `db:"after_id"`
+	AfterSeasonKey sql.NullInt32  `db:"after_season_key"`
+	RowLimit       int32          `db:"row_limit"`
+}
+
+// 季節の新しい順に並べる。代表の季節の無い作品は、こちらでも最後に置く
+func (q *Queries) ListAPIWorkIDsOrderBySeasonDesc(ctx context.Context, arg ListAPIWorkIDsOrderBySeasonDescParams) ([]int64, error) {
+	rows, err := q.db.QueryContext(ctx, listAPIWorkIDsOrderBySeasonDesc,
+		pq.Array(arg.Ids),
+		arg.TitlePattern,
+		arg.AfterID,
+		arg.AfterSeasonKey,
+		arg.RowLimit,
+	)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []int64{}
+	for rows.Next() {
+		var id int64
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listAnimesByIDs = `-- name: ListAnimesByIDs :many
 SELECT id, title, title_kana, title_ro, title_en, title_alter, title_alter_ro, title_alter_en, title_alter_other, media, release_status, synopsis, synopsis_en, synopsis_source, synopsis_source_en, status, archive_message, created_at, updated_at FROM animes
 WHERE id = ANY($1::bigint[])

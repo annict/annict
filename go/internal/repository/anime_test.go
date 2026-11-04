@@ -238,3 +238,197 @@ func TestAnimeRepository_UpdateTitle(t *testing.T) {
 		t.Errorf("(TitleKana, Synopsis) = (%q, %q)、期待値 = (てすとあにめ, あらすじ)", got.TitleKana.String, got.Synopsis.String)
 	}
 }
+
+// createTestEpisodeAnimeは、作品parentIDのエピソードのanimeと分類を作る
+func createTestEpisodeAnime(t *testing.T, queries *query.Queries, parentID model.AnimeID, sortNumber int32, status model.AnimeStatus) model.AnimeID {
+	t.Helper()
+	anime, err := repository.NewAnimeRepository(queries).Create(context.Background(), repository.CreateAnimeParams{
+		Title:  nullStr("エピソード"),
+		Status: status,
+	})
+	if err != nil {
+		t.Fatalf("エピソードのanimeの作成に失敗しました: %v", err)
+	}
+	if _, err := repository.NewAnimeClassificationRepository(queries).Create(context.Background(), repository.CreateAnimeClassificationParams{
+		AnimeID:       anime.ID,
+		Kind:          model.AnimeClassificationKindEpisode,
+		ParentAnimeID: &parentID,
+		SortNumber:    sql.NullInt32{Int32: sortNumber, Valid: true},
+	}); err != nil {
+		t.Fatalf("エピソードの分類の作成に失敗しました: %v", err)
+	}
+	return anime.ID
+}
+
+// createTestWorkAnimeは作品のanimeと分類を作り、seasonsを代表の季節から順に付ける
+func createTestWorkAnime(t *testing.T, queries *query.Queries, title string, status model.AnimeStatus, seasons ...model.SeasonBucket) model.AnimeID {
+	t.Helper()
+	ctx := context.Background()
+	anime, err := repository.NewAnimeRepository(queries).Create(ctx, repository.CreateAnimeParams{
+		Title:  nullStr(title),
+		Status: status,
+	})
+	if err != nil {
+		t.Fatalf("作品のanimeの作成に失敗しました: %v", err)
+	}
+	if _, err := repository.NewAnimeClassificationRepository(queries).Create(ctx, repository.CreateAnimeClassificationParams{
+		AnimeID: anime.ID,
+		Kind:    model.AnimeClassificationKindWork,
+	}); err != nil {
+		t.Fatalf("作品の分類の作成に失敗しました: %v", err)
+	}
+	for i, s := range seasons {
+		if _, err := repository.NewAnimeSeasonRepository(queries).Create(ctx, repository.CreateAnimeSeasonParams{
+			AnimeID: anime.ID, Year: s.Year, Name: s.Name, IsPrimary: i == 0,
+		}); err != nil {
+			t.Fatalf("季節の作成に失敗しました: %v", err)
+		}
+	}
+	return anime.ID
+}
+
+func season(year int32, name model.SeasonName) model.SeasonBucket {
+	return model.SeasonBucket{Year: year, Name: &name}
+}
+
+func animeIDsOf(animes []*model.Anime) []model.AnimeID {
+	ids := make([]model.AnimeID, len(animes))
+	for i, a := range animes {
+		ids[i] = a.ID
+	}
+	return ids
+}
+
+func TestAnimeRepository_ListAPIWorks(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewAnimeRepository(queries)
+
+	fall2025 := createTestWorkAnime(t, queries, "秋の作品", model.AnimeStatusPublished, season(2025, model.SeasonNameFall))
+	unknown2025 := createTestWorkAnime(t, queries, "季節不明の作品", model.AnimeStatusPublished, model.SeasonBucket{Year: 2025})
+	winter2026 := createTestWorkAnime(t, queries, "100%_の作品", model.AnimeStatusPublished, season(2026, model.SeasonNameWinter), season(2025, model.SeasonNameFall))
+	noSeason := createTestWorkAnime(t, queries, "季節の無い作品", model.AnimeStatusPublished)
+	// 同じ季節キーの作品どうしと、代表の季節の無い作品どうしは、IDの向きで並ぶ
+	sameFall2025 := createTestWorkAnime(t, queries, "同じ秋の作品", model.AnimeStatusPublished, season(2025, model.SeasonNameFall))
+	otherNoSeason := createTestWorkAnime(t, queries, "もう1つの季節の無い作品", model.AnimeStatusPublished)
+	archived := createTestWorkAnime(t, queries, "非公開の作品", model.AnimeStatusArchived, season(2025, model.SeasonNameFall))
+	episode := createTestEpisodeAnime(t, queries, fall2025, 1, model.AnimeStatusPublished)
+	candidates := []model.AnimeID{fall2025, unknown2025, winter2026, noSeason, sameFall2025, otherNoSeason, archived, episode}
+
+	tests := []struct {
+		name  string
+		order repository.APIWorkOrder
+		want  []model.AnimeID
+	}{
+		{name: "IDの順。非公開とエピソードは含めない", order: repository.APIWorkOrderID, want: []model.AnimeID{fall2025, unknown2025, winter2026, noSeason, sameFall2025, otherNoSeason}},
+		{name: "IDの逆順", order: repository.APIWorkOrderIDDesc, want: []model.AnimeID{otherNoSeason, sameFall2025, noSeason, winter2026, unknown2025, fall2025}},
+		{
+			name:  "代表の季節の順。季節不明は同じ年の秋の後、季節の無い作品は最後。どちらのグループの中もIDの昇順",
+			order: repository.APIWorkOrderSeason,
+			want:  []model.AnimeID{fall2025, sameFall2025, unknown2025, winter2026, noSeason, otherNoSeason},
+		},
+		{
+			name:  "代表の季節の逆順でも、季節の無い作品は最後。どちらのグループの中もIDの降順",
+			order: repository.APIWorkOrderSeasonDesc,
+			want:  []model.AnimeID{winter2026, unknown2025, sameFall2025, fall2025, otherNoSeason, noSeason},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := repo.ListAPIWorks(ctx, repository.ListAPIWorksParams{IDs: candidates, Order: tt.order, Limit: 10})
+			if err != nil {
+				t.Fatalf("ListAPIWorks()のエラー = %v", err)
+			}
+			assertAnimeIDs(t, animeIDsOf(got), tt.want)
+
+			// 1件ずつカーソルで送っても、同じ並びになる
+			var paged []model.AnimeID
+			params := repository.ListAPIWorksParams{IDs: candidates, Order: tt.order, Limit: 1}
+			for range len(tt.want) + 1 {
+				page, err := repo.ListAPIWorks(ctx, params)
+				if err != nil {
+					t.Fatalf("ListAPIWorks()のエラー = %v", err)
+				}
+				if len(page) == 0 {
+					break
+				}
+				last := page[0]
+				paged = append(paged, last.ID)
+				params.AfterID = &last.ID
+				params.AfterSeasonKey = nil
+				seasons, err := repository.NewAnimeSeasonRepository(queries).ListByAnimeIDs(ctx, []model.AnimeID{last.ID})
+				if err != nil {
+					t.Fatalf("季節の取得に失敗しました: %v", err)
+				}
+				for _, s := range seasons {
+					if s.IsPrimary {
+						key := s.SortKey()
+						params.AfterSeasonKey = &key
+					}
+				}
+			}
+			assertAnimeIDs(t, paged, tt.want)
+		})
+	}
+
+	t.Run("タイトルの部分一致はLIKEの特殊文字をそのままの文字として扱う", func(t *testing.T) {
+		title := "%_"
+		got, err := repo.ListAPIWorks(ctx, repository.ListAPIWorksParams{IDs: candidates, Title: &title, Order: repository.APIWorkOrderID, Limit: 10})
+		if err != nil {
+			t.Fatalf("ListAPIWorks()のエラー = %v", err)
+		}
+		assertAnimeIDs(t, animeIDsOf(got), []model.AnimeID{winter2026})
+	})
+
+	t.Run("候補が空なら何も返さない", func(t *testing.T) {
+		got, err := repo.ListAPIWorks(ctx, repository.ListAPIWorksParams{IDs: []model.AnimeID{}, Order: repository.APIWorkOrderID, Limit: 10})
+		if err != nil {
+			t.Fatalf("ListAPIWorks()のエラー = %v", err)
+		}
+		assertAnimeIDs(t, animeIDsOf(got), nil)
+	})
+}
+
+func TestAnimeRepository_ListAPIEpisodes(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewAnimeRepository(queries)
+
+	workID := createTestAnime(t, repo, "エピソードの一覧の作品")
+	second := createTestEpisodeAnime(t, queries, workID, 20, model.AnimeStatusPublished)
+	first := createTestEpisodeAnime(t, queries, workID, 10, model.AnimeStatusPublished)
+	createTestEpisodeAnime(t, queries, workID, 15, model.AnimeStatusArchived)
+	// sort_numberが同じエピソードは、anime_idの順に並ぶ
+	tied := createTestEpisodeAnime(t, queries, workID, 20, model.AnimeStatusPublished)
+
+	got, err := repo.ListAPIEpisodes(ctx, workID, nil, 10)
+	if err != nil {
+		t.Fatalf("ListAPIEpisodes()のエラー = %v", err)
+	}
+	assertAnimeIDs(t, animeIDsOf(got), []model.AnimeID{first, second, tied})
+
+	got, err = repo.ListAPIEpisodes(ctx, workID, &repository.AfterEpisode{SortNumber: 20, AnimeID: second}, 10)
+	if err != nil {
+		t.Fatalf("カーソルを渡したListAPIEpisodes()のエラー = %v", err)
+	}
+	assertAnimeIDs(t, animeIDsOf(got), []model.AnimeID{tied})
+}
+
+func assertAnimeIDs(t *testing.T, got, want []model.AnimeID) {
+	t.Helper()
+	if len(got) != len(want) {
+		t.Fatalf("anime = %v、期待値 = %v", got, want)
+	}
+	for i := range want {
+		if got[i] != want[i] {
+			t.Fatalf("anime = %v、期待値 = %v", got, want)
+		}
+	}
+}

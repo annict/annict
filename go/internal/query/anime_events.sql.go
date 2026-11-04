@@ -71,7 +71,7 @@ func (q *Queries) DeleteAnimeEvent(ctx context.Context, id int64) error {
 const listAnimeEventsByAnimeIDs = `-- name: ListAnimeEventsByAnimeIDs :many
 SELECT id, anime_id, kind, started_on, ended_on, title, title_en, description, description_en, sort_number, created_at, updated_at FROM anime_events
 WHERE anime_id = ANY($1::bigint[])
-ORDER BY anime_id, kind
+ORDER BY anime_id, sort_number, kind, id
 `
 
 func (q *Queries) ListAnimeEventsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeEvent, error) {

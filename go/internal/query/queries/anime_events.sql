@@ -13,7 +13,7 @@ INSERT INTO anime_events (
 -- name: ListAnimeEventsByAnimeIDs :many
 SELECT * FROM anime_events
 WHERE anime_id = ANY($1::bigint[])
-ORDER BY anime_id, kind;
+ORDER BY anime_id, sort_number, kind, id;
 
 -- name: UpdateAnimeEvent :exec
 UPDATE anime_events

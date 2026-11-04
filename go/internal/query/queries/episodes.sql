@@ -847,3 +847,13 @@ WHERE e.id = locked.id
             AND s.program_id IS NOT NULL
     )
 RETURNING e.id, e.anime_id;
+
+-- name: ListEpisodeIDsByAnimeIDs :many
+-- 参照モデルのanimeに写した旧エピソードのIDを引く
+SELECT id, anime_id::bigint AS anime_id FROM episodes
+WHERE anime_id = ANY($1::bigint[]);
+
+-- name: ListAnimeIDsByEpisodeIDs :many
+-- 旧エピソードのIDから、写した先のanimeのIDを引く。animeに写していない旧エピソードは含めない
+SELECT id, anime_id::bigint AS anime_id FROM episodes
+WHERE id = ANY(sqlc.arg(episode_ids)::bigint[]) AND anime_id IS NOT NULL;

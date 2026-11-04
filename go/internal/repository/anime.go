@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
@@ -231,4 +233,134 @@ func toQueryAnimeStatus(s model.AnimeStatus) query.AnimeStatus {
 		return query.AnimeStatusPublished
 	}
 	return query.AnimeStatus(s)
+}
+
+// APIWorkOrderは、REST API V2の作品の一覧の並び順
+type APIWorkOrder string
+
+const (
+	APIWorkOrderID         APIWorkOrder = "id"
+	APIWorkOrderIDDesc     APIWorkOrder = "-id"
+	APIWorkOrderSeason     APIWorkOrder = "season"
+	APIWorkOrderSeasonDesc APIWorkOrder = "-season"
+)
+
+// ListAPIWorksParamsは、REST API V2の作品の一覧の条件を保持する
+type ListAPIWorksParams struct {
+	// IDsは候補の作品のID。nilなら候補で絞らない
+	IDs []model.AnimeID
+	// Titleはタイトルか読み仮名に部分一致させる文字列。nilなら絞らない
+	Title *string
+	Order APIWorkOrder
+	// AfterIDとAfterSeasonKeyは前のページの最後の作品のIDと季節のキー (model.AnimeSeason.SortKey)。
+	// AfterIDがnilなら最初のページを返す。AfterSeasonKeyは季節の順のときだけ使い、代表の季節の無い作品ならnilにする
+	AfterID        *model.AnimeID
+	AfterSeasonKey *int32
+	Limit          int32
+}
+
+// ListAPIWorksは、公開中の作品を条件で絞り込み、並び順のとおりに最大Limit件返す
+func (r *AnimeRepository) ListAPIWorks(ctx context.Context, params ListAPIWorksParams) ([]*model.Anime, error) {
+	var ids []int64
+	if params.IDs != nil {
+		ids = make([]int64, len(params.IDs))
+		for i, id := range params.IDs {
+			ids[i] = int64(id)
+		}
+	}
+	var titlePattern sql.NullString
+	if params.Title != nil {
+		titlePattern = sql.NullString{String: "%" + escapeLikePattern(*params.Title) + "%", Valid: true}
+	}
+	var afterID sql.NullInt64
+	if params.AfterID != nil {
+		afterID = sql.NullInt64{Int64: int64(*params.AfterID), Valid: true}
+	}
+	var afterSeasonKey sql.NullInt32
+	if params.AfterSeasonKey != nil {
+		afterSeasonKey = sql.NullInt32{Int32: *params.AfterSeasonKey, Valid: true}
+	}
+
+	var (
+		rows []int64
+		err  error
+	)
+	switch params.Order {
+	case APIWorkOrderID:
+		rows, err = r.queries.ListAPIWorkIDsOrderByID(ctx, query.ListAPIWorkIDsOrderByIDParams{
+			Ids: ids, TitlePattern: titlePattern, AfterID: afterID, RowLimit: params.Limit,
+		})
+	case APIWorkOrderIDDesc:
+		rows, err = r.queries.ListAPIWorkIDsOrderByIDDesc(ctx, query.ListAPIWorkIDsOrderByIDDescParams{
+			Ids: ids, TitlePattern: titlePattern, AfterID: afterID, RowLimit: params.Limit,
+		})
+	case APIWorkOrderSeason:
+		rows, err = r.queries.ListAPIWorkIDsOrderBySeason(ctx, query.ListAPIWorkIDsOrderBySeasonParams{
+			Ids: ids, TitlePattern: titlePattern, AfterID: afterID, AfterSeasonKey: afterSeasonKey, RowLimit: params.Limit,
+		})
+	case APIWorkOrderSeasonDesc:
+		rows, err = r.queries.ListAPIWorkIDsOrderBySeasonDesc(ctx, query.ListAPIWorkIDsOrderBySeasonDescParams{
+			Ids: ids, TitlePattern: titlePattern, AfterID: afterID, AfterSeasonKey: afterSeasonKey, RowLimit: params.Limit,
+		})
+	default:
+		return nil, fmt.Errorf("作品の一覧の並び順 %q を扱えません", params.Order)
+	}
+	if err != nil {
+		return nil, err
+	}
+	return r.listInOrder(ctx, rows)
+}
+
+// AfterEpisodeは、前のページの最後のエピソードの並び順のキー
+type AfterEpisode struct {
+	SortNumber int32
+	AnimeID    model.AnimeID
+}
+
+// ListAPIEpisodesは、作品の公開中のエピソードを (sort_number, anime_id) の順に最大limit件返す。
+// afterがnilなら最初のページを返す
+func (r *AnimeRepository) ListAPIEpisodes(ctx context.Context, parentAnimeID model.AnimeID, after *AfterEpisode, limit int32) ([]*model.Anime, error) {
+	params := query.ListAPIEpisodeIDsParams{ParentAnimeID: int64(parentAnimeID), RowLimit: limit}
+	if after != nil {
+		params.AfterSortNumber = sql.NullInt32{Int32: after.SortNumber, Valid: true}
+		params.AfterAnimeID = sql.NullInt64{Int64: int64(after.AnimeID), Valid: true}
+	}
+	rows, err := r.queries.ListAPIEpisodeIDs(ctx, params)
+	if err != nil {
+		return nil, err
+	}
+	return r.listInOrder(ctx, rows)
+}
+
+// listInOrderは、IDの並びのとおりにanimeを返す
+func (r *AnimeRepository) listInOrder(ctx context.Context, rawIDs []int64) ([]*model.Anime, error) {
+	ids := make([]model.AnimeID, len(rawIDs))
+	for i, id := range rawIDs {
+		ids[i] = model.AnimeID(id)
+	}
+	animes, err := r.ListByIDs(ctx, ids)
+	if err != nil {
+		return nil, err
+	}
+	byID := make(map[model.AnimeID]*model.Anime, len(animes))
+	for _, a := range animes {
+		byID[a.ID] = a
+	}
+
+	ordered := make([]*model.Anime, 0, len(ids))
+	for _, id := range ids {
+		a, ok := byID[id]
+		if !ok {
+			return nil, fmt.Errorf("anime %d を読めません", id)
+		}
+		ordered = append(ordered, a)
+	}
+	return ordered, nil
+}
+
+// likePatternEscaperは、LIKEのパターンで特別な意味を持つ文字をエスケープする (PostgreSQLの既定のエスケープ文字は `\`)
+var likePatternEscaper = strings.NewReplacer(`\`, `\\`, `%`, `\%`, `_`, `\_`)
+
+func escapeLikePattern(s string) string {
+	return likePatternEscaper.Replace(s)
 }
