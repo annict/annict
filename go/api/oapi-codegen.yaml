@@ -1,0 +1,9 @@
+# oapi-codegenの設定
+# https://github.com/oapi-codegen/oapi-codegen#usage
+package: apigen
+output: internal/apigen/apigen.gen.go
+generate:
+  chi-server: true
+  strict-server: true
+  models: true
+  embedded-spec: true

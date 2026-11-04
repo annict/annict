@@ -44,6 +44,26 @@ jobs:
         run: |
           make goimports-check
 
+      # 生成コードは生成器の出力のままgoimportsの整形を通るため、後続の
+      # `make templ-generate` の `goimports -w .` に書き換えられることはない。
+      - name: Check API generate
+        run: |
+          make api-generate
+          git diff --exit-code internal/apigen/
+
+      - name: Lint OpenAPI description
+        run: make api-lint
+
+      # PRのマージ先の記述と比べて、互換を壊す変更を検出する。
+      # checkoutは既定でPRのコミットしか取得しないため、比較対象を別途取得する。
+      - name: Check OpenAPI breaking changes
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
+          make api-breaking API_BREAKING_BASE="origin/$BASE_REF"
+
       - name: Check templ generate
         run: |
           make templ-generate

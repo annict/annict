@@ -1,0 +1,102 @@
+# OpenAPI記述のlintルール (vacuum)
+# https://quobix.com/vacuum/rulesets/
+extends: [[vacuum:oas, recommended]]
+rules:
+  # すべてのスキーマ・プロパティに例を求めるルール。
+  # 例は利用者の理解を助けるところにだけ書き、網羅は求めない。
+  oas3-missing-example: off
+
+  # プロパティ名にcamelCaseを求めるルール。
+  # APIのJSONのキーは `snake_case` にする規約のため、使わない。
+  camel-case-properties: off
+
+  # パスにkebab-caseを求めるルール。
+  # APIのパスは、複数語のリソース名を `snake_case` で表す (`/legacy_ids` など) ため、使わない。
+  paths-kebab-case: off
+
+  # 予期しないエラー (500・503など) もProblem Detailsで返すことを記述に残すため、
+  # すべてのoperationに `default` 応答を求める。
+  annict-operation-default-response:
+    description: operationには `default` 応答を定義してください
+    message: operationには `default` 応答を定義してください
+    severity: error
+    given: $.paths[*][get,put,post,patch,delete,head,options,trace]
+    then:
+      field: responses.default
+      function: defined
+
+  # クライアントが、確認を求める操作や再試行してよい操作を
+  # operationごとに決められるよう、すべてのoperationに操作の分類を求める。
+  # 読み取り専用の操作は取り消せない変更・確認を伴わず冪等であること、
+  # 取り消せない変更は確認を求めることも、分類の矛盾として検出する。
+  annict-operation-classification:
+    description: "operationには操作の分類 (`x-annict-operation`) を定義してください"
+    message: "operationには操作の分類 (`x-annict-operation`) を定義してください"
+    severity: error
+    given: $.paths[*][get,put,post,patch,delete,head,options,trace]
+    then:
+      field: x-annict-operation
+      function: defined
+
+  annict-operation-classification-schema:
+    description: "操作の分類 (`x-annict-operation`) は4つの真偽値を矛盾なく指定してください"
+    message: "操作の分類 (`x-annict-operation`) が正しくありません: {{error}}"
+    severity: error
+    given: $.paths[*][get,put,post,patch,delete,head,options,trace]
+    then:
+      field: x-annict-operation
+      function: schema
+      functionOptions:
+        schema:
+          type: object
+          required: [read_only, irreversible, idempotent, confirmation_required]
+          additionalProperties: false
+          properties:
+            read_only:
+              type: boolean
+            irreversible:
+              type: boolean
+            idempotent:
+              type: boolean
+            confirmation_required:
+              type: boolean
+          allOf:
+            - if:
+                properties:
+                  read_only:
+                    const: true
+              then:
+                properties:
+                  irreversible:
+                    const: false
+                  idempotent:
+                    const: true
+                  confirmation_required:
+                    const: false
+            - if:
+                properties:
+                  irreversible:
+                    const: true
+              then:
+                properties:
+                  confirmation_required:
+                    const: true
+
+  # 状態を変えないGETだけを読み取り専用に分類する。
+  annict-operation-get-read-only:
+    description: "GETのoperationは読み取り専用 (`read_only: true`) に分類してください"
+    message: "GETのoperationは読み取り専用 (`read_only: true`) に分類してください"
+    severity: error
+    given: $.paths[*].get['x-annict-operation']
+    then:
+      field: read_only
+      function: truthy
+
+  annict-operation-write-not-read-only:
+    description: GET以外のoperationは読み取り専用に分類しないでください
+    message: "GET以外のoperationは読み取り専用に分類しないでください (`read_only: false`)"
+    severity: error
+    given: $.paths[*][put,post,patch,delete]['x-annict-operation']
+    then:
+      field: read_only
+      function: falsy
