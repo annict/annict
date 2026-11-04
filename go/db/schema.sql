@@ -5575,6 +5575,13 @@ CREATE UNIQUE INDEX index_anime_classifications_on_anime_id ON public.anime_clas
 
 
 --
+-- Name: index_anime_classifications_on_anime_id_of_works; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_classifications_on_anime_id_of_works ON public.anime_classifications USING btree (anime_id) WHERE (kind = 'work'::public.anime_classification_kind);
+
+
+--
 -- Name: index_anime_classifications_on_parent_anime_id_and_sort_number; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5649,6 +5656,20 @@ CREATE UNIQUE INDEX index_anime_seasons_on_anime_id_and_year_and_name ON public.
 --
 
 CREATE UNIQUE INDEX index_anime_seasons_on_anime_id_primary ON public.anime_seasons USING btree (anime_id) WHERE is_primary;
+
+
+--
+-- Name: index_anime_seasons_on_primary_season_key_and_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_seasons_on_primary_season_key_and_anime_id ON public.anime_seasons USING btree ((((year * 10) +
+CASE name
+    WHEN 'winter'::public.season_name THEN 1
+    WHEN 'spring'::public.season_name THEN 2
+    WHEN 'summer'::public.season_name THEN 3
+    WHEN 'fall'::public.season_name THEN 4
+    ELSE 5
+END)), anime_id) WHERE is_primary;
 
 
 --
@@ -8847,4 +8868,6 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20261016165628'),
     ('20261016173859'),
     ('20261102033056'),
-    ('20261102033057');
+    ('20261102033057'),
+    ('20261104100100'),
+    ('20261104100200');
