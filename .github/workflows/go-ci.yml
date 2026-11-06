@@ -73,6 +73,8 @@ jobs:
         run: |
           go mod tidy
           git diff --exit-code go.mod go.sum
+          go -C tools/vacuum mod tidy
+          git diff --exit-code tools/vacuum/go.mod tools/vacuum/go.sum
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v9.3.0
