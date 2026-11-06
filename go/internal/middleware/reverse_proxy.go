@@ -343,6 +343,8 @@ func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *htt
 	}
 
 	secure := m.cfg.Env != "development"
+	// Secureは実行環境から決めるため、gosec G124が静的に判定できず指摘するので、抑制する。
+	//nolint:gosec // G124
 	http.SetCookie(w, &http.Cookie{
 		Name:  DeviceTokenCookieName,
 		Value: token,

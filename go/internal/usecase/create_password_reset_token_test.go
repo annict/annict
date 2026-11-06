@@ -360,8 +360,9 @@ func TestCreatePasswordResetTokenUsecase_Execute_ConcurrentRequests(t *testing.T
 		select {
 		case <-results:
 			successCount++
-		case <-errors:
+		case err := <-errors:
 			errorCount++
+			t.Logf("トークン生成のエラー: %v", err)
 		}
 	}
 

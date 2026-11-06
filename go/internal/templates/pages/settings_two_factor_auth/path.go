@@ -1,3 +1,4 @@
+// Package settings_two_factor_authは、二要素認証の設定・認証アプリの登録・リカバリーコードの表示の画面のテンプレートを定義する。
 package settings_two_factor_auth
 
 const (
