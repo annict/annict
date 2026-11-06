@@ -57,5 +57,8 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
+	// returnToはredirect.GetSafeDBReturnURLで戻り先を同じサイトのAnnict DBのページに限っているため、
+	// gosec G710は誤検知として抑制する。
+	//nolint:gosec // G710
 	http.Redirect(w, r, returnTo, http.StatusSeeOther)
 }

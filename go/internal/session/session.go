@@ -353,6 +353,9 @@ func (m *Manager) setSessionCookie(w http.ResponseWriter, r *http.Request, publi
 		secure = true
 	}
 
+	// SecureとHttpOnlyは設定値 (ANNICT_SESSION_SECURE / ANNICT_SESSION_HTTPONLY) とリクエストから
+	// 決めるため、gosec G124が静的に判定できず指摘するので、抑制する。
+	//nolint:gosec // G124
 	cookie := &http.Cookie{
 		Name:     SessionKey,
 		Value:    publicID,
@@ -456,6 +459,9 @@ func (m *Manager) deleteSessionCookie(w http.ResponseWriter, r *http.Request) {
 		secure = true
 	}
 
+	// 削除するCookieの属性は、setSessionCookieで設定したセッションCookieと揃える必要がある。
+	// SecureとHttpOnlyは設定値とリクエストから決めるため、gosec G124が静的に判定できず指摘するので、抑制する。
+	//nolint:gosec // G124
 	cookie := &http.Cookie{
 		Name:     SessionKey,
 		Value:    "",
