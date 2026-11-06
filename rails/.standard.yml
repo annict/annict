@@ -1,6 +1,22 @@
-extend_config:
-  - .standard_rubocop_extensions.yml
-
 plugins:
   - standard-rails
   - standard-sorbet
+  - rubocop-factory_bot
+  - rubocop-rspec
+
+# rubocop-rspecのcopのうち、このプロジェクトのテストの書き方に合わないものを無効にする。
+# プラグインが有効にしたcopは `extend_config` からは無効にできないため、`ignore` で指定する。
+ignore:
+  - "**/*":
+      # https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspeccontextwording
+      - RSpec/ContextWording
+      # https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecdescribedclass
+      - RSpec/DescribedClass
+      # https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecexamplelength
+      - RSpec/ExampleLength
+      # https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmultipleexpectations
+      - RSpec/MultipleExpectations
+      # https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecmultiplememoizedhelpers
+      - RSpec/MultipleMemoizedHelpers
+      # https://docs.rubocop.org/rubocop-rspec/cops_rspec.html#rspecnestedgroups
+      - RSpec/NestedGroups
