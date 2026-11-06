@@ -109,8 +109,19 @@ func TestValidateBackURL(t *testing.T) {
 			backURL:  "\\\\evil.com",
 			expected: false,
 		},
+		{name: "スラッシュとバックスラッシュ", backURL: `/\example.org/phishing`, expected: false},
+		{name: "ドットセグメントの後のバックスラッシュ", backURL: `/db/../\example.org/phishing`, expected: false},
+		{name: "水平タブ", backURL: "/\t/example.org", expected: false},
+		{name: "改行", backURL: "/\n/example.org", expected: false},
+		{name: "復帰", backURL: "/\r/example.org", expected: false},
+		{name: "NULL文字", backURL: "/works\x00", expected: false},
+		{name: "DEL文字", backURL: "/works\x7f", expected: false},
+		{name: "不正なパーセントエンコード", backURL: "/works/%", expected: false},
+		{name: "フラグメント内の水平タブとドットセグメント", backURL: "/a#/../\t/example.org/phishing", expected: false},
+		{name: "フラグメント内の改行", backURL: "/works#\n", expected: false},
 
 		// エッジケース - 紛らわしいが安全なケース
+		{name: "フラグメント付きのパス", backURL: "/works?q=1#frag", expected: true},
 		{
 			name:     "スラッシュのみ",
 			backURL:  "/",
@@ -186,6 +197,9 @@ func TestGetSafeRedirectURL(t *testing.T) {
 			backURL:  "works",
 			expected: "/",
 		},
+		{name: "バックスラッシュで外部URLになるパス", backURL: `/\example.org/phishing`, expected: "/"},
+		{name: "水平タブを取り除くと外部URLになるパス", backURL: "/\t/example.org", expected: "/"},
+		{name: "フラグメントを正規化すると外部URLになるパス", backURL: "/a#/../\t/example.org/phishing", expected: "/"},
 	}
 
 	for _, tt := range tests {
@@ -214,6 +228,19 @@ func TestValidateDBReturnURL(t *testing.T) {
 		{name: "Annict DBの一覧", returnTo: "/db/works", expected: true},
 		{name: "クエリパラメータ付きの検索結果", returnTo: "/db/search?q=%E6%A4%9C%E7%B4%A2", expected: true},
 		{name: "フラグメント付きのパス", returnTo: "/db/works#row-1", expected: true},
+		{name: "クエリとフラグメント付きのパス", returnTo: "/db/works?page=2#row-1", expected: true},
+		{name: "末尾にスラッシュのあるパス", returnTo: "/db/works/", expected: true},
+		{name: "クエリ内のドットセグメント", returnTo: "/db/search?q=/../settings", expected: true},
+		{name: "クエリ内のエンコードしたスラッシュ", returnTo: "/db/search?q=a%2fb", expected: true},
+		{name: "パスの末尾のエンコードしたスペース", returnTo: "/db/..%20", expected: true},
+		{name: "クエリ内のエンコードしたスペース", returnTo: "/db/search?q=hello%20world", expected: true},
+		{name: "先頭の半角スペース", returnTo: " /db/works", expected: false},
+		{name: "末尾の半角スペースで隠れたドットセグメント", returnTo: "/db/.. ", expected: false},
+		{name: "末尾の複数の半角スペース", returnTo: "/db/..  ", expected: false},
+		{name: "パスの末尾の半角スペース", returnTo: "/db/works ", expected: false},
+		{name: "フラグメントの末尾の半角スペース", returnTo: "/db/works#row-1 ", expected: false},
+		{name: "正規化するとAnnict DBの中になるドットセグメント", returnTo: "/db/works/../people?q=test", expected: false},
+		{name: "空のセグメント", returnTo: "/db//works", expected: false},
 		{name: "空文字", returnTo: "", expected: false},
 		{name: "Annict DBの外", returnTo: "/settings", expected: false},
 		{name: "接頭辞だけ一致する別のパス", returnTo: "/dbx/works", expected: false},
@@ -221,6 +248,17 @@ func TestValidateDBReturnURL(t *testing.T) {
 		{name: "外部URL", returnTo: "https://example.com/db/works", expected: false},
 		{name: "プロトコル相対URL", returnTo: "//example.com/db/works", expected: false},
 		{name: "バックスラッシュ始まり", returnTo: "/\\example.com", expected: false},
+		{name: "正規化後に外部URLになるパス", returnTo: `/db/../\example.org/phishing`, expected: false},
+		{name: "正規化後にAnnict DBの外になるパス", returnTo: "/db/../settings", expected: false},
+		{name: "エンコードされたドットセグメント", returnTo: "/db/%2e%2e/settings", expected: false},
+		{name: "混在するドットセグメント", returnTo: "/db/.%2E/settings", expected: false},
+		{name: "フラグメントを正規化すると外部URLになるパス", returnTo: "/db/works#/../../\t/example.org/phishing", expected: false},
+		{name: "フラグメントを正規化するとAnnict DBの外になるパス", returnTo: "/db/works#/../../settings", expected: false},
+		{name: "サーバーとブラウザの正規化でAnnict DBの外になるパス", returnTo: "/db/a#/../%2e%2e/settings", expected: false},
+		{name: "正規化でAnnict DBの外になるクエリ付きパス", returnTo: "/db/a#/../%2e%2e/settings?q=1", expected: false},
+		{name: "エンコードしたスラッシュとドットセグメント", returnTo: "/db/x%2fy/%2e%2e/%2e%2e/settings", expected: false},
+		{name: "大文字でエンコードしたスラッシュとクエリ", returnTo: "/db/x%2Fy/%2e%2e/%2e%2e/settings?q=1", expected: false},
+		{name: "フラグメントの直前のドットセグメント", returnTo: "/db/..#settings", expected: false},
 	}
 
 	for _, tt := range tests {
@@ -248,6 +286,19 @@ func TestGetSafeDBReturnURL(t *testing.T) {
 		{name: "空文字はフォールバック", returnTo: "", expected: fallback},
 		{name: "Annict DBの外はフォールバック", returnTo: "/settings", expected: fallback},
 		{name: "外部URLはフォールバック", returnTo: "https://example.com/", expected: fallback},
+		{name: "バックスラッシュはフォールバック", returnTo: `/db/../\example.org/phishing`, expected: fallback},
+		{name: "Annict DBの外に正規化されるパスはフォールバック", returnTo: "/db/../settings", expected: fallback},
+		{name: "エンコードされたドットセグメントはフォールバック", returnTo: "/db/%2e%2e/settings", expected: fallback},
+		{name: "フラグメント付きのパスはそのまま", returnTo: "/db/works#row-1", expected: "/db/works#row-1"},
+		{name: "パスの末尾のエンコードしたスペースはそのまま", returnTo: "/db/..%20", expected: "/db/..%20"},
+		{name: "クエリ内のエンコードしたスペースはそのまま", returnTo: "/db/search?q=hello%20world", expected: "/db/search?q=hello%20world"},
+		{name: "末尾の半角スペースで隠れたドットセグメントはフォールバック", returnTo: "/db/.. ", expected: fallback},
+		{name: "フラグメントを正規化すると外部URLになるパスはフォールバック", returnTo: "/db/works#/../../\t/example.org/phishing", expected: fallback},
+		{name: "フラグメントを正規化するとAnnict DBの外になるパスはフォールバック", returnTo: "/db/works#/../../settings", expected: fallback},
+		{name: "サーバーとブラウザの正規化でAnnict DBの外になるパスはフォールバック", returnTo: "/db/a#/../%2e%2e/settings", expected: fallback},
+		{name: "エンコードしたスラッシュでAnnict DBの外になるパスはフォールバック", returnTo: "/db/x%2fy/%2e%2e/%2e%2e/settings", expected: fallback},
+		{name: "フラグメントの直前のドットセグメントはフォールバック", returnTo: "/db/..#settings", expected: fallback},
+		{name: "ドットセグメントを含むパスはフォールバック", returnTo: "/db/works/../people?q=test", expected: fallback},
 	}
 
 	for _, tt := range tests {

@@ -223,55 +223,68 @@ func TestCreate_WithBackParam(t *testing.T) {
 func TestCreate_WithInvalidBackParam(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTx(t)
-	queries := testutil.NewQueriesWithTx(db, tx)
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
-	if err != nil {
-		t.Fatalf("パスワードハッシュ生成エラー: %v", err)
+	tests := []struct {
+		name    string
+		backURL string
+	}{
+		{name: "絶対URL", backURL: "https://evil.com/phishing"},
+		{name: "バックスラッシュで外部URLになるパス", backURL: `/\example.org/phishing`},
+		{name: "水平タブを取り除くと外部URLになるパス", backURL: "/\t/example.org/phishing"},
+		{name: "フラグメントを正規化すると外部URLになるパス", backURL: "/a#/../\t/example.org/phishing"},
 	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
 
-	testutil.NewUserBuilder(t, tx).
-		WithUsername("signin_invalid_back_user").
-		WithEmail("signin_invalid_back@example.com").
-		WithEncryptedPassword(string(hashedPassword)).
-		Build()
+			db, tx := testutil.SetupTx(t)
+			queries := testutil.NewQueriesWithTx(db, tx)
 
-	cfg := &config.Config{
-		CookieDomain:    ".examle.com",
-		SessionSecure:   "false",
-		SessionHTTPOnly: "true",
-	}
-	sessionRepo := repository.NewSessionRepository(queries)
-	sessionMgr := session.NewManager(sessionRepo, cfg)
+			hashedPassword, err := bcrypt.GenerateFromPassword([]byte("password123"), bcrypt.DefaultCost)
+			if err != nil {
+				t.Fatalf("パスワードハッシュ生成エラー: %v", err)
+			}
 
-	createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
+			user := testutil.NewUserBuilder(t, tx).
+				WithEncryptedPassword(string(hashedPassword)).
+				BuildWithResult()
 
-	handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
+			cfg := &config.Config{
+				CookieDomain:    ".examle.com",
+				SessionSecure:   "false",
+				SessionHTTPOnly: "true",
+			}
+			sessionRepo := repository.NewSessionRepository(queries)
+			sessionMgr := session.NewManager(sessionRepo, cfg)
 
-	// セッションにメールアドレスを設定
-	sessionCookie := setupSessionWithEmail(t, sessionMgr, "signin_invalid_back@example.com")
+			createSessionUC := usecase.NewCreateSessionUsecase(repository.NewSessionRepository(queries))
 
-	// 無効なbackパラメータ (絶対URL) でログイン
-	form := url.Values{}
-	form.Set("password", "password123")
-	form.Set("back", "https://evil.com/phishing")
+			handler := newTestHandler(t, cfg, sessionMgr, queries, createSessionUC)
 
-	req := httptest.NewRequest("POST", "/sign_in/password", strings.NewReader(form.Encode()))
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	req.AddCookie(sessionCookie)
-	rr := httptest.NewRecorder()
+			// セッションにメールアドレスを設定
+			sessionCookie := setupSessionWithEmail(t, sessionMgr, user.Email)
 
-	handler.Create(rr, req)
+			// 外部サイトを指すbackパラメータでログイン
+			form := url.Values{}
+			form.Set("password", "password123")
+			form.Set("back", tt.backURL)
 
-	if rr.Code != http.StatusSeeOther {
-		t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
-	}
+			req := httptest.NewRequest("POST", "/sign_in/password", strings.NewReader(form.Encode()))
+			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+			req.AddCookie(sessionCookie)
+			rr := httptest.NewRecorder()
 
-	// 無効なbackパラメータの場合はデフォルト ("/") にリダイレクトされることを確認
-	location := rr.Header().Get("Location")
-	if location != "/" {
-		t.Errorf("リダイレクト先 = %v、期待値 = %v (無効なbackパラメータはデフォルトにリダイレクトされるべき)", location, "/")
+			handler.Create(rr, req)
+
+			if rr.Code != http.StatusSeeOther {
+				t.Errorf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusSeeOther)
+			}
+
+			// 無効なbackパラメータの場合はデフォルト ("/") にリダイレクトされることを確認
+			location := rr.Header().Get("Location")
+			if location != "/" {
+				t.Errorf("リダイレクト先 = %v、期待値 = %v (無効なbackパラメータはデフォルトにリダイレクトされるべき)", location, "/")
+			}
+		})
 	}
 }
 
