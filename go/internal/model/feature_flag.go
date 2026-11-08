@@ -16,4 +16,8 @@ type FeatureFlag struct {
 // FeatureFlagExampleをconstブロックに常に1つ以上残しておく。
 const (
 	FeatureFlagExample FeatureFlagName = "go_example"
+
+	// FeatureFlagRESTAPIV2は、REST API V2をトークンの持ち主の利用者に応答するかを決めるフラグ。
+	// 移行のフラグではないため `go_` を付けない
+	FeatureFlagRESTAPIV2 FeatureFlagName = "rest_api_v2"
 )

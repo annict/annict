@@ -13,7 +13,7 @@ INSERT INTO anime_links (
 -- name: ListAnimeLinksByAnimeIDs :many
 SELECT * FROM anime_links
 WHERE anime_id = ANY($1::bigint[])
-ORDER BY anime_id, kind, language;
+ORDER BY anime_id, sort_number, kind, language, id;
 
 -- name: UpdateAnimeLink :exec
 UPDATE anime_links

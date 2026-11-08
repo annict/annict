@@ -1,0 +1,1003 @@
+openapi: 3.1.1
+info:
+  title: Annict REST API V2
+  version: 2.0.0
+  summary: Annictのアニメの情報を取得する
+  # 本文のページは本番にしか無いため、配信しているホストではなく本番の固定URLを書く
+  termsOfService: https://annict.com/terms/api
+  description: |
+    AnnictのREST API V2です。
+    APIを呼び出すには、設定ページで発行する個人用アクセストークンか、OAuthで取得したアクセストークンを `Authorization: Bearer` ヘッダーで送ります。
+    アクセストークンはREST API V1・GraphQL APIと共通です。
+    アクセストークンをクエリパラメーターで送ることはできません。
+
+    エラーはRFC 9457のProblem Details (`application/problem+json`) で返します。
+
+    レート制限はREST API V1・GraphQL APIと共通で、3つのAPIへのリクエストを合わせて数えます。
+    アクセストークンを送るリクエストは、アクセストークンと接続元のIPアドレスの組ごとに1分あたり600件まで、アクセストークンを送らないリクエストは接続元のIPアドレスごとに1分あたり60件までです。
+    1分の区切りは毎分0秒に切り替わります。
+    残量は `RateLimit-Limit`・`RateLimit-Remaining`・`RateLimit-Reset` ヘッダーで返します。
+    上限を超えると429を返し、再試行できるまでの秒数を `Retry-After` ヘッダーで示します。
+
+    REST API V2では、提供を始めたあとにエンドポイント・フィールド・列挙値を削除したり、型や意味を変えたりしません。
+    変更は追加だけです。
+    クライアントは、知らないフィールドと列挙値を無視するように作ってください。
+  contact:
+    name: Annict
+    url: https://github.com/annict/annict
+servers:
+  - url: /api/v2
+    description: このドキュメントを配信しているホストのAPI
+security:
+  - oauth2: [read]
+  - personalAccessToken: [read]
+tags:
+  - name: anime
+    description: 作品とエピソード
+  - name: legacy_id
+    description: REST API V1・GraphQL APIのIDからの移行 (期間限定)
+  - name: openapi
+    description: このAPIのOpenAPI記述
+paths:
+  /anime/works:
+    get:
+      operationId: listWorks
+      summary: 作品の一覧を取得する
+      description: |
+        公開している作品を、`sort` の順に返します。
+        エピソードは含みません。作品のエピソードは `listEpisodes` で取得します。
+
+        絞り込みのパラメーターを複数指定すると、すべてを満たす作品を返します。
+        `season` と `year` は、作品が放送・公開したどの季節に一致してもよく、代表の季節に限りません。
+        `anime_id` が分かっている作品をまとめて取得するときは `ids` を、放送する季節の作品を探すときは `season` と `sort=season` を使います。
+        1つの作品だけを取得するときは `getAnime` を使います。
+
+        続きがあるときは、応答の `next_cursor` と `Link` ヘッダーで次のページを示します。
+        次のページは、`cursor` 以外のパラメーターを変えずに取得してください。
+        別の `sort` で作ったカーソルは受け付けず、400を返します。
+      x-annict-operation:
+        read_only: true
+        irreversible: false
+        idempotent: true
+        confirmation_required: false
+      tags:
+        - anime
+      parameters:
+        - name: ids
+          in: query
+          required: false
+          description: "`anime_id` のカンマ区切り (例 `ids=1,2,3`) です。指定した作品に絞り込みます。公開していない作品とエピソードのIDは無視します。"
+          style: form
+          explode: false
+          schema:
+            type: array
+            maxItems: 50
+            items:
+              type: integer
+              format: int64
+              minimum: 1
+        - name: season
+          in: query
+          required: false
+          description: |
+            季節のカンマ区切り (例 `season=2026-winter,2026-spring`) です。どれかの季節に放送・公開した作品に絞り込みます。
+            季節は `{年}-{winter/spring/summer/fall}` で、年だけが分かっていて季節の分からない作品は `{年}-unknown` で指定します。
+          style: form
+          explode: false
+          schema:
+            type: array
+            maxItems: 20
+            items:
+              type: string
+              pattern: "^[0-9]{4}-(winter|spring|summer|fall|unknown)$"
+        - name: year
+          in: query
+          required: false
+          description: 年です。その年のどれかの季節に放送・公開した作品 (季節の分からない作品を含みます) に絞り込みます。
+          schema:
+            type: integer
+            format: int32
+            minimum: 1000
+            maximum: 9999
+        - name: title
+          in: query
+          required: false
+          description: "`title` か `title_kana` に、この文字列を含む作品に絞り込みます。大文字と小文字を区別しません。"
+          schema:
+            type: string
+            minLength: 1
+            maxLength: 100
+        - name: sort
+          in: query
+          required: false
+          description: |
+            並び順です。
+            `id` は `id` の小さい順、`-id` は大きい順です。
+            `season` は代表の季節の年と季節の古い順で、同じ季節では `id` の小さい順です。同じ年の中では冬・春・夏・秋・季節名が不明の順に並べ、`-season` はその逆順です。
+            年が分かっていて季節名だけが不明な作品も、その年の位置に含まれます。
+            代表の季節が無い作品は、どちらの並び順でも最後にまとめます。このグループの `id` は `season` で昇順、`-season` で降順になります。
+          schema:
+            type: string
+            enum:
+              - id
+              - -id
+              - season
+              - -season
+            default: id
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: 作品の一覧
+          headers:
+            Link:
+              $ref: "#/components/headers/Link"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnimeList"
+        "400":
+          $ref: "#/components/responses/ValidationFailed"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+  /anime/{anime_id}:
+    get:
+      operationId: getAnime
+      summary: 作品かエピソードを取得する
+      description: |
+        `anime_id` で指定した作品かエピソードを返します。
+        作品かエピソードかは `kind` で分かり、作品には `work`、エピソードには `episode` のキーで、それぞれに固有の情報を含みます。
+        `kind` は、作品をエピソードに分け直すなどの見直しで変わることがあります。
+        `kind` を保存して使う場合は、取得し直したときに変わっていないかを確かめてください。
+
+        重複していて別の作品・エピソードに統合したものの `anime_id` を指定すると、統合先を返します。
+        このとき応答の `id` は指定した `anime_id` と違う値になるため、保存している `anime_id` を応答の `id` に置き換えてください。
+
+        REST API V1・GraphQL APIの作品・エピソードのIDを保存している場合は、応答の `legacy_work_id`・`legacy_episode_id` で対応を確かめられます。
+        この2つのフィールドは、REST API V1・GraphQL APIから移るための期間限定のもので、将来提供を終えます。
+
+        作品・エピソードが存在しない場合と、非公開・削除済みの場合は404を返します。
+      x-annict-operation:
+        read_only: true
+        irreversible: false
+        idempotent: true
+        confirmation_required: false
+      tags:
+        - anime
+      parameters:
+        - $ref: "#/components/parameters/AnimeId"
+      responses:
+        "200":
+          description: 作品かエピソード
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Anime"
+        "400":
+          $ref: "#/components/responses/ValidationFailed"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+  /anime/{anime_id}/episodes:
+    get:
+      operationId: listEpisodes
+      summary: 作品のエピソードの一覧を取得する
+      description: |
+        `anime_id` で指定した作品の、公開しているエピソードを `episode.sort_number` の順に返します。
+
+        続きがあるときは、応答の `next_cursor` と `Link` ヘッダーで次のページを示します。
+        次のページは、`cursor` 以外のパラメーターを変えずに取得してください。
+
+        作品が存在しない場合、非公開・削除済みの場合、エピソードの `anime_id` を指定した場合は404を返します。
+        別の作品に統合した作品の `anime_id` も404です。`getAnime` で統合先の `id` を確かめてから取得し直してください。
+      x-annict-operation:
+        read_only: true
+        irreversible: false
+        idempotent: true
+        confirmation_required: false
+      tags:
+        - anime
+      parameters:
+        - $ref: "#/components/parameters/AnimeId"
+        - $ref: "#/components/parameters/Cursor"
+        - $ref: "#/components/parameters/Limit"
+      responses:
+        "200":
+          description: エピソードの一覧
+          headers:
+            Link:
+              $ref: "#/components/headers/Link"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnimeList"
+        "400":
+          $ref: "#/components/responses/ValidationFailed"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+  /legacy_ids:
+    get:
+      operationId: listLegacyIds
+      summary: REST API V1・GraphQL APIのIDから作品・エピソードのIDを取得する
+      description: |
+        REST API V1・GraphQL APIの作品・エピソードのIDを、このAPIの作品・エピソードのID (`anime_id`) に変換して返します。
+        応答の配列は、指定した旧IDの順に並び、同じ旧IDは1件にまとめます。
+        指定しなかった種類のキーも、空の配列で返します。
+
+        REST API V1・GraphQL APIのIDを保存しているクライアントが、このAPIへ移るときに使います。
+        変換した `anime_id` は、`getAnime`・`listWorks` の `ids`・`listEpisodes` に渡せます。
+        このエンドポイントは、REST API V1・GraphQL APIから移るための期間限定のもので、将来提供を終えます。
+
+        重複していて別の作品・エピソードに統合したものは、統合先の `anime_id` を返します。
+        対応する作品・エピソードが無い旧IDと、非公開・削除済みの作品・エピソードの旧IDは、`anime_id` を `null` にします。
+
+        変換できる種類は、今後増えることがあります。そのときは、`{種類}_ids` のパラメーターと、同じ名前の応答のキーを足します。
+        知らない応答のキーは無視してください。
+
+        旧IDのパラメーターを1つも指定しない場合と、旧IDの数が種類をまたいで合計100件を超える場合は400を返します。
+      x-annict-operation:
+        read_only: true
+        irreversible: false
+        idempotent: true
+        confirmation_required: false
+      tags:
+        - legacy_id
+      parameters:
+        - name: work_ids
+          in: query
+          required: false
+          description: REST API V1・GraphQL APIの作品のIDのカンマ区切り (例 `work_ids=673,674`) です。
+          style: form
+          explode: false
+          schema:
+            type: array
+            maxItems: 100
+            items:
+              type: integer
+              format: int64
+              minimum: 1
+        - name: episode_ids
+          in: query
+          required: false
+          description: REST API V1・GraphQL APIのエピソードのIDのカンマ区切り (例 `episode_ids=1001,1002`) です。
+          style: form
+          explode: false
+          schema:
+            type: array
+            maxItems: 100
+            items:
+              type: integer
+              format: int64
+              minimum: 1
+      responses:
+        "200":
+          description: 旧IDごとの作品・エピソードのID
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LegacyIdList"
+        "400":
+          $ref: "#/components/responses/ValidationFailed"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "429":
+          $ref: "#/components/responses/TooManyRequests"
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+  /openapi.yaml:
+    get:
+      operationId: getOpenAPIDescription
+      summary: OpenAPI記述を取得する
+      description: |
+        このAPIのOpenAPI記述をYAMLで返します。
+
+        使えるoperation・パラメーター・応答の形を機械的に調べるときに使います。
+        アクセストークンは要りません。
+      x-annict-operation:
+        read_only: true
+        irreversible: false
+        idempotent: true
+        confirmation_required: false
+      tags:
+        - openapi
+      security: []
+      responses:
+        "200":
+          description: OpenAPI記述
+          content:
+            application/yaml:
+              schema:
+                type: string
+        default:
+          $ref: "#/components/responses/UnexpectedError"
+components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      description: |
+        OAuth 2.0のAuthorization Codeで取得したアクセストークンです。
+      flows:
+        authorizationCode:
+          authorizationUrl: /oauth/authorize
+          tokenUrl: /oauth/token
+          scopes:
+            read: Annictのデータを読む
+            write: Annictのデータを書き込む
+    personalAccessToken:
+      type: http
+      scheme: bearer
+      description: |
+        設定ページで発行した個人用アクセストークンです。
+        発行時に選んだスコープ (`read`、または `read` と `write`) の範囲で使えます。
+  parameters:
+    AnimeId:
+      name: anime_id
+      in: path
+      required: true
+      description: 作品かエピソードのIDです。
+      schema:
+        type: integer
+        format: int64
+        minimum: 1
+    Cursor:
+      name: cursor
+      in: query
+      required: false
+      description: |
+        続きのページを取得するためのカーソルです。前のページの応答の `next_cursor` をそのまま渡します。
+        中身の形式は公開しておらず、予告なく変わることがあります。省略すると最初のページを返します。
+      schema:
+        type: string
+    Limit:
+      name: limit
+      in: query
+      required: false
+      description: 1ページの件数です。100を超える値は100として扱います。
+      schema:
+        type: integer
+        format: int32
+        minimum: 1
+        default: 20
+  headers:
+    Link:
+      description: |
+        次のページのURLです (RFC 8288。例: `</api/v2/anime/works?cursor=...>; rel="next"`)。
+        続きが無い場合は付きません。
+      schema:
+        type: string
+    RateLimitLimit:
+      description: |
+        1分あたりに送れるリクエストの数です。
+        レート制限のカウンターを確かめられなかった場合は付きません。
+      schema:
+        type: integer
+    RateLimitRemaining:
+      description: |
+        今の1分のうちに、あと送れるリクエストの数です。
+        レート制限のカウンターを確かめられなかった場合は付きません。
+      schema:
+        type: integer
+    RateLimitReset:
+      description: |
+        今の1分が終わり、残りの数が戻るまでの秒数です。
+        レート制限のカウンターを確かめられなかった場合は付きません。
+      schema:
+        type: integer
+    RetryAfter:
+      description: 再試行できるまでの秒数です。
+      required: true
+      schema:
+        type: integer
+    WWWAuthenticate:
+      description: |
+        RFC 6750のBearer認証のチャレンジです。
+        アクセストークンを送らなかった場合は `Bearer`、送ったアクセストークンを受け付けられない場合は `Bearer error="invalid_token"` です。
+        アクセストークンのスコープが足りない場合 (403) は `Bearer error="insufficient_scope", scope="write"` のように要るスコープを示します。
+      required: true
+      schema:
+        type: string
+  responses:
+    Unauthorized:
+      description: |
+        アクセストークンが無いか、無効・期限切れ・失効済みです。
+        アクセストークンの持ち主の利用者がいない場合も401です。
+      headers:
+        WWW-Authenticate:
+          $ref: "#/components/headers/WWWAuthenticate"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    Forbidden:
+      description: |
+        アクセストークンに、この操作に要るスコープがありません。
+        `WWW-Authenticate` ヘッダーの `scope` で要るスコープを示します。
+      headers:
+        WWW-Authenticate:
+          $ref: "#/components/headers/WWWAuthenticate"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    NotFound:
+      description: リソースが存在しないか、非公開・削除済みです。
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    ValidationFailed:
+      description: |
+        パラメーターの内容が正しくありません。
+        `errors` でパラメーター単位の問題を示します。
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    TooManyRequests:
+      description: レート制限を超えました。
+      headers:
+        RateLimit-Limit:
+          $ref: "#/components/headers/RateLimitLimit"
+        RateLimit-Remaining:
+          $ref: "#/components/headers/RateLimitRemaining"
+        RateLimit-Reset:
+          $ref: "#/components/headers/RateLimitReset"
+        Retry-After:
+          $ref: "#/components/headers/RetryAfter"
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+    UnexpectedError:
+      description: 予期しないエラー
+      content:
+        application/problem+json:
+          schema:
+            $ref: "#/components/schemas/ProblemDetails"
+  schemas:
+    AnimeList:
+      type: object
+      description: 作品かエピソードの一覧の1ページです。
+      required:
+        - items
+        - next_cursor
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Anime"
+        next_cursor:
+          $ref: "#/components/schemas/NextCursor"
+    Anime:
+      description: |
+        作品かエピソードです。`kind` で見分けます。
+        今は `work` と `episode` の2つですが、見分ける値が増えることがあります。知らない `kind` は無視してください。
+      oneOf:
+        - $ref: "#/components/schemas/WorkAnime"
+        - $ref: "#/components/schemas/EpisodeAnime"
+      discriminator:
+        propertyName: kind
+        mapping:
+          work: "#/components/schemas/WorkAnime"
+          episode: "#/components/schemas/EpisodeAnime"
+    WorkAnime:
+      description: 作品です。
+      allOf:
+        - $ref: "#/components/schemas/AnimeAttributes"
+        - type: object
+          required:
+            - kind
+            - work
+          properties:
+            kind:
+              type: string
+              enum:
+                - work
+              description: 作品であることを表します。見直しで変わることがあります。
+            work:
+              $ref: "#/components/schemas/WorkAttributes"
+    EpisodeAnime:
+      description: エピソードです。
+      allOf:
+        - $ref: "#/components/schemas/AnimeAttributes"
+        - type: object
+          required:
+            - kind
+            - episode
+          properties:
+            kind:
+              type: string
+              enum:
+                - episode
+              description: エピソードであることを表します。見直しで変わることがあります。
+            episode:
+              $ref: "#/components/schemas/EpisodeAttributes"
+    AnimeAttributes:
+      type: object
+      description: 作品とエピソードに共通の情報です。
+      required:
+        - id
+        - title
+        - title_kana
+        - title_ro
+        - title_en
+        - title_alter
+        - title_alter_ro
+        - title_alter_en
+        - title_alter_other
+        - media
+        - release_status
+        - synopsis
+        - synopsis_en
+        - synopsis_source
+        - synopsis_source_en
+        - seasons
+        - events
+        - links
+        - external_ids
+        - official_accounts
+        - hashtags
+        - legacy_work_id
+        - legacy_episode_id
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 作品かエピソードのIDです。作品をエピソードに分け直すなどの見直しでは変わりません。
+        title:
+          type: [string, "null"]
+          description: タイトルです。
+        title_kana:
+          type: [string, "null"]
+          description: タイトルの読み仮名です。
+        title_ro:
+          type: [string, "null"]
+          description: タイトルのローマ字表記です。
+        title_en:
+          type: [string, "null"]
+          description: タイトルの英語表記です。
+        title_alter:
+          type: [string, "null"]
+          description: 別のタイトルです。
+        title_alter_ro:
+          type: [string, "null"]
+          description: 別のタイトルのローマ字表記です。
+        title_alter_en:
+          type: [string, "null"]
+          description: 別のタイトルの英語表記です。
+        title_alter_other:
+          type: [string, "null"]
+          description: 別のタイトルの、日本語・英語以外の表記です。
+        media:
+          description: 媒体です。分からない場合は `null` です。
+          oneOf:
+            - $ref: "#/components/schemas/AnimeMedia"
+            - type: "null"
+        release_status:
+          description: 放送・公開の状況です。分からない場合は `null` です。
+          oneOf:
+            - $ref: "#/components/schemas/AnimeReleaseStatus"
+            - type: "null"
+        synopsis:
+          type: [string, "null"]
+          description: あらすじです。
+        synopsis_en:
+          type: [string, "null"]
+          description: あらすじの英語版です。
+        synopsis_source:
+          type: [string, "null"]
+          description: あらすじの出典です。
+        synopsis_source_en:
+          type: [string, "null"]
+          description: 英語版のあらすじの出典です。
+        seasons:
+          type: array
+          description: 放送・公開した季節です。年と季節の順に並べます。分からない場合は空の配列です。
+          items:
+            $ref: "#/components/schemas/AnimeSeason"
+        events:
+          type: array
+          description: 放送やリバイバル上映などの予定です。編集者が決めた順に並べます。
+          items:
+            $ref: "#/components/schemas/AnimeEvent"
+        links:
+          type: array
+          description: 公式サイトなどへのリンクです。編集者が決めた順に並べます。
+          items:
+            $ref: "#/components/schemas/AnimeLink"
+        external_ids:
+          type: array
+          description: ほかのサービスでのIDです。
+          items:
+            $ref: "#/components/schemas/AnimeExternalId"
+        official_accounts:
+          type: array
+          description: SNSの公式アカウントです。編集者が決めた順に並べます。
+          items:
+            $ref: "#/components/schemas/AnimeOfficialAccount"
+        hashtags:
+          type: array
+          description: ハッシュタグです。編集者が決めた順に並べます。
+          items:
+            $ref: "#/components/schemas/AnimeHashtag"
+        legacy_work_id:
+          type: [integer, "null"]
+          format: int64
+          description: |
+            REST API V1・GraphQL APIでの作品のIDです。対応する作品が無い場合は `null` です。
+            REST API V1・GraphQL APIから移るための期間限定のフィールドで、将来提供を終えます。
+        legacy_episode_id:
+          type: [integer, "null"]
+          format: int64
+          description: |
+            REST API V1・GraphQL APIでのエピソードのIDです。対応するエピソードが無い場合は `null` です。
+            REST API V1・GraphQL APIから移るための期間限定のフィールドで、将来提供を終えます。
+    WorkAttributes:
+      type: object
+      description: 作品に固有の情報です。
+      required:
+        - standalone
+        - expected_episodes_count
+        - episodes_count
+      properties:
+        standalone:
+          type: boolean
+          description: 映画のように、エピソードに分けない1つの作品であるかです。
+        expected_episodes_count:
+          type: [integer, "null"]
+          format: int32
+          description: 予定しているエピソードの数です。分からない場合は `null` です。
+        episodes_count:
+          type: integer
+          format: int64
+          description: 公開しているエピソードの数です。
+    EpisodeAttributes:
+      type: object
+      description: エピソードに固有の情報です。
+      required:
+        - number
+        - number_text
+        - sort_number
+        - work
+        - prev_episode
+        - next_episode
+      properties:
+        number:
+          type: [number, "null"]
+          format: double
+          description: 話数です。総集編のように話数の無いエピソードでは `null` です。
+        number_text:
+          type: [string, "null"]
+          description: 表示用の話数 (例 `第1話`) です。
+        sort_number:
+          type: integer
+          format: int32
+          description: 作品の中でのエピソードの並び順です。小さいほど前です。
+        work:
+          $ref: "#/components/schemas/AnimeReference"
+        prev_episode:
+          description: 同じ作品の公開している1つ前のエピソードです。最初のエピソードでは `null` です。
+          oneOf:
+            - $ref: "#/components/schemas/AnimeReference"
+            - type: "null"
+        next_episode:
+          description: 同じ作品の公開している1つ後のエピソードです。最後のエピソードでは `null` です。
+          oneOf:
+            - $ref: "#/components/schemas/AnimeReference"
+            - type: "null"
+    AnimeReference:
+      type: object
+      description: ほかの作品・エピソードを指す情報です。詳しい情報は `getAnime` で取得します。
+      required:
+        - id
+        - title
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 作品かエピソードのIDです。
+        title:
+          type: [string, "null"]
+          description: タイトルです。
+    AnimeSeason:
+      type: object
+      description: 放送・公開した季節です。
+      required:
+        - year
+        - name
+        - is_primary
+      properties:
+        year:
+          type: integer
+          format: int32
+          description: 年です。
+        name:
+          description: 季節です。年だけが分かっていて季節が分からない場合は `null` です。
+          oneOf:
+            - $ref: "#/components/schemas/SeasonName"
+            - type: "null"
+        is_primary:
+          type: boolean
+          description: 複数の季節に放送・公開した場合に、代表とする季節であるかです。
+    AnimeMedia:
+      type: string
+      enum:
+        - tv
+        - ova
+        - movie
+        - ona
+        - other
+      description: |
+        媒体です。
+        `tv` はテレビ放送、`ova` はOVA、`movie` は映画、`ona` はインターネット配信、`other` はそれ以外です。
+    AnimeReleaseStatus:
+      type: string
+      enum:
+        - not_yet_released
+        - released
+        - cancelled
+      description: |
+        放送・公開の状況です。
+        `not_yet_released` はまだ放送・公開していないこと、`released` は放送・公開したこと、`cancelled` は放送・公開を取りやめたことを表します。
+    SeasonName:
+      type: string
+      enum:
+        - winter
+        - spring
+        - summer
+        - fall
+      description: 季節です。`winter` は冬 (1〜3月)、`spring` は春 (4〜6月)、`summer` は夏 (7〜9月)、`fall` は秋 (10〜12月) です。
+    AnimeEvent:
+      type: object
+      description: 放送やリバイバル上映などの予定です。
+      required:
+        - kind
+        - started_on
+        - ended_on
+        - title
+        - title_en
+        - description
+        - description_en
+      properties:
+        kind:
+          type: string
+          enum:
+            - broadcast
+            - revival_screening
+            - other
+          description: |
+            予定の種類です。
+            `broadcast` は放送・公開、`revival_screening` はリバイバル上映、`other` はそれ以外です。
+        started_on:
+          type: string
+          format: date
+          description: 始まる日です。
+        ended_on:
+          type: [string, "null"]
+          format: date
+          description: 終わる日です。決まっていない場合は `null` です。
+        title:
+          type: [string, "null"]
+          description: 予定の名前です。
+        title_en:
+          type: [string, "null"]
+          description: 予定の名前の英語表記です。
+        description:
+          type: [string, "null"]
+          description: 予定の説明です。
+        description_en:
+          type: [string, "null"]
+          description: 予定の説明の英語版です。
+    AnimeLink:
+      type: object
+      description: 公式サイトなどへのリンクです。
+      required:
+        - kind
+        - language
+        - url
+        - label
+        - label_en
+      properties:
+        kind:
+          type: string
+          enum:
+            - official_site
+            - wikipedia
+            - other
+          description: リンク先の種類です。`official_site` は公式サイト、`wikipedia` はWikipedia、`other` はそれ以外です。
+        language:
+          type: string
+          enum:
+            - ja
+            - en
+            - other
+          description: リンク先のページの言語です。`ja` は日本語、`en` は英語、`other` はそれ以外です。
+        url:
+          type: string
+          format: uri
+          description: リンク先のURLです。
+        label:
+          type: [string, "null"]
+          description: リンクの表示名です。
+        label_en:
+          type: [string, "null"]
+          description: リンクの表示名の英語表記です。
+    AnimeExternalId:
+      type: object
+      description: ほかのサービスでのIDです。
+      required:
+        - service
+        - external_id
+      properties:
+        service:
+          type: string
+          enum:
+            - syobocal
+            - mal
+          description: サービスです。`syobocal` はしょぼいカレンダー、`mal` はMyAnimeListです。
+        external_id:
+          type: string
+          description: サービスでのIDです。
+    AnimeOfficialAccount:
+      type: object
+      description: SNSの公式アカウントです。
+      required:
+        - service
+        - account
+        - label
+        - label_en
+      properties:
+        service:
+          type: string
+          enum:
+            - bluesky
+            - instagram
+            - line
+            - mastodon
+            - mixi2
+            - threads
+            - tiktok
+            - x
+            - youtube
+          description: SNSです。
+        account:
+          type: string
+          description: アカウントの名前です。
+        label:
+          type: [string, "null"]
+          description: アカウントの表示名です。
+        label_en:
+          type: [string, "null"]
+          description: アカウントの表示名の英語表記です。
+    AnimeHashtag:
+      type: object
+      description: ハッシュタグです。
+      required:
+        - hashtag
+      properties:
+        hashtag:
+          type: string
+          description: ハッシュタグです。
+    LegacyIdList:
+      type: object
+      description: |
+        旧IDの種類ごとの、旧IDとこのAPIのIDの組の一覧です。
+        変換できる種類が増えると、キーが増えます。知らないキーは無視してください。
+      required:
+        - work_ids
+        - episode_ids
+      properties:
+        work_ids:
+          type: array
+          items:
+            $ref: "#/components/schemas/LegacyWorkId"
+        episode_ids:
+          type: array
+          items:
+            $ref: "#/components/schemas/LegacyEpisodeId"
+    LegacyWorkId:
+      type: object
+      description: REST API V1・GraphQL APIの作品のIDと、このAPIの作品・エピソードのIDの組です。
+      required:
+        - legacy_work_id
+        - anime_id
+      properties:
+        legacy_work_id:
+          type: integer
+          format: int64
+          description: REST API V1・GraphQL APIの作品のIDです。
+        anime_id:
+          type: [integer, "null"]
+          format: int64
+          description: |
+            `legacy_work_id` の作品の、このAPIでのIDです。作品を分け直したものは、エピソードのIDのこともあります。
+            対応する作品・エピソードが無い場合と、非公開・削除済みの場合は `null` です。
+    LegacyEpisodeId:
+      type: object
+      description: REST API V1・GraphQL APIのエピソードのIDと、このAPIの作品・エピソードのIDの組です。
+      required:
+        - legacy_episode_id
+        - anime_id
+      properties:
+        legacy_episode_id:
+          type: integer
+          format: int64
+          description: REST API V1・GraphQL APIのエピソードのIDです。
+        anime_id:
+          type: [integer, "null"]
+          format: int64
+          description: |
+            `legacy_episode_id` のエピソードの、このAPIでのIDです。
+            対応するエピソードが無い場合と、非公開・削除済みの場合は `null` です。
+    NextCursor:
+      type: [string, "null"]
+      description: 次のページを取得するカーソルです。`cursor` パラメーターに渡します。続きが無い場合は `null` です。
+    ProblemDetails:
+      type: object
+      description: RFC 9457のProblem Detailsです。
+      required:
+        - type
+        - title
+        - status
+        - detail
+      properties:
+        type:
+          type: string
+          format: uri
+          description: |
+            問題の種類を表すURIです。種類ごとに変わらない値で、プログラムでの判別に使えます。
+            ステータスコード以上の情報を持たない問題では `about:blank` です。
+        title:
+          type: string
+          description: 問題の種類の短い説明です。
+        status:
+          type: integer
+          description: HTTPステータスコードです。
+        detail:
+          type: [string, "null"]
+          description: この発生に固有の説明です。
+        errors:
+          type: array
+          description: パラメーター単位の問題です。`type` が `validation-failed` の問題にだけ含みます。
+          items:
+            $ref: "#/components/schemas/ProblemDetailsError"
+    ProblemDetailsError:
+      type: object
+      description: リクエストの検証で見つかった1つの問題です。
+      required:
+        - detail
+        - pointer
+        - parameter
+      properties:
+        detail:
+          type: string
+          description: 問題の説明です。
+        pointer:
+          type: [string, "null"]
+          description: リクエスト本文の問題の箇所を指すJSON Pointer (URIフラグメント形式。例 `#/title`) です。本文以外の問題では `null` です。
+        parameter:
+          type: [string, "null"]
+          description: 問題のあったパラメーター (パス・クエリ・ヘッダー) の名前です。パラメーター以外の問題では `null` です。

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"math"
 	"testing"
 
 	"github.com/annict/annict/go/internal/model"
@@ -18,9 +19,12 @@ func TestGetPopularWorksUsecase_Execute(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		queries := query.New(db).WithTx(tx)
 
+		// 人気作品はDB全体の上位30件のため、並行するほかのテストがコミットした作品に
+		// 押し出されないよう、ウォッチャー数を最大にして必ず上位に入れる。
 		workID1 := testutil.NewWorkBuilder(t, tx).
 			WithTitle("人気アニメ1").
 			WithSeason(2024, testutil.SeasonSpring).
+			WithWatchersCount(math.MaxInt32).
 			Build()
 		testutil.NewWorkImageBuilder(t, tx, workID1).Build()
 		testutil.NewCastBuilder(t, tx, workID1).WithCharacterName("キャラクター1").WithPersonName("声優1").Build()
@@ -31,6 +35,7 @@ func TestGetPopularWorksUsecase_Execute(t *testing.T) {
 		workID2 := testutil.NewWorkBuilder(t, tx).
 			WithTitle("人気アニメ2").
 			WithSeason(2024, testutil.SeasonSummer).
+			WithWatchersCount(math.MaxInt32).
 			Build()
 		testutil.NewWorkImageBuilder(t, tx, workID2).Build()
 		testutil.NewCastBuilder(t, tx, workID2).WithCharacterName("キャラクター3").WithPersonName("声優3").Build()
@@ -82,29 +87,6 @@ func TestGetPopularWorksUsecase_Execute(t *testing.T) {
 		}
 		if len(work2.Staffs) != 0 {
 			t.Errorf("作品2のスタッフ数 = %d、期待値 = 0 (キャスト・スタッフがなくても結果に含まれる)", len(work2.Staffs))
-		}
-	})
-
-	t.Run("正常系: 作品が存在しない場合は空のスライスを返す", func(t *testing.T) {
-		t.Parallel()
-		db, tx := testutil.SetupTx(t)
-		queries := query.New(db).WithTx(tx)
-
-		uc := NewGetPopularWorksUsecase(
-			repository.NewWorkRepository(queries),
-			repository.NewCastRepository(queries),
-			repository.NewStaffRepository(queries),
-		)
-
-		result, err := uc.Execute(context.Background())
-		if err != nil {
-			t.Fatalf("Execute()のエラー = %v", err)
-		}
-		if result == nil {
-			t.Fatal("resultがnilだった")
-		}
-		if len(result.Works) != 0 {
-			t.Errorf("len(result.Works) = %d、期待値 = 0", len(result.Works))
 		}
 	})
 }

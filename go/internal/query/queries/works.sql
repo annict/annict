@@ -484,3 +484,13 @@ SELECT EXISTS (
         AND unpublished_at IS NULL
         AND (sqlc.narg('exclude_id')::bigint IS NULL OR id <> sqlc.narg('exclude_id'))
 );
+
+-- name: ListWorkIDsByAnimeIDs :many
+-- 参照モデルのanimeに写した旧作品のIDを引く
+SELECT id, anime_id::bigint AS anime_id FROM works
+WHERE anime_id = ANY($1::bigint[]);
+
+-- name: ListAnimeIDsByWorkIDs :many
+-- 旧作品のIDから、写した先のanimeのIDを引く。animeに写していない旧作品は含めない
+SELECT id, anime_id::bigint AS anime_id FROM works
+WHERE id = ANY(sqlc.arg(work_ids)::bigint[]) AND anime_id IS NOT NULL;

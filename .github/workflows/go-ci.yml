@@ -14,7 +14,7 @@ on:
       - ".github/workflows/go-ci.yml"
 
 env:
-  GO_VERSION: "1.26.10"
+  GO_VERSION: "1.27.3"
   NODE_VERSION: "22.23.4"
 
 jobs:
@@ -44,6 +44,26 @@ jobs:
         run: |
           make goimports-check
 
+      # 生成コードは生成器の出力のままgoimportsの整形を通るため、後続の
+      # `make templ-generate` の `goimports -w .` に書き換えられることはない。
+      - name: Check API generate
+        run: |
+          make api-generate
+          git diff --exit-code internal/apigen/
+
+      - name: Lint OpenAPI description
+        run: make api-lint
+
+      # PRのマージ先の記述と比べて、互換を壊す変更を検出する。
+      # checkoutは既定でPRのコミットしか取得しないため、比較対象を別途取得する。
+      - name: Check OpenAPI breaking changes
+        if: github.event_name == 'pull_request'
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE_REF"
+          make api-breaking API_BREAKING_BASE="origin/$BASE_REF"
+
       - name: Check templ generate
         run: |
           make templ-generate
@@ -53,11 +73,13 @@ jobs:
         run: |
           go mod tidy
           git diff --exit-code go.mod go.sum
+          go -C tools/vacuum mod tidy
+          git diff --exit-code tools/vacuum/go.mod tools/vacuum/go.sum
 
       - name: Run golangci-lint
         uses: golangci/golangci-lint-action@v9.3.0
         with:
-          version: v2.11.4
+          version: v2.15.0
           working-directory: go
           args: --config=.golangci.yml ./...
 

@@ -12,6 +12,44 @@ import (
 	"github.com/lib/pq"
 )
 
+const countPublishedEpisodesByParentAnimeIDs = `-- name: CountPublishedEpisodesByParentAnimeIDs :many
+SELECT ac.parent_anime_id::bigint AS parent_anime_id, COUNT(*) AS episodes_count
+FROM anime_classifications ac
+INNER JOIN animes a ON a.id = ac.anime_id
+WHERE ac.parent_anime_id = ANY($1::bigint[])
+    AND a.status = 'published'
+GROUP BY ac.parent_anime_id
+`
+
+type CountPublishedEpisodesByParentAnimeIDsRow struct {
+	ParentAnimeID int64 `db:"parent_anime_id"`
+	EpisodesCount int64 `db:"episodes_count"`
+}
+
+// 作品ごとの公開中のエピソードの数を返す。エピソードの無い作品の行は返さない
+func (q *Queries) CountPublishedEpisodesByParentAnimeIDs(ctx context.Context, dollar_1 []int64) ([]CountPublishedEpisodesByParentAnimeIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, countPublishedEpisodesByParentAnimeIDs, pq.Array(dollar_1))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []CountPublishedEpisodesByParentAnimeIDsRow{}
+	for rows.Next() {
+		var i CountPublishedEpisodesByParentAnimeIDsRow
+		if err := rows.Scan(&i.ParentAnimeID, &i.EpisodesCount); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const createAnimeClassification = `-- name: CreateAnimeClassification :one
 INSERT INTO anime_classifications (
     anime_id,
@@ -133,6 +171,62 @@ func (q *Queries) ListAnimeClassificationsByAnimeIDs(ctx context.Context, dollar
 			&i.CreatedAt,
 			&i.UpdatedAt,
 		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listPublishedEpisodeNeighbors = `-- name: ListPublishedEpisodeNeighbors :many
+SELECT
+    x.anime_id::bigint AS anime_id,
+    COALESCE(x.prev_anime_id, 0)::bigint AS prev_anime_id,
+    COALESCE(x.next_anime_id, 0)::bigint AS next_anime_id
+FROM (
+    SELECT
+        ac.anime_id,
+        LAG(ac.anime_id) OVER w AS prev_anime_id,
+        LEAD(ac.anime_id) OVER w AS next_anime_id
+    FROM anime_classifications ac
+    INNER JOIN animes a ON a.id = ac.anime_id
+    WHERE ac.parent_anime_id = ANY($1::bigint[])
+        AND a.status = 'published'
+    WINDOW w AS (PARTITION BY ac.parent_anime_id ORDER BY ac.sort_number, ac.anime_id)
+) x
+WHERE x.anime_id = ANY($2::bigint[])
+`
+
+type ListPublishedEpisodeNeighborsParams struct {
+	ParentAnimeIds []int64 `db:"parent_anime_ids"`
+	AnimeIds       []int64 `db:"anime_ids"`
+}
+
+type ListPublishedEpisodeNeighborsRow struct {
+	AnimeID     int64 `db:"anime_id"`
+	PrevAnimeID int64 `db:"prev_anime_id"`
+	NextAnimeID int64 `db:"next_anime_id"`
+}
+
+// 指定したエピソードについて、同じ作品の公開中のエピソードを (sort_number, anime_id) の順に並べたときの前後を返す。
+// 前後を作品ごとにまとめて求めるため、親の作品の公開中のエピソードをすべて並べてから絞る。
+// 前後が無いときは0を返す (animes.idは1から始まる)
+func (q *Queries) ListPublishedEpisodeNeighbors(ctx context.Context, arg ListPublishedEpisodeNeighborsParams) ([]ListPublishedEpisodeNeighborsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listPublishedEpisodeNeighbors, pq.Array(arg.ParentAnimeIds), pq.Array(arg.AnimeIds))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListPublishedEpisodeNeighborsRow{}
+	for rows.Next() {
+		var i ListPublishedEpisodeNeighborsRow
+		if err := rows.Scan(&i.AnimeID, &i.PrevAnimeID, &i.NextAnimeID); err != nil {
 			return nil, err
 		}
 		items = append(items, i)

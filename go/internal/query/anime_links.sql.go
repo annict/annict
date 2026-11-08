@@ -67,7 +67,7 @@ func (q *Queries) DeleteAnimeLink(ctx context.Context, id int64) error {
 const listAnimeLinksByAnimeIDs = `-- name: ListAnimeLinksByAnimeIDs :many
 SELECT id, anime_id, kind, language, url, label, label_en, sort_number, created_at, updated_at FROM anime_links
 WHERE anime_id = ANY($1::bigint[])
-ORDER BY anime_id, kind, language
+ORDER BY anime_id, sort_number, kind, language, id
 `
 
 func (q *Queries) ListAnimeLinksByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeLink, error) {

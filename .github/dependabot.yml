@@ -48,6 +48,12 @@ updates:
           - "patch"
           - "minor"
 
+  # Go版のOpenAPI記述のlintに使うvacuum (アプリと依存を分けたモジュール)
+  - package-ecosystem: "gomod"
+    directory: "/go/tools/vacuum"
+    schedule:
+      interval: "daily"
+
   # Go版のnpm依存パッケージ (pnpm)
   - package-ecosystem: "npm"
     directory: "/go"

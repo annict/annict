@@ -3,9 +3,9 @@
 source "https://rubygems.org"
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
-ruby "3.3.12"
+ruby "4.0.9"
 
-gem "rails", "~> 7.2.0"
+gem "rails", "~> 8.1.0"
 
 gem "active_decorator"
 gem "active_link_to"
@@ -16,14 +16,13 @@ gem "aws-sdk-s3" # Shrineで使用
 gem "browser", require: "browser/browser"
 gem "by_star"
 gem "cld"
-# github-markupが1系に対応するまで0系を使う
-# ref: https://github.com/github/markup/issues/1758
-gem "commonmarker", "< 1.0" # Using github-markup
+gem "commonmarker" # Using github-markup
 # connection_pool 3.0にするとgraphql-fragment_cache周りでエラーになるため2.xに固定する
 # ref: https://wikino.app/s/shimbaco/pages/1202
 gem "connection_pool", "< 3.0"
 gem "counter_culture"
 gem "cssbundling-rails"
+gem "csv" # Ruby 3.4からdefault gemsでなくなったため明示する
 gem "delayed_job_active_record"
 gem "devise"
 gem "discord-notifier"
@@ -56,6 +55,7 @@ gem "mini_mime"
 gem "mjml-rails"
 gem "moji"
 gem "nokogiri"
+gem "ostruct" # virtusで使用。Ruby 4.0からdefault gemsでなくなったため明示する
 gem "pg"
 gem "prelude-batch-loader", require: "prelude"
 gem "propshaft"

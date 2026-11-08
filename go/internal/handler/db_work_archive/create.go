@@ -44,5 +44,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.flashMgr.SetSuccess(w, i18n.T(ctx, "flash_db_work_archived"))
+	// returnPathはredirect.GetSafeDBReturnURLで戻り先を同じサイトのAnnict DBのページに限っているため、
+	// gosec G710は誤検知として抑制する。
+	//nolint:gosec // G710
 	http.Redirect(w, r, returnPath(r), http.StatusSeeOther)
 }

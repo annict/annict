@@ -1,3 +1,4 @@
+// Package db_worksは、Annict DBの作品の一覧・登録・編集・アーカイブ・削除の画面のテンプレートを定義する。
 package db_works
 
 import (

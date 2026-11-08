@@ -530,6 +530,40 @@ func (q *Queries) GetEpisodeForUpdateByID(ctx context.Context, id int64) (GetEpi
 	return i, err
 }
 
+const listAnimeIDsByEpisodeIDs = `-- name: ListAnimeIDsByEpisodeIDs :many
+SELECT id, anime_id::bigint AS anime_id FROM episodes
+WHERE id = ANY($1::bigint[]) AND anime_id IS NOT NULL
+`
+
+type ListAnimeIDsByEpisodeIDsRow struct {
+	ID      int64 `db:"id"`
+	AnimeID int64 `db:"anime_id"`
+}
+
+// 旧エピソードのIDから、写した先のanimeのIDを引く。animeに写していない旧エピソードは含めない
+func (q *Queries) ListAnimeIDsByEpisodeIDs(ctx context.Context, episodeIds []int64) ([]ListAnimeIDsByEpisodeIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listAnimeIDsByEpisodeIDs, pq.Array(episodeIds))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListAnimeIDsByEpisodeIDsRow{}
+	for rows.Next() {
+		var i ListAnimeIDsByEpisodeIDsRow
+		if err := rows.Scan(&i.ID, &i.AnimeID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const listDBEpisodes = `-- name: ListDBEpisodes :many
 WITH work_episodes AS (
     SELECT
@@ -672,6 +706,40 @@ func (q *Queries) ListEpisodeIDsAfter(ctx context.Context, arg ListEpisodeIDsAft
 			return nil, err
 		}
 		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listEpisodeIDsByAnimeIDs = `-- name: ListEpisodeIDsByAnimeIDs :many
+SELECT id, anime_id::bigint AS anime_id FROM episodes
+WHERE anime_id = ANY($1::bigint[])
+`
+
+type ListEpisodeIDsByAnimeIDsRow struct {
+	ID      int64 `db:"id"`
+	AnimeID int64 `db:"anime_id"`
+}
+
+// 参照モデルのanimeに写した旧エピソードのIDを引く
+func (q *Queries) ListEpisodeIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]ListEpisodeIDsByAnimeIDsRow, error) {
+	rows, err := q.db.QueryContext(ctx, listEpisodeIDsByAnimeIDs, pq.Array(dollar_1))
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	items := []ListEpisodeIDsByAnimeIDsRow{}
+	for rows.Next() {
+		var i ListEpisodeIDsByAnimeIDsRow
+		if err := rows.Scan(&i.ID, &i.AnimeID); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err

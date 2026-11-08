@@ -627,9 +627,19 @@ func returnToCases() []struct {
 		wantLocation string
 	}{
 		{name: "検索結果に戻る", returnTo: "/db/search?q=test", wantLocation: "/db/search?q=test"},
+		{name: "エンコードしたスペースのある検索結果に戻る", returnTo: "/db/search?q=hello%20world", wantLocation: "/db/search?q=hello%20world"},
+		{name: "パスの末尾のエンコードしたスペースはそのまま", returnTo: "/db/..%20", wantLocation: "/db/..%20"},
 		{name: "空のときは作品一覧", returnTo: "", wantLocation: "/db/works"},
 		{name: "Annict DBの外は作品一覧", returnTo: "/settings", wantLocation: "/db/works"},
 		{name: "外部URLは作品一覧", returnTo: "https://example.com/", wantLocation: "/db/works"},
 		{name: "プロトコル相対URLは作品一覧", returnTo: "//example.com/db/works", wantLocation: "/db/works"},
+		{name: "バックスラッシュで外部URLになるパスは作品一覧", returnTo: `/db/../\example.org/phishing`, wantLocation: "/db/works"},
+		{name: "正規化後にAnnict DBの外になるパスは作品一覧", returnTo: "/db/../settings", wantLocation: "/db/works"},
+		{name: "エンコードされたドットセグメントは作品一覧", returnTo: "/db/%2e%2e/settings", wantLocation: "/db/works"},
+		{name: "フラグメントを正規化すると外部URLになるパスは作品一覧", returnTo: "/db/works#/../../\t/example.org/phishing", wantLocation: "/db/works"},
+		{name: "フラグメントを正規化するとAnnict DBの外になるパスは作品一覧", returnTo: "/db/works#/../../settings", wantLocation: "/db/works"},
+		{name: "サーバーとブラウザの正規化でAnnict DBの外になるパスは作品一覧", returnTo: "/db/a#/../%2e%2e/settings", wantLocation: "/db/works"},
+		{name: "エンコードしたスラッシュでAnnict DBの外になるパスは作品一覧", returnTo: "/db/x%2fy/%2e%2e/%2e%2e/settings", wantLocation: "/db/works"},
+		{name: "末尾の半角スペースで隠れたドットセグメントは作品一覧", returnTo: "/db/.. ", wantLocation: "/db/works"},
 	}
 }

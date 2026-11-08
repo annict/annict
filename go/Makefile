@@ -214,6 +214,46 @@ sqlc-diff: ## 生成コードがクエリ・スキーマと同期しているか
 	@echo "🔍 sqlc生成コードの同期をチェック中..."
 	@go tool sqlc diff
 
+# REST API V2のOpenAPI記述 (api/openapi.yaml) を正本として、サーバーのインターフェースと
+# 型をinternal/apigenに生成する。生成物はコミットし、CIで再生成の差分が無いことを
+# 確かめる。
+.PHONY: api-generate
+api-generate: ## OpenAPI記述からAPIのGoコードを生成
+	go tool oapi-codegen -config api/oapi-codegen.yaml api/openapi.yaml
+
+# warn以上で失敗させるのは、recommendedのルールの大半がwarnであり、errorだけで
+# 失敗させると説明文やタグの欠落を見逃すため。
+# vacuumはアプリと依存を分けた tools/vacuum/go.mod のモジュールで実行する。
+.PHONY: api-lint
+api-lint: ## OpenAPI記述をlint (vacuum)
+	@echo "🔍 OpenAPI記述をlint中..."
+	@go tool -modfile=tools/vacuum/go.mod vacuum lint --details --no-banner --no-style --fail-severity warn --ruleset api/vacuum.yaml api/openapi.yaml
+
+# BASEのOpenAPI記述と比べて、互換を壊す変更があれば失敗する。BASEに記述がまだ
+# 無い場合 (記述を追加するブランチ自身) は比較の対象が無いため成功とする。
+# BASE自体を解決できない場合は、ref名の誤りで検査が素通りしないよう失敗させる。
+# 意図して行った互換を壊す変更はapi/oasdiff-err-ignore.txtに書いて除外する。
+# V2は列挙値の追加を許すため、その検査をapi/oasdiff-levels.txtでwarnにする。
+API_BREAKING_BASE ?= develop
+
+.PHONY: api-breaking
+api-breaking: ## OpenAPI記述の互換を壊す変更をチェック (例: make api-breaking API_BREAKING_BASE=origin/develop)
+	@echo "🔍 $(API_BREAKING_BASE)に対するOpenAPI記述の互換を壊す変更をチェック中..."
+	@if ! git rev-parse --verify --quiet "$(API_BREAKING_BASE)^{commit}" > /dev/null; then \
+		echo "$(API_BREAKING_BASE)を解決できません"; \
+		exit 1; \
+	fi; \
+	base=$$(mktemp --suffix=.yaml); \
+	if ! git show "$(API_BREAKING_BASE):./api/openapi.yaml" > "$$base" 2> /dev/null; then \
+		echo "$(API_BREAKING_BASE)にOpenAPI記述が無いため、チェックを省略します"; \
+		rm -f "$$base"; \
+		exit 0; \
+	fi; \
+	status=0; \
+	go tool oasdiff breaking --fail-on ERR --severity-levels api/oasdiff-levels.txt --err-ignore api/oasdiff-err-ignore.txt "$$base" api/openapi.yaml || status=$$?; \
+	rm -f "$$base"; \
+	exit "$$status"
+
 .PHONY: seed
 seed: ## 開発環境用のシードデータを生成
 	@echo "シードデータを生成しています..."

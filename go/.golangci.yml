@@ -58,6 +58,16 @@ linters:
           - errcheck
           - ineffassign
           - unused
+      # oapi-codegenの出力が従うのもdepguardだけで、理由はtemplの出力と同じ。
+      # 生成するのはapigen.gen.goの1ファイルで、隣に置いた手書きのファイルは検査対象のままになる。
+      - path: "internal/apigen/apigen\\.gen\\.go"
+        linters:
+          - govet
+          - staticcheck
+          - gosec
+          - errcheck
+          - ineffassign
+          - unused
       # シード関連ファイルはすべてのリンターから除外 (開発/テスト用ユーティリティのため)
       - path: "internal/usecase/seed/.+\\.go"
         linters:
@@ -120,6 +130,14 @@ linters:
               desc: "TemplatesはUseCaseに依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "TemplatesはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "TemplatesはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "TemplatesはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "TemplatesはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
+              desc: "TemplatesはHandlerに依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "TemplatesはMiddlewareに依存できません。"
 
@@ -134,6 +152,14 @@ linters:
             - pkg: github.com/annict/annict/go/internal/repository
               desc: "ViewModelはRepositoryに依存できません。ModelからViewModelへの変換を行ってください。"
             - pkg: github.com/annict/annict/go/internal/handler
+              desc: "ViewModelはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "ViewModelはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "ViewModelはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "ViewModelはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
               desc: "ViewModelはHandlerに依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "ViewModelはMiddlewareに依存できません。"
@@ -170,10 +196,93 @@ linters:
               desc: "httperrorはApplication層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "httperrorはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "httperrorはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "httperrorはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "httperrorはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
+              desc: "httperrorはAPI層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "httperrorはMiddlewareに依存できません。"
             - pkg: github.com/annict/annict/go/internal/worker
               desc: "httperrorはWorkerに依存できません。"
+
+        # REST API V2のHandler層と、oapi-codegenの生成コードのルール
+        # Handler層と同じ制約に加え、JSONを返すためTemplatesにも依存しない
+        apihandler-layer:
+          files:
+            - "**/internal/apihandler/**"
+            - "**/internal/apigen/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "APIのHandlerはQueryに直接依存できません。UseCase経由でアクセスしてください。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "APIのHandlerはRepositoryに直接依存できません。UseCase経由でアクセスしてください。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "APIのHandlerはApplication層のValidatorに直接依存できません。UseCase経由でアクセスしてください。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "APIのHandlerはTemplatesに依存できません。JSONで応答してください。"
+
+        # APIエラーヘルパー層のルール: 他の層へ依存せず、Problem Detailsを書き込む
+        # UseCaseが返すエラー (*model.ValidationError・*model.AppError) を変換するため、modelへの依存は許可
+        apierror-layer:
+          files:
+            - "**/internal/apierror/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "apierrorはQueryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "apierrorはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/dispatcher
+              desc: "apierrorはDispatcherに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "apierrorはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "apierrorはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "apierrorはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "apierrorはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "apierrorはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "apierrorはMiddlewareに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "apierrorはWorkerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "apierrorはTemplatesに依存できません。JSONで応答してください。"
+
+        # APIページネーションヘルパー層のルール: 他の層へ依存せず、カーソルと `Link` ヘッダーを扱う
+        apipagination-layer:
+          files:
+            - "**/internal/apipagination/**"
+          deny:
+            - pkg: github.com/annict/annict/go/internal/query
+              desc: "apipaginationはQueryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/repository
+              desc: "apipaginationはRepositoryに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/dispatcher
+              desc: "apipaginationはDispatcherに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/policy
+              desc: "apipaginationはPolicyに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/usecase
+              desc: "apipaginationはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/validator
+              desc: "apipaginationはApplication層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/handler
+              desc: "apipaginationはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "apipaginationはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "apipaginationはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/middleware
+              desc: "apipaginationはMiddlewareに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/worker
+              desc: "apipaginationはWorkerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/templates
+              desc: "apipaginationはTemplatesに依存できません。JSONで応答してください。"
 
         # Validator層のルール (Application層): UseCaseから呼び出されるバリデーション
         # Presentation層とQuery、UseCaseへの依存を禁止
@@ -184,6 +293,14 @@ linters:
             - pkg: github.com/annict/annict/go/internal/query
               desc: "ValidatorはQueryに直接依存できません。Repositoryを経由してください。"
             - pkg: github.com/annict/annict/go/internal/handler
+              desc: "ValidatorはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "ValidatorはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "ValidatorはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "ValidatorはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
               desc: "ValidatorはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "ValidatorはPresentation層に依存できません。"
@@ -207,6 +324,14 @@ linters:
             - pkg: github.com/annict/annict/go/internal/worker
               desc: "DispatcherはWorkerに依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
+              desc: "DispatcherはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "DispatcherはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "DispatcherはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "DispatcherはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
               desc: "DispatcherはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "DispatcherはPresentation層に依存できません。"
@@ -235,6 +360,10 @@ linters:
               desc: "MiddlewareはUseCaseに依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "MiddlewareはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "MiddlewareはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "MiddlewareはHandlerに依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
               desc: "MiddlewareはViewModelに依存できません。"
 
@@ -247,6 +376,14 @@ linters:
             - pkg: github.com/annict/annict/go/internal/query
               desc: "Application層はQueryに直接依存できません。Repositoryを経由してください。"
             - pkg: github.com/annict/annict/go/internal/handler
+              desc: "Application層はPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "Application層はPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "Application層はPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "Application層はPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
               desc: "Application層はPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "Application層はPresentation層に依存できません。"
@@ -273,6 +410,14 @@ linters:
               desc: "emailパッケージはRepositoryに依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "emailパッケージはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "emailパッケージはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "emailパッケージはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "emailパッケージはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
+              desc: "emailパッケージはAPI層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "emailパッケージはMiddlewareに依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
@@ -302,6 +447,14 @@ linters:
               desc: "ModelはApplication層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "ModelはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "ModelはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "ModelはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "ModelはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
+              desc: "ModelはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "ModelはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
@@ -320,6 +473,14 @@ linters:
             - pkg: github.com/annict/annict/go/internal/usecase
               desc: "RateLimitはApplication層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
+              desc: "RateLimitはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "RateLimitはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "RateLimitはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "RateLimitはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
               desc: "RateLimitはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "RateLimitはPresentation層に依存できません。"
@@ -352,6 +513,14 @@ linters:
               desc: "authは横断的な技術ユーティリティのため、Validator(Application層)に依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "authは横断的な技術ユーティリティのため、Handler(Presentation層)に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "authは横断的な技術ユーティリティのため、API層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "authは横断的な技術ユーティリティのため、API層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "authは横断的な技術ユーティリティのため、API層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
+              desc: "authは横断的な技術ユーティリティのため、API層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "authは横断的な技術ユーティリティのため、Middleware(Presentation層)に依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
@@ -392,6 +561,14 @@ linters:
               desc: "syobocalはApplication層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "syobocalはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
+              desc: "syobocalはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "syobocalはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
@@ -423,6 +600,14 @@ linters:
               desc: "RepositoryはApplication層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "RepositoryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "RepositoryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "RepositoryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "RepositoryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
+              desc: "RepositoryはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "RepositoryはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
@@ -442,6 +627,14 @@ linters:
               desc: "WorkerはRepositoryに直接依存できません。UseCase経由でアクセスしてください。"
             - pkg: github.com/annict/annict/go/internal/handler
               desc: "WorkerはHandlerに依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "WorkerはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "WorkerはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "WorkerはAPI層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
+              desc: "WorkerはAPI層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "WorkerはMiddlewareに依存できません。"
             - pkg: github.com/annict/annict/go/internal/viewmodel
@@ -462,6 +655,14 @@ linters:
             - pkg: github.com/annict/annict/go/internal/usecase
               desc: "QueryはApplication層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/handler
+              desc: "QueryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apihandler
+              desc: "QueryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apigen
+              desc: "QueryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apierror
+              desc: "QueryはPresentation層に依存できません。"
+            - pkg: github.com/annict/annict/go/internal/apipagination
               desc: "QueryはPresentation層に依存できません。"
             - pkg: github.com/annict/annict/go/internal/middleware
               desc: "QueryはPresentation層に依存できません。"

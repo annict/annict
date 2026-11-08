@@ -18,6 +18,15 @@ import (
 	"github.com/redis/go-redis/v9"
 	"github.com/riverqueue/river"
 
+	"github.com/annict/annict/go/api"
+	"github.com/annict/annict/go/internal/apierror"
+	"github.com/annict/annict/go/internal/apigen"
+	"github.com/annict/annict/go/internal/apihandler"
+	apianime "github.com/annict/annict/go/internal/apihandler/anime"
+	apiepisode "github.com/annict/annict/go/internal/apihandler/episode"
+	apilegacyid "github.com/annict/annict/go/internal/apihandler/legacy_id"
+	"github.com/annict/annict/go/internal/apihandler/openapi_description"
+	apiwork "github.com/annict/annict/go/internal/apihandler/work"
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/dispatcher"
@@ -441,28 +450,46 @@ func runServe() {
 		slog.Info("リバースプロキシミドルウェアを有効化しました", "rails_app_url", cfg.RailsAppURL)
 	}
 
-	// Chiルーターの設定
-	r := chi.NewRouter()
+	// REST API V2のエラーをProblem Detailsで書き込む。メンテナンス中の503とパニック時の500にも使う
+	apiProblems := apierror.NewWriter(cfg.AppURL())
+	apiRateLimit := authMiddleware.NewAPIRateLimit(cfg, limiter, apiProblems)
+
+	// Chiルーターの設定。rootにはWeb画面とREST API V2に共通のミドルウェアを掛け、
+	// Web画面のルーター (r) とAPIのルーターを載せる
+	root := chi.NewRouter()
 
 	// ミドルウェア
-	r.Use(authMiddleware.AccessLog)
-	r.Use(middleware.RequestID)
+	root.Use(authMiddleware.AccessLog)
+	root.Use(middleware.RequestID)
+
+	// REST API V2の共通の応答ヘッダーとCORS。レート制限の429・本文サイズ超過の413・
+	// メンテナンス中の503・パニック時の500にも付けるため、それらのミドルウェアより前に置く。
+	// CORSのプリフライトはここで応え、レート制限で数えず、メンテナンス中も止めない
+	root.Use(authMiddleware.APIResponseHeader)
+	root.Use(authMiddleware.APICORS)
+
+	// レート制限の計数と残量通知は、本文サイズ・メンテナンスの早期応答も含める。
+	// 429を返すかの判定は、それぞれのステータスを優先できる位置で行う
+	root.Use(apiRateLimit.CountMiddleware)
 
 	// リクエストボディサイズ制限 (10MB)
-	requestBodyLimitMW := authMiddleware.NewRequestBodyLimitMiddleware(10 * 1024 * 1024)
-	r.Use(requestBodyLimitMW.Middleware)
+	requestBodyLimitMW := authMiddleware.NewRequestBodyLimitMiddleware(10*1024*1024, apiProblems)
+	root.Use(requestBodyLimitMW.Middleware)
 
 	// メンテナンスミドルウェア。クライアントIPはclientip.GetClientIPで
 	// 取得し、同関数がプロキシヘッダを自前で読むため、他のミドルウェアとの
 	// 登録順はIP取得に影響しない。
-	maintenanceMW := authMiddleware.NewMaintenanceMiddleware(cfg)
-	r.Use(maintenanceMW.Middleware)
+	maintenanceMW := authMiddleware.NewMaintenanceMiddleware(cfg, apiProblems)
+	root.Use(maintenanceMW.Middleware)
+
+	// 本文サイズ超過の413とメンテナンス中の503を、レート制限の429より優先する
+	root.Use(apiRateLimit.EnforceMiddleware)
 
 	// Webサイトのレート制限ミドルウェア。リバースプロキシより前に置き、Go版が描画する
 	// ページとRails版へ中継するページの両方を接続元IP単位で数える。メンテナンス中は
 	// メンテナンスページを返すだけのため、メンテナンスミドルウェアの内側に置く。
 	rateLimitMW := authMiddleware.NewRateLimitMiddleware(cfg, limiter, sessionManager)
-	r.Use(rateLimitMW.Middleware)
+	root.Use(rateLimitMW.Middleware)
 
 	// リバースプロキシミドルウェア
 	// Go版で処理するかRails版にプロキシするかを判定
@@ -472,8 +499,8 @@ func runServe() {
 	// どのGoルートにもマッチしない場合に、ミドルウェアがこのレイヤー (下のSentry /
 	// CSRFチェーンより前) でRailsへフォールバックできるようにする。
 	if reverseProxyMW != nil {
-		reverseProxyMW.SetRouter(r)
-		r.Use(reverseProxyMW.Middleware)
+		reverseProxyMW.SetRouter(root)
+		root.Use(reverseProxyMW.Middleware)
 	}
 
 	// 以下はGo版で処理する場合のみ適用されるミドルウェア。Sentryの
@@ -484,26 +511,85 @@ func runServe() {
 	// 配信と、以下のミドルウェアが返すRecovererの500やCSRFの403を含む) を覆う。
 	// リバースプロキシの外側へは動かせない。Railsは同じヘッダーを既に送っており、
 	// httputil.ReverseProxyはそれを上書きではなく追記するため。
-	r.Use(authMiddleware.SecurityHeaders)
+	root.Use(authMiddleware.SecurityHeaders)
 
 	// Recovererはsentryhttpより前 (= 外側) に登録する。sentryhttpが
 	// Repanic: trueで再panicしたものをここで握り潰して500を返すため。
 	// Sentry SDK公式READMEも「recovery middlewareはsentryhttpより外側に
-	// 置く」と指示している。
-	r.Use(middleware.Recoverer)
+	// 置く」と指示している。APIのパスには500をProblem Detailsで返す。
+	root.Use(authMiddleware.NewRecoverer(apiProblems).Middleware)
 
 	// sentryhttpはリクエスト単位のHubをcontextに積み、panicを捕捉して
 	// Sentryに送信し、リクエストごとのSentryトランザクションを開始する。
 	// Repanic: trueにより捕捉後に再panicすることで、外側のRecovererが
 	// クライアントに500を返せる。
 	sentryHandler := sentryhttp.New(sentryhttp.Options{Repanic: true})
-	r.Use(sentryHandler.Handle)
+	root.Use(sentryHandler.Handle)
 
 	// SentryTransactionはトランザクション名をchiのルートパターンに
 	// 上書きするミドルウェア。sentryhttpの後 (= 内側) に登録することで、LIFOの
 	// defer順序によりsentryhttpのtransaction.Finish() やrecoverWithSentry
 	// より先に書き換えが走ることを保証する。
-	r.Use(authMiddleware.SentryTransaction)
+	root.Use(authMiddleware.SentryTransaction)
+
+	// REST API V2。`Authorization: Bearer` のトークンで認証し、Cookieのセッションを使わないため、
+	// 以下のWeb画面のミドルウェア (セッションの認証・CSRF・フラッシュ・Method Override・I18nなど) を掛けない
+	apiSpec, err := apigen.GetSpec()
+	if err != nil {
+		slog.Error("OpenAPI記述の読み込みに失敗しました", "error", err)
+		os.Exit(1)
+	}
+	apiRequestValidator, err := authMiddleware.NewAPIRequestValidator(apiSpec, apiProblems)
+	if err != nil {
+		slog.Error("APIのリクエスト検証の初期化に失敗しました", "error", err)
+		os.Exit(1)
+	}
+	animeRepo := repository.NewAnimeRepository(queries)
+	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
+	// 作品・エピソードの別表のリポジトリの束。作品 作成 / 更新UseCaseは、workがsourceとする6つの別表の両書きに使い、
+	// REST API V2は作品・エピソードの情報を返すのに使う
+	satelliteRepos := usecase.WorkSatelliteRepos{
+		ExternalID:      repository.NewAnimeExternalIDRepository(queries),
+		Link:            repository.NewAnimeLinkRepository(queries),
+		OfficialAccount: repository.NewAnimeOfficialAccountRepository(queries),
+		Hashtag:         repository.NewAnimeHashtagRepository(queries),
+		Season:          repository.NewAnimeSeasonRepository(queries),
+		Event:           repository.NewAnimeEventRepository(queries),
+	}
+	animeLegacyIDRepo := repository.NewAnimeLegacyIDRepository(queries)
+	animeRedirectRepo := repository.NewAnimeRedirectRepository(queries)
+	apiServer := apihandler.NewServer(
+		apianime.NewHandler(usecase.NewGetAPIAnimeUsecase(
+			animeRepo,
+			animeClassificationRepo,
+			animeRedirectRepo,
+			animeLegacyIDRepo,
+			satelliteRepos,
+		)),
+		apiepisode.NewHandler(usecase.NewGetAPIEpisodesUsecase(animeRepo, animeClassificationRepo, animeLegacyIDRepo, satelliteRepos)),
+		apilegacyid.NewHandler(usecase.NewGetAPILegacyIDsUsecase(
+			validator.NewAPILegacyIDIndexValidator(),
+			animeRepo,
+			animeClassificationRepo,
+			animeRedirectRepo,
+			animeLegacyIDRepo,
+		)),
+		openapi_description.NewHandler(api.OpenAPIDescription),
+		apiwork.NewHandler(usecase.NewGetAPIWorksUsecase(animeRepo, animeClassificationRepo, animeLegacyIDRepo, satelliteRepos)),
+	)
+	apiFeatureFlag, err := authMiddleware.NewAPIFeatureFlag(apiSpec, apiProblems)
+	if err != nil {
+		slog.Error("APIのフィーチャーフラグの判定の初期化に失敗しました", "error", err)
+		os.Exit(1)
+	}
+	apiTokenAuth := authMiddleware.NewAPITokenAuth(
+		usecase.NewGetAPIPrincipalUsecase(repository.NewOAuthAccessTokenRepository(queries), featureFlagRepo),
+		apiProblems,
+	)
+	root.Mount(authMiddleware.APIPathPrefix, newAPIRouter(apiServer, apiProblems, apiTokenAuth, apiFeatureFlag, apiRequestValidator))
+
+	// Web画面のルーター。ここから下のミドルウェアとルートはWeb画面だけに掛かる
+	r := chi.NewRouter()
 
 	r.Use(authMiddleware.MethodOverride) // Method Overrideミドルウェアを追加 (HTMLフォームからPUT/PATCH/DELETEを使用可能に)
 	r.Use(authMW.Middleware)             // 認証ミドルウェアを追加 (ユーザー情報をコンテキストに設定)
@@ -770,21 +856,9 @@ func runServe() {
 
 	// DB管理画面
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-	animeRepo := repository.NewAnimeRepository(queries)
-	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
 	getDBWorksUC := usecase.NewGetDBWorksUsecase(workRepo)
 	getDBWorkFormOptionsUC := usecase.NewGetDBWorkFormOptionsUsecase(numberFormatRepo)
 	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
-	// 作品 作成 / 更新UseCaseはworkがsourceとする6つの別表を両書きするため、
-	// フェーズ2の同期バッチと同じ別表リポジトリの束を受け取る。
-	satelliteRepos := usecase.WorkSatelliteRepos{
-		ExternalID:      repository.NewAnimeExternalIDRepository(queries),
-		Link:            repository.NewAnimeLinkRepository(queries),
-		OfficialAccount: repository.NewAnimeOfficialAccountRepository(queries),
-		Hashtag:         repository.NewAnimeHashtagRepository(queries),
-		Season:          repository.NewAnimeSeasonRepository(queries),
-		Event:           repository.NewAnimeEventRepository(queries),
-	}
 	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
 	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
 	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo)
@@ -919,9 +993,11 @@ func runServe() {
 	slog.Info("アクセス先", "local", fmt.Sprintf("http://localhost:%s", cfg.Port), "domain", fmt.Sprintf("https://%s", cfg.Domain))
 
 	// HTTPサーバーの作成
+	root.Mount("/", r)
+
 	srv := &http.Server{
 		Addr:           addr,
-		Handler:        r,
+		Handler:        root,
 		ReadTimeout:    15 * time.Second,
 		WriteTimeout:   15 * time.Second,
 		IdleTimeout:    60 * time.Second,

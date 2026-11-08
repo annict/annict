@@ -86,6 +86,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 
 	slog.InfoContext(ctx, "ログイン成功 (二要素認証)", "user_id", output.UserID, "username", output.Username)
 
+	// redirect.GetSafeRedirectURLで戻り先を同じサイトのパスに限っているため、gosec G710は誤検知として抑制する。
+	//nolint:gosec // G710
 	http.Redirect(w, r, redirect.GetSafeRedirectURL(backURL), http.StatusSeeOther)
 }
 

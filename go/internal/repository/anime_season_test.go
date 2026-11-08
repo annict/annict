@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"slices"
 	"testing"
 
 	"github.com/annict/annict/go/internal/model"
@@ -107,5 +108,44 @@ func TestAnimeSeasonRepository_ListByAnimeIDs_EmptyInput(t *testing.T) {
 	}
 	if len(got) != 0 {
 		t.Errorf("空入力時のlen(got) = %d、期待値 = 0", len(got))
+	}
+}
+
+func TestAnimeSeasonRepository_ListAnimeIDsBySeasons(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	ctx := context.Background()
+	queries := query.New(db).WithTx(tx)
+	repo := repository.NewAnimeSeasonRepository(queries)
+
+	// 年を3001年以降にして、ほかのテストのデータと重ならないようにする
+	spring := createTestWorkAnime(t, queries, "春の作品", model.AnimeStatusPublished, season(3001, model.SeasonNameSpring))
+	unknown := createTestWorkAnime(t, queries, "季節不明の作品", model.AnimeStatusPublished, model.SeasonBucket{Year: 3001})
+	// 代表でない季節に一致しても候補にする
+	secondary := createTestWorkAnime(t, queries, "2つの季節の作品", model.AnimeStatusPublished, season(3002, model.SeasonNameWinter), season(3001, model.SeasonNameSpring))
+	createTestWorkAnime(t, queries, "別の年の作品", model.AnimeStatusPublished, season(3003, model.SeasonNameSpring))
+
+	year := int32(3001)
+	tests := []struct {
+		name    string
+		year    *int32
+		buckets []model.SeasonBucket
+		want    []model.AnimeID
+	}{
+		{name: "年で絞る", year: &year, want: []model.AnimeID{spring, unknown, secondary}},
+		{name: "季節で絞る", buckets: []model.SeasonBucket{season(3001, model.SeasonNameSpring)}, want: []model.AnimeID{spring, secondary}},
+		{name: "季節不明で絞る", buckets: []model.SeasonBucket{{Year: 3001}}, want: []model.AnimeID{unknown}},
+		{name: "複数の季節のどれかに一致すればよい", buckets: []model.SeasonBucket{{Year: 3001}, season(3002, model.SeasonNameWinter)}, want: []model.AnimeID{unknown, secondary}},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := repo.ListAnimeIDsBySeasons(ctx, tt.year, tt.buckets)
+			if err != nil {
+				t.Fatalf("ListAnimeIDsBySeasons()のエラー = %v", err)
+			}
+			slices.Sort(got)
+			assertAnimeIDs(t, got, tt.want)
+		})
 	}
 }
