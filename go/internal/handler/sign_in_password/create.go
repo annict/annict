@@ -96,6 +96,8 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// ログイン後のリダイレクト先を取得 (バリデーション付き)
 	redirectTo := redirect.GetSafeRedirectURL(backURL)
 
+	// redirect.GetSafeRedirectURLで戻り先を同じサイトのパスに限っているため、gosec G710は誤検知として抑制する。
+	//nolint:gosec // G710
 	http.Redirect(w, r, redirectTo, http.StatusSeeOther)
 }
 

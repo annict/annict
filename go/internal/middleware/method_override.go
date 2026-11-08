@@ -4,6 +4,8 @@ import (
 	"net/http"
 	"slices"
 	"strings"
+
+	"github.com/go-chi/chi/v5"
 )
 
 // overridableMethodsは _methodパラメータによってPOSTから書き換えられるメソッドの
@@ -26,18 +28,20 @@ var overridableMethods = []string{
 //
 // これにより、HTMLフォーム (GETとPOSTのみサポート) とREST API (PUT/PATCH/DELETE) で
 // 同じルーティングを使用できます。
+//
+// GETを上書きできるとリンク1つで状態を変える要求を作れてしまうため、上書きするのはPOSTの要求だけにする。
 func MethodOverride(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// POSTリクエストのみ処理
 		if r.Method == http.MethodPost {
-			// フォームデータから_methodパラメータを取得
 			if err := r.ParseForm(); err == nil {
-				method := r.PostFormValue("_method")
-				if method != "" {
-					// サポートされているメソッドのみ許可
-					method = strings.ToUpper(method)
-					if slices.Contains(overridableMethods, method) {
-						r.Method = method
+				method := strings.ToUpper(r.PostFormValue("_method"))
+				if slices.Contains(overridableMethods, method) {
+					r.Method = method
+					// 外側のルーターからMountで載せられていると、chiはルーティングに使うメソッドを
+					// 外側のルーティングの時点で決めて内側でも使い回すため、r.Methodだけを変えても
+					// 上書きがルーティングに効かない。
+					if rctx := chi.RouteContext(r.Context()); rctx != nil {
+						rctx.RouteMethod = method
 					}
 				}
 			}

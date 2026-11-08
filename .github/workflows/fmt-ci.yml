@@ -36,7 +36,7 @@ on:
       - "**/*.graphql"
 
 env:
-  GO_VERSION: "1.26.10"
+  GO_VERSION: "1.27.3"
 
 jobs:
   oxfmt:

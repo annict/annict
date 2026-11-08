@@ -59,6 +59,9 @@ func (fm *FlashManager) setFlash(w http.ResponseWriter, flashType, message strin
 	// JSONの特殊文字 (ダブルクォートなど) がCookieで無効な文字として扱われるため
 	encoded := base64.StdEncoding.EncodeToString(data)
 
+	// Secureを設定値から決めていることと、HttpOnlyをfalseにしていることをgosec G124が指摘する。
+	// フラッシュCookieの属性は変えずに保つため、抑制する。
+	//nolint:gosec // G124
 	cookie := &http.Cookie{
 		Name:     FlashCookieName,
 		Value:    encoded,
@@ -120,6 +123,10 @@ func FlashFromContext(ctx context.Context) *Flash {
 
 // clearFlashはフラッシュCookieを削除する
 func (fm *FlashManager) clearFlash(w http.ResponseWriter) {
+	// 削除するCookieの属性は、setFlashで設定したフラッシュCookieと揃える必要がある。
+	// Secureを設定値から決めていることと、HttpOnlyをfalseにしていることをgosec G124が指摘するが、
+	// 属性を揃えるために変えないので、抑制する。
+	//nolint:gosec // G124
 	cookie := &http.Cookie{
 		Name:     FlashCookieName,
 		Value:    "",

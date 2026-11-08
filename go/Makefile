@@ -223,10 +223,11 @@ api-generate: ## OpenAPI記述からAPIのGoコードを生成
 
 # warn以上で失敗させるのは、recommendedのルールの大半がwarnであり、errorだけで
 # 失敗させると説明文やタグの欠落を見逃すため。
+# vacuumはアプリと依存を分けた tools/vacuum/go.mod のモジュールで実行する。
 .PHONY: api-lint
 api-lint: ## OpenAPI記述をlint (vacuum)
 	@echo "🔍 OpenAPI記述をlint中..."
-	@go tool vacuum lint --details --no-banner --no-style --fail-severity warn --ruleset api/vacuum.yaml api/openapi.yaml
+	@go tool -modfile=tools/vacuum/go.mod vacuum lint --details --no-banner --no-style --fail-severity warn --ruleset api/vacuum.yaml api/openapi.yaml
 
 # BASEのOpenAPI記述と比べて、互換を壊す変更があれば失敗する。BASEに記述がまだ
 # 無い場合 (記述を追加するブランチ自身) は比較の対象が無いため成功とする。
