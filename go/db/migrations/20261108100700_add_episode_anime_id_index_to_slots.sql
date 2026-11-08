@@ -1,7 +1,9 @@
 -- migrate:up transaction:false
 -- slotsの行をanimeから引くために使う。Rails版の書き込みを止めないよう、非トランザクションの
 -- マイグレーションでCONCURRENTLYに作る (CONCURRENTLYは他の文と同じトランザクションに置けない)。
--- IF NOT EXISTSは、構築が中断して無効なインデックスが残ったときの再実行を冪等にする。
+-- IF NOT EXISTSは作成済みのインデックスがある場合の再実行を許す。
+-- 中断で同名の無効なインデックスが残った場合は再構築されないため、無効であることを
+-- 確認し、DROP INDEX CONCURRENTLYで削除してから再実行する。
 CREATE INDEX CONCURRENTLY IF NOT EXISTS index_slots_on_episode_anime_id ON public.slots USING btree (episode_anime_id);
 
 -- migrate:down transaction:false
