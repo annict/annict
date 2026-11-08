@@ -49,8 +49,8 @@ type relatedAnimeIDsSyncer interface {
 //
 // 第3のパスはworksテーブルを再度走査し、別表 (外部ID / リンク / 公式アカウント /
 // ハッシュタグ / 季節 / イベント) をリコンサイルする。works同期パスがworks.anime_idを
-// 書き戻すことに依存するため最後に走らせる。anime_idが未解決のままのworkは繰り延べる
-// (SkippedNoAnime)。
+// 書き戻すことに依存するためworks同期パスより後に走らせる。anime_idが未解決のままの
+// workは繰り延べる (SkippedNoAnime)。
 //
 // 第4のパスは、作品・エピソードのメタデータを持つ関連テーブル (キャスト・放送枠など) の
 // anime_idを照合して直す。works / episodesのパスがanime_idを書き戻した後に走らせ、

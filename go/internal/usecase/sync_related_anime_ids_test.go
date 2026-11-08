@@ -89,7 +89,6 @@ func TestSyncRelatedAnimeIDsUsecase_Execute_FillsAllColumns(t *testing.T) {
 			`INSERT INTO series_works (series_id, work_id, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id`, seriesID, int64(workID))},
 	}
 
-	// ページをまたいで走査されるよう、ページを小さくする。
 	result, err := newSyncRelatedAnimeIDsUsecaseInTx(db, tx, 2).Execute(context.Background())
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
@@ -122,6 +121,55 @@ func TestSyncRelatedAnimeIDsUsecase_Execute_FillsAllColumns(t *testing.T) {
 		if count < 1 {
 			t.Errorf("%s = %d、期待値 = 1以上", name, count)
 		}
+	}
+}
+
+func TestSyncRelatedAnimeIDsUsecase_Execute_ContinuesAfterUnchangedPage(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	// 並行テストのコミットで走査対象が変わらないよう、スナップショットを固定する。
+	if _, err := tx.Exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"); err != nil {
+		t.Fatalf("テスト用トランザクションの分離レベルの設定に失敗: %v", err)
+	}
+
+	workID := testutil.NewWorkBuilder(t, tx).Build()
+	animeID := insertRelatedRow(t, tx, `INSERT INTO animes (status) VALUES ('published') RETURNING id`)
+	if _, err := tx.Exec(`UPDATE works SET anime_id = $1 WHERE id = $2`, animeID, int64(workID)); err != nil {
+		t.Fatalf("works.anime_idの設定に失敗: %v", err)
+	}
+
+	// 先の行は写し元と一致させ、後の行だけが修正を必要とする状態にする。
+	unchangedID := insertRelatedRow(t, tx,
+		`INSERT INTO trailers (work_id, anime_id, url, title, created_at, updated_at) VALUES ($1, $2, 'https://example.com/unchanged', '一致するPV', NOW(), NOW()) RETURNING id`,
+		int64(workID), animeID)
+	missingID := insertRelatedRow(t, tx,
+		`INSERT INTO trailers (work_id, url, title, created_at, updated_at) VALUES ($1, 'https://example.com/missing', '照合するPV', NOW(), NOW()) RETURNING id`,
+		int64(workID))
+
+	// 1行を1ページにし、更新件数0のページの後にも照合が続くことを確かめる。
+	result, err := newSyncRelatedAnimeIDsUsecaseInTx(db, tx, 1).Execute(context.Background())
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+
+	for _, row := range []struct {
+		name string
+		id   int64
+	}{
+		{name: "写し元と一致する先の行", id: unchangedID},
+		{name: "後のページで照合する行", id: missingID},
+	} {
+		var got sql.NullInt64
+		if err := tx.QueryRow(`SELECT anime_id FROM trailers WHERE id = $1`, row.id).Scan(&got); err != nil {
+			t.Fatalf("%sの取得に失敗: %v", row.name, err)
+		}
+		if !got.Valid || got.Int64 != animeID {
+			t.Errorf("%sのanime_id = %+v、期待値 = %d", row.name, got, animeID)
+		}
+	}
+	if result.Trailers < 1 {
+		t.Errorf("Trailers = %d、期待値 = 1以上", result.Trailers)
 	}
 }
 
