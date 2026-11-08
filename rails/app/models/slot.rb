@@ -4,6 +4,7 @@
 class Slot < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
+  include AnimeIdCopyable
 
   DIFF_FIELDS = %i[channel_id episode_id started_at rebroadcast].freeze
 
@@ -13,6 +14,10 @@ class Slot < ApplicationRecord
   belongs_to :episode, optional: true
   belongs_to :program, optional: true
   belongs_to :work, touch: true
+
+  copy_anime_id_from :work
+  copy_anime_id_from :episode, to: :episode_anime_id
+
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :library_entries, dependent: :nullify, foreign_key: :next_slot_id, inverse_of: :next_slot
