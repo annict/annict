@@ -134,6 +134,10 @@ func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
+	// 並行テストのコミットで走査対象が変わらないよう、スナップショットを固定する。
+	if _, err := tx.Exec("SET TRANSACTION ISOLATION LEVEL REPEATABLE READ"); err != nil {
+		t.Fatalf("テスト用トランザクションの分離レベルの設定に失敗: %v", err)
+	}
 
 	var workIDs []model.WorkID
 	for range 3 {
