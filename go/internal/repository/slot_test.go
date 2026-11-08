@@ -2,6 +2,7 @@ package repository_test
 
 import (
 	"context"
+	"database/sql"
 	"testing"
 	"time"
 
@@ -114,6 +115,14 @@ func TestSlotRepository_LinkEpisode(t *testing.T) {
 	firstID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
 	secondID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
 
+	var firstAnimeID int64
+	if err := tx.QueryRow(`INSERT INTO animes (status) VALUES ('published') RETURNING id`).Scan(&firstAnimeID); err != nil {
+		t.Fatalf("animesの挿入に失敗: %v", err)
+	}
+	if _, err := tx.Exec(`UPDATE episodes SET anime_id = $1 WHERE id = $2`, firstAnimeID, int64(firstID)); err != nil {
+		t.Fatalf("episodes.anime_idの設定に失敗: %v", err)
+	}
+
 	repo := repository.NewSlotRepository(query.New(db)).WithTx(tx)
 	slot, err := repo.GetForEpisodeGenerationByID(ctx, slotID, workID, now.Add(-time.Hour), now.Add(time.Hour))
 	if err != nil || slot == nil {
@@ -148,11 +157,22 @@ func TestSlotRepository_LinkEpisode(t *testing.T) {
 	}
 
 	var episodeID int64
-	if err := tx.QueryRow(`SELECT episode_id FROM slots WHERE id = $1`, int64(slotID)).Scan(&episodeID); err != nil {
+	var episodeAnimeID sql.NullInt64
+	if err := tx.QueryRow(`SELECT episode_id, episode_anime_id FROM slots WHERE id = $1`, int64(slotID)).Scan(&episodeID, &episodeAnimeID); err != nil {
 		t.Fatalf("放送枠の読み込みに失敗: %v", err)
 	}
 	if episodeID != int64(firstID) {
 		t.Errorf("slots.episode_id = %d、期待値 = %d", episodeID, firstID)
+	}
+	if !episodeAnimeID.Valid || episodeAnimeID.Int64 != firstAnimeID {
+		t.Errorf("slots.episode_anime_id = %+v、期待値 = %d (紐づけたエピソードのanime_id)", episodeAnimeID, firstAnimeID)
+	}
+	var deletedEpisodeAnimeID sql.NullInt64
+	if err := tx.QueryRow(`SELECT episode_anime_id FROM slots WHERE id = $1`, int64(deletedSlotID)).Scan(&deletedEpisodeAnimeID); err != nil {
+		t.Fatalf("放送枠の読み込みに失敗: %v", err)
+	}
+	if deletedEpisodeAnimeID.Valid {
+		t.Errorf("紐づけなかった放送枠のepisode_anime_id = %+v、期待値 = NULL", deletedEpisodeAnimeID)
 	}
 }
 

@@ -73,7 +73,8 @@ func (r *SlotRepository) GetForEpisodeGenerationByID(ctx context.Context, id mod
 	}, nil
 }
 
-// LinkEpisodeはGetForEpisodeGenerationByIDでロックした放送枠へエピソードを紐づける。
+// LinkEpisodeはGetForEpisodeGenerationByIDでロックした放送枠へエピソードを紐づけ、
+// episode_anime_idにエピソードのanime_idを写す。
 // falseは、照合に使った属性や対象条件が一致せず、何も書かなかったことを表す。
 func (r *SlotRepository) LinkEpisode(ctx context.Context, slot *model.Slot, episodeID model.EpisodeID) (bool, error) {
 	affected, err := r.queries.LinkSlotEpisode(ctx, query.LinkSlotEpisodeParams{
@@ -88,4 +89,33 @@ func (r *SlotRepository) LinkEpisode(ctx context.Context, slot *model.Slot, epis
 		return false, err
 	}
 	return affected == 1, nil
+}
+
+// ReconcileAnimeIDsAfterは、IDがafterIDより大きい放送枠の1ページについて、anime_idを
+// 作品のanime_idと照合して直す。作品を指していない行と、作品のanime_idがまだ無い行はNULLにする。
+func (r *SlotRepository) ReconcileAnimeIDsAfter(ctx context.Context, afterID int64, batchSize int) (AnimeIDReconcilePage, error) {
+	row, err := r.queries.ReconcileSlotAnimeIDsAfter(ctx, query.ReconcileSlotAnimeIDsAfterParams{
+		AfterID: afterID,
+		// batchSizeは小さく上限のあるページサイズ (既定1000) でint32上限には達しない。
+		BatchSize: int32(batchSize), // #nosec G115
+	})
+	if err != nil {
+		return AnimeIDReconcilePage{}, err
+	}
+	return newAnimeIDReconcilePage(row.LastID, row.UpdatedCount), nil
+}
+
+// ReconcileEpisodeAnimeIDsAfterは、IDがafterIDより大きい放送枠の1ページについて、episode_anime_idを
+// 紐づいたエピソードのanime_idと照合して直す。エピソードが紐づいていない行と、エピソードの
+// anime_idがまだ無い行はNULLにする。
+func (r *SlotRepository) ReconcileEpisodeAnimeIDsAfter(ctx context.Context, afterID int64, batchSize int) (AnimeIDReconcilePage, error) {
+	row, err := r.queries.ReconcileSlotEpisodeAnimeIDsAfter(ctx, query.ReconcileSlotEpisodeAnimeIDsAfterParams{
+		AfterID: afterID,
+		// batchSizeは小さく上限のあるページサイズ (既定1000) でint32上限には達しない。
+		BatchSize: int32(batchSize), // #nosec G115
+	})
+	if err != nil {
+		return AnimeIDReconcilePage{}, err
+	}
+	return newAnimeIDReconcilePage(row.LastID, row.UpdatedCount), nil
 }

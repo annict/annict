@@ -22,3 +22,27 @@ WHERE c.work_id = ANY($1::bigint[])
   AND c.unpublished_at IS NULL
   AND p.status = 'published'
 ORDER BY c.work_id, c.sort_number;
+
+-- name: ReconcileCastAnimeIDsAfter :one
+-- animes同期バッチの関連テーブルの照合。idがafter_idより大きいcastsの1ページについて、
+-- anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+-- 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+-- last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+WITH page AS (
+    SELECT casts.id, works.anime_id
+    FROM casts
+    LEFT JOIN works ON works.id = casts.work_id
+    WHERE casts.id > sqlc.arg('after_id')
+    ORDER BY casts.id
+    LIMIT sqlc.arg('batch_size')
+), updated AS (
+    UPDATE casts
+    SET anime_id = page.anime_id
+    FROM page
+    WHERE casts.id = page.id
+        AND casts.anime_id IS DISTINCT FROM page.anime_id
+    RETURNING casts.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count;

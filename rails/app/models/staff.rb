@@ -6,6 +6,7 @@ class Staff < ApplicationRecord
 
   include DbActivityMethods
   include Unpublishable
+  include AnimeIdCopyable
 
   DIFF_FIELDS = %i[
     resource_id name role role_other sort_number name_en role_other_en
@@ -32,6 +33,9 @@ class Staff < ApplicationRecord
 
   belongs_to :resource, polymorphic: true
   belongs_to :work, touch: true
+
+  copy_anime_id_from :work
+
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 

@@ -84,3 +84,45 @@ func (q *Queries) GetStaffsByWorkIDs(ctx context.Context, dollar_1 []int64) ([]G
 	}
 	return items, nil
 }
+
+const reconcileStaffAnimeIDsAfter = `-- name: ReconcileStaffAnimeIDsAfter :one
+WITH page AS (
+    SELECT staffs.id, works.anime_id
+    FROM staffs
+    LEFT JOIN works ON works.id = staffs.work_id
+    WHERE staffs.id > $1
+    ORDER BY staffs.id
+    LIMIT $2
+), updated AS (
+    UPDATE staffs
+    SET anime_id = page.anime_id
+    FROM page
+    WHERE staffs.id = page.id
+        AND staffs.anime_id IS DISTINCT FROM page.anime_id
+    RETURNING staffs.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count
+`
+
+type ReconcileStaffAnimeIDsAfterParams struct {
+	AfterID   int64 `db:"after_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+type ReconcileStaffAnimeIDsAfterRow struct {
+	LastID       int64 `db:"last_id"`
+	UpdatedCount int64 `db:"updated_count"`
+}
+
+// animes同期バッチの関連テーブルの照合。idがafter_idより大きいstaffsの1ページについて、
+// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+func (q *Queries) ReconcileStaffAnimeIDsAfter(ctx context.Context, arg ReconcileStaffAnimeIDsAfterParams) (ReconcileStaffAnimeIDsAfterRow, error) {
+	row := q.db.QueryRowContext(ctx, reconcileStaffAnimeIDsAfter, arg.AfterID, arg.BatchSize)
+	var i ReconcileStaffAnimeIDsAfterRow
+	err := row.Scan(&i.LastID, &i.UpdatedCount)
+	return i, err
+}

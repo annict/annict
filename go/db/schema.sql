@@ -653,7 +653,8 @@ CREATE TABLE public.casts (
     character_id bigint NOT NULL,
     name_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint
 );
 
 
@@ -2297,7 +2298,8 @@ CREATE TABLE public.programs (
     rebroadcast boolean DEFAULT false NOT NULL,
     minimum_episode_generatable_number integer DEFAULT 1 NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint
 );
 
 
@@ -2666,7 +2668,8 @@ CREATE TABLE public.series_works (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint
 );
 
 
@@ -2881,7 +2884,9 @@ CREATE TABLE public.slots (
     number integer,
     irregular boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint,
+    episode_anime_id bigint
 );
 
 
@@ -2916,7 +2921,8 @@ CREATE TABLE public.staffs (
     name_en character varying DEFAULT ''::character varying NOT NULL,
     role_other_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint
 );
 
 
@@ -3043,41 +3049,6 @@ ALTER SEQUENCE public.stripe_webhook_events_id_seq OWNED BY public.stripe_webhoo
 
 
 --
--- Name: syobocal_alerts; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.syobocal_alerts (
-    id bigint NOT NULL,
-    work_id bigint,
-    kind integer NOT NULL,
-    sc_prog_item_id integer,
-    sc_sub_title character varying(255),
-    sc_prog_comment character varying(255),
-    created_at timestamp without time zone,
-    updated_at timestamp without time zone
-);
-
-
---
--- Name: syobocal_alerts_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.syobocal_alerts_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: syobocal_alerts_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.syobocal_alerts_id_seq OWNED BY public.syobocal_alerts.id;
-
-
---
 -- Name: tips; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -3132,7 +3103,8 @@ CREATE TABLE public.trailers (
     title_en character varying DEFAULT ''::character varying NOT NULL,
     image_data text,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint
 );
 
 
@@ -3493,7 +3465,8 @@ CREATE TABLE public.vod_titles (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
-    unpublished_at timestamp without time zone
+    unpublished_at timestamp without time zone,
+    anime_id bigint
 );
 
 
@@ -3567,7 +3540,8 @@ CREATE TABLE public.work_images (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     color_rgb character varying DEFAULT '255,255,255'::character varying NOT NULL,
-    image_data text NOT NULL
+    image_data text NOT NULL,
+    anime_id bigint
 );
 
 
@@ -4205,13 +4179,6 @@ ALTER TABLE ONLY public.stripe_subscribers ALTER COLUMN id SET DEFAULT nextval('
 --
 
 ALTER TABLE ONLY public.stripe_webhook_events ALTER COLUMN id SET DEFAULT nextval('public.stripe_webhook_events_id_seq'::regclass);
-
-
---
--- Name: syobocal_alerts id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.syobocal_alerts ALTER COLUMN id SET DEFAULT nextval('public.syobocal_alerts_id_seq'::regclass);
 
 
 --
@@ -5072,14 +5039,6 @@ ALTER TABLE ONLY public.stripe_webhook_events
 
 
 --
--- Name: syobocal_alerts syobocal_alerts_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.syobocal_alerts
-    ADD CONSTRAINT syobocal_alerts_pkey PRIMARY KEY (id);
-
-
---
 -- Name: tips tips_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -5684,6 +5643,13 @@ CREATE INDEX index_anime_seasons_on_year_and_name ON public.anime_seasons USING 
 --
 
 CREATE INDEX index_casts_on_aasm_state ON public.casts USING btree (aasm_state);
+
+
+--
+-- Name: index_casts_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_casts_on_anime_id ON public.casts USING btree (anime_id);
 
 
 --
@@ -6597,6 +6563,13 @@ CREATE UNIQUE INDEX index_prefectures_on_name ON public.prefectures USING btree 
 
 
 --
+-- Name: index_programs_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_programs_on_anime_id ON public.programs USING btree (anime_id);
+
+
+--
 -- Name: index_programs_on_channel_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6730,6 +6703,13 @@ CREATE INDEX index_series_on_unpublished_at ON public.series USING btree (unpubl
 
 
 --
+-- Name: index_series_works_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_series_works_on_anime_id ON public.series_works USING btree (anime_id);
+
+
+--
 -- Name: index_series_works_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6793,10 +6773,24 @@ CREATE INDEX index_slots_on_aasm_state ON public.slots USING btree (aasm_state);
 
 
 --
+-- Name: index_slots_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_slots_on_anime_id ON public.slots USING btree (anime_id);
+
+
+--
 -- Name: index_slots_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
 CREATE INDEX index_slots_on_deleted_at ON public.slots USING btree (deleted_at);
+
+
+--
+-- Name: index_slots_on_episode_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_slots_on_episode_anime_id ON public.slots USING btree (episode_anime_id);
 
 
 --
@@ -6842,6 +6836,13 @@ CREATE INDEX index_staffs_on_aasm_state ON public.staffs USING btree (aasm_state
 
 
 --
+-- Name: index_staffs_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_staffs_on_anime_id ON public.staffs USING btree (anime_id);
+
+
+--
 -- Name: index_staffs_on_deleted_at; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6884,20 +6885,6 @@ CREATE INDEX index_statuses_on_oauth_application_id ON public.statuses USING btr
 
 
 --
--- Name: index_syobocal_alerts_on_kind; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_syobocal_alerts_on_kind ON public.syobocal_alerts USING btree (kind);
-
-
---
--- Name: index_syobocal_alerts_on_sc_prog_item_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_syobocal_alerts_on_sc_prog_item_id ON public.syobocal_alerts USING btree (sc_prog_item_id);
-
-
---
 -- Name: index_tips_on_locale; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -6909,6 +6896,13 @@ CREATE INDEX index_tips_on_locale ON public.tips USING btree (locale);
 --
 
 CREATE UNIQUE INDEX index_tips_on_slug_and_locale ON public.tips USING btree (slug, locale);
+
+
+--
+-- Name: index_trailers_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_trailers_on_anime_id ON public.trailers USING btree (anime_id);
 
 
 --
@@ -6996,6 +6990,13 @@ CREATE INDEX index_users_on_gumroad_subscriber_id ON public.users USING btree (g
 
 
 --
+-- Name: index_vod_titles_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_vod_titles_on_anime_id ON public.vod_titles USING btree (anime_id);
+
+
+--
 -- Name: index_vod_titles_on_channel_id; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -7056,6 +7057,13 @@ CREATE UNIQUE INDEX index_work_comments_on_user_id_and_work_id ON public.work_co
 --
 
 CREATE INDEX index_work_comments_on_work_id ON public.work_comments USING btree (work_id);
+
+
+--
+-- Name: index_work_images_on_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_work_images_on_anime_id ON public.work_images USING btree (anime_id);
 
 
 --
@@ -8494,14 +8502,6 @@ ALTER TABLE ONLY public.statuses
 
 
 --
--- Name: syobocal_alerts syobocal_alerts_work_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.syobocal_alerts
-    ADD CONSTRAINT syobocal_alerts_work_id_fk FOREIGN KEY (work_id) REFERENCES public.works(id) ON DELETE CASCADE;
-
-
---
 -- Name: user_two_factor_auths user_two_factor_auths_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8870,4 +8870,15 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20261102033056'),
     ('20261102033057'),
     ('20261104100100'),
-    ('20261104100200');
+    ('20261104100200'),
+    ('20261108100000'),
+    ('20261108100100'),
+    ('20261108100200'),
+    ('20261108100300'),
+    ('20261108100400'),
+    ('20261108100500'),
+    ('20261108100600'),
+    ('20261108100700'),
+    ('20261108100800'),
+    ('20261108100900'),
+    ('20261108101000');

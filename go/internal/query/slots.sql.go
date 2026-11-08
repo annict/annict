@@ -95,17 +95,18 @@ func (q *Queries) GetSlotForEpisodeGenerationByID(ctx context.Context, arg GetSl
 
 const linkSlotEpisode = `-- name: LinkSlotEpisode :execrows
 UPDATE slots
-SET episode_id = $1
-WHERE id = $2
-    AND work_id = $3
-    AND program_id = $4
-    AND number = $5
-    AND started_at = $6
-    AND episode_id IS NULL
-    AND deleted_at IS NULL
-    AND unpublished_at IS NULL
-    AND NOT rebroadcast
-    AND NOT irregular
+SET episode_id = $1,
+    episode_anime_id = (SELECT episodes.anime_id FROM episodes WHERE episodes.id = $1)
+WHERE slots.id = $2
+    AND slots.work_id = $3
+    AND slots.program_id = $4
+    AND slots.number = $5
+    AND slots.started_at = $6
+    AND slots.episode_id IS NULL
+    AND slots.deleted_at IS NULL
+    AND slots.unpublished_at IS NULL
+    AND NOT slots.rebroadcast
+    AND NOT slots.irregular
 `
 
 type LinkSlotEpisodeParams struct {
@@ -120,6 +121,8 @@ type LinkSlotEpisodeParams struct {
 // 照合に使った所属・番組・回数・開始時刻と対象条件を満たす放送枠だけを書き込む。
 // 0行なら呼び出し側は生成をロールバックする。Railsのupdate_column相当で、updated_atも
 // 作品のtouchも行わない。
+// episode_anime_idには紐づけるエピソードのanime_idを同じ文で写す。エピソードのanime_idがまだ
+// 無ければNULLのまま書き、animes同期バッチが埋める。
 func (q *Queries) LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error) {
 	result, err := q.db.ExecContext(ctx, linkSlotEpisode,
 		arg.EpisodeID,
@@ -188,4 +191,88 @@ func (q *Queries) ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlo
 		return nil, err
 	}
 	return items, nil
+}
+
+const reconcileSlotAnimeIDsAfter = `-- name: ReconcileSlotAnimeIDsAfter :one
+WITH page AS (
+    SELECT slots.id, works.anime_id
+    FROM slots
+    LEFT JOIN works ON works.id = slots.work_id
+    WHERE slots.id > $1
+    ORDER BY slots.id
+    LIMIT $2
+), updated AS (
+    UPDATE slots
+    SET anime_id = page.anime_id
+    FROM page
+    WHERE slots.id = page.id
+        AND slots.anime_id IS DISTINCT FROM page.anime_id
+    RETURNING slots.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count
+`
+
+type ReconcileSlotAnimeIDsAfterParams struct {
+	AfterID   int64 `db:"after_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+type ReconcileSlotAnimeIDsAfterRow struct {
+	LastID       int64 `db:"last_id"`
+	UpdatedCount int64 `db:"updated_count"`
+}
+
+// animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、
+// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+func (q *Queries) ReconcileSlotAnimeIDsAfter(ctx context.Context, arg ReconcileSlotAnimeIDsAfterParams) (ReconcileSlotAnimeIDsAfterRow, error) {
+	row := q.db.QueryRowContext(ctx, reconcileSlotAnimeIDsAfter, arg.AfterID, arg.BatchSize)
+	var i ReconcileSlotAnimeIDsAfterRow
+	err := row.Scan(&i.LastID, &i.UpdatedCount)
+	return i, err
+}
+
+const reconcileSlotEpisodeAnimeIDsAfter = `-- name: ReconcileSlotEpisodeAnimeIDsAfter :one
+WITH page AS (
+    SELECT slots.id, episodes.anime_id
+    FROM slots
+    LEFT JOIN episodes ON episodes.id = slots.episode_id
+    WHERE slots.id > $1
+    ORDER BY slots.id
+    LIMIT $2
+), updated AS (
+    UPDATE slots
+    SET episode_anime_id = page.anime_id
+    FROM page
+    WHERE slots.id = page.id
+        AND slots.episode_anime_id IS DISTINCT FROM page.anime_id
+    RETURNING slots.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count
+`
+
+type ReconcileSlotEpisodeAnimeIDsAfterParams struct {
+	AfterID   int64 `db:"after_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+type ReconcileSlotEpisodeAnimeIDsAfterRow struct {
+	LastID       int64 `db:"last_id"`
+	UpdatedCount int64 `db:"updated_count"`
+}
+
+// animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、
+// episode_anime_idをepisode_idの指すエピソードのanime_idと照合し、違う行だけを書き換える。episode_idがNULLの行と、
+// エピソードのanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+func (q *Queries) ReconcileSlotEpisodeAnimeIDsAfter(ctx context.Context, arg ReconcileSlotEpisodeAnimeIDsAfterParams) (ReconcileSlotEpisodeAnimeIDsAfterRow, error) {
+	row := q.db.QueryRowContext(ctx, reconcileSlotEpisodeAnimeIDsAfter, arg.AfterID, arg.BatchSize)
+	var i ReconcileSlotEpisodeAnimeIDsAfterRow
+	err := row.Scan(&i.LastID, &i.UpdatedCount)
+	return i, err
 }

@@ -6,12 +6,15 @@ class Trailer < ApplicationRecord
   include DbActivityMethods
   include ImageUploadable
   include Unpublishable
+  include AnimeIdCopyable
 
   DIFF_FIELDS = %i[title url sort_number].freeze
 
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   belongs_to :work, touch: true
+
+  copy_anime_id_from :work
 
   validates :title, presence: true
   validates :url, url: true
