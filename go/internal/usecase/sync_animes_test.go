@@ -2,101 +2,45 @@ package usecase
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"testing"
 
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/query"
+	"github.com/annict/annict/go/internal/repository"
+	"github.com/annict/annict/go/internal/testutil"
 )
-
-// fakeWorkIDPagerはbackingスライスからwork IDをkeysetページで返し、UseCaseが
-// 渡すbatchSizeを尊重する。各呼び出しの (afterID, batchSize) を記録し、カーソルが正しく
-// 前進することをテストで検証できるようにする。
-type fakeWorkIDPager struct {
-	ids       []model.WorkID
-	calls     []fakeWorkPageCall
-	err       error
-	errOnCall int
-	callCount int
-}
-
-type fakeWorkPageCall struct {
-	afterID   model.WorkID
-	batchSize int
-}
-
-func (p *fakeWorkIDPager) ListIDsAfter(_ context.Context, afterID model.WorkID, batchSize int) ([]model.WorkID, error) {
-	p.callCount++
-	p.calls = append(p.calls, fakeWorkPageCall{afterID: afterID, batchSize: batchSize})
-	if p.err != nil && p.callCount == p.errOnCall {
-		return nil, p.err
-	}
-
-	var page []model.WorkID
-	for _, id := range p.ids {
-		if id <= afterID {
-			continue
-		}
-		page = append(page, id)
-		if len(page) == batchSize {
-			break
-		}
-	}
-	return page, nil
-}
-
-// fakeEpisodeIDPagerはepisode ID用にfakeWorkIDPagerを写したもの。
-type fakeEpisodeIDPager struct {
-	ids   []model.EpisodeID
-	calls []fakeEpisodePageCall
-}
-
-type fakeEpisodePageCall struct {
-	afterID   model.EpisodeID
-	batchSize int
-}
-
-func (p *fakeEpisodeIDPager) ListIDsAfter(_ context.Context, afterID model.EpisodeID, batchSize int) ([]model.EpisodeID, error) {
-	p.calls = append(p.calls, fakeEpisodePageCall{afterID: afterID, batchSize: batchSize})
-
-	var page []model.EpisodeID
-	for _, id := range p.ids {
-		if id <= afterID {
-			continue
-		}
-		page = append(page, id)
-		if len(page) == batchSize {
-			break
-		}
-	}
-	return page, nil
-}
 
 // fakeWorksSyncerは同期を依頼されたwork IDを記録し、固定の呼び出し結果を返して
 // 集計をテストで検証できるようにする。
 type fakeWorksSyncer struct {
 	gotPages [][]model.WorkID
 	result   SyncWorksToAnimesResult
+	err      error
 }
 
 func (s *fakeWorksSyncer) Execute(_ context.Context, input SyncWorksToAnimesInput) (*SyncWorksToAnimesResult, error) {
 	s.gotPages = append(s.gotPages, input.WorkIDs)
+	if s.err != nil {
+		return nil, s.err
+	}
 	r := s.result
 	r.Processed = len(input.WorkIDs)
 	return &r, nil
 }
 
-// fakeEpisodesSyncerはepisodes用にfakeWorksSyncerを写したもの。works同期が
-// 既に走ったかも記録し、works→episodesの順序をテストで検証できるようにする。
+// fakeEpisodesSyncerはepisodes用にfakeWorksSyncerを写したもの。各ページの前に
+// beforeExecuteを呼び、works→episodesの順序をテストで検証できるようにする。
 type fakeEpisodesSyncer struct {
-	gotPages       [][]model.EpisodeID
-	result         SyncEpisodesToAnimesResult
-	worksDoneFirst func() bool
-	worksWereDone  bool
+	gotPages      [][]model.EpisodeID
+	result        SyncEpisodesToAnimesResult
+	beforeExecute func()
 }
 
 func (s *fakeEpisodesSyncer) Execute(_ context.Context, input SyncEpisodesToAnimesInput) (*SyncEpisodesToAnimesResult, error) {
-	if s.worksDoneFirst != nil {
-		s.worksWereDone = s.worksDoneFirst()
+	if s.beforeExecute != nil {
+		s.beforeExecute()
 	}
 	s.gotPages = append(s.gotPages, input.EpisodeIDs)
 	r := s.result
@@ -104,19 +48,18 @@ func (s *fakeEpisodesSyncer) Execute(_ context.Context, input SyncEpisodesToAnim
 	return &r, nil
 }
 
-// fakeWorkSatellitesSyncerは別表パス用にfakeWorksSyncerを写したもの。works同期が
-// 既に走ったかも記録し、本パスが依存するworks→別表 の順序 (anime_idはworksパスが先に
+// fakeWorkSatellitesSyncerは別表パス用にfakeWorksSyncerを写したもの。各ページの前に
+// beforeExecuteを呼び、本パスが依存するworks→別表の順序 (anime_idはworksパスが先に
 // 書き戻す必要がある) をテストで検証できるようにする。
 type fakeWorkSatellitesSyncer struct {
-	gotPages       [][]model.WorkID
-	result         SyncWorkSatellitesResult
-	worksDoneFirst func() bool
-	worksWereDone  bool
+	gotPages      [][]model.WorkID
+	result        SyncWorkSatellitesResult
+	beforeExecute func()
 }
 
 func (s *fakeWorkSatellitesSyncer) Execute(_ context.Context, input SyncWorkSatellitesInput) (*SyncWorkSatellitesResult, error) {
-	if s.worksDoneFirst != nil {
-		s.worksWereDone = s.worksDoneFirst()
+	if s.beforeExecute != nil {
+		s.beforeExecute()
 	}
 	s.gotPages = append(s.gotPages, input.WorkIDs)
 	r := s.result
@@ -124,140 +67,182 @@ func (s *fakeWorkSatellitesSyncer) Execute(_ context.Context, input SyncWorkSate
 	return &r, nil
 }
 
+// newSyncAnimesUsecaseInTxは、テストのトランザクションでworks / episodesを読む
+// Repositoryと、子のUseCaseのフェイクからSyncAnimesUsecaseを組み立てる。
+func newSyncAnimesUsecaseInTx(
+	db *sql.DB,
+	tx *sql.Tx,
+	worksSyncer worksToAnimesSyncer,
+	episodesSyncer episodesToAnimesSyncer,
+	satellitesSyncer workSatellitesSyncer,
+	batchSize int,
+) *SyncAnimesUsecase {
+	queries := query.New(db).WithTx(tx)
+	return NewSyncAnimesUsecase(
+		repository.NewWorkRepository(queries),
+		repository.NewEpisodeRepository(queries),
+		worksSyncer,
+		episodesSyncer,
+		satellitesSyncer,
+		batchSize,
+	)
+}
+
+// assertIDPagesは、走査したページが空でなく、batchSize以下で、最後のページ以外は
+// batchSizeちょうどで、ページをまたいでIDが厳密に増加し、wantIDsをすべて含むことを
+// 確かめる。テスト用DBにはほかのテストがコミットした行もあるため、ページの中身そのものは
+// 固定しない。
+func assertIDPages[ID ~int64](t *testing.T, name string, pages [][]ID, batchSize int, wantIDs []ID) {
+	t.Helper()
+
+	seen := make(map[ID]bool)
+	var prev ID
+	for i, page := range pages {
+		if len(page) == 0 {
+			t.Errorf("%sのページ%dが空。空のページで子のUseCaseを呼ばないこと", name, i)
+		}
+		if len(page) > batchSize {
+			t.Errorf("%sのページ%dの件数 = %d、期待値 = %d以下", name, i, len(page), batchSize)
+		}
+		if i < len(pages)-1 && len(page) != batchSize {
+			t.Errorf("%sのページ%dの件数 = %d、期待値 = %d (最後のページ以外)", name, i, len(page), batchSize)
+		}
+		for _, id := range page {
+			if id <= prev {
+				t.Errorf("%sのページ%dのID %dが直前のID %d以下。IDは厳密に増加すること", name, i, id, prev)
+			}
+			prev = id
+			seen[id] = true
+		}
+	}
+	for _, id := range wantIDs {
+		if !seen[id] {
+			t.Errorf("%sのページにID %dが含まれない", name, id)
+		}
+	}
+}
+
+func countIDs[ID any](pages [][]ID) int {
+	n := 0
+	for _, page := range pages {
+		n += len(page)
+	}
+	return n
+}
+
 func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	t.Parallel()
 
-	workPager := &fakeWorkIDPager{ids: []model.WorkID{1, 2, 3, 4, 5}}
-	episodePager := &fakeEpisodeIDPager{ids: []model.EpisodeID{10, 20, 30}}
+	db, tx := testutil.SetupTx(t)
+
+	var workIDs []model.WorkID
+	for range 3 {
+		workIDs = append(workIDs, testutil.NewWorkBuilder(t, tx).Build())
+	}
+	episodeIDs := []model.EpisodeID{
+		testutil.NewEpisodeBuilder(t, tx, workIDs[0]).Build(),
+		testutil.NewEpisodeBuilder(t, tx, workIDs[0]).Build(),
+	}
+
 	worksSyncer := &fakeWorksSyncer{result: SyncWorksToAnimesResult{Created: 1, Updated: 1}}
 	episodesSyncer := &fakeEpisodesSyncer{result: SyncEpisodesToAnimesResult{Created: 1, SkippedNoParent: 1}}
-	episodesSyncer.worksDoneFirst = func() bool { return len(worksSyncer.gotPages) > 0 }
 	satellitesSyncer := &fakeWorkSatellitesSyncer{result: SyncWorkSatellitesResult{Created: 1, Deleted: 1}}
-	satellitesSyncer.worksDoneFirst = func() bool { return len(worksSyncer.gotPages) > 0 }
+	// works同期のページ数を、episodesと別表の最初のページの時点で記録し、
+	// works→episodes・works→別表の順序を検証する。
+	worksPagesAtEpisodes, worksPagesAtSatellites := -1, -1
+	episodesSyncer.beforeExecute = func() {
+		if worksPagesAtEpisodes < 0 {
+			worksPagesAtEpisodes = len(worksSyncer.gotPages)
+		}
+	}
+	satellitesSyncer.beforeExecute = func() {
+		if worksPagesAtSatellites < 0 {
+			worksPagesAtSatellites = len(worksSyncer.gotPages)
+		}
+	}
 
-	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, satellitesSyncer, 2)
+	const batchSize = 2
+	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, batchSize)
 
 	result, err := uc.Execute(context.Background())
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
-	// works: 5件を2件ずつ -> [1,2] [3,4] [5]。ループはもう1回 (カーソル5)
-	// 呼び出して空ページを受け取り停止する。別表パスは同じworksを再走査するため、
-	// 同じ3ページになる。
-	wantWorkPages := [][]model.WorkID{{1, 2}, {3, 4}, {5}}
-	if len(worksSyncer.gotPages) != len(wantWorkPages) {
-		t.Fatalf("作品のページ数 = %d、期待値 = %d (%v)", len(worksSyncer.gotPages), len(wantWorkPages), worksSyncer.gotPages)
+	assertIDPages(t, "works", worksSyncer.gotPages, batchSize, workIDs)
+	assertIDPages(t, "episodes", episodesSyncer.gotPages, batchSize, episodeIDs)
+	assertIDPages(t, "別表", satellitesSyncer.gotPages, batchSize, workIDs)
+
+	// 子のUseCaseは各ページについて固定の件数を返すため、集計はページ数の倍数になる。
+	// Processedは子のUseCaseに渡したIDの件数の合計になる。
+	worksPages := len(worksSyncer.gotPages)
+	if result.Works.Processed != countIDs(worksSyncer.gotPages) {
+		t.Errorf("Works.Processed = %d、期待値 = %d", result.Works.Processed, countIDs(worksSyncer.gotPages))
 	}
-	for i, want := range wantWorkPages {
-		if !equalWorkIDs(worksSyncer.gotPages[i], want) {
-			t.Errorf("作品のページ%d = %v、期待値 = %v", i, worksSyncer.gotPages[i], want)
-		}
+	if result.Works.Created != worksPages || result.Works.Updated != worksPages {
+		t.Errorf("Works.Created / Updated = %d / %d、期待値 = %d / %d", result.Works.Created, result.Works.Updated, worksPages, worksPages)
 	}
-	if len(satellitesSyncer.gotPages) != len(wantWorkPages) {
-		t.Fatalf("サテライトのページ数 = %d、期待値 = %d (%v)", len(satellitesSyncer.gotPages), len(wantWorkPages), satellitesSyncer.gotPages)
+	episodesPages := len(episodesSyncer.gotPages)
+	if result.Episodes.Processed != countIDs(episodesSyncer.gotPages) {
+		t.Errorf("Episodes.Processed = %d、期待値 = %d", result.Episodes.Processed, countIDs(episodesSyncer.gotPages))
 	}
-	for i, want := range wantWorkPages {
-		if !equalWorkIDs(satellitesSyncer.gotPages[i], want) {
-			t.Errorf("サテライトのページ%d = %v、期待値 = %v", i, satellitesSyncer.gotPages[i], want)
-		}
+	if result.Episodes.Created != episodesPages || result.Episodes.SkippedNoParent != episodesPages {
+		t.Errorf("Episodes.Created / SkippedNoParent = %d / %d、期待値 = %d / %d", result.Episodes.Created, result.Episodes.SkippedNoParent, episodesPages, episodesPages)
+	}
+	satellitesPages := len(satellitesSyncer.gotPages)
+	if result.Satellites.Processed != countIDs(satellitesSyncer.gotPages) {
+		t.Errorf("Satellites.Processed = %d、期待値 = %d", result.Satellites.Processed, countIDs(satellitesSyncer.gotPages))
+	}
+	if result.Satellites.Created != satellitesPages || result.Satellites.Deleted != satellitesPages {
+		t.Errorf("Satellites.Created / Deleted = %d / %d、期待値 = %d / %d", result.Satellites.Created, result.Satellites.Deleted, satellitesPages, satellitesPages)
 	}
 
-	// work pagerは2度走査される (worksパス、続いて別表パス)。各走査のカーソルは
-	// 厳密に前進する: 0, 2, 4, 続いて5 (空ページ)。
-	wantWorkCursors := []model.WorkID{0, 2, 4, 5, 0, 2, 4, 5}
-	if len(workPager.calls) != len(wantWorkCursors) {
-		t.Fatalf("作品のページャーの呼び出し回数 = %d、期待値 = %d", len(workPager.calls), len(wantWorkCursors))
+	// 順序: episodesと別表の最初のページは、worksの走査を終えてから実行される必要がある。
+	if worksPagesAtEpisodes != worksPages {
+		t.Errorf("episodesの開始時点のworksのページ数 = %d、期待値 = %d (worksの走査を終えてから)", worksPagesAtEpisodes, worksPages)
 	}
-	for i, want := range wantWorkCursors {
-		if workPager.calls[i].afterID != want {
-			t.Errorf("作品のページャーの呼び出し%dのafterID = %d、期待値 = %d", i, workPager.calls[i].afterID, want)
-		}
-		if workPager.calls[i].batchSize != 2 {
-			t.Errorf("作品のページャーの呼び出し%dのbatchSize = %d、期待値 = 2", i, workPager.calls[i].batchSize)
-		}
-	}
-
-	// 集計件数: worksは3ページ (各created+1, updated+1)、episodesは2ページ
-	// (各created+1, skipped+1)、別表は3ページ (各created+1, deleted+1)。
-	if result.Works.Processed != 5 {
-		t.Errorf("Works.Processed = %d、期待値 = 5", result.Works.Processed)
-	}
-	if result.Works.Created != 3 {
-		t.Errorf("Works.Created = %d、期待値 = 3", result.Works.Created)
-	}
-	if result.Works.Updated != 3 {
-		t.Errorf("Works.Updated = %d、期待値 = 3", result.Works.Updated)
-	}
-	if result.Episodes.Processed != 3 {
-		t.Errorf("Episodes.Processed = %d、期待値 = 3", result.Episodes.Processed)
-	}
-	if result.Episodes.Created != 2 {
-		t.Errorf("Episodes.Created = %d、期待値 = 2", result.Episodes.Created)
-	}
-	if result.Episodes.SkippedNoParent != 2 {
-		t.Errorf("Episodes.SkippedNoParent = %d、期待値 = 2", result.Episodes.SkippedNoParent)
-	}
-	if result.Satellites.Processed != 5 {
-		t.Errorf("Satellites.Processed = %d、期待値 = 5", result.Satellites.Processed)
-	}
-	if result.Satellites.Created != 3 {
-		t.Errorf("Satellites.Created = %d、期待値 = 3", result.Satellites.Created)
-	}
-	if result.Satellites.Deleted != 3 {
-		t.Errorf("Satellites.Deleted = %d、期待値 = 3", result.Satellites.Deleted)
-	}
-
-	// 順序: episodesの各ページと別表の各ページはworksの走査完了後に実行される必要がある。
-	if !episodesSyncer.worksWereDone {
-		t.Error("worksより先にepisodesが同期された。worksが先に動くこと")
-	}
-	if !satellitesSyncer.worksWereDone {
-		t.Error("worksより先にsatellitesが同期された。worksが先に動くこと")
+	if worksPagesAtSatellites != worksPages {
+		t.Errorf("別表の開始時点のworksのページ数 = %d、期待値 = %d (worksの走査を終えてから)", worksPagesAtSatellites, worksPages)
 	}
 }
 
-func TestSyncAnimesUsecase_Execute_EmptyTablesDoNotCallSyncers(t *testing.T) {
+func TestSyncAnimesUsecase_Execute_PropagatesRepositoryError(t *testing.T) {
 	t.Parallel()
 
-	workPager := &fakeWorkIDPager{}
-	episodePager := &fakeEpisodeIDPager{}
+	db, tx := testutil.SetupTx(t)
+	testutil.NewWorkBuilder(t, tx).Build()
+
 	worksSyncer := &fakeWorksSyncer{}
 	episodesSyncer := &fakeEpisodesSyncer{}
 	satellitesSyncer := &fakeWorkSatellitesSyncer{}
+	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, 1)
 
-	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, satellitesSyncer, 100)
+	// キャンセル済みのコンテキストで、worksのIDのページの取得を失敗させる。
+	ctx, cancel := context.WithCancel(context.Background())
+	cancel()
 
-	result, err := uc.Execute(context.Background())
-	if err != nil {
-		t.Fatalf("Execute()のエラー = %v", err)
+	_, err := uc.Execute(ctx)
+	if !errors.Is(err, context.Canceled) {
+		t.Fatalf("Execute()のエラー = %v、期待値 = %vをラップしたエラー", err, context.Canceled)
 	}
 
-	if len(worksSyncer.gotPages) != 0 {
-		t.Errorf("worksのsyncerの呼び出し回数 = %d、期待値 = 0", len(worksSyncer.gotPages))
-	}
-	if len(episodesSyncer.gotPages) != 0 {
-		t.Errorf("episodesのsyncerの呼び出し回数 = %d、期待値 = 0", len(episodesSyncer.gotPages))
-	}
-	if len(satellitesSyncer.gotPages) != 0 {
-		t.Errorf("satellitesのsyncerの呼び出し回数 = %d、期待値 = 0", len(satellitesSyncer.gotPages))
-	}
-	if result.Works.Processed != 0 || result.Episodes.Processed != 0 || result.Satellites.Processed != 0 {
-		t.Errorf("Processedの件数 = (%d, %d, %d)、期待値 = (0, 0, 0)", result.Works.Processed, result.Episodes.Processed, result.Satellites.Processed)
+	if len(worksSyncer.gotPages) != 0 || len(episodesSyncer.gotPages) != 0 || len(satellitesSyncer.gotPages) != 0 {
+		t.Errorf("子のUseCaseの呼び出し回数 = (%d, %d, %d)、期待値 = (0, 0, 0)",
+			len(worksSyncer.gotPages), len(episodesSyncer.gotPages), len(satellitesSyncer.gotPages))
 	}
 }
 
-func TestSyncAnimesUsecase_Execute_PropagatesPagerError(t *testing.T) {
+func TestSyncAnimesUsecase_Execute_PropagatesSyncerError(t *testing.T) {
 	t.Parallel()
 
-	wantErr := errors.New("pager boom")
-	workPager := &fakeWorkIDPager{ids: []model.WorkID{1, 2, 3}, err: wantErr, errOnCall: 2}
-	episodePager := &fakeEpisodeIDPager{}
-	worksSyncer := &fakeWorksSyncer{}
+	db, tx := testutil.SetupTx(t)
+	testutil.NewWorkBuilder(t, tx).Build()
+
+	wantErr := errors.New("works同期の失敗")
+	worksSyncer := &fakeWorksSyncer{err: wantErr}
 	episodesSyncer := &fakeEpisodesSyncer{}
 	satellitesSyncer := &fakeWorkSatellitesSyncer{}
-
-	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, satellitesSyncer, 1)
+	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, 1)
 
 	_, err := uc.Execute(context.Background())
 	if !errors.Is(err, wantErr) {
@@ -265,6 +250,9 @@ func TestSyncAnimesUsecase_Execute_PropagatesPagerError(t *testing.T) {
 	}
 
 	// エラーはworksの走査中に発生したため、episodesも別表も一切触れないこと。
+	if len(worksSyncer.gotPages) != 1 {
+		t.Errorf("worksのsyncerの呼び出し回数 = %d、期待値 = 1 (最初のページで止まる)", len(worksSyncer.gotPages))
+	}
 	if len(episodesSyncer.gotPages) != 0 {
 		t.Errorf("worksのエラー後のepisodesのsyncerの呼び出し回数 = %d、期待値 = 0", len(episodesSyncer.gotPages))
 	}
@@ -276,32 +264,12 @@ func TestSyncAnimesUsecase_Execute_PropagatesPagerError(t *testing.T) {
 func TestNewSyncAnimesUsecase_DefaultsBatchSize(t *testing.T) {
 	t.Parallel()
 
-	workPager := &fakeWorkIDPager{ids: []model.WorkID{1}}
-	episodePager := &fakeEpisodeIDPager{}
-	worksSyncer := &fakeWorksSyncer{}
-	episodesSyncer := &fakeEpisodesSyncer{}
-	satellitesSyncer := &fakeWorkSatellitesSyncer{}
-
 	// 非正のbatch sizeは既定値にフォールバックし、keysetループが必ず前進する
 	// こと (LIMIT 0のページは空を返して停滞する)。
-	uc := NewSyncAnimesUsecase(workPager, episodePager, worksSyncer, episodesSyncer, satellitesSyncer, 0)
-
-	if _, err := uc.Execute(context.Background()); err != nil {
-		t.Fatalf("Execute()のエラー = %v", err)
-	}
-	if workPager.calls[0].batchSize != DefaultSyncAnimesBatchSize {
-		t.Errorf("batchSize = %d、期待値 = 既定値の%d", workPager.calls[0].batchSize, DefaultSyncAnimesBatchSize)
-	}
-}
-
-func equalWorkIDs(a, b []model.WorkID) bool {
-	if len(a) != len(b) {
-		return false
-	}
-	for i := range a {
-		if a[i] != b[i] {
-			return false
+	for _, batchSize := range []int{0, -1} {
+		uc := NewSyncAnimesUsecase(nil, nil, &fakeWorksSyncer{}, &fakeEpisodesSyncer{}, &fakeWorkSatellitesSyncer{}, batchSize)
+		if uc.batchSize != DefaultSyncAnimesBatchSize {
+			t.Errorf("batchSize %dを渡したときのbatchSize = %d、期待値 = 既定値の%d", batchSize, uc.batchSize, DefaultSyncAnimesBatchSize)
 		}
 	}
-	return true
 }

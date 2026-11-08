@@ -6,26 +6,13 @@ import (
 	"log/slog"
 
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/repository"
 )
 
 // DefaultSyncAnimesBatchSizeは呼び出し側が指定しない場合にSyncAnimesUsecaseが
-// works / episodesテーブルを走査するページサイズ。あくまで初期値で、計画では本番データ
-// 規模を実測してから最終値を決めるため、コンストラクタで調整可能にしている。
+// works / episodesテーブルを走査するページサイズ。本番のデータ規模に合わせて変えられるよう、
+// コンストラクタで調整可能にしている。
 const DefaultSyncAnimesBatchSize = 1000
-
-// workIDPagerはwork IDをページ単位で返す (idによるkeysetページネーション)。
-// 実体は *repository.WorkRepository。共有テストDBを走査せずに、テスト自身のIDだけを
-// 返すフェイクでバッチのオーケストレーションをテストできるよう、狭いインターフェースに
-// している。
-type workIDPager interface {
-	ListIDsAfter(ctx context.Context, afterID model.WorkID, batchSize int) ([]model.WorkID, error)
-}
-
-// episodeIDPagerはepisode IDをページ単位で返す (idによるkeysetページネーション)。
-// 実体は *repository.EpisodeRepository。
-type episodeIDPager interface {
-	ListIDsAfter(ctx context.Context, afterID model.EpisodeID, batchSize int) ([]model.EpisodeID, error)
-}
 
 // worksToAnimesSyncerはworksの1ページをanimesへリコンサイルする。
 // 実体は *SyncWorksToAnimesUsecase。
@@ -45,7 +32,7 @@ type workSatellitesSyncer interface {
 	Execute(ctx context.Context, input SyncWorkSatellitesInput) (*SyncWorkSatellitesResult, error)
 }
 
-// SyncAnimesUsecaseはフェーズ2のフル・リコンシリエーションバッチ。worksテーブル
+// SyncAnimesUsecaseはanimesのフル・リコンシリエーションバッチ。worksテーブル
 // 全体、続いてepisodesテーブル全体をページ単位で走査し、各ページをページ単位の同期
 // UseCaseに渡して、差分検出件数を集計してログに出す。
 //
@@ -59,8 +46,8 @@ type workSatellitesSyncer interface {
 // 書き戻すことに依存するため最後に走らせる。anime_idが未解決のままのworkは繰り延べる
 // (SkippedNoAnime)。
 type SyncAnimesUsecase struct {
-	workIDPager      workIDPager
-	episodeIDPager   episodeIDPager
+	workRepo         *repository.WorkRepository
+	episodeRepo      *repository.EpisodeRepository
 	worksSyncer      worksToAnimesSyncer
 	episodesSyncer   episodesToAnimesSyncer
 	satellitesSyncer workSatellitesSyncer
@@ -70,8 +57,8 @@ type SyncAnimesUsecase struct {
 // NewSyncAnimesUsecaseはSyncAnimesUsecaseを生成する。batchSizeが0以下の場合は
 // DefaultSyncAnimesBatchSizeにフォールバックし、keysetループが必ず前進するようにする。
 func NewSyncAnimesUsecase(
-	workIDPager workIDPager,
-	episodeIDPager episodeIDPager,
+	workRepo *repository.WorkRepository,
+	episodeRepo *repository.EpisodeRepository,
 	worksSyncer worksToAnimesSyncer,
 	episodesSyncer episodesToAnimesSyncer,
 	satellitesSyncer workSatellitesSyncer,
@@ -81,8 +68,8 @@ func NewSyncAnimesUsecase(
 		batchSize = DefaultSyncAnimesBatchSize
 	}
 	return &SyncAnimesUsecase{
-		workIDPager:      workIDPager,
-		episodeIDPager:   episodeIDPager,
+		workRepo:         workRepo,
+		episodeRepo:      episodeRepo,
 		worksSyncer:      worksSyncer,
 		episodesSyncer:   episodesSyncer,
 		satellitesSyncer: satellitesSyncer,
@@ -151,7 +138,7 @@ func (uc *SyncAnimesUsecase) syncAllWorks(ctx context.Context) (SyncWorksToAnime
 	var afterID model.WorkID
 
 	for {
-		ids, err := uc.workIDPager.ListIDsAfter(ctx, afterID, uc.batchSize)
+		ids, err := uc.workRepo.ListIDsAfter(ctx, afterID, uc.batchSize)
 		if err != nil {
 			return total, fmt.Errorf("works IDページの取得に失敗: %w", err)
 		}
@@ -182,7 +169,7 @@ func (uc *SyncAnimesUsecase) syncAllEpisodes(ctx context.Context) (SyncEpisodesT
 	var afterID model.EpisodeID
 
 	for {
-		ids, err := uc.episodeIDPager.ListIDsAfter(ctx, afterID, uc.batchSize)
+		ids, err := uc.episodeRepo.ListIDsAfter(ctx, afterID, uc.batchSize)
 		if err != nil {
 			return total, fmt.Errorf("episodes IDページの取得に失敗: %w", err)
 		}
@@ -208,15 +195,15 @@ func (uc *SyncAnimesUsecase) syncAllEpisodes(ctx context.Context) (SyncEpisodesT
 }
 
 // syncAllWorkSatellitesはworksテーブルを再度keysetページネーションで走査し、各
-// ページの別表をリコンサイルして件数 (SkippedNoAnimeを含む) を積算する。別表パスは同じ
-// worksに紐づくためwork IDページャを再利用し、works.anime_idが大半の行で解決済みに
+// ページの別表をリコンサイルして件数 (SkippedNoAnimeを含む) を積算する。別表は
+// worksに紐づくためworksのIDで走査し、works.anime_idが大半の行で解決済みに
 // なるようsyncAllWorksの後に走らせる。
 func (uc *SyncAnimesUsecase) syncAllWorkSatellites(ctx context.Context) (SyncWorkSatellitesResult, error) {
 	var total SyncWorkSatellitesResult
 	var afterID model.WorkID
 
 	for {
-		ids, err := uc.workIDPager.ListIDsAfter(ctx, afterID, uc.batchSize)
+		ids, err := uc.workRepo.ListIDsAfter(ctx, afterID, uc.batchSize)
 		if err != nil {
 			return total, fmt.Errorf("別表同期のworks IDページの取得に失敗: %w", err)
 		}
