@@ -38,8 +38,19 @@ func newSyncAnimesUsecase(db *sql.DB, queries *query.Queries) *usecase.SyncAnime
 	syncAnimeHashtagsReconciler := usecase.NewSyncAnimeHashtagsUsecase(db, animeHashtagRepo)
 	syncAnimeSeasonsReconciler := usecase.NewSyncAnimeSeasonsUsecase(db, animeSeasonRepo)
 	syncAnimeEventsReconciler := usecase.NewSyncAnimeEventsUsecase(db, animeEventRepo)
+	syncRelatedAnimeIDsUC := usecase.NewSyncRelatedAnimeIDsUsecase(
+		repository.NewCastRepository(queries),
+		repository.NewStaffRepository(queries),
+		repository.NewTrailerRepository(queries),
+		repository.NewWorkImageRepository(queries),
+		repository.NewVodTitleRepository(queries),
+		repository.NewSlotRepository(queries),
+		repository.NewProgramRepository(queries),
+		repository.NewSeriesWorkRepository(queries),
+		usecase.DefaultSyncAnimesBatchSize,
+	)
 	syncWorkSatellitesUC := usecase.NewSyncWorkSatellitesUsecase(workRepo, syncAnimeExternalIDsReconciler, syncAnimeLinksReconciler, syncAnimeOfficialAccountsReconciler, syncAnimeHashtagsReconciler, syncAnimeSeasonsReconciler, syncAnimeEventsReconciler)
-	return usecase.NewSyncAnimesUsecase(workRepo, episodeRepo, syncWorksToAnimesUC, syncEpisodesToAnimesUC, syncWorkSatellitesUC, usecase.DefaultSyncAnimesBatchSize)
+	return usecase.NewSyncAnimesUsecase(workRepo, episodeRepo, syncWorksToAnimesUC, syncEpisodesToAnimesUC, syncWorkSatellitesUC, syncRelatedAnimeIDsUC, usecase.DefaultSyncAnimesBatchSize)
 }
 
 // syncAnimesはsync-animesタスクの本体で、animesのフル・リコンシリエーション

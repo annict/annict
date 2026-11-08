@@ -79,3 +79,51 @@ WHERE id = sqlc.arg('id')
     AND unpublished_at IS NULL
     AND NOT rebroadcast
     AND NOT irregular;
+
+-- name: ReconcileSlotAnimeIDsAfter :one
+-- animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、
+-- anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+-- 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+-- last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+WITH page AS (
+    SELECT slots.id, works.anime_id
+    FROM slots
+    LEFT JOIN works ON works.id = slots.work_id
+    WHERE slots.id > sqlc.arg('after_id')
+    ORDER BY slots.id
+    LIMIT sqlc.arg('batch_size')
+), updated AS (
+    UPDATE slots
+    SET anime_id = page.anime_id
+    FROM page
+    WHERE slots.id = page.id
+        AND slots.anime_id IS DISTINCT FROM page.anime_id
+    RETURNING slots.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count;
+
+-- name: ReconcileSlotEpisodeAnimeIDsAfter :one
+-- animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、
+-- episode_anime_idをepisode_idの指すエピソードのanime_idと照合し、違う行だけを書き換える。episode_idがNULLの行と、
+-- エピソードのanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+-- last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+WITH page AS (
+    SELECT slots.id, episodes.anime_id
+    FROM slots
+    LEFT JOIN episodes ON episodes.id = slots.episode_id
+    WHERE slots.id > sqlc.arg('after_id')
+    ORDER BY slots.id
+    LIMIT sqlc.arg('batch_size')
+), updated AS (
+    UPDATE slots
+    SET episode_anime_id = page.anime_id
+    FROM page
+    WHERE slots.id = page.id
+        AND slots.episode_anime_id IS DISTINCT FROM page.anime_id
+    RETURNING slots.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count;

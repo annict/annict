@@ -32,6 +32,12 @@ type workSatellitesSyncer interface {
 	Execute(ctx context.Context, input SyncWorkSatellitesInput) (*SyncWorkSatellitesResult, error)
 }
 
+// relatedAnimeIDsSyncerは関連テーブルのanime_idを照合して直す。
+// 実体は *SyncRelatedAnimeIDsUsecase。
+type relatedAnimeIDsSyncer interface {
+	Execute(ctx context.Context) (*SyncRelatedAnimeIDsResult, error)
+}
+
 // SyncAnimesUsecaseはanimesのフル・リコンシリエーションバッチ。worksテーブル
 // 全体、続いてepisodesテーブル全体をページ単位で走査し、各ページをページ単位の同期
 // UseCaseに渡して、差分検出件数を集計してログに出す。
@@ -45,12 +51,17 @@ type workSatellitesSyncer interface {
 // ハッシュタグ / 季節 / イベント) をリコンサイルする。works同期パスがworks.anime_idを
 // 書き戻すことに依存するため最後に走らせる。anime_idが未解決のままのworkは繰り延べる
 // (SkippedNoAnime)。
+//
+// 第4のパスは、作品・エピソードのメタデータを持つ関連テーブル (キャスト・放送枠など) の
+// anime_idを照合して直す。works / episodesのパスがanime_idを書き戻した後に走らせ、
+// 同じ実行で作られたanimeも写せるようにする。
 type SyncAnimesUsecase struct {
 	workRepo         *repository.WorkRepository
 	episodeRepo      *repository.EpisodeRepository
 	worksSyncer      worksToAnimesSyncer
 	episodesSyncer   episodesToAnimesSyncer
 	satellitesSyncer workSatellitesSyncer
+	relatedSyncer    relatedAnimeIDsSyncer
 	batchSize        int
 }
 
@@ -62,6 +73,7 @@ func NewSyncAnimesUsecase(
 	worksSyncer worksToAnimesSyncer,
 	episodesSyncer episodesToAnimesSyncer,
 	satellitesSyncer workSatellitesSyncer,
+	relatedSyncer relatedAnimeIDsSyncer,
 	batchSize int,
 ) *SyncAnimesUsecase {
 	if batchSize <= 0 {
@@ -73,6 +85,7 @@ func NewSyncAnimesUsecase(
 		worksSyncer:      worksSyncer,
 		episodesSyncer:   episodesSyncer,
 		satellitesSyncer: satellitesSyncer,
+		relatedSyncer:    relatedSyncer,
 		batchSize:        batchSize,
 	}
 }
@@ -84,11 +97,12 @@ type SyncAnimesResult struct {
 	Works      SyncWorksToAnimesResult
 	Episodes   SyncEpisodesToAnimesResult
 	Satellites SyncWorkSatellitesResult
+	Related    SyncRelatedAnimeIDsResult
 }
 
 // Executeはフル・リコンシリエーションを実行する。まず全works、続いて全episodes、
-// 最後にworksの別表。別表はworksパスがworks.anime_idを書き戻すことに依存するため
-// 最後に走らせる。
+// worksの別表、最後に関連テーブルのanime_id。別表と関連テーブルはworks / episodesの
+// パスがanime_idを書き戻すことに依存するため、その後に走らせる。
 func (uc *SyncAnimesUsecase) Execute(ctx context.Context) (*SyncAnimesResult, error) {
 	slog.InfoContext(ctx, "animes同期バッチを開始します", "batch_size", uc.batchSize)
 
@@ -107,7 +121,12 @@ func (uc *SyncAnimesUsecase) Execute(ctx context.Context) (*SyncAnimesResult, er
 		return nil, err
 	}
 
-	result := &SyncAnimesResult{Works: works, Episodes: episodes, Satellites: satellites}
+	related, err := uc.relatedSyncer.Execute(ctx)
+	if err != nil {
+		return nil, fmt.Errorf("関連テーブルのanime_idの照合に失敗: %w", err)
+	}
+
+	result := &SyncAnimesResult{Works: works, Episodes: episodes, Satellites: satellites, Related: *related}
 
 	slog.InfoContext(ctx, "animes同期バッチが完了しました",
 		"works_processed", result.Works.Processed,
@@ -125,6 +144,15 @@ func (uc *SyncAnimesUsecase) Execute(ctx context.Context) (*SyncAnimesResult, er
 		"satellites_deleted", result.Satellites.Deleted,
 		"satellites_unchanged", result.Satellites.Unchanged,
 		"satellites_skipped_no_anime", result.Satellites.SkippedNoAnime,
+		"related_casts_updated", result.Related.Casts,
+		"related_staffs_updated", result.Related.Staffs,
+		"related_trailers_updated", result.Related.Trailers,
+		"related_work_images_updated", result.Related.WorkImages,
+		"related_vod_titles_updated", result.Related.VodTitles,
+		"related_slots_anime_id_updated", result.Related.SlotsAnimeID,
+		"related_slots_episode_anime_id_updated", result.Related.SlotsEpisodeAnimeID,
+		"related_programs_updated", result.Related.Programs,
+		"related_series_works_updated", result.Related.SeriesWorks,
 	)
 
 	return result, nil

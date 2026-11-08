@@ -52,3 +52,45 @@ func (q *Queries) CreateWorkImage(ctx context.Context, arg CreateWorkImageParams
 	err := row.Scan(&id)
 	return id, err
 }
+
+const reconcileWorkImageAnimeIDsAfter = `-- name: ReconcileWorkImageAnimeIDsAfter :one
+WITH page AS (
+    SELECT work_images.id, works.anime_id
+    FROM work_images
+    LEFT JOIN works ON works.id = work_images.work_id
+    WHERE work_images.id > $1
+    ORDER BY work_images.id
+    LIMIT $2
+), updated AS (
+    UPDATE work_images
+    SET anime_id = page.anime_id
+    FROM page
+    WHERE work_images.id = page.id
+        AND work_images.anime_id IS DISTINCT FROM page.anime_id
+    RETURNING work_images.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count
+`
+
+type ReconcileWorkImageAnimeIDsAfterParams struct {
+	AfterID   int64 `db:"after_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+type ReconcileWorkImageAnimeIDsAfterRow struct {
+	LastID       int64 `db:"last_id"`
+	UpdatedCount int64 `db:"updated_count"`
+}
+
+// animes同期バッチの関連テーブルの照合。idがafter_idより大きいwork_imagesの1ページについて、
+// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+func (q *Queries) ReconcileWorkImageAnimeIDsAfter(ctx context.Context, arg ReconcileWorkImageAnimeIDsAfterParams) (ReconcileWorkImageAnimeIDsAfterRow, error) {
+	row := q.db.QueryRowContext(ctx, reconcileWorkImageAnimeIDsAfter, arg.AfterID, arg.BatchSize)
+	var i ReconcileWorkImageAnimeIDsAfterRow
+	err := row.Scan(&i.LastID, &i.UpdatedCount)
+	return i, err
+}

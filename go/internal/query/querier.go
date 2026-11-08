@@ -694,6 +694,51 @@ type Querier interface {
 	MarkPasswordResetTokenAsUsed(ctx context.Context, id int64) (int64, error)
 	MarkSignInCodeAsUsed(ctx context.Context, id int64) error
 	MarkSignUpCodeAsUsed(ctx context.Context, id int64) error
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいcastsの1ページについて、
+	// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+	// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileCastAnimeIDsAfter(ctx context.Context, arg ReconcileCastAnimeIDsAfterParams) (ReconcileCastAnimeIDsAfterRow, error)
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいprogramsの1ページについて、
+	// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+	// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileProgramAnimeIDsAfter(ctx context.Context, arg ReconcileProgramAnimeIDsAfterParams) (ReconcileProgramAnimeIDsAfterRow, error)
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいseries_worksの1ページについて、
+	// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+	// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileSeriesWorkAnimeIDsAfter(ctx context.Context, arg ReconcileSeriesWorkAnimeIDsAfterParams) (ReconcileSeriesWorkAnimeIDsAfterRow, error)
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、
+	// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+	// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileSlotAnimeIDsAfter(ctx context.Context, arg ReconcileSlotAnimeIDsAfterParams) (ReconcileSlotAnimeIDsAfterRow, error)
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、
+	// episode_anime_idをepisode_idの指すエピソードのanime_idと照合し、違う行だけを書き換える。episode_idがNULLの行と、
+	// エピソードのanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileSlotEpisodeAnimeIDsAfter(ctx context.Context, arg ReconcileSlotEpisodeAnimeIDsAfterParams) (ReconcileSlotEpisodeAnimeIDsAfterRow, error)
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいstaffsの1ページについて、
+	// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+	// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileStaffAnimeIDsAfter(ctx context.Context, arg ReconcileStaffAnimeIDsAfterParams) (ReconcileStaffAnimeIDsAfterRow, error)
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいtrailersの1ページについて、
+	// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+	// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileTrailerAnimeIDsAfter(ctx context.Context, arg ReconcileTrailerAnimeIDsAfterParams) (ReconcileTrailerAnimeIDsAfterRow, error)
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいvod_titlesの1ページについて、
+	// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+	// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileVodTitleAnimeIDsAfter(ctx context.Context, arg ReconcileVodTitleAnimeIDsAfterParams) (ReconcileVodTitleAnimeIDsAfterRow, error)
+	// animes同期バッチの関連テーブルの照合。idがafter_idより大きいwork_imagesの1ページについて、
+	// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+	// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+	ReconcileWorkImageAnimeIDsAfter(ctx context.Context, arg ReconcileWorkImageAnimeIDsAfterParams) (ReconcileWorkImageAnimeIDsAfterRow, error)
 	TouchSession(ctx context.Context, sessionID string) error
 	// 再公開はArchiveDBEpisodeの逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
 	// カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開

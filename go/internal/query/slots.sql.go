@@ -189,3 +189,87 @@ func (q *Queries) ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlo
 	}
 	return items, nil
 }
+
+const reconcileSlotAnimeIDsAfter = `-- name: ReconcileSlotAnimeIDsAfter :one
+WITH page AS (
+    SELECT slots.id, works.anime_id
+    FROM slots
+    LEFT JOIN works ON works.id = slots.work_id
+    WHERE slots.id > $1
+    ORDER BY slots.id
+    LIMIT $2
+), updated AS (
+    UPDATE slots
+    SET anime_id = page.anime_id
+    FROM page
+    WHERE slots.id = page.id
+        AND slots.anime_id IS DISTINCT FROM page.anime_id
+    RETURNING slots.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count
+`
+
+type ReconcileSlotAnimeIDsAfterParams struct {
+	AfterID   int64 `db:"after_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+type ReconcileSlotAnimeIDsAfterRow struct {
+	LastID       int64 `db:"last_id"`
+	UpdatedCount int64 `db:"updated_count"`
+}
+
+// animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、
+// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
+// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+func (q *Queries) ReconcileSlotAnimeIDsAfter(ctx context.Context, arg ReconcileSlotAnimeIDsAfterParams) (ReconcileSlotAnimeIDsAfterRow, error) {
+	row := q.db.QueryRowContext(ctx, reconcileSlotAnimeIDsAfter, arg.AfterID, arg.BatchSize)
+	var i ReconcileSlotAnimeIDsAfterRow
+	err := row.Scan(&i.LastID, &i.UpdatedCount)
+	return i, err
+}
+
+const reconcileSlotEpisodeAnimeIDsAfter = `-- name: ReconcileSlotEpisodeAnimeIDsAfter :one
+WITH page AS (
+    SELECT slots.id, episodes.anime_id
+    FROM slots
+    LEFT JOIN episodes ON episodes.id = slots.episode_id
+    WHERE slots.id > $1
+    ORDER BY slots.id
+    LIMIT $2
+), updated AS (
+    UPDATE slots
+    SET episode_anime_id = page.anime_id
+    FROM page
+    WHERE slots.id = page.id
+        AND slots.episode_anime_id IS DISTINCT FROM page.anime_id
+    RETURNING slots.id
+)
+SELECT
+    COALESCE((SELECT MAX(page.id) FROM page), 0)::bigint AS last_id,
+    (SELECT COUNT(*) FROM updated)::bigint AS updated_count
+`
+
+type ReconcileSlotEpisodeAnimeIDsAfterParams struct {
+	AfterID   int64 `db:"after_id"`
+	BatchSize int32 `db:"batch_size"`
+}
+
+type ReconcileSlotEpisodeAnimeIDsAfterRow struct {
+	LastID       int64 `db:"last_id"`
+	UpdatedCount int64 `db:"updated_count"`
+}
+
+// animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、
+// episode_anime_idをepisode_idの指すエピソードのanime_idと照合し、違う行だけを書き換える。episode_idがNULLの行と、
+// エピソードのanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
+func (q *Queries) ReconcileSlotEpisodeAnimeIDsAfter(ctx context.Context, arg ReconcileSlotEpisodeAnimeIDsAfterParams) (ReconcileSlotEpisodeAnimeIDsAfterRow, error) {
+	row := q.db.QueryRowContext(ctx, reconcileSlotEpisodeAnimeIDsAfter, arg.AfterID, arg.BatchSize)
+	var i ReconcileSlotEpisodeAnimeIDsAfterRow
+	err := row.Scan(&i.LastID, &i.UpdatedCount)
+	return i, err
+}

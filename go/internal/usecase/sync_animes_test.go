@@ -67,6 +67,27 @@ func (s *fakeWorkSatellitesSyncer) Execute(_ context.Context, input SyncWorkSate
 	return &r, nil
 }
 
+// fakeRelatedAnimeIDsSyncerは関連テーブルの照合のパス用のフェイク。呼ばれた回数を数え、
+// 呼ばれる前にbeforeExecuteを呼んで、ほかのパスより後に走ることをテストで検証できるようにする。
+type fakeRelatedAnimeIDsSyncer struct {
+	calls         int
+	result        SyncRelatedAnimeIDsResult
+	err           error
+	beforeExecute func()
+}
+
+func (s *fakeRelatedAnimeIDsSyncer) Execute(_ context.Context) (*SyncRelatedAnimeIDsResult, error) {
+	if s.beforeExecute != nil {
+		s.beforeExecute()
+	}
+	s.calls++
+	if s.err != nil {
+		return nil, s.err
+	}
+	r := s.result
+	return &r, nil
+}
+
 // newSyncAnimesUsecaseInTxは、テストのトランザクションでworks / episodesを読む
 // Repositoryと、子のUseCaseのフェイクからSyncAnimesUsecaseを組み立てる。
 func newSyncAnimesUsecaseInTx(
@@ -75,6 +96,7 @@ func newSyncAnimesUsecaseInTx(
 	worksSyncer worksToAnimesSyncer,
 	episodesSyncer episodesToAnimesSyncer,
 	satellitesSyncer workSatellitesSyncer,
+	relatedSyncer relatedAnimeIDsSyncer,
 	batchSize int,
 ) *SyncAnimesUsecase {
 	queries := query.New(db).WithTx(tx)
@@ -84,6 +106,7 @@ func newSyncAnimesUsecaseInTx(
 		worksSyncer,
 		episodesSyncer,
 		satellitesSyncer,
+		relatedSyncer,
 		batchSize,
 	)
 }
@@ -166,7 +189,14 @@ func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	}
 
 	const batchSize = 2
-	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, batchSize)
+	relatedSyncer := &fakeRelatedAnimeIDsSyncer{result: SyncRelatedAnimeIDsResult{Casts: 1, SlotsEpisodeAnimeID: 2, SeriesWorks: 3}}
+	// 関連テーブルの照合が、works・episodes・別表のパスを終えてから走ることを検証する。
+	var pagesAtRelated [3]int
+	relatedSyncer.beforeExecute = func() {
+		pagesAtRelated = [3]int{len(worksSyncer.gotPages), len(episodesSyncer.gotPages), len(satellitesSyncer.gotPages)}
+	}
+
+	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, relatedSyncer, batchSize)
 
 	result, err := uc.Execute(context.Background())
 	if err != nil {
@@ -208,6 +238,17 @@ func TestSyncAnimesUsecase_Execute_PagesAndAggregates(t *testing.T) {
 	if worksPagesAtSatellites != worksPages {
 		t.Errorf("別表の開始時点のworksのページ数 = %d、期待値 = %d (worksの走査を終えてから)", worksPagesAtSatellites, worksPages)
 	}
+
+	if relatedSyncer.calls != 1 {
+		t.Fatalf("関連テーブルの照合の呼び出し回数 = %d、期待値 = 1", relatedSyncer.calls)
+	}
+	wantPagesAtRelated := [3]int{worksPages, episodesPages, satellitesPages}
+	if pagesAtRelated != wantPagesAtRelated {
+		t.Errorf("関連テーブルの照合の開始時点の (works, episodes, 別表) のページ数 = %v、期待値 = %v (ほかのパスを終えてから)", pagesAtRelated, wantPagesAtRelated)
+	}
+	if result.Related != relatedSyncer.result {
+		t.Errorf("Related = %+v、期待値 = %+v", result.Related, relatedSyncer.result)
+	}
 }
 
 func TestSyncAnimesUsecase_Execute_PropagatesRepositoryError(t *testing.T) {
@@ -219,7 +260,8 @@ func TestSyncAnimesUsecase_Execute_PropagatesRepositoryError(t *testing.T) {
 	worksSyncer := &fakeWorksSyncer{}
 	episodesSyncer := &fakeEpisodesSyncer{}
 	satellitesSyncer := &fakeWorkSatellitesSyncer{}
-	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, 1)
+	relatedSyncer := &fakeRelatedAnimeIDsSyncer{}
+	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, relatedSyncer, 1)
 
 	// キャンセル済みのコンテキストで、worksのIDのページの取得を失敗させる。
 	ctx, cancel := context.WithCancel(context.Background())
@@ -230,9 +272,9 @@ func TestSyncAnimesUsecase_Execute_PropagatesRepositoryError(t *testing.T) {
 		t.Fatalf("Execute()のエラー = %v、期待値 = %vをラップしたエラー", err, context.Canceled)
 	}
 
-	if len(worksSyncer.gotPages) != 0 || len(episodesSyncer.gotPages) != 0 || len(satellitesSyncer.gotPages) != 0 {
-		t.Errorf("子のUseCaseの呼び出し回数 = (%d, %d, %d)、期待値 = (0, 0, 0)",
-			len(worksSyncer.gotPages), len(episodesSyncer.gotPages), len(satellitesSyncer.gotPages))
+	if len(worksSyncer.gotPages) != 0 || len(episodesSyncer.gotPages) != 0 || len(satellitesSyncer.gotPages) != 0 || relatedSyncer.calls != 0 {
+		t.Errorf("子のUseCaseの呼び出し回数 = (%d, %d, %d, %d)、期待値 = (0, 0, 0, 0)",
+			len(worksSyncer.gotPages), len(episodesSyncer.gotPages), len(satellitesSyncer.gotPages), relatedSyncer.calls)
 	}
 }
 
@@ -246,7 +288,8 @@ func TestSyncAnimesUsecase_Execute_PropagatesSyncerError(t *testing.T) {
 	worksSyncer := &fakeWorksSyncer{err: wantErr}
 	episodesSyncer := &fakeEpisodesSyncer{}
 	satellitesSyncer := &fakeWorkSatellitesSyncer{}
-	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, 1)
+	relatedSyncer := &fakeRelatedAnimeIDsSyncer{}
+	uc := newSyncAnimesUsecaseInTx(db, tx, worksSyncer, episodesSyncer, satellitesSyncer, relatedSyncer, 1)
 
 	_, err := uc.Execute(context.Background())
 	if !errors.Is(err, wantErr) {
@@ -263,6 +306,28 @@ func TestSyncAnimesUsecase_Execute_PropagatesSyncerError(t *testing.T) {
 	if len(satellitesSyncer.gotPages) != 0 {
 		t.Errorf("worksのエラー後のsatellitesのsyncerの呼び出し回数 = %d、期待値 = 0", len(satellitesSyncer.gotPages))
 	}
+	if relatedSyncer.calls != 0 {
+		t.Errorf("worksのエラー後の関連テーブルの照合の呼び出し回数 = %d、期待値 = 0", relatedSyncer.calls)
+	}
+}
+
+func TestSyncAnimesUsecase_Execute_PropagatesRelatedSyncerError(t *testing.T) {
+	t.Parallel()
+
+	db, tx := testutil.SetupTx(t)
+	testutil.NewWorkBuilder(t, tx).Build()
+
+	wantErr := errors.New("関連テーブルの照合の失敗")
+	relatedSyncer := &fakeRelatedAnimeIDsSyncer{err: wantErr}
+	uc := newSyncAnimesUsecaseInTx(db, tx, &fakeWorksSyncer{}, &fakeEpisodesSyncer{}, &fakeWorkSatellitesSyncer{}, relatedSyncer, DefaultSyncAnimesBatchSize)
+
+	result, err := uc.Execute(context.Background())
+	if !errors.Is(err, wantErr) {
+		t.Fatalf("Execute()のエラー = %v、期待値 = %vをラップしたエラー", err, wantErr)
+	}
+	if result != nil {
+		t.Errorf("Execute()の結果 = %+v、期待値 = nil", result)
+	}
 }
 
 func TestNewSyncAnimesUsecase_DefaultsBatchSize(t *testing.T) {
@@ -271,7 +336,7 @@ func TestNewSyncAnimesUsecase_DefaultsBatchSize(t *testing.T) {
 	// 非正のbatch sizeは既定値にフォールバックし、keysetループが必ず前進する
 	// こと (LIMIT 0のページは空を返して停滞する)。
 	for _, batchSize := range []int{0, -1} {
-		uc := NewSyncAnimesUsecase(nil, nil, &fakeWorksSyncer{}, &fakeEpisodesSyncer{}, &fakeWorkSatellitesSyncer{}, batchSize)
+		uc := NewSyncAnimesUsecase(nil, nil, &fakeWorksSyncer{}, &fakeEpisodesSyncer{}, &fakeWorkSatellitesSyncer{}, &fakeRelatedAnimeIDsSyncer{}, batchSize)
 		if uc.batchSize != DefaultSyncAnimesBatchSize {
 			t.Errorf("batchSize %dを渡したときのbatchSize = %d、期待値 = 既定値の%d", batchSize, uc.batchSize, DefaultSyncAnimesBatchSize)
 		}
