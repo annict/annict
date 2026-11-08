@@ -67,18 +67,21 @@ FOR UPDATE OF s SKIP LOCKED;
 -- 照合に使った所属・番組・回数・開始時刻と対象条件を満たす放送枠だけを書き込む。
 -- 0行なら呼び出し側は生成をロールバックする。Railsのupdate_column相当で、updated_atも
 -- 作品のtouchも行わない。
+-- episode_anime_idには紐づけるエピソードのanime_idを同じ文で写す。エピソードのanime_idがまだ
+-- 無ければNULLのまま書き、animes同期バッチが埋める。
 UPDATE slots
-SET episode_id = sqlc.arg('episode_id')
-WHERE id = sqlc.arg('id')
-    AND work_id = sqlc.arg('work_id')
-    AND program_id = sqlc.arg('program_id')
-    AND number = sqlc.arg('number')
-    AND started_at = sqlc.arg('started_at')
-    AND episode_id IS NULL
-    AND deleted_at IS NULL
-    AND unpublished_at IS NULL
-    AND NOT rebroadcast
-    AND NOT irregular;
+SET episode_id = sqlc.arg('episode_id'),
+    episode_anime_id = (SELECT episodes.anime_id FROM episodes WHERE episodes.id = sqlc.arg('episode_id'))
+WHERE slots.id = sqlc.arg('id')
+    AND slots.work_id = sqlc.arg('work_id')
+    AND slots.program_id = sqlc.arg('program_id')
+    AND slots.number = sqlc.arg('number')
+    AND slots.started_at = sqlc.arg('started_at')
+    AND slots.episode_id IS NULL
+    AND slots.deleted_at IS NULL
+    AND slots.unpublished_at IS NULL
+    AND NOT slots.rebroadcast
+    AND NOT slots.irregular;
 
 -- name: ReconcileSlotAnimeIDsAfter :one
 -- animes同期バッチの関連テーブルの照合。idがafter_idより大きいslotsの1ページについて、

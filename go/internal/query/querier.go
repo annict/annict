@@ -554,6 +554,8 @@ type Querier interface {
 	// 照合に使った所属・番組・回数・開始時刻と対象条件を満たす放送枠だけを書き込む。
 	// 0行なら呼び出し側は生成をロールバックする。Railsのupdate_column相当で、updated_atも
 	// 作品のtouchも行わない。
+	// episode_anime_idには紐づけるエピソードのanime_idを同じ文で写す。エピソードのanime_idがまだ
+	// 無ければNULLのまま書き、animes同期バッチが埋める。
 	LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error)
 	// 作品の公開中のエピソードを (sort_number, anime_id) の順に並べる
 	ListAPIEpisodeIDs(ctx context.Context, arg ListAPIEpisodeIDsParams) ([]int64, error)

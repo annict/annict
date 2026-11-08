@@ -95,17 +95,18 @@ func (q *Queries) GetSlotForEpisodeGenerationByID(ctx context.Context, arg GetSl
 
 const linkSlotEpisode = `-- name: LinkSlotEpisode :execrows
 UPDATE slots
-SET episode_id = $1
-WHERE id = $2
-    AND work_id = $3
-    AND program_id = $4
-    AND number = $5
-    AND started_at = $6
-    AND episode_id IS NULL
-    AND deleted_at IS NULL
-    AND unpublished_at IS NULL
-    AND NOT rebroadcast
-    AND NOT irregular
+SET episode_id = $1,
+    episode_anime_id = (SELECT episodes.anime_id FROM episodes WHERE episodes.id = $1)
+WHERE slots.id = $2
+    AND slots.work_id = $3
+    AND slots.program_id = $4
+    AND slots.number = $5
+    AND slots.started_at = $6
+    AND slots.episode_id IS NULL
+    AND slots.deleted_at IS NULL
+    AND slots.unpublished_at IS NULL
+    AND NOT slots.rebroadcast
+    AND NOT slots.irregular
 `
 
 type LinkSlotEpisodeParams struct {
@@ -120,6 +121,8 @@ type LinkSlotEpisodeParams struct {
 // 照合に使った所属・番組・回数・開始時刻と対象条件を満たす放送枠だけを書き込む。
 // 0行なら呼び出し側は生成をロールバックする。Railsのupdate_column相当で、updated_atも
 // 作品のtouchも行わない。
+// episode_anime_idには紐づけるエピソードのanime_idを同じ文で写す。エピソードのanime_idがまだ
+// 無ければNULLのまま書き、animes同期バッチが埋める。
 func (q *Queries) LinkSlotEpisode(ctx context.Context, arg LinkSlotEpisodeParams) (int64, error) {
 	result, err := q.db.ExecContext(ctx, linkSlotEpisode,
 		arg.EpisodeID,

@@ -133,6 +133,16 @@ func readSlotEpisodeID(t *testing.T, db *sql.DB, slotID model.SlotID) sql.NullIn
 	return episodeID
 }
 
+func readSlotEpisodeAnimeID(t *testing.T, db *sql.DB, slotID model.SlotID) sql.NullInt64 {
+	t.Helper()
+
+	var episodeAnimeID sql.NullInt64
+	if err := db.QueryRow(`SELECT episode_anime_id FROM slots WHERE id = $1`, int64(slotID)).Scan(&episodeAnimeID); err != nil {
+		t.Fatalf("放送枠の読み込みに失敗: %v", err)
+	}
+	return episodeAnimeID
+}
+
 func countWorkEpisodes(t *testing.T, db *sql.DB, workID model.WorkID) int {
 	t.Helper()
 
@@ -186,6 +196,10 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_CreatesEpisode(t *testing.T) {
 	}
 	if !episode.animeID.Valid {
 		t.Fatal("episodes.anime_idが書かれていません")
+	}
+	// 放送枠には、同じトランザクションで作ったエピソードのanimeを写す。
+	if got := readSlotEpisodeAnimeID(t, db, targetID); got != episode.animeID {
+		t.Errorf("対象の放送枠のepisode_anime_id = %+v、期待値 = %+v (作ったエピソードのanime_id)", got, episode.animeID)
 	}
 
 	classification, err := repository.NewAnimeClassificationRepository(query.New(db)).GetByAnimeID(ctx, model.AnimeID(episode.animeID.Int64))
@@ -259,6 +273,46 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_LinksExistingEpisode(t *testing.
 	// animeに対応付いていない作品では、episodesの行だけを書く。
 	if episode := readCreatedEpisode(t, db, output.CreatedEpisodes[0].EpisodeID); episode.animeID.Valid {
 		t.Errorf("episodes.anime_id = %+v、期待値 = NULL", episode.animeID)
+	}
+	// エピソードのanime_idがまだ無いため、放送枠のepisode_anime_idも空のまま (animes同期バッチが埋める)。
+	for _, slotID := range []model.SlotID{linkedSlotID, createdSlotID} {
+		if got := readSlotEpisodeAnimeID(t, db, slotID); got.Valid {
+			t.Errorf("放送枠%dのepisode_anime_id = %+v、期待値 = NULL", slotID, got)
+		}
+	}
+}
+
+// TestCreateEpisodesFromSlotsUsecase_Execute_LinksExistingMappedEpisodeは、animeに対応付いた
+// 既存のエピソードに紐づけるとき、放送枠のepisode_anime_idにそのエピソードのanime_idを写すことを
+// 検証する。
+func TestCreateEpisodesFromSlotsUsecase_Execute_LinksExistingMappedEpisode(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := generationNow()
+
+	workID, _ := insertMappedCreateTargetWork(t, db)
+	episodeAnimeID := insertBareAnime(t, db)
+	in := generationEpisodeInput(workID, 2, 200)
+	in.animeID = sql.NullInt64{Int64: int64(episodeAnimeID), Valid: true}
+	episodeID := insertSyncEpisode(t, db, in)
+	program := insertGenerationProgram(t, db, workID, 1)
+	slotID := program.insertSlot(2, now.Add(time.Hour), nil)
+
+	output, err := newCreateEpisodesFromSlotsUsecase(db).Execute(ctx, CreateEpisodesFromSlotsInput{Now: now})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if output.LinkedSlotCount != 1 || len(output.CreatedEpisodes) != 0 {
+		t.Fatalf("output = %+v、期待値 = 紐づけ1件のみ", output)
+	}
+
+	if got := readSlotEpisodeID(t, db, slotID); got.Int64 != int64(episodeID) {
+		t.Errorf("放送枠のepisode_id = %+v、期待値 = %d", got, episodeID)
+	}
+	if got := readSlotEpisodeAnimeID(t, db, slotID); !got.Valid || got.Int64 != int64(episodeAnimeID) {
+		t.Errorf("放送枠のepisode_anime_id = %+v、期待値 = %d (紐づけたエピソードのanime_id)", got, episodeAnimeID)
 	}
 }
 

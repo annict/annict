@@ -73,7 +73,8 @@ func (r *SlotRepository) GetForEpisodeGenerationByID(ctx context.Context, id mod
 	}, nil
 }
 
-// LinkEpisodeはGetForEpisodeGenerationByIDでロックした放送枠へエピソードを紐づける。
+// LinkEpisodeはGetForEpisodeGenerationByIDでロックした放送枠へエピソードを紐づけ、
+// episode_anime_idにエピソードのanime_idを写す。
 // falseは、照合に使った属性や対象条件が一致せず、何も書かなかったことを表す。
 func (r *SlotRepository) LinkEpisode(ctx context.Context, slot *model.Slot, episodeID model.EpisodeID) (bool, error) {
 	affected, err := r.queries.LinkSlotEpisode(ctx, query.LinkSlotEpisodeParams{
