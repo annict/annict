@@ -5,18 +5,11 @@ import (
 	"fmt"
 
 	"github.com/annict/annict/go/internal/model"
+	"github.com/annict/annict/go/internal/repository"
 )
 
-// satelliteWorkLoaderは別表ソース列を射影したworksをロードする。実体は
-// *repository.WorkRepository。DBに触れず、テスト自身のworksを返すフェイクローダーで
-// オーケストレーションをテストできるよう狭いインターフェースにしている (ローダーSQL自体は
-// リポジトリテストでカバーする)。
-type satelliteWorkLoader interface {
-	ListForSatelliteSyncByIDs(ctx context.Context, workIDs []model.WorkID) ([]*model.Work, error)
-}
-
 // satelliteReconcilerはanime解決済みのworksのバッチに対して1つの別表
-// (例: anime_external_ids) をリコンサイルし、テーブルごとの件数を返す。タスク2-8以降が
+// (例: anime_external_ids) をリコンサイルし、テーブルごとの件数を返す。別表の
 // テーブルごとに1つずつ登録する。各リコンサイラは既存行を読み、reconcileSatelliteで差分を
 // 計画し、自前のトランザクションで作成 / 更新 / 削除を適用する自己完結した書き込みUseCase
 // (SyncWorksToAnimesUsecaseを写したもの)。登録された各リコンサイラは既存行を読み差分を
@@ -40,9 +33,9 @@ type satelliteReconcileCounts struct {
 	Unchanged int
 }
 
-// SyncWorkSatellitesUsecaseはフェーズ2の第3パス。worksとepisodesをanimes /
+// SyncWorkSatellitesUsecaseはanimes同期バッチの第3パス。worksとepisodesをanimes /
 // anime_classificationsにリコンサイルした後、works (episodesではなく) がsourceとする
-// 6つの別表をリコンサイルする。works同期 (タスク2-2) に織り込まず独立したパスとして走らせ、
+// 6つの別表をリコンサイルする。works同期に織り込まず独立したパスとして走らせ、
 // works同期の中核 (写像・差分・anime_id書き戻し) を小さく保ち、テーブルごとのリコンサイラを
 // 1つずつ足せるようにする。
 //
@@ -50,19 +43,19 @@ type satelliteReconcileCounts struct {
 // (SkippedNoAnimeに数える)。worksパスがanime_idを書き戻した後の実行で取り込まれる。
 // リコンサイルは冪等なので繰り延べは安全。
 type SyncWorkSatellitesUsecase struct {
-	workLoader  satelliteWorkLoader
+	workRepo    *repository.WorkRepository
 	reconcilers []satelliteReconciler
 }
 
 // NewSyncWorkSatellitesUsecaseはSyncWorkSatellitesUsecaseを生成する。リコンサイラは
-// 可変長で渡し、タスク2-8以降が別表ごとに1つずつ登録できるようにする。0個でも有効で、
+// 可変長で渡し、別表ごとに1つずつ登録できるようにする。0個でも有効で、
 // その場合は本パスがworksのロードと未マッピングworkの繰り延べだけを行う。
 func NewSyncWorkSatellitesUsecase(
-	workLoader satelliteWorkLoader,
+	workRepo *repository.WorkRepository,
 	reconcilers ...satelliteReconciler,
 ) *SyncWorkSatellitesUsecase {
 	return &SyncWorkSatellitesUsecase{
-		workLoader:  workLoader,
+		workRepo:    workRepo,
 		reconcilers: reconcilers,
 	}
 }
@@ -89,7 +82,7 @@ type SyncWorkSatellitesResult struct {
 // worksはどのリコンサイラがトランザクションを開くより前にロードする。登録された各リコンサイラ
 // が既存行を読んで差分を永続化する。
 func (uc *SyncWorkSatellitesUsecase) Execute(ctx context.Context, input SyncWorkSatellitesInput) (*SyncWorkSatellitesResult, error) {
-	works, err := uc.workLoader.ListForSatelliteSyncByIDs(ctx, input.WorkIDs)
+	works, err := uc.workRepo.ListForSatelliteSyncByIDs(ctx, input.WorkIDs)
 	if err != nil {
 		return nil, fmt.Errorf("別表同期対象worksの取得に失敗: %w", err)
 	}

@@ -4,6 +4,7 @@
 class Program < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
+  include AnimeIdCopyable
 
   DIFF_FIELDS = %i[channel_id work_id url started_at].freeze
 
@@ -13,6 +14,9 @@ class Program < ApplicationRecord
 
   belongs_to :channel
   belongs_to :work, touch: true
+
+  copy_anime_id_from :work
+
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
   has_many :slots, dependent: :destroy

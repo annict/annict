@@ -4,6 +4,7 @@
 class SeriesWork < ApplicationRecord
   include DbActivityMethods
   include Unpublishable
+  include AnimeIdCopyable
 
   DIFF_FIELDS = %i[work_id].freeze
 
@@ -11,6 +12,9 @@ class SeriesWork < ApplicationRecord
 
   belongs_to :series
   belongs_to :work, touch: true
+
+  copy_anime_id_from :work
+
   has_many :db_activities, as: :trackable, dependent: :destroy
   has_many :db_comments, as: :resource, dependent: :destroy
 
