@@ -41,7 +41,13 @@ type featureFlaggedPattern struct {
 // パターンに一致してフラグが無効なリクエストは、goSharedPathsの配下でGo版にルートがあっても
 // Rails版へ送る。フラグを削除するときは一覧から外し、goSharedPathsなどの判定に戻す。
 // 一覧が空になってもこの仕組みは次の移行で使うため、変数は削除せず残す。
-var featureFlaggedPatterns []featureFlaggedPattern
+var featureFlaggedPatterns = []featureFlaggedPattern{
+	// Annict DBの編集履歴。Rails版にはルートが無いため、フラグが無効な利用者にはRails版の404になる。
+	{pattern: regexp.MustCompile(`^/db/works/[^/]+/revisions$`), flag: model.FeatureFlagDBEditHistory},
+	{pattern: regexp.MustCompile(`^/db/episodes/[^/]+/revisions$`), flag: model.FeatureFlagDBEditHistory},
+	{pattern: regexp.MustCompile(`^/db/people/[^/]+/revisions$`), flag: model.FeatureFlagDBEditHistory},
+	{pattern: regexp.MustCompile(`^/db/edits$`), flag: model.FeatureFlagDBEditHistory},
+}
 
 // ReverseProxyMiddlewareはRails版へのリバースプロキシミドルウェア
 type ReverseProxyMiddleware struct {
@@ -100,6 +106,7 @@ var goHandledErrorPaths = []string{
 	httperror.ForbiddenPath,
 	httperror.InvalidCSRFTokenPath,
 	httperror.InternalServerErrorPath,
+	httperror.ConflictPath,
 }
 
 // Go版とRails版が分け合っているパスの接頭辞。Go版はルートを持つ画面だけを処理し、
@@ -329,11 +336,22 @@ func (m *ReverseProxyMiddleware) matchesGoRoute(r *http.Request) bool {
 	return false
 }
 
+// GetDeviceTokenはリクエストのdevice_token Cookieの値を返し、Cookieが無いときは空文字列を返す。
+// ハンドラーがフィーチャーフラグの判定をユースケースに渡すときに使い、このミドルウェアのゲートと同じ
+// デバイスでフラグを判定できるようにする。
+func GetDeviceToken(r *http.Request) string {
+	c, err := r.Cookie(DeviceTokenCookieName)
+	if err != nil {
+		return ""
+	}
+	return c.Value
+}
+
 // リクエストからdevice_token Cookieを取得し、未設定の場合は新規生成してレスポンスにセットしたうえで返す。
 // トークン生成自体に失敗した場合のみ空文字列を返す。
 func (m *ReverseProxyMiddleware) ensureDeviceToken(w http.ResponseWriter, r *http.Request) string {
-	if c, err := r.Cookie(DeviceTokenCookieName); err == nil && c.Value != "" {
-		return c.Value
+	if token := GetDeviceToken(r); token != "" {
+		return token
 	}
 
 	token, err := auth.GenerateSecureToken()

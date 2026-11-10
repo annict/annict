@@ -1,0 +1,73 @@
+package db_work_revisions
+
+import (
+	"github.com/a-h/templ"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// IndexPageDataは作品の履歴ページが描画するデータ (見出し・サブナビに使う作品のidと名前、および
+// 版の1ページ分)。
+type IndexPageData struct {
+	Work       viewmodel.DBWorkRevisionWork
+	Revisions  []viewmodel.DBRevision
+	Pagination viewmodel.Pagination
+	// IsCommitterは見出しに編集画面へ戻るリンクを出すかを決める。履歴の画面は誰でも見られるが、
+	// 編集画面は編集者 (管理者または編集者) だけが開ける。
+	IsCommitter bool
+}
+
+// Indexはフィーチャーフラグが有効な利用者に作品の履歴を描画する。
+// サブナビでは作品の項目に現在地の印を付ける。
+templ Index(data IndexPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: data.Work.Heading(ctx),
+					Actions: editLink(data),
+				})
+			</div>
+		</div>
+
+		<div class="px-4">
+			@components.DBWorkSubnav(components.DBWorkSubnavData{
+				WorkID:             data.Work.ID,
+				NoEpisodes:         data.Work.NoEpisodes,
+				CurrentSectionPath: templates.DBWorkEditPath(data.Work.ID),
+			})
+		</div>
+
+		@components.ContentCard("") {
+			<div class="flex flex-col gap-6">
+				@components.DBRevisionList(data.Revisions)
+				@components.Pagination(data.Pagination)
+			</div>
+		}
+	</div>
+}
+
+// editLinkは見出しの操作として、編集者に編集画面へ戻るリンクを返す。リンクを出さない閲覧者にはnilを返し、
+// MainTitleが空の操作のコンテナを描画しないようにする。
+func editLink(data IndexPageData) templ.Component {
+	if !data.IsCommitter {
+		return nil
+	}
+	return editLinkButton(templates.DBWorkEditPath(data.Work.ID))
+}
+
+templ editLinkButton(path templates.Path) {
+	<a
+		href={ path.SafeURL() }
+		class="btn rounded-full"
+		data-variant="outline"
+		data-size="sm"
+	>
+		@templates.DecorativeInlineIcon("arrow-bend-up-left-regular", templates.InlineIconStart)
+		{ templates.T(ctx, "db_work_revisions_index_edit_link") }
+	</a>
+}

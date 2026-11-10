@@ -29,6 +29,7 @@ func newCreateEpisodesFromSlotsUsecase(db *sql.DB) *CreateEpisodesFromSlotsUseca
 		repository.NewEpisodeRepository(queries),
 		repository.NewAnimeRepository(queries),
 		repository.NewAnimeClassificationRepository(queries),
+		newTestDBEditRecordRepos(queries),
 	)
 }
 

@@ -24,6 +24,9 @@ type EditPageData struct {
 	// 決められないため。フォームが運ぶhiddenの版はこれらの値の版のため、もう一度送信すると
 	// ここに表示された内容だけを上書きし、その後に届いた変更は上書きしない。
 	ConflictCurrent *viewmodel.DBWorkFormInput
+	// ShowRevisionsは見出しに作品の履歴へのリンクを出すかを表す。フィーチャーフラグdb_edit_historyが
+	// 有効な利用者にだけ出す。更新の却下で再描画するときは判定しないため出さない。
+	ShowRevisions bool
 }
 
 func (d EditPageData) hasFieldError(field string) bool {
@@ -152,15 +155,15 @@ templ Edit(data EditPageData) {
 				@components.MainTitle(components.MainTitleData{
 					Title:   data.heading(ctx),
 					Content: components.GuidelineLink(templates.T(ctx, "db_works_edit_guideline_link"), viewmodel.HelpWorkEditingURL()),
-					Actions: editWorkPageLink(data.WorkID),
+					Actions: editActions(data),
 				})
 			</div>
 		</div>
 
 		<div class="px-4">
 			@components.DBWorkSubnav(components.DBWorkSubnavData{
-				WorkID:     data.WorkID,
-				NoEpisodes: data.FormInput.Val("no_episodes") == "1",
+				WorkID:        data.WorkID,
+				NoEpisodes:    data.FormInput.Val("no_episodes") == "1",
 			})
 		</div>
 
@@ -947,6 +950,23 @@ templ Edit(data EditPageData) {
 			</div>
 		}
 	</div>
+}
+
+// editActionsは見出しの操作として、フラグが有効な利用者には作品の履歴へのリンクを、作品ページへのリンクと並べる。
+// エピソードと人物の編集画面と同じ並びにする。
+templ editActions(data EditPageData) {
+	if data.ShowRevisions {
+		<a
+			href={ templates.DBWorkRevisionsPath(data.WorkID).SafeURL() }
+			class="btn rounded-full"
+			data-variant="outline"
+			data-size="sm"
+		>
+			@templates.DecorativeInlineIcon("clock-counter-clockwise-regular", templates.InlineIconStart)
+			{ templates.T(ctx, "db_works_edit_revisions_link") }
+		</a>
+	}
+	@editWorkPageLink(data.WorkID)
 }
 
 // editWorkPageLinkは編集フォームの見出しの横に表示する操作を描画する。公開サイト側の

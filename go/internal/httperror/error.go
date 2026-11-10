@@ -20,6 +20,9 @@ const ForbiddenPath = "/errors/forbidden"
 // InvalidCSRFTokenPathは無効なCSRFトークンの全画面エラーページのパスです。
 const InvalidCSRFTokenPath = "/errors/invalid-csrf-token"
 
+// ConflictPathは別の編集と競合した場合の全画面エラーページのパスです。
+const ConflictPath = "/errors/conflict"
+
 // InternalServerErrorPathは内部エラーの全画面エラーページのパスです。
 const InternalServerErrorPath = "/errors/internal-server-error"
 
@@ -39,6 +42,13 @@ func NotFound(w http.ResponseWriter, r *http.Request) {
 func Forbidden(w http.ResponseWriter, r *http.Request) {
 	redirectHTMXToPage(w, r, ForbiddenPath)
 	render(w, r, http.StatusForbidden, "error_forbidden_title", "error_forbidden_message")
+}
+
+// Conflictは競合で操作を保存しなかったことを409で伝える。HTMXの送信元がボタンでも、
+// エラーページをその中へ挿入せず全画面で表示する。
+func Conflict(w http.ResponseWriter, r *http.Request) {
+	redirectHTMXToPage(w, r, ConflictPath)
+	render(w, r, http.StatusConflict, "error_conflict_title", "error_conflict_message")
 }
 
 // InvalidCSRFTokenは、フォーム送信のCSRF検証に失敗したときに出す403ページを描画する。

@@ -33,6 +33,9 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 			case model.AppErrCodeResourceNotFound:
 				httperror.NotFound(w, r)
 				return
+			case model.AppErrCodeConflict:
+				httperror.Conflict(w, r)
+				return
 			case model.AppErrCodeForbidden:
 				httperror.Forbidden(w, r)
 				return

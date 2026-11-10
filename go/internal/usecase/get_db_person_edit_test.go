@@ -19,7 +19,7 @@ func newGetDBPersonEditUsecase(t *testing.T) (*GetDBPersonEditUsecase, *sql.Tx) 
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
-	return NewGetDBPersonEditUsecase(repository.NewPersonRepository(queries), repository.NewPrefectureRepository(queries)), tx
+	return NewGetDBPersonEditUsecase(repository.NewPersonRepository(queries), repository.NewPrefectureRepository(queries), repository.NewFeatureFlagRepository(queries)), tx
 }
 
 // TestGetDBPersonEditUsecase_Execute_ReturnsPersonAndPrefecturesは、フォームの初期値に

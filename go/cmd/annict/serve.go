@@ -30,17 +30,21 @@ import (
 	"github.com/annict/annict/go/internal/auth"
 	"github.com/annict/annict/go/internal/config"
 	"github.com/annict/annict/go/internal/dispatcher"
+	"github.com/annict/annict/go/internal/handler/db_edit"
 	"github.com/annict/annict/go/internal/handler/db_episode"
 	"github.com/annict/annict/go/internal/handler/db_episode_archive"
+	"github.com/annict/annict/go/internal/handler/db_episode_revision"
 	"github.com/annict/annict/go/internal/handler/db_person"
 	"github.com/annict/annict/go/internal/handler/db_person_archive"
 	"github.com/annict/annict/go/internal/handler/db_person_deletion"
 	"github.com/annict/annict/go/internal/handler/db_person_delisting"
+	"github.com/annict/annict/go/internal/handler/db_person_revision"
 	"github.com/annict/annict/go/internal/handler/db_person_unarchive"
 	"github.com/annict/annict/go/internal/handler/db_person_undelisting"
 	"github.com/annict/annict/go/internal/handler/db_work"
 	"github.com/annict/annict/go/internal/handler/db_work_archive"
 	"github.com/annict/annict/go/internal/handler/db_work_deletion"
+	"github.com/annict/annict/go/internal/handler/db_work_revision"
 	"github.com/annict/annict/go/internal/handler/db_work_unarchive"
 	"github.com/annict/annict/go/internal/handler/health"
 	"github.com/annict/annict/go/internal/handler/home"
@@ -268,6 +272,13 @@ func runServe() {
 	// エピソードの自動生成が使うUseCaseを組み立てる (Worker用)。放送枠へのエピソードの
 	// 紐づけと作成、しょぼいカレンダーのサブタイトルの取得、ライブラリの次のエピソード・次の
 	// 放送枠の更新を、下の定期ジョブが順に呼ぶ。
+	// Annict DBの編集履歴を記録するリポジトリの束。Annict DBの書き込みUseCaseとエピソードの自動生成が、書き込みと同じ
+	// トランザクションで操作と版を書くのに使う
+	dbEditRecordRepos := usecase.DBEditRecordRepos{
+		DBEdit:         repository.NewDBEditRepository(queries),
+		AnimeRevision:  repository.NewAnimeRevisionRepository(queries),
+		PersonRevision: repository.NewPersonRevisionRepository(queries),
+	}
 	createEpisodesFromSlotsUC := usecase.NewCreateEpisodesFromSlotsUsecase(
 		db,
 		repository.NewSlotRepository(queries),
@@ -275,12 +286,15 @@ func runServe() {
 		repository.NewEpisodeRepository(queries),
 		repository.NewAnimeRepository(queries),
 		repository.NewAnimeClassificationRepository(queries),
+		dbEditRecordRepos,
 	)
 	fillEpisodeTitlesUC := usecase.NewFillEpisodeTitlesUsecase(
 		db,
 		repository.NewEpisodeRepository(queries),
 		repository.NewAnimeRepository(queries),
 		syobocal.NewClient(),
+		repository.NewAnimeClassificationRepository(queries),
+		dbEditRecordRepos,
 	)
 	updateLibraryEntryNextResourcesUC := usecase.NewUpdateLibraryEntryNextResourcesUsecase(
 		repository.NewLibraryEntryRepository(queries),
@@ -606,6 +620,9 @@ func runServe() {
 	// Annict DBサイドバーのCookie設定をSSRの初期状態用に保存する。
 	r.Use(templates.DBSidebarStateMiddleware)
 
+	// Annict DBのサイドバーに編集履歴の項目を出すかを判定する (認証ミドルウェアの後に置く)。
+	r.Use(authMiddleware.NewDBEditHistoryLinkMiddleware(featureFlagRepo).Middleware)
+
 	// CSRF保護ミドルウェアを追加
 	csrfMiddleware := authMiddleware.NewCSRFMiddleware(sessionManager)
 	r.Use(csrfMiddleware.Middleware)
@@ -799,6 +816,7 @@ func runServe() {
 	r.Get(httperror.ForbiddenPath, httperror.Forbidden)
 	r.Get(httperror.InvalidCSRFTokenPath, httperror.InvalidCSRFToken)
 	r.Get(httperror.InternalServerErrorPath, httperror.InternalServerError)
+	r.Get(httperror.ConflictPath, httperror.Conflict)
 	r.Get("/health", healthHandler.Show)
 	r.Get("/manifest.json", manifestHandler.Show)
 	r.Get("/works/popular", popularWorkHandler.Index)
@@ -856,16 +874,16 @@ func runServe() {
 
 	// DB管理画面
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-	getDBWorksUC := usecase.NewGetDBWorksUsecase(workRepo)
+	getDBWorksUC := usecase.NewGetDBWorksUsecase(workRepo, featureFlagRepo)
 	getDBWorkFormOptionsUC := usecase.NewGetDBWorkFormOptionsUsecase(numberFormatRepo)
-	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
-	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
-	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo)
+	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo, featureFlagRepo)
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
+	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
+	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos)
 	dbWorkHandler := db_work.NewHandler(cfg, sessionManager, flashMgr, imageHelper, getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC, deleteWorkUC)
 	getDBWorkArchiveNewUC := usecase.NewGetDBWorkArchiveNewUsecase(workRepo)
-	archiveWorkUC := usecase.NewArchiveWorkUsecase(db, workRepo, animeRepo)
-	unarchiveWorkUC := usecase.NewUnarchiveWorkUsecase(db, workRepo, animeRepo)
+	archiveWorkUC := usecase.NewArchiveWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos)
+	unarchiveWorkUC := usecase.NewUnarchiveWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos)
 	dbWorkArchiveHandler := db_work_archive.NewHandler(cfg, sessionManager, flashMgr, getDBWorkArchiveNewUC, archiveWorkUC, unarchiveWorkUC)
 	getDBWorkUnarchiveNewUC := usecase.NewGetDBWorkUnarchiveNewUsecase(workRepo)
 	dbWorkUnarchiveHandler := db_work_unarchive.NewHandler(cfg, sessionManager, getDBWorkUnarchiveNewUC)
@@ -878,6 +896,10 @@ func runServe() {
 	// (ADR 0009でarchived=committer / deleted=adminに権限分離)、削除とその確認画面は
 	// RequireAdminで別途ゲートする (確認画面には、それを送信できる者だけが到達する)。
 	r.Get("/db/works", dbWorkHandler.Index)
+	// 作品の履歴はRails版の /db/activitiesと同じく公開。フィーチャーフラグdb_edit_historyが無効な
+	// 利用者のリクエストは、リバースプロキシがRails版へ流す。
+	dbWorkRevisionHandler := db_work_revision.NewHandler(cfg, imageHelper, usecase.NewGetDBWorkRevisionsUsecase(workRepo, dbEditRecordRepos.AnimeRevision, numberFormatRepo))
+	r.Get("/db/works/{id}/revisions", dbWorkRevisionHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
 		r.Get("/db/works/new", dbWorkHandler.New)
@@ -903,18 +925,20 @@ func runServe() {
 	// deleted=adminに権限分離。RailsのEpisodePolicyが行う分割とも同じ)、RequireAdminで
 	// 別途ゲートする。
 	episodeRepo := repository.NewEpisodeRepository(queries)
-	getDBEpisodesUC := usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo)
+	getDBEpisodesUC := usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo, featureFlagRepo)
 	getDBEpisodeNewUC := usecase.NewGetDBEpisodeNewUsecase(workRepo)
-	createEpisodesUC := usecase.NewCreateEpisodesUsecase(db, workRepo, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeCreateValidator())
-	getDBEpisodeEditUC := usecase.NewGetDBEpisodeEditUsecase(episodeRepo)
-	updateEpisodeUC := usecase.NewUpdateEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeUpdateValidator())
-	deleteEpisodeUC := usecase.NewDeleteEpisodeUsecase(db, episodeRepo, animeRepo)
+	createEpisodesUC := usecase.NewCreateEpisodesUsecase(db, workRepo, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeCreateValidator(), dbEditRecordRepos)
+	getDBEpisodeEditUC := usecase.NewGetDBEpisodeEditUsecase(episodeRepo, featureFlagRepo)
+	updateEpisodeUC := usecase.NewUpdateEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, validator.NewDBEpisodeUpdateValidator(), dbEditRecordRepos)
+	deleteEpisodeUC := usecase.NewDeleteEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, dbEditRecordRepos)
 	dbEpisodeHandler := db_episode.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodesUC, getDBEpisodeNewUC, createEpisodesUC, getDBEpisodeEditUC, updateEpisodeUC, deleteEpisodeUC)
 	getDBEpisodeArchiveNewUC := usecase.NewGetDBEpisodeArchiveNewUsecase(episodeRepo)
-	archiveEpisodeUC := usecase.NewArchiveEpisodeUsecase(db, episodeRepo, animeRepo)
-	unarchiveEpisodeUC := usecase.NewUnarchiveEpisodeUsecase(db, episodeRepo, animeRepo)
+	archiveEpisodeUC := usecase.NewArchiveEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, dbEditRecordRepos)
+	unarchiveEpisodeUC := usecase.NewUnarchiveEpisodeUsecase(db, episodeRepo, animeRepo, animeClassificationRepo, dbEditRecordRepos)
 	dbEpisodeArchiveHandler := db_episode_archive.NewHandler(cfg, sessionManager, flashMgr, getDBEpisodeArchiveNewUC, archiveEpisodeUC, unarchiveEpisodeUC)
 	r.Get("/db/works/{work_id}/episodes", dbEpisodeHandler.Index)
+	dbEpisodeRevisionHandler := db_episode_revision.NewHandler(cfg, imageHelper, usecase.NewGetDBEpisodeRevisionsUsecase(episodeRepo, dbEditRecordRepos.AnimeRevision))
+	r.Get("/db/episodes/{id}/revisions", dbEpisodeRevisionHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
 		r.Get("/db/works/{work_id}/episodes/new", dbEpisodeHandler.New)
@@ -938,26 +962,30 @@ func runServe() {
 	// ゲートする。掲載停止とその解除、それらの確認画面も同じくadmin専用とする。
 	personRepo := repository.NewPersonRepository(queries)
 	prefectureRepo := repository.NewPrefectureRepository(queries)
-	getDBPeopleUC := usecase.NewGetDBPeopleUsecase(personRepo)
+	getDBPeopleUC := usecase.NewGetDBPeopleUsecase(personRepo, featureFlagRepo)
 	getDBPersonNewUC := usecase.NewGetDBPersonNewUsecase()
-	createPeopleUC := usecase.NewCreatePeopleUsecase(db, personRepo, validator.NewDBPersonCreateValidator(personRepo))
-	getDBPersonEditUC := usecase.NewGetDBPersonEditUsecase(personRepo, prefectureRepo)
-	updatePersonUC := usecase.NewUpdatePersonUsecase(personRepo, validator.NewDBPersonUpdateValidator(personRepo, prefectureRepo))
-	deletePersonUC := usecase.NewDeletePersonUsecase(personRepo)
+	createPeopleUC := usecase.NewCreatePeopleUsecase(db, personRepo, validator.NewDBPersonCreateValidator(personRepo), dbEditRecordRepos)
+	getDBPersonEditUC := usecase.NewGetDBPersonEditUsecase(personRepo, prefectureRepo, featureFlagRepo)
+	updatePersonUC := usecase.NewUpdatePersonUsecase(db, personRepo, validator.NewDBPersonUpdateValidator(personRepo, prefectureRepo), dbEditRecordRepos)
+	deletePersonUC := usecase.NewDeletePersonUsecase(db, personRepo, dbEditRecordRepos)
 	dbPersonHandler := db_person.NewHandler(cfg, sessionManager, flashMgr, getDBPeopleUC, getDBPersonNewUC, createPeopleUC, getDBPersonEditUC, updatePersonUC, deletePersonUC)
 	getDBPersonArchiveNewUC := usecase.NewGetDBPersonArchiveNewUsecase(personRepo)
-	archivePersonUC := usecase.NewArchivePersonUsecase(personRepo)
-	unarchivePersonUC := usecase.NewUnarchivePersonUsecase(personRepo)
+	archivePersonUC := usecase.NewArchivePersonUsecase(db, personRepo, dbEditRecordRepos)
+	unarchivePersonUC := usecase.NewUnarchivePersonUsecase(db, personRepo, dbEditRecordRepos)
 	dbPersonArchiveHandler := db_person_archive.NewHandler(cfg, sessionManager, flashMgr, getDBPersonArchiveNewUC, archivePersonUC, unarchivePersonUC)
 	dbPersonUnarchiveHandler := db_person_unarchive.NewHandler(cfg, sessionManager, usecase.NewGetDBPersonUnarchiveNewUsecase(personRepo))
 	dbPersonDeletionHandler := db_person_deletion.NewHandler(cfg, sessionManager, usecase.NewGetDBPersonDeletionNewUsecase(personRepo))
 	getDBPersonDelistingNewUC := usecase.NewGetDBPersonDelistingNewUsecase(personRepo)
 	getDBPersonUndelistingNewUC := usecase.NewGetDBPersonUndelistingNewUsecase(personRepo)
-	delistPersonUC := usecase.NewDelistPersonUsecase(personRepo)
-	undelistPersonUC := usecase.NewUndelistPersonUsecase(personRepo)
+	delistPersonUC := usecase.NewDelistPersonUsecase(db, personRepo, dbEditRecordRepos)
+	undelistPersonUC := usecase.NewUndelistPersonUsecase(db, personRepo, dbEditRecordRepos)
 	dbPersonDelistingHandler := db_person_delisting.NewHandler(cfg, sessionManager, flashMgr, getDBPersonDelistingNewUC, getDBPersonUndelistingNewUC, delistPersonUC, undelistPersonUC)
 	dbPersonUndelistingHandler := db_person_undelisting.NewHandler(cfg, sessionManager, getDBPersonUndelistingNewUC)
+	dbEditHandler := db_edit.NewHandler(cfg, imageHelper, usecase.NewGetDBEditsUsecase(dbEditRecordRepos.DBEdit, dbEditRecordRepos.AnimeRevision, dbEditRecordRepos.PersonRevision, numberFormatRepo, prefectureRepo))
+	r.Get("/db/edits", dbEditHandler.Index)
 	r.Get("/db/people", dbPersonHandler.Index)
+	dbPersonRevisionHandler := db_person_revision.NewHandler(cfg, imageHelper, usecase.NewGetDBPersonRevisionsUsecase(personRepo, dbEditRecordRepos.PersonRevision, prefectureRepo))
+	r.Get("/db/people/{id}/revisions", dbPersonRevisionHandler.Index)
 	r.Group(func(r chi.Router) {
 		r.Use(authMiddleware.RequireCommitter)
 		r.Get("/db/people/new", dbPersonHandler.New)

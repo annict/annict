@@ -21,6 +21,9 @@ func newDeleteWorkUsecase(db *sql.DB) *DeleteWorkUsecase {
 		db,
 		repository.NewWorkRepository(queries),
 		repository.NewAnimeRepository(queries),
+		repository.NewAnimeClassificationRepository(queries),
+		newTestWorkSatelliteRepos(queries),
+		newTestDBEditRecordRepos(queries),
 	)
 }
 
@@ -39,7 +42,7 @@ func TestDeleteWorkUsecase_Execute_DeletesWorkAndAnime(t *testing.T) {
 	workID := createMappedWork(t, db, "削除前アニメ_"+t.Name())
 	animeID := *reloadSyncWork(t, db, workID).AnimeID
 
-	if _, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, DeleteWorkInput{User: committedEditorForTest(t, model.RoleAdmin), WorkID: workID}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -88,7 +91,7 @@ func TestDeleteWorkUsecase_Execute_DeletesArchivedWork(t *testing.T) {
 	}
 	animeID := *reloadSyncWork(t, db, workID).AnimeID
 
-	if _, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, DeleteWorkInput{User: committedEditorForTest(t, model.RoleAdmin), WorkID: workID}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -124,7 +127,7 @@ func TestDeleteWorkUsecase_Execute_SkipsAnimeWriteForUnmappedWork(t *testing.T) 
 		t.Fatalf("anime_idのクリアに失敗: %v", err)
 	}
 
-	if _, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, DeleteWorkInput{User: committedEditorForTest(t, model.RoleAdmin), WorkID: workID}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -148,11 +151,11 @@ func TestDeleteWorkUsecase_Execute_ReturnsNotFoundForDeletedWork(t *testing.T) {
 	ctx := context.Background()
 
 	workID := createMappedWork(t, db, "二重削除_"+t.Name())
-	if _, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, DeleteWorkInput{User: committedEditorForTest(t, model.RoleAdmin), WorkID: workID}); err != nil {
 		t.Fatalf("最初のExecute()のエラー = %v", err)
 	}
 
-	output, err := uc.Execute(ctx, DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: workID})
+	output, err := uc.Execute(ctx, DeleteWorkInput{User: committedEditorForTest(t, model.RoleAdmin), WorkID: workID})
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (削除済みの作品のため)", output)
 	}
@@ -170,7 +173,7 @@ func TestDeleteWorkUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T) {
 	db := testutil.GetTestDB()
 	uc := newDeleteWorkUsecase(db)
 
-	output, err := uc.Execute(context.Background(), DeleteWorkInput{User: &model.User{ID: 1, Role: model.RoleAdmin}, WorkID: model.WorkID(1 << 62)})
+	output, err := uc.Execute(context.Background(), DeleteWorkInput{User: committedEditorForTest(t, model.RoleAdmin), WorkID: model.WorkID(1 << 62)})
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (存在しない作品のため)", output)
 	}

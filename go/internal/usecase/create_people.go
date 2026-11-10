@@ -15,9 +15,10 @@ import (
 // 運び、それらをまとめて作成する (送信された全行が保存されるか、1行も保存されないかの
 // どちらか)。Rails版は行ごとに保存しており、途中の行が失敗すると前の行だけが残っていた。
 type CreatePeopleUsecase struct {
-	db         *sql.DB
-	personRepo *repository.PersonRepository
-	validator  *validator.DBPersonCreateValidator
+	db                *sql.DB
+	personRepo        *repository.PersonRepository
+	validator         *validator.DBPersonCreateValidator
+	dbEditRecordRepos DBEditRecordRepos
 }
 
 // NewCreatePeopleUsecaseはCreatePeopleUsecaseを生成する。
@@ -25,11 +26,13 @@ func NewCreatePeopleUsecase(
 	db *sql.DB,
 	personRepo *repository.PersonRepository,
 	validator *validator.DBPersonCreateValidator,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *CreatePeopleUsecase {
 	return &CreatePeopleUsecase{
-		db:         db,
-		personRepo: personRepo,
-		validator:  validator,
+		db:                db,
+		personRepo:        personRepo,
+		validator:         validator,
+		dbEditRecordRepos: dbEditRecordRepos,
 	}
 }
 
@@ -47,7 +50,8 @@ type CreatePeopleOutput struct {
 }
 
 // Executeは送信された全行の人物を作成する。認可を確認してから行を検証し、1つの
-// トランザクションで作成する。作成した人物ごとに、編集履歴へpeople.createを記録する。
+// トランザクションで作成する。作成した人物ごとに、編集履歴へpeople.createを記録する。Annict DBの編集履歴には、
+// 作成した人物の版を1つの操作にまとめて記録する。
 func (uc *CreatePeopleUsecase) Execute(ctx context.Context, input CreatePeopleInput) (*CreatePeopleOutput, error) {
 	// 送信はcommitterに限られ、作成者に帰属するため、ユーザーを伴わない呼び出しと一般
 	// ユーザーの呼び出しは何かを読む前に拒否する。
@@ -71,16 +75,34 @@ func (uc *CreatePeopleUsecase) Execute(ctx context.Context, input CreatePeopleIn
 
 	personRepo := uc.personRepo.WithTx(tx)
 	personIDs := make([]model.PersonID, 0, len(rows))
+	revisions := make([]PersonRevisionInput, 0, len(rows))
 	for i, row := range rows {
-		personID, err := personRepo.Create(ctx, repository.CreatePersonParams{
+		params := repository.CreatePersonParams{
 			Name:     row.Name,
 			NameKana: row.NameKana,
 			UserID:   input.User.ID,
-		})
+		}
+		personID, err := personRepo.Create(ctx, params)
 		if err != nil {
 			return nil, fmt.Errorf("人物の作成に失敗しました (%d件目): %w", i+1, err)
 		}
 		personIDs = append(personIDs, personID)
+		revisions = append(revisions, PersonRevisionInput{PersonID: personID, After: personSnapshotFromCreateParams(params)})
+	}
+
+	// 作成の版は起点の版を持たないため、計画は何も読まず、トランザクションの中で立てても書き込んだ行を読み直さない。
+	recordRepos := uc.dbEditRecordRepos.WithTx(tx)
+	recordPlan, err := planDBEditRecord(ctx, recordRepos, DBEditRecordInput{
+		Actor:  model.DBEditActorUser,
+		UserID: &input.User.ID,
+		Action: model.DBEditActionCreate,
+		People: revisions,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("編集履歴の記録の計画に失敗しました: %w", err)
+	}
+	if err := writeDBEditRecord(ctx, recordRepos, recordPlan); err != nil {
+		return nil, err
 	}
 
 	if err := tx.Commit(); err != nil {

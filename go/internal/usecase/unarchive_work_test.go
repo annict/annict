@@ -21,6 +21,9 @@ func newUnarchiveWorkUsecase(db *sql.DB) *UnarchiveWorkUsecase {
 		db,
 		repository.NewWorkRepository(queries),
 		repository.NewAnimeRepository(queries),
+		repository.NewAnimeClassificationRepository(queries),
+		newTestWorkSatelliteRepos(queries),
+		newTestDBEditRecordRepos(queries),
 	)
 }
 
@@ -39,11 +42,11 @@ func TestUnarchiveWorkUsecase_Execute_UnarchivesWorkAndAnime(t *testing.T) {
 	// アーカイブ済みでマッピング済みのworkを用意する。
 	workID := createMappedWork(t, db, "再公開前アニメ_"+t.Name())
 	animeID := *reloadSyncWork(t, db, workID).AnimeID
-	if _, err := newArchiveWorkUsecase(db).Execute(ctx, ArchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
+	if _, err := newArchiveWorkUsecase(db).Execute(ctx, ArchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID}); err != nil {
 		t.Fatalf("前提のアーカイブに失敗: %v", err)
 	}
 
-	if _, err := newUnarchiveWorkUsecase(db).Execute(ctx, UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
+	if _, err := newUnarchiveWorkUsecase(db).Execute(ctx, UnarchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -92,7 +95,7 @@ func TestUnarchiveWorkUsecase_Execute_SkipsAnimeWriteForUnmappedWork(t *testing.
 		t.Fatalf("非公開・未マッピング状態の設定に失敗: %v", err)
 	}
 
-	if _, err := newUnarchiveWorkUsecase(db).Execute(ctx, UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
+	if _, err := newUnarchiveWorkUsecase(db).Execute(ctx, UnarchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -116,7 +119,7 @@ func TestUnarchiveWorkUsecase_Execute_ReturnsNotFoundForPublishedWork(t *testing
 
 	workID := createMappedWork(t, db, "公開中再公開_"+t.Name())
 
-	output, err := uc.Execute(context.Background(), UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
+	output, err := uc.Execute(context.Background(), UnarchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID})
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (公開済みの作品のため)", output)
 	}
@@ -141,7 +144,7 @@ func TestUnarchiveWorkUsecase_Execute_ReturnsNotFoundForDeletedWork(t *testing.T
 		t.Fatalf("非公開・削除済み状態の設定に失敗: %v", err)
 	}
 
-	output, err := uc.Execute(ctx, UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
+	output, err := uc.Execute(ctx, UnarchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID})
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (削除済みの作品のため)", output)
 	}
@@ -159,7 +162,7 @@ func TestUnarchiveWorkUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T
 	db := testutil.GetTestDB()
 	uc := newUnarchiveWorkUsecase(db)
 
-	output, err := uc.Execute(context.Background(), UnarchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: model.WorkID(1 << 62)})
+	output, err := uc.Execute(context.Background(), UnarchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: model.WorkID(1 << 62)})
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (存在しない作品のため)", output)
 	}
@@ -180,7 +183,7 @@ func TestUnarchiveWorkUsecase_Execute_RejectsUnauthorizedUserBeforeWrite(t *test
 
 	workID := createMappedWork(t, db, "公開認可テストアニメ_"+t.Name())
 	if _, err := newArchiveWorkUsecase(db).Execute(ctx, ArchiveWorkInput{
-		User:   &model.User{ID: 1, Role: model.RoleEditor},
+		User:   committedEditorForTest(t, model.RoleEditor),
 		WorkID: workID,
 	}); err != nil {
 		t.Fatalf("前提の非公開に失敗: %v", err)

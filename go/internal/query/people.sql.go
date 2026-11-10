@@ -21,15 +21,25 @@ SET
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = $1
     AND status = 'published'
+    AND updated_at = $2::timestamp
 RETURNING id
 `
 
+type ArchiveDBPersonParams struct {
+	ID      int64     `db:"id"`
+	Version time.Time `db:"version"`
+}
+
+// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+// 間に別の編集が入った場合は状態も履歴も書き込まない。
+//
 // 公開中の人物を非公開 (archived) にする。Rails版はperson_statusを読まないため、Rails版の表示と
 // APIから除外されるようunpublished_atにも時刻を書く (作品の非公開と同じRails版への橋渡し)。
 // 状態の確認と書き込みを1文で行うため、確認画面を開いた後に他者が状態を変えた場合も、1行も
 // 返らない (not found) になる。時刻はCreatePersonと同じくUTCに変換してから書く。
-func (q *Queries) ArchiveDBPerson(ctx context.Context, id int64) (int64, error) {
-	row := q.db.QueryRowContext(ctx, archiveDBPerson, id)
+func (q *Queries) ArchiveDBPerson(ctx context.Context, arg ArchiveDBPersonParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, archiveDBPerson, arg.ID, arg.Version)
+	var id int64
 	err := row.Scan(&id)
 	return id, err
 }
@@ -120,15 +130,25 @@ SET
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = $1
     AND status IN ('published', 'archived')
+    AND updated_at = $2::timestamp
 RETURNING id
 `
 
+type DeleteDBPersonParams struct {
+	ID      int64     `db:"id"`
+	Version time.Time `db:"version"`
+}
+
+// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+// 間に別の編集が入った場合は状態も履歴も書き込まない。
+//
 // 人物を論理削除する。Rails版の物理削除 (destroy_in_batches) と異なり、キャスト・スタッフ・
 // 編集履歴は残す。Rails版はperson_statusを読まないため、Rails版の表示から除外されるよう
 // deleted_atにも時刻を書く (Rails版への橋渡し)。削除できるのは一覧に表示する公開中と
 // アーカイブの人物で、削除済み・掲載停止の人物は対象にしない。
-func (q *Queries) DeleteDBPerson(ctx context.Context, id int64) (int64, error) {
-	row := q.db.QueryRowContext(ctx, deleteDBPerson, id)
+func (q *Queries) DeleteDBPerson(ctx context.Context, arg DeleteDBPersonParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, deleteDBPerson, arg.ID, arg.Version)
+	var id int64
 	err := row.Scan(&id)
 	return id, err
 }
@@ -272,6 +292,85 @@ func (q *Queries) GetPersonForEditByID(ctx context.Context, id int64) (GetPerson
 		&i.TwitterUsername,
 		&i.TwitterUsernameEn,
 		&i.Status,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getPersonForRevisionByID = `-- name: GetPersonForRevisionByID :one
+SELECT
+    p.id,
+    p.name,
+    p.name_kana,
+    p.name_en,
+    p.nickname,
+    p.nickname_en,
+    p.gender,
+    p.blood_type,
+    p.prefecture_id,
+    p.birthday,
+    p.height,
+    p.url,
+    p.url_en,
+    p.wikipedia_url,
+    p.wikipedia_url_en,
+    p.twitter_username,
+    p.twitter_username_en,
+    p.status,
+    p.archive_message,
+    p.updated_at
+FROM people p
+WHERE p.id = $1
+`
+
+type GetPersonForRevisionByIDRow struct {
+	ID                int64          `db:"id"`
+	Name              string         `db:"name"`
+	NameKana          string         `db:"name_kana"`
+	NameEn            string         `db:"name_en"`
+	Nickname          sql.NullString `db:"nickname"`
+	NicknameEn        string         `db:"nickname_en"`
+	Gender            sql.NullString `db:"gender"`
+	BloodType         sql.NullString `db:"blood_type"`
+	PrefectureID      sql.NullInt64  `db:"prefecture_id"`
+	Birthday          sql.NullTime   `db:"birthday"`
+	Height            sql.NullInt32  `db:"height"`
+	Url               sql.NullString `db:"url"`
+	UrlEn             string         `db:"url_en"`
+	WikipediaUrl      sql.NullString `db:"wikipedia_url"`
+	WikipediaUrlEn    string         `db:"wikipedia_url_en"`
+	TwitterUsername   sql.NullString `db:"twitter_username"`
+	TwitterUsernameEn string         `db:"twitter_username_en"`
+	Status            PersonStatus   `db:"status"`
+	ArchiveMessage    sql.NullString `db:"archive_message"`
+	UpdatedAt         time.Time      `db:"updated_at"`
+}
+
+// 編集履歴の版を組み立てるため、書き込む前の人物の状態を読む。スナップショットの列と状態と版を持ち、
+// 掲載停止の対応記録 (delist_message) は版に入れないため読まない。どの状態の人物も返す。
+func (q *Queries) GetPersonForRevisionByID(ctx context.Context, id int64) (GetPersonForRevisionByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getPersonForRevisionByID, id)
+	var i GetPersonForRevisionByIDRow
+	err := row.Scan(
+		&i.ID,
+		&i.Name,
+		&i.NameKana,
+		&i.NameEn,
+		&i.Nickname,
+		&i.NicknameEn,
+		&i.Gender,
+		&i.BloodType,
+		&i.PrefectureID,
+		&i.Birthday,
+		&i.Height,
+		&i.Url,
+		&i.UrlEn,
+		&i.WikipediaUrl,
+		&i.WikipediaUrlEn,
+		&i.TwitterUsername,
+		&i.TwitterUsernameEn,
+		&i.Status,
+		&i.ArchiveMessage,
 		&i.UpdatedAt,
 	)
 	return i, err
@@ -440,13 +539,23 @@ SET
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = $1
     AND status = 'archived'
+    AND updated_at = $2::timestamp
 RETURNING id
 `
 
+type UnarchiveDBPersonParams struct {
+	ID      int64     `db:"id"`
+	Version time.Time `db:"version"`
+}
+
+// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+// 間に別の編集が入った場合は状態も履歴も書き込まない。
+//
 // 非公開の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。ArchiveDBPersonの
 // 逆で、非公開の人物だけを対象にする。
-func (q *Queries) UnarchiveDBPerson(ctx context.Context, id int64) (int64, error) {
-	row := q.db.QueryRowContext(ctx, unarchiveDBPerson, id)
+func (q *Queries) UnarchiveDBPerson(ctx context.Context, arg UnarchiveDBPersonParams) (int64, error) {
+	row := q.db.QueryRowContext(ctx, unarchiveDBPerson, arg.ID, arg.Version)
+	var id int64
 	err := row.Scan(&id)
 	return id, err
 }

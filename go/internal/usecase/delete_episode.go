@@ -21,17 +21,21 @@ import (
 // HTTPルートのRequireAdmin middlewareに加えて、すべてのentry pointで同じ規則になるよう
 // UseCase自身もadmin認可を強制する。非公開がcommitterに開かれているのに対し削除がadmin
 // 専用なのはADR 0009の権限分離で、RailsのEpisodePolicyが行う分割とも同じ。Railsの削除は
-// db_activityを記録しないため、管理者は認可に使うが活動履歴の作成者としては記録しない。
+// db_activityを記録しないため、db_activityには記録しない。Annict DBの編集履歴には、管理者の
+// 削除の操作として記録する。
 //
-// episodesの更新は、行がまだ削除されておらず、トランザクション前の射影が観測した作品に今も属し、
-// その作品も未削除の場合だけ行う。親作品のtouchとカウンター更新にも成功した場合だけ結果を返し、
-// 親作品が同時に削除された場合はトランザクションをロールバックする。実際に削除した行から
-// anime_idを返すため、写像が同時に変わっても以前のanimeへstatusを書かない。statusだけを
-// 更新することで、事前読み取り後にコミットされたanimeの内容も保持する。
+// episodesの更新は、行がまだ削除されておらず、トランザクションの前に読んだ版 (updated_at) の
+// ままで、トランザクション前の射影が観測した作品に今も属し、その作品も未削除の場合だけ行う。
+// 親作品のtouchとカウンター更新にも成功した場合だけ結果を返し、親作品が同時に削除された場合は
+// トランザクションをロールバックする。編集履歴の版はトランザクションの前に読んだanimeから
+// 組み立てるため、実際に削除した行が返すanime_idがその読み取りと違えば、競合を返して何も
+// 書かない。statusだけを更新することで、事前読み取り後にコミットされたanimeの内容も保持する。
 type DeleteEpisodeUsecase struct {
-	db          *sql.DB
-	episodeRepo *repository.EpisodeRepository
-	animeRepo   *repository.AnimeRepository
+	db                      *sql.DB
+	episodeRepo             *repository.EpisodeRepository
+	animeRepo               *repository.AnimeRepository
+	animeClassificationRepo *repository.AnimeClassificationRepository
+	dbEditRecordRepos       DBEditRecordRepos
 }
 
 // NewDeleteEpisodeUsecaseはDeleteEpisodeUsecaseを生成する。
@@ -39,11 +43,15 @@ func NewDeleteEpisodeUsecase(
 	db *sql.DB,
 	episodeRepo *repository.EpisodeRepository,
 	animeRepo *repository.AnimeRepository,
+	animeClassificationRepo *repository.AnimeClassificationRepository,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *DeleteEpisodeUsecase {
 	return &DeleteEpisodeUsecase{
-		db:          db,
-		episodeRepo: episodeRepo,
-		animeRepo:   animeRepo,
+		db:                      db,
+		episodeRepo:             episodeRepo,
+		animeRepo:               animeRepo,
+		animeClassificationRepo: animeClassificationRepo,
+		dbEditRecordRepos:       dbEditRecordRepos,
 	}
 }
 
@@ -85,7 +93,12 @@ func (uc *DeleteEpisodeUsecase) Execute(ctx context.Context, input DeleteEpisode
 		return nil, episodeNotFoundError(ctx, input.EpisodeID)
 	}
 
-	return uc.deleteEpisode(ctx, target)
+	recordPlan, err := planEpisodeStatusRecord(ctx, uc.animeRepo, uc.animeClassificationRepo, uc.dbEditRecordRepos, input.User, model.DBEditActionDelete, target.AnimeID, model.AnimeStatusDeleted)
+	if err != nil {
+		return nil, fmt.Errorf("編集履歴の記録の計画に失敗しました: %w", err)
+	}
+
+	return uc.deleteEpisode(ctx, target, recordPlan)
 }
 
 // deleteEpisodeはソフトデリートをepisodesに、そして実際に更新した行がマッピング済みなら
@@ -95,6 +108,7 @@ func (uc *DeleteEpisodeUsecase) Execute(ctx context.Context, input DeleteEpisode
 func (uc *DeleteEpisodeUsecase) deleteEpisode(
 	ctx context.Context,
 	current *model.Episode,
+	recordPlan *dbEditRecordPlan,
 ) (*DeleteEpisodeOutput, error) {
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -103,8 +117,9 @@ func (uc *DeleteEpisodeUsecase) deleteEpisode(
 	defer func() { _ = tx.Rollback() }()
 
 	deleted, err := uc.episodeRepo.WithTx(tx).Delete(ctx, repository.DeleteEpisodeParams{
-		ID:     current.ID,
-		WorkID: current.WorkID,
+		ID:      current.ID,
+		WorkID:  current.WorkID,
+		Version: current.UpdatedAt,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("エピソードの削除に失敗しました: %w", err)
@@ -112,11 +127,19 @@ func (uc *DeleteEpisodeUsecase) deleteEpisode(
 	if deleted == nil {
 		return nil, episodeNotFoundError(ctx, current.ID)
 	}
+	// 版はトランザクションの前に読んだanimeから組み立てたため、写像がその後に変わっていたら書き込みをやめる。
+	if episodeAnimeIDChanged(current.AnimeID, deleted.AnimeID) {
+		return nil, episodeConflictError(ctx, current.ID)
+	}
 
 	if deleted.AnimeID != nil {
 		if err := uc.animeRepo.WithTx(tx).UpdateStatus(ctx, *deleted.AnimeID, model.AnimeStatusDeleted); err != nil {
 			return nil, fmt.Errorf("animeの状態更新に失敗しました: %w", err)
 		}
+	}
+
+	if err := writeDBEditRecord(ctx, uc.dbEditRecordRepos.WithTx(tx), recordPlan); err != nil {
+		return nil, err
 	}
 
 	if err := tx.Commit(); err != nil {

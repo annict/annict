@@ -261,6 +261,55 @@ func (r *PersonRepository) Update(ctx context.Context, params UpdatePersonParams
 	return true, nil
 }
 
+// GetForRevisionByIDは、編集履歴の版を組み立てるために、書き込む前の人物のスナップショットの列と状態と版を
+// 読み込みます。掲載停止の対応記録は読みません。どの状態の人物も返し、存在しない人物ではnilを返します。
+func (r *PersonRepository) GetForRevisionByID(ctx context.Context, id model.PersonID) (*model.Person, error) {
+	row, err := r.queries.GetPersonForRevisionByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+
+	person := &model.Person{
+		ID:                model.PersonID(row.ID),
+		Name:              row.Name,
+		NameKana:          row.NameKana,
+		NameEn:            row.NameEn,
+		Nickname:          stringPtrFromNull(row.Nickname),
+		NicknameEn:        row.NicknameEn,
+		URL:               stringPtrFromNull(row.Url),
+		URLEn:             row.UrlEn,
+		WikipediaURL:      stringPtrFromNull(row.WikipediaUrl),
+		WikipediaURLEn:    row.WikipediaUrlEn,
+		TwitterUsername:   stringPtrFromNull(row.TwitterUsername),
+		TwitterUsernameEn: row.TwitterUsernameEn,
+		Birthday:          timePtrFromNull(row.Birthday),
+		Status:            model.PersonStatus(row.Status),
+		ArchiveMessage:    stringPtrFromNull(row.ArchiveMessage),
+		UpdatedAt:         row.UpdatedAt,
+	}
+	if row.Gender.Valid {
+		gender := model.PersonGender(row.Gender.String)
+		person.Gender = &gender
+	}
+	if row.BloodType.Valid {
+		bloodType := model.PersonBloodType(row.BloodType.String)
+		person.BloodType = &bloodType
+	}
+	if row.PrefectureID.Valid {
+		prefectureID := model.PrefectureID(row.PrefectureID.Int64)
+		person.PrefectureID = &prefectureID
+	}
+	if row.Height.Valid {
+		height := row.Height.Int32
+		person.Height = &height
+	}
+
+	return person, nil
+}
+
 // GetForStateChangeByIDはAnnict DB管理画面の人物の状態変更 (アーカイブ・アーカイブ解除・
 // 削除) の確認画面が必要とするカラム (表示する名前と状態) を読み込みます。呼び出し側が現在の
 // 状態でその画面が操作できない人物を弾けるよう、どの状態の人物も返します。存在しない人物では
@@ -282,21 +331,24 @@ func (r *PersonRepository) GetForStateChangeByID(ctx context.Context, id model.P
 }
 
 // Archiveは公開中の人物をアーカイブします。人物が存在しないか、公開中でない場合は何も書かずに
-// falseを返します。
-func (r *PersonRepository) Archive(ctx context.Context, id model.PersonID) (bool, error) {
-	return rowAffected(r.queries.ArchiveDBPerson(ctx, int64(id)))
+// falseを返します。versionは事前に読んだupdated_atで、
+// 一致しない場合も書き込みません。
+func (r *PersonRepository) Archive(ctx context.Context, id model.PersonID, version time.Time) (bool, error) {
+	return rowAffected(r.queries.ArchiveDBPerson(ctx, query.ArchiveDBPersonParams{ID: int64(id), Version: version.UTC()}))
 }
 
 // Unarchiveはアーカイブの人物を公開中に戻します。人物が存在しないか、アーカイブでない場合は
-// 何も書かずにfalseを返します。
-func (r *PersonRepository) Unarchive(ctx context.Context, id model.PersonID) (bool, error) {
-	return rowAffected(r.queries.UnarchiveDBPerson(ctx, int64(id)))
+// 何も書かずにfalseを返します。versionは事前に読んだupdated_atで、
+// 一致しない場合も書き込みません。
+func (r *PersonRepository) Unarchive(ctx context.Context, id model.PersonID, version time.Time) (bool, error) {
+	return rowAffected(r.queries.UnarchiveDBPerson(ctx, query.UnarchiveDBPersonParams{ID: int64(id), Version: version.UTC()}))
 }
 
 // Deleteは人物を論理削除します。キャスト・スタッフ・編集履歴は残します。人物が存在しないか、
-// 公開中とアーカイブのどちらでもない場合は何も書かずにfalseを返します。
-func (r *PersonRepository) Delete(ctx context.Context, id model.PersonID) (bool, error) {
-	return rowAffected(r.queries.DeleteDBPerson(ctx, int64(id)))
+// 公開中とアーカイブのどちらでもない場合は何も書かずにfalseを返します。versionは事前に読んだupdated_atで、
+// 一致しない場合も書き込みません。
+func (r *PersonRepository) Delete(ctx context.Context, id model.PersonID, version time.Time) (bool, error) {
+	return rowAffected(r.queries.DeleteDBPerson(ctx, query.DeleteDBPersonParams{ID: int64(id), Version: version.UTC()}))
 }
 
 // GetForDelistingByIDはAnnict DB管理画面の人物の掲載停止・掲載停止の解除の確認画面が必要と

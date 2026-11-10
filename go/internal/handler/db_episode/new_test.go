@@ -230,3 +230,28 @@ func TestNew_ForbiddenWithoutMiddleware(t *testing.T) {
 
 	assertForbiddenPage(t, rr)
 }
+
+// TestNew_NoRevisionsLinkは、フィーチャーフラグdb_edit_historyを有効にしたデバイスの閲覧者にも、
+// 一括作成フォームの作品のサブナビに「履歴」を出さないことを検証する。作品の履歴の入口は、作品一覧の行と作品の
+// 編集画面の見出しに置く。
+func TestNew_NoRevisionsLink(t *testing.T) {
+	t.Parallel()
+
+	const deviceToken = "db-episodes-new-revisions-flagged"
+	db, tx := testutil.SetupTx(t)
+	workID := testutil.NewWorkBuilder(t, tx).WithTitle("履歴リンクの作品").Build()
+	testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(deviceToken).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+
+	req := newNewRequest(workID)
+	req.AddCookie(&http.Cookie{Name: authMiddleware.DeviceTokenCookieName, Value: deviceToken})
+	rr := httptest.NewRecorder()
+	newTestHandler(t, db, tx).New(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
+	}
+	revisionsLink := fmt.Sprintf(`href="/db/works/%d/revisions"`, int64(workID))
+	if strings.Contains(rr.Body.String(), revisionsLink) {
+		t.Errorf("作品の履歴へのリンク %qが出ている", revisionsLink)
+	}
+}

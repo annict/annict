@@ -177,6 +177,10 @@ func (r *EpisodeRepository) GetForEditByID(ctx context.Context, id model.Episode
 		updatedAt := row.UpdatedAt.Time
 		episode.UpdatedAt = &updatedAt
 	}
+	if row.AnimeID.Valid {
+		animeID := model.AnimeID(row.AnimeID.Int64)
+		episode.AnimeID = &animeID
+	}
 
 	return &DBEpisodeEditTarget{
 		Episode: episode,
@@ -353,6 +357,7 @@ func (r *EpisodeRepository) GetForArchiveByID(ctx context.Context, id model.Epis
 		deletedAt := row.DeletedAt.Time
 		episode.DeletedAt = &deletedAt
 	}
+	setEpisodeVersionAndAnimeID(episode, row.UpdatedAt, row.AnimeID)
 	return &DBEpisodeArchiveTarget{
 		Episode: episode,
 		Work: &model.Work{
@@ -369,6 +374,8 @@ func (r *EpisodeRepository) GetForArchiveByID(ctx context.Context, id model.Epis
 type ArchiveEpisodeParams struct {
 	ID     model.EpisodeID
 	WorkID model.WorkID
+	// Versionはトランザクションの前に読んだupdated_at (nilはNULL)。一致しない行には書き込まない。
+	Version *time.Time
 }
 
 // ArchiveEpisodeResultは、実際に非公開にしたエピソード行が持つanimeの写像を報告する。
@@ -378,14 +385,15 @@ type ArchiveEpisodeResult struct {
 }
 
 // Archiveはエピソードを非公開にし、どの行も一致しなかった場合にnilを返す (エピソード
-// が失われた、親作品が削除された、確認ページを開いてから他者が非公開にした、またはそのページが
-// 名指しした作品にもう属していない)。呼び出し側はこれを、確認ページ自身が返すのと同じnot found
-// の応答に変換し、起きなかった書き込みを報告しない。成功時の結果は、トランザクション前の射影では
+// が失われた、親作品が削除された、確認ページを開いてから他者が非公開にした、そのページが
+// 名指しした作品にもう属していない、またはVersionの後に行が書かれた)。呼び出し側は起きなかった
+// 書き込みを報告しない。成功時の結果は、トランザクション前の射影では
 // なく、更新した行が返したanimeの写像を運ぶ。
 func (r *EpisodeRepository) Archive(ctx context.Context, params ArchiveEpisodeParams) (*ArchiveEpisodeResult, error) {
 	row, err := r.queries.ArchiveDBEpisode(ctx, query.ArchiveDBEpisodeParams{
-		ID:     int64(params.ID),
-		WorkID: int64(params.WorkID),
+		ID:      int64(params.ID),
+		WorkID:  int64(params.WorkID),
+		Version: nullTimeFromPtr(params.Version),
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -409,6 +417,8 @@ func (r *EpisodeRepository) Archive(ctx context.Context, params ArchiveEpisodePa
 type UnarchiveEpisodeParams struct {
 	ID     model.EpisodeID
 	WorkID model.WorkID
+	// Versionはトランザクションの前に読んだupdated_at (nilはNULL)。一致しない行には書き込まない。
+	Version *time.Time
 }
 
 // UnarchiveEpisodeResultは、実際に再公開したエピソード行が持つanimeの写像を報告する。
@@ -418,14 +428,15 @@ type UnarchiveEpisodeResult struct {
 }
 
 // Unarchiveは非公開のエピソードを再公開し、どの行も一致しなかった場合にnilを返す
-// (エピソードが失われた、親作品が削除された、一覧を開いてから他者が再公開した、またはその一覧が
-// 名指しした作品にもう属していない)。呼び出し側はこれを、一覧が表示できないエピソードに対して
-// 返すのと同じnot foundの応答に変換し、起きなかった書き込みを報告しない。成功時の結果は、
+// (エピソードが失われた、親作品が削除された、一覧を開いてから他者が再公開した、その一覧が
+// 名指しした作品にもう属していない、またはVersionの後に行が書かれた)。呼び出し側は起きなかった
+// 書き込みを報告しない。成功時の結果は、
 // トランザクション前の射影ではなく、更新した行が返したanimeの写像を運ぶ。
 func (r *EpisodeRepository) Unarchive(ctx context.Context, params UnarchiveEpisodeParams) (*UnarchiveEpisodeResult, error) {
 	row, err := r.queries.UnarchiveDBEpisode(ctx, query.UnarchiveDBEpisodeParams{
-		ID:     int64(params.ID),
-		WorkID: int64(params.WorkID),
+		ID:      int64(params.ID),
+		WorkID:  int64(params.WorkID),
+		Version: nullTimeFromPtr(params.Version),
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -457,10 +468,25 @@ func (r *EpisodeRepository) GetForDeleteByID(ctx context.Context, id model.Episo
 		return nil, err
 	}
 
-	return &model.Episode{
+	episode := &model.Episode{
 		ID:     model.EpisodeID(row.ID),
 		WorkID: model.WorkID(row.WorkID),
-	}, nil
+	}
+	setEpisodeVersionAndAnimeID(episode, row.UpdatedAt, row.AnimeID)
+	return episode, nil
+}
+
+// setEpisodeVersionAndAnimeIDは、状態を変える送信がトランザクションの前に読んだ版とanimeの写像を
+// エピソードに入れる。送信はこの版で書き込みを照合し、この写像のanimeから編集履歴の版を組み立てる。
+func setEpisodeVersionAndAnimeID(episode *model.Episode, updatedAt sql.NullTime, animeID sql.NullInt64) {
+	if updatedAt.Valid {
+		t := updatedAt.Time
+		episode.UpdatedAt = &t
+	}
+	if animeID.Valid {
+		id := model.AnimeID(animeID.Int64)
+		episode.AnimeID = &id
+	}
 }
 
 // DeleteEpisodeParamsは1回の削除の送信がソフトデリートするエピソードを指定する。WorkID
@@ -469,6 +495,8 @@ func (r *EpisodeRepository) GetForDeleteByID(ctx context.Context, id model.Episo
 type DeleteEpisodeParams struct {
 	ID     model.EpisodeID
 	WorkID model.WorkID
+	// Versionはトランザクションの前に読んだupdated_at (nilはNULL)。一致しない行には書き込まない。
+	Version *time.Time
 }
 
 // DeleteEpisodeResultは、実際に削除したエピソード行が持つanimeの写像を報告する。
@@ -478,14 +506,15 @@ type DeleteEpisodeResult struct {
 }
 
 // Deleteはエピソードをソフトデリートし、どの行も一致しなかった場合にnilを返す
-// (エピソードが失われた、親作品が削除された、一覧を開いてから他者が削除した、またはその一覧が
-// 名指しした作品にもう属していない)。呼び出し側はこれを、一覧が表示できないエピソードに対して
-// 返すのと同じnot foundの応答に変換し、起きなかった書き込みを報告しない。成功時の結果は、
+// (エピソードが失われた、親作品が削除された、一覧を開いてから他者が削除した、その一覧が
+// 名指しした作品にもう属していない、またはVersionの後に行が書かれた)。呼び出し側は起きなかった
+// 書き込みを報告しない。成功時の結果は、
 // トランザクション前の射影ではなく、更新した行が返したanimeの写像を運ぶ。
 func (r *EpisodeRepository) Delete(ctx context.Context, params DeleteEpisodeParams) (*DeleteEpisodeResult, error) {
 	row, err := r.queries.DeleteDBEpisode(ctx, query.DeleteDBEpisodeParams{
-		ID:     int64(params.ID),
-		WorkID: int64(params.WorkID),
+		ID:      int64(params.ID),
+		WorkID:  int64(params.WorkID),
+		Version: nullTimeFromPtr(params.Version),
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
@@ -628,7 +657,8 @@ func (r *EpisodeRepository) UpdatePrevEpisodeID(ctx context.Context, workID mode
 // DBEpisodeTitleFillTargetは、しょぼいカレンダーからタイトルを入れるエピソードと、引く先の
 // 作品のTIDを表す。TIDはworksのカラムで、エピソードの属性ではないため並べて持つ。
 type DBEpisodeTitleFillTarget struct {
-	// EpisodeはID・WorkID・RawNumberだけを持つ。
+	// EpisodeはID・WorkID・RawNumberだけを持つ。書き込む前にGetForTitleFillByIDで読んだ版 (UpdatedAt) と
+	// animeの写像 (AnimeID) を入れると、UpdateEmptyTitleはその2つを照合して書く。
 	Episode *model.Episode
 	ScTid   int32
 }
@@ -655,6 +685,21 @@ func (r *EpisodeRepository) ListForTitleFill(ctx context.Context, createdFrom ti
 	return targets, nil
 }
 
+// GetForTitleFillByIDは、タイトルを入れる直前のエピソードの版とanimeの写像を読む。行が無いときは
+// (nil, nil) を返す。
+func (r *EpisodeRepository) GetForTitleFillByID(ctx context.Context, id model.EpisodeID) (*model.Episode, error) {
+	row, err := r.queries.GetEpisodeForTitleFillByID(ctx, int64(id))
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, nil
+		}
+		return nil, err
+	}
+	episode := &model.Episode{ID: model.EpisodeID(row.ID)}
+	setEpisodeVersionAndAnimeID(episode, row.UpdatedAt, row.AnimeID)
+	return episode, nil
+}
+
 // UpdateEmptyTitleは、問い合わせに使った識別値と対象条件が一致するエピソードにタイトルを
 // 入れ、更新した行のIDと現在のAnimeIDを返す。WithTxで使い、animeも同じトランザクションで
 // 更新する。nilは、対象が変化したかタイトルが入っていたとき、またはほかのトランザクションが
@@ -667,6 +712,8 @@ func (r *EpisodeRepository) UpdateEmptyTitle(ctx context.Context, target DBEpiso
 		RawNumber:   nullFloat64FromPtr(target.Episode.RawNumber),
 		Title:       sql.NullString{String: title, Valid: true},
 		CreatedFrom: createdFrom,
+		Version:     nullTimeFromPtr(target.Episode.UpdatedAt),
+		AnimeID:     nullInt64FromAnimeID(target.Episode.AnimeID),
 	})
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

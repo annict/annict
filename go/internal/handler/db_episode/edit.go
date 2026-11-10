@@ -49,8 +49,9 @@ func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, episodeID m
 	ctx := r.Context()
 
 	output, err := h.getDBEpisodeEditUC.Execute(ctx, usecase.GetDBEpisodeEditInput{
-		User:      middleware.GetUserFromContext(ctx),
-		EpisodeID: episodeID,
+		User:        middleware.GetUserFromContext(ctx),
+		EpisodeID:   episodeID,
+		DeviceToken: middleware.GetDeviceToken(r),
 	})
 	if err != nil {
 		if ae := model.AsAppError(err); ae != nil {
@@ -99,6 +100,7 @@ func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, episodeID m
 			FormErrors:      viewmodel.NewFormErrors(state.FormErrors),
 			FormInput:       formInput,
 			ConflictCurrent: conflictCurrent,
+			ShowRevisions:   output.CanShowRevisions,
 		}),
 	)
 	var body bytes.Buffer

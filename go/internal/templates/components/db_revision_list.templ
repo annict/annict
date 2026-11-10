@@ -1,0 +1,254 @@
+package components
+
+import (
+	"context"
+
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// dbRevisionTableClassとdbRevisionFirstColumnClassは差分の表と行の表で共有し、縦に並んだ表の列をそろえる。
+// 列の幅を内容の長さから切り離すため固定レイアウトにし、狭い画面では最小幅を保って横にスクロールさせる。
+const (
+	dbRevisionTableClass       = "table table-fixed min-w-[480px]"
+	dbRevisionFirstColumnClass = "w-32 sm:w-48"
+)
+
+// DBRevisionListはAnnict DBの履歴の版を新しい順に並べる。作品・エピソード・人物の履歴で共有する。
+// 版ごとに、編集者・操作・日時と、変わった項目の表・別表の行の追加と削除の表を示す。作品の履歴では作品と
+// エピソードの版が並ぶため、Annict DB全体の編集履歴と同じく、編集者と操作の文の下に版の対象を示す。
+templ DBRevisionList(revisions []viewmodel.DBRevision) {
+	if len(revisions) == 0 {
+		@Empty(templates.T(ctx, "db_revision_list_empty"), "")
+	} else {
+		<ol class="flex flex-col gap-8">
+			for _, r := range revisions {
+				<li class="flex flex-col gap-3">
+					@dbEditHeading(r.DBEditHeader)
+					if r.Episode != nil {
+						@dbRevisionEpisode(*r.Episode)
+					} else if r.WorkName != "" {
+						@dbRevisionWork(r.WorkName)
+					}
+					if len(r.Fields) > 0 {
+						@dbRevisionFieldTable(r)
+					}
+					if len(r.Rows) > 0 {
+						@dbRevisionRowTable(r)
+					}
+				</li>
+			}
+		</ol>
+	}
+}
+
+// dbRevisionEpisodeは作品の履歴に並べるエピソードの版が、どのエピソードの版かを示し、そのエピソードの
+// 履歴へリンクする。
+templ dbRevisionEpisode(e viewmodel.DBRevisionEpisode) {
+	<p class="text-sm">
+		<span class="text-muted-foreground">{ templates.T(ctx, "db_revision_episode_label") }</span>
+		<a href={ templates.DBEpisodeRevisionsPath(e.ID).SafeURL() } class="font-medium underline-offset-4 hover:underline">
+			{ e.DisplayName(ctx) }
+		</a>
+	</p>
+}
+
+// dbRevisionWorkは作品の履歴に並べる作品の版が、作品の版であることを示す。作品の名前は、リンク先が今開いている
+// 作品の履歴になるため、リンクにしない。
+templ dbRevisionWork(name string) {
+	<p class="text-sm">
+		<span class="text-muted-foreground">{ templates.T(ctx, "db_revision_work_label") }</span>
+		<span class="font-medium">{ name }</span>
+	</p>
+}
+
+// dbEditHeadingは操作の編集者のアバター・編集者と操作の文・日時を1行に並べる。各リソースの履歴では版ごとに、
+// Annict DB全体の編集履歴では操作ごとに示す。
+templ dbEditHeading(h viewmodel.DBEditHeader) {
+	<p class="flex flex-wrap items-center gap-x-2 text-sm">
+		@dbEditEditorAvatar(h)
+		@dbEditSentence(h)
+		<time datetime={ h.CreatedAtDateTime } class="text-muted-foreground">{ h.CreatedAtDisplay }</time>
+	</p>
+}
+
+// dbEditEditorAvatarは編集者のアバターを示す。プロフィール画像の無いユーザーはアットネームの頭文字で、
+// システムの書き込みと退会したユーザーの編集はアイコンで示す。隣の文の編集者の名前で誰の操作かが分かるため、
+// どれも支援技術から隠す装飾として扱う。
+templ dbEditEditorAvatar(h viewmodel.DBEditHeader) {
+	switch h.EditorKind {
+		case viewmodel.DBRevisionEditorUser:
+			if h.EditorAvatarURL != "" {
+				<img src={ h.EditorAvatarURL } alt="" width="20" height="20" class="size-5 rounded-full object-cover" loading="lazy"/>
+			} else {
+				<span aria-hidden="true" class="flex size-5 items-center justify-center rounded-full bg-muted text-xs font-medium">{ h.EditorInitial() }</span>
+			}
+		case viewmodel.DBRevisionEditorSystem:
+			@templates.DecorativeIcon("robot-regular", "size-5 text-muted-foreground")
+		default:
+			@templates.DecorativeIcon("user-circle-dashed-regular", "size-5 text-muted-foreground")
+	}
+}
+
+// dbEditSentenceは編集者と操作を「@editorが更新しました」のような1つの文で示す。ユーザーの編集者は
+// プロフィールへリンクし、退会したユーザーとシステムの書き込みはリンクを持たない。文の途中に空白が
+// 入らないよう、各行を1行に書く。
+templ dbEditSentence(h viewmodel.DBEditHeader) {
+	switch h.EditorKind {
+		case viewmodel.DBRevisionEditorUser:
+			<span>{ h.SentenceBeforeEditor }<a href={ templates.UserProfilePath(h.EditorUsername).SafeURL() } class="font-medium underline-offset-4 hover:underline">{ "@" + h.EditorUsername }</a>{ h.SentenceAfterEditor }</span>
+		case viewmodel.DBRevisionEditorSystem:
+			<span>{ h.SentenceBeforeEditor }<span class="font-medium">{ templates.T(ctx, "db_revision_editor_system") }</span>{ h.SentenceAfterEditor }</span>
+		default:
+			<span>{ h.SentenceBeforeEditor }<span class="font-medium">{ templates.T(ctx, "db_revision_editor_deleted_user") }</span>{ h.SentenceAfterEditor }</span>
+	}
+}
+
+// dbRevisionFieldTableは版で変わった項目を、項目・変更前・変更後の表で示す。作成の版は変更前の列を
+// 持たない。表の見出しで版を見分けられるよう、captionに操作と日時を入れる。
+templ dbRevisionFieldTable(r viewmodel.DBRevision) {
+	<div
+		class="overflow-x-auto"
+		role="region"
+		aria-label={ dbRevisionCaption(ctx, r, "db_revision_fields_caption") }
+		tabindex="0"
+	>
+		<table class={ dbRevisionTableClass }>
+			<caption class="sr-only">{ dbRevisionCaption(ctx, r, "db_revision_fields_caption") }</caption>
+			// 幅指定の無い変更前・変更後の列が、残りの幅を等分する。
+			<colgroup>
+				<col class={ dbRevisionFirstColumnClass }/>
+				if !r.IsCreate {
+					<col/>
+				}
+				<col/>
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col" class="text-left">{ templates.T(ctx, "db_revision_fields_item_label") }</th>
+					if !r.IsCreate {
+						<th scope="col" class="text-left">{ templates.T(ctx, "db_revision_fields_before_label") }</th>
+					}
+					<th scope="col" class="text-left">{ templates.T(ctx, "db_revision_fields_after_label") }</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, f := range r.Fields {
+					<tr>
+						<th scope="row" class="whitespace-normal text-left font-normal text-muted-foreground">{ f.Label }</th>
+						if !r.IsCreate {
+							<td class="whitespace-pre-wrap break-all">{ f.Before }</td>
+						}
+						<td class="whitespace-pre-wrap break-all">{ f.After }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+// dbRevisionRowTableは版で追加・削除した別表の行を示す。行の項目が変わったときは、削除と追加の2行になる。
+templ dbRevisionRowTable(r viewmodel.DBRevision) {
+	<div
+		class="overflow-x-auto"
+		role="region"
+		aria-label={ dbRevisionCaption(ctx, r, "db_revision_rows_caption") }
+		tabindex="0"
+	>
+		<table class={ dbRevisionTableClass }>
+			<caption class="sr-only">{ dbRevisionCaption(ctx, r, "db_revision_rows_caption") }</caption>
+			<colgroup>
+				<col class={ dbRevisionFirstColumnClass }/>
+				<col class="w-20"/>
+				<col/>
+			</colgroup>
+			<thead>
+				<tr>
+					<th scope="col" class="text-left">{ templates.T(ctx, "db_revision_rows_table_label") }</th>
+					<th scope="col" class="text-left">{ templates.T(ctx, "db_revision_rows_change_label") }</th>
+					<th scope="col" class="text-left">{ templates.T(ctx, "db_revision_rows_values_label") }</th>
+				</tr>
+			</thead>
+			<tbody>
+				for _, row := range r.Rows {
+					<tr>
+						<th scope="row" class="whitespace-normal text-left font-normal text-muted-foreground">{ row.TableLabel }</th>
+						<td>
+							if row.Added {
+								{ templates.T(ctx, "db_revision_rows_added") }
+							} else {
+								{ templates.T(ctx, "db_revision_rows_removed") }
+							}
+						</td>
+						<td class="whitespace-normal break-all">{ row.Values }</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+}
+
+// dbRevisionCaptionは版の表の見出しを返す。作品の履歴では作品とエピソードの版が並ぶため、エピソードの版の
+// 見出しにはエピソードの名前を入れる。Annict DB全体の編集履歴では、1つの操作に複数のリソースの版が並ぶため、
+// 見出しに対象のリソースの名前を入れる。
+func dbRevisionCaption(ctx context.Context, r viewmodel.DBRevision, key string) string {
+	caption := templates.T(ctx, key, map[string]any{"Action": r.ActionLabel, "CreatedAt": r.CreatedAtDisplay})
+	if r.TargetName != "" {
+		return templates.T(ctx, "db_revision_target_caption", map[string]any{"Target": r.TargetName, "Caption": caption})
+	}
+	if r.Episode == nil {
+		return caption
+	}
+	return templates.T(ctx, "db_revision_episode_caption", map[string]any{"Episode": r.Episode.DisplayName(ctx), "Caption": caption})
+}
+
+// DBEditListはAnnict DB全体の編集履歴の操作を新しい順に並べる。操作ごとに、編集者・操作・日時を1度だけ示し、
+// その下に対象のリソースごとの、リソースの履歴へのリンクと差分の表を並べる。
+templ DBEditList(edits []viewmodel.DBEdit) {
+	if len(edits) == 0 {
+		@Empty(templates.T(ctx, "db_revision_list_empty"), "")
+	} else {
+		<ol class="flex flex-col gap-8">
+			for _, e := range edits {
+				<li class="flex flex-col gap-3">
+					@dbEditHeading(e.DBEditHeader)
+					<ul class="flex flex-col gap-4">
+						for _, r := range e.Revisions {
+							<li class="flex flex-col gap-2">
+								<p class="text-sm">
+									<span class="text-muted-foreground">{ dbEditTargetKindLabel(ctx, r.Kind) }</span>
+									<a href={ dbEditTargetPath(r).SafeURL() } class="font-medium underline-offset-4 hover:underline">
+										{ r.Name }
+									</a>
+								</p>
+								if len(r.Revision.Fields) > 0 {
+									@dbRevisionFieldTable(r.Revision)
+								}
+								if len(r.Revision.Rows) > 0 {
+									@dbRevisionRowTable(r.Revision)
+								}
+							</li>
+						}
+					</ul>
+				</li>
+			}
+		</ol>
+	}
+}
+
+// dbEditTargetKindLabelは版が指すリソースの種類の見出しを返す。
+func dbEditTargetKindLabel(ctx context.Context, kind viewmodel.DBEditTargetKind) string {
+	return templates.T(ctx, "db_edits_target_"+string(kind)+"_label")
+}
+
+// dbEditTargetPathは版が指すリソースの履歴のパスを返す。
+func dbEditTargetPath(r viewmodel.DBEditRevision) templates.Path {
+	switch r.Kind {
+	case viewmodel.DBEditTargetEpisode:
+		return templates.DBEpisodeRevisionsPath(r.EpisodeID)
+	case viewmodel.DBEditTargetPerson:
+		return templates.DBPersonRevisionsPath(r.PersonID)
+	default:
+		return templates.DBWorkRevisionsPath(r.WorkID)
+	}
+}

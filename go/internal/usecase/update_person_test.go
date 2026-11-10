@@ -17,17 +17,17 @@ import (
 // 往復書式で一致する。同じトランザクションの中ではNOW() が進まないため、過去の時刻を使う。
 var updatePersonTestVersion = time.Date(2024, 5, 6, 7, 8, 9, 654321000, time.UTC)
 
-// newUpdatePersonUsecaseはテスト用トランザクション上にUseCaseを組み立てる。本UseCaseは
-// 1文で更新を終え、自らトランザクションを開かないためSetupTxを使う。
-func newUpdatePersonUsecase(t *testing.T) (*UpdatePersonUsecase, *sql.Tx) {
+// newUpdatePersonUsecaseは共有テストDBに対してUseCaseを組み立てる。本UseCaseは編集履歴と同じトランザクションで
+// 書くため自前のトランザクションを開く。前提の人物はtestutil.CreateCommittedPersonでコミットする。
+func newUpdatePersonUsecase(t *testing.T) (*UpdatePersonUsecase, *sql.DB) {
 	t.Helper()
 
-	db, tx := testutil.SetupTx(t)
-	queries := query.New(db).WithTx(tx)
+	db := testutil.GetTestDB()
+	queries := query.New(db)
 	personRepo := repository.NewPersonRepository(queries)
 	prefectureRepo := repository.NewPrefectureRepository(queries)
 
-	return NewUpdatePersonUsecase(personRepo, validator.NewDBPersonUpdateValidator(personRepo, prefectureRepo)), tx
+	return NewUpdatePersonUsecase(db, personRepo, validator.NewDBPersonUpdateValidator(personRepo, prefectureRepo), newTestDBEditRecordRepos(queries)), db
 }
 
 // TestUpdatePersonUsecase_Execute_UpdatesPersonWithActivityは、送信された値を人物に適用し、
@@ -35,9 +35,11 @@ func newUpdatePersonUsecase(t *testing.T) (*UpdatePersonUsecase, *sql.Tx) {
 func TestUpdatePersonUsecase_Execute_UpdatesPersonWithActivity(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUpdatePersonUsecase(t)
-	userID := testutil.NewUserBuilder(t, tx).WithRole(model.RoleEditor).Build()
-	personID := testutil.NewPersonBuilder(t, tx).WithUpdatedAt(updatePersonTestVersion).Build()
+	uc, db := newUpdatePersonUsecase(t)
+	userID := committedEditorForTest(t, model.RoleEditor).ID
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithUpdatedAt(updatePersonTestVersion)
+	})
 	newName := "編集後の人物-" + t.Name()
 
 	output, err := uc.Execute(context.Background(), UpdatePersonInput{
@@ -60,7 +62,7 @@ func TestUpdatePersonUsecase_Execute_UpdatesPersonWithActivity(t *testing.T) {
 		height       int32
 		activities   int
 	)
-	if err := tx.QueryRow(`
+	if err := db.QueryRow(`
 		SELECT p.name, p.gender, p.height,
 			(SELECT COUNT(*) FROM db_activities a
 			 WHERE a.trackable_type = 'Person' AND a.trackable_id = p.id AND a.action = 'people.update' AND a.user_id = $2)
@@ -81,10 +83,12 @@ func TestUpdatePersonUsecase_Execute_UpdatesPersonWithActivity(t *testing.T) {
 func TestUpdatePersonUsecase_Execute_Conflict(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUpdatePersonUsecase(t)
-	userID := testutil.NewUserBuilder(t, tx).WithRole(model.RoleEditor).Build()
+	uc, db := newUpdatePersonUsecase(t)
+	userID := committedEditorForTest(t, model.RoleEditor).ID
 	storedName := "保存済みの人物-" + t.Name()
-	personID := testutil.NewPersonBuilder(t, tx).WithName(storedName).WithUpdatedAt(updatePersonTestVersion).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithName(storedName).WithUpdatedAt(updatePersonTestVersion)
+	})
 
 	staleVersion := updatePersonTestVersion.Add(-time.Second).Format(validator.FormVersionLayout)
 	output, err := uc.Execute(context.Background(), UpdatePersonInput{
@@ -102,7 +106,7 @@ func TestUpdatePersonUsecase_Execute_Conflict(t *testing.T) {
 	}
 
 	var name string
-	if err := tx.QueryRow(`SELECT name FROM people WHERE id = $1`, int64(personID)).Scan(&name); err != nil {
+	if err := db.QueryRow(`SELECT name FROM people WHERE id = $1`, int64(personID)).Scan(&name); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
 	}
 	if name != storedName {
@@ -115,14 +119,16 @@ func TestUpdatePersonUsecase_Execute_Conflict(t *testing.T) {
 func TestUpdatePersonUsecase_Execute_ConflictBeforeDuplicate(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUpdatePersonUsecase(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithUpdatedAt(updatePersonTestVersion).Build()
+	uc, _ := newUpdatePersonUsecase(t)
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithUpdatedAt(updatePersonTestVersion)
+	})
 	takenName := "別の人物-" + t.Name()
-	testutil.NewPersonBuilder(t, tx).WithName(takenName).Build()
+	testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder { return b.WithName(takenName) })
 
 	_, err := uc.Execute(context.Background(), UpdatePersonInput{
 		PersonID:  personID,
-		User:      &model.User{ID: 1, Role: model.RoleEditor},
+		User:      committedEditorForTest(t, model.RoleEditor),
 		Name:      takenName,
 		UpdatedAt: updatePersonTestVersion.Add(-time.Second).Format(validator.FormVersionLayout),
 	})
@@ -136,15 +142,17 @@ func TestUpdatePersonUsecase_Execute_ConflictBeforeDuplicate(t *testing.T) {
 func TestUpdatePersonUsecase_Execute_NotFound(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUpdatePersonUsecase(t)
-	delistedID := testutil.NewPersonBuilder(t, tx).
-		WithStatus(model.PersonStatusDelisted).
-		WithUpdatedAt(updatePersonTestVersion).
-		Build()
-	deletedID := testutil.NewPersonBuilder(t, tx).
-		WithStatus(model.PersonStatusDeleted).
-		WithUpdatedAt(updatePersonTestVersion).
-		Build()
+	uc, _ := newUpdatePersonUsecase(t)
+	delistedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.
+			WithStatus(model.PersonStatusDelisted).
+			WithUpdatedAt(updatePersonTestVersion)
+	})
+	deletedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.
+			WithStatus(model.PersonStatusDeleted).
+			WithUpdatedAt(updatePersonTestVersion)
+	})
 
 	tests := []struct {
 		name     string
@@ -159,7 +167,7 @@ func TestUpdatePersonUsecase_Execute_NotFound(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			_, err := uc.Execute(context.Background(), UpdatePersonInput{
 				PersonID:  tt.personID,
-				User:      &model.User{ID: 1, Role: model.RoleEditor},
+				User:      committedEditorForTest(t, model.RoleEditor),
 				Name:      "見つからない人物-" + t.Name(),
 				UpdatedAt: updatePersonTestVersion.Format(validator.FormVersionLayout),
 			})
@@ -176,13 +184,15 @@ func TestUpdatePersonUsecase_Execute_NotFound(t *testing.T) {
 func TestUpdatePersonUsecase_Execute_ValidationError(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUpdatePersonUsecase(t)
+	uc, _ := newUpdatePersonUsecase(t)
 	storedName := "検証される人物-" + t.Name()
-	personID := testutil.NewPersonBuilder(t, tx).WithName(storedName).WithUpdatedAt(updatePersonTestVersion).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithName(storedName).WithUpdatedAt(updatePersonTestVersion)
+	})
 
 	_, err := uc.Execute(context.Background(), UpdatePersonInput{
 		PersonID:  personID,
-		User:      &model.User{ID: 1, Role: model.RoleEditor},
+		User:      committedEditorForTest(t, model.RoleEditor),
 		Name:      storedName,
 		Birthday:  "1990-13-01",
 		UpdatedAt: updatePersonTestVersion.Format(validator.FormVersionLayout),
@@ -198,16 +208,18 @@ func TestUpdatePersonUsecase_Execute_ValidationError(t *testing.T) {
 func TestUpdatePersonUsecase_Execute_RequiresCommitter(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUpdatePersonUsecase(t)
+	uc, db := newUpdatePersonUsecase(t)
 	storedName := "認可される人物-" + t.Name()
-	personID := testutil.NewPersonBuilder(t, tx).WithName(storedName).WithUpdatedAt(updatePersonTestVersion).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithName(storedName).WithUpdatedAt(updatePersonTestVersion)
+	})
 
 	tests := []struct {
 		name string
 		user *model.User
 	}{
 		{name: "ユーザー無し", user: nil},
-		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
+		{name: "一般ユーザー", user: committedEditorForTest(t, model.RoleUser)},
 	}
 
 	for _, tt := range tests {
@@ -226,7 +238,7 @@ func TestUpdatePersonUsecase_Execute_RequiresCommitter(t *testing.T) {
 	}
 
 	var name string
-	if err := tx.QueryRow(`SELECT name FROM people WHERE id = $1`, int64(personID)).Scan(&name); err != nil {
+	if err := db.QueryRow(`SELECT name FROM people WHERE id = $1`, int64(personID)).Scan(&name); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
 	}
 	if name != storedName {

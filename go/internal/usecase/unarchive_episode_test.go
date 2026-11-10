@@ -21,6 +21,8 @@ func newUnarchiveEpisodeUsecase(db *sql.DB) *UnarchiveEpisodeUsecase {
 		db,
 		repository.NewEpisodeRepository(queries),
 		repository.NewAnimeRepository(queries),
+		repository.NewAnimeClassificationRepository(queries),
+		newTestDBEditRecordRepos(queries),
 	)
 }
 
@@ -63,7 +65,7 @@ func TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeAndAnime(t *testing.T)
 		t.Fatalf("非公開済みanimeの準備に失敗: %v", err)
 	}
 
-	output, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()})
+	output, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleEditor)})
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -112,7 +114,7 @@ func TestUnarchiveEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing
 	episodeID := insertUpdateTargetEpisode(t, db, workID, sql.NullInt64{}, 100)
 	archiveFixtureEpisode(t, db, episodeID)
 
-	if _, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()}); err != nil {
+	if _, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleEditor)}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -149,7 +151,7 @@ func TestUnarchiveEpisodeUsecase_Execute_UnarchivesEpisodeWithUnmappedParent(t *
 		t.Fatalf("親作品の写像の解除に失敗: %v", err)
 	}
 
-	if _, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()}); err != nil {
+	if _, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleEditor)}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -262,10 +264,11 @@ func TestUnarchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisod
 		err    error
 	}
 	resultCh := make(chan unarchiveResult, 1)
+	editor := committedEditorForTest(t, model.RoleEditor)
 	go func() {
 		output, err := uc.Execute(ctx, UnarchiveEpisodeInput{
 			EpisodeID: episodeID,
-			User:      unsavedCreateActor(),
+			User:      editor,
 		})
 		resultCh <- unarchiveResult{output: output, err: err}
 	}()
@@ -356,11 +359,99 @@ func TestUnarchiveEpisodeUsecase_Execute_NotFound(t *testing.T) {
 	}
 	for name, episodeID := range tests {
 		t.Run(name, func(t *testing.T) {
-			_, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()})
+			_, err := uc.Execute(context.Background(), UnarchiveEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleEditor)})
 			appErr := model.AsAppError(err)
 			if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
 				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", err)
 			}
 		})
+	}
+}
+
+// このテストは再公開の事前読み取りと書き込みの間の実行順を固定する。再公開がロック済みのepisodeを
+// 待つ間に別トランザクションがanimeの写像を変える。編集履歴の版はトランザクションの前に読んだanimeから
+// 組み立てるため、解放後の再公開は書き込みをやめ、episodeもどちらのanimeのstatusも変えない。
+func TestUnarchiveEpisodeUsecase_Execute_RejectsWhenMappingChangesWhileEpisodeWriteWaits(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newUnarchiveEpisodeUsecase(db)
+	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
+	episodeID, formerAnimeID := insertMappedUpdateTargetEpisode(t, db, workID, parentAnimeID, 100)
+	archiveFixtureEpisode(t, db, episodeID)
+	if _, err := db.Exec(`UPDATE animes SET status = $1 WHERE id = $2`, model.AnimeStatusArchived, int64(formerAnimeID)); err != nil {
+		t.Fatalf("非公開済みanimeの準備に失敗: %v", err)
+	}
+	currentAnimeID := insertBareAnime(t, db)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	blockerTx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatalf("ブロッカー用トランザクションのBeginTx()のエラー = %v", err)
+	}
+	defer func() { _ = blockerTx.Rollback() }()
+
+	var blockerPID int
+	if err := blockerTx.QueryRowContext(ctx, `SELECT pg_backend_pid()`).Scan(&blockerPID); err != nil {
+		t.Fatalf("ブロッカーのbackend PIDの取得に失敗: %v", err)
+	}
+	if _, err := blockerTx.ExecContext(ctx, `SELECT id FROM episodes WHERE id = $1 FOR UPDATE`, int64(episodeID)); err != nil {
+		t.Fatalf("episodeのロック取得に失敗: %v", err)
+	}
+
+	type unarchiveResult struct {
+		output *UnarchiveEpisodeOutput
+		err    error
+	}
+	resultCh := make(chan unarchiveResult, 1)
+	editor := committedEditorForTest(t, model.RoleEditor)
+	go func() {
+		output, err := uc.Execute(ctx, UnarchiveEpisodeInput{
+			EpisodeID: episodeID,
+			User:      editor,
+		})
+		resultCh <- unarchiveResult{output: output, err: err}
+	}()
+
+	// 写像を変更する前に、再公開がblockerTxを待っていることを観測する。
+	awaitBlockedByBackend(t, ctx, db, blockerPID, resultCh)
+
+	if _, err := blockerTx.ExecContext(
+		ctx,
+		`UPDATE episodes SET anime_id = $1 WHERE id = $2`,
+		int64(currentAnimeID),
+		int64(episodeID),
+	); err != nil {
+		t.Fatalf("episodeのanime写像変更に失敗: %v", err)
+	}
+	if err := blockerTx.Commit(); err != nil {
+		t.Fatalf("ブロッカー用トランザクションのCommit()のエラー = %v", err)
+	}
+
+	var result unarchiveResult
+	select {
+	case result = <-resultCh:
+	case <-ctx.Done():
+		t.Fatalf("ブロッカーのコミット後にExecute()を待つcontextのエラー = %v、期待値 = nil (Execute()が完了すること)", ctx.Err())
+	}
+	appErr := model.AsAppError(result.err)
+	if appErr == nil || appErr.Code != model.AppErrCodeConflict {
+		t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeConflict", result.err)
+	}
+	if unpublishedAt := readArchivedEpisodeState(t, db, episodeID); !unpublishedAt.Valid {
+		t.Error("episodes.unpublished_at = NULL、期待値 = 非公開のまま")
+	}
+
+	animeRepo := repository.NewAnimeRepository(query.New(db))
+	for animeID, want := range map[model.AnimeID]model.AnimeStatus{formerAnimeID: model.AnimeStatusArchived, currentAnimeID: model.AnimeStatusPublished} {
+		anime, err := animeRepo.GetByID(ctx, animeID)
+		if err != nil || anime == nil {
+			t.Fatalf("anime%dのGetByID() anime=%v err=%v", animeID, anime, err)
+		}
+		if anime.Status != want {
+			t.Errorf("anime%d.Status = %q、期待値 = %q", animeID, anime.Status, want)
+		}
 	}
 }

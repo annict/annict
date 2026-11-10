@@ -1,0 +1,35 @@
+package db_edits
+
+import (
+	"github.com/annict/annict/go/internal/templates"
+	"github.com/annict/annict/go/internal/templates/components"
+	"github.com/annict/annict/go/internal/viewmodel"
+)
+
+// IndexPageDataはAnnict DB全体の編集履歴のページが描画するデータ (操作の1ページ分)。
+type IndexPageData struct {
+	Edits      []viewmodel.DBEdit
+	Pagination viewmodel.Pagination
+}
+
+// IndexはAnnict DB全体の編集履歴を描画する。このページにはフィーチャーフラグが有効な利用者だけが到達する。
+templ Index(data IndexPageData) {
+	<div class="flex flex-col gap-4 py-4 max-w-7xl w-full mx-auto">
+		<div class="flex gap-4 px-4">
+			@components.DBSidebarToggle()
+
+			<div class="flex-1">
+				@components.MainTitle(components.MainTitleData{
+					Title: templates.T(ctx, "db_edits_index_title"),
+				})
+			</div>
+		</div>
+
+		@components.ContentCard("") {
+			<div class="flex flex-col gap-6">
+				@components.DBEditList(data.Edits)
+				@components.Pagination(data.Pagination)
+			</div>
+		}
+	</div>
+}

@@ -28,6 +28,9 @@ type FillEpisodeTitlesUsecase struct {
 	episodeRepo    *repository.EpisodeRepository
 	animeRepo      *repository.AnimeRepository
 	subTitleLookup SyobocalSubTitleLookup
+	// animeClassificationRepoとdbEditRecordReposは、タイトルを入れた版を編集履歴に記録するのに使う。
+	animeClassificationRepo *repository.AnimeClassificationRepository
+	dbEditRecordRepos       DBEditRecordRepos
 }
 
 // NewFillEpisodeTitlesUsecaseはFillEpisodeTitlesUsecaseを生成する。
@@ -36,12 +39,16 @@ func NewFillEpisodeTitlesUsecase(
 	episodeRepo *repository.EpisodeRepository,
 	animeRepo *repository.AnimeRepository,
 	subTitleLookup SyobocalSubTitleLookup,
+	animeClassificationRepo *repository.AnimeClassificationRepository,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *FillEpisodeTitlesUsecase {
 	return &FillEpisodeTitlesUsecase{
-		db:             db,
-		episodeRepo:    episodeRepo,
-		animeRepo:      animeRepo,
-		subTitleLookup: subTitleLookup,
+		db:                      db,
+		episodeRepo:             episodeRepo,
+		animeRepo:               animeRepo,
+		subTitleLookup:          subTitleLookup,
+		animeClassificationRepo: animeClassificationRepo,
+		dbEditRecordRepos:       dbEditRecordRepos,
 	}
 }
 
@@ -120,8 +127,27 @@ func (uc *FillEpisodeTitlesUsecase) Execute(ctx context.Context, input FillEpiso
 
 // fillTitleは現在も問い合わせ時の作品・話数・TIDと対象条件に一致するエピソードにタイトルを
 // 入れ、更新した行が現在対応するanimeへ両書きする。条件が変わっていれば書かずにfalseを返す。
-// Railsのupdate_columnと同じく、DB活動の記録と作品のtouchは行わない。
+// Railsのupdate_columnと同じく、DB活動の記録と作品のtouchは行わない。編集履歴には、システムの
+// 書き込みとして記録する。
 func (uc *FillEpisodeTitlesUsecase) fillTitle(ctx context.Context, target repository.DBEpisodeTitleFillTarget, title string, createdFrom time.Time) (bool, error) {
+	// 版と写像は、しょぼいカレンダーに問い合わせている間の対応付けや付け替えに追従するよう、書き込む直前に読む。
+	current, err := uc.episodeRepo.GetForTitleFillByID(ctx, target.Episode.ID)
+	if err != nil {
+		return false, fmt.Errorf("エピソードの取得に失敗しました: %w", err)
+	}
+	if current == nil {
+		return false, nil
+	}
+	episodeAtFill := *target.Episode
+	episodeAtFill.UpdatedAt = current.UpdatedAt
+	episodeAtFill.AnimeID = current.AnimeID
+	target.Episode = &episodeAtFill
+
+	recordPlan, err := uc.planTitleRecord(ctx, current.AnimeID, title)
+	if err != nil {
+		return false, err
+	}
+
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
 		return false, fmt.Errorf("トランザクションの開始に失敗しました: %w", err)
@@ -132,6 +158,7 @@ func (uc *FillEpisodeTitlesUsecase) fillTitle(ctx context.Context, target reposi
 	if err != nil {
 		return false, fmt.Errorf("エピソードのタイトルの更新に失敗しました: %w", err)
 	}
+	// 書き込みは直前に読んだ版とanimeの写像を照合するため、更新した行の写像は計画を立てた写像と一致する。
 	if episode == nil {
 		return false, nil
 	}
@@ -142,10 +169,40 @@ func (uc *FillEpisodeTitlesUsecase) fillTitle(ctx context.Context, target reposi
 		}
 	}
 
+	if err := writeDBEditRecord(ctx, uc.dbEditRecordRepos.WithTx(tx), recordPlan); err != nil {
+		return false, err
+	}
+
 	if err := tx.Commit(); err != nil {
 		return false, fmt.Errorf("トランザクションのコミットに失敗しました: %w", err)
 	}
 	return true, nil
+}
+
+// planTitleRecordは、エピソードのanimeにタイトルを入れる書き込みの記録の計画を立てる。書き込んだ後の状態は、
+// 書き込む前の状態のタイトルを差し替えたもの。animeにマッピングされていないエピソードではnilを返す。
+func (uc *FillEpisodeTitlesUsecase) planTitleRecord(ctx context.Context, animeID *model.AnimeID, title string) (*dbEditRecordPlan, error) {
+	if animeID == nil {
+		return nil, nil
+	}
+	before, err := readEpisodeAnimeSnapshot(ctx, uc.animeRepo, uc.animeClassificationRepo, *animeID)
+	if err != nil {
+		return nil, err
+	}
+	if before == nil {
+		return nil, nil
+	}
+	after := *before
+	after.Title = &title
+	plan, err := planDBEditRecord(ctx, uc.dbEditRecordRepos, DBEditRecordInput{
+		Actor:  model.DBEditActorSystem,
+		Action: model.DBEditActionUpdate,
+		Animes: []AnimeRevisionInput{{AnimeID: *animeID, Before: before, After: after}},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("編集履歴の記録の計画に失敗しました: %w", err)
+	}
+	return plan, nil
 }
 
 // scTidsOfは対象のエピソードの作品のTIDを、重複を除いて昇順に返す。

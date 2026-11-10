@@ -27,16 +27,33 @@ import (
 func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	t.Helper()
 
-	queries := query.New(db).WithTx(tx)
+	queries := query.New(db)
+	if tx != nil {
+		queries = queries.WithTx(tx)
+	}
 	cfg := &config.Config{Env: "test", Domain: "test.annict.com"}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
 	workRepo := repository.NewWorkRepository(queries)
 	animeRepo := repository.NewAnimeRepository(queries)
+	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
+	satelliteRepos := usecase.WorkSatelliteRepos{
+		ExternalID:      repository.NewAnimeExternalIDRepository(queries),
+		Link:            repository.NewAnimeLinkRepository(queries),
+		OfficialAccount: repository.NewAnimeOfficialAccountRepository(queries),
+		Hashtag:         repository.NewAnimeHashtagRepository(queries),
+		Season:          repository.NewAnimeSeasonRepository(queries),
+		Event:           repository.NewAnimeEventRepository(queries),
+	}
+	dbEditRecordRepos := usecase.DBEditRecordRepos{
+		DBEdit:         repository.NewDBEditRepository(queries),
+		AnimeRevision:  repository.NewAnimeRevisionRepository(queries),
+		PersonRevision: repository.NewPersonRevisionRepository(queries),
+	}
 
 	getDBWorkArchiveNewUC := usecase.NewGetDBWorkArchiveNewUsecase(workRepo)
-	archiveWorkUC := usecase.NewArchiveWorkUsecase(db, workRepo, animeRepo)
-	unarchiveWorkUC := usecase.NewUnarchiveWorkUsecase(db, workRepo, animeRepo)
+	archiveWorkUC := usecase.NewArchiveWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos)
+	unarchiveWorkUC := usecase.NewUnarchiveWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos)
 
 	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), getDBWorkArchiveNewUC, archiveWorkUC, unarchiveWorkUC)
 }
@@ -194,9 +211,9 @@ func TestNew_RequiresCommitter(t *testing.T) {
 func TestCreate_Success(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTx(t)
-	workID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開対象作品").WithMedia(1).Build()
-	handler := newTestHandler(t, db, tx)
+	db := testutil.GetTestDB()
+	workID := newCommittedWork(t, db, false)
+	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
 	r.Post("/db/works/{id}/archive", handler.Create)
@@ -209,6 +226,13 @@ func TestCreate_Success(t *testing.T) {
 	}
 	if location := rr.Header().Get("Location"); location != "/db/works" {
 		t.Errorf("リダイレクト先 = %v、期待値 = /db/works", location)
+	}
+	var changed bool
+	if err := db.QueryRow("SELECT unpublished_at IS NOT NULL FROM works WHERE id = $1", int64(workID)).Scan(&changed); err != nil {
+		t.Fatalf("作品の状態の取得に失敗: %v", err)
+	}
+	if !changed {
+		t.Error("作品の状態が変更されていません")
 	}
 }
 
@@ -301,9 +325,9 @@ func assertRequiresCommitter(t *testing.T, r chi.Router, method, target string) 
 func TestDelete_Success(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTx(t)
-	workID := testutil.NewWorkBuilder(t, tx).WithTitle("再公開対象作品").WithMedia(1).WithUnpublishedAt(time.Now()).Build()
-	handler := newTestHandler(t, db, tx)
+	db := testutil.GetTestDB()
+	workID := newCommittedWork(t, db, true)
+	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
 	r.Delete("/db/works/{id}/archive", handler.Delete)
@@ -316,6 +340,13 @@ func TestDelete_Success(t *testing.T) {
 	}
 	if location := rr.Header().Get("Location"); location != "/db/works" {
 		t.Errorf("リダイレクト先 = %v、期待値 = /db/works", location)
+	}
+	var changed bool
+	if err := db.QueryRow("SELECT unpublished_at IS NULL FROM works WHERE id = $1", int64(workID)).Scan(&changed); err != nil {
+		t.Fatalf("作品の状態の取得に失敗: %v", err)
+	}
+	if !changed {
+		t.Error("作品の状態が変更されていません")
 	}
 }
 
@@ -359,9 +390,9 @@ func TestDelete_RequiresCommitter(t *testing.T) {
 func TestDelete_HTMXRedirect(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTx(t)
-	workID := testutil.NewWorkBuilder(t, tx).WithTitle("htmx再公開対象").WithMedia(1).WithUnpublishedAt(time.Now()).Build()
-	handler := newTestHandler(t, db, tx)
+	db := testutil.GetTestDB()
+	workID := newCommittedWork(t, db, true)
+	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
 	r.Delete("/db/works/{id}/archive", handler.Delete)
@@ -549,8 +580,8 @@ func TestNew_CarriesReturnToThroughTheConfirmation(t *testing.T) {
 func TestCreate_ReturnsToSubmittedListing(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTx(t)
-	handler := newTestHandler(t, db, tx)
+	db := testutil.GetTestDB()
+	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
 	r.Use(authMiddleware.MethodOverride)
@@ -558,7 +589,7 @@ func TestCreate_ReturnsToSubmittedListing(t *testing.T) {
 
 	for _, tt := range returnToCases() {
 		t.Run(tt.name, func(t *testing.T) {
-			workID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開戻り先テスト").WithMedia(1).Build()
+			workID := newCommittedWork(t, db, false)
 			form := url.Values{"return_to": {tt.returnTo}}
 			req := httptest.NewRequest("POST", fmt.Sprintf("/db/works/%d/archive", int64(workID)), strings.NewReader(form.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -582,8 +613,8 @@ func TestCreate_ReturnsToSubmittedListing(t *testing.T) {
 func TestDelete_ReturnsToSubmittedListing(t *testing.T) {
 	t.Parallel()
 
-	db, tx := testutil.SetupTx(t)
-	handler := newTestHandler(t, db, tx)
+	db := testutil.GetTestDB()
+	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
 	r.Use(authMiddleware.MethodOverride)
@@ -591,11 +622,7 @@ func TestDelete_ReturnsToSubmittedListing(t *testing.T) {
 
 	for _, tt := range returnToCases() {
 		t.Run(tt.name, func(t *testing.T) {
-			workID := testutil.NewWorkBuilder(t, tx).
-				WithTitle("再公開戻り先テスト").
-				WithMedia(1).
-				WithUnpublishedAt(time.Now()).
-				Build()
+			workID := newCommittedWork(t, db, true)
 			form := url.Values{"_method": {"DELETE"}, "return_to": {tt.returnTo}}
 			req := httptest.NewRequest("POST", fmt.Sprintf("/db/works/%d/archive", int64(workID)), strings.NewReader(form.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
@@ -642,4 +669,29 @@ func returnToCases() []struct {
 		{name: "エンコードしたスラッシュでAnnict DBの外になるパスは作品一覧", returnTo: "/db/x%2fy/%2e%2e/%2e%2e/settings", wantLocation: "/db/works"},
 		{name: "末尾の半角スペースで隠れたドットセグメントは作品一覧", returnTo: "/db/.. ", wantLocation: "/db/works"},
 	}
+}
+
+// newCommittedWorkは、状態変更UseCaseが開くトランザクションから読める作品を作る。
+// 書き込みが実際に行われるようコミットし、テストが終わると作品を削除する。
+func newCommittedWork(t *testing.T, db *sql.DB, archived bool) model.WorkID {
+	t.Helper()
+	tx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("作品の準備トランザクションの開始に失敗: %v", err)
+	}
+	defer func() { _ = tx.Rollback() }()
+	builder := testutil.NewWorkBuilder(t, tx).WithTitle("状態変更テスト_" + t.Name()).WithMedia(1)
+	if archived {
+		builder.WithUnpublishedAt(time.Now())
+	}
+	id := builder.Build()
+	if err := tx.Commit(); err != nil {
+		t.Fatalf("作品の準備のコミットに失敗: %v", err)
+	}
+	t.Cleanup(func() {
+		if _, err := db.Exec("DELETE FROM works WHERE id = $1", int64(id)); err != nil {
+			t.Errorf("作品の後片付けに失敗: %v", err)
+		}
+	})
+	return id
 }

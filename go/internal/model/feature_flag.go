@@ -20,4 +20,8 @@ const (
 	// FeatureFlagRESTAPIV2は、REST API V2をトークンの持ち主の利用者に応答するかを決めるフラグ。
 	// 移行のフラグではないため `go_` を付けない
 	FeatureFlagRESTAPIV2 FeatureFlagName = "rest_api_v2"
+
+	// FeatureFlagDBEditHistoryは、Annict DBの編集履歴の画面と画面へのリンクを出すかを決めるフラグ。
+	// 編集履歴の記録はフラグにかかわらず行う。移行のフラグではないため `go_` を付けない
+	FeatureFlagDBEditHistory FeatureFlagName = "db_edit_history"
 )

@@ -27,9 +27,10 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	user := middleware.GetUserFromContext(ctx)
 
 	result, err := h.getDBPeopleUC.Execute(ctx, usecase.GetDBPeopleInput{
-		User:    user,
-		Page:    page,
-		PerPage: perPage,
+		User:        user,
+		Page:        page,
+		PerPage:     perPage,
+		DeviceToken: middleware.GetDeviceToken(r),
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "DB人物一覧の取得エラー", "error", err)
@@ -46,11 +47,12 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 		meta,
 		h.cfg.GetAssetVersion(),
 		db_people.Index(db_people.IndexPageData{
-			People:      viewmodel.NewDBPersonListItems(result.People),
-			Pagination:  pagination,
-			IsCommitter: middleware.IsCommitter(user),
-			IsAdmin:     middleware.IsAdmin(user),
-			CSRFToken:   middleware.GetCSRFToken(r, h.sessionManager),
+			People:        viewmodel.NewDBPersonListItems(result.People),
+			Pagination:    pagination,
+			IsCommitter:   middleware.IsCommitter(user),
+			IsAdmin:       middleware.IsAdmin(user),
+			CSRFToken:     middleware.GetCSRFToken(r, h.sessionManager),
+			ShowRevisions: result.CanShowRevisions,
 		}),
 	)
 	var body bytes.Buffer

@@ -10,11 +10,11 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-func TestDbCommentRepository_DeleteByUserID(t *testing.T) {
+func TestDBCommentRepository_DeleteByUserID(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	repo := repository.NewDbCommentRepository(query.New(db)).WithTx(tx)
+	repo := repository.NewDBCommentRepository(query.New(db)).WithTx(tx)
 	ctx := context.Background()
 
 	userID := testutil.NewUserBuilder(t, tx).Build()

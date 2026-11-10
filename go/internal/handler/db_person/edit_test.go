@@ -186,3 +186,46 @@ func TestEdit_ForbiddenWithoutMiddleware(t *testing.T) {
 		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusForbidden)
 	}
 }
+
+// TestEdit_RevisionsLinkは、フィーチャーフラグdb_edit_historyを有効にしたデバイスの閲覧者にだけ、人物の履歴への
+// リンクを出すことを検証する。
+func TestEdit_RevisionsLink(t *testing.T) {
+	t.Parallel()
+
+	// feature_flagsは (device_token, name) で一意のため、ケースごとに別のトークンを使う。
+	for _, tt := range []struct {
+		name        string
+		deviceToken string
+		flagged     bool
+	}{
+		{name: "フラグを有効にしたデバイス", deviceToken: "db-person-edit-revisions-flagged", flagged: true},
+		{name: "フラグを有効にしていないデバイス", deviceToken: "db-person-edit-revisions-unflagged", flagged: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db, tx := testutil.SetupTx(t)
+			personID := testutil.NewPersonBuilder(t, tx).Build()
+			if tt.flagged {
+				testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(tt.deviceToken).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+
+			req := newEditRequest(personID)
+			req.AddCookie(&http.Cookie{Name: authMiddleware.DeviceTokenCookieName, Value: tt.deviceToken})
+			rr := httptest.NewRecorder()
+			newTestHandler(t, db, tx).Edit(rr, req)
+
+			if rr.Code != http.StatusOK {
+				t.Fatalf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
+			}
+			link := fmt.Sprintf(`href="/db/people/%d/revisions"`, int64(personID))
+			if got := strings.Contains(rr.Body.String(), link); got != tt.flagged {
+				t.Errorf("履歴へのリンクの有無 = %v、期待値 = %v", got, tt.flagged)
+			}
+			// 見出しの「履歴」には、履歴を表すアイコンを装飾としてテキストの左に付ける。
+			if got := strings.Contains(rr.Body.String(), link+` class="btn rounded-full" data-variant="outline" data-size="sm"><svg data-icon="inline-start" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M136,80v43.47`); got != tt.flagged {
+				t.Errorf("アイコン付きの履歴へのリンクの有無 = %v、期待値 = %v", got, tt.flagged)
+			}
+		})
+	}
+}

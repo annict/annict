@@ -22,6 +22,8 @@ type EditPageData struct {
 	// 決められないため。フォームが運ぶhiddenの版はこれらの値の版のため、もう一度送信すると
 	// ここに表示された内容だけを上書きし、その後に届いた変更は上書きしない。
 	ConflictCurrent *viewmodel.DBPersonFormInput
+	// ShowRevisionsは人物の履歴へのリンクを出すかを表す。フィーチャーフラグdb_edit_historyが有効な利用者にだけ出す。
+	ShowRevisions bool
 }
 
 // editFieldKindは入力欄の種類。種類ごとに描画する要素と属性が決まる。
@@ -161,7 +163,7 @@ templ Edit(data EditPageData) {
 			<div class="flex-1">
 				@components.MainTitle(components.MainTitleData{
 					Title:   data.Person.Name,
-					Actions: editPersonPageLink(data.Person.ID),
+					Actions: editActions(data),
 				})
 			</div>
 		</div>
@@ -302,6 +304,22 @@ func editFieldInputType(kind editFieldKind) string {
 	default:
 		return "text"
 	}
+}
+
+// editActionsは見出しの操作として、フラグが有効な利用者には人物の履歴へのリンクを、人物ページへのリンクと並べる。
+templ editActions(data EditPageData) {
+	if data.ShowRevisions {
+		<a
+			href={ templates.DBPersonRevisionsPath(data.Person.ID).SafeURL() }
+			class="btn rounded-full"
+			data-variant="outline"
+			data-size="sm"
+		>
+			@templates.DecorativeInlineIcon("clock-counter-clockwise-regular", templates.InlineIconStart)
+			{ templates.T(ctx, "db_people_edit_revisions_link") }
+		</a>
+	}
+	@editPersonPageLink(data.Person.ID)
 }
 
 // editPersonPageLinkは編集フォームの見出しの横に表示する操作を描画する。公開サイト側の

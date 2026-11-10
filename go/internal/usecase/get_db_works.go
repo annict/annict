@@ -10,13 +10,15 @@ import (
 
 // GetDBWorksUsecaseはDB管理画面の作品一覧を取得するユースケース。
 type GetDBWorksUsecase struct {
-	workRepo *repository.WorkRepository
+	workRepo        *repository.WorkRepository
+	featureFlagRepo *repository.FeatureFlagRepository
 }
 
 // NewGetDBWorksUsecaseは新しいGetDBWorksUsecaseを作成する。
-func NewGetDBWorksUsecase(workRepo *repository.WorkRepository) *GetDBWorksUsecase {
+func NewGetDBWorksUsecase(workRepo *repository.WorkRepository, featureFlagRepo *repository.FeatureFlagRepository) *GetDBWorksUsecase {
 	return &GetDBWorksUsecase{
-		workRepo: workRepo,
+		workRepo:        workRepo,
+		featureFlagRepo: featureFlagRepo,
 	}
 }
 
@@ -32,12 +34,18 @@ type GetDBWorksInput struct {
 	SeasonNames []int32
 	Page        int32
 	PerPage     int32
+	// Userは閲覧者 (ログインしていないときはnil)。履歴へのリンクを出すかの判定に使う。
+	User *model.User
+	// DeviceTokenは閲覧中のデバイスのトークン (Cookieが無いときは空文字列)。履歴へのリンクを出すかの判定に使う。
+	DeviceToken string
 }
 
 // GetDBWorksOutputはユースケースの出力。
 type GetDBWorksOutput struct {
 	Works      []*model.Work
 	TotalCount int64
+	// CanShowRevisionsは各行に作品の履歴へのリンクを出すかを表す。
+	CanShowRevisions bool
 }
 
 // ExecuteはDB管理画面の作品一覧と総数を取得する。
@@ -63,8 +71,14 @@ func (uc *GetDBWorksUsecase) Execute(ctx context.Context, input GetDBWorksInput)
 		return nil, fmt.Errorf("DB作品総数の取得に失敗: %w", err)
 	}
 
+	canShowRevisions, err := canShowDBRevisions(ctx, uc.featureFlagRepo, input.DeviceToken, input.User)
+	if err != nil {
+		return nil, err
+	}
+
 	return &GetDBWorksOutput{
-		Works:      works,
-		TotalCount: totalCount,
+		Works:            works,
+		TotalCount:       totalCount,
+		CanShowRevisions: canShowRevisions,
 	}, nil
 }

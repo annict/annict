@@ -19,7 +19,7 @@ func newGetDBPeopleUsecase(t *testing.T) (*GetDBPeopleUsecase, *sql.Tx) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
-	return NewGetDBPeopleUsecase(repository.NewPersonRepository(queries)), tx
+	return NewGetDBPeopleUsecase(repository.NewPersonRepository(queries), repository.NewFeatureFlagRepository(queries)), tx
 }
 
 // TestGetDBPeopleUsecase_Executeは、公開中とアーカイブの人物を返し、掲載停止と削除の人物は
@@ -103,6 +103,56 @@ func TestGetDBPeopleUsecase_Execute_Delisted(t *testing.T) {
 			}
 			if ids[deletedID] {
 				t.Error("削除済みの人物が含まれてはいけません")
+			}
+		})
+	}
+}
+
+// TestGetDBPeopleUsecase_Execute_CanShowRevisionsは、ログインしていなくても見られる一覧でも、各行に履歴へのリンクを出すかが、
+// リバースプロキシのゲートと同じくデバイスかユーザーのフラグで決まることを検証する。
+func TestGetDBPeopleUsecase_Execute_CanShowRevisions(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name       string
+		loggedIn   bool
+		flagUser   bool
+		flagDevice bool
+		noDevice   bool
+		want       bool
+	}{
+		{name: "ログインしていない閲覧者のデバイスでフラグが有効", flagDevice: true, want: true},
+		{name: "ログインしていない閲覧者でデバイストークンが無い", noDevice: true, want: false},
+		{name: "ユーザーでフラグが有効な閲覧者", loggedIn: true, flagUser: true, want: true},
+		{name: "フラグが無効な閲覧者", loggedIn: true, want: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			uc, tx := newGetDBPeopleUsecase(t)
+			userID := testutil.NewUserBuilder(t, tx).Build()
+			// feature_flagsは (device_token, name) で一意のため、テストごとに別のトークンを使う。
+			device := "db-people-revisions-" + t.Name()
+			if tt.flagUser {
+				testutil.NewFeatureFlagBuilder(t, tx).WithUserID(userID).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+			if tt.flagDevice {
+				testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(device).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+			input := GetDBPeopleInput{Page: 1, PerPage: 10, DeviceToken: device}
+			if tt.noDevice {
+				input.DeviceToken = ""
+			}
+			if tt.loggedIn {
+				input.User = &model.User{ID: userID, Role: model.RoleUser}
+			}
+
+			output, err := uc.Execute(context.Background(), input)
+			if err != nil {
+				t.Fatalf("Execute()のエラー = %v", err)
+			}
+			if output.CanShowRevisions != tt.want {
+				t.Errorf("CanShowRevisions = %v、期待値 = %v", output.CanShowRevisions, tt.want)
 			}
 		})
 	}

@@ -27,6 +27,7 @@ func newCreateWorkUsecase(db *sql.DB) *CreateWorkUsecase {
 		repository.NewAnimeRepository(queries),
 		repository.NewAnimeClassificationRepository(queries),
 		newTestWorkSatelliteRepos(queries),
+		newTestDBEditRecordRepos(queries),
 		validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo),
 	)
 }
@@ -64,9 +65,11 @@ func newSyncSatellitesUsecase(db *sql.DB) *SyncWorkSatellitesUsecase {
 // タイトルは引数で受け取り、各テストがユニークな値 (例: t.Name()) を渡せるようにする。
 // 本テスト群はGetTestDBを使い行を共有DBにコミットするため、テストごとのタイトルで
 // 並行テストがworks行を共有しないようにする。
-func validCreateWorkInput(title string) CreateWorkInput {
+func validCreateWorkInput(t *testing.T, title string) CreateWorkInput {
+	t.Helper()
+
 	return CreateWorkInput{
-		User: &model.User{ID: 1, Role: model.RoleEditor},
+		User: committedEditorForTest(t, model.RoleEditor),
 		WorkFormInput: WorkFormInput{
 			Title:                 title,
 			TitleKana:             "さくせいてすとあにめ",
@@ -100,7 +103,7 @@ func TestCreateWorkUsecase_Execute_CreatesWorkAnimeAndClassification(t *testing.
 	uc := newCreateWorkUsecase(db)
 
 	title := "作成テストアニメ_" + t.Name()
-	output, err := uc.Execute(context.Background(), validCreateWorkInput(title))
+	output, err := uc.Execute(context.Background(), validCreateWorkInput(t, title))
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -169,7 +172,7 @@ func TestCreateWorkUsecase_Execute_ProducesSyncConsistentMapping(t *testing.T) {
 	db := testutil.GetTestDB()
 	uc := newCreateWorkUsecase(db)
 
-	output, err := uc.Execute(context.Background(), validCreateWorkInput("作成テストアニメ_"+t.Name()))
+	output, err := uc.Execute(context.Background(), validCreateWorkInput(t, "作成テストアニメ_"+t.Name()))
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -194,7 +197,7 @@ func TestCreateWorkUsecase_Execute_WritesSatelliteRows(t *testing.T) {
 	uc := newCreateWorkUsecase(db)
 	ctx := context.Background()
 
-	output, err := uc.Execute(ctx, validCreateWorkInput("別表作成テストアニメ_"+t.Name()))
+	output, err := uc.Execute(ctx, validCreateWorkInput(t, "別表作成テストアニメ_"+t.Name()))
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -283,7 +286,7 @@ func TestCreateWorkUsecase_Execute_ProducesSyncConsistentSatellites(t *testing.T
 	db := testutil.GetTestDB()
 	uc := newCreateWorkUsecase(db)
 
-	output, err := uc.Execute(context.Background(), validCreateWorkInput("別表整合作成_"+t.Name()))
+	output, err := uc.Execute(context.Background(), validCreateWorkInput(t, "別表整合作成_"+t.Name()))
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -306,7 +309,7 @@ func TestCreateWorkUsecase_Execute_ReturnsValidationError(t *testing.T) {
 	db := testutil.GetTestDB()
 	uc := newCreateWorkUsecase(db)
 
-	input := validCreateWorkInput("作成テストアニメ_" + t.Name())
+	input := validCreateWorkInput(t, "作成テストアニメ_"+t.Name())
 	input.Title = "" // 必須項目
 
 	output, err := uc.Execute(context.Background(), input)
@@ -340,7 +343,7 @@ func TestCreateWorkUsecase_Execute_RequiresCommitter(t *testing.T) {
 	} {
 		t.Run(tt.name, func(t *testing.T) {
 			title := "認可テストアニメ_" + t.Name()
-			input := validCreateWorkInput(title)
+			input := validCreateWorkInput(t, title)
 			input.User = tt.user
 
 			output, err := uc.Execute(context.Background(), input)
@@ -373,11 +376,11 @@ func TestCreateWorkUsecase_Execute_RejectsDuplicateTitle(t *testing.T) {
 	uc := newCreateWorkUsecase(db)
 
 	title := "作成テストアニメ_" + t.Name()
-	if _, err := uc.Execute(context.Background(), validCreateWorkInput(title)); err != nil {
+	if _, err := uc.Execute(context.Background(), validCreateWorkInput(t, title)); err != nil {
 		t.Fatalf("1件目のExecute()のエラー = %v", err)
 	}
 
-	output, err := uc.Execute(context.Background(), validCreateWorkInput(title))
+	output, err := uc.Execute(context.Background(), validCreateWorkInput(t, title))
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (バリデーションエラーのため)", output)
 	}
@@ -449,7 +452,7 @@ func TestCreateWorkUsecase_Execute_RejectsUnstorableValues(t *testing.T) {
 			db := testutil.GetTestDB()
 			uc := newCreateWorkUsecase(db)
 
-			input := validCreateWorkInput("作成テストアニメ_" + t.Name())
+			input := validCreateWorkInput(t, "作成テストアニメ_"+t.Name())
 			tt.mutate(&input)
 
 			output, err := uc.Execute(context.Background(), input)

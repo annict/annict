@@ -21,6 +21,9 @@ func newArchiveWorkUsecase(db *sql.DB) *ArchiveWorkUsecase {
 		db,
 		repository.NewWorkRepository(queries),
 		repository.NewAnimeRepository(queries),
+		repository.NewAnimeClassificationRepository(queries),
+		newTestWorkSatelliteRepos(queries),
+		newTestDBEditRecordRepos(queries),
 	)
 }
 
@@ -39,7 +42,7 @@ func TestArchiveWorkUsecase_Execute_ArchivesWorkAndAnime(t *testing.T) {
 	workID := createMappedWork(t, db, "非公開前アニメ_"+t.Name())
 	animeID := *reloadSyncWork(t, db, workID).AnimeID
 
-	if _, err := uc.Execute(ctx, ArchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, ArchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -89,7 +92,7 @@ func TestArchiveWorkUsecase_Execute_SkipsAnimeWriteForUnmappedWork(t *testing.T)
 		t.Fatalf("anime_idのクリアに失敗: %v", err)
 	}
 
-	if _, err := uc.Execute(ctx, ArchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, ArchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -113,11 +116,11 @@ func TestArchiveWorkUsecase_Execute_ReturnsNotFoundForAlreadyArchivedWork(t *tes
 	ctx := context.Background()
 
 	workID := createMappedWork(t, db, "二重非公開_"+t.Name())
-	if _, err := uc.Execute(ctx, ArchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID}); err != nil {
+	if _, err := uc.Execute(ctx, ArchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID}); err != nil {
 		t.Fatalf("最初のExecute()のエラー = %v", err)
 	}
 
-	output, err := uc.Execute(ctx, ArchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
+	output, err := uc.Execute(ctx, ArchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID})
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (アーカイブ済みの作品のため)", output)
 	}
@@ -142,7 +145,7 @@ func TestArchiveWorkUsecase_Execute_ReturnsNotFoundForDeletedWork(t *testing.T) 
 		t.Fatalf("deleted_atの設定に失敗: %v", err)
 	}
 
-	output, err := uc.Execute(ctx, ArchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: workID})
+	output, err := uc.Execute(ctx, ArchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: workID})
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (削除済みの作品のため)", output)
 	}
@@ -160,7 +163,7 @@ func TestArchiveWorkUsecase_Execute_ReturnsNotFoundForMissingWork(t *testing.T) 
 	db := testutil.GetTestDB()
 	uc := newArchiveWorkUsecase(db)
 
-	output, err := uc.Execute(context.Background(), ArchiveWorkInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: model.WorkID(1 << 62)})
+	output, err := uc.Execute(context.Background(), ArchiveWorkInput{User: committedEditorForTest(t, model.RoleEditor), WorkID: model.WorkID(1 << 62)})
 	if output != nil {
 		t.Errorf("output = %+v、期待値 = nil (存在しない作品のため)", output)
 	}
