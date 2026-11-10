@@ -64,8 +64,8 @@ type DeleteUserUsecase struct {
 	forumPostParticipantRepo  *repository.ForumPostParticipantRepository
 	forumCommentRepo          *repository.ForumCommentRepository
 	forumPostRepo             *repository.ForumPostRepository
-	dbActivityRepo            *repository.DbActivityRepository
-	dbCommentRepo             *repository.DbCommentRepository
+	dbActivityRepo            *repository.DBActivityRepository
+	dbCommentRepo             *repository.DBCommentRepository
 	workCommentRepo           *repository.WorkCommentRepository
 	userlandProjectMemberRepo *repository.UserlandProjectMemberRepository
 	oauthAccessTokenRepo      *repository.OAuthAccessTokenRepository
@@ -110,8 +110,8 @@ func NewDeleteUserUsecase(
 	forumPostParticipantRepo *repository.ForumPostParticipantRepository,
 	forumCommentRepo *repository.ForumCommentRepository,
 	forumPostRepo *repository.ForumPostRepository,
-	dbActivityRepo *repository.DbActivityRepository,
-	dbCommentRepo *repository.DbCommentRepository,
+	dbActivityRepo *repository.DBActivityRepository,
+	dbCommentRepo *repository.DBCommentRepository,
 	workCommentRepo *repository.WorkCommentRepository,
 	userlandProjectMemberRepo *repository.UserlandProjectMemberRepository,
 	oauthAccessTokenRepo *repository.OAuthAccessTokenRepository,
