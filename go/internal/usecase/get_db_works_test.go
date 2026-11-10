@@ -20,7 +20,7 @@ func newGetDBWorksUsecase(t *testing.T) (*GetDBWorksUsecase, *sql.Tx) {
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
 
-	return NewGetDBWorksUsecase(repository.NewWorkRepository(queries)), tx
+	return NewGetDBWorksUsecase(repository.NewWorkRepository(queries), repository.NewFeatureFlagRepository(queries)), tx
 }
 
 // 同じパッケージには作品をコミットするテストがあり、SetupTxのトランザクションからも
@@ -294,7 +294,7 @@ func TestGetDBWorksUsecase_Execute_ReturnsCountError(t *testing.T) {
 
 	_, tx := testutil.SetupTx(t)
 	countTx := &countErrorTx{Tx: tx}
-	uc := NewGetDBWorksUsecase(repository.NewWorkRepository(query.New(countTx)))
+	uc := NewGetDBWorksUsecase(repository.NewWorkRepository(query.New(countTx)), repository.NewFeatureFlagRepository(query.New(countTx)))
 
 	output, err := uc.Execute(context.Background(), GetDBWorksInput{Page: 1, PerPage: 100})
 	if !countTx.listCalled {
@@ -305,5 +305,55 @@ func TestGetDBWorksUsecase_Execute_ReturnsCountError(t *testing.T) {
 	}
 	if !errors.Is(err, context.Canceled) {
 		t.Errorf("エラー = %v、期待値 = %v", err, context.Canceled)
+	}
+}
+
+// TestGetDBWorksUsecase_Execute_CanShowRevisionsは、ログインしていなくても見られる一覧でも、各行に履歴へのリンクを出すかが、
+// リバースプロキシのゲートと同じくデバイスかユーザーのフラグで決まることを検証する。
+func TestGetDBWorksUsecase_Execute_CanShowRevisions(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name       string
+		loggedIn   bool
+		flagUser   bool
+		flagDevice bool
+		noDevice   bool
+		want       bool
+	}{
+		{name: "ログインしていない閲覧者のデバイスでフラグが有効", flagDevice: true, want: true},
+		{name: "ログインしていない閲覧者でデバイストークンが無い", noDevice: true, want: false},
+		{name: "ユーザーでフラグが有効な閲覧者", loggedIn: true, flagUser: true, want: true},
+		{name: "フラグが無効な閲覧者", loggedIn: true, want: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			uc, tx := newGetDBWorksUsecase(t)
+			userID := testutil.NewUserBuilder(t, tx).Build()
+			// feature_flagsは (device_token, name) で一意のため、テストごとに別のトークンを使う。
+			device := "db-works-revisions-" + t.Name()
+			if tt.flagUser {
+				testutil.NewFeatureFlagBuilder(t, tx).WithUserID(userID).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+			if tt.flagDevice {
+				testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(device).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+			input := GetDBWorksInput{Page: 1, PerPage: 10, DeviceToken: device}
+			if tt.noDevice {
+				input.DeviceToken = ""
+			}
+			if tt.loggedIn {
+				input.User = &model.User{ID: userID, Role: model.RoleUser}
+			}
+
+			output, err := uc.Execute(context.Background(), input)
+			if err != nil {
+				t.Fatalf("Execute()のエラー = %v", err)
+			}
+			if output.CanShowRevisions != tt.want {
+				t.Errorf("CanShowRevisions = %v、期待値 = %v", output.CanShowRevisions, tt.want)
+			}
+		})
 	}
 }

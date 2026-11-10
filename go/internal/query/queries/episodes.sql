@@ -68,7 +68,7 @@ WHERE e.work_id = sqlc.arg('work_id')
 -- 失われたエピソードを、その作品を見出しとサブナビで指すページから編集させないため。
 --
 -- updated_atはフォームがhiddenで持ち回る版。古い読み取りに対する送信を更新側で
--- 却下できるようにする。
+-- 却下できるようにする。anime_idは、同じ範囲のエピソードを見せる履歴の画面が版を引くのに使う。
 SELECT
     e.id,
     e.work_id,
@@ -78,6 +78,7 @@ SELECT
     e.title,
     e.title_en,
     e.updated_at,
+    e.anime_id,
     w.title AS work_title,
     w.no_episodes AS work_no_episodes
 FROM episodes e
@@ -418,6 +419,8 @@ SELECT
     e.title,
     e.unpublished_at,
     e.deleted_at,
+    e.updated_at,
+    e.anime_id,
     w.title AS work_title,
     w.no_episodes AS work_no_episodes
 FROM episodes e
@@ -427,6 +430,9 @@ WHERE e.id = $1
     AND w.deleted_at IS NULL;
 
 -- name: ArchiveDBEpisode :one
+-- versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+-- 間に別の編集が入った場合は状態も履歴も書き込まない。
+--
 -- 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
 -- unpublished_atを再スタンプせず、1行も返さない。作品idは確認ページが前提とした親作品との
 -- 一致を要求する。その間にAnnict::DataCare::MoveEpisodeで別作品へ移されたエピソードが、
@@ -458,6 +464,7 @@ WITH archived_episode AS (
         updated_at = NOW()
     WHERE episodes.id = sqlc.arg('id')
         AND episodes.work_id = sqlc.arg('work_id')
+        AND episodes.updated_at IS NOT DISTINCT FROM sqlc.narg('version')::timestamptz
         AND episodes.unpublished_at IS NULL
         AND episodes.deleted_at IS NULL
         AND EXISTS (
@@ -481,6 +488,9 @@ FROM archived_episode ae
 INNER JOIN touched_work tw ON tw.id = ae.work_id;
 
 -- name: UnarchiveDBEpisode :one
+-- versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+-- 間に別の編集が入った場合は状態も履歴も書き込まない。
+--
 -- 再公開はArchiveDBEpisodeの逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
 -- カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開
 -- であることを条件とする。他者が再公開する前に開いた一覧から、その再公開後に送信された場合は、
@@ -511,6 +521,7 @@ WITH published_episode AS (
         updated_at = NOW()
     WHERE episodes.id = sqlc.arg('id')
         AND episodes.work_id = sqlc.arg('work_id')
+        AND episodes.updated_at IS NOT DISTINCT FROM sqlc.narg('version')::timestamptz
         AND episodes.unpublished_at IS NOT NULL
         AND episodes.deleted_at IS NULL
         AND EXISTS (
@@ -545,7 +556,9 @@ INNER JOIN touched_work tw ON tw.id = pe.work_id;
 -- エンドポイントと違い呼び出し側が当てる状態条件が無く、タイムスタンプを運ぶ必要も無い。
 SELECT
     e.id,
-    e.work_id
+    e.work_id,
+    e.updated_at,
+    e.anime_id
 FROM episodes e
 INNER JOIN works w ON w.id = e.work_id
 WHERE e.id = $1
@@ -553,6 +566,9 @@ WHERE e.id = $1
     AND w.deleted_at IS NULL;
 
 -- name: DeleteDBEpisode :one
+-- versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+-- 間に別の編集が入った場合は状態も履歴も書き込まない。
+--
 -- 削除は、エピソードがまだ削除されていないことを条件とする。他者が削除する前に開いた一覧から、
 -- その削除後に送信された場合は、deleted_atを再スタンプせず、カウンターを2度目に減算せず、
 -- 1行も返さない。作品idは一覧が名指しした親作品との一致を要求する。その間に
@@ -601,6 +617,7 @@ WITH deleted_episode AS (
         updated_at = NOW()
     WHERE episodes.id = sqlc.arg('id')
         AND episodes.work_id = sqlc.arg('work_id')
+        AND episodes.updated_at IS NOT DISTINCT FROM sqlc.narg('version')::timestamptz
         AND episodes.deleted_at IS NULL
         AND EXISTS (
             SELECT 1
@@ -809,7 +826,20 @@ WHERE e.deleted_at IS NULL
     )
 ORDER BY e.id;
 
+-- name: GetEpisodeForTitleFillByID :one
+-- タイトルを入れる直前に、エピソードの版とanimeの写像を読む。編集履歴の版をこの読み取りから組み立て、
+-- UpdateEpisodeEmptyTitleはこの2つを照合して書く。
+SELECT
+    e.id,
+    e.updated_at,
+    e.anime_id
+FROM episodes e
+WHERE e.id = $1;
+
 -- name: UpdateEpisodeEmptyTitle :one
+-- versionとanime_idはGetEpisodeForTitleFillByIDで読んだ値で、編集履歴の版をその時点の読み取りから組み立てるため、
+-- 間に別の編集や写像の変更が入った行には書き込まない。
+--
 -- 問い合わせに使った作品・話数・TIDと対象条件が一致する間だけタイトルを入れる。作品を
 -- ロックしてTIDを保持し、エピソードのUPDATEによる行ロックをコミットまで保持する。
 -- Railsはエピソード行の更新後に作品をtouchするため、編集でロック中のエピソードを待つと
@@ -840,6 +870,8 @@ WHERE e.id = locked.id
     AND e.unpublished_at IS NULL
     AND e.created_at >= sqlc.arg('created_from')::timestamptz
     AND (e.title IS NULL OR e.title = '')
+    AND e.updated_at IS NOT DISTINCT FROM sqlc.narg('version')::timestamptz
+    AND e.anime_id IS NOT DISTINCT FROM sqlc.narg('anime_id')::bigint
     AND EXISTS (
         SELECT 1
         FROM slots s

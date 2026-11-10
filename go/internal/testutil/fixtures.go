@@ -366,6 +366,7 @@ type UserBuilder struct {
 	role               int32
 	stripeSubscriberID *model.StripeSubscriberID
 	deletedAt          *time.Time
+	profileImageData   sql.NullString
 }
 
 // NewUserBuilderは新しいUserBuilderを作成します
@@ -388,6 +389,12 @@ func NewUserBuilder(t *testing.T, tx *sql.Tx) *UserBuilder {
 // WithUsernameはユーザー名を設定します
 func (b *UserBuilder) WithUsername(username string) *UserBuilder {
 	b.username = username
+	return b
+}
+
+// WithProfileImageDataはプロフィール画像のimage_data (ShrineのJSON) を設定します
+func (b *UserBuilder) WithProfileImageData(imageData string) *UserBuilder {
+	b.profileImageData = sql.NullString{String: imageData, Valid: true}
 	return b
 }
 
@@ -466,9 +473,9 @@ func (b *UserBuilder) Build() model.UserID {
 
 	// プロフィールを作成 (CompleteSignUpUsecaseと同様)
 	_, err = b.tx.Exec(`
-		INSERT INTO profiles (user_id, name, description, created_at, updated_at, background_image_animated)
-		VALUES ($1, $2, '', NOW(), NOW(), false)
-	`, id, b.username)
+		INSERT INTO profiles (user_id, name, description, image_data, created_at, updated_at, background_image_animated)
+		VALUES ($1, $2, '', $3, NOW(), NOW(), false)
+	`, id, b.username, b.profileImageData)
 	if err != nil {
 		b.t.Fatalf("プロフィールデータの作成に失敗しました: %v", err)
 	}

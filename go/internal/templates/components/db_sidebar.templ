@@ -66,6 +66,11 @@ templ DBSidebar() {
 
 				<div role="group" class="py-0">
 					<ul class="space-y-1">
+						// 編集履歴はフィーチャーフラグdb_edit_historyが有効な利用者にだけ出す。アクティビティはRails版の画面で、
+						// 編集履歴と並べて残す。
+						if templates.IsDBEditHistoryLinkVisible(ctx) {
+							@dbSidebarMenuItem("/db/edits", "db_sidebar_edits")
+						}
 						@dbSidebarMenuItem("/db/activities", "db_sidebar_activities")
 						@dbSidebarMenuItem("/db/series", "db_sidebar_series")
 						@dbSidebarMenuItem("/db/works", "db_sidebar_works")

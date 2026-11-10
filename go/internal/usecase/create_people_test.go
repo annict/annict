@@ -19,7 +19,7 @@ import (
 // 内部で自前のトランザクションを開くため、テストはSetupTxではなくGetTestDBを使う。
 func newCreatePeopleUsecase(db *sql.DB) *CreatePeopleUsecase {
 	personRepo := repository.NewPersonRepository(query.New(db))
-	return NewCreatePeopleUsecase(db, personRepo, validator.NewDBPersonCreateValidator(personRepo))
+	return NewCreatePeopleUsecase(db, personRepo, validator.NewDBPersonCreateValidator(personRepo), newTestDBEditRecordRepos(query.New(db)))
 }
 
 // createPeopleTestNameは他のテストがコミットした人物と重ならない名前を返す。

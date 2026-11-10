@@ -19,7 +19,7 @@ func newGetDBEpisodeEditUsecase(t *testing.T) (*GetDBEpisodeEditUsecase, *sql.Tx
 
 	db, tx := testutil.SetupTx(t)
 
-	return NewGetDBEpisodeEditUsecase(repository.NewEpisodeRepository(query.New(db).WithTx(tx))), tx
+	return NewGetDBEpisodeEditUsecase(repository.NewEpisodeRepository(query.New(db).WithTx(tx)), repository.NewFeatureFlagRepository(query.New(db).WithTx(tx))), tx
 }
 
 // TestGetDBEpisodeEditUsecase_Execute_ReturnsEpisodeAndWorkは、フォームの初期値になる

@@ -51,8 +51,9 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	output, err := h.getDBWorkEditUC.Execute(ctx, usecase.GetDBWorkEditInput{
-		User:   middleware.GetUserFromContext(ctx),
-		WorkID: model.WorkID(id),
+		User:        middleware.GetUserFromContext(ctx),
+		WorkID:      model.WorkID(id),
+		DeviceToken: middleware.GetDeviceToken(r),
 	})
 	if err != nil {
 		if ae := model.AsAppError(err); ae != nil {
@@ -83,11 +84,12 @@ func (h *Handler) Edit(w http.ResponseWriter, r *http.Request) {
 		meta,
 		h.cfg.GetAssetVersion(),
 		db_works.Edit(db_works.EditPageData{
-			CSRFToken:   csrfToken,
-			WorkID:      viewmodel.WorkID(output.Work.ID),
-			WorkTitle:   workName,
-			FormOptions: formOptions,
-			FormInput:   formInput,
+			CSRFToken:     csrfToken,
+			WorkID:        viewmodel.WorkID(output.Work.ID),
+			WorkTitle:     workName,
+			FormOptions:   formOptions,
+			FormInput:     formInput,
+			ShowRevisions: output.CanShowRevisions,
 		}),
 	)
 	var body bytes.Buffer

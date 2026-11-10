@@ -45,6 +45,8 @@ func newFillEpisodeTitlesUsecase(db *sql.DB, lookup SyobocalSubTitleLookup) *Fil
 		repository.NewEpisodeRepository(queries),
 		repository.NewAnimeRepository(queries),
 		lookup,
+		repository.NewAnimeClassificationRepository(queries),
+		newTestDBEditRecordRepos(queries),
 	)
 }
 

@@ -98,14 +98,18 @@ type Person struct {
 
 	// Statusは人物の状態の正本。値が入るのはAnnict DB管理画面のローダー (ListForDB・
 	// GetForEditByID・GetForStateChangeByID・GetForDelistingByID・ListNameHolders・
-	// GetNameHolderExcludingID) のみ。
+	// GetNameHolderExcludingID・GetForRevisionByID) のみ。
 	Status PersonStatus
+
+	// ArchiveMessageは非公開の理由。値が入るのは編集履歴の版を組み立てるローダー (GetForRevisionByID) のみ。
+	ArchiveMessage *string
 
 	// DelistMessageは掲載停止 (delisted) の対応記録で、管理者だけが参照する。値が入るのは掲載停止・
 	// 掲載停止の解除の確認画面のローダー (GetForDelistingByID) のみ。
 	DelistMessage *string
 
 	// UpdatedAtは編集フォームと掲載停止・解除の確認画面がhiddenで持ち回る版。値が入るのは
-	// 編集用と掲載停止用のローダー (GetForEditByID・GetForDelistingByID) のみ。
+	// 編集用と掲載停止用のローダー (GetForEditByID・GetForDelistingByID) と、編集履歴の版を組み立てる
+	// ローダー (GetForRevisionByID) のみ。
 	UpdatedAt time.Time
 }

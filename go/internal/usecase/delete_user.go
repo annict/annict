@@ -66,6 +66,7 @@ type DeleteUserUsecase struct {
 	forumPostRepo             *repository.ForumPostRepository
 	dbActivityRepo            *repository.DBActivityRepository
 	dbCommentRepo             *repository.DBCommentRepository
+	dbEditRepo                *repository.DBEditRepository
 	workCommentRepo           *repository.WorkCommentRepository
 	userlandProjectMemberRepo *repository.UserlandProjectMemberRepository
 	oauthAccessTokenRepo      *repository.OAuthAccessTokenRepository
@@ -112,6 +113,7 @@ func NewDeleteUserUsecase(
 	forumPostRepo *repository.ForumPostRepository,
 	dbActivityRepo *repository.DBActivityRepository,
 	dbCommentRepo *repository.DBCommentRepository,
+	dbEditRepo *repository.DBEditRepository,
 	workCommentRepo *repository.WorkCommentRepository,
 	userlandProjectMemberRepo *repository.UserlandProjectMemberRepository,
 	oauthAccessTokenRepo *repository.OAuthAccessTokenRepository,
@@ -151,6 +153,7 @@ func NewDeleteUserUsecase(
 		forumPostRepo:             forumPostRepo,
 		dbActivityRepo:            dbActivityRepo,
 		dbCommentRepo:             dbCommentRepo,
+		dbEditRepo:                dbEditRepo,
 		workCommentRepo:           workCommentRepo,
 		userlandProjectMemberRepo: userlandProjectMemberRepo,
 		oauthAccessTokenRepo:      oauthAccessTokenRepo,
@@ -207,6 +210,7 @@ func NewDeleteUserUsecase(
 		{name: "delete_forum_posts", run: uc.deleteInBatches(uc.forumPostRepo.DeleteByUserID)},
 		{name: "delete_db_activities", run: uc.deleteInBatches(uc.dbActivityRepo.DeleteByUserID)},
 		{name: "delete_db_comments", run: uc.deleteInBatches(uc.dbCommentRepo.DeleteByUserID)},
+		{name: "detach_db_edits", run: uc.deleteInBatches(uc.dbEditRepo.DetachFromUser)},
 		{name: "delete_work_comments", run: uc.deleteInBatches(uc.workCommentRepo.DeleteByUserID)},
 		{name: "delete_userland_project_members", run: uc.deleteInBatches(uc.userlandProjectMemberRepo.DeleteByUserID)},
 		{name: "delete_oauth_access_tokens", run: uc.deleteInBatches(uc.oauthAccessTokenRepo.DeleteByUserID)},

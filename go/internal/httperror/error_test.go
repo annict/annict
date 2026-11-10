@@ -634,3 +634,36 @@ func assertErrorResponse(
 		}
 	}
 }
+
+func TestConflict(t *testing.T) {
+	t.Parallel()
+	for _, htmx := range []bool{false, true} {
+		name := "通常の送信"
+		if htmx {
+			name = "HTMXの送信"
+		}
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			req := httptest.NewRequest(http.MethodPost, "/db/works/1/archive", nil)
+			req = req.WithContext(i18n.SetLocale(req.Context(), "ja"))
+			if htmx {
+				req.Header.Set("HX-Request", "true")
+			}
+			response := httptest.NewRecorder()
+			Conflict(response, req)
+			if response.Code != http.StatusConflict {
+				t.Errorf("ステータス = %d、期待値 = 409", response.Code)
+			}
+			if !strings.Contains(response.Body.String(), "操作を保存していません") {
+				t.Error("競合で保存しなかった案内がありません")
+			}
+			wantRedirect := ""
+			if htmx {
+				wantRedirect = ConflictPath
+			}
+			if got := response.Header().Get("HX-Redirect"); got != wantRedirect {
+				t.Errorf("HX-Redirect = %q、期待値 = %q", got, wantRedirect)
+			}
+		})
+	}
+}

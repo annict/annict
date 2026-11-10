@@ -12,24 +12,26 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// newUndelistPersonUsecaseはテスト用トランザクション上にUseCaseを組み立てる。本UseCaseは
-// 自らトランザクションを開かず1文の更新で書き込むため、SetupTxで書き込みを巻き戻せる。
-func newUndelistPersonUsecase(t *testing.T) (*UndelistPersonUsecase, *sql.Tx) {
+// newUndelistPersonUsecaseは共有テストDBに対してUseCaseを組み立てる。本UseCaseは編集履歴と同じトランザクションで
+// 書くため自前のトランザクションを開く。前提の人物はtestutil.CreateCommittedPersonでコミットする。
+func newUndelistPersonUsecase(t *testing.T) (*UndelistPersonUsecase, *sql.DB) {
 	t.Helper()
 
-	db, tx := testutil.SetupTx(t)
-	return NewUndelistPersonUsecase(repository.NewPersonRepository(query.New(db).WithTx(tx))), tx
+	db := testutil.GetTestDB()
+	queries := query.New(db)
+	return NewUndelistPersonUsecase(db, repository.NewPersonRepository(queries), newTestDBEditRecordRepos(queries)), db
 }
 
 // newDelistedPersonは橋渡しのunpublished_atと対応記録を持つ、掲載停止の人物を作る。
-func newDelistedPerson(t *testing.T, tx *sql.Tx) model.PersonID {
+func newDelistedPerson(t *testing.T, db *sql.DB) model.PersonID {
 	t.Helper()
 
-	return testutil.NewPersonBuilder(t, tx).
-		WithStatus(model.PersonStatusDelisted).
-		WithUnpublishedAt(time.Now()).
-		WithDelistMessage("対応記録").
-		Build()
+	return testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.
+			WithStatus(model.PersonStatusDelisted).
+			WithUnpublishedAt(time.Now()).
+			WithDelistMessage("対応記録")
+	})
 }
 
 // TestUndelistPersonUsecase_Executeは、掲載停止の人物を公開中に戻し、橋渡しのunpublished_atを
@@ -37,13 +39,13 @@ func newDelistedPerson(t *testing.T, tx *sql.Tx) model.PersonID {
 func TestUndelistPersonUsecase_Execute(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUndelistPersonUsecase(t)
-	personID := newDelistedPerson(t, tx)
+	uc, db := newUndelistPersonUsecase(t)
+	personID := newDelistedPerson(t, db)
 
 	output, err := uc.Execute(context.Background(), UndelistPersonInput{
-		User:      &model.User{ID: 1, Role: model.RoleAdmin},
+		User:      committedEditorForTest(t, model.RoleAdmin),
 		PersonID:  personID,
-		UpdatedAt: testutil.PersonVersion(t, tx, int64(personID)),
+		UpdatedAt: testutil.PersonVersion(t, db, int64(personID)),
 	})
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
@@ -54,7 +56,7 @@ func TestUndelistPersonUsecase_Execute(t *testing.T) {
 
 	var published bool
 	var message sql.NullString
-	if err := tx.QueryRow(`
+	if err := db.QueryRow(`
 		SELECT status = 'published' AND unpublished_at IS NULL, delist_message FROM people WHERE id = $1
 	`, int64(personID)).Scan(&published, &message); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
@@ -90,18 +92,18 @@ func TestUndelistPersonUsecase_Execute_NotFound(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			uc, tx := newUndelistPersonUsecase(t)
+			uc, db := newUndelistPersonUsecase(t)
 			personID := model.PersonID(999999999)
 			if tt.prepare != nil {
-				personID = tt.prepare(testutil.NewPersonBuilder(t, tx)).Build()
+				personID = testutil.CreateCommittedPerson(t, tt.prepare)
 			}
 			version := time.Now().UTC().Format(time.RFC3339Nano)
 			if tt.prepare != nil {
-				version = testutil.PersonVersion(t, tx, int64(personID))
+				version = testutil.PersonVersion(t, db, int64(personID))
 			}
 
 			output, err := uc.Execute(context.Background(), UndelistPersonInput{
-				User:      &model.User{ID: 1, Role: model.RoleAdmin},
+				User:      committedEditorForTest(t, model.RoleAdmin),
 				PersonID:  personID,
 				UpdatedAt: version,
 			})
@@ -117,11 +119,11 @@ func TestUndelistPersonUsecase_Execute_NotFound(t *testing.T) {
 }
 
 // readUndelistedは人物が公開中に戻り、橋渡しのunpublished_atがNULLになっているかを返す。
-func readUndelisted(t *testing.T, tx *sql.Tx, id model.PersonID) bool {
+func readUndelisted(t *testing.T, db *sql.DB, id model.PersonID) bool {
 	t.Helper()
 
 	var published bool
-	if err := tx.QueryRow(`
+	if err := db.QueryRow(`
 		SELECT status = 'published' AND unpublished_at IS NULL FROM people WHERE id = $1
 	`, int64(id)).Scan(&published); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
@@ -134,15 +136,15 @@ func readUndelisted(t *testing.T, tx *sql.Tx, id model.PersonID) bool {
 func TestUndelistPersonUsecase_Execute_Conflict(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUndelistPersonUsecase(t)
-	personID := newDelistedPerson(t, tx)
-	version := testutil.PersonVersion(t, tx, int64(personID))
-	if _, err := tx.Exec(`UPDATE people SET updated_at = updated_at + interval '1 second' WHERE id = $1`, int64(personID)); err != nil {
+	uc, db := newUndelistPersonUsecase(t)
+	personID := newDelistedPerson(t, db)
+	version := testutil.PersonVersion(t, db, int64(personID))
+	if _, err := db.Exec(`UPDATE people SET updated_at = updated_at + interval '1 second' WHERE id = $1`, int64(personID)); err != nil {
 		t.Fatalf("人物の更新に失敗: %v", err)
 	}
 
 	output, err := uc.Execute(context.Background(), UndelistPersonInput{
-		User:      &model.User{ID: 1, Role: model.RoleAdmin},
+		User:      committedEditorForTest(t, model.RoleAdmin),
 		PersonID:  personID,
 		UpdatedAt: version,
 	})
@@ -153,7 +155,7 @@ func TestUndelistPersonUsecase_Execute_Conflict(t *testing.T) {
 	if ae == nil || ae.Code != model.AppErrCodeConflict {
 		t.Errorf("Execute()のエラー = %v、期待値 = AppErrCodeConflict", err)
 	}
-	if readUndelisted(t, tx, personID) {
+	if readUndelisted(t, db, personID) {
 		t.Error("競合した解除が人物を公開中に戻しました")
 	}
 }
@@ -163,11 +165,11 @@ func TestUndelistPersonUsecase_Execute_Conflict(t *testing.T) {
 func TestUndelistPersonUsecase_Execute_MissingVersion(t *testing.T) {
 	t.Parallel()
 
-	uc, tx := newUndelistPersonUsecase(t)
-	personID := newDelistedPerson(t, tx)
+	uc, db := newUndelistPersonUsecase(t)
+	personID := newDelistedPerson(t, db)
 
 	output, err := uc.Execute(context.Background(), UndelistPersonInput{
-		User:     &model.User{ID: 1, Role: model.RoleAdmin},
+		User:     committedEditorForTest(t, model.RoleAdmin),
 		PersonID: personID,
 	})
 	if output != nil {
@@ -176,7 +178,7 @@ func TestUndelistPersonUsecase_Execute_MissingVersion(t *testing.T) {
 	if model.AsValidationError(err) == nil {
 		t.Errorf("Execute()のエラー = %v、期待値 = *model.ValidationError", err)
 	}
-	if readUndelisted(t, tx, personID) {
+	if readUndelisted(t, db, personID) {
 		t.Error("版の無い解除が人物を公開中に戻しました")
 	}
 }
@@ -191,16 +193,16 @@ func TestUndelistPersonUsecase_Execute_RequiresAdmin(t *testing.T) {
 		user *model.User
 	}{
 		{name: "ユーザー無し", user: nil},
-		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
-		{name: "編集者", user: &model.User{ID: 1, Role: model.RoleEditor}},
+		{name: "一般ユーザー", user: committedEditorForTest(t, model.RoleUser)},
+		{name: "編集者", user: committedEditorForTest(t, model.RoleEditor)},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			uc, tx := newUndelistPersonUsecase(t)
-			personID := newDelistedPerson(t, tx)
+			uc, db := newUndelistPersonUsecase(t)
+			personID := newDelistedPerson(t, db)
 
 			_, err := uc.Execute(context.Background(), UndelistPersonInput{User: tt.user, PersonID: personID})
 			ae := model.AsAppError(err)
@@ -209,7 +211,7 @@ func TestUndelistPersonUsecase_Execute_RequiresAdmin(t *testing.T) {
 			}
 
 			var unchanged bool
-			if err := tx.QueryRow(`SELECT status = 'delisted' AND unpublished_at IS NOT NULL FROM people WHERE id = $1`, int64(personID)).Scan(&unchanged); err != nil {
+			if err := db.QueryRow(`SELECT status = 'delisted' AND unpublished_at IS NOT NULL FROM people WHERE id = $1`, int64(personID)).Scan(&unchanged); err != nil {
 				t.Fatalf("人物の取得に失敗: %v", err)
 			}
 			if !unchanged {

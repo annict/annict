@@ -173,3 +173,24 @@ func TestDBSidebar_AlignsHorizontalPadding(t *testing.T) {
 		t.Error("検索欄のラッパーにpx-4が残っています")
 	}
 }
+
+// TestDBSidebar_EditHistoryItemは、編集履歴の項目を、フィーチャーフラグが有効な利用者にだけ出し、
+// アクティビティの項目はどちらでも残すことを検証する。
+func TestDBSidebar_EditHistoryItem(t *testing.T) {
+	t.Parallel()
+
+	for _, visible := range []bool{false, true} {
+		ctx := templates.SetDBEditHistoryLinkVisible(i18n.SetLocale(context.Background(), "ja"), visible)
+		var buf strings.Builder
+		if err := DBSidebar().Render(ctx, &buf); err != nil {
+			t.Fatalf("レンダリングエラー: %v", err)
+		}
+		html := buf.String()
+		if got := strings.Contains(html, `href="/db/edits"`); got != visible {
+			t.Errorf("編集履歴の項目の有無 = %v、期待値 = %v", got, visible)
+		}
+		if !strings.Contains(html, `href="/db/activities"`) {
+			t.Errorf("アクティビティの項目が無い (編集履歴の項目を出すか = %v)", visible)
+		}
+	}
+}

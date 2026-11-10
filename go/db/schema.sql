@@ -134,6 +134,31 @@ CREATE TYPE public.anime_status AS ENUM (
 
 
 --
+-- Name: db_edit_action; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.db_edit_action AS ENUM (
+    'create',
+    'update',
+    'archive',
+    'unarchive',
+    'delete',
+    'delist',
+    'undelist'
+);
+
+
+--
+-- Name: db_edit_actor; Type: TYPE; Schema: public; Owner: -
+--
+
+CREATE TYPE public.db_edit_actor AS ENUM (
+    'user',
+    'system'
+);
+
+
+--
 -- Name: language; Type: TYPE; Schema: public; Owner: -
 --
 
@@ -543,6 +568,40 @@ CREATE TABLE public.anime_redirects (
     updated_at timestamp with time zone DEFAULT now() NOT NULL,
     CONSTRAINT anime_redirects_no_self_redirect_check CHECK ((old_anime_id <> canonical_anime_id))
 );
+
+
+--
+-- Name: anime_revisions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.anime_revisions (
+    id bigint NOT NULL,
+    db_edit_id bigint,
+    anime_id bigint NOT NULL,
+    parent_anime_id bigint,
+    snapshot jsonb NOT NULL,
+    snapshot_version smallint NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: anime_revisions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.anime_revisions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: anime_revisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.anime_revisions_id_seq OWNED BY public.anime_revisions.id;
 
 
 --
@@ -1076,6 +1135,39 @@ CREATE SEQUENCE public.db_comments_id_seq
 --
 
 ALTER SEQUENCE public.db_comments_id_seq OWNED BY public.db_comments.id;
+
+
+--
+-- Name: db_edits; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.db_edits (
+    id bigint NOT NULL,
+    actor public.db_edit_actor NOT NULL,
+    user_id bigint,
+    action public.db_edit_action NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL,
+    CONSTRAINT db_edits_user_id_check CHECK (((actor = 'user'::public.db_edit_actor) OR (user_id IS NULL)))
+);
+
+
+--
+-- Name: db_edits_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.db_edits_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: db_edits_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.db_edits_id_seq OWNED BY public.db_edits.id;
 
 
 --
@@ -2209,6 +2301,39 @@ CREATE SEQUENCE public.person_favorites_id_seq
 --
 
 ALTER SEQUENCE public.person_favorites_id_seq OWNED BY public.person_favorites.id;
+
+
+--
+-- Name: person_revisions; Type: TABLE; Schema: public; Owner: -
+--
+
+CREATE TABLE public.person_revisions (
+    id bigint NOT NULL,
+    db_edit_id bigint,
+    person_id bigint NOT NULL,
+    snapshot jsonb NOT NULL,
+    snapshot_version smallint NOT NULL,
+    created_at timestamp with time zone DEFAULT now() NOT NULL
+);
+
+
+--
+-- Name: person_revisions_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE public.person_revisions_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: person_revisions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE public.person_revisions_id_seq OWNED BY public.person_revisions.id;
 
 
 --
@@ -3832,6 +3957,13 @@ ALTER TABLE ONLY public.anime_official_accounts ALTER COLUMN id SET DEFAULT next
 
 
 --
+-- Name: anime_revisions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_revisions ALTER COLUMN id SET DEFAULT nextval('public.anime_revisions_id_seq'::regclass);
+
+
+--
 -- Name: anime_seasons id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -3899,6 +4031,13 @@ ALTER TABLE ONLY public.db_activities ALTER COLUMN id SET DEFAULT nextval('publi
 --
 
 ALTER TABLE ONLY public.db_comments ALTER COLUMN id SET DEFAULT nextval('public.db_comments_id_seq'::regclass);
+
+
+--
+-- Name: db_edits id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.db_edits ALTER COLUMN id SET DEFAULT nextval('public.db_edits_id_seq'::regclass);
 
 
 --
@@ -4081,6 +4220,13 @@ ALTER TABLE ONLY public.people ALTER COLUMN id SET DEFAULT nextval('public.peopl
 --
 
 ALTER TABLE ONLY public.person_favorites ALTER COLUMN id SET DEFAULT nextval('public.person_favorites_id_seq'::regclass);
+
+
+--
+-- Name: person_revisions id; Type: DEFAULT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.person_revisions ALTER COLUMN id SET DEFAULT nextval('public.person_revisions_id_seq'::regclass);
 
 
 --
@@ -4367,6 +4513,14 @@ ALTER TABLE ONLY public.anime_redirects
 
 
 --
+-- Name: anime_revisions anime_revisions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_revisions
+    ADD CONSTRAINT anime_revisions_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: anime_seasons anime_seasons_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -4524,6 +4678,14 @@ ALTER TABLE ONLY public.db_activities
 
 ALTER TABLE ONLY public.db_comments
     ADD CONSTRAINT db_comments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: db_edits db_edits_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.db_edits
+    ADD CONSTRAINT db_edits_pkey PRIMARY KEY (id);
 
 
 --
@@ -4804,6 +4966,14 @@ ALTER TABLE ONLY public.people
 
 ALTER TABLE ONLY public.person_favorites
     ADD CONSTRAINT person_favorites_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: person_revisions person_revisions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.person_revisions
+    ADD CONSTRAINT person_revisions_pkey PRIMARY KEY (id);
 
 
 --
@@ -5604,6 +5774,34 @@ CREATE INDEX index_anime_redirects_on_canonical_anime_id ON public.anime_redirec
 
 
 --
+-- Name: index_anime_revisions_on_anime_id_and_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_revisions_on_anime_id_and_id ON public.anime_revisions USING btree (anime_id, id);
+
+
+--
+-- Name: index_anime_revisions_on_anime_id_initial; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_revisions_on_anime_id_initial ON public.anime_revisions USING btree (anime_id) WHERE (db_edit_id IS NULL);
+
+
+--
+-- Name: index_anime_revisions_on_db_edit_id_and_anime_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_anime_revisions_on_db_edit_id_and_anime_id ON public.anime_revisions USING btree (db_edit_id, anime_id);
+
+
+--
+-- Name: index_anime_revisions_on_parent_anime_id_and_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_anime_revisions_on_parent_anime_id_and_id ON public.anime_revisions USING btree (parent_anime_id, id);
+
+
+--
 -- Name: index_anime_seasons_on_anime_id_and_year_and_name; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -5916,6 +6114,13 @@ CREATE INDEX index_db_comments_on_resource_id_and_resource_type ON public.db_com
 --
 
 CREATE INDEX index_db_comments_on_user_id ON public.db_comments USING btree (user_id);
+
+
+--
+-- Name: index_db_edits_on_user_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_db_edits_on_user_id ON public.db_edits USING btree (user_id);
 
 
 --
@@ -6553,6 +6758,27 @@ CREATE UNIQUE INDEX index_person_favorites_on_user_id_and_person_id ON public.pe
 --
 
 CREATE INDEX index_person_favorites_on_watched_works_count ON public.person_favorites USING btree (watched_works_count);
+
+
+--
+-- Name: index_person_revisions_on_db_edit_id_and_person_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_person_revisions_on_db_edit_id_and_person_id ON public.person_revisions USING btree (db_edit_id, person_id);
+
+
+--
+-- Name: index_person_revisions_on_person_id_and_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_person_revisions_on_person_id_and_id ON public.person_revisions USING btree (person_id, id);
+
+
+--
+-- Name: index_person_revisions_on_person_id_initial; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE UNIQUE INDEX index_person_revisions_on_person_id_initial ON public.person_revisions USING btree (person_id) WHERE (db_edit_id IS NULL);
 
 
 --
@@ -7526,6 +7752,30 @@ ALTER TABLE ONLY public.anime_redirects
 
 
 --
+-- Name: anime_revisions anime_revisions_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_revisions
+    ADD CONSTRAINT anime_revisions_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id) ON DELETE CASCADE;
+
+
+--
+-- Name: anime_revisions anime_revisions_db_edit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_revisions
+    ADD CONSTRAINT anime_revisions_db_edit_id_fkey FOREIGN KEY (db_edit_id) REFERENCES public.db_edits(id) ON DELETE CASCADE;
+
+
+--
+-- Name: anime_revisions anime_revisions_parent_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.anime_revisions
+    ADD CONSTRAINT anime_revisions_parent_anime_id_fkey FOREIGN KEY (parent_anime_id) REFERENCES public.animes(id) ON DELETE SET NULL;
+
+
+--
 -- Name: anime_seasons anime_seasons_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -7611,6 +7861,14 @@ ALTER TABLE ONLY public.comments
 
 ALTER TABLE ONLY public.comments
     ADD CONSTRAINT comments_user_id_fk FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE DEFERRABLE INITIALLY DEFERRED;
+
+
+--
+-- Name: db_edits db_edits_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.db_edits
+    ADD CONSTRAINT db_edits_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE SET NULL;
 
 
 --
@@ -8398,6 +8656,22 @@ ALTER TABLE ONLY public.password_reset_tokens
 
 
 --
+-- Name: person_revisions person_revisions_db_edit_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.person_revisions
+    ADD CONSTRAINT person_revisions_db_edit_id_fkey FOREIGN KEY (db_edit_id) REFERENCES public.db_edits(id) ON DELETE CASCADE;
+
+
+--
+-- Name: person_revisions person_revisions_person_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.person_revisions
+    ADD CONSTRAINT person_revisions_person_id_fkey FOREIGN KEY (person_id) REFERENCES public.people(id) ON DELETE CASCADE;
+
+
+--
 -- Name: profiles profiles_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8881,4 +9155,5 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20261108100700'),
     ('20261108100800'),
     ('20261108100900'),
-    ('20261108101000');
+    ('20261108101000'),
+    ('20261108120000');

@@ -28,6 +28,7 @@ type CreateEpisodesFromSlotsUsecase struct {
 	episodeRepo             *repository.EpisodeRepository
 	animeRepo               *repository.AnimeRepository
 	animeClassificationRepo *repository.AnimeClassificationRepository
+	dbEditRecordRepos       DBEditRecordRepos
 }
 
 // NewCreateEpisodesFromSlotsUsecaseはCreateEpisodesFromSlotsUsecaseを生成する。
@@ -38,6 +39,7 @@ func NewCreateEpisodesFromSlotsUsecase(
 	episodeRepo *repository.EpisodeRepository,
 	animeRepo *repository.AnimeRepository,
 	animeClassificationRepo *repository.AnimeClassificationRepository,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *CreateEpisodesFromSlotsUsecase {
 	return &CreateEpisodesFromSlotsUsecase{
 		db:                      db,
@@ -46,6 +48,7 @@ func NewCreateEpisodesFromSlotsUsecase(
 		episodeRepo:             episodeRepo,
 		animeRepo:               animeRepo,
 		animeClassificationRepo: animeClassificationRepo,
+		dbEditRecordRepos:       dbEditRecordRepos,
 	}
 }
 
@@ -218,15 +221,19 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, candi
 	}
 
 	var animeID *model.AnimeID
+	var revisions []AnimeRevisionInput
 	if episode.ParentAnimeID != nil {
-		anime, err := uc.animeRepo.WithTx(tx).Create(ctx, animeCreateParamsFromEpisode(episode))
+		animeParams := animeCreateParamsFromEpisode(episode)
+		anime, err := uc.animeRepo.WithTx(tx).Create(ctx, animeParams)
 		if err != nil {
 			return slotResult{}, fmt.Errorf("animeの作成に失敗しました: %w", err)
 		}
-		if _, err := uc.animeClassificationRepo.WithTx(tx).Create(ctx, classificationCreateParamsFromEpisode(episode, anime.ID)); err != nil {
+		classificationParams := classificationCreateParamsFromEpisode(episode, anime.ID)
+		if _, err := uc.animeClassificationRepo.WithTx(tx).Create(ctx, classificationParams); err != nil {
 			return slotResult{}, fmt.Errorf("anime_classificationの作成に失敗しました: %w", err)
 		}
 		animeID = &anime.ID
+		revisions = []AnimeRevisionInput{{AnimeID: anime.ID, After: episodeAnimeSnapshotFromCreateParams(animeParams, classificationParams)}}
 	}
 
 	episodeID, err := episodeRepo.CreateGenerated(ctx, repository.CreateGeneratedEpisodeParams{
@@ -258,6 +265,10 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, candi
 
 	if err := workRepo.IncrementEpisodesCount(ctx, work.Work.ID, 1); err != nil {
 		return slotResult{}, fmt.Errorf("作品のエピソード件数の更新に失敗しました: %w", err)
+	}
+
+	if err := writeCreatedEpisodesDBEditRecord(ctx, uc.dbEditRecordRepos, tx, model.DBEditActorSystem, nil, revisions); err != nil {
+		return slotResult{}, err
 	}
 
 	if err := tx.Commit(); err != nil {

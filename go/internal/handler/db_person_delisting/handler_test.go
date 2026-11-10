@@ -23,9 +23,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// newTestHandlerはテスト用トランザクション上にHandlerを組み立てる。人物の掲載停止・解除の
-// UseCaseは自前のトランザクションを開かず1文の更新で書き込むため、書き込みはテスト終了時に
-// 巻き戻る。
+// newTestHandlerはHandlerを組み立てる。確認画面の読み取りはテスト用トランザクション上で行う。
 func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	t.Helper()
 
@@ -33,14 +31,23 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	cfg := &config.Config{Env: "test", Domain: "test.annict.com"}
 	sessionManager := session.NewManager(repository.NewSessionRepository(queries), cfg)
 	personRepo := repository.NewPersonRepository(queries)
+	// 書き込みのUseCaseは編集履歴と同じトランザクションで書くため自前のトランザクションを開く。テスト用の
+	// トランザクションではなくプールに対して組み立て、前提の人物はコミットして作る。
+	poolQueries := query.New(db)
+	poolPersonRepo := repository.NewPersonRepository(poolQueries)
+	dbEditRecordRepos := usecase.DBEditRecordRepos{
+		DBEdit:         repository.NewDBEditRepository(poolQueries),
+		AnimeRevision:  repository.NewAnimeRevisionRepository(poolQueries),
+		PersonRevision: repository.NewPersonRevisionRepository(poolQueries),
+	}
 	return NewHandler(
 		cfg,
 		sessionManager,
 		testutil.NewTestFlashManager(),
 		usecase.NewGetDBPersonDelistingNewUsecase(personRepo),
 		usecase.NewGetDBPersonUndelistingNewUsecase(personRepo),
-		usecase.NewDelistPersonUsecase(personRepo),
-		usecase.NewUndelistPersonUsecase(personRepo),
+		usecase.NewDelistPersonUsecase(db, poolPersonRepo, dbEditRecordRepos),
+		usecase.NewUndelistPersonUsecase(db, poolPersonRepo, dbEditRecordRepos),
 	)
 }
 
@@ -59,7 +66,7 @@ func newTestRouter(handler *Handler) chi.Router {
 func adminFormRequest(t *testing.T, method, target string, form url.Values) *http.Request {
 	t.Helper()
 
-	return userFormRequest(t, method, target, form, &model.User{ID: 1, Role: model.RoleAdmin})
+	return userFormRequest(t, method, target, form, testutil.CreateCommittedUser(t, model.RoleAdmin))
 }
 
 // userFormRequestはuserからのフォームの送信を組み立てる。
@@ -72,12 +79,12 @@ func userFormRequest(t *testing.T, method, target string, form url.Values, user 
 }
 
 // readStatusは人物の状態と、Rails版への橋渡しのunpublished_atが立っているかを返す。
-func readStatus(t *testing.T, tx *sql.Tx, id model.PersonID) (model.PersonStatus, bool) {
+func readStatus(t *testing.T, db *sql.DB, id model.PersonID) (model.PersonStatus, bool) {
 	t.Helper()
 
 	var status model.PersonStatus
 	var unpublished bool
-	if err := tx.QueryRow(`SELECT status, unpublished_at IS NOT NULL FROM people WHERE id = $1`, int64(id)).Scan(&status, &unpublished); err != nil {
+	if err := db.QueryRow(`SELECT status, unpublished_at IS NOT NULL FROM people WHERE id = $1`, int64(id)).Scan(&status, &unpublished); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
 	}
 	return status, unpublished
@@ -89,7 +96,9 @@ func TestNew(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithName("掲載停止確認の人物").WithDelistMessage("以前の対応記録").Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithName("掲載停止確認の人物").WithDelistMessage("以前の対応記録")
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	rr := httptest.NewRecorder()
@@ -126,8 +135,12 @@ func TestNew_NotFound(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	delistedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDelisted).Build()
-	deletedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDeleted).Build()
+	delistedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDelisted)
+	})
+	deletedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDeleted)
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	for _, target := range []string{
@@ -154,7 +167,7 @@ func TestNew_CarriesReturnToThroughTheConfirmation(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).Build()
+	personID := testutil.CreateCommittedPerson(t, nil)
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	tests := []struct {
@@ -207,9 +220,9 @@ func TestCreate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			personID := testutil.NewPersonBuilder(t, tx).Build()
+			personID := testutil.CreateCommittedPerson(t, nil)
 			req := adminFormRequest(t, "POST", fmt.Sprintf("/db/people/%d/delisting", int64(personID)), url.Values{
-				"updated_at":     {testutil.PersonVersion(t, tx, int64(personID))},
+				"updated_at":     {testutil.PersonVersion(t, db, int64(personID))},
 				"return_to":      {tt.returnTo},
 				"delist_message": {"本人から申出"},
 			})
@@ -223,12 +236,12 @@ func TestCreate(t *testing.T) {
 			if got := rr.Header().Get("Location"); got != tt.wantLocation {
 				t.Errorf("リダイレクト先 = %q、期待値 = %q", got, tt.wantLocation)
 			}
-			if status, unpublished := readStatus(t, tx, personID); status != model.PersonStatusDelisted || !unpublished {
+			if status, unpublished := readStatus(t, db, personID); status != model.PersonStatusDelisted || !unpublished {
 				t.Errorf("状態 = %q、unpublished_atあり = %v、期待値 = delisted、true", status, unpublished)
 			}
 
 			var message sql.NullString
-			if err := tx.QueryRow(`SELECT delist_message FROM people WHERE id = $1`, int64(personID)).Scan(&message); err != nil {
+			if err := db.QueryRow(`SELECT delist_message FROM people WHERE id = $1`, int64(personID)).Scan(&message); err != nil {
 				t.Fatalf("人物の取得に失敗: %v", err)
 			}
 			if message.String != "本人から申出" {
@@ -244,12 +257,14 @@ func TestCreate_NotFoundForDelistedPerson(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDelisted).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDelisted)
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, adminFormRequest(t, "POST", fmt.Sprintf("/db/people/%d/delisting", int64(personID)), url.Values{
-		"updated_at": {testutil.PersonVersion(t, tx, int64(personID))},
+		"updated_at": {testutil.PersonVersion(t, db, int64(personID))},
 	}))
 
 	if status := rr.Code; status != http.StatusNotFound {
@@ -263,9 +278,9 @@ func TestCreate_Conflict(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithName("変更前の人物").Build()
-	version := testutil.PersonVersion(t, tx, int64(personID))
-	if _, err := tx.Exec(`UPDATE people SET name = '変更後の人物', updated_at = updated_at + interval '1 second' WHERE id = $1`, int64(personID)); err != nil {
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder { return b.WithName("変更前の人物") })
+	version := testutil.PersonVersion(t, db, int64(personID))
+	if _, err := db.Exec(`UPDATE people SET name = '変更後の人物', updated_at = updated_at + interval '1 second' WHERE id = $1`, int64(personID)); err != nil {
 		t.Fatalf("人物の更新に失敗: %v", err)
 	}
 	r := newTestRouter(newTestHandler(t, db, tx))
@@ -286,7 +301,7 @@ func TestCreate_Conflict(t *testing.T) {
 	if !strings.Contains(body, "保存済みの対応記録はありません。") {
 		t.Errorf("競合画面に保存済みの対応記録 (未記録) が示されていません: %s", body)
 	}
-	if status, unpublished := readStatus(t, tx, personID); status != model.PersonStatusPublished || unpublished {
+	if status, unpublished := readStatus(t, db, personID); status != model.PersonStatusPublished || unpublished {
 		t.Errorf("競合後の状態 = %q、unpublished_atあり = %v", status, unpublished)
 	}
 }
@@ -297,7 +312,7 @@ func TestCreate_MissingVersion(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).Build()
+	personID := testutil.CreateCommittedPerson(t, nil)
 	r := newTestRouter(newTestHandler(t, db, tx))
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, adminFormRequest(t, "POST", fmt.Sprintf("/db/people/%d/delisting", int64(personID)), url.Values{
@@ -313,7 +328,7 @@ func TestCreate_MissingVersion(t *testing.T) {
 	if !strings.Contains(body, ">版の無い送信の対応記録</textarea>") {
 		t.Errorf("確認画面の入力欄に送信した対応記録が残っていません: %s", body)
 	}
-	if status, unpublished := readStatus(t, tx, personID); status != model.PersonStatusPublished || unpublished {
+	if status, unpublished := readStatus(t, db, personID); status != model.PersonStatusPublished || unpublished {
 		t.Errorf("拒否後の状態 = %q、unpublished_atあり = %v", status, unpublished)
 	}
 }
@@ -324,7 +339,9 @@ func TestDelete_MissingVersion(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDelisted).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDelisted)
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, adminFormRequest(t, "POST", fmt.Sprintf("/db/people/%d/delisting", int64(personID)), url.Values{
@@ -336,7 +353,7 @@ func TestDelete_MissingVersion(t *testing.T) {
 	if body := rr.Body.String(); !strings.Contains(body, `<p role="alert" class="text-destructive">編集中のデータを特定できませんでした。`) {
 		t.Errorf("確認画面に版の欠落の案内がありません: %s", body)
 	}
-	if status, _ := readStatus(t, tx, personID); status != model.PersonStatusDelisted {
+	if status, _ := readStatus(t, db, personID); status != model.PersonStatusDelisted {
 		t.Errorf("拒否後の状態 = %q、期待値 = delisted", status)
 	}
 }
@@ -347,9 +364,9 @@ func TestCreate_StateChangedAfterConfirmation(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).Build()
-	version := testutil.PersonVersion(t, tx, int64(personID))
-	if _, err := tx.Exec(`UPDATE people SET status = 'delisted', delist_message = '先の対応', unpublished_at = NOW() AT TIME ZONE 'UTC', updated_at = updated_at + interval '1 second' WHERE id = $1`, int64(personID)); err != nil {
+	personID := testutil.CreateCommittedPerson(t, nil)
+	version := testutil.PersonVersion(t, db, int64(personID))
+	if _, err := db.Exec(`UPDATE people SET status = 'delisted', delist_message = '先の対応', unpublished_at = NOW() AT TIME ZONE 'UTC', updated_at = updated_at + interval '1 second' WHERE id = $1`, int64(personID)); err != nil {
 		t.Fatalf("先の掲載停止に失敗: %v", err)
 	}
 	r := newTestRouter(newTestHandler(t, db, tx))
@@ -361,7 +378,7 @@ func TestCreate_StateChangedAfterConfirmation(t *testing.T) {
 		t.Errorf("ステータスコード = %d、期待値 = 404", rr.Code)
 	}
 	var message string
-	if err := tx.QueryRow(`SELECT delist_message FROM people WHERE id = $1`, int64(personID)).Scan(&message); err != nil {
+	if err := db.QueryRow(`SELECT delist_message FROM people WHERE id = $1`, int64(personID)).Scan(&message); err != nil {
 		t.Fatalf("対応記録の取得に失敗: %v", err)
 	}
 	if message != "先の対応" {
@@ -374,9 +391,11 @@ func TestDelete_Conflict(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDelisted).WithDelistMessage("以前の記録").Build()
-	version := testutil.PersonVersion(t, tx, int64(personID))
-	if _, err := tx.Exec(`UPDATE people SET delist_message = '更新された記録', updated_at = updated_at + interval '1 second' WHERE id = $1`, int64(personID)); err != nil {
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDelisted).WithDelistMessage("以前の記録")
+	})
+	version := testutil.PersonVersion(t, db, int64(personID))
+	if _, err := db.Exec(`UPDATE people SET delist_message = '更新された記録', updated_at = updated_at + interval '1 second' WHERE id = $1`, int64(personID)); err != nil {
 		t.Fatalf("対応記録の更新に失敗: %v", err)
 	}
 	r := newTestRouter(newTestHandler(t, db, tx))
@@ -390,7 +409,7 @@ func TestDelete_Conflict(t *testing.T) {
 	if body := rr.Body.String(); !strings.Contains(body, "更新された記録") || !strings.Contains(body, "他の編集者によって") {
 		t.Errorf("競合画面に現在の対応記録と競合の案内がありません: %s", body)
 	}
-	if status, _ := readStatus(t, tx, personID); status != model.PersonStatusDelisted {
+	if status, _ := readStatus(t, db, personID); status != model.PersonStatusDelisted {
 		t.Errorf("競合後の状態 = %q、期待値 = delisted", status)
 	}
 }
@@ -401,11 +420,13 @@ func TestDelete(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDelisted).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDelisted)
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	req := adminFormRequest(t, "POST", fmt.Sprintf("/db/people/%d/delisting", int64(personID)), url.Values{
-		"updated_at": {testutil.PersonVersion(t, tx, int64(personID))},
+		"updated_at": {testutil.PersonVersion(t, db, int64(personID))},
 		"_method":    {"DELETE"},
 		"return_to":  {"/db/search?q=test"},
 	})
@@ -418,7 +439,7 @@ func TestDelete(t *testing.T) {
 	if got := rr.Header().Get("Location"); got != "/db/search?q=test" {
 		t.Errorf("リダイレクト先 = %q、期待値 = /db/search?q=test", got)
 	}
-	if status, unpublished := readStatus(t, tx, personID); status != model.PersonStatusPublished || unpublished {
+	if status, unpublished := readStatus(t, db, personID); status != model.PersonStatusPublished || unpublished {
 		t.Errorf("状態 = %q、unpublished_atあり = %v、期待値 = published、false", status, unpublished)
 	}
 }
@@ -429,12 +450,12 @@ func TestDelete_NotFoundForPublishedPerson(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).Build()
+	personID := testutil.CreateCommittedPerson(t, nil)
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, adminFormRequest(t, "POST", fmt.Sprintf("/db/people/%d/delisting", int64(personID)), url.Values{
-		"_method": {"DELETE"}, "updated_at": {testutil.PersonVersion(t, tx, int64(personID))},
+		"_method": {"DELETE"}, "updated_at": {testutil.PersonVersion(t, db, int64(personID))},
 	}))
 
 	if status := rr.Code; status != http.StatusNotFound {
@@ -448,8 +469,10 @@ func TestForbiddenWithoutMiddleware(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	publishedID := testutil.NewPersonBuilder(t, tx).Build()
-	delistedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDelisted).Build()
+	publishedID := testutil.CreateCommittedPerson(t, nil)
+	delistedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDelisted)
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	tests := []struct {
@@ -474,10 +497,10 @@ func TestForbiddenWithoutMiddleware(t *testing.T) {
 		}
 	}
 
-	if status, _ := readStatus(t, tx, publishedID); status != model.PersonStatusPublished {
+	if status, _ := readStatus(t, db, publishedID); status != model.PersonStatusPublished {
 		t.Errorf("公開中の人物の状態 = %q、期待値 = published", status)
 	}
-	if status, _ := readStatus(t, tx, delistedID); status != model.PersonStatusDelisted {
+	if status, _ := readStatus(t, db, delistedID); status != model.PersonStatusDelisted {
 		t.Errorf("掲載停止の人物の状態 = %q、期待値 = delisted", status)
 	}
 }

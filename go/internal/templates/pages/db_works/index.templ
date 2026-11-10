@@ -19,15 +19,17 @@ type IndexPageData struct {
 	FilterNoSeason      bool
 	FilterNoSlots       bool
 	SeasonFilterOptions []viewmodel.SeasonFilterOption
-	// IsCommitterとIsAdminは見出しの「新規登録」と操作列の出し分けに使う。committer
+	// IsCommitterとIsAdminは見出しの「新規登録」と各行の操作の出し分けに使う。committer
 	// (管理者または編集者) は「新規登録」と編集・非公開 / 公開の操作を、管理者はさらに
-	// 削除の操作を見る。作品一覧自体は公開のため、未ログインや一般ユーザーではどちらも
-	// falseになり、そのときは見出しの操作コンテナと操作列自体を描画しない。
+	// 削除の操作を見る。
 	IsCommitter bool
 	IsAdmin     bool
 	// CSRFTokenはhtmxが発行するDELETEリクエスト (公開 / 削除) のX-CSRF-Token
 	// ヘッダーで送られ、それらのリクエストがCSRFミドルウェアを通るようにする。
 	CSRFToken string
+	// ShowRevisionsは各行に作品の履歴へのリンクを出すかを表す。履歴の画面はログインしていなくても
+	// 見られるため、フィーチャーフラグdb_edit_historyが有効な閲覧者なら誰にでも出す。
+	ShowRevisions bool
 }
 
 // newWorkActionは見出しの横に表示する操作を返し、操作を出さない閲覧者にはnilを
@@ -42,12 +44,12 @@ func (d IndexPageData) newWorkAction() templ.Component {
 	return indexNewButton()
 }
 
-// hasRowActionsは閲覧者が行ごとの操作を1つでも行えるかを返し、操作列そのものを
+// hasRowActionsは閲覧者に行ごとのメニュー (履歴へのリンクと操作) が1つでもあるかを返し、メニューの列そのものを
 // 描画するかを決める。操作を持たない閲覧者に空のセルだけの列は出さない。このテーブルは
 // モバイル幅では既に横スクロールを要し、何も入らない列の見出しが行ごとに読み上げられて
 // しまうため。newWorkActionが見出しの操作コンテナを出さないのと同じ理由である。
 func (d IndexPageData) hasRowActions() bool {
-	return d.IsCommitter || d.IsAdmin
+	return d.IsCommitter || d.IsAdmin || d.ShowRevisions
 }
 
 // tableMinWidthClassはコンテナが横スクロールを始めるまでテーブルが保つ幅を返す。
@@ -160,8 +162,9 @@ templ Index(data IndexPageData) {
 				@components.Empty(templates.T(ctx, "db_works_index_empty"), "")
 			} else {
 				<div class="flex flex-col gap-4">
+					// 対象名の絶対配置をスクロール領域内に収め、ページ全体が横に広がるのを防ぐ。
 					<div
-						class="overflow-x-auto"
+						class="relative overflow-x-auto"
 						role="region"
 						aria-label={ templates.T(ctx, "db_works_index_table_caption") }
 						tabindex="0"
@@ -315,8 +318,9 @@ templ externalServiceLink(link viewmodel.ExternalServiceLink) {
 	}
 }
 
-// actionButtonsは作品一覧の行ごとの操作列を描画する。committerには編集リンクと
-// 非公開 (公開中の行) または公開 (非公開の行) の操作を、管理者にはさらに削除の操作を出す。
+// actionButtonsは作品一覧の行ごとのメニューの列を描画する。committerには編集リンクと非公開 (公開中の行) または
+// 公開 (非公開の行) の操作を、管理者にはさらに削除の操作を出し、その下に、フラグが有効な閲覧者には作品の履歴への
+// リンクを出す。
 // 公開・削除は確認ダイアログ付きのhtmx DELETEボタンで、CSRFトークンはX-CSRF-Token
 // ヘッダーで送り、削除・公開ハンドラーがHX-Redirectを返してhtmxが一覧へ遷移する。
 // 非公開は確認画面への素のリンク。
@@ -378,6 +382,18 @@ templ actionButtons(data IndexPageData, work viewmodel.DBWorkListItem) {
 				{ templates.T(ctx, "db_works_index_delete_button") }
 				@actionTarget(work)
 			</button>
+		}
+		// 履歴は操作ではないため、編集などの操作を選ぶときに誤って選ばないよう、操作の下に置く。
+		if data.ShowRevisions {
+			<a
+				href={ templates.DBWorkRevisionsPath(work.ID).SafeURL() }
+				class="btn rounded-full"
+				data-variant="outline"
+				data-size="sm"
+			>
+				{ templates.T(ctx, "db_works_index_revisions_link") }
+				@actionTarget(work)
+			</a>
 		}
 	</div>
 }

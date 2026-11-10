@@ -11,13 +11,14 @@ import (
 	"github.com/annict/annict/go/internal/testutil"
 )
 
-// newArchivePersonUsecaseはテスト用トランザクション上にUseCaseを組み立てる。本UseCaseは
-// 自らトランザクションを開かず1文の更新で書き込むため、SetupTxで書き込みを巻き戻せる。
-func newArchivePersonUsecase(t *testing.T) (*ArchivePersonUsecase, *sql.Tx) {
+// newArchivePersonUsecaseは共有テストDBに対してUseCaseを組み立てる。本UseCaseは編集履歴と同じトランザクションで
+// 書くため自前のトランザクションを開く。前提の人物はtestutil.CreateCommittedPersonでコミットする。
+func newArchivePersonUsecase(t *testing.T) (*ArchivePersonUsecase, *sql.DB) {
 	t.Helper()
 
-	db, tx := testutil.SetupTx(t)
-	return NewArchivePersonUsecase(repository.NewPersonRepository(query.New(db).WithTx(tx))), tx
+	db := testutil.GetTestDB()
+	queries := query.New(db)
+	return NewArchivePersonUsecase(db, repository.NewPersonRepository(queries), newTestDBEditRecordRepos(queries)), db
 }
 
 // TestArchivePersonUsecase_Executeは、公開中の人物を非公開にし、Rails版への橋渡しのunpublished_atを書くことを検証する。
@@ -35,11 +36,11 @@ func TestArchivePersonUsecase_Execute(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			uc, tx := newArchivePersonUsecase(t)
-			personID := tt.prepare(testutil.NewPersonBuilder(t, tx)).Build()
+			uc, db := newArchivePersonUsecase(t)
+			personID := testutil.CreateCommittedPerson(t, tt.prepare)
 
 			output, err := uc.Execute(context.Background(), ArchivePersonInput{
-				User:     &model.User{ID: 1, Role: model.RoleEditor},
+				User:     committedEditorForTest(t, model.RoleEditor),
 				PersonID: personID,
 			})
 			if err != nil {
@@ -50,7 +51,7 @@ func TestArchivePersonUsecase_Execute(t *testing.T) {
 			}
 
 			var archived bool
-			if err := tx.QueryRow(`SELECT status = 'archived' AND unpublished_at IS NOT NULL FROM people WHERE id = $1`, int64(personID)).Scan(&archived); err != nil {
+			if err := db.QueryRow(`SELECT status = 'archived' AND unpublished_at IS NOT NULL FROM people WHERE id = $1`, int64(personID)).Scan(&archived); err != nil {
 				t.Fatalf("人物の取得に失敗: %v", err)
 			}
 			if !archived {
@@ -85,14 +86,14 @@ func TestArchivePersonUsecase_Execute_NotFound(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			uc, tx := newArchivePersonUsecase(t)
+			uc, _ := newArchivePersonUsecase(t)
 			personID := model.PersonID(999999999)
 			if tt.prepare != nil {
-				personID = tt.prepare(testutil.NewPersonBuilder(t, tx)).Build()
+				personID = testutil.CreateCommittedPerson(t, tt.prepare)
 			}
 
 			output, err := uc.Execute(context.Background(), ArchivePersonInput{
-				User:     &model.User{ID: 1, Role: model.RoleAdmin},
+				User:     committedEditorForTest(t, model.RoleAdmin),
 				PersonID: personID,
 			})
 			if output != nil {
@@ -116,15 +117,15 @@ func TestArchivePersonUsecase_Execute_RequiresCommitter(t *testing.T) {
 		user *model.User
 	}{
 		{name: "ユーザー無し", user: nil},
-		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}},
+		{name: "一般ユーザー", user: committedEditorForTest(t, model.RoleUser)},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Parallel()
 
-			uc, tx := newArchivePersonUsecase(t)
-			personID := testutil.NewPersonBuilder(t, tx).Build()
+			uc, db := newArchivePersonUsecase(t)
+			personID := testutil.CreateCommittedPerson(t, nil)
 
 			_, err := uc.Execute(context.Background(), ArchivePersonInput{User: tt.user, PersonID: personID})
 			ae := model.AsAppError(err)
@@ -133,7 +134,7 @@ func TestArchivePersonUsecase_Execute_RequiresCommitter(t *testing.T) {
 			}
 
 			var unchanged bool
-			if err := tx.QueryRow(`SELECT status = 'published' FROM people WHERE id = $1`, int64(personID)).Scan(&unchanged); err != nil {
+			if err := db.QueryRow(`SELECT status = 'published' FROM people WHERE id = $1`, int64(personID)).Scan(&unchanged); err != nil {
 				t.Fatalf("人物の取得に失敗: %v", err)
 			}
 			if !unchanged {

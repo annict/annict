@@ -18,17 +18,20 @@ import (
 //
 // HTTPルートのRequireCommitter middlewareに加えて、すべてのentry pointで同じ規則になる
 // ようUseCase自身もcommitter認可を強制する。Railsの再公開はdb_activityを記録しないため、
-// 編集者は認可に使うが活動履歴の作成者としては記録しない。
+// db_activityには記録しない。Annict DBの編集履歴には、編集者の再公開の操作として記録する。
 //
-// episodesの更新は、行が今も非公開であり、トランザクション前の射影が観測した作品に今も属し、
-// その作品も未削除の場合だけ行う。親作品のtouchとカウンター更新にも成功した場合だけ結果を返し、
-// 親作品が同時に削除された場合はトランザクションをロールバックする。実際に再公開した行から
-// anime_idを返すため、写像が同時に変わっても以前のanimeへstatusを書かない。statusだけを
-// 更新することで、事前読み取り後にコミットされたanimeの内容も保持する。
+// episodesの更新は、行が今も非公開であり、トランザクションの前に読んだ版 (updated_at) のままで、
+// トランザクション前の射影が観測した作品に今も属し、その作品も未削除の場合だけ行う。親作品の
+// touchとカウンター更新にも成功した場合だけ結果を返し、親作品が同時に削除された場合は
+// トランザクションをロールバックする。編集履歴の版はトランザクションの前に読んだanimeから
+// 組み立てるため、実際に再公開した行が返すanime_idがその読み取りと違えば、競合を返して何も
+// 書かない。statusだけを更新することで、事前読み取り後にコミットされたanimeの内容も保持する。
 type UnarchiveEpisodeUsecase struct {
-	db          *sql.DB
-	episodeRepo *repository.EpisodeRepository
-	animeRepo   *repository.AnimeRepository
+	db                      *sql.DB
+	episodeRepo             *repository.EpisodeRepository
+	animeRepo               *repository.AnimeRepository
+	animeClassificationRepo *repository.AnimeClassificationRepository
+	dbEditRecordRepos       DBEditRecordRepos
 }
 
 // NewUnarchiveEpisodeUsecaseはUnarchiveEpisodeUsecaseを生成する。
@@ -36,11 +39,15 @@ func NewUnarchiveEpisodeUsecase(
 	db *sql.DB,
 	episodeRepo *repository.EpisodeRepository,
 	animeRepo *repository.AnimeRepository,
+	animeClassificationRepo *repository.AnimeClassificationRepository,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *UnarchiveEpisodeUsecase {
 	return &UnarchiveEpisodeUsecase{
-		db:          db,
-		episodeRepo: episodeRepo,
-		animeRepo:   animeRepo,
+		db:                      db,
+		episodeRepo:             episodeRepo,
+		animeRepo:               animeRepo,
+		animeClassificationRepo: animeClassificationRepo,
+		dbEditRecordRepos:       dbEditRecordRepos,
 	}
 }
 
@@ -83,7 +90,12 @@ func (uc *UnarchiveEpisodeUsecase) Execute(ctx context.Context, input UnarchiveE
 		return nil, episodeNotFoundError(ctx, input.EpisodeID)
 	}
 
-	return uc.unarchiveEpisode(ctx, target.Episode)
+	recordPlan, err := planEpisodeStatusRecord(ctx, uc.animeRepo, uc.animeClassificationRepo, uc.dbEditRecordRepos, input.User, model.DBEditActionUnarchive, target.Episode.AnimeID, model.AnimeStatusPublished)
+	if err != nil {
+		return nil, fmt.Errorf("編集履歴の記録の計画に失敗しました: %w", err)
+	}
+
+	return uc.unarchiveEpisode(ctx, target.Episode, recordPlan)
 }
 
 // unarchiveEpisodeは再公開をepisodesに、そして実際に更新した行がマッピング済みならその
@@ -93,6 +105,7 @@ func (uc *UnarchiveEpisodeUsecase) Execute(ctx context.Context, input UnarchiveE
 func (uc *UnarchiveEpisodeUsecase) unarchiveEpisode(
 	ctx context.Context,
 	current *model.Episode,
+	recordPlan *dbEditRecordPlan,
 ) (*UnarchiveEpisodeOutput, error) {
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -101,8 +114,9 @@ func (uc *UnarchiveEpisodeUsecase) unarchiveEpisode(
 	defer func() { _ = tx.Rollback() }()
 
 	unarchived, err := uc.episodeRepo.WithTx(tx).Unarchive(ctx, repository.UnarchiveEpisodeParams{
-		ID:     current.ID,
-		WorkID: current.WorkID,
+		ID:      current.ID,
+		WorkID:  current.WorkID,
+		Version: current.UpdatedAt,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("エピソードの再公開に失敗しました: %w", err)
@@ -110,11 +124,19 @@ func (uc *UnarchiveEpisodeUsecase) unarchiveEpisode(
 	if unarchived == nil {
 		return nil, episodeNotFoundError(ctx, current.ID)
 	}
+	// 版はトランザクションの前に読んだanimeから組み立てたため、写像がその後に変わっていたら書き込みをやめる。
+	if episodeAnimeIDChanged(current.AnimeID, unarchived.AnimeID) {
+		return nil, episodeConflictError(ctx, current.ID)
+	}
 
 	if unarchived.AnimeID != nil {
 		if err := uc.animeRepo.WithTx(tx).UpdateStatus(ctx, *unarchived.AnimeID, model.AnimeStatusPublished); err != nil {
 			return nil, fmt.Errorf("animeの状態更新に失敗しました: %w", err)
 		}
+	}
+
+	if err := writeDBEditRecord(ctx, uc.dbEditRecordRepos.WithTx(tx), recordPlan); err != nil {
+		return nil, err
 	}
 
 	if err := tx.Commit(); err != nil {

@@ -57,6 +57,7 @@ func newDeleteUserUsecase(
 		repository.NewForumPostRepository(queries),
 		repository.NewDBActivityRepository(queries),
 		repository.NewDBCommentRepository(queries),
+		repository.NewDBEditRepository(queries),
 		repository.NewWorkCommentRepository(queries),
 		repository.NewUserlandProjectMemberRepository(queries),
 		repository.NewOAuthAccessTokenRepository(queries),

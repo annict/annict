@@ -72,6 +72,7 @@ func newDeleteUserUsecase(db *sql.DB, queries *query.Queries, canceler Subscript
 		repository.NewForumPostRepository(queries),
 		repository.NewDBActivityRepository(queries),
 		repository.NewDBCommentRepository(queries),
+		repository.NewDBEditRepository(queries),
 		repository.NewWorkCommentRepository(queries),
 		repository.NewUserlandProjectMemberRepository(queries),
 		repository.NewOAuthAccessTokenRepository(queries),
@@ -923,6 +924,8 @@ func TestDeleteUserUsecase_Execute_DeleteCollectionsForumsAndAccount(t *testing.
 		}
 	}
 	activeApplicationID := testutil.CreateTestOAuthApplication(t, tx, otherUserID, false)
+	dbEditID := int64(testutil.NewDBEditBuilder(t, tx).WithUser(userID).Build())
+	otherDBEditID := int64(testutil.NewDBEditBuilder(t, tx).WithUser(otherUserID).Build())
 
 	rows := []struct {
 		name  string
@@ -940,6 +943,7 @@ func TestDeleteUserUsecase_Execute_DeleteCollectionsForumsAndAccount(t *testing.
 		{name: "他人のスレッドに書いたコメント", table: "forum_comments", id: detachedForumCommentID, want: 1},
 		{name: "Annict DBの編集履歴", table: "db_activities", id: testutil.CreateTestDbActivity(t, tx, userID, workID), want: 0},
 		{name: "Annict DBのコメント", table: "db_comments", id: testutil.CreateTestDbComment(t, tx, userID, workID), want: 0},
+		{name: "Annict DBの編集履歴の操作", table: "db_edits", id: dbEditID, want: 1},
 		{name: "作品へのコメント", table: "work_comments", id: testutil.CreateTestWorkComment(t, tx, userID, workID), want: 0},
 		{name: "Userlandプロジェクトへの参加", table: "userland_project_members", id: testutil.CreateTestUserlandProjectMember(t, tx, userID), want: 0},
 		{name: "アクセストークン", table: "oauth_access_tokens", id: testutil.CreateTestOAuthAccessToken(t, tx, userID, activeApplicationID), want: 0},
@@ -972,6 +976,7 @@ func TestDeleteUserUsecase_Execute_DeleteCollectionsForumsAndAccount(t *testing.
 		where string
 	}{
 		{name: "他人のスレッドに書いたコメントの投稿者", table: "forum_comments", id: detachedForumCommentID, where: "user_id IS NULL"},
+		{name: "Annict DBの編集履歴の操作の編集者", table: "db_edits", id: dbEditID, where: "actor = 'user' AND user_id IS NULL"},
 		{name: "他人のステータスの投稿元", table: "statuses", id: otherStatusID, where: "oauth_application_id IS NULL"},
 		{name: "他人の作品の記録の投稿元", table: "work_records", id: otherWorkRecordID, where: "oauth_application_id IS NULL"},
 		{name: "他人のエピソードの記録の投稿元", table: "episode_records", id: otherEpisodeRecordID, where: "oauth_application_id IS NULL"},
@@ -979,6 +984,9 @@ func TestDeleteUserUsecase_Execute_DeleteCollectionsForumsAndAccount(t *testing.
 		if got := testutil.CountRows(t, tx, c.table, "id = $1 AND "+c.where, c.id); got != 1 {
 			t.Errorf("%sが外れていない", c.name)
 		}
+	}
+	if got := testutil.CountRows(t, tx, "db_edits", "id = $1 AND user_id = $2", otherDBEditID, int64(otherUserID)); got != 1 {
+		t.Errorf("他人のAnnict DBの編集履歴の操作の編集者の件数 = %d、期待値 = 1", got)
 	}
 }
 

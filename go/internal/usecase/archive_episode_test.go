@@ -22,6 +22,8 @@ func newArchiveEpisodeUsecase(db *sql.DB) *ArchiveEpisodeUsecase {
 		db,
 		repository.NewEpisodeRepository(queries),
 		repository.NewAnimeRepository(queries),
+		repository.NewAnimeClassificationRepository(queries),
+		newTestDBEditRecordRepos(queries),
 	)
 }
 
@@ -104,7 +106,7 @@ func TestArchiveEpisodeUsecase_Execute_ArchivesEpisodeAndAnime(t *testing.T) {
 		t.Fatalf("同期済みanimeの準備に失敗: %v", err)
 	}
 
-	output, err := uc.Execute(context.Background(), ArchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()})
+	output, err := uc.Execute(context.Background(), ArchiveEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleEditor)})
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -151,7 +153,7 @@ func TestArchiveEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing.T
 	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
 	episodeID := insertUpdateTargetEpisode(t, db, workID, sql.NullInt64{}, 100)
 
-	if _, err := uc.Execute(context.Background(), ArchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()}); err != nil {
+	if _, err := uc.Execute(context.Background(), ArchiveEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleEditor)}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -184,7 +186,7 @@ func TestArchiveEpisodeUsecase_Execute_ArchivesEpisodeWithUnmappedParent(t *test
 		t.Fatalf("親作品の写像の解除に失敗: %v", err)
 	}
 
-	if _, err := uc.Execute(context.Background(), ArchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()}); err != nil {
+	if _, err := uc.Execute(context.Background(), ArchiveEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleEditor)}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -243,10 +245,9 @@ func TestArchiveEpisodeUsecase_Execute_RequiresCommitter(t *testing.T) {
 }
 
 // このテストは確認用の射影と非公開の書き込みの間の実行順を固定する。非公開がロック済みの
-// episodeを待つ間に
-// 別トランザクションがanimeの写像を変え、その窓でanime固有の編集もコミットする。解放後の
-// status書き込みは更新したepisodeが返す写像へ追従し、競合した内容を保持しなければならない。
-func TestArchiveEpisodeUsecase_Execute_UsesMappingFromArchivedRowAndPreservesConcurrentAnimeEdit(t *testing.T) {
+// episodeを待つ間に別トランザクションがanimeの写像を変える。編集履歴の版はトランザクションの前に
+// 読んだanimeから組み立てるため、解放後の非公開は書き込みをやめ、どちらのanimeのstatusも変えない。
+func TestArchiveEpisodeUsecase_Execute_RejectsWhenMappingChangesWhileEpisodeWriteWaits(t *testing.T) {
 	t.Parallel()
 
 	db := testutil.GetTestDB()
@@ -277,10 +278,11 @@ func TestArchiveEpisodeUsecase_Execute_UsesMappingFromArchivedRowAndPreservesCon
 		err    error
 	}
 	resultCh := make(chan archiveResult, 1)
+	editor := committedEditorForTest(t, model.RoleEditor)
 	go func() {
 		output, err := uc.Execute(ctx, ArchiveEpisodeInput{
 			EpisodeID: episodeID,
-			User:      unsavedCreateActor(),
+			User:      editor,
 		})
 		resultCh <- archiveResult{output: output, err: err}
 	}()
@@ -296,13 +298,6 @@ func TestArchiveEpisodeUsecase_Execute_UsesMappingFromArchivedRowAndPreservesCon
 	); err != nil {
 		t.Fatalf("episodeのanime写像変更に失敗: %v", err)
 	}
-	if _, err := db.ExecContext(
-		ctx,
-		`UPDATE animes SET archive_message = '同時編集後のメッセージ' WHERE id = $1`,
-		int64(currentAnimeID),
-	); err != nil {
-		t.Fatalf("anime固有属性の同時編集に失敗: %v", err)
-	}
 	if err := blockerTx.Commit(); err != nil {
 		t.Fatalf("ブロッカー用トランザクションのCommit()のエラー = %v", err)
 	}
@@ -313,35 +308,23 @@ func TestArchiveEpisodeUsecase_Execute_UsesMappingFromArchivedRowAndPreservesCon
 	case <-ctx.Done():
 		t.Fatalf("ブロッカーのコミット後にExecute()を待つcontextのエラー = %v、期待値 = nil (Execute()が完了すること)", ctx.Err())
 	}
-	if result.err != nil {
-		t.Fatalf("Execute()のエラー = %v", result.err)
+	appErr := model.AsAppError(result.err)
+	if appErr == nil || appErr.Code != model.AppErrCodeConflict {
+		t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeConflict", result.err)
 	}
-	if result.output == nil || result.output.EpisodeID != episodeID || result.output.WorkID != workID {
-		t.Fatalf("Execute()のoutput = %+v、期待値 = {EpisodeID:%d WorkID:%d}", result.output, int64(episodeID), int64(workID))
+	if unpublishedAt := readArchivedEpisodeState(t, db, episodeID); unpublishedAt.Valid {
+		t.Errorf("episodes.unpublished_at = %v、期待値 = NULLのまま", unpublishedAt.Time)
 	}
 
 	animeRepo := repository.NewAnimeRepository(query.New(db))
-	formerAnime, err := animeRepo.GetByID(ctx, formerAnimeID)
-	if err != nil || formerAnime == nil {
-		t.Fatalf("以前のanimeのGetByID() anime=%v err=%v", formerAnime, err)
-	}
-	if formerAnime.Status != model.AnimeStatusPublished {
-		t.Errorf("以前のanime.Status = %q、期待値 = %q", formerAnime.Status, model.AnimeStatusPublished)
-	}
-
-	currentAnime, err := animeRepo.GetByID(ctx, currentAnimeID)
-	if err != nil || currentAnime == nil {
-		t.Fatalf("現在のanimeのGetByID() anime=%v err=%v", currentAnime, err)
-	}
-	if currentAnime.Status != model.AnimeStatusArchived {
-		t.Errorf("現在のanime.Status = %q、期待値 = %q", currentAnime.Status, model.AnimeStatusArchived)
-	}
-	if currentAnime.ArchiveMessage.String != "同時編集後のメッセージ" {
-		t.Errorf(
-			"現在のanime.ArchiveMessage = %q、期待値 = %q",
-			currentAnime.ArchiveMessage.String,
-			"同時編集後のメッセージ",
-		)
+	for name, animeID := range map[string]model.AnimeID{"以前のanime": formerAnimeID, "現在のanime": currentAnimeID} {
+		anime, err := animeRepo.GetByID(ctx, animeID)
+		if err != nil || anime == nil {
+			t.Fatalf("%sのGetByID() anime=%v err=%v", name, anime, err)
+		}
+		if anime.Status != model.AnimeStatusPublished {
+			t.Errorf("%s.Status = %q、期待値 = %q", name, anime.Status, model.AnimeStatusPublished)
+		}
 	}
 }
 
@@ -392,10 +375,11 @@ func TestArchiveEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeW
 		err    error
 	}
 	resultCh := make(chan archiveResult, 1)
+	editor := committedEditorForTest(t, model.RoleEditor)
 	go func() {
 		output, err := uc.Execute(ctx, ArchiveEpisodeInput{
 			EpisodeID: episodeID,
-			User:      unsavedCreateActor(),
+			User:      editor,
 		})
 		resultCh <- archiveResult{output: output, err: err}
 	}()
@@ -487,7 +471,7 @@ func TestArchiveEpisodeUsecase_Execute_NotFound(t *testing.T) {
 	}
 	for name, episodeID := range tests {
 		t.Run(name, func(t *testing.T) {
-			_, err := uc.Execute(context.Background(), ArchiveEpisodeInput{EpisodeID: episodeID, User: unsavedCreateActor()})
+			_, err := uc.Execute(context.Background(), ArchiveEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleEditor)})
 			appErr := model.AsAppError(err)
 			if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
 				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", err)

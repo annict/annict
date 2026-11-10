@@ -27,6 +27,7 @@ func newUpdateEpisodeUsecase(db *sql.DB) *UpdateEpisodeUsecase {
 		repository.NewAnimeRepository(queries),
 		repository.NewAnimeClassificationRepository(queries),
 		validator.NewDBEpisodeUpdateValidator(),
+		newTestDBEditRecordRepos(queries),
 	)
 }
 

@@ -22,7 +22,10 @@ import (
 func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	t.Helper()
 
-	queries := query.New(db).WithTx(tx)
+	queries := query.New(db)
+	if tx != nil {
+		queries = queries.WithTx(tx)
+	}
 	cfg := &config.Config{Env: "test", Domain: "test.annict.com"}
 	sessionRepo := repository.NewSessionRepository(queries)
 	sessionManager := session.NewManager(sessionRepo, cfg)
@@ -31,6 +34,11 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	animeRepo := repository.NewAnimeRepository(queries)
 	animeClassificationRepo := repository.NewAnimeClassificationRepository(queries)
 
+	dbEditRecordRepos := usecase.DBEditRecordRepos{
+		DBEdit:         repository.NewDBEditRepository(queries),
+		AnimeRevision:  repository.NewAnimeRevisionRepository(queries),
+		PersonRevision: repository.NewPersonRevisionRepository(queries),
+	}
 	satelliteRepos := usecase.WorkSatelliteRepos{
 		ExternalID:      repository.NewAnimeExternalIDRepository(queries),
 		Link:            repository.NewAnimeLinkRepository(queries),
@@ -40,12 +48,12 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 		Event:           repository.NewAnimeEventRepository(queries),
 	}
 
-	getDBWorksUC := usecase.NewGetDBWorksUsecase(workRepo)
+	getDBWorksUC := usecase.NewGetDBWorksUsecase(workRepo, repository.NewFeatureFlagRepository(queries))
 	getDBWorkFormOptionsUC := usecase.NewGetDBWorkFormOptionsUsecase(numberFormatRepo)
-	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
-	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
-	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
-	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo)
+	getDBWorkEditUC := usecase.NewGetDBWorkEditUsecase(workRepo, numberFormatRepo, repository.NewFeatureFlagRepository(queries))
+	createWorkUC := usecase.NewCreateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
+	updateWorkUC := usecase.NewUpdateWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos, validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo))
+	deleteWorkUC := usecase.NewDeleteWorkUsecase(db, workRepo, animeRepo, animeClassificationRepo, satelliteRepos, dbEditRecordRepos)
 
 	return NewHandler(cfg, sessionManager, testutil.NewTestFlashManager(), testutil.NewTestImageHelper(), getDBWorksUC, getDBWorkFormOptionsUC, getDBWorkEditUC, createWorkUC, updateWorkUC, deleteWorkUC)
 }
@@ -55,6 +63,25 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 // 認可を通過させるため。
 func withCommitterUser(req *http.Request) *http.Request {
 	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, &model.User{ID: 1, Role: model.RoleEditor}))
+}
+
+// newCommittedEditorは、作品の作成のようにUseCaseが自前のトランザクションでコミットする送信の編集者を、
+// 共有テストDBにコミットして作る。編集履歴の操作がusersを外部キーで指すため、行の無いユーザーでは作成できない。
+// テストの終わりに削除する。
+func newCommittedEditor(t *testing.T, db *sql.DB) *model.User {
+	t.Helper()
+
+	tx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("編集者の作成トランザクションの開始に失敗: %v", err)
+	}
+	userID := testutil.NewUserBuilder(t, tx).WithRole(model.RoleEditor).Build()
+	if err := tx.Commit(); err != nil {
+		t.Fatalf("編集者の作成トランザクションのコミットに失敗: %v", err)
+	}
+	t.Cleanup(func() { testutil.DeleteUser(t, db, userID) })
+
+	return &model.User{ID: userID, Role: model.RoleEditor}
 }
 
 // assertNotFoundPageは404が共通のエラーページとして配信されることを検証する。古い

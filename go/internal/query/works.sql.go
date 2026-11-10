@@ -970,7 +970,8 @@ SELECT
     manual_episodes_count,
     start_episode_raw_number,
     number_format_id,
-    anime_id
+    anime_id,
+    updated_at
 FROM works
 WHERE id = ANY($1::bigint[])
 ORDER BY id
@@ -996,6 +997,7 @@ type ListWorksForAnimeSyncByIDsRow struct {
 	StartEpisodeRawNumber float64       `db:"start_episode_raw_number"`
 	NumberFormatID        sql.NullInt64 `db:"number_format_id"`
 	AnimeID               sql.NullInt64 `db:"anime_id"`
+	UpdatedAt             sql.NullTime  `db:"updated_at"`
 }
 
 func (q *Queries) ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int64) ([]ListWorksForAnimeSyncByIDsRow, error) {
@@ -1027,6 +1029,7 @@ func (q *Queries) ListWorksForAnimeSyncByIDs(ctx context.Context, dollar_1 []int
 			&i.StartEpisodeRawNumber,
 			&i.NumberFormatID,
 			&i.AnimeID,
+			&i.UpdatedAt,
 		); err != nil {
 			return nil, err
 		}
@@ -1257,38 +1260,50 @@ func (q *Queries) UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDPa
 	return err
 }
 
-const updateWorkDeletedAt = `-- name: UpdateWorkDeletedAt :exec
+const updateWorkDeletedAt = `-- name: UpdateWorkDeletedAt :execrows
 UPDATE works
 SET
     deleted_at = $1,
     updated_at = NOW()
 WHERE id = $2
+    AND updated_at IS NOT DISTINCT FROM $3::timestamptz
 `
 
 type UpdateWorkDeletedAtParams struct {
 	DeletedAt sql.NullTime `db:"deleted_at"`
 	ID        int64        `db:"id"`
+	Version   sql.NullTime `db:"version"`
 }
 
-func (q *Queries) UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error {
-	_, err := q.db.ExecContext(ctx, updateWorkDeletedAt, arg.DeletedAt, arg.ID)
-	return err
+// 事前に読んだ版を照合し、間に別の編集が入った場合は状態と履歴を書き込まない。
+func (q *Queries) UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, updateWorkDeletedAt, arg.DeletedAt, arg.ID, arg.Version)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }
 
-const updateWorkUnpublishedAt = `-- name: UpdateWorkUnpublishedAt :exec
+const updateWorkUnpublishedAt = `-- name: UpdateWorkUnpublishedAt :execrows
 UPDATE works
 SET
     unpublished_at = $1,
     updated_at = NOW()
 WHERE id = $2
+    AND updated_at IS NOT DISTINCT FROM $3::timestamptz
 `
 
 type UpdateWorkUnpublishedAtParams struct {
 	UnpublishedAt sql.NullTime `db:"unpublished_at"`
 	ID            int64        `db:"id"`
+	Version       sql.NullTime `db:"version"`
 }
 
-func (q *Queries) UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error {
-	_, err := q.db.ExecContext(ctx, updateWorkUnpublishedAt, arg.UnpublishedAt, arg.ID)
-	return err
+// 事前に読んだ版を照合し、間に別の編集が入った場合は状態と履歴を書き込まない。
+func (q *Queries) UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) (int64, error) {
+	result, err := q.db.ExecContext(ctx, updateWorkUnpublishedAt, arg.UnpublishedAt, arg.ID, arg.Version)
+	if err != nil {
+		return 0, err
+	}
+	return result.RowsAffected()
 }

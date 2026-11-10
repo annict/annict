@@ -24,6 +24,9 @@ type Querier interface {
 	// 受付が二重に処理されないよう、変更した件数を返す。ユーザー名が検証時から
 	// 変わった場合も更新しない。
 	AnonymizeAndSoftDeleteUser(ctx context.Context, arg AnonymizeAndSoftDeleteUserParams) (int64, error)
+	// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+	// 間に別の編集が入った場合は状態も履歴も書き込まない。
+	//
 	// 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
 	// unpublished_atを再スタンプせず、1行も返さない。作品idは確認ページが前提とした親作品との
 	// 一致を要求する。その間にAnnict::DataCare::MoveEpisodeで別作品へ移されたエピソードが、
@@ -49,23 +52,34 @@ type Querier interface {
 	// 更新側が必要なエピソードをNOWAITで先取りし、待たずに試行を中断するため。一括作成も作品を
 	// 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
 	ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error)
+	// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+	// 間に別の編集が入った場合は状態も履歴も書き込まない。
+	//
 	// 公開中の人物を非公開 (archived) にする。Rails版はperson_statusを読まないため、Rails版の表示と
 	// APIから除外されるようunpublished_atにも時刻を書く (作品の非公開と同じRails版への橋渡し)。
 	// 状態の確認と書き込みを1文で行うため、確認画面を開いた後に他者が状態を変えた場合も、1行も
 	// 返らない (not found) になる。時刻はCreatePersonと同じくUTCに変換してから書く。
-	ArchiveDBPerson(ctx context.Context, id int64) (int64, error)
+	ArchiveDBPerson(ctx context.Context, arg ArchiveDBPersonParams) (int64, error)
 	// 解約の通知で有効なユーザーの紐付けだけを外す。退会受付との行ロック競合後にも
 	// deleted_atを再評価し、論理削除済みのユーザーの紐付けを残す。
 	ClearActiveUserStripeSubscriberID(ctx context.Context, stripeSubscriberID sql.NullInt64) (int64, error)
 	CountActivitiesByUserID(ctx context.Context, userID int64) (int64, error)
+	// 作品・エピソードの操作の版の数を返す。起点の版は履歴に並べないため数えない。
+	CountAnimeRevisionHistory(ctx context.Context, animeID int64) (int64, error)
+	// ListDBEditsが並べる操作の数を返す。
+	CountDBEdits(ctx context.Context, includeDelisted bool) (int64, error)
 	CountDBEpisodes(ctx context.Context, workID int64) (int64, error)
 	CountDBPeople(ctx context.Context, includeDelisted bool) (int64, error)
 	CountDBWorks(ctx context.Context, arg CountDBWorksParams) (int64, error)
 	CountEpisodeRecordsByUserID(ctx context.Context, userID int64) (int64, error)
+	// ListPersonRevisionHistoryが並べる版の数を返す。
+	CountPersonRevisionHistory(ctx context.Context, arg CountPersonRevisionHistoryParams) (int64, error)
 	// 作品ごとの公開中のエピソードの数を返す。エピソードの無い作品の行は返さない
 	CountPublishedEpisodesByParentAnimeIDs(ctx context.Context, dollar_1 []int64) ([]CountPublishedEpisodesByParentAnimeIDsRow, error)
 	CountRecordsByUserID(ctx context.Context, userID int64) (int64, error)
 	CountUnusedUserTwoFactorRecoveryCodes(ctx context.Context, userID int64) (int64, error)
+	// ListWorkAnimeRevisionHistoryが並べる版の数を返す。
+	CountWorkAnimeRevisionHistory(ctx context.Context, animeID int64) (int64, error)
 	CreateAnime(ctx context.Context, arg CreateAnimeParams) (Anime, error)
 	CreateAnimeClassification(ctx context.Context, arg CreateAnimeClassificationParams) (AnimeClassification, error)
 	CreateAnimeEvent(ctx context.Context, arg CreateAnimeEventParams) (AnimeEvent, error)
@@ -73,7 +87,12 @@ type Querier interface {
 	CreateAnimeHashtag(ctx context.Context, arg CreateAnimeHashtagParams) (AnimeHashtag, error)
 	CreateAnimeLink(ctx context.Context, arg CreateAnimeLinkParams) (AnimeLink, error)
 	CreateAnimeOfficialAccount(ctx context.Context, arg CreateAnimeOfficialAccountParams) (AnimeOfficialAccount, error)
+	// 操作に属する作品・エピソードの版を1件作る。
+	CreateAnimeRevision(ctx context.Context, arg CreateAnimeRevisionParams) error
 	CreateAnimeSeason(ctx context.Context, arg CreateAnimeSeasonParams) (AnimeSeason, error)
+	// Annict DBの編集履歴の操作を1件作る。created_atはtimestamp with time zoneのため、NOW() を
+	// そのまま書く。
+	CreateDBEdit(ctx context.Context, arg CreateDBEditParams) (DbEdit, error)
 	CreateEmailNotification(ctx context.Context, arg CreateEmailNotificationParams) (CreateEmailNotificationRow, error)
 	// anime_idは後から書き戻さず行と一緒に書く。一括作成はエピソード本体より先にその
 	// animeを挿入するため、マッピングカラムの値が既に分かっているため。prev_episode_idには
@@ -86,6 +105,11 @@ type Querier interface {
 	// 放送枠から自動生成するエピソードを挿入する。CreateEpisodeと違い、DB活動は記録しない。
 	// Railsの自動生成も編集者を伴わずに作成し、DB活動を残さないため。
 	CreateGeneratedEpisode(ctx context.Context, arg CreateGeneratedEpisodeParams) (int64, error)
+	// 起点の版 (db_edit_idがNULLの版) を1件作る。同じ作品・エピソードの初めての記録が同時に走ったときは、
+	// 部分一意インデックスで先に作られた起点の版を残し、この行は足さない。
+	CreateInitialAnimeRevision(ctx context.Context, arg CreateInitialAnimeRevisionParams) error
+	// 人物の起点の版を1件作る。CreateInitialAnimeRevisionと同じく、先に作られた起点の版があれば足さない。
+	CreateInitialPersonRevision(ctx context.Context, arg CreateInitialPersonRevisionParams) error
 	CreateOAuthAccessToken(ctx context.Context, arg CreateOAuthAccessTokenParams) (int64, error)
 	CreateOAuthApplication(ctx context.Context, arg CreateOAuthApplicationParams) (int64, error)
 	CreatePasswordResetToken(ctx context.Context, arg CreatePasswordResetTokenParams) (PasswordResetToken, error)
@@ -97,6 +121,8 @@ type Querier interface {
 	// 書いている。NOW() をそのまま書くと接続のTimeZone設定で壁時計の値が変わるため、UTCに
 	// 変換してから書く (UpdateDBPersonも同じ)。
 	CreatePerson(ctx context.Context, arg CreatePersonParams) (int64, error)
+	// 操作に属する人物の版を1件作る。
+	CreatePersonRevision(ctx context.Context, arg CreatePersonRevisionParams) error
 	CreateProfile(ctx context.Context, arg CreateProfileParams) (CreateProfileRow, error)
 	CreateSession(ctx context.Context, arg CreateSessionParams) (Session, error)
 	CreateSetting(ctx context.Context, userID int64) (CreateSettingRow, error)
@@ -154,6 +180,9 @@ type Querier interface {
 	// 他人宛ての通知のうち未読の分だけ、宛先のusers.notifications_count (未読数) を減算する。
 	// 通知は宛先 (user_id) で絞り、user_idのインデックスから引く。
 	DeleteCommentsOnEpisodeRecordsByUserID(ctx context.Context, arg DeleteCommentsOnEpisodeRecordsByUserIDParams) (int64, error)
+	// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+	// 間に別の編集が入った場合は状態も履歴も書き込まない。
+	//
 	// 削除は、エピソードがまだ削除されていないことを条件とする。他者が削除する前に開いた一覧から、
 	// その削除後に送信された場合は、deleted_atを再スタンプせず、カウンターを2度目に減算せず、
 	// 1行も返さない。作品idは一覧が名指しした親作品との一致を要求する。その間に
@@ -196,11 +225,14 @@ type Querier interface {
 	// 理由はUpdateDBEpisodeの張り替えが述べるものと同じ。削除するエピソード自身の
 	// prev_episode_idはそのままにする。削除済みの行は何も表示しないため。
 	DeleteDBEpisode(ctx context.Context, arg DeleteDBEpisodeParams) (DeleteDBEpisodeRow, error)
+	// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+	// 間に別の編集が入った場合は状態も履歴も書き込まない。
+	//
 	// 人物を論理削除する。Rails版の物理削除 (destroy_in_batches) と異なり、キャスト・スタッフ・
 	// 編集履歴は残す。Rails版はperson_statusを読まないため、Rails版の表示から除外されるよう
 	// deleted_atにも時刻を書く (Rails版への橋渡し)。削除できるのは一覧に表示する公開中と
 	// アーカイブの人物で、削除済み・掲載停止の人物は対象にしない。
-	DeleteDBPerson(ctx context.Context, id int64) (int64, error)
+	DeleteDBPerson(ctx context.Context, arg DeleteDBPersonParams) (int64, error)
 	// ユーザーが行ったAnnict DBの編集履歴を最大batch_size件削除し、削除した件数を返す。
 	DeleteDbActivitiesByUserID(ctx context.Context, arg DeleteDbActivitiesByUserIDParams) (int64, error)
 	// ユーザーが書いたAnnict DBのコメントを最大batch_size件削除し、削除した件数を返す。
@@ -338,6 +370,9 @@ type Querier interface {
 	// 対象から外れており、掲載停止にすると一意インデックスに戻って同じ名前の別人と衝突しうるため。
 	// 確認後に人物が変わった送信を止めるため、updated_atも照合する。
 	DelistDBPerson(ctx context.Context, arg DelistDBPersonParams) (int64, error)
+	// ユーザーが行ったAnnict DBの編集の操作を最大batch_size件、編集者との紐づきを外し、外した件数を
+	// 返す。前後の版の差分が正しく出るよう、操作と版は残す。
+	DetachDBEditsFromUser(ctx context.Context, arg DetachDBEditsFromUserParams) (int64, error)
 	// ユーザーが持つ論理削除済みのアプリケーションから投稿された他人のエピソードの記録を最大batch_size件、
 	// アプリケーションとの紐づきを外し、外した件数を返す。投稿元のアプリケーションは表示に
 	// 使われないため、エピソードの記録そのものと更新日時は変えない。
@@ -425,8 +460,11 @@ type Querier interface {
 	// 失われたエピソードを、その作品を見出しとサブナビで指すページから編集させないため。
 	//
 	// updated_atはフォームがhiddenで持ち回る版。古い読み取りに対する送信を更新側で
-	// 却下できるようにする。
+	// 却下できるようにする。anime_idは、同じ範囲のエピソードを見せる履歴の画面が版を引くのに使う。
 	GetEpisodeForEditByID(ctx context.Context, id int64) (GetEpisodeForEditByIDRow, error)
+	// タイトルを入れる直前に、エピソードの版とanimeの写像を読む。編集履歴の版をこの読み取りから組み立て、
+	// UpdateEpisodeEmptyTitleはこの2つを照合して書く。
+	GetEpisodeForTitleFillByID(ctx context.Context, id int64) (GetEpisodeForTitleFillByIDRow, error)
 	// 更新が読むのは、送信された値が運ばないものだけ。title_roと状態のタイムスタンプ
 	// (animesへの両書きが写像するがフォームでは編集しない) と、両書きを行うか自体を決める2つの
 	// マッピングカラム (エピソード自身のanimeと親作品のanime)。編集対象のカラムは送信された値が
@@ -454,6 +492,9 @@ type Querier interface {
 	// を読む。編集できるのは一覧に表示する公開中とアーカイブの人物だけで、削除と掲載停止の
 	// 人物は除く。
 	GetPersonForEditByID(ctx context.Context, id int64) (GetPersonForEditByIDRow, error)
+	// 編集履歴の版を組み立てるため、書き込む前の人物の状態を読む。スナップショットの列と状態と版を持ち、
+	// 掲載停止の対応記録 (delist_message) は版に入れないため読まない。どの状態の人物も返す。
+	GetPersonForRevisionByID(ctx context.Context, id int64) (GetPersonForRevisionByIDRow, error)
 	// アーカイブ・アーカイブ解除・削除の確認画面が、対象の名前と現在の状態を読む。その画面が
 	// 操作できない人物を呼び出し側で弾けるよう、状態で絞り込まずに返す
 	// (GetWorkForStateChangeByIDと同じ)。
@@ -583,11 +624,28 @@ type Querier interface {
 	ListAnimeIDsBySeasons(ctx context.Context, arg ListAnimeIDsBySeasonsParams) ([]int64, error)
 	// 旧作品のIDから、写した先のanimeのIDを引く。animeに写していない旧作品は含めない
 	ListAnimeIDsByWorkIDs(ctx context.Context, workIds []int64) ([]ListAnimeIDsByWorkIDsRow, error)
+	// 指定した作品・エピソードのうち、版を1つ以上持つもののIDを返す。
+	ListAnimeIDsWithRevisions(ctx context.Context, animeIds []int64) ([]int64, error)
 	ListAnimeLinksByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeLink, error)
 	ListAnimeOfficialAccountsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeOfficialAccount, error)
 	ListAnimeRedirectsByOldAnimeIDs(ctx context.Context, oldAnimeIds []int64) ([]AnimeRedirect, error)
+	// 作品・エピソードの操作の版を、新しい順に1ページ分返す。各版には、起点の版を含めて同じ作品・エピソードの
+	// 1つ前の版のスナップショットと、操作・編集者のアットネームを付ける。1つ前の版は差分の比べる相手で、
+	// ページの外にあっても取れるよう、起点の版を含めたすべての版に対してLAGを取ってからページを切る。
+	ListAnimeRevisionHistory(ctx context.Context, arg ListAnimeRevisionHistoryParams) ([]ListAnimeRevisionHistoryRow, error)
+	// 作品・エピソードの版を、起点の版を含めてIDの昇順に返す。
+	ListAnimeRevisionsByAnimeID(ctx context.Context, animeID int64) ([]ListAnimeRevisionsByAnimeIDRow, error)
+	// Annict DBの編集履歴の1ページ分の操作に属する、作品・エピソードの版をIDの昇順に返す。各版には、起点の版を
+	// 含めた同じ作品・エピソードの1つ前の版と、今のリソースへのリンクに使うworks.id・episodes.id (無いときは0) を
+	// 付ける。work_idとwork_titleは、作品の版ではその作品、エピソードの版では今の親作品のもの。今のリソースが
+	// Annict DBの一覧で見えない版 (削除した作品・エピソード) は除く。
+	ListAnimeRevisionsForDBEdits(ctx context.Context, dbEditIds []int64) ([]ListAnimeRevisionsForDBEditsRow, error)
 	ListAnimeSeasonsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]AnimeSeason, error)
 	ListAnimesByIDs(ctx context.Context, dollar_1 []int64) ([]Anime, error)
+	// Annict DBの編集履歴の操作を、IDの降順に1ページ分返す。見える版を1つも持たない操作は、ページの件数が
+	// 欠けないよう、ページを切る前に除く。編集者のいない操作 (システムの書き込みと退会したユーザーの編集) では
+	// アットネームを空文字列にする。
+	ListDBEdits(ctx context.Context, arg ListDBEditsParams) ([]ListDBEditsRow, error)
 	// 直前のエピソードはepisodes.prev_episode_idを読まず、sort_number昇順の隣接行から
 	// 導出する。ウィンドウはCTEの中で作品の一覧全体に対して評価され、LIMIT / OFFSETが
 	// 1ページに絞り込む前に確定するため、ページ末尾の行も次ページに載るエピソードを指せる。
@@ -628,10 +686,22 @@ type Querier interface {
 	// 作品も未削除・公開中に限る (Railsも対象の作品をWork.only_keptで引き直す)。
 	ListEpisodesForTitleFill(ctx context.Context, createdFrom time.Time) ([]ListEpisodesForTitleFillRow, error)
 	ListNumberFormats(ctx context.Context) ([]ListNumberFormatsRow, error)
+	// 指定した人物のうち、版を1つ以上持つもののIDを返す。
+	ListPersonIDsWithRevisions(ctx context.Context, personIds []int64) ([]int64, error)
 	// 一括登録の名前の重複確認に使う。people.nameの一意インデックス (index_people_on_name) と
 	// 同じく、deletedの人物だけを除いて照合する。掲載停止 (delisted) の人物との重複を別の
 	// エラーで伝えるため、名前を占有している人物の状態も返す。
 	ListPersonNameHolders(ctx context.Context, names []string) ([]ListPersonNameHoldersRow, error)
+	// 人物の操作の版を、新しい順に1ページ分返す。各版には、起点の版と隠す版を含めた1つ前の版のスナップショットと、
+	// 操作・編集者のアットネームを付ける。include_delistedが偽のときは、掲載停止・掲載再開の操作の版と、
+	// 掲載停止中に記録した版 (スナップショットのstatusがdelisted) を除く。掲載停止の事実を管理者以外に
+	// 伝えないため。1つ前の版は隠す版も含めてLAGを取ってからページを切るため、見せる版の差分に隠した版の変更は出ない。
+	ListPersonRevisionHistory(ctx context.Context, arg ListPersonRevisionHistoryParams) ([]ListPersonRevisionHistoryRow, error)
+	// 人物の版を、起点の版を含めてIDの昇順に返す。
+	ListPersonRevisionsByPersonID(ctx context.Context, personID int64) ([]PersonRevision, error)
+	// Annict DBの編集履歴の1ページ分の操作に属する、人物の版をIDの昇順に返す。各版には、起点の版と隠す版を含めた
+	// 同じ人物の1つ前の版を付ける。見せる版の条件はListDBEditsと同じ。
+	ListPersonRevisionsForDBEdits(ctx context.Context, arg ListPersonRevisionsForDBEditsParams) ([]ListPersonRevisionsForDBEditsRow, error)
 	// 人物の編集フォームの出身地の選択肢。都道府県の順 (北海道から沖縄県、最後に海外) は
 	// IDの順と一致するため、IDで並べる。
 	ListPrefectures(ctx context.Context) ([]ListPrefecturesRow, error)
@@ -647,6 +717,12 @@ type Querier interface {
 	// 未削除・公開中であることを加えたもの。
 	// 一覧では処理するidと所属作品だけを読み、話数の計算に使う値は作品ロック後に読み直す。
 	ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlotsForEpisodeGenerationParams) ([]ListSlotsForEpisodeGenerationRow, error)
+	// 作品の操作の版と、版の時点でその作品の配下にあったエピソードの操作の版を、新しい順に1ページ分返す。
+	// 1つ前の版はエピソードごとに取るため、作品とエピソードのすべての版に対して、作品・エピソードで分けたLAGを
+	// 取ってからページを切る。削除したエピソードの版は、Annict DBのエピソードの一覧と同じく誰にも見せないため除く。
+	// 版の時点と今の親作品が異なる場合も、今の親作品が削除されていればエピソードの版を除く。
+	// エピソードの版には、履歴の画面へのリンクに使うepisodes.idを付け、作品の版では0にする。
+	ListWorkAnimeRevisionHistory(ctx context.Context, arg ListWorkAnimeRevisionHistoryParams) ([]ListWorkAnimeRevisionHistoryRow, error)
 	ListWorkIDsAfter(ctx context.Context, arg ListWorkIDsAfterParams) ([]int64, error)
 	// 参照モデルのanimeに写した旧作品のIDを引く
 	ListWorkIDsByAnimeIDs(ctx context.Context, dollar_1 []int64) ([]ListWorkIDsByAnimeIDsRow, error)
@@ -742,6 +818,9 @@ type Querier interface {
 	// last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
 	ReconcileWorkImageAnimeIDsAfter(ctx context.Context, arg ReconcileWorkImageAnimeIDsAfterParams) (ReconcileWorkImageAnimeIDsAfterRow, error)
 	TouchSession(ctx context.Context, sessionID string) error
+	// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+	// 間に別の編集が入った場合は状態も履歴も書き込まない。
+	//
 	// 再公開はArchiveDBEpisodeの逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
 	// カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開
 	// であることを条件とする。他者が再公開する前に開いた一覧から、その再公開後に送信された場合は、
@@ -766,9 +845,12 @@ type Querier interface {
 	//
 	// 書き込みがepisodes先・works後なのはArchiveDBEpisodeが述べる理由による。
 	UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisodeParams) (UnarchiveDBEpisodeRow, error)
+	// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+	// 間に別の編集が入った場合は状態も履歴も書き込まない。
+	//
 	// 非公開の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。ArchiveDBPersonの
 	// 逆で、非公開の人物だけを対象にする。
-	UnarchiveDBPerson(ctx context.Context, id int64) (int64, error)
+	UnarchiveDBPerson(ctx context.Context, arg UnarchiveDBPersonParams) (int64, error)
 	// 掲載停止の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。対応記録
 	// (delist_message) は、申出に応じた経緯として残す。確認後の変更はupdated_atで検出する。
 	UndelistDBPerson(ctx context.Context, arg UndelistDBPersonParams) (int64, error)
@@ -844,6 +926,9 @@ type Querier interface {
 	// しまうため。
 	UpdateDBPerson(ctx context.Context, arg UpdateDBPersonParams) (int64, error)
 	UpdateEpisodeAnimeID(ctx context.Context, arg UpdateEpisodeAnimeIDParams) error
+	// versionとanime_idはGetEpisodeForTitleFillByIDで読んだ値で、編集履歴の版をその時点の読み取りから組み立てるため、
+	// 間に別の編集や写像の変更が入った行には書き込まない。
+	//
 	// 問い合わせに使った作品・話数・TIDと対象条件が一致する間だけタイトルを入れる。作品を
 	// ロックしてTIDを保持し、エピソードのUPDATEによる行ロックをコミットまで保持する。
 	// Railsはエピソード行の更新後に作品をtouchするため、編集でロック中のエピソードを待つと
@@ -879,8 +964,10 @@ type Querier interface {
 	// 行を書いたことを意味し、呼び出し側は上書きせず競合として報告する。
 	UpdateWork(ctx context.Context, arg UpdateWorkParams) (int64, error)
 	UpdateWorkAnimeID(ctx context.Context, arg UpdateWorkAnimeIDParams) error
-	UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) error
-	UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) error
+	// 事前に読んだ版を照合し、間に別の編集が入った場合は状態と履歴を書き込まない。
+	UpdateWorkDeletedAt(ctx context.Context, arg UpdateWorkDeletedAtParams) (int64, error)
+	// 事前に読んだ版を照合し、間に別の編集が入った場合は状態と履歴を書き込まない。
+	UpdateWorkUnpublishedAt(ctx context.Context, arg UpdateWorkUnpublishedAtParams) (int64, error)
 	// 欠損した分類の再作成と既存行の更新をアトミックに行う。エピソード編集では事前の
 	// 存在確認をせずこのクエリを使い、並行削除によって両書き先のanimeだけが分類なしで残るのを
 	// 防ぐ。

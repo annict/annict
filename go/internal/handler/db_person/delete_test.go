@@ -26,10 +26,10 @@ func newDeleteRequest(id string, user *model.User, form url.Values) *http.Reques
 }
 
 // isDeletedは人物のstatusがdeletedで、Rails版への橋渡しのdeleted_atが立っているかを返す。
-func isDeleted(t *testing.T, tx *sql.Tx, id model.PersonID) bool {
+func isDeleted(t *testing.T, db *sql.DB, id model.PersonID) bool {
 	t.Helper()
 	var deleted bool
-	if err := tx.QueryRow(`SELECT status = 'deleted' AND deleted_at IS NOT NULL FROM people WHERE id = $1`, int64(id)).Scan(&deleted); err != nil {
+	if err := db.QueryRow(`SELECT status = 'deleted' AND deleted_at IS NOT NULL FROM people WHERE id = $1`, int64(id)).Scan(&deleted); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
 	}
 	return deleted
@@ -42,7 +42,7 @@ func TestDelete(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 	handler := newTestHandler(t, db, tx)
-	admin := &model.User{ID: 1, Role: model.RoleAdmin}
+	admin := testutil.CreateCommittedUser(t, model.RoleAdmin)
 
 	tests := []struct {
 		name         string
@@ -57,11 +57,12 @@ func TestDelete(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			builder := testutil.NewPersonBuilder(t, tx)
-			if tt.archived {
-				builder = builder.WithStatus(model.PersonStatusArchived)
-			}
-			personID := builder.Build()
+			personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+				if tt.archived {
+					return b.WithStatus(model.PersonStatusArchived)
+				}
+				return b
+			})
 
 			rr := httptest.NewRecorder()
 			handler.Delete(rr, newDeleteRequest(personID.String(), admin, url.Values{"return_to": {tt.returnTo}}))
@@ -72,7 +73,7 @@ func TestDelete(t *testing.T) {
 			if got := rr.Header().Get("Location"); got != tt.wantLocation {
 				t.Errorf("リダイレクト先 = %q、期待値 = %q", got, tt.wantLocation)
 			}
-			if !isDeleted(t, tx, personID) {
+			if !isDeleted(t, db, personID) {
 				t.Error("人物が削除されていません")
 			}
 		})
@@ -87,9 +88,9 @@ func TestDelete_HTMXRedirect(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 	handler := newTestHandler(t, db, tx)
-	personID := testutil.NewPersonBuilder(t, tx).Build()
+	personID := testutil.CreateCommittedPerson(t, nil)
 
-	req := newDeleteRequest(personID.String(), &model.User{ID: 1, Role: model.RoleAdmin}, url.Values{})
+	req := newDeleteRequest(personID.String(), testutil.CreateCommittedUser(t, model.RoleAdmin), url.Values{})
 	req.Header.Set("HX-Request", "true")
 	rr := httptest.NewRecorder()
 	handler.Delete(rr, req)
@@ -112,13 +113,17 @@ func TestDelete_NotFound(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 	handler := newTestHandler(t, db, tx)
-	delistedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDelisted).Build()
-	deletedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDeleted).Build()
+	delistedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDelisted)
+	})
+	deletedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDeleted)
+	})
 
 	for _, id := range []string{"999999999", "abc", delistedID.String(), deletedID.String()} {
 		t.Run(id, func(t *testing.T) {
 			rr := httptest.NewRecorder()
-			handler.Delete(rr, newDeleteRequest(id, &model.User{ID: 1, Role: model.RoleAdmin}, url.Values{}))
+			handler.Delete(rr, newDeleteRequest(id, testutil.CreateCommittedUser(t, model.RoleAdmin), url.Values{}))
 
 			if rr.Code != http.StatusNotFound {
 				t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusNotFound)
@@ -134,7 +139,7 @@ func TestDelete_Forbidden(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 	handler := newTestHandler(t, db, tx)
-	personID := testutil.NewPersonBuilder(t, tx).Build()
+	personID := testutil.CreateCommittedPerson(t, nil)
 
 	for _, role := range []int32{model.RoleUser, model.RoleEditor} {
 		t.Run(fmt.Sprint(role), func(t *testing.T) {
@@ -147,7 +152,7 @@ func TestDelete_Forbidden(t *testing.T) {
 		})
 	}
 
-	if isDeleted(t, tx, personID) {
+	if isDeleted(t, db, personID) {
 		t.Error("拒否した送信が人物を削除しました")
 	}
 }

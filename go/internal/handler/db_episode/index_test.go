@@ -34,9 +34,15 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	sessionManager := session.NewManager(repository.NewSessionRepository(queries), cfg)
 	workRepo := repository.NewWorkRepository(queries)
 	episodeRepo := repository.NewEpisodeRepository(queries)
+	featureFlagRepo := repository.NewFeatureFlagRepository(queries)
 
 	// 作成・更新・削除UseCaseは自前のトランザクションを開くため、テスト用トランザクション
 	// ではなくプールに対して組み立てる。コミットされた行はそのテスト側で後始末する。
+	dbEditRecordRepos := usecase.DBEditRecordRepos{
+		DBEdit:         repository.NewDBEditRepository(query.New(db)),
+		AnimeRevision:  repository.NewAnimeRevisionRepository(query.New(db)),
+		PersonRevision: repository.NewPersonRevisionRepository(query.New(db)),
+	}
 	createEpisodesUC := usecase.NewCreateEpisodesUsecase(
 		db,
 		repository.NewWorkRepository(query.New(db)),
@@ -44,6 +50,7 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 		repository.NewAnimeRepository(query.New(db)),
 		repository.NewAnimeClassificationRepository(query.New(db)),
 		validator.NewDBEpisodeCreateValidator(),
+		dbEditRecordRepos,
 	)
 	updateEpisodeUC := usecase.NewUpdateEpisodeUsecase(
 		db,
@@ -51,21 +58,24 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 		repository.NewAnimeRepository(query.New(db)),
 		repository.NewAnimeClassificationRepository(query.New(db)),
 		validator.NewDBEpisodeUpdateValidator(),
+		dbEditRecordRepos,
 	)
 	deleteEpisodeUC := usecase.NewDeleteEpisodeUsecase(
 		db,
 		repository.NewEpisodeRepository(query.New(db)),
 		repository.NewAnimeRepository(query.New(db)),
+		repository.NewAnimeClassificationRepository(query.New(db)),
+		dbEditRecordRepos,
 	)
 
 	return NewHandler(
 		cfg,
 		sessionManager,
 		testutil.NewTestFlashManager(),
-		usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo),
+		usecase.NewGetDBEpisodesUsecase(workRepo, episodeRepo, featureFlagRepo),
 		usecase.NewGetDBEpisodeNewUsecase(workRepo),
 		createEpisodesUC,
-		usecase.NewGetDBEpisodeEditUsecase(episodeRepo),
+		usecase.NewGetDBEpisodeEditUsecase(episodeRepo, featureFlagRepo),
 		updateEpisodeUC,
 		deleteEpisodeUC,
 	)
@@ -272,7 +282,7 @@ func TestIndex_ActionColumnFollowsViewerRole(t *testing.T) {
 			// 列の見出しはコントロールと同じ条件で出る。操作の無い閲覧者には、空の
 			// セルが並ぶ列ではなく列そのものを出さない。
 			wantHeader := tt.wantCommitterOnly || tt.wantAdminOnly
-			if got := strings.Contains(body, `<th scope="col" class="text-center">操作</th>`); got != wantHeader {
+			if got := strings.Contains(body, `<th scope="col" class="text-center">メニュー</th>`); got != wantHeader {
 				t.Errorf("操作列の見出しの有無 = %v、期待値 = %v", got, wantHeader)
 			}
 			if wantHeader {
@@ -708,6 +718,54 @@ func TestLastPageNumber(t *testing.T) {
 
 			if got := lastPageNumber(tt.totalCount, tt.perPage); got != tt.want {
 				t.Errorf("lastPageNumber(%d, %d) = %d、期待値 = %d", tt.totalCount, tt.perPage, got, tt.want)
+			}
+		})
+	}
+}
+
+// TestIndex_RevisionsLinkは、ログインしていない閲覧者でも、フィーチャーフラグdb_edit_historyを有効にした
+// デバイスなら各行に「履歴」とメニューの列を出し、作品のサブナビには「履歴」を出さないことを検証する。
+func TestIndex_RevisionsLink(t *testing.T) {
+	t.Parallel()
+
+	// feature_flagsは (device_token, name) で一意のため、ケースごとに別のトークンを使う。
+	for _, tt := range []struct {
+		name        string
+		deviceToken string
+		flagged     bool
+	}{
+		{name: "フラグを有効にしたデバイス", deviceToken: "db-episodes-index-revisions-flagged", flagged: true},
+		{name: "フラグを有効にしていないデバイス", deviceToken: "db-episodes-index-revisions-unflagged", flagged: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db, tx := testutil.SetupTx(t)
+			workID := testutil.NewWorkBuilder(t, tx).WithTitle("履歴リンクの作品").Build()
+			episodeID := testutil.NewEpisodeBuilder(t, tx, workID).WithNumber("第1話").Build()
+			if tt.flagged {
+				testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(tt.deviceToken).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+
+			req := newIndexRequest(workID, "")
+			req.AddCookie(&http.Cookie{Name: authMiddleware.DeviceTokenCookieName, Value: tt.deviceToken})
+			rr := httptest.NewRecorder()
+			newTestHandler(t, db, tx).Index(rr, req)
+
+			if rr.Code != http.StatusOK {
+				t.Fatalf("ステータスコード = %v、期待値 = %v", rr.Code, http.StatusOK)
+			}
+			body := rr.Body.String()
+			for _, s := range []string{
+				fmt.Sprintf(`href="/db/episodes/%d/revisions"`, int64(episodeID)),
+				`<th scope="col" class="text-center">メニュー</th>`,
+			} {
+				if got := strings.Contains(body, s); got != tt.flagged {
+					t.Errorf("%qの有無 = %v、期待値 = %v", s, got, tt.flagged)
+				}
+			}
+			if workLink := fmt.Sprintf(`href="/db/works/%d/revisions"`, int64(workID)); strings.Contains(body, workLink) {
+				t.Errorf("作品のサブナビに%sが出ている", workLink)
 			}
 		})
 	}

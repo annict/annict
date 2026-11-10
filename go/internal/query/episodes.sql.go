@@ -21,6 +21,7 @@ WITH archived_episode AS (
         updated_at = NOW()
     WHERE episodes.id = $1
         AND episodes.work_id = $2
+        AND episodes.updated_at IS NOT DISTINCT FROM $3::timestamptz
         AND episodes.unpublished_at IS NULL
         AND episodes.deleted_at IS NULL
         AND EXISTS (
@@ -45,8 +46,9 @@ INNER JOIN touched_work tw ON tw.id = ae.work_id
 `
 
 type ArchiveDBEpisodeParams struct {
-	ID     int64 `db:"id"`
-	WorkID int64 `db:"work_id"`
+	ID      int64        `db:"id"`
+	WorkID  int64        `db:"work_id"`
+	Version sql.NullTime `db:"version"`
 }
 
 type ArchiveDBEpisodeRow struct {
@@ -54,6 +56,9 @@ type ArchiveDBEpisodeRow struct {
 	AnimeID sql.NullInt64 `db:"anime_id"`
 }
 
+// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+// 間に別の編集が入った場合は状態も履歴も書き込まない。
+//
 // 非公開は、エピソードが今も公開中であることを条件とする。古い確認ページからの送信は
 // unpublished_atを再スタンプせず、1行も返さない。作品idは確認ページが前提とした親作品との
 // 一致を要求する。その間にAnnict::DataCare::MoveEpisodeで別作品へ移されたエピソードが、
@@ -79,7 +84,7 @@ type ArchiveDBEpisodeRow struct {
 // 更新側が必要なエピソードをNOWAITで先取りし、待たずに試行を中断するため。一括作成も作品を
 // 先に取るが、行を挿入するだけのため本ステートメントが保持するエピソードを待つことはない。
 func (q *Queries) ArchiveDBEpisode(ctx context.Context, arg ArchiveDBEpisodeParams) (ArchiveDBEpisodeRow, error) {
-	row := q.db.QueryRowContext(ctx, archiveDBEpisode, arg.ID, arg.WorkID)
+	row := q.db.QueryRowContext(ctx, archiveDBEpisode, arg.ID, arg.WorkID, arg.Version)
 	var i ArchiveDBEpisodeRow
 	err := row.Scan(&i.ID, &i.AnimeID)
 	return i, err
@@ -243,6 +248,7 @@ WITH deleted_episode AS (
         updated_at = NOW()
     WHERE episodes.id = $1
         AND episodes.work_id = $2
+        AND episodes.updated_at IS NOT DISTINCT FROM $3::timestamptz
         AND episodes.deleted_at IS NULL
         AND EXISTS (
             SELECT 1
@@ -276,8 +282,9 @@ INNER JOIN touched_work tw ON tw.id = de.work_id
 `
 
 type DeleteDBEpisodeParams struct {
-	ID     int64 `db:"id"`
-	WorkID int64 `db:"work_id"`
+	ID      int64        `db:"id"`
+	WorkID  int64        `db:"work_id"`
+	Version sql.NullTime `db:"version"`
 }
 
 type DeleteDBEpisodeRow struct {
@@ -285,6 +292,9 @@ type DeleteDBEpisodeRow struct {
 	AnimeID sql.NullInt64 `db:"anime_id"`
 }
 
+// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+// 間に別の編集が入った場合は状態も履歴も書き込まない。
+//
 // 削除は、エピソードがまだ削除されていないことを条件とする。他者が削除する前に開いた一覧から、
 // その削除後に送信された場合は、deleted_atを再スタンプせず、カウンターを2度目に減算せず、
 // 1行も返さない。作品idは一覧が名指しした親作品との一致を要求する。その間に
@@ -327,7 +337,7 @@ type DeleteDBEpisodeRow struct {
 // 理由はUpdateDBEpisodeの張り替えが述べるものと同じ。削除するエピソード自身の
 // prev_episode_idはそのままにする。削除済みの行は何も表示しないため。
 func (q *Queries) DeleteDBEpisode(ctx context.Context, arg DeleteDBEpisodeParams) (DeleteDBEpisodeRow, error) {
-	row := q.db.QueryRowContext(ctx, deleteDBEpisode, arg.ID, arg.WorkID)
+	row := q.db.QueryRowContext(ctx, deleteDBEpisode, arg.ID, arg.WorkID, arg.Version)
 	var i DeleteDBEpisodeRow
 	err := row.Scan(&i.ID, &i.AnimeID)
 	return i, err
@@ -341,6 +351,8 @@ SELECT
     e.title,
     e.unpublished_at,
     e.deleted_at,
+    e.updated_at,
+    e.anime_id,
     w.title AS work_title,
     w.no_episodes AS work_no_episodes
 FROM episodes e
@@ -357,6 +369,8 @@ type GetEpisodeForArchiveByIDRow struct {
 	Title          sql.NullString `db:"title"`
 	UnpublishedAt  sql.NullTime   `db:"unpublished_at"`
 	DeletedAt      sql.NullTime   `db:"deleted_at"`
+	UpdatedAt      sql.NullTime   `db:"updated_at"`
+	AnimeID        sql.NullInt64  `db:"anime_id"`
 	WorkTitle      string         `db:"work_title"`
 	WorkNoEpisodes bool           `db:"work_no_episodes"`
 }
@@ -384,6 +398,8 @@ func (q *Queries) GetEpisodeForArchiveByID(ctx context.Context, id int64) (GetEp
 		&i.Title,
 		&i.UnpublishedAt,
 		&i.DeletedAt,
+		&i.UpdatedAt,
+		&i.AnimeID,
 		&i.WorkTitle,
 		&i.WorkNoEpisodes,
 	)
@@ -393,7 +409,9 @@ func (q *Queries) GetEpisodeForArchiveByID(ctx context.Context, id int64) (GetEp
 const getEpisodeForDeleteByID = `-- name: GetEpisodeForDeleteByID :one
 SELECT
     e.id,
-    e.work_id
+    e.work_id,
+    e.updated_at,
+    e.anime_id
 FROM episodes e
 INNER JOIN works w ON w.id = e.work_id
 WHERE e.id = $1
@@ -402,8 +420,10 @@ WHERE e.id = $1
 `
 
 type GetEpisodeForDeleteByIDRow struct {
-	ID     int64 `db:"id"`
-	WorkID int64 `db:"work_id"`
+	ID        int64         `db:"id"`
+	WorkID    int64         `db:"work_id"`
+	UpdatedAt sql.NullTime  `db:"updated_at"`
+	AnimeID   sql.NullInt64 `db:"anime_id"`
 }
 
 // 削除の送信はページではなく確認アラートから来るため、この射影は書き込みが必要とするもの
@@ -418,7 +438,12 @@ type GetEpisodeForDeleteByIDRow struct {
 func (q *Queries) GetEpisodeForDeleteByID(ctx context.Context, id int64) (GetEpisodeForDeleteByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getEpisodeForDeleteByID, id)
 	var i GetEpisodeForDeleteByIDRow
-	err := row.Scan(&i.ID, &i.WorkID)
+	err := row.Scan(
+		&i.ID,
+		&i.WorkID,
+		&i.UpdatedAt,
+		&i.AnimeID,
+	)
 	return i, err
 }
 
@@ -432,6 +457,7 @@ SELECT
     e.title,
     e.title_en,
     e.updated_at,
+    e.anime_id,
     w.title AS work_title,
     w.no_episodes AS work_no_episodes
 FROM episodes e
@@ -450,6 +476,7 @@ type GetEpisodeForEditByIDRow struct {
 	Title          sql.NullString  `db:"title"`
 	TitleEn        string          `db:"title_en"`
 	UpdatedAt      sql.NullTime    `db:"updated_at"`
+	AnimeID        sql.NullInt64   `db:"anime_id"`
 	WorkTitle      string          `db:"work_title"`
 	WorkNoEpisodes bool            `db:"work_no_episodes"`
 }
@@ -463,7 +490,7 @@ type GetEpisodeForEditByIDRow struct {
 // 失われたエピソードを、その作品を見出しとサブナビで指すページから編集させないため。
 //
 // updated_atはフォームがhiddenで持ち回る版。古い読み取りに対する送信を更新側で
-// 却下できるようにする。
+// 却下できるようにする。anime_idは、同じ範囲のエピソードを見せる履歴の画面が版を引くのに使う。
 func (q *Queries) GetEpisodeForEditByID(ctx context.Context, id int64) (GetEpisodeForEditByIDRow, error) {
 	row := q.db.QueryRowContext(ctx, getEpisodeForEditByID, id)
 	var i GetEpisodeForEditByIDRow
@@ -476,9 +503,34 @@ func (q *Queries) GetEpisodeForEditByID(ctx context.Context, id int64) (GetEpiso
 		&i.Title,
 		&i.TitleEn,
 		&i.UpdatedAt,
+		&i.AnimeID,
 		&i.WorkTitle,
 		&i.WorkNoEpisodes,
 	)
+	return i, err
+}
+
+const getEpisodeForTitleFillByID = `-- name: GetEpisodeForTitleFillByID :one
+SELECT
+    e.id,
+    e.updated_at,
+    e.anime_id
+FROM episodes e
+WHERE e.id = $1
+`
+
+type GetEpisodeForTitleFillByIDRow struct {
+	ID        int64         `db:"id"`
+	UpdatedAt sql.NullTime  `db:"updated_at"`
+	AnimeID   sql.NullInt64 `db:"anime_id"`
+}
+
+// タイトルを入れる直前に、エピソードの版とanimeの写像を読む。編集履歴の版をこの読み取りから組み立て、
+// UpdateEpisodeEmptyTitleはこの2つを照合して書く。
+func (q *Queries) GetEpisodeForTitleFillByID(ctx context.Context, id int64) (GetEpisodeForTitleFillByIDRow, error) {
+	row := q.db.QueryRowContext(ctx, getEpisodeForTitleFillByID, id)
+	var i GetEpisodeForTitleFillByIDRow
+	err := row.Scan(&i.ID, &i.UpdatedAt, &i.AnimeID)
 	return i, err
 }
 
@@ -1118,6 +1170,7 @@ WITH published_episode AS (
         updated_at = NOW()
     WHERE episodes.id = $1
         AND episodes.work_id = $2
+        AND episodes.updated_at IS NOT DISTINCT FROM $3::timestamptz
         AND episodes.unpublished_at IS NOT NULL
         AND episodes.deleted_at IS NULL
         AND EXISTS (
@@ -1142,8 +1195,9 @@ INNER JOIN touched_work tw ON tw.id = pe.work_id
 `
 
 type UnarchiveDBEpisodeParams struct {
-	ID     int64 `db:"id"`
-	WorkID int64 `db:"work_id"`
+	ID      int64        `db:"id"`
+	WorkID  int64        `db:"work_id"`
+	Version sql.NullTime `db:"version"`
 }
 
 type UnarchiveDBEpisodeRow struct {
@@ -1151,6 +1205,9 @@ type UnarchiveDBEpisodeRow struct {
 	AnimeID sql.NullInt64 `db:"anime_id"`
 }
 
+// versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+// 間に別の編集が入った場合は状態も履歴も書き込まない。
+//
 // 再公開はArchiveDBEpisodeの逆で、あちらが打つタイムスタンプをクリアし、あちらが引く
 // カウンターを戻す。ガードはすべて同じで、状態の条件だけを逆向きに読む。エピソードが今も非公開
 // であることを条件とする。他者が再公開する前に開いた一覧から、その再公開後に送信された場合は、
@@ -1175,7 +1232,7 @@ type UnarchiveDBEpisodeRow struct {
 //
 // 書き込みがepisodes先・works後なのはArchiveDBEpisodeが述べる理由による。
 func (q *Queries) UnarchiveDBEpisode(ctx context.Context, arg UnarchiveDBEpisodeParams) (UnarchiveDBEpisodeRow, error) {
-	row := q.db.QueryRowContext(ctx, unarchiveDBEpisode, arg.ID, arg.WorkID)
+	row := q.db.QueryRowContext(ctx, unarchiveDBEpisode, arg.ID, arg.WorkID, arg.Version)
 	var i UnarchiveDBEpisodeRow
 	err := row.Scan(&i.ID, &i.AnimeID)
 	return i, err
@@ -1405,8 +1462,8 @@ const updateEpisodeEmptyTitle = `-- name: UpdateEpisodeEmptyTitle :one
 WITH locked_work AS (
     SELECT w.id
     FROM works w
-    WHERE w.id = $4
-        AND w.sc_tid = $5
+    WHERE w.id = $6
+        AND w.sc_tid = $7
         AND w.deleted_at IS NULL
         AND w.unpublished_at IS NULL
     FOR UPDATE
@@ -1414,7 +1471,7 @@ WITH locked_work AS (
     SELECT e.id
     FROM episodes e
     JOIN locked_work w ON w.id = e.work_id
-    WHERE e.id = $6
+    WHERE e.id = $8
     FOR UPDATE OF e SKIP LOCKED
 )
 UPDATE episodes e
@@ -1426,6 +1483,8 @@ WHERE e.id = locked.id
     AND e.unpublished_at IS NULL
     AND e.created_at >= $3::timestamptz
     AND (e.title IS NULL OR e.title = '')
+    AND e.updated_at IS NOT DISTINCT FROM $4::timestamptz
+    AND e.anime_id IS NOT DISTINCT FROM $5::bigint
     AND EXISTS (
         SELECT 1
         FROM slots s
@@ -1439,6 +1498,8 @@ type UpdateEpisodeEmptyTitleParams struct {
 	Title       sql.NullString  `db:"title"`
 	RawNumber   sql.NullFloat64 `db:"raw_number"`
 	CreatedFrom time.Time       `db:"created_from"`
+	Version     sql.NullTime    `db:"version"`
+	AnimeID     sql.NullInt64   `db:"anime_id"`
 	WorkID      int64           `db:"work_id"`
 	ScTid       sql.NullInt32   `db:"sc_tid"`
 	ID          int64           `db:"id"`
@@ -1449,6 +1510,9 @@ type UpdateEpisodeEmptyTitleRow struct {
 	AnimeID sql.NullInt64 `db:"anime_id"`
 }
 
+// versionとanime_idはGetEpisodeForTitleFillByIDで読んだ値で、編集履歴の版をその時点の読み取りから組み立てるため、
+// 間に別の編集や写像の変更が入った行には書き込まない。
+//
 // 問い合わせに使った作品・話数・TIDと対象条件が一致する間だけタイトルを入れる。作品を
 // ロックしてTIDを保持し、エピソードのUPDATEによる行ロックをコミットまで保持する。
 // Railsはエピソード行の更新後に作品をtouchするため、編集でロック中のエピソードを待つと
@@ -1460,6 +1524,8 @@ func (q *Queries) UpdateEpisodeEmptyTitle(ctx context.Context, arg UpdateEpisode
 		arg.Title,
 		arg.RawNumber,
 		arg.CreatedFrom,
+		arg.Version,
+		arg.AnimeID,
 		arg.WorkID,
 		arg.ScTid,
 		arg.ID,
