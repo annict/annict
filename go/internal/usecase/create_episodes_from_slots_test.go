@@ -248,7 +248,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_LinksExistingEpisode(t *testing.
 	ctx := context.Background()
 	now := generationNow()
 
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	secondID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 2, 200))
 	archived := generationEpisodeInput(workID, 3, 300)
 	archived.unpublishedAt = sql.NullTime{Time: now, Valid: true}
@@ -271,15 +271,10 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_LinksExistingEpisode(t *testing.
 	if got := readSlotEpisodeID(t, db, createdSlotID); got.Int64 != int64(output.CreatedEpisodes[0].EpisodeID) {
 		t.Errorf("回数3の放送枠のepisode_id = %+v、期待値 = %d", got, output.CreatedEpisodes[0].EpisodeID)
 	}
-	// animeに対応付いていない作品では、episodesの行だけを書く。
-	if episode := readCreatedEpisode(t, db, output.CreatedEpisodes[0].EpisodeID); episode.animeID.Valid {
-		t.Errorf("episodes.anime_id = %+v、期待値 = NULL", episode.animeID)
-	}
-	// エピソードのanime_idがまだ無いため、放送枠のepisode_anime_idも空のまま (animes同期バッチが埋める)。
-	for _, slotID := range []model.SlotID{linkedSlotID, createdSlotID} {
-		if got := readSlotEpisodeAnimeID(t, db, slotID); got.Valid {
-			t.Errorf("放送枠%dのepisode_anime_id = %+v、期待値 = NULL", slotID, got)
-		}
+	// 紐づけた既存のエピソードはanime_idをまだ持たないため、その放送枠のepisode_anime_idも空のまま
+	// (animes同期バッチが埋める)。
+	if got := readSlotEpisodeAnimeID(t, db, linkedSlotID); got.Valid {
+		t.Errorf("回数2の放送枠のepisode_anime_id = %+v、期待値 = NULL", got)
 	}
 }
 
@@ -327,7 +322,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_SkipsWhenCandidatesLinked(t *tes
 	ctx := context.Background()
 	now := generationNow()
 
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	thirdID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 3, 300))
 	fourthID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 4, 400))
 	program := insertGenerationProgram(t, db, workID, 3)
@@ -365,7 +360,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_CountsPrecedingIrregularSlots(t 
 	ctx := context.Background()
 	now := generationNow()
 
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	if _, err := db.Exec(`UPDATE works SET manual_episodes_count = 2 WHERE id = $1`, int64(workID)); err != nil {
 		t.Fatalf("予定エピソード数の設定に失敗: %v", err)
 	}
@@ -406,7 +401,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_InsertsBeforeLargerEpisode(t *te
 	ctx := context.Background()
 	now := generationNow()
 
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	firstID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
 	thirdID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 3, 300))
 	if _, err := db.Exec(`UPDATE episodes SET prev_episode_id = $2, updated_at = '2001-01-01' WHERE id = $1`, int64(thirdID), int64(firstID)); err != nil {
@@ -453,7 +448,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_SkipsWhenNoSortNumberGap(t *test
 	ctx := context.Background()
 	now := generationNow()
 
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
 	insertSyncEpisode(t, db, generationEpisodeInput(workID, 3, 101))
 	program := insertGenerationProgram(t, db, workID, 1)
@@ -503,7 +498,7 @@ func TestCreateEpisodesFromSlotsUsecase_RereadsSlot(t *testing.T) {
 			db := testutil.GetTestDB()
 			ctx := context.Background()
 			now := generationNow()
-			workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+			workID, _ := insertMappedCreateTargetWork(t, db)
 			program := insertGenerationProgram(t, db, workID, 2)
 			var precedingSlotID model.SlotID
 			number := int32(1)
@@ -532,7 +527,7 @@ func TestCreateEpisodesFromSlotsUsecase_RereadsSlot(t *testing.T) {
 			}
 			switch change.name {
 			case "別作品へ移動":
-				otherWorkID := insertCreateTargetWork(t, db, sql.NullInt64{})
+				otherWorkID, _ := insertMappedCreateTargetWork(t, db)
 				_, err = db.Exec(`UPDATE slots SET work_id = $2 WHERE id = $1`, int64(slotID), int64(otherWorkID))
 			case "番組の変更":
 				otherProgram := insertGenerationProgram(t, db, workID, 1)
@@ -576,7 +571,7 @@ func TestCreateEpisodesFromSlotsUsecase_IgnoresAlreadyLinkedSlot(t *testing.T) {
 	db := testutil.GetTestDB()
 	ctx := context.Background()
 	now := generationNow()
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	program := insertGenerationProgram(t, db, workID, 1)
 	slotID := program.insertSlot(1, now, nil)
 	uc := newCreateEpisodesFromSlotsUsecase(db)
@@ -602,7 +597,7 @@ func TestCreateEpisodesFromSlotsUsecase_SkipsLockedSlot(t *testing.T) {
 	db := testutil.GetTestDB()
 	ctx := context.Background()
 	now := generationNow()
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	program := insertGenerationProgram(t, db, workID, 1)
 	slotID := program.insertSlot(1, now, nil)
 	uc := newCreateEpisodesFromSlotsUsecase(db)
@@ -660,7 +655,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollback(t *testin
 	}
 	failedProgram := insertGenerationProgram(t, db, workID, 1)
 	failedSlotID := failedProgram.insertSlot(2, now, nil)
-	goodWorkID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	goodWorkID, _ := insertMappedCreateTargetWork(t, db)
 	goodProgram := insertGenerationProgram(t, db, goodWorkID, 1)
 	goodSlotID := goodProgram.insertSlot(1, now.Add(time.Hour), nil)
 
@@ -730,7 +725,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_StopsWhenContextEnds(t *testing.
 
 	db := testutil.GetTestDB()
 	now := generationNow()
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	program := insertGenerationProgram(t, db, workID, 1)
 	firstID := program.insertSlot(1, now, nil)
 	secondID := program.insertSlot(2, now.Add(time.Hour), nil)

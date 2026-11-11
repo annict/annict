@@ -38,7 +38,7 @@ func insertRelatedRow(t *testing.T, tx *sql.Tx, q string, args ...any) int64 {
 	return id
 }
 
-// relatedRowは照合で埋まることを確かめる1つの列の1行。
+// relatedRowは照合で直ることを確かめる1つの列の1行。
 type relatedRow struct {
 	table  string
 	column string
@@ -46,7 +46,7 @@ type relatedRow struct {
 	want   int64
 }
 
-func TestSyncRelatedAnimeIDsUsecase_Execute_FillsAllColumns(t *testing.T) {
+func TestSyncRelatedAnimeIDsUsecase_Execute_ReconcilesAllColumns(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
@@ -55,9 +55,35 @@ func TestSyncRelatedAnimeIDsUsecase_Execute_FillsAllColumns(t *testing.T) {
 		t.Fatalf("テスト用トランザクションの分離レベルの設定に失敗: %v", err)
 	}
 
-	// animeにマッピング済みの作品とエピソードを作る。
+	// 作品は既定のanimeを持たせ、エピソードはanimeに紐づけずに作る。関連テーブルのビルダーは
+	// 作品・エピソードのanime_idを写すため、先に行を作ってから写し元のanimeを割り当て直すと、
+	// 作品を指す列は写し元と食い違い、エピソードを指す列 (NULLを許す) は空になる。
 	workID := testutil.NewWorkBuilder(t, tx).Build()
 	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
+
+	// 作品・エピソードを指す行を各テーブルに作る。
+	suffix := fmt.Sprintf("%d", workID)
+	channelID := testutil.NewChannelBuilder(t, tx).Build()
+	seriesID := insertRelatedRow(t, tx, `INSERT INTO series (name, created_at, updated_at) VALUES ($1, NOW(), NOW()) RETURNING id`, "照合テストシリーズ"+suffix)
+	slotID := int64(testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithEpisodeID(episodeID).WithChannelID(channelID).Build())
+	rows := []relatedRow{
+		{table: "casts", column: "anime_id", id: int64(testutil.NewCastBuilder(t, tx, workID).
+			WithPersonName("照合テスト声優" + suffix).WithCharacterName("照合テストキャラクター" + suffix).Build())},
+		{table: "staffs", column: "anime_id", id: int64(testutil.NewStaffBuilder(t, tx, workID).WithName("照合テストスタッフ" + suffix).Build())},
+		{table: "trailers", column: "anime_id", id: insertRelatedRow(t, tx,
+			`INSERT INTO trailers (work_id, anime_id, url, title, created_at, updated_at) VALUES ($1, (SELECT anime_id FROM works WHERE id = $1), 'https://example.com/pv', 'PV', NOW(), NOW()) RETURNING id`, int64(workID))},
+		{table: "work_images", column: "anime_id", id: insertRelatedRow(t, tx,
+			`INSERT INTO work_images (work_id, anime_id, image_data, created_at, updated_at) VALUES ($1, (SELECT anime_id FROM works WHERE id = $1), '{}', NOW(), NOW()) RETURNING id`, int64(workID))},
+		{table: "vod_titles", column: "anime_id", id: insertRelatedRow(t, tx,
+			`INSERT INTO vod_titles (channel_id, work_id, anime_id, code, name, created_at, updated_at) VALUES ($1, $2, (SELECT anime_id FROM works WHERE id = $2), 'code', 'VODタイトル', NOW(), NOW()) RETURNING id`, channelID, int64(workID))},
+		{table: "slots", column: "anime_id", id: slotID},
+		{table: "slots", column: "episode_anime_id", id: slotID},
+		{table: "programs", column: "anime_id", id: testutil.NewProgramBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()},
+		{table: "series_works", column: "anime_id", id: insertRelatedRow(t, tx,
+			`INSERT INTO series_works (series_id, work_id, anime_id, created_at, updated_at) VALUES ($1, $2, (SELECT anime_id FROM works WHERE id = $2), NOW(), NOW()) RETURNING id`, seriesID, int64(workID))},
+	}
+
+	// 作品とエピソードに、行を作ったときと別のanimeを割り当てる。
 	workAnimeID := insertRelatedRow(t, tx, `INSERT INTO animes (status) VALUES ('published') RETURNING id`)
 	episodeAnimeID := insertRelatedRow(t, tx, `INSERT INTO animes (status) VALUES ('published') RETURNING id`)
 	if _, err := tx.Exec(`UPDATE works SET anime_id = $1 WHERE id = $2`, workAnimeID, int64(workID)); err != nil {
@@ -66,27 +92,12 @@ func TestSyncRelatedAnimeIDsUsecase_Execute_FillsAllColumns(t *testing.T) {
 	if _, err := tx.Exec(`UPDATE episodes SET anime_id = $1 WHERE id = $2`, episodeAnimeID, int64(episodeID)); err != nil {
 		t.Fatalf("episodes.anime_idの設定に失敗: %v", err)
 	}
-
-	// 作品・エピソードを指し、anime_idが空の行を各テーブルに作る。
-	suffix := fmt.Sprintf("%d", workID)
-	channelID := testutil.NewChannelBuilder(t, tx).Build()
-	seriesID := insertRelatedRow(t, tx, `INSERT INTO series (name, created_at, updated_at) VALUES ($1, NOW(), NOW()) RETURNING id`, "照合テストシリーズ"+suffix)
-	slotID := int64(testutil.NewSlotBuilder(t, tx).WithWorkID(workID).WithEpisodeID(episodeID).WithChannelID(channelID).Build())
-	rows := []relatedRow{
-		{table: "casts", column: "anime_id", want: workAnimeID, id: int64(testutil.NewCastBuilder(t, tx, workID).
-			WithPersonName("照合テスト声優" + suffix).WithCharacterName("照合テストキャラクター" + suffix).Build())},
-		{table: "staffs", column: "anime_id", want: workAnimeID, id: int64(testutil.NewStaffBuilder(t, tx, workID).WithName("照合テストスタッフ" + suffix).Build())},
-		{table: "trailers", column: "anime_id", want: workAnimeID, id: insertRelatedRow(t, tx,
-			`INSERT INTO trailers (work_id, url, title, created_at, updated_at) VALUES ($1, 'https://example.com/pv', 'PV', NOW(), NOW()) RETURNING id`, int64(workID))},
-		{table: "work_images", column: "anime_id", want: workAnimeID, id: insertRelatedRow(t, tx,
-			`INSERT INTO work_images (work_id, image_data, created_at, updated_at) VALUES ($1, '{}', NOW(), NOW()) RETURNING id`, int64(workID))},
-		{table: "vod_titles", column: "anime_id", want: workAnimeID, id: insertRelatedRow(t, tx,
-			`INSERT INTO vod_titles (channel_id, work_id, code, name, created_at, updated_at) VALUES ($1, $2, 'code', 'VODタイトル', NOW(), NOW()) RETURNING id`, channelID, int64(workID))},
-		{table: "slots", column: "anime_id", want: workAnimeID, id: slotID},
-		{table: "slots", column: "episode_anime_id", want: episodeAnimeID, id: slotID},
-		{table: "programs", column: "anime_id", want: workAnimeID, id: testutil.NewProgramBuilder(t, tx).WithWorkID(workID).WithChannelID(channelID).Build()},
-		{table: "series_works", column: "anime_id", want: workAnimeID, id: insertRelatedRow(t, tx,
-			`INSERT INTO series_works (series_id, work_id, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id`, seriesID, int64(workID))},
+	for i := range rows {
+		if rows[i].column == "episode_anime_id" {
+			rows[i].want = episodeAnimeID
+		} else {
+			rows[i].want = workAnimeID
+		}
 	}
 
 	result, err := newSyncRelatedAnimeIDsUsecaseInTx(db, tx, 2).Execute(context.Background())
@@ -139,13 +150,15 @@ func TestSyncRelatedAnimeIDsUsecase_Execute_ContinuesAfterUnchangedPage(t *testi
 		t.Fatalf("works.anime_idの設定に失敗: %v", err)
 	}
 
+	staleAnimeID := insertRelatedRow(t, tx, `INSERT INTO animes (status) VALUES ('published') RETURNING id`)
+
 	// 先の行は写し元と一致させ、後の行だけが修正を必要とする状態にする。
 	unchangedID := insertRelatedRow(t, tx,
 		`INSERT INTO trailers (work_id, anime_id, url, title, created_at, updated_at) VALUES ($1, $2, 'https://example.com/unchanged', '一致するPV', NOW(), NOW()) RETURNING id`,
 		int64(workID), animeID)
-	missingID := insertRelatedRow(t, tx,
-		`INSERT INTO trailers (work_id, url, title, created_at, updated_at) VALUES ($1, 'https://example.com/missing', '照合するPV', NOW(), NOW()) RETURNING id`,
-		int64(workID))
+	staleID := insertRelatedRow(t, tx,
+		`INSERT INTO trailers (work_id, anime_id, url, title, created_at, updated_at) VALUES ($1, $2, 'https://example.com/stale', '照合するPV', NOW(), NOW()) RETURNING id`,
+		int64(workID), staleAnimeID)
 
 	// 1行を1ページにし、更新件数0のページの後にも照合が続くことを確かめる。
 	result, err := newSyncRelatedAnimeIDsUsecaseInTx(db, tx, 1).Execute(context.Background())
@@ -158,7 +171,7 @@ func TestSyncRelatedAnimeIDsUsecase_Execute_ContinuesAfterUnchangedPage(t *testi
 		id   int64
 	}{
 		{name: "写し元と一致する先の行", id: unchangedID},
-		{name: "後のページで照合する行", id: missingID},
+		{name: "後のページで照合する行", id: staleID},
 	} {
 		var got sql.NullInt64
 		if err := tx.QueryRow(`SELECT anime_id FROM trailers WHERE id = $1`, row.id).Scan(&got); err != nil {

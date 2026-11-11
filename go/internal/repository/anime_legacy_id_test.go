@@ -69,7 +69,7 @@ func TestAnimeLegacyIDRepository_ListByWorkIDsAndEpisodeIDs(t *testing.T) {
 	workAnimeID := createTestAnime(t, animeRepo, "旧作品から写した作品")
 	episodeAnimeID := createTestAnime(t, animeRepo, "旧エピソードから写したエピソード")
 	workID := testutil.NewWorkBuilder(t, tx).WithTitle("旧作品").Build()
-	unmappedWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("写していない旧作品").Build()
+	unmappedWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("写していない旧作品").WithoutAnime().Build()
 	episodeID := testutil.NewEpisodeBuilder(t, tx, workID).Build()
 	unmappedEpisodeID := testutil.NewEpisodeBuilder(t, tx, workID).WithSortNumber(2).Build()
 	if err := repository.NewWorkRepository(queries).UpdateAnimeID(ctx, workID, workAnimeID); err != nil {

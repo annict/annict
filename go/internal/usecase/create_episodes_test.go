@@ -609,7 +609,7 @@ func TestCreateEpisodesUsecase_Execute_RequiresRawNumberForWorkWithSlots(t *test
 
 	db := testutil.GetTestDB()
 	uc := newCreateEpisodesUsecase(db)
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	program := insertGenerationProgram(t, db, workID, 1)
 	program.insertSlot(1, time.Now().Add(24*time.Hour), nil)
 	editor := insertCreateActor(t, db, model.RoleEditor)
@@ -659,7 +659,7 @@ func TestCreateEpisodesUsecase_Execute_RechecksRawNumberAfterWorkLock(t *testing
 			t.Parallel()
 
 			db := testutil.GetTestDB()
-			workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+			workID, _ := insertMappedCreateTargetWork(t, db)
 			program := insertGenerationProgram(t, db, workID, 1)
 			user := insertCreateActor(t, db, tt.role)
 			blocker, err := db.Begin()

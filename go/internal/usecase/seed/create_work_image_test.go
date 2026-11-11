@@ -2,6 +2,7 @@ package seed
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"testing"
 
@@ -87,10 +88,16 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 
 			// work_imagesテーブルから1件目のレコードを取得して検証
 			if len(results) > 0 {
-				row := tx.QueryRow("SELECT work_id, user_id, image_data FROM work_images WHERE id = $1", results[0].WorkImageID)
+				row := tx.QueryRow(`
+					SELECT work_images.work_id, work_images.user_id, work_images.image_data, work_images.anime_id, works.anime_id
+					FROM work_images
+					JOIN works ON works.id = work_images.work_id
+					WHERE work_images.id = $1
+				`, results[0].WorkImageID)
 				var workID, userID int64
 				var imageData string
-				if err := row.Scan(&workID, &userID, &imageData); err != nil {
+				var animeID, workAnimeID sql.NullInt64
+				if err := row.Scan(&workID, &userID, &imageData, &animeID, &workAnimeID); err != nil {
 					t.Fatalf("work_imagesテーブルからの取得エラー: %v", err)
 				}
 
@@ -100,6 +107,14 @@ func TestCreateWorkImageUsecase_ExecuteBatchWithTx(t *testing.T) {
 				}
 				if model.UserID(userID) != params[0].UserID {
 					t.Errorf("user_id = %d、期待値 = %d", userID, params[0].UserID)
+				}
+
+				// anime_idは作品のanime_idを写す
+				if !workAnimeID.Valid {
+					t.Fatal("作品のanime_id = NULL、期待値 = 値あり")
+				}
+				if animeID != workAnimeID {
+					t.Errorf("anime_id = %v、期待値 = %v", animeID, workAnimeID)
 				}
 
 				// image_dataのJSON形式を確認

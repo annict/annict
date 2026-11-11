@@ -59,7 +59,7 @@ func insertTitleFillWork(t *testing.T, db *sql.DB) (model.WorkID, int32) {
 	t.Helper()
 
 	tid := 900000000 + titleFillTidCounter.Add(1)
-	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
+	workID, _ := insertMappedCreateTargetWork(t, db)
 	if _, err := db.Exec(`UPDATE works SET sc_tid = $2 WHERE id = $1`, int64(workID), tid); err != nil {
 		t.Fatalf("TIDの設定に失敗: %v", err)
 	}
