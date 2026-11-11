@@ -795,19 +795,19 @@ type ArInternalMetadatum struct {
 }
 
 type Cast struct {
-	ID            int64         `db:"id"`
-	PersonID      int64         `db:"person_id"`
-	WorkID        int64         `db:"work_id"`
-	Name          string        `db:"name"`
-	AasmState     string        `db:"aasm_state"`
-	SortNumber    int32         `db:"sort_number"`
-	CreatedAt     time.Time     `db:"created_at"`
-	UpdatedAt     time.Time     `db:"updated_at"`
-	CharacterID   int64         `db:"character_id"`
-	NameEn        string        `db:"name_en"`
-	DeletedAt     sql.NullTime  `db:"deleted_at"`
-	UnpublishedAt sql.NullTime  `db:"unpublished_at"`
-	AnimeID       sql.NullInt64 `db:"anime_id"`
+	ID            int64        `db:"id"`
+	PersonID      int64        `db:"person_id"`
+	WorkID        int64        `db:"work_id"`
+	Name          string       `db:"name"`
+	AasmState     string       `db:"aasm_state"`
+	SortNumber    int32        `db:"sort_number"`
+	CreatedAt     time.Time    `db:"created_at"`
+	UpdatedAt     time.Time    `db:"updated_at"`
+	CharacterID   int64        `db:"character_id"`
+	NameEn        string       `db:"name_en"`
+	DeletedAt     sql.NullTime `db:"deleted_at"`
+	UnpublishedAt sql.NullTime `db:"unpublished_at"`
+	AnimeID       int64        `db:"anime_id"`
 }
 
 type Channel struct {
@@ -1434,7 +1434,7 @@ type Program struct {
 	MinimumEpisodeGeneratableNumber int32          `db:"minimum_episode_generatable_number"`
 	DeletedAt                       sql.NullTime   `db:"deleted_at"`
 	UnpublishedAt                   sql.NullTime   `db:"unpublished_at"`
-	AnimeID                         sql.NullInt64  `db:"anime_id"`
+	AnimeID                         int64          `db:"anime_id"`
 }
 
 type Provider struct {
@@ -1563,17 +1563,17 @@ type Series struct {
 }
 
 type SeriesWork struct {
-	ID            int64         `db:"id"`
-	SeriesID      int64         `db:"series_id"`
-	WorkID        int64         `db:"work_id"`
-	Summary       string        `db:"summary"`
-	SummaryEn     string        `db:"summary_en"`
-	AasmState     string        `db:"aasm_state"`
-	CreatedAt     time.Time     `db:"created_at"`
-	UpdatedAt     time.Time     `db:"updated_at"`
-	DeletedAt     sql.NullTime  `db:"deleted_at"`
-	UnpublishedAt sql.NullTime  `db:"unpublished_at"`
-	AnimeID       sql.NullInt64 `db:"anime_id"`
+	ID            int64        `db:"id"`
+	SeriesID      int64        `db:"series_id"`
+	WorkID        int64        `db:"work_id"`
+	Summary       string       `db:"summary"`
+	SummaryEn     string       `db:"summary_en"`
+	AasmState     string       `db:"aasm_state"`
+	CreatedAt     time.Time    `db:"created_at"`
+	UpdatedAt     time.Time    `db:"updated_at"`
+	DeletedAt     sql.NullTime `db:"deleted_at"`
+	UnpublishedAt sql.NullTime `db:"unpublished_at"`
+	AnimeID       int64        `db:"anime_id"`
 }
 
 type Session struct {
@@ -1645,7 +1645,7 @@ type Slot struct {
 	Irregular      bool          `db:"irregular"`
 	DeletedAt      sql.NullTime  `db:"deleted_at"`
 	UnpublishedAt  sql.NullTime  `db:"unpublished_at"`
-	AnimeID        sql.NullInt64 `db:"anime_id"`
+	AnimeID        int64         `db:"anime_id"`
 	EpisodeAnimeID sql.NullInt64 `db:"episode_anime_id"`
 }
 
@@ -1674,7 +1674,7 @@ type Staff struct {
 	RoleOtherEn   string         `db:"role_other_en"`
 	DeletedAt     sql.NullTime   `db:"deleted_at"`
 	UnpublishedAt sql.NullTime   `db:"unpublished_at"`
-	AnimeID       sql.NullInt64  `db:"anime_id"`
+	AnimeID       int64          `db:"anime_id"`
 }
 
 type Status struct {
@@ -1743,7 +1743,7 @@ type Trailer struct {
 	ImageData            sql.NullString `db:"image_data"`
 	DeletedAt            sql.NullTime   `db:"deleted_at"`
 	UnpublishedAt        sql.NullTime   `db:"unpublished_at"`
-	AnimeID              sql.NullInt64  `db:"anime_id"`
+	AnimeID              int64          `db:"anime_id"`
 }
 
 type TwitterBot struct {
@@ -1965,7 +1965,7 @@ type WorkImage struct {
 	UpdatedAt             time.Time      `db:"updated_at"`
 	ColorRgb              string         `db:"color_rgb"`
 	ImageData             string         `db:"image_data"`
-	AnimeID               sql.NullInt64  `db:"anime_id"`
+	AnimeID               int64          `db:"anime_id"`
 }
 
 type WorkRecord struct {

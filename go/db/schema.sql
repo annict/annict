@@ -713,7 +713,7 @@ CREATE TABLE public.casts (
     name_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
-    anime_id bigint
+    anime_id bigint NOT NULL
 );
 
 
@@ -2424,7 +2424,7 @@ CREATE TABLE public.programs (
     minimum_episode_generatable_number integer DEFAULT 1 NOT NULL,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
-    anime_id bigint
+    anime_id bigint NOT NULL
 );
 
 
@@ -2794,7 +2794,7 @@ CREATE TABLE public.series_works (
     updated_at timestamp without time zone NOT NULL,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
-    anime_id bigint
+    anime_id bigint NOT NULL
 );
 
 
@@ -3010,7 +3010,7 @@ CREATE TABLE public.slots (
     irregular boolean DEFAULT false NOT NULL,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
-    anime_id bigint,
+    anime_id bigint NOT NULL,
     episode_anime_id bigint
 );
 
@@ -3047,7 +3047,7 @@ CREATE TABLE public.staffs (
     role_other_en character varying DEFAULT ''::character varying NOT NULL,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
-    anime_id bigint
+    anime_id bigint NOT NULL
 );
 
 
@@ -3229,7 +3229,7 @@ CREATE TABLE public.trailers (
     image_data text,
     deleted_at timestamp without time zone,
     unpublished_at timestamp without time zone,
-    anime_id bigint
+    anime_id bigint NOT NULL
 );
 
 
@@ -3666,7 +3666,7 @@ CREATE TABLE public.work_images (
     updated_at timestamp without time zone NOT NULL,
     color_rgb character varying DEFAULT '255,255,255'::character varying NOT NULL,
     image_data text NOT NULL,
-    anime_id bigint
+    anime_id bigint NOT NULL
 );
 
 
@@ -7784,6 +7784,14 @@ ALTER TABLE ONLY public.anime_seasons
 
 
 --
+-- Name: casts casts_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.casts
+    ADD CONSTRAINT casts_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
 -- Name: channel_works channel_works_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8680,6 +8688,14 @@ ALTER TABLE ONLY public.profiles
 
 
 --
+-- Name: programs programs_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.programs
+    ADD CONSTRAINT programs_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
 -- Name: slots programs_channel_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8752,11 +8768,43 @@ ALTER TABLE ONLY public.receptions
 
 
 --
+-- Name: series_works series_works_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.series_works
+    ADD CONSTRAINT series_works_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
 -- Name: sign_in_codes sign_in_codes_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
 ALTER TABLE ONLY public.sign_in_codes
     ADD CONSTRAINT sign_in_codes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: slots slots_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.slots
+    ADD CONSTRAINT slots_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: slots slots_episode_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.slots
+    ADD CONSTRAINT slots_episode_anime_id_fkey FOREIGN KEY (episode_anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: staffs staffs_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.staffs
+    ADD CONSTRAINT staffs_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -8776,6 +8824,14 @@ ALTER TABLE ONLY public.statuses
 
 
 --
+-- Name: trailers trailers_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.trailers
+    ADD CONSTRAINT trailers_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
 -- Name: user_two_factor_auths user_two_factor_auths_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8789,6 +8845,22 @@ ALTER TABLE ONLY public.user_two_factor_auths
 
 ALTER TABLE ONLY public.user_two_factor_recovery_codes
     ADD CONSTRAINT user_two_factor_recovery_codes_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: vod_titles vod_titles_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.vod_titles
+    ADD CONSTRAINT vod_titles_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
+
+
+--
+-- Name: work_images work_images_anime_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY public.work_images
+    ADD CONSTRAINT work_images_anime_id_fkey FOREIGN KEY (anime_id) REFERENCES public.animes(id);
 
 
 --
@@ -9156,4 +9228,7 @@ INSERT INTO public.schema_migrations (version) VALUES
     ('20261108100800'),
     ('20261108100900'),
     ('20261108101000'),
-    ('20261108120000');
+    ('20261108120000'),
+    ('20261110100000'),
+    ('20261110100100'),
+    ('20261110100200');

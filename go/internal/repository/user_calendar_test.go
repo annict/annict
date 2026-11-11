@@ -287,15 +287,16 @@ func createTestWorkWithStartedOn(t *testing.T, tx *sql.Tx, title, titleEn string
 			title, title_kana, title_en, media, official_site_url,
 			wikipedia_url, season_year, season_name,
 			watchers_count, episodes_count, started_on,
-			created_at, updated_at
+			created_at, updated_at, anime_id
 		) VALUES (
 			$1, $2, $3, $4, $5,
 			$6, $7, $8,
 			$9, $10, $11,
-			$12, $13
+			$12, $13, $14
 		) RETURNING id
 	`
 
+	animeID := testutil.CreateTestAnime(t, tx)
 	var id int64
 	err := tx.QueryRow(
 		query,
@@ -312,6 +313,7 @@ func createTestWorkWithStartedOn(t *testing.T, tx *sql.Tx, title, titleEn string
 		startedOn,
 		time.Now(),
 		time.Now(),
+		int64(animeID),
 	).Scan(&id)
 
 	if err != nil {
@@ -364,8 +366,8 @@ func createTestProgram(t *testing.T, tx *sql.Tx, channelID int64, workID model.W
 	t.Helper()
 
 	query := `
-		INSERT INTO programs (channel_id, work_id, created_at, updated_at)
-		VALUES ($1, $2, $3, $4)
+		INSERT INTO programs (channel_id, work_id, created_at, updated_at, anime_id)
+		VALUES ($1, $2, $3, $4, (SELECT anime_id FROM works WHERE id = $2))
 		RETURNING id
 	`
 
@@ -383,8 +385,8 @@ func createTestSlot(t *testing.T, tx *sql.Tx, channelID int64, workID model.Work
 	t.Helper()
 
 	query := `
-		INSERT INTO slots (channel_id, work_id, episode_id, program_id, started_at, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7)
+		INSERT INTO slots (channel_id, work_id, episode_id, program_id, started_at, created_at, updated_at, anime_id, episode_anime_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, (SELECT anime_id FROM works WHERE id = $2), (SELECT anime_id FROM episodes WHERE id = $3))
 		RETURNING id
 	`
 

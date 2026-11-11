@@ -20,6 +20,7 @@ import (
 	"github.com/annict/annict/go/internal/model"
 	"github.com/annict/annict/go/internal/query"
 	"github.com/annict/annict/go/internal/seed"
+	"github.com/annict/annict/go/internal/usecase"
 	seedusecase "github.com/annict/annict/go/internal/usecase/seed"
 )
 
@@ -29,10 +30,12 @@ import (
 var seedableEnvs = []string{"dev", "test"}
 
 // Runはシード対象のテーブルを空にし、開発用データをフェーズ順に生成し直す。
+// syncAnimesUCは作品・エピソードを作ったあとにanimes系のテーブルへ写すために実行する。
+// 本番と同じ写し方にするため、`serve` の定期ジョブと同じ組み立てのものを渡す。
 //
 // 環境ガードはdbに触れるどの処理よりも先に実行されるため、環境が拒否された場合にデータ
 // ベースの中身は変わらない。ガードを通過するまでRun自身の文は1つも発行されない。
-func Run(ctx context.Context, cfg *config.Config, db *sql.DB) error {
+func Run(ctx context.Context, cfg *config.Config, db *sql.DB, syncAnimesUC *usecase.SyncAnimesUsecase) error {
 	if err := EnsureSeedableEnv(cfg); err != nil {
 		return err
 	}
@@ -89,6 +92,11 @@ func Run(ctx context.Context, cfg *config.Config, db *sql.DB) error {
 	// フェーズ3: エピソード生成
 	episodeIDs, err := generateEpisodes(ctx, db, rnd, workIDs)
 	if err != nil {
+		return err
+	}
+
+	// フェーズ3-1: animes同期 (作品画像が作品のanime_idを写せるよう、作品画像の生成より前に行う)
+	if err := syncAnimes(ctx, syncAnimesUC); err != nil {
 		return err
 	}
 
@@ -152,7 +160,14 @@ func cleanupExistingData(ctx context.Context, db *sql.DB) error {
 		"oauth_applications",
 		"episode_records",
 		"records",
+		// 作品・エピソードの削除で写し元を失う関連行も、animes同期の前に消す。
+		"casts",
+		"staffs",
+		"trailers",
 		"work_images",
+		"slots",
+		"programs",
+		"series_works",
 		"follows",
 		"episodes",
 		"works",
@@ -450,6 +465,19 @@ func cleanupWorkImages(ctx context.Context, cfg *config.Config) error {
 	}
 
 	slog.Info("作品画像クリーンアップ完了")
+	fmt.Println()
+	return nil
+}
+
+// syncAnimesは生成した作品・エピソードをanimes系のテーブルへ写します
+func syncAnimes(ctx context.Context, uc *usecase.SyncAnimesUsecase) error {
+	slog.InfoContext(ctx, "フェーズ3-1: animes同期")
+
+	if _, err := uc.Execute(ctx); err != nil {
+		return fmt.Errorf("animes同期エラー: %w", err)
+	}
+
+	slog.InfoContext(ctx, "animes同期完了")
 	fmt.Println()
 	return nil
 }

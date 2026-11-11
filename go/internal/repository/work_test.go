@@ -500,7 +500,7 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// 有効な放送枠 (deleted_at / unpublished_atがNULL) を持つ作品はフィルタで除外される。
 		workWithSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定あり").Build()
 		if _, err := tx.Exec(
-			`INSERT INTO slots (work_id, channel_id, started_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW())`,
+			`INSERT INTO slots (work_id, channel_id, started_at, created_at, updated_at, anime_id) VALUES ($1, $2, NOW(), NOW(), NOW(), (SELECT anime_id FROM works WHERE id = $1))`,
 			int64(workWithSlot), channelID,
 		); err != nil {
 			t.Fatalf("放送枠の投入に失敗: %v", err)
@@ -509,7 +509,7 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// 唯一の放送枠がソフト削除済みの作品は「放送予定なし」とみなされる。
 		workWithDeletedSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定削除済み").Build()
 		if _, err := tx.Exec(
-			`INSERT INTO slots (work_id, channel_id, started_at, deleted_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW())`,
+			`INSERT INTO slots (work_id, channel_id, started_at, deleted_at, created_at, updated_at, anime_id) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW(), (SELECT anime_id FROM works WHERE id = $1))`,
 			int64(workWithDeletedSlot), channelID,
 		); err != nil {
 			t.Fatalf("削除済み放送枠の投入に失敗: %v", err)
@@ -518,7 +518,7 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// 唯一の放送枠が非公開 (unpublished_atがセット) の作品も「放送予定なし」とみなされる。
 		workWithUnpublishedSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定非公開").Build()
 		if _, err := tx.Exec(
-			`INSERT INTO slots (work_id, channel_id, started_at, unpublished_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW())`,
+			`INSERT INTO slots (work_id, channel_id, started_at, unpublished_at, created_at, updated_at, anime_id) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW(), (SELECT anime_id FROM works WHERE id = $1))`,
 			int64(workWithUnpublishedSlot), channelID,
 		); err != nil {
 			t.Fatalf("非公開放送枠の投入に失敗: %v", err)
@@ -1656,7 +1656,7 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
 
-		workID := testutil.NewWorkBuilder(t, tx).WithTitle("エピソードなしの親作品").Build()
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("エピソードなしの親作品").WithoutAnime().Build()
 
 		createWork, err := repo.GetForEpisodeCreateByID(context.Background(), workID)
 		if err != nil {
@@ -2116,7 +2116,7 @@ func TestWorkRepository_GetForEpisodeGenerationByID(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		ctx := context.Background()
 
-		workID := testutil.NewWorkBuilder(t, tx).Build()
+		workID := testutil.NewWorkBuilder(t, tx).WithoutAnime().Build()
 
 		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
 		got, err := repo.GetForEpisodeGenerationByID(ctx, workID)

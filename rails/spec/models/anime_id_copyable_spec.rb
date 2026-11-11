@@ -60,11 +60,11 @@ describe AnimeIdCopyable do
   end
 
   it "作品のanime_idがまだ無いとき、空のまま保存すること" do
-    work_record = FactoryBot.create(:work)
+    work_record = FactoryBot.create(:work, anime_id: nil)
 
-    cast_record = FactoryBot.create(:cast, work: work_record)
+    vod_title_record = VodTitle.create!(channel: FactoryBot.create(:channel), work: work_record, code: "code", name: "VODタイトル")
 
-    expect(cast_record.reload.anime_id).to be_nil
+    expect(vod_title_record.reload.anime_id).to be_nil
   end
 
   it "外部キーの変わらない保存では写さないこと" do

@@ -50,6 +50,9 @@ type WorkBuilder struct {
 	// 設定します。nilの場合はカラムをNULLのまま (公開 / 未削除) にします。
 	unpublishedAt *time.Time
 	deletedAt     *time.Time
+	// withoutAnimeがtrueの場合、animesの行を作らずworks.anime_idをNULLのままにする。
+	// 本番では作品は必ずanimeを持つため、既定ではanimeを作って紐づける。
+	withoutAnime bool
 }
 
 // NewWorkBuilderは新しいWorkBuilderを作成します
@@ -164,6 +167,13 @@ func (b *WorkBuilder) WithWatchersCount(count int32) *WorkBuilder {
 	return b
 }
 
+// WithoutAnimeはanimeに紐づけない作品 (works.anime_idがNULL) を作ります。
+// animes同期バッチがまだ写していない作品を前提にするテストで使います。
+func (b *WorkBuilder) WithoutAnime() *WorkBuilder {
+	b.withoutAnime = true
+	return b
+}
+
 // Buildはテスト用の作品データをデータベースに作成します
 func (b *WorkBuilder) Build() model.WorkID {
 	b.t.Helper()
@@ -174,15 +184,21 @@ func (b *WorkBuilder) Build() model.WorkID {
 			wikipedia_url, season_year, season_name,
 			watchers_count, episodes_count, no_episodes,
 			sc_tid, mal_anime_id, manual_episodes_count, unpublished_at, deleted_at,
-			created_at, updated_at
+			created_at, updated_at, anime_id
 		) VALUES (
 			$1, $2, $3, $4, $5,
 			$6, $7, $8,
 			$9, $10, $11,
 			$12, $13, $14, $15, $16,
-			$17, $18
+			$17, $18, $19
 		) RETURNING id
 	`
+
+	// 分類や別表の行は作らない。それらが要るテストは、テストの中でanimeを作って紐づける。
+	var animeID interface{}
+	if !b.withoutAnime {
+		animeID = int64(CreateTestAnime(b.t, b.tx))
+	}
 
 	var seasonYear, seasonName interface{}
 	if b.noSeason {
@@ -235,6 +251,7 @@ func (b *WorkBuilder) Build() model.WorkID {
 		deletedAt,
 		time.Now(),
 		time.Now(),
+		animeID,
 	).Scan(&id)
 
 	if err != nil {
@@ -641,9 +658,9 @@ func (b *WorkImageBuilder) Build() int64 {
 
 	query := `
 		INSERT INTO work_images (
-			work_id, user_id, image_data, copyright, asin, color_rgb, created_at, updated_at
+			work_id, user_id, image_data, copyright, asin, color_rgb, created_at, updated_at, anime_id
 		) VALUES (
-			$1, $2, $3, $4, $5, $6, $7, $8
+			$1, $2, $3, $4, $5, $6, $7, $8, (SELECT anime_id FROM works WHERE id = $1)
 		) RETURNING id
 	`
 
@@ -1313,10 +1330,10 @@ func (b *ProgramBuilder) Build() int64 {
 	query := `
 		INSERT INTO programs (
 			channel_id, work_id, aasm_state, created_at, updated_at,
-			minimum_episode_generatable_number
+			minimum_episode_generatable_number, anime_id
 		) VALUES (
 			$1, $2, $3, $4, $5,
-			$6
+			$6, (SELECT anime_id FROM works WHERE id = $2)
 		) RETURNING id
 	`
 
@@ -1444,11 +1461,13 @@ func (b *SlotBuilder) Build() model.SlotID {
 		INSERT INTO slots (
 			work_id, episode_id, channel_id, program_id, started_at,
 			number, unpublished_at, deleted_at,
-			created_at, updated_at, rebroadcast, irregular
+			created_at, updated_at, rebroadcast, irregular,
+			anime_id, episode_anime_id
 		) VALUES (
 			$1, $2, $3, $4, $5,
 			$6, $7, $8,
-			$9, $10, $11, $12
+			$9, $10, $11, $12,
+			(SELECT anime_id FROM works WHERE id = $1), (SELECT anime_id FROM episodes WHERE id = $2)
 		) RETURNING id
 	`
 
@@ -1756,8 +1775,8 @@ func (b *CastBuilder) Build() model.CastID {
 	displayName := b.characterName + " as " + b.personName
 	var castID int64
 	err = b.tx.QueryRow(`
-		INSERT INTO casts (work_id, character_id, person_id, name, name_en, sort_number, unpublished_at, deleted_at, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW())
+		INSERT INTO casts (work_id, character_id, person_id, name, name_en, sort_number, unpublished_at, deleted_at, created_at, updated_at, anime_id)
+		VALUES ($1, $2, $3, $4, $5, $6, $7, $8, NOW(), NOW(), (SELECT anime_id FROM works WHERE id = $1))
 		RETURNING id
 	`, int64(b.workID), characterID, personID, displayName, displayName, 1, unpublishedAt, deletedAt).Scan(&castID)
 	if err != nil {
@@ -1868,8 +1887,8 @@ func (b *StaffBuilder) Build() model.StaffID {
 
 	var staffID int64
 	err := b.tx.QueryRow(`
-		INSERT INTO staffs (work_id, name, name_en, role, role_other, role_other_en, resource_id, resource_type, sort_number, unpublished_at, deleted_at, created_at, updated_at)
-		VALUES ($1, $2, $3, $4, '', '', $5, $6, 1, $7, $8, NOW(), NOW())
+		INSERT INTO staffs (work_id, name, name_en, role, role_other, role_other_en, resource_id, resource_type, sort_number, unpublished_at, deleted_at, created_at, updated_at, anime_id)
+		VALUES ($1, $2, $3, $4, '', '', $5, $6, 1, $7, $8, NOW(), NOW(), (SELECT anime_id FROM works WHERE id = $1))
 		RETURNING id
 	`, int64(b.workID), b.name, b.name, b.role, resourceID, resourceType, unpublishedAt, deletedAt).Scan(&staffID)
 	if err != nil {

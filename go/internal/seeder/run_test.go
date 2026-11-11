@@ -45,13 +45,13 @@ func TestEnsureSeedableEnv(t *testing.T) {
 	}
 }
 
-// TestRun_RejectsNonSeedableEnvは意図的にnilのデータベースハンドルを渡す。ガードは
+// TestRun_RejectsNonSeedableEnvは意図的にnilのデータベースハンドルと同期のユースケースを渡す。ガードは
 // Runがデータベースに到達する前に環境を拒否しなければならず、nilのハンドルが参照される
 // ことは無い。ガードが遅れて動く実装であれば、静かに通るのではなくここでpanicする。
 func TestRun_RejectsNonSeedableEnv(t *testing.T) {
 	t.Parallel()
 
-	if err := Run(context.Background(), &config.Config{Env: "prod"}, nil); err == nil {
+	if err := Run(context.Background(), &config.Config{Env: "prod"}, nil, nil); err == nil {
 		t.Fatal("Run() = nil、期待値 = エラーあり")
 	}
 }

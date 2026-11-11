@@ -28,7 +28,7 @@ func TestGetAPILegacyIDsUsecase_Execute(t *testing.T) {
 	// legacyWorkは、旧作品を作り、指定したanimeに写す
 	legacyWork := func(animeID model.AnimeID) model.WorkID {
 		t.Helper()
-		id := testutil.NewWorkBuilder(t, f.tx).WithTitle("旧作品").Build()
+		id := testutil.NewWorkBuilder(t, f.tx).WithTitle("旧作品").WithoutAnime().Build()
 		if err := workRepo.UpdateAnimeID(ctx, id, animeID); err != nil {
 			t.Fatalf("旧作品のanime_idの設定に失敗しました: %v", err)
 		}
@@ -53,7 +53,7 @@ func TestGetAPILegacyIDsUsecase_Execute(t *testing.T) {
 	publishedWorkID := legacyWork(published)
 	mergedWorkID := legacyWork(merged)
 	archivedWorkID := legacyWork(archived)
-	unmappedWorkID := testutil.NewWorkBuilder(t, f.tx).WithTitle("写していない旧作品").Build()
+	unmappedWorkID := testutil.NewWorkBuilder(t, f.tx).WithTitle("写していない旧作品").WithoutAnime().Build()
 	episodeID := legacyEpisode(publishedWorkID, 1, episode)
 	episodeOfArchivedID := legacyEpisode(archivedWorkID, 1, episodeOfArchived)
 
