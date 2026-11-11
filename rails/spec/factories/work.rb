@@ -15,6 +15,9 @@ FactoryBot.define do
     mal_anime_id { 12_345 }
     released_at { Date.parse("2012-04-05") }
     released_at_about { "2012年" }
+    # 本番の作品は必ずanimeを持つため、テストの作品も既定でanimesの行に紐づける。
+    # animesテーブルのモデルが無いため、SQLで行を作る。animeに紐づけない作品は `anime_id: nil` で作る。
+    anime_id { ActiveRecord::Base.connection.select_value("INSERT INTO animes (status) VALUES ('published') RETURNING id") }
 
     trait :with_current_season do
       year, name = ENV["ANNICT_CURRENT_SEASON"].split("-")
