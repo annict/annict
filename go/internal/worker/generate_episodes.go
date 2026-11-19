@@ -11,8 +11,8 @@ import (
 )
 
 // GenerateEpisodesTimeoutはGenerateEpisodesWorkerの1回の試行の実行上限。Riverの既定の
-// ジョブタイムアウト (1分) では、前後7日の放送枠を1件ずつ処理し、しょぼいカレンダーへ問い
-// 合わせるまでに足りないことがあるため上書きする。
+// ジョブタイムアウト (1分) では、7日後までに始まる放送枠を1件ずつ処理し、しょぼいカレンダーへ
+// 問い合わせるまでに足りないことがあるため上書きする。
 const GenerateEpisodesTimeout = 10 * time.Minute
 
 // EpisodesGeneratorはエピソードの自動生成を実行する。

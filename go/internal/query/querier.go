@@ -713,11 +713,17 @@ type Querier interface {
 	// 前後を作品ごとにまとめて求めるため、親の作品の公開中のエピソードをすべて並べてから絞る。
 	// 前後が無いときは0を返す (animes.idは1から始まる)
 	ListPublishedEpisodeNeighbors(ctx context.Context, arg ListPublishedEpisodeNeighborsParams) ([]ListPublishedEpisodeNeighborsRow, error)
-	// 自動生成の対象はRailsのepisode:generateと同じ条件 (未削除・公開中で、エピソードが紐づいて
-	// おらず、再放送でも不定期放送でもなく、番組と回数を持つ) の放送枠に、開始日時の範囲と作品が
-	// 未削除・公開中であることを加えたもの。
+	// 自動生成の対象は、未削除・公開中で、エピソードが紐づいておらず、再放送でも不定期放送でもなく、
+	// 番組と回数を持つ放送枠のうち、開始日時がstarted_beforeより前で、作品が未削除・公開中のもの。
+	// 開始日時の下限は設けず、放送日を過ぎてから登録された放送枠も拾う。
+	//
+	// 作品の予定エピソード数があるときは、作品をロックしたあとの判定で何もしないと分かっている放送枠を
+	// 除く。予定エピソード数を超える話にあたる放送枠と、公開中のエピソード数が予定エピソード数に達した
+	// 作品で、紐づけの候補 (計算した話数と等しい公開中のエピソード) も無い放送枠である。
+	// 作品内の順番と話数はGetSlotForEpisodeGenerationByIDと同じ数え方にする。
+	//
 	// 一覧では処理するidと所属作品だけを読み、話数の計算に使う値は作品ロック後に読み直す。
-	ListSlotsForEpisodeGeneration(ctx context.Context, arg ListSlotsForEpisodeGenerationParams) ([]ListSlotsForEpisodeGenerationRow, error)
+	ListSlotsForEpisodeGeneration(ctx context.Context, startedBefore time.Time) ([]ListSlotsForEpisodeGenerationRow, error)
 	// 作品の操作の版と、版の時点でその作品の配下にあったエピソードの操作の版を、新しい順に1ページ分返す。
 	// 1つ前の版はエピソードごとに取るため、作品とエピソードのすべての版に対して、作品・エピソードで分けたLAGを
 	// 取ってからページを切る。削除したエピソードの版は、Annict DBのエピソードの一覧と同じく誰にも見せないため除く。
