@@ -722,7 +722,7 @@ DEPENDENCIES
   wilson_score
 
 RUBY VERSION
-  ruby 4.0.9p0
+  ruby 4.0.10
 
 BUNDLED WITH
   4.0.20
