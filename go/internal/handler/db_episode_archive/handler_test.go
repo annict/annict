@@ -38,14 +38,19 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	sessionManager := session.NewManager(repository.NewSessionRepository(query.New(db).WithTx(tx)), cfg)
 	poolQueries := query.New(db)
 	episodeRepo := repository.NewEpisodeRepository(poolQueries)
+	dbEditRecordRepos := usecase.DBEditRecordRepos{
+		DBEdit:         repository.NewDBEditRepository(poolQueries),
+		AnimeRevision:  repository.NewAnimeRevisionRepository(poolQueries),
+		PersonRevision: repository.NewPersonRevisionRepository(poolQueries),
+	}
 
 	return NewHandler(
 		cfg,
 		sessionManager,
 		testutil.NewTestFlashManager(),
 		usecase.NewGetDBEpisodeArchiveNewUsecase(episodeRepo),
-		usecase.NewArchiveEpisodeUsecase(db, episodeRepo, repository.NewAnimeRepository(poolQueries)),
-		usecase.NewUnarchiveEpisodeUsecase(db, episodeRepo, repository.NewAnimeRepository(poolQueries)),
+		usecase.NewArchiveEpisodeUsecase(db, episodeRepo, repository.NewAnimeRepository(poolQueries), repository.NewAnimeClassificationRepository(poolQueries), dbEditRecordRepos),
+		usecase.NewUnarchiveEpisodeUsecase(db, episodeRepo, repository.NewAnimeRepository(poolQueries), repository.NewAnimeClassificationRepository(poolQueries), dbEditRecordRepos),
 	)
 }
 
@@ -548,4 +553,32 @@ func TestRequiresCommitter(t *testing.T) {
 			t.Errorf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
 		}
 	})
+}
+
+// TestNew_NoRevisionsLinkは、フィーチャーフラグdb_edit_historyを有効にしたデバイスの閲覧者にも、
+// 非公開の確認ページの作品のサブナビに「履歴」を出さないことを検証する。作品の履歴の入口は、作品一覧の行と作品の
+// 編集画面の見出しに置く。
+func TestNew_NoRevisionsLink(t *testing.T) {
+	t.Parallel()
+
+	const deviceToken = "db-episode-archive-new-revisions-flagged"
+	db, tx := testutil.SetupTx(t)
+	workID := insertArchiveTargetWork(t, db)
+	episodeID := insertArchiveTargetEpisode(t, db, workID)
+	testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(deviceToken).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+
+	r := chi.NewRouter()
+	r.Get("/db/episodes/{id}/archive/new", newTestHandler(t, db, tx).New)
+	req := getRequest(fmt.Sprintf("/db/episodes/%d/archive/new", int64(episodeID)))
+	req.AddCookie(&http.Cookie{Name: authMiddleware.DeviceTokenCookieName, Value: deviceToken})
+	rr := httptest.NewRecorder()
+	r.ServeHTTP(rr, req)
+
+	if rr.Code != http.StatusOK {
+		t.Fatalf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
+	}
+	revisionsLink := fmt.Sprintf(`href="/db/works/%d/revisions"`, int64(workID))
+	if strings.Contains(rr.Body.String(), revisionsLink) {
+		t.Errorf("作品の履歴へのリンク %qが出ている", revisionsLink)
+	}
 }

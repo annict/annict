@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 
 	"github.com/annict/annict/go/internal/i18n"
@@ -11,7 +12,7 @@ import (
 
 // ArchivePersonUsecaseはAnnict DB管理画面から人物を非公開にする。people.statusをarchivedにし、
 // Rails版の表示から除外されるようRails版への橋渡し (unpublished_at) も書く。キャスト・スタッフは
-// 書き換えず、編集履歴にも記録しない。非公開にできるのは公開中の人物だけで、状態の確認と
+// 書き換えず、db_activitiesにも記録しない。Annict DBの編集履歴には、書き込みと同じトランザクションで記録する。非公開にできるのは公開中の人物だけで、状態の確認と
 // 書き込みはリポジトリの1文の更新で行う。確認画面を開いた後に他者が状態を変えた人物への送信は、
 // 何も書かずにnot foundになる。
 //
@@ -19,12 +20,14 @@ import (
 // リクエストを手前で拒否する。UseCase側に検査を残すことで、そのルート以外から到達した呼び出し元
 // にも同じ権限を要求する。
 type ArchivePersonUsecase struct {
-	personRepo *repository.PersonRepository
+	db                *sql.DB
+	personRepo        *repository.PersonRepository
+	dbEditRecordRepos DBEditRecordRepos
 }
 
 // NewArchivePersonUsecaseは新しいArchivePersonUsecaseを作成する。
-func NewArchivePersonUsecase(personRepo *repository.PersonRepository) *ArchivePersonUsecase {
-	return &ArchivePersonUsecase{personRepo: personRepo}
+func NewArchivePersonUsecase(db *sql.DB, personRepo *repository.PersonRepository, dbEditRecordRepos DBEditRecordRepos) *ArchivePersonUsecase {
+	return &ArchivePersonUsecase{db: db, personRepo: personRepo, dbEditRecordRepos: dbEditRecordRepos}
 }
 
 // ArchivePersonInputはアーカイブする人物と、書き込みを認可するユーザーを指定する。
@@ -49,9 +52,24 @@ func (uc *ArchivePersonUsecase) Execute(ctx context.Context, input ArchivePerson
 		}
 	}
 
-	written, err := uc.personRepo.Archive(ctx, input.PersonID)
+	// 編集履歴の版は事前に読んだ人物から組み立てるため、書き込みはその版を照合する。読んだ後に別の編集が入った
+	// 人物と、状態を変えられない人物には書き込まない。
+	before, err := uc.personRepo.GetForRevisionByID(ctx, input.PersonID)
 	if err != nil {
-		return nil, fmt.Errorf("人物のアーカイブに失敗しました: %w", err)
+		return nil, fmt.Errorf("人物の取得に失敗しました: %w", err)
+	}
+	written := false
+	if before != nil && before.Status == model.PersonStatusPublished {
+		recordPlan, err := planPersonStatusRecord(ctx, uc.dbEditRecordRepos, input.User, model.DBEditActionArchive, before, model.PersonStatusArchived)
+		if err != nil {
+			return nil, err
+		}
+		written, err = writePersonWithRecord(ctx, uc.db, uc.personRepo, uc.dbEditRecordRepos, recordPlan, func(repo *repository.PersonRepository) (bool, error) {
+			return repo.Archive(ctx, input.PersonID, before.UpdatedAt)
+		})
+		if err != nil {
+			return nil, fmt.Errorf("人物のアーカイブに失敗しました: %w", err)
+		}
 	}
 	if !written {
 		return nil, &model.AppError{

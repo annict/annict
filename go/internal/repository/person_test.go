@@ -707,13 +707,24 @@ func TestPersonRepository_StateChanges(t *testing.T) {
 
 	type operation func(repo *repository.PersonRepository, id model.PersonID) (bool, error)
 	archive := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
-		return repo.Archive(context.Background(), id)
+		return repo.Archive(context.Background(), id, personTestVersion)
 	}
 	unarchive := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
-		return repo.Unarchive(context.Background(), id)
+		return repo.Unarchive(context.Background(), id, personTestVersion)
 	}
 	deletePerson := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
-		return repo.Delete(context.Background(), id)
+		return repo.Delete(context.Background(), id, personTestVersion)
+	}
+	// 読んだ後に別の編集が入った人物 (版の食い違う送信) には書き込まない。
+	staleVersion := personTestVersion.Add(-time.Second)
+	archiveStale := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
+		return repo.Archive(context.Background(), id, staleVersion)
+	}
+	unarchiveStale := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
+		return repo.Unarchive(context.Background(), id, staleVersion)
+	}
+	deleteStale := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
+		return repo.Delete(context.Background(), id, staleVersion)
 	}
 	delist := func(repo *repository.PersonRepository, id model.PersonID) (bool, error) {
 		message := "対応記録"
@@ -739,6 +750,9 @@ func TestPersonRepository_StateChanges(t *testing.T) {
 		{name: "非公開の人物は非公開にしない", op: archive, status: archived, wantState: personState{status: archived, unpublished: true}},
 		{name: "掲載停止の人物は非公開にしない", op: archive, status: delisted, wantState: personState{status: delisted}},
 		{name: "削除済みの人物は非公開にしない", op: archive, status: deleted, wantState: personState{status: deleted}},
+		{name: "版の食い違う人物は非公開にしない", op: archiveStale, status: published, wantState: personState{status: published}},
+		{name: "版の食い違う人物は公開しない", op: unarchiveStale, status: archived, wantState: personState{status: archived, unpublished: true}},
+		{name: "版の食い違う人物は削除しない", op: deleteStale, status: published, wantState: personState{status: published}},
 		{name: "非公開の人物を公開する", op: unarchive, status: archived, wantWritten: true, wantState: personState{status: published}},
 		{name: "公開中の人物は公開しない", op: unarchive, status: published, wantState: personState{status: published}},
 		{name: "掲載停止の人物は公開しない", op: unarchive, status: delisted, wantState: personState{status: delisted}},
@@ -943,9 +957,9 @@ func TestPersonRepository_Delete_KeepsRecord(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 	repo := repository.NewPersonRepository(query.New(db).WithTx(tx))
-	id := testutil.NewPersonBuilder(t, tx).Build()
+	id := testutil.NewPersonBuilder(t, tx).WithUpdatedAt(personTestVersion).Build()
 
-	if _, err := repo.Delete(context.Background(), id); err != nil {
+	if _, err := repo.Delete(context.Background(), id, personTestVersion); err != nil {
 		t.Fatalf("Deleteでエラー: %v", err)
 	}
 

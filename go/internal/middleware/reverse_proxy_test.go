@@ -1727,3 +1727,94 @@ func TestReverseProxyMiddleware_MethodOverrideKeepsBodyForRails(t *testing.T) {
 		t.Errorf("Railsへ転送されたボディ = %q、期待値 = %q", got, body)
 	}
 }
+
+func TestReverseProxyMiddleware_DBRevisionsFlag(t *testing.T) {
+	t.Parallel()
+	for _, resource := range []string{"works", "episodes", "people"} {
+		for _, enabled := range []bool{false, true} {
+			for _, id := range []string{"1", "+1"} {
+				name := resource + "/フラグ無効/" + id
+				if enabled {
+					name = resource + "/フラグ有効/" + id
+				}
+				t.Run(name, func(t *testing.T) {
+					t.Parallel()
+					rails := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write([]byte("Rails")) }))
+					defer rails.Close()
+					mw, err := NewReverseProxyMiddleware(rails.URL, &config.Config{Domain: "annict-test.page"}, &mockFeatureFlagChecker{enabled: enabled}, nil)
+					if err != nil {
+						t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+					}
+					router := chi.NewRouter()
+					router.Get("/db/"+resource+"/{id}/revisions", func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write([]byte("Go")) })
+					mw.SetRouter(router)
+					response := httptest.NewRecorder()
+					mw.Middleware(router).ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/db/"+resource+"/"+id+"/revisions", nil))
+					want := "Rails"
+					if enabled {
+						want = "Go"
+					}
+					if got := response.Body.String(); got != want {
+						t.Errorf("転送先 = %q、期待値 = %q", got, want)
+					}
+				})
+			}
+		}
+	}
+}
+
+func TestReverseProxyMiddleware_DBEditsFlag(t *testing.T) {
+	t.Parallel()
+	for _, enabled := range []bool{false, true} {
+		name := "フラグ無効"
+		if enabled {
+			name = "フラグ有効"
+		}
+		t.Run(name, func(t *testing.T) {
+			t.Parallel()
+			rails := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write([]byte("Rails")) }))
+			defer rails.Close()
+			mw, err := NewReverseProxyMiddleware(rails.URL, &config.Config{Domain: "annict-test.page"}, &mockFeatureFlagChecker{enabled: enabled}, nil)
+			if err != nil {
+				t.Fatalf("ミドルウェアの作成に失敗: %v", err)
+			}
+			router := chi.NewRouter()
+			router.Get("/db/edits", func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write([]byte("Go")) })
+			mw.SetRouter(router)
+			response := httptest.NewRecorder()
+			mw.Middleware(router).ServeHTTP(response, httptest.NewRequest(http.MethodGet, "/db/edits", nil))
+			want := "Rails"
+			if enabled {
+				want = "Go"
+			}
+			if got := response.Body.String(); got != want {
+				t.Errorf("転送先 = %q、期待値 = %q", got, want)
+			}
+		})
+	}
+}
+
+func TestGetDeviceToken(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name   string
+		cookie *http.Cookie
+		want   string
+	}{
+		{name: "Cookieがあるときはその値を返す", cookie: &http.Cookie{Name: DeviceTokenCookieName, Value: "device-1"}, want: "device-1"},
+		{name: "Cookieが無いときは空文字列を返す", want: ""},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			req := httptest.NewRequest(http.MethodGet, "/", nil)
+			if tt.cookie != nil {
+				req.AddCookie(tt.cookie)
+			}
+			if got := GetDeviceToken(req); got != tt.want {
+				t.Errorf("GetDeviceToken() = %q、期待値 = %q", got, tt.want)
+			}
+		})
+	}
+}

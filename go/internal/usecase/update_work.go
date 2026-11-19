@@ -23,6 +23,7 @@ type UpdateWorkUsecase struct {
 	animeRepo               *repository.AnimeRepository
 	animeClassificationRepo *repository.AnimeClassificationRepository
 	satelliteRepos          WorkSatelliteRepos
+	dbEditRecordRepos       DBEditRecordRepos
 	validator               *validator.DBWorkCreateValidator
 }
 
@@ -32,6 +33,7 @@ func NewUpdateWorkUsecase(
 	animeRepo *repository.AnimeRepository,
 	animeClassificationRepo *repository.AnimeClassificationRepository,
 	satelliteRepos WorkSatelliteRepos,
+	dbEditRecordRepos DBEditRecordRepos,
 	validator *validator.DBWorkCreateValidator,
 ) *UpdateWorkUsecase {
 	return &UpdateWorkUsecase{
@@ -40,6 +42,7 @@ func NewUpdateWorkUsecase(
 		animeRepo:               animeRepo,
 		animeClassificationRepo: animeClassificationRepo,
 		satelliteRepos:          satelliteRepos,
+		dbEditRecordRepos:       dbEditRecordRepos,
 		validator:               validator,
 	}
 }
@@ -101,6 +104,7 @@ func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput)
 	// 引き継げるよう既存animeを読み込む。nilはworkが未だanimeにマッピングされて
 	// いないことを表し、その場合animesへの両書きはスキップする (updateWorkを参照)。
 	var existingAnime *model.Anime
+	var existingClassification *model.AnimeClassification
 	var existingSatellites workSatelliteExisting
 	if current.AnimeID != nil {
 		existingAnime, err = uc.animeRepo.GetByID(ctx, *current.AnimeID)
@@ -116,6 +120,11 @@ func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput)
 			if err != nil {
 				return nil, fmt.Errorf("既存別表行の取得に失敗しました: %w", err)
 			}
+			// 編集履歴の書き込む前の状態を組み立てるため、分類も読む。
+			existingClassification, err = uc.animeClassificationRepo.GetByAnimeID(ctx, existingAnime.ID)
+			if err != nil {
+				return nil, fmt.Errorf("anime_classificationの取得に失敗しました: %w", err)
+			}
 		}
 	}
 
@@ -124,7 +133,7 @@ func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput)
 		return nil, fmt.Errorf("入力値の変換に失敗: %w", err)
 	}
 
-	return uc.updateWork(ctx, params, current, existingAnime, existingSatellites)
+	return uc.updateWork(ctx, input.User.ID, params, current, existingAnime, existingClassification, existingSatellites)
 }
 
 // updateWorkは更新をworksに、そしてworkが既にマッピング済みなら そのanime /
@@ -136,7 +145,10 @@ func (uc *UpdateWorkUsecase) Execute(ctx context.Context, input UpdateWorkInput)
 // フェーズ2の同期バッチに委ねる。同期は裁定者であり既存workに対するanimeの唯一の
 // 作成者なので、ここでは作成しない。workはanime_id NULLのまま既にバッチから見えており、
 // ここで並行してanimeを作ると1つのworkに2つのanimeができる競合になる。
-func (uc *UpdateWorkUsecase) updateWork(ctx context.Context, params repository.UpdateWorkParams, current *model.Work, existingAnime *model.Anime, existingSatellites workSatelliteExisting) (*UpdateWorkOutput, error) {
+//
+// 編集履歴は、animeに両書きするときだけ記録する。版はanimeを指すため、未マッピングのworkの更新は
+// 記録できない。
+func (uc *UpdateWorkUsecase) updateWork(ctx context.Context, userID model.UserID, params repository.UpdateWorkParams, current *model.Work, existingAnime *model.Anime, existingClassification *model.AnimeClassification, existingSatellites workSatelliteExisting) (*UpdateWorkOutput, error) {
 	// anime / 分類の写像と別表のリコンサイル計画はトランザクションを開く前に組み立てる
 	// (createWorkと対称、トランザクション内は永続化のみとするルール1)。送信されたparamsを
 	// *model.Workに射影し (編集フォームが触れないカラムは保持)、フェーズ2同期の写像ヘルパーを
@@ -146,12 +158,31 @@ func (uc *UpdateWorkUsecase) updateWork(ctx context.Context, params repository.U
 	var animeParams repository.UpdateAnimeParams
 	var classificationParams repository.UpdateAnimeClassificationParams
 	var satellitePlans workSatellitePlans
+	var recordPlan *dbEditRecordPlan
 	if existingAnime != nil {
 		work := workFromUpdateWorkParams(params, current)
 		work.AnimeID = &existingAnime.ID
 		animeParams = animeUpdateParamsFromWork(work, existingAnime)
 		classificationParams = classificationUpdateParamsFromWork(work, existingAnime.ID)
 		satellitePlans = planWorkSatellites(work, existingSatellites)
+
+		// 書き込む前と後のスナップショットを、事前に読んだ行と書き込む値から組み立てる
+		// (トランザクションの中では書き込んだ行を読み直さない)。
+		before := animeSnapshotFromRows(existingAnime, existingClassification, existingSatellites)
+		after := before
+		setAnimeSnapshotColumns(&after, animeParams)
+		setAnimeSnapshotClassification(&after, classificationParams)
+		setAnimeSnapshotSatellites(&after, existingSatellites, satellitePlans)
+		var err error
+		recordPlan, err = planDBEditRecord(ctx, uc.dbEditRecordRepos, DBEditRecordInput{
+			Actor:  model.DBEditActorUser,
+			UserID: &userID,
+			Action: model.DBEditActionUpdate,
+			Animes: []AnimeRevisionInput{{AnimeID: existingAnime.ID, Before: &before, After: after}},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("編集履歴の記録の準備に失敗しました: %w", err)
+		}
 	}
 
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -184,6 +215,9 @@ func (uc *UpdateWorkUsecase) updateWork(ctx context.Context, params repository.U
 		}
 		if err := applyWorkSatellitePlans(ctx, uc.satelliteRepos.WithTx(tx), satellitePlans); err != nil {
 			return nil, fmt.Errorf("別表テーブルの両書きに失敗しました: %w", err)
+		}
+		if err := writeDBEditRecord(ctx, uc.dbEditRecordRepos.WithTx(tx), recordPlan); err != nil {
+			return nil, fmt.Errorf("編集履歴の記録に失敗しました: %w", err)
 		}
 	}
 

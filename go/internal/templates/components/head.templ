@@ -39,9 +39,14 @@ templ Head(meta viewmodel.PageMeta, assetVersion string) {
 // DBHeadはAnnict DB管理画面の <head> の内容を出力する。本画面はrobots.txtで
 // クロールを禁止しているため、検索エンジンとインストール済みPWAに向けたタグは出さない。
 // 一方Open Graphは最小限だけ残す。作品一覧は未ログインでも閲覧でき、URLをどこかに
-// 貼られうるため、タイトル付きのカードを出せるようにしておく。
+// 貼られうるため、タイトル付きのカードを出せるようにしておく。robotsのタグは、ページ送りで
+// 薄いページが増える履歴のように、ページ自身がインデックスさせないと宣言したときだけ出す。
+// robots.txtの扱いが変わっても、そのページが検索結果に出ないようにするため。
 templ DBHead(meta viewmodel.PageMeta, assetVersion string) {
 	@headCommon(meta, assetVersion)
+	if meta.Robots() != "" {
+		<meta name="robots" content={ meta.Robots() }/>
+	}
 	<meta property="og:title" content={ meta.Title }/>
 	<meta property="og:type" content={ meta.OGType }/>
 	<meta property="og:url" content={ meta.CanonicalURL }/>

@@ -118,6 +118,26 @@ func DBWorkArchiveNewPath(id viewmodel.WorkID) Path {
 	return Path(fmt.Sprintf("/db/works/%s/archive/new", id))
 }
 
+// DBWorkRevisionsPathはDB管理画面の作品の履歴のパスを生成します。
+func DBWorkRevisionsPath(id viewmodel.WorkID) Path {
+	return Path(fmt.Sprintf("/db/works/%s/revisions", id))
+}
+
+// DBEpisodeRevisionsPathはDB管理画面のエピソードの履歴のパスを生成します。
+func DBEpisodeRevisionsPath(id viewmodel.EpisodeID) Path {
+	return Path(fmt.Sprintf("/db/episodes/%s/revisions", id))
+}
+
+// DBPersonRevisionsPathはDB管理画面の人物の履歴のパスを生成します。
+func DBPersonRevisionsPath(id viewmodel.PersonID) Path {
+	return Path(fmt.Sprintf("/db/people/%s/revisions", id))
+}
+
+// UserProfilePathは利用者のプロフィールのパスを生成します。プロフィールはRails版が配信します。
+func UserProfilePath(username string) Path {
+	return Path("/@" + username)
+}
+
 // DBWorkEpisodesPathはDB管理画面の作品のエピソード一覧のパスを生成します。
 func DBWorkEpisodesPath(id viewmodel.WorkID) Path {
 	return Path(fmt.Sprintf("/db/works/%s/episodes", id))

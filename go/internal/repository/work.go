@@ -748,30 +748,41 @@ func (r *WorkRepository) UpdateAnimeID(ctx context.Context, workID model.WorkID,
 // 更新する。非nilの時刻を渡すと作品を非公開にし (Unpublishable#unpublish)、nilを渡すと
 // クリアして再公開する (Unpublishable#publish)。UpdateAnimeIDと異なりupdated_atを更新
 // するのは、公開状態の変更が記帳ではなく実質的な内容変更であるため。
-func (r *WorkRepository) UpdateUnpublishedAt(ctx context.Context, id model.WorkID, unpublishedAt *time.Time) error {
-	var nullTime sql.NullTime
+// versionは事前に読んだ版 (nilはNULL) で、一致しない場合はfalseを返す。
+func (r *WorkRepository) UpdateUnpublishedAt(ctx context.Context, id model.WorkID, unpublishedAt, version *time.Time) (bool, error) {
+	var nullTime, nullVersion sql.NullTime
 	if unpublishedAt != nil {
 		nullTime = sql.NullTime{Time: *unpublishedAt, Valid: true}
 	}
-	return r.queries.UpdateWorkUnpublishedAt(ctx, query.UpdateWorkUnpublishedAtParams{
+	if version != nil {
+		nullVersion = sql.NullTime{Time: *version, Valid: true}
+	}
+	rows, err := r.queries.UpdateWorkUnpublishedAt(ctx, query.UpdateWorkUnpublishedAtParams{
 		ID:            int64(id),
 		UnpublishedAt: nullTime,
+		Version:       nullVersion,
 	})
+	return rows > 0, err
 }
 
 // UpdateDeletedAtはworks.deleted_at状態カラムを書き込み、updated_atを更新する。
 // 非nilの時刻を渡すと作品をソフトデリートし (SoftDeletable#destroy)、nilを渡すと復元する。
 // UpdateUnpublishedAtと同じくupdated_atを更新するのは、削除状態の変更が記帳ではなく実質的な
-// 内容変更であるため。
-func (r *WorkRepository) UpdateDeletedAt(ctx context.Context, id model.WorkID, deletedAt *time.Time) error {
-	var nullTime sql.NullTime
+// 内容変更であるため。事前に読んだversion (nilはNULL) が一致しない場合はfalseを返す。
+func (r *WorkRepository) UpdateDeletedAt(ctx context.Context, id model.WorkID, deletedAt, version *time.Time) (bool, error) {
+	var nullTime, nullVersion sql.NullTime
 	if deletedAt != nil {
 		nullTime = sql.NullTime{Time: *deletedAt, Valid: true}
 	}
-	return r.queries.UpdateWorkDeletedAt(ctx, query.UpdateWorkDeletedAtParams{
+	if version != nil {
+		nullVersion = sql.NullTime{Time: *version, Valid: true}
+	}
+	rows, err := r.queries.UpdateWorkDeletedAt(ctx, query.UpdateWorkDeletedAtParams{
 		ID:        int64(id),
 		DeletedAt: nullTime,
+		Version:   nullVersion,
 	})
+	return rows > 0, err
 }
 
 // workFromAnimeSyncRowはanime同期のquery行を *model.Workに変換する。
@@ -796,6 +807,10 @@ func workFromAnimeSyncRow(row query.ListWorksForAnimeSyncByIDsRow) *model.Work {
 	if row.TitleKana != "" {
 		titleKana := row.TitleKana
 		work.TitleKana = &titleKana
+	}
+	if row.UpdatedAt.Valid {
+		updatedAt := row.UpdatedAt.Time
+		work.UpdatedAt = &updatedAt
 	}
 	if row.UnpublishedAt.Valid {
 		unpublishedAt := row.UnpublishedAt.Time

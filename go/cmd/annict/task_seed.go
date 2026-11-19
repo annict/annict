@@ -31,5 +31,5 @@ func seed(ctx context.Context, cfg *config.Config, db *sql.DB, queries *query.Qu
 		return err
 	}
 
-	return seeder.Run(ctx, cfg, db)
+	return seeder.Run(ctx, cfg, db, newSyncAnimesUsecase(db, queries))
 }

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -14,18 +15,20 @@ import (
 // UndelistPersonUsecaseはAnnict DB管理画面から人物の掲載停止を解除する。DelistPersonUsecaseの
 // 逆で、people.statusをpublishedに戻し、橋渡しのunpublished_atをNULLに戻す。対応記録は申出に
 // 応じた経緯として残す。掲載停止を解除できるのは掲載停止の人物だけで、それ以外の状態の人物への
-// 送信はnot foundになる。確認後に版が進んだ送信は競合として扱う。編集履歴には記録しない。
+// 送信はnot foundになる。確認後に版が進んだ送信は競合として扱う。db_activitiesには記録せず、Annict DBの編集履歴に記録する。
 //
 // 認可 (admin) は書き込みより先に本UseCaseで行い、ルートのRequireAdmin middlewareも同じ
 // リクエストを手前で拒否する。UseCase側に検査を残すことで、そのルート以外から到達した呼び出し元
 // にも同じ権限を要求する。
 type UndelistPersonUsecase struct {
-	personRepo *repository.PersonRepository
+	db                *sql.DB
+	personRepo        *repository.PersonRepository
+	dbEditRecordRepos DBEditRecordRepos
 }
 
 // NewUndelistPersonUsecaseは新しいUndelistPersonUsecaseを作成する。
-func NewUndelistPersonUsecase(personRepo *repository.PersonRepository) *UndelistPersonUsecase {
-	return &UndelistPersonUsecase{personRepo: personRepo}
+func NewUndelistPersonUsecase(db *sql.DB, personRepo *repository.PersonRepository, dbEditRecordRepos DBEditRecordRepos) *UndelistPersonUsecase {
+	return &UndelistPersonUsecase{db: db, personRepo: personRepo, dbEditRecordRepos: dbEditRecordRepos}
 }
 
 // UndelistPersonInputは掲載停止を解除する人物と確認時の版、認可するユーザーを指定する。
@@ -58,9 +61,9 @@ func (uc *UndelistPersonUsecase) Execute(ctx context.Context, input UndelistPers
 		return nil, ve
 	}
 
-	written, err := uc.personRepo.Undelist(ctx, input.PersonID, version)
+	written, err := uc.undelist(ctx, input, version)
 	if err != nil {
-		return nil, fmt.Errorf("人物の掲載停止の解除に失敗しました: %w", err)
+		return nil, err
 	}
 	if !written {
 		current, err := uc.personRepo.GetForDelistingByID(ctx, input.PersonID)
@@ -78,4 +81,27 @@ func (uc *UndelistPersonUsecase) Execute(ctx context.Context, input UndelistPers
 	}
 
 	return &UndelistPersonOutput{PersonID: input.PersonID}, nil
+}
+
+// undelistは、掲載停止の解除を編集履歴の記録と同じトランザクションで書く。DelistPersonUsecase.delistと同じく、
+// 掲載停止でない人物と、確認時の版が進んでいた人物ではfalseを返す。
+func (uc *UndelistPersonUsecase) undelist(ctx context.Context, input UndelistPersonInput, version time.Time) (bool, error) {
+	before, err := uc.personRepo.GetForRevisionByID(ctx, input.PersonID)
+	if err != nil {
+		return false, fmt.Errorf("人物の取得に失敗しました: %w", err)
+	}
+	if before == nil || before.Status != model.PersonStatusDelisted {
+		return false, nil
+	}
+	recordPlan, err := planPersonStatusRecord(ctx, uc.dbEditRecordRepos, input.User, model.DBEditActionUndelist, before, model.PersonStatusPublished)
+	if err != nil {
+		return false, err
+	}
+	written, err := writePersonWithRecord(ctx, uc.db, uc.personRepo, uc.dbEditRecordRepos, recordPlan, func(repo *repository.PersonRepository) (bool, error) {
+		return repo.Undelist(ctx, input.PersonID, version)
+	})
+	if err != nil {
+		return false, fmt.Errorf("人物の掲載停止の解除に失敗しました: %w", err)
+	}
+	return written, nil
 }

@@ -51,8 +51,9 @@ func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, personID mo
 	ctx := r.Context()
 
 	output, err := h.getDBPersonEditUC.Execute(ctx, usecase.GetDBPersonEditInput{
-		User:     middleware.GetUserFromContext(ctx),
-		PersonID: personID,
+		User:        middleware.GetUserFromContext(ctx),
+		PersonID:    personID,
+		DeviceToken: middleware.GetDeviceToken(r),
 	})
 	if err != nil {
 		if ae := model.AsAppError(err); ae != nil {
@@ -98,6 +99,7 @@ func (h *Handler) renderEdit(w http.ResponseWriter, r *http.Request, personID mo
 			FormErrors:      viewmodel.NewFormErrors(state.FormErrors),
 			FormInput:       formInput,
 			ConflictCurrent: conflictCurrent,
+			ShowRevisions:   output.CanShowRevisions,
 		}),
 	)
 	var body bytes.Buffer

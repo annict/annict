@@ -19,7 +19,7 @@ func TestGetDBWorkEditUsecase_Execute_ReturnsWork(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-	uc := NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
+	uc := NewGetDBWorkEditUsecase(workRepo, numberFormatRepo, repository.NewFeatureFlagRepository(queries))
 
 	workID := testutil.NewWorkBuilder(t, tx).
 		WithTitle("編集UseCaseテスト").
@@ -79,7 +79,7 @@ func TestGetDBWorkEditUsecase_Execute_NotFound(t *testing.T) {
 	queries := query.New(db).WithTx(tx)
 	workRepo := repository.NewWorkRepository(queries)
 	numberFormatRepo := repository.NewNumberFormatRepository(queries)
-	uc := NewGetDBWorkEditUsecase(workRepo, numberFormatRepo)
+	uc := NewGetDBWorkEditUsecase(workRepo, numberFormatRepo, repository.NewFeatureFlagRepository(queries))
 
 	_, err := uc.Execute(context.Background(), GetDBWorkEditInput{User: &model.User{ID: 1, Role: model.RoleEditor}, WorkID: model.WorkID(999999999)})
 	if err == nil {
@@ -101,7 +101,7 @@ func TestGetDBWorkEditUsecase_Execute_RejectsUnauthorizedUserBeforeLookup(t *tes
 
 	db, tx := testutil.SetupTx(t)
 	queries := query.New(db).WithTx(tx)
-	uc := NewGetDBWorkEditUsecase(repository.NewWorkRepository(queries), repository.NewNumberFormatRepository(queries))
+	uc := NewGetDBWorkEditUsecase(repository.NewWorkRepository(queries), repository.NewNumberFormatRepository(queries), repository.NewFeatureFlagRepository(queries))
 	existingWorkID := testutil.NewWorkBuilder(t, tx).WithTitle("編集認可テスト").Build()
 	missingWorkID := model.WorkID(1 << 62)
 
@@ -128,6 +128,61 @@ func TestGetDBWorkEditUsecase_Execute_RejectsUnauthorizedUserBeforeLookup(t *tes
 			ae := model.AsAppError(err)
 			if ae == nil || ae.Code != model.AppErrCodeForbidden {
 				t.Fatalf("エラーコード = %v、期待値 = AppErrCodeForbidden", err)
+			}
+		})
+	}
+}
+
+// TestGetDBWorkEditUsecase_Execute_CanShowRevisionsは、履歴へのリンクを出すかが、リバースプロキシの
+// ゲートと同じく、フィーチャーフラグdb_edit_historyが閲覧中のデバイスかユーザーに有効かで決まることを検証する。
+func TestGetDBWorkEditUsecase_Execute_CanShowRevisions(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name       string
+		flagUser   bool
+		flagDevice bool
+		// viewOtherDeviceは、フラグを有効にしたデバイスとは別のデバイスから開くことを表す。
+		viewOtherDevice bool
+		want            bool
+	}{
+		{name: "ユーザーでフラグが有効な編集者", flagUser: true, want: true},
+		{name: "閲覧中のデバイスでフラグが有効な編集者", flagDevice: true, want: true},
+		{name: "別のデバイスでだけフラグが有効な編集者", flagDevice: true, viewOtherDevice: true, want: false},
+		{name: "フラグが無効な編集者", want: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db, tx := testutil.SetupTx(t)
+			queries := query.New(db).WithTx(tx)
+			uc := NewGetDBWorkEditUsecase(repository.NewWorkRepository(queries), repository.NewNumberFormatRepository(queries), repository.NewFeatureFlagRepository(queries))
+			userID := testutil.NewUserBuilder(t, tx).WithRole(model.RoleEditor).Build()
+			// feature_flagsは (device_token, name) で一意のため、並行するサブテストが互いを待たないよう
+			// テストごとに別のトークンを使う。
+			flaggedDevice := "db-work-edit-revisions-" + t.Name()
+			if tt.flagUser {
+				testutil.NewFeatureFlagBuilder(t, tx).WithUserID(userID).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+			if tt.flagDevice {
+				testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(flaggedDevice).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+			viewingDevice := flaggedDevice
+			if tt.viewOtherDevice {
+				viewingDevice += "-other"
+			}
+			workID := testutil.NewWorkBuilder(t, tx).WithTitle("履歴リンクテスト").Build()
+
+			output, err := uc.Execute(context.Background(), GetDBWorkEditInput{
+				User:        &model.User{ID: userID, Role: model.RoleEditor},
+				WorkID:      workID,
+				DeviceToken: viewingDevice,
+			})
+			if err != nil {
+				t.Fatalf("Execute()のエラー = %v", err)
+			}
+			if output.CanShowRevisions != tt.want {
+				t.Errorf("CanShowRevisions = %v、期待値 = %v", output.CanShowRevisions, tt.want)
 			}
 		})
 	}

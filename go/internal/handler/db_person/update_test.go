@@ -36,8 +36,8 @@ func TestUpdate_Success(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 
-	userID := testutil.NewUserBuilder(t, tx).WithRole(model.RoleEditor).Build()
-	personID := testutil.NewPersonBuilder(t, tx).WithUpdatedAt(updateTestVersion).Build()
+	userID := testutil.CreateCommittedUser(t, model.RoleEditor).ID
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder { return b.WithUpdatedAt(updateTestVersion) })
 	newName := "更新後の人物-" + t.Name()
 	handler := newTestHandler(t, db, tx)
 
@@ -60,7 +60,7 @@ func TestUpdate_Success(t *testing.T) {
 	}
 
 	var name, bloodType, birthday string
-	if err := tx.QueryRow(`
+	if err := db.QueryRow(`
 		SELECT name, blood_type, to_char(birthday, 'YYYY-MM-DD') FROM people WHERE id = $1
 	`, int64(personID)).Scan(&name, &bloodType, &birthday); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
@@ -78,7 +78,9 @@ func TestUpdate_ValidationError(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 
 	storedName := "保存済みの人物-" + t.Name()
-	personID := testutil.NewPersonBuilder(t, tx).WithName(storedName).WithUpdatedAt(updateTestVersion).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithName(storedName).WithUpdatedAt(updateTestVersion)
+	})
 	handler := newTestHandler(t, db, tx)
 
 	form := url.Values{}
@@ -88,7 +90,7 @@ func TestUpdate_ValidationError(t *testing.T) {
 	form.Set("updated_at", updateTestFormVersion)
 
 	rr := httptest.NewRecorder()
-	handler.Update(rr, newUpdateRequest(personID, &model.User{ID: 1, Role: model.RoleEditor}, form))
+	handler.Update(rr, newUpdateRequest(personID, testutil.CreateCommittedUser(t, model.RoleEditor), form))
 
 	if status := rr.Code; status != http.StatusUnprocessableEntity {
 		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusUnprocessableEntity)
@@ -119,9 +121,11 @@ func TestUpdate_DelistedName(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 
-	personID := testutil.NewPersonBuilder(t, tx).WithUpdatedAt(updateTestVersion).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder { return b.WithUpdatedAt(updateTestVersion) })
 	delistedName := "掲載停止の人物-" + t.Name()
-	testutil.NewPersonBuilder(t, tx).WithName(delistedName).WithStatus(model.PersonStatusDelisted).Build()
+	testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithName(delistedName).WithStatus(model.PersonStatusDelisted)
+	})
 	handler := newTestHandler(t, db, tx)
 
 	form := url.Values{}
@@ -129,7 +133,7 @@ func TestUpdate_DelistedName(t *testing.T) {
 	form.Set("updated_at", updateTestFormVersion)
 
 	rr := httptest.NewRecorder()
-	handler.Update(rr, newUpdateRequest(personID, &model.User{ID: 1, Role: model.RoleEditor}, form))
+	handler.Update(rr, newUpdateRequest(personID, testutil.CreateCommittedUser(t, model.RoleEditor), form))
 
 	if status := rr.Code; status != http.StatusUnprocessableEntity {
 		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusUnprocessableEntity)
@@ -154,7 +158,9 @@ func TestUpdate_Conflict(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 
 	storedName := "他者が書いた人物-" + t.Name()
-	personID := testutil.NewPersonBuilder(t, tx).WithName(storedName).WithUpdatedAt(updateTestVersion).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithName(storedName).WithUpdatedAt(updateTestVersion)
+	})
 	handler := newTestHandler(t, db, tx)
 
 	submittedName := "古い版からの人物-" + t.Name()
@@ -163,7 +169,7 @@ func TestUpdate_Conflict(t *testing.T) {
 	form.Set("updated_at", "2026-09-30T00:00:00Z")
 
 	rr := httptest.NewRecorder()
-	handler.Update(rr, newUpdateRequest(personID, &model.User{ID: 1, Role: model.RoleEditor}, form))
+	handler.Update(rr, newUpdateRequest(personID, testutil.CreateCommittedUser(t, model.RoleEditor), form))
 
 	if status := rr.Code; status != http.StatusConflict {
 		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusConflict)
@@ -192,7 +198,9 @@ func TestUpdate_NotFound(t *testing.T) {
 
 	db, tx := testutil.SetupTx(t)
 
-	personID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDeleted).WithUpdatedAt(updateTestVersion).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDeleted).WithUpdatedAt(updateTestVersion)
+	})
 	handler := newTestHandler(t, db, tx)
 
 	form := url.Values{}
@@ -200,7 +208,7 @@ func TestUpdate_NotFound(t *testing.T) {
 	form.Set("updated_at", updateTestFormVersion)
 
 	rr := httptest.NewRecorder()
-	handler.Update(rr, newUpdateRequest(personID, &model.User{ID: 1, Role: model.RoleEditor}, form))
+	handler.Update(rr, newUpdateRequest(personID, testutil.CreateCommittedUser(t, model.RoleEditor), form))
 
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
@@ -215,7 +223,9 @@ func TestUpdate_ForbiddenWithoutMiddleware(t *testing.T) {
 	db, tx := testutil.SetupTx(t)
 
 	storedName := "認可される人物-" + t.Name()
-	personID := testutil.NewPersonBuilder(t, tx).WithName(storedName).WithUpdatedAt(updateTestVersion).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithName(storedName).WithUpdatedAt(updateTestVersion)
+	})
 	handler := newTestHandler(t, db, tx)
 
 	form := url.Values{}
@@ -230,7 +240,7 @@ func TestUpdate_ForbiddenWithoutMiddleware(t *testing.T) {
 	}
 
 	var name string
-	if err := tx.QueryRow(`SELECT name FROM people WHERE id = $1`, int64(personID)).Scan(&name); err != nil {
+	if err := db.QueryRow(`SELECT name FROM people WHERE id = $1`, int64(personID)).Scan(&name); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
 	}
 	if name != storedName {

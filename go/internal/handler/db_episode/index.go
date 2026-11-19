@@ -34,9 +34,11 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	page := parsePageParam(r)
 
 	output, err := h.getDBEpisodesUC.Execute(ctx, usecase.GetDBEpisodesInput{
-		WorkID:  workID,
-		Page:    page,
-		PerPage: perPage,
+		WorkID:      workID,
+		Page:        page,
+		PerPage:     perPage,
+		User:        middleware.GetUserFromContext(ctx),
+		DeviceToken: middleware.GetDeviceToken(r),
 	})
 	if err != nil {
 		if ae := model.AsAppError(err); ae != nil && ae.Code == model.AppErrCodeResourceNotFound {
@@ -89,6 +91,8 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 			IsCommitter: middleware.IsCommitter(user),
 			IsAdmin:     middleware.IsAdmin(user),
 			CSRFToken:   middleware.GetCSRFToken(r, h.sessionManager),
+			// 履歴へのリンクは、フラグが有効な利用者にだけ出す。
+			ShowRevisions: output.CanShowRevisions,
 		}),
 	)
 	var body bytes.Buffer

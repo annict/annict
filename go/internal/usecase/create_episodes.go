@@ -30,6 +30,7 @@ type CreateEpisodesUsecase struct {
 	animeRepo               *repository.AnimeRepository
 	animeClassificationRepo *repository.AnimeClassificationRepository
 	validator               *validator.DBEpisodeCreateValidator
+	dbEditRecordRepos       DBEditRecordRepos
 }
 
 // NewCreateEpisodesUsecaseはCreateEpisodesUsecaseを生成する。
@@ -40,6 +41,7 @@ func NewCreateEpisodesUsecase(
 	animeRepo *repository.AnimeRepository,
 	animeClassificationRepo *repository.AnimeClassificationRepository,
 	validator *validator.DBEpisodeCreateValidator,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *CreateEpisodesUsecase {
 	return &CreateEpisodesUsecase{
 		db:                      db,
@@ -48,6 +50,7 @@ func NewCreateEpisodesUsecase(
 		animeRepo:               animeRepo,
 		animeClassificationRepo: animeClassificationRepo,
 		validator:               validator,
+		dbEditRecordRepos:       dbEditRecordRepos,
 	}
 }
 
@@ -186,20 +189,27 @@ func (uc *CreateEpisodesUsecase) createEpisodes(
 	}
 	position := appendedEpisodePosition(maxSortNumber, prevEpisodeID)
 	episodeIDs := make([]model.EpisodeID, 0, len(rows))
+	revisions := make([]AnimeRevisionInput, 0, len(rows))
 
 	for i, row := range rows {
 		episode := episodeFromCreateRow(work.Work, row, position.SortNumber)
 
 		var animeID *model.AnimeID
 		if episode.ParentAnimeID != nil {
-			anime, err := animeRepo.Create(ctx, animeCreateParamsFromEpisode(episode))
+			animeParams := animeCreateParamsFromEpisode(episode)
+			anime, err := animeRepo.Create(ctx, animeParams)
 			if err != nil {
 				return nil, fmt.Errorf("animeの作成に失敗しました (%d行目): %w", i+1, err)
 			}
-			if _, err := classificationRepo.Create(ctx, classificationCreateParamsFromEpisode(episode, anime.ID)); err != nil {
+			classificationParams := classificationCreateParamsFromEpisode(episode, anime.ID)
+			if _, err := classificationRepo.Create(ctx, classificationParams); err != nil {
 				return nil, fmt.Errorf("anime_classificationの作成に失敗しました (%d行目): %w", i+1, err)
 			}
 			animeID = &anime.ID
+			revisions = append(revisions, AnimeRevisionInput{
+				AnimeID: anime.ID,
+				After:   episodeAnimeSnapshotFromCreateParams(animeParams, classificationParams),
+			})
 		}
 
 		episodeID, err := episodeRepo.Create(ctx, repository.CreateEpisodeParams{
@@ -225,6 +235,10 @@ func (uc *CreateEpisodesUsecase) createEpisodes(
 	createdCount := int32(len(rows)) // #nosec G115 -- 1回の送信は検証で100行までに制限される
 	if err := workRepo.IncrementEpisodesCount(ctx, input.WorkID, createdCount); err != nil {
 		return nil, fmt.Errorf("作品のエピソード件数の更新に失敗しました: %w", err)
+	}
+
+	if err := writeCreatedEpisodesDBEditRecord(ctx, uc.dbEditRecordRepos, tx, model.DBEditActorUser, &input.User.ID, revisions); err != nil {
+		return nil, err
 	}
 
 	if err := tx.Commit(); err != nil {

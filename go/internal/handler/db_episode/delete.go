@@ -34,6 +34,8 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 				httperror.NotFound(w, r)
 			case model.AppErrCodeForbidden:
 				httperror.Forbidden(w, r)
+			case model.AppErrCodeConflict:
+				httperror.Conflict(w, r)
 			default:
 				slog.ErrorContext(ctx, ae.LogString())
 				httperror.InternalServerError(w, r)

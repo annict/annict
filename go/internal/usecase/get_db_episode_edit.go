@@ -13,24 +13,29 @@ import (
 // フォームの初期値になる保存済みのエピソードと、ページの見出しとサブナビが示す親作品を
 // 取得する。
 type GetDBEpisodeEditUsecase struct {
-	episodeRepo *repository.EpisodeRepository
+	episodeRepo     *repository.EpisodeRepository
+	featureFlagRepo *repository.FeatureFlagRepository
 }
 
 // NewGetDBEpisodeEditUsecaseは新しいGetDBEpisodeEditUsecaseを作成する。
-func NewGetDBEpisodeEditUsecase(episodeRepo *repository.EpisodeRepository) *GetDBEpisodeEditUsecase {
-	return &GetDBEpisodeEditUsecase{episodeRepo: episodeRepo}
+func NewGetDBEpisodeEditUsecase(episodeRepo *repository.EpisodeRepository, featureFlagRepo *repository.FeatureFlagRepository) *GetDBEpisodeEditUsecase {
+	return &GetDBEpisodeEditUsecase{episodeRepo: episodeRepo, featureFlagRepo: featureFlagRepo}
 }
 
 // GetDBEpisodeEditInputはユースケースの入力。
 type GetDBEpisodeEditInput struct {
 	User      *model.User
 	EpisodeID model.EpisodeID
+	// DeviceTokenは閲覧中のデバイスのトークン (Cookieが無いときは空文字列)。履歴へのリンクを出すかの判定に使う。
+	DeviceToken string
 }
 
 // GetDBEpisodeEditOutputはユースケースの出力。
 type GetDBEpisodeEditOutput struct {
 	Episode *model.Episode
 	Work    *model.Work
+	// CanShowRevisionsはエピソードの編集画面の見出しに、そのエピソードの履歴へのリンクを出すかを表す。
+	CanShowRevisions bool
 }
 
 // Executeはエピソードを取得する前にコミッターを認可し、編集対象のエピソードとその親作品を
@@ -57,8 +62,14 @@ func (uc *GetDBEpisodeEditUsecase) Execute(ctx context.Context, input GetDBEpiso
 		}
 	}
 
+	canShowRevisions, err := canShowDBRevisions(ctx, uc.featureFlagRepo, input.DeviceToken, input.User)
+	if err != nil {
+		return nil, err
+	}
+
 	return &GetDBEpisodeEditOutput{
-		Episode: target.Episode,
-		Work:    target.Work,
+		Episode:          target.Episode,
+		Work:             target.Work,
+		CanShowRevisions: canShowRevisions,
 	}, nil
 }

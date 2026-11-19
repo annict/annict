@@ -23,9 +23,7 @@ import (
 	"github.com/annict/annict/go/internal/usecase"
 )
 
-// newTestHandlerはテスト用トランザクション上にHandlerを組み立てる。人物のアーカイブ・解除の
-// UseCaseは自前のトランザクションを開かず1文の更新で書き込むため、書き込みはテスト終了時に
-// 巻き戻る。
+// newTestHandlerはHandlerを組み立てる。確認画面の読み取りはテスト用トランザクション上で行う。
 func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	t.Helper()
 
@@ -33,14 +31,23 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	cfg := &config.Config{Env: "test", Domain: "test.annict.com"}
 	sessionManager := session.NewManager(repository.NewSessionRepository(queries), cfg)
 	personRepo := repository.NewPersonRepository(queries)
+	// 書き込みのUseCaseは編集履歴と同じトランザクションで書くため自前のトランザクションを開く。テスト用の
+	// トランザクションではなくプールに対して組み立て、前提の人物はコミットして作る。
+	poolQueries := query.New(db)
+	poolPersonRepo := repository.NewPersonRepository(poolQueries)
+	dbEditRecordRepos := usecase.DBEditRecordRepos{
+		DBEdit:         repository.NewDBEditRepository(poolQueries),
+		AnimeRevision:  repository.NewAnimeRevisionRepository(poolQueries),
+		PersonRevision: repository.NewPersonRevisionRepository(poolQueries),
+	}
 
 	return NewHandler(
 		cfg,
 		sessionManager,
 		testutil.NewTestFlashManager(),
 		usecase.NewGetDBPersonArchiveNewUsecase(personRepo),
-		usecase.NewArchivePersonUsecase(personRepo),
-		usecase.NewUnarchivePersonUsecase(personRepo),
+		usecase.NewArchivePersonUsecase(db, poolPersonRepo, dbEditRecordRepos),
+		usecase.NewUnarchivePersonUsecase(db, poolPersonRepo, dbEditRecordRepos),
 	)
 }
 
@@ -60,15 +67,15 @@ func newTestRouter(handler *Handler) chi.Router {
 func committerRequest(t *testing.T, method, target string) *http.Request {
 	t.Helper()
 	req := httptest.NewRequest(method, target, nil)
-	user := &model.User{ID: 1, Role: model.RoleEditor}
+	user := testutil.CreateCommittedUser(t, model.RoleEditor)
 	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, user))
 }
 
 // isArchivedは人物のstatusがarchivedかを返す。
-func isArchived(t *testing.T, tx *sql.Tx, id model.PersonID) bool {
+func isArchived(t *testing.T, db *sql.DB, id model.PersonID) bool {
 	t.Helper()
 	var archived bool
-	if err := tx.QueryRow(`SELECT status = 'archived' FROM people WHERE id = $1`, int64(id)).Scan(&archived); err != nil {
+	if err := db.QueryRow(`SELECT status = 'archived' FROM people WHERE id = $1`, int64(id)).Scan(&archived); err != nil {
 		t.Fatalf("人物の取得に失敗: %v", err)
 	}
 	return archived
@@ -80,7 +87,7 @@ func TestNew(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithName("非公開確認の人物").Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder { return b.WithName("非公開確認の人物") })
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	rr := httptest.NewRecorder()
@@ -114,8 +121,12 @@ func TestNew_NotFound(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	archivedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusArchived).Build()
-	deletedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusDeleted).Build()
+	archivedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusArchived)
+	})
+	deletedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusDeleted)
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	for _, target := range []string{
@@ -142,7 +153,7 @@ func TestNew_CarriesReturnToThroughTheConfirmation(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).Build()
+	personID := testutil.CreateCommittedPerson(t, nil)
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	tests := []struct {
@@ -196,7 +207,7 @@ func TestCreate(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			personID := testutil.NewPersonBuilder(t, tx).Build()
+			personID := testutil.CreateCommittedPerson(t, nil)
 			req := committerFormRequest(t, "POST", fmt.Sprintf("/db/people/%d/archive", int64(personID)), url.Values{"return_to": {tt.returnTo}})
 
 			rr := httptest.NewRecorder()
@@ -208,7 +219,7 @@ func TestCreate(t *testing.T) {
 			if got := rr.Header().Get("Location"); got != tt.wantLocation {
 				t.Errorf("リダイレクト先 = %q、期待値 = %q", got, tt.wantLocation)
 			}
-			if !isArchived(t, tx, personID) {
+			if !isArchived(t, db, personID) {
 				t.Error("人物がアーカイブされていません")
 			}
 		})
@@ -221,7 +232,9 @@ func TestCreate_NotFoundForArchivedPerson(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusArchived).Build()
+	personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusArchived)
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	rr := httptest.NewRecorder()
@@ -242,7 +255,9 @@ func TestDelete(t *testing.T) {
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	t.Run("フォームの送信は303", func(t *testing.T) {
-		personID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusArchived).Build()
+		personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+			return b.WithStatus(model.PersonStatusArchived)
+		})
 		req := committerFormRequest(t, "POST", fmt.Sprintf("/db/people/%d/archive", int64(personID)), url.Values{"_method": {"DELETE"}, "return_to": {"/db/search?q=test"}})
 
 		rr := httptest.NewRecorder()
@@ -254,13 +269,15 @@ func TestDelete(t *testing.T) {
 		if got := rr.Header().Get("Location"); got != "/db/search?q=test" {
 			t.Errorf("リダイレクト先 = %q、期待値 = /db/search?q=test", got)
 		}
-		if isArchived(t, tx, personID) {
+		if isArchived(t, db, personID) {
 			t.Error("人物のアーカイブが解除されていません")
 		}
 	})
 
 	t.Run("htmxの送信は204とHX-Redirect", func(t *testing.T) {
-		personID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusArchived).Build()
+		personID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+			return b.WithStatus(model.PersonStatusArchived)
+		})
 		req := committerRequest(t, "DELETE", fmt.Sprintf("/db/people/%d/archive", int64(personID)))
 		req.Header.Set("HX-Request", "true")
 
@@ -285,7 +302,7 @@ func TestDelete_NotFoundForPublishedPerson(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	personID := testutil.NewPersonBuilder(t, tx).Build()
+	personID := testutil.CreateCommittedPerson(t, nil)
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	rr := httptest.NewRecorder()
@@ -302,8 +319,10 @@ func TestForbiddenWithoutMiddleware(t *testing.T) {
 	t.Parallel()
 
 	db, tx := testutil.SetupTx(t)
-	publishedID := testutil.NewPersonBuilder(t, tx).Build()
-	archivedID := testutil.NewPersonBuilder(t, tx).WithStatus(model.PersonStatusArchived).Build()
+	publishedID := testutil.CreateCommittedPerson(t, nil)
+	archivedID := testutil.CreateCommittedPerson(t, func(b *testutil.PersonBuilder) *testutil.PersonBuilder {
+		return b.WithStatus(model.PersonStatusArchived)
+	})
 	r := newTestRouter(newTestHandler(t, db, tx))
 
 	tests := []struct {
@@ -329,7 +348,7 @@ func TestForbiddenWithoutMiddleware(t *testing.T) {
 		})
 	}
 
-	if isArchived(t, tx, publishedID) || !isArchived(t, tx, archivedID) {
+	if isArchived(t, db, publishedID) || !isArchived(t, db, archivedID) {
 		t.Error("拒否したリクエストが人物の状態を書き換えました")
 	}
 }
@@ -339,6 +358,6 @@ func committerFormRequest(t *testing.T, method, target string, form url.Values) 
 	t.Helper()
 	req := httptest.NewRequest(method, target, strings.NewReader(form.Encode()))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-	user := &model.User{ID: 1, Role: model.RoleEditor}
+	user := testutil.CreateCommittedUser(t, model.RoleEditor)
 	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, user))
 }

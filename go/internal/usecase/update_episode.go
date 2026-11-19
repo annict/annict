@@ -27,6 +27,7 @@ type UpdateEpisodeUsecase struct {
 	animeRepo               *repository.AnimeRepository
 	animeClassificationRepo *repository.AnimeClassificationRepository
 	validator               *validator.DBEpisodeUpdateValidator
+	dbEditRecordRepos       DBEditRecordRepos
 	// lockRetryLimitとlockRetryBaseDelayは、NOWAITのロック取得失敗が引き起こす
 	// トランザクション全体の再試行を制限する。定数ではなくフィールドにしているのは、この
 	// UseCaseに到達する全ケースが実際のbackoffを払わずに、テストから待ち時間を縮められる
@@ -42,6 +43,7 @@ func NewUpdateEpisodeUsecase(
 	animeRepo *repository.AnimeRepository,
 	animeClassificationRepo *repository.AnimeClassificationRepository,
 	validator *validator.DBEpisodeUpdateValidator,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *UpdateEpisodeUsecase {
 	return &UpdateEpisodeUsecase{
 		db:                      db,
@@ -49,6 +51,7 @@ func NewUpdateEpisodeUsecase(
 		animeRepo:               animeRepo,
 		animeClassificationRepo: animeClassificationRepo,
 		validator:               validator,
+		dbEditRecordRepos:       dbEditRecordRepos,
 		lockRetryLimit:          defaultUpdateEpisodeLockRetryLimit,
 		lockRetryBaseDelay:      defaultUpdateEpisodeLockRetryBaseDelay,
 	}
@@ -125,11 +128,19 @@ func (uc *UpdateEpisodeUsecase) Execute(ctx context.Context, input UpdateEpisode
 	// (UpdateWorkUsecaseと対称)。親の写像がnil、エピソードの写像がnil、またはepisodeの
 	// anime_idが存在しないanimeを指す場合はいずれもanimeへの両書きをスキップし、親の
 	// マッピング後にフェーズ2の同期が追いつくようにする。
+	// 分類は編集履歴の書き込む前の版にだけ使う。
 	var existingAnime *model.Anime
+	var existingClassification *model.AnimeClassification
 	if current.AnimeID != nil && current.ParentAnimeID != nil {
 		existingAnime, err = uc.animeRepo.GetByID(ctx, *current.AnimeID)
 		if err != nil {
 			return nil, fmt.Errorf("animeの取得に失敗しました: %w", err)
+		}
+		if existingAnime != nil {
+			existingClassification, err = uc.animeClassificationRepo.GetByAnimeID(ctx, existingAnime.ID)
+			if err != nil {
+				return nil, fmt.Errorf("anime_classificationの取得に失敗しました: %w", err)
+			}
 		}
 	}
 
@@ -145,7 +156,7 @@ func (uc *UpdateEpisodeUsecase) Execute(ctx context.Context, input UpdateEpisode
 		UserID:     input.User.ID,
 	}
 
-	return uc.updateEpisode(ctx, params, current, existingAnime)
+	return uc.updateEpisode(ctx, params, current, existingAnime, existingClassification)
 }
 
 // updateEpisodeは送信をepisodesに、そしてエピソードが既にマッピング済みならそのanime /
@@ -159,6 +170,7 @@ func (uc *UpdateEpisodeUsecase) updateEpisode(
 	params repository.UpdateEpisodeParams,
 	current *model.Episode,
 	existingAnime *model.Anime,
+	existingClassification *model.AnimeClassification,
 ) (*UpdateEpisodeOutput, error) {
 	// anime / 分類の写像はトランザクションを開く前に組み立てる (createEpisodesと対称、
 	// トランザクション内は永続化のみとする)。送信された値を *model.Episodeに射影し
@@ -173,8 +185,28 @@ func (uc *UpdateEpisodeUsecase) updateEpisode(
 		classificationParams = classificationCreateParamsFromEpisode(episode, existingAnime.ID)
 	}
 
+	// 編集履歴は、animeへ両書きするときだけ記録する。版はanimeを指すため、未マッピングのエピソードには
+	// 記録する対象が無い。
+	var recordPlan *dbEditRecordPlan
+	if existingAnime != nil {
+		before := animeSnapshotFromRows(existingAnime, existingClassification, workSatelliteExisting{})
+		after := before
+		setAnimeSnapshotColumns(&after, animeParams)
+		setAnimeSnapshotClassification(&after, repository.UpdateAnimeClassificationParams(classificationParams))
+		var err error
+		recordPlan, err = planDBEditRecord(ctx, uc.dbEditRecordRepos, DBEditRecordInput{
+			Actor:  model.DBEditActorUser,
+			UserID: &params.UserID,
+			Action: model.DBEditActionUpdate,
+			Animes: []AnimeRevisionInput{{AnimeID: existingAnime.ID, Before: &before, After: after}},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("編集履歴の記録の計画に失敗しました: %w", err)
+		}
+	}
+
 	output, err := uc.retryEpisodeUpdateLock(ctx, func() (*UpdateEpisodeOutput, error) {
-		return uc.updateEpisodeAttempt(ctx, params, current, existingAnime, animeParams, classificationParams)
+		return uc.updateEpisodeAttempt(ctx, params, current, existingAnime, animeParams, classificationParams, recordPlan)
 	})
 	if !errors.Is(err, repository.ErrEpisodeLockUnavailable) {
 		return output, err
@@ -202,6 +234,7 @@ func (uc *UpdateEpisodeUsecase) updateEpisodeAttempt(
 	existingAnime *model.Anime,
 	animeParams repository.UpdateAnimeParams,
 	classificationParams repository.CreateAnimeClassificationParams,
+	recordPlan *dbEditRecordPlan,
 ) (*UpdateEpisodeOutput, error) {
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -228,6 +261,10 @@ func (uc *UpdateEpisodeUsecase) updateEpisodeAttempt(
 		if err := uc.animeClassificationRepo.WithTx(tx).Upsert(ctx, classificationParams); err != nil {
 			return nil, fmt.Errorf("anime_classificationの保存に失敗しました: %w", err)
 		}
+	}
+
+	if err := writeDBEditRecord(ctx, uc.dbEditRecordRepos.WithTx(tx), recordPlan); err != nil {
+		return nil, err
 	}
 
 	if err := tx.Commit(); err != nil {

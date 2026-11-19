@@ -28,6 +28,9 @@ type EditPageData struct {
 	// hiddenの版はこれらの値の版のため、もう一度送信するとここに表示された内容だけを上書きし、
 	// その後に届いた変更は上書きしない。
 	ConflictCurrent *viewmodel.DBEpisodeFormInput
+	// ShowRevisionsは見出しにエピソードの履歴へのリンクを出すかを表す。フィーチャーフラグdb_edit_historyが
+	// 有効な利用者にだけ出す。
+	ShowRevisions bool
 }
 
 // headingはページ見出しのテキストとして作品の名前を返す。名前が無いあいだは汎用の
@@ -93,7 +96,7 @@ templ Edit(data EditPageData) {
 				@components.MainTitle(components.MainTitleData{
 					Title:   data.heading(ctx),
 					Content: components.GuidelineLink(templates.T(ctx, "db_episodes_edit_guideline_link"), viewmodel.HelpEpisodeEditingURL()),
-					Actions: editBackToListLink(data.WorkID),
+					Actions: editActions(data),
 				})
 			</div>
 		</div>
@@ -312,6 +315,22 @@ templ Edit(data EditPageData) {
 			</div>
 		}
 	</div>
+}
+
+// editActionsは見出しの操作として、一覧へ戻るリンクと、フラグが有効な利用者にはエピソードの履歴へのリンクを並べる。
+templ editActions(data EditPageData) {
+	if data.ShowRevisions {
+		<a
+			href={ templates.DBEpisodeRevisionsPath(data.EpisodeID).SafeURL() }
+			class="btn rounded-full"
+			data-variant="outline"
+			data-size="sm"
+		>
+			@templates.DecorativeInlineIcon("clock-counter-clockwise-regular", templates.InlineIconStart)
+			{ templates.T(ctx, "db_episodes_edit_revisions_link") }
+		</a>
+	}
+	@editBackToListLink(data.WorkID)
 }
 
 // editBackToListLinkは見出しの横に表示する操作を描画する。作品のエピソード一覧へ戻る

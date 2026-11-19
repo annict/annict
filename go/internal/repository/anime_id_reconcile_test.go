@@ -35,6 +35,8 @@ type animeIDReconcileTarget struct {
 	// fkColumnは写し元を指す列。nullableFKがtrueなら、写し元を指さない行も作れる。
 	fkColumn   string
 	nullableFK bool
+	// notNullがtrueなら列はNULLを許さず、空の行も、写し元のanime_idが無い行も作れない。
+	notNull bool
 	// episodeSourceがtrueなら写し元はエピソード、falseなら作品。
 	episodeSource bool
 	// createは写し元を指す行を作り、そのIDを返す。srcがnilなら写し元を指さない行を作る。
@@ -45,7 +47,7 @@ type animeIDReconcileTarget struct {
 func animeIDReconcileTargets() []animeIDReconcileTarget {
 	return []animeIDReconcileTarget{
 		{
-			name: "casts.anime_id", table: "casts", column: "anime_id", fkColumn: "work_id",
+			name: "casts.anime_id", table: "casts", column: "anime_id", fkColumn: "work_id", notNull: true,
 			create: func(t *testing.T, tx *sql.Tx, src *reconcileSource) int64 {
 				return int64(testutil.NewCastBuilder(t, tx, src.workID).
 					WithPersonName(uniqueReconcileName("照合テスト声優")).
@@ -57,7 +59,7 @@ func animeIDReconcileTargets() []animeIDReconcileTarget {
 			},
 		},
 		{
-			name: "staffs.anime_id", table: "staffs", column: "anime_id", fkColumn: "work_id",
+			name: "staffs.anime_id", table: "staffs", column: "anime_id", fkColumn: "work_id", notNull: true,
 			create: func(t *testing.T, tx *sql.Tx, src *reconcileSource) int64 {
 				return int64(testutil.NewStaffBuilder(t, tx, src.workID).WithName(uniqueReconcileName("照合テストスタッフ")).Build())
 			},
@@ -66,10 +68,10 @@ func animeIDReconcileTargets() []animeIDReconcileTarget {
 			},
 		},
 		{
-			name: "trailers.anime_id", table: "trailers", column: "anime_id", fkColumn: "work_id",
+			name: "trailers.anime_id", table: "trailers", column: "anime_id", fkColumn: "work_id", notNull: true,
 			create: func(t *testing.T, tx *sql.Tx, src *reconcileSource) int64 {
 				return insertReconcileRow(t, tx,
-					`INSERT INTO trailers (work_id, url, title, created_at, updated_at) VALUES ($1, 'https://example.com/pv', 'PV', NOW(), NOW()) RETURNING id`,
+					`INSERT INTO trailers (work_id, anime_id, url, title, created_at, updated_at) VALUES ($1, (SELECT anime_id FROM works WHERE id = $1), 'https://example.com/pv', 'PV', NOW(), NOW()) RETURNING id`,
 					int64(src.workID))
 			},
 			reconcile: func(q *query.Queries) func(context.Context, int64, int) (repository.AnimeIDReconcilePage, error) {
@@ -77,10 +79,10 @@ func animeIDReconcileTargets() []animeIDReconcileTarget {
 			},
 		},
 		{
-			name: "work_images.anime_id", table: "work_images", column: "anime_id", fkColumn: "work_id",
+			name: "work_images.anime_id", table: "work_images", column: "anime_id", fkColumn: "work_id", notNull: true,
 			create: func(t *testing.T, tx *sql.Tx, src *reconcileSource) int64 {
 				return insertReconcileRow(t, tx,
-					`INSERT INTO work_images (work_id, image_data, created_at, updated_at) VALUES ($1, '{}', NOW(), NOW()) RETURNING id`,
+					`INSERT INTO work_images (work_id, anime_id, image_data, created_at, updated_at) VALUES ($1, (SELECT anime_id FROM works WHERE id = $1), '{}', NOW(), NOW()) RETURNING id`,
 					int64(src.workID))
 			},
 			reconcile: func(q *query.Queries) func(context.Context, int64, int) (repository.AnimeIDReconcilePage, error) {
@@ -96,7 +98,7 @@ func animeIDReconcileTargets() []animeIDReconcileTarget {
 				}
 				channelID := testutil.NewChannelBuilder(t, tx).Build()
 				return insertReconcileRow(t, tx,
-					`INSERT INTO vod_titles (channel_id, work_id, code, name, created_at, updated_at) VALUES ($1, $2, 'code', 'VODタイトル', NOW(), NOW()) RETURNING id`,
+					`INSERT INTO vod_titles (channel_id, work_id, anime_id, code, name, created_at, updated_at) VALUES ($1, $2, (SELECT anime_id FROM works WHERE id = $2), 'code', 'VODタイトル', NOW(), NOW()) RETURNING id`,
 					channelID, workID)
 			},
 			reconcile: func(q *query.Queries) func(context.Context, int64, int) (repository.AnimeIDReconcilePage, error) {
@@ -104,7 +106,7 @@ func animeIDReconcileTargets() []animeIDReconcileTarget {
 			},
 		},
 		{
-			name: "slots.anime_id", table: "slots", column: "anime_id", fkColumn: "work_id",
+			name: "slots.anime_id", table: "slots", column: "anime_id", fkColumn: "work_id", notNull: true,
 			create: func(t *testing.T, tx *sql.Tx, src *reconcileSource) int64 {
 				channelID := testutil.NewChannelBuilder(t, tx).Build()
 				return int64(testutil.NewSlotBuilder(t, tx).WithWorkID(src.workID).WithChannelID(channelID).Build())
@@ -130,7 +132,7 @@ func animeIDReconcileTargets() []animeIDReconcileTarget {
 			},
 		},
 		{
-			name: "programs.anime_id", table: "programs", column: "anime_id", fkColumn: "work_id",
+			name: "programs.anime_id", table: "programs", column: "anime_id", fkColumn: "work_id", notNull: true,
 			create: func(t *testing.T, tx *sql.Tx, src *reconcileSource) int64 {
 				channelID := testutil.NewChannelBuilder(t, tx).Build()
 				return testutil.NewProgramBuilder(t, tx).WithWorkID(src.workID).WithChannelID(channelID).Build()
@@ -140,12 +142,12 @@ func animeIDReconcileTargets() []animeIDReconcileTarget {
 			},
 		},
 		{
-			name: "series_works.anime_id", table: "series_works", column: "anime_id", fkColumn: "work_id",
+			name: "series_works.anime_id", table: "series_works", column: "anime_id", fkColumn: "work_id", notNull: true,
 			create: func(t *testing.T, tx *sql.Tx, src *reconcileSource) int64 {
 				seriesID := insertReconcileRow(t, tx, `INSERT INTO series (name, created_at, updated_at) VALUES ($1, NOW(), NOW()) RETURNING id`,
 					uniqueReconcileName("照合テストシリーズ"))
 				return insertReconcileRow(t, tx,
-					`INSERT INTO series_works (series_id, work_id, created_at, updated_at) VALUES ($1, $2, NOW(), NOW()) RETURNING id`,
+					`INSERT INTO series_works (series_id, work_id, anime_id, created_at, updated_at) VALUES ($1, $2, (SELECT anime_id FROM works WHERE id = $2), NOW(), NOW()) RETURNING id`,
 					seriesID, int64(src.workID))
 			},
 			reconcile: func(q *query.Queries) func(context.Context, int64, int) (repository.AnimeIDReconcilePage, error) {
@@ -166,10 +168,16 @@ func insertReconcileRow(t *testing.T, tx *sql.Tx, q string, args ...any) int64 {
 
 // newReconcileSourceは写し元の作品 (episodeSourceならその作品のエピソードも) を作る。
 // withAnimeがtrueなら、写し元にanimeを割り当て、そのIDを返す。
+// 写し元のanime_idをこの関数だけで決めるため、作品を写し元にするときは作品をanimeに紐づけずに作る。
+// エピソードを写し元にするときは、放送枠のanime_idに写せるよう、作品は既定のanimeを持たせる。
 func newReconcileSource(t *testing.T, tx *sql.Tx, episodeSource, withAnime bool) (*reconcileSource, sql.NullInt64) {
 	t.Helper()
 
-	src := &reconcileSource{workID: testutil.NewWorkBuilder(t, tx).Build()}
+	workBuilder := testutil.NewWorkBuilder(t, tx)
+	if !episodeSource {
+		workBuilder = workBuilder.WithoutAnime()
+	}
+	src := &reconcileSource{workID: workBuilder.Build()}
 	if episodeSource {
 		src.episodeID = testutil.NewEpisodeBuilder(t, tx, src.workID).Build()
 	}
@@ -232,7 +240,6 @@ func TestAnimeIDReconcile(t *testing.T) {
 
 			srcA, animeA := newReconcileSource(t, tx, target.episodeSource, true)
 			srcB, animeB := newReconcileSource(t, tx, target.episodeSource, true)
-			srcNoAnime, _ := newReconcileSource(t, tx, target.episodeSource, false)
 
 			type rowCase struct {
 				name    string
@@ -241,11 +248,22 @@ func TestAnimeIDReconcile(t *testing.T) {
 				want    sql.NullInt64
 				changed bool
 			}
-			cases := []rowCase{
-				{name: "空の行を写し元のanime_idで埋める", src: srcA, initial: sql.NullInt64{}, want: animeA, changed: true},
-				{name: "写し元と食い違う行を直す", src: srcA, initial: animeB, want: animeA, changed: true},
-				{name: "写し元のanime_idがまだ無い行をNULLに戻す", src: srcNoAnime, initial: animeA, want: sql.NullInt64{}, changed: true},
-				{name: "写し元と一致する行は書き換えない", src: srcB, initial: animeB, want: animeB, changed: false},
+			// 最初のページで先頭の2行を書き換え、3行目を書き換えずに残すよう並べる。
+			var cases []rowCase
+			if target.notNull {
+				cases = []rowCase{
+					{name: "写し元と食い違う行を直す", src: srcA, initial: animeB, want: animeA, changed: true},
+					{name: "別の写し元と食い違う行を直す", src: srcB, initial: animeA, want: animeB, changed: true},
+					{name: "写し元と一致する行は書き換えない", src: srcB, initial: animeB, want: animeB, changed: false},
+				}
+			} else {
+				srcNoAnime, _ := newReconcileSource(t, tx, target.episodeSource, false)
+				cases = []rowCase{
+					{name: "空の行を写し元のanime_idで埋める", src: srcA, initial: sql.NullInt64{}, want: animeA, changed: true},
+					{name: "写し元と食い違う行を直す", src: srcA, initial: animeB, want: animeA, changed: true},
+					{name: "写し元のanime_idがまだ無い行をNULLに戻す", src: srcNoAnime, initial: animeA, want: sql.NullInt64{}, changed: true},
+					{name: "写し元と一致する行は書き換えない", src: srcB, initial: animeB, want: animeB, changed: false},
+				}
 			}
 			if target.nullableFK {
 				cases = append(cases, rowCase{name: "写し元を指さない行をNULLに戻す", src: nil, initial: animeA, want: sql.NullInt64{}, changed: true})

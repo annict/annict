@@ -500,7 +500,7 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// 有効な放送枠 (deleted_at / unpublished_atがNULL) を持つ作品はフィルタで除外される。
 		workWithSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定あり").Build()
 		if _, err := tx.Exec(
-			`INSERT INTO slots (work_id, channel_id, started_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW())`,
+			`INSERT INTO slots (work_id, channel_id, started_at, created_at, updated_at, anime_id) VALUES ($1, $2, NOW(), NOW(), NOW(), (SELECT anime_id FROM works WHERE id = $1))`,
 			int64(workWithSlot), channelID,
 		); err != nil {
 			t.Fatalf("放送枠の投入に失敗: %v", err)
@@ -509,7 +509,7 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// 唯一の放送枠がソフト削除済みの作品は「放送予定なし」とみなされる。
 		workWithDeletedSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定削除済み").Build()
 		if _, err := tx.Exec(
-			`INSERT INTO slots (work_id, channel_id, started_at, deleted_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW())`,
+			`INSERT INTO slots (work_id, channel_id, started_at, deleted_at, created_at, updated_at, anime_id) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW(), (SELECT anime_id FROM works WHERE id = $1))`,
 			int64(workWithDeletedSlot), channelID,
 		); err != nil {
 			t.Fatalf("削除済み放送枠の投入に失敗: %v", err)
@@ -518,7 +518,7 @@ func TestWorkRepository_ListForDB(t *testing.T) {
 		// 唯一の放送枠が非公開 (unpublished_atがセット) の作品も「放送予定なし」とみなされる。
 		workWithUnpublishedSlot := testutil.NewWorkBuilder(t, tx).WithTitle("放送予定非公開").Build()
 		if _, err := tx.Exec(
-			`INSERT INTO slots (work_id, channel_id, started_at, unpublished_at, created_at, updated_at) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW())`,
+			`INSERT INTO slots (work_id, channel_id, started_at, unpublished_at, created_at, updated_at, anime_id) VALUES ($1, $2, NOW(), NOW(), NOW(), NOW(), (SELECT anime_id FROM works WHERE id = $1))`,
 			int64(workWithUnpublishedSlot), channelID,
 		); err != nil {
 			t.Fatalf("非公開放送枠の投入に失敗: %v", err)
@@ -1656,7 +1656,7 @@ func TestWorkRepository_GetForEpisodeCreateByID(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		repo := repository.NewWorkRepository(query.New(db).WithTx(tx))
 
-		workID := testutil.NewWorkBuilder(t, tx).WithTitle("エピソードなしの親作品").Build()
+		workID := testutil.NewWorkBuilder(t, tx).WithTitle("エピソードなしの親作品").WithoutAnime().Build()
 
 		createWork, err := repo.GetForEpisodeCreateByID(context.Background(), workID)
 		if err != nil {
@@ -1817,8 +1817,12 @@ func TestWorkRepository_UpdateUnpublishedAt(t *testing.T) {
 		workID := testutil.NewWorkBuilder(t, tx).WithTitle("非公開化対象").Build()
 
 		now := time.Now()
-		if err := repo.UpdateUnpublishedAt(ctx, workID, &now); err != nil {
-			t.Fatalf("UpdateUnpublishedAt()のエラー = %v", err)
+		before, err := repo.GetForEditByID(ctx, workID)
+		if err != nil {
+			t.Fatalf("更新前の作品の取得に失敗: %v", err)
+		}
+		if updated, err := repo.UpdateUnpublishedAt(ctx, workID, &now, before.UpdatedAt); err != nil || !updated {
+			t.Fatalf("UpdateUnpublishedAt() = %v、エラー = %v、更新成功を期待", updated, err)
 		}
 
 		work, err := repo.GetForStateChangeByID(ctx, workID)
@@ -1838,8 +1842,12 @@ func TestWorkRepository_UpdateUnpublishedAt(t *testing.T) {
 
 		workID := testutil.NewWorkBuilder(t, tx).WithTitle("再公開対象").WithUnpublishedAt(time.Now()).Build()
 
-		if err := repo.UpdateUnpublishedAt(ctx, workID, nil); err != nil {
-			t.Fatalf("UpdateUnpublishedAt()のエラー = %v", err)
+		before, err := repo.GetForEditByID(ctx, workID)
+		if err != nil {
+			t.Fatalf("更新前の作品の取得に失敗: %v", err)
+		}
+		if updated, err := repo.UpdateUnpublishedAt(ctx, workID, nil, before.UpdatedAt); err != nil || !updated {
+			t.Fatalf("UpdateUnpublishedAt() = %v、エラー = %v、更新成功を期待", updated, err)
 		}
 
 		work, err := repo.GetForStateChangeByID(ctx, workID)
@@ -2108,7 +2116,7 @@ func TestWorkRepository_GetForEpisodeGenerationByID(t *testing.T) {
 		db, tx := testutil.SetupTx(t)
 		ctx := context.Background()
 
-		workID := testutil.NewWorkBuilder(t, tx).Build()
+		workID := testutil.NewWorkBuilder(t, tx).WithoutAnime().Build()
 
 		repo := repository.NewWorkRepository(query.New(db)).WithTx(tx)
 		got, err := repo.GetForEpisodeGenerationByID(ctx, workID)
@@ -2148,4 +2156,40 @@ func TestWorkRepository_GetForEpisodeGenerationByID(t *testing.T) {
 			}
 		}
 	})
+}
+
+func TestWorkRepository_StateChangeNullVersion(t *testing.T) {
+	t.Parallel()
+	for _, column := range []string{"unpublished_at", "deleted_at"} {
+		t.Run(column, func(t *testing.T) {
+			t.Parallel()
+			_, tx := testutil.SetupTx(t)
+			repo := repository.NewWorkRepository(query.New(tx))
+			id := testutil.NewWorkBuilder(t, tx).Build()
+			if _, err := tx.Exec("UPDATE works SET updated_at = NULL WHERE id = $1", int64(id)); err != nil {
+				t.Fatalf("状態変更テストの準備または取得に失敗: %v", err)
+			}
+			update := repo.UpdateUnpublishedAt
+			if column == "deleted_at" {
+				update = repo.UpdateDeletedAt
+			}
+			when := time.Date(2026, 11, 9, 0, 0, 0, 0, time.UTC)
+			updated, err := update(context.Background(), id, &when, nil)
+			if err != nil || !updated {
+				t.Fatalf("NULL版からの更新 = %v、エラー = %v、成功を期待", updated, err)
+			}
+			later := when.Add(time.Hour)
+			updated, err = update(context.Background(), id, &later, nil)
+			if err != nil || updated {
+				t.Fatalf("古いNULL版からの更新 = %v、エラー = %v、却下を期待", updated, err)
+			}
+			var stored time.Time
+			if err := tx.QueryRow("SELECT "+column+" FROM works WHERE id = $1", int64(id)).Scan(&stored); err != nil {
+				t.Fatalf("状態変更テストの準備または取得に失敗: %v", err)
+			}
+			if !stored.Equal(when) {
+				t.Errorf("状態の時刻 = %v、期待値 = %v", stored, when)
+			}
+		})
+	}
 }

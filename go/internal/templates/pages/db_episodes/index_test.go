@@ -105,7 +105,7 @@ func TestIndex_WithEpisodes(t *testing.T) {
 		"<table",
 		"<thead",
 		"<tbody",
-		`<div class="overflow-x-auto" role="region" aria-label="DBエピソード一覧" tabindex="0">`,
+		`<div class="relative overflow-x-auto" role="region" aria-label="DBエピソード一覧" tabindex="0">`,
 		`<caption class="sr-only">DBエピソード一覧</caption>`,
 		// 見出しは親作品を名指しし、サブナビはそこへ戻るリンクを持つ。
 		"テストアニメ",
@@ -427,7 +427,7 @@ func TestIndex_ActionColumn_Committer(t *testing.T) {
 
 	wantPresent := []string{
 		// 列は専用の見出しで示される。
-		`<th scope="col" class="text-center">操作</th>`,
+		`<th scope="col" class="text-center">メニュー</th>`,
 		// 両行の編集リンク。
 		`href="/db/episodes/10/edit"`,
 		`href="/db/episodes/11/edit"`,
@@ -505,7 +505,7 @@ func TestIndex_ActionColumn_Anonymous(t *testing.T) {
 	assertActionColumnStructure(t, html, false)
 
 	wantAbsent := []string{
-		`<th scope="col" class="text-center">操作</th>`,
+		`<th scope="col" class="text-center">メニュー</th>`,
 		`href="/db/episodes/10/edit"`,
 		`href="/db/episodes/10/archive/new"`,
 		"hx-delete=",
@@ -552,5 +552,96 @@ func TestIndex_DecorativeIconsAreHidden(t *testing.T) {
 	}
 	if strings.Contains(html, iconWrapperMarkup) {
 		t.Error("装飾アイコンはラッパー要素ではなくSVG自体で隠すべきです")
+	}
+}
+
+// TestIndex_RevisionsLinkは、フィーチャーフラグdb_edit_historyが有効な閲覧者には、ログインしていなくても
+// 各行に「履歴」とメニューの列を出し、作品のサブナビには「履歴」を出さないことを検証する。
+func TestIndex_RevisionsLink(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name          string
+		isCommitter   bool
+		showRevisions bool
+		wantRevisions bool
+		wantEdit      bool
+		wantColumn    bool
+	}{
+		{name: "ログインしていない閲覧者でフラグが有効", showRevisions: true, wantRevisions: true, wantColumn: true},
+		{name: "ログインしていない閲覧者でフラグが無効"},
+		{name: "committerでフラグが有効", isCommitter: true, showRevisions: true, wantRevisions: true, wantEdit: true, wantColumn: true},
+		{name: "committerでフラグが無効", isCommitter: true, wantEdit: true, wantColumn: true},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			ctx := i18n.SetLocale(context.Background(), "ja")
+			var buf strings.Builder
+			if err := Index(IndexPageData{
+				WorkID:        3,
+				WorkName:      "テストアニメ",
+				Episodes:      actionColumnEpisodes(),
+				Pagination:    viewmodel.NewPagination(1, 2, 100, "/db/works/3/episodes"),
+				IsCommitter:   tt.isCommitter,
+				ShowRevisions: tt.showRevisions,
+			}).Render(ctx, &buf); err != nil {
+				t.Fatalf("レンダリングエラー: %v", err)
+			}
+			html := buf.String()
+
+			assertActionColumnStructure(t, html, tt.wantColumn)
+			for _, c := range []struct {
+				s    string
+				want bool
+			}{
+				{`href="/db/episodes/10/revisions"`, tt.wantRevisions},
+				{`href="/db/episodes/10/edit"`, tt.wantEdit},
+				{`href="/db/works/3/revisions"`, false},
+			} {
+				if got := strings.Contains(html, c.s); got != c.want {
+					t.Errorf("%qを含むか = %v、期待値 = %v", c.s, got, c.want)
+				}
+			}
+		})
+	}
+}
+
+// TestIndex_RevisionsLinkOrderは、行のメニューで「履歴」を操作の下に置くことを検証する。編集などの操作を
+// 選ぶときに、操作ではない「履歴」を誤って選ばないようにするため。
+func TestIndex_RevisionsLinkOrder(t *testing.T) {
+	t.Parallel()
+
+	ctx := i18n.SetLocale(context.Background(), "ja")
+	var buf strings.Builder
+	if err := Index(IndexPageData{
+		WorkID:        3,
+		WorkName:      "テストアニメ",
+		Episodes:      actionColumnEpisodes(),
+		Pagination:    viewmodel.NewPagination(1, 2, 100, "/db/works/3/episodes"),
+		IsCommitter:   true,
+		IsAdmin:       true,
+		ShowRevisions: true,
+	}).Render(ctx, &buf); err != nil {
+		t.Fatalf("レンダリングエラー: %v", err)
+	}
+	html := buf.String()
+
+	for _, row := range []struct {
+		revisions  string
+		operations []string
+	}{
+		{revisions: `href="/db/episodes/10/revisions"`, operations: []string{`href="/db/episodes/10/edit"`, `href="/db/episodes/10/archive/new"`, `hx-delete="/db/episodes/10"`}},
+		{revisions: `href="/db/episodes/11/revisions"`, operations: []string{`href="/db/episodes/11/edit"`, `hx-delete="/db/episodes/11/archive"`, `hx-delete="/db/episodes/11"`}},
+	} {
+		revisionsAt := strings.Index(html, row.revisions)
+		if revisionsAt < 0 {
+			t.Fatalf("%qが含まれていない", row.revisions)
+		}
+		for _, op := range row.operations {
+			if at := strings.Index(html, op); at < 0 || at > revisionsAt {
+				t.Errorf("%qの位置 = %d、期待値 = 「履歴」(%d) より前", op, at, revisionsAt)
+			}
+		}
 	}
 }

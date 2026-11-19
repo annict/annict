@@ -122,7 +122,8 @@ func TestCreate_Success(t *testing.T) {
 	form := url.Values{}
 	form.Set("title", "新しいアニメ作品")
 	form.Set("media", "1") // tv
-	req := withCommitterUser(httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode())))
+	req := httptest.NewRequest("POST", "/db/works", strings.NewReader(form.Encode()))
+	req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, newCommittedEditor(t, db)))
 	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
 	rr := httptest.NewRecorder()
 
@@ -174,7 +175,7 @@ func TestCreate_RequiresCommitter(t *testing.T) {
 		},
 		{
 			name:       "編集者はアクセス許可 (作成成功でリダイレクト)",
-			user:       &model.User{ID: 1, Role: model.RoleEditor},
+			user:       newCommittedEditor(t, db),
 			wantStatus: http.StatusSeeOther,
 		},
 	}

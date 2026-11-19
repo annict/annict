@@ -337,7 +337,8 @@ SELECT
     manual_episodes_count,
     start_episode_raw_number,
     number_format_id,
-    anime_id
+    anime_id,
+    updated_at
 FROM works
 WHERE id = ANY($1::bigint[])
 ORDER BY id;
@@ -374,19 +375,23 @@ UPDATE works
 SET anime_id = $2
 WHERE id = $1;
 
--- name: UpdateWorkUnpublishedAt :exec
+-- name: UpdateWorkUnpublishedAt :execrows
+-- 事前に読んだ版を照合し、間に別の編集が入った場合は状態と履歴を書き込まない。
 UPDATE works
 SET
     unpublished_at = sqlc.narg('unpublished_at'),
     updated_at = NOW()
-WHERE id = sqlc.arg('id');
+WHERE id = sqlc.arg('id')
+    AND updated_at IS NOT DISTINCT FROM sqlc.narg('version')::timestamptz;
 
--- name: UpdateWorkDeletedAt :exec
+-- name: UpdateWorkDeletedAt :execrows
+-- 事前に読んだ版を照合し、間に別の編集が入った場合は状態と履歴を書き込まない。
 UPDATE works
 SET
     deleted_at = sqlc.narg('deleted_at'),
     updated_at = NOW()
-WHERE id = sqlc.arg('id');
+WHERE id = sqlc.arg('id')
+    AND updated_at IS NOT DISTINCT FROM sqlc.narg('version')::timestamptz;
 
 -- name: UpdateWork :execrows
 -- 送信が名乗る版の照合は、直前の読み取りとの比較ではなくUPDATEの中で行う。比較と書き込み

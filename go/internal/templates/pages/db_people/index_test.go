@@ -96,7 +96,7 @@ func TestIndex_ActionsByRole(t *testing.T) {
 
 	newLink := `href="/db/people/new"`
 	editLink := `href="/db/people/1/edit"`
-	actionsHeader := `<th scope="col" class="text-center">操作</th>`
+	actionsHeader := `<th scope="col" class="text-center">メニュー</th>`
 
 	tests := []struct {
 		name        string
@@ -249,5 +249,91 @@ func TestIndex_DelistLinkRequiresAdmin(t *testing.T) {
 
 	if strings.Contains(html, `href="/db/people/1/delisting/new"`) {
 		t.Error("編集者に掲載停止の確認画面へのリンクが表示されています")
+	}
+}
+
+// TestIndex_RevisionsLinkは、フィーチャーフラグdb_edit_historyが有効な閲覧者には、ログインしていなくても
+// 各行に「履歴」とメニューの列を出し、committer以外には操作を出さないことを検証する。
+func TestIndex_RevisionsLink(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name          string
+		isCommitter   bool
+		showRevisions bool
+		wantRevisions bool
+		wantEdit      bool
+		wantColumn    bool
+		wantMinWidth  string
+	}{
+		{name: "ログインしていない閲覧者でフラグが有効", showRevisions: true, wantRevisions: true, wantColumn: true, wantMinWidth: "min-w-[480px]"},
+		{name: "ログインしていない閲覧者でフラグが無効", wantMinWidth: "min-w-[384px]"},
+		{name: "committerでフラグが有効", isCommitter: true, showRevisions: true, wantRevisions: true, wantEdit: true, wantColumn: true, wantMinWidth: "min-w-[480px]"},
+		{name: "committerでフラグが無効", isCommitter: true, wantEdit: true, wantColumn: true, wantMinWidth: "min-w-[480px]"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			html := renderIndex(t, i18n.SetLocale(context.Background(), "ja"), IndexPageData{
+				People: []viewmodel.DBPersonListItem{
+					{ID: 1, Name: "人物1", Status: viewmodel.DBPersonStatusPublished},
+					{ID: 2, Name: "人物2", Status: viewmodel.DBPersonStatusArchived},
+				},
+				Pagination:    viewmodel.NewPagination(1, 2, 100, "/db/people"),
+				IsCommitter:   tt.isCommitter,
+				ShowRevisions: tt.showRevisions,
+			})
+
+			for _, c := range []struct {
+				s    string
+				want bool
+			}{
+				{`href="/db/people/1/revisions"`, tt.wantRevisions},
+				{`href="/db/people/2/revisions"`, tt.wantRevisions},
+				{`href="/db/people/1/edit"`, tt.wantEdit},
+				// 非公開の人物の再公開のボタンも、committerにだけ出す。
+				{`hx-delete="/db/people/2/archive"`, tt.wantEdit},
+				{`<th scope="col" class="text-center">メニュー</th>`, tt.wantColumn},
+				{tt.wantMinWidth, true},
+			} {
+				if got := strings.Contains(html, c.s); got != c.want {
+					t.Errorf("%qを含むか = %v、期待値 = %v", c.s, got, c.want)
+				}
+			}
+		})
+	}
+}
+
+// TestIndex_RevisionsLinkOrderは、行のメニューで「履歴」を操作の下に置くことを検証する。編集などの操作を
+// 選ぶときに、操作ではない「履歴」を誤って選ばないようにするため。掲載停止中の行でも、掲載停止の解除の下に置く。
+func TestIndex_RevisionsLinkOrder(t *testing.T) {
+	t.Parallel()
+
+	html := renderIndex(t, i18n.SetLocale(context.Background(), "ja"), IndexPageData{
+		People: []viewmodel.DBPersonListItem{
+			{ID: 1, Name: "人物1", Status: viewmodel.DBPersonStatusPublished},
+			{ID: 3, Name: "人物3", Status: viewmodel.DBPersonStatusDelisted},
+		},
+		Pagination:    viewmodel.NewPagination(1, 2, 100, "/db/people"),
+		IsCommitter:   true,
+		IsAdmin:       true,
+		ShowRevisions: true,
+	})
+	for _, row := range []struct {
+		revisions  string
+		operations []string
+	}{
+		{revisions: `href="/db/people/1/revisions"`, operations: []string{`href="/db/people/1/edit"`, `href="/db/people/1/archive/new"`, `href="/db/people/1/delisting/new"`, `hx-delete="/db/people/1"`}},
+		{revisions: `href="/db/people/3/revisions"`, operations: []string{`href="/db/people/3/undelisting/new"`}},
+	} {
+		revisionsAt := strings.Index(html, row.revisions)
+		if revisionsAt < 0 {
+			t.Fatalf("%qが含まれていない", row.revisions)
+		}
+		for _, op := range row.operations {
+			if at := strings.Index(html, op); at < 0 || at > revisionsAt {
+				t.Errorf("%qの位置 = %d、期待値 = 「履歴」(%d) より前", op, at, revisionsAt)
+			}
+		}
 	}
 }

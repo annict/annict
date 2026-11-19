@@ -24,20 +24,29 @@ import (
 // リクエストを手前で拒否する。UseCase側に検査を残すことで、そのルート以外から到達した
 // 呼び出し元にも同じ権限を要求する。
 type DeleteWorkUsecase struct {
-	db        *sql.DB
-	workRepo  *repository.WorkRepository
-	animeRepo *repository.AnimeRepository
+	db                      *sql.DB
+	workRepo                *repository.WorkRepository
+	animeRepo               *repository.AnimeRepository
+	animeClassificationRepo *repository.AnimeClassificationRepository
+	satelliteRepos          WorkSatelliteRepos
+	dbEditRecordRepos       DBEditRecordRepos
 }
 
 func NewDeleteWorkUsecase(
 	db *sql.DB,
 	workRepo *repository.WorkRepository,
 	animeRepo *repository.AnimeRepository,
+	animeClassificationRepo *repository.AnimeClassificationRepository,
+	satelliteRepos WorkSatelliteRepos,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *DeleteWorkUsecase {
 	return &DeleteWorkUsecase{
-		db:        db,
-		workRepo:  workRepo,
-		animeRepo: animeRepo,
+		db:                      db,
+		workRepo:                workRepo,
+		animeRepo:               animeRepo,
+		animeClassificationRepo: animeClassificationRepo,
+		satelliteRepos:          satelliteRepos,
+		dbEditRecordRepos:       dbEditRecordRepos,
 	}
 }
 
@@ -83,14 +92,22 @@ func (uc *DeleteWorkUsecase) Execute(ctx context.Context, input DeleteWorkInput)
 	// 未だanimeにマッピングされていないことを表し、その場合animesへの両書きはスキップし、
 	// フェーズ2の同期が後で導出済みstatusのanimeを作成する。
 	var existingAnime *model.Anime
+	var before model.AnimeSnapshot
 	if current.AnimeID != nil {
 		existingAnime, err = uc.animeRepo.GetByID(ctx, *current.AnimeID)
 		if err != nil {
 			return nil, fmt.Errorf("animeの取得に失敗しました: %w", err)
 		}
+		// 編集履歴の書き込む前の状態を、分類と別表も含めて読む。
+		if existingAnime != nil {
+			before, err = readAnimeSnapshot(ctx, uc.animeClassificationRepo, uc.satelliteRepos, existingAnime)
+			if err != nil {
+				return nil, fmt.Errorf("編集履歴の書き込む前の状態の取得に失敗しました: %w", err)
+			}
+		}
 	}
 
-	return uc.deleteWork(ctx, current, existingAnime, time.Now())
+	return uc.deleteWork(ctx, input.User.ID, current, existingAnime, before, time.Now())
 }
 
 // deleteWorkはソフトデリートをworksに、そしてworkがマッピング済みならそのanimeにも
@@ -99,12 +116,27 @@ func (uc *DeleteWorkUsecase) Execute(ctx context.Context, input DeleteWorkInput)
 // 導出し (deleted_atがunpublished_atより優先される)、worksとanimeの状態を揃える。
 // パラメータはBeginTxの前に組み立て、トランザクション本体は永続化のみとする
 // (書き込みUseCaseのルール1)。
-func (uc *DeleteWorkUsecase) deleteWork(ctx context.Context, current *model.Work, existingAnime *model.Anime, now time.Time) (*DeleteWorkOutput, error) {
+func (uc *DeleteWorkUsecase) deleteWork(ctx context.Context, userID model.UserID, current *model.Work, existingAnime *model.Anime, before model.AnimeSnapshot, now time.Time) (*DeleteWorkOutput, error) {
 	current.DeletedAt = &now
 
 	var animeParams repository.UpdateAnimeParams
+	var recordPlan *dbEditRecordPlan
 	if existingAnime != nil {
 		animeParams = animeUpdateParamsFromWork(current, existingAnime)
+
+		// animeの列だけを書き換えるため、書き込んだ後の状態は書き込む前の状態にanimeの値を重ねて求める。
+		after := before
+		setAnimeSnapshotColumns(&after, animeParams)
+		var err error
+		recordPlan, err = planDBEditRecord(ctx, uc.dbEditRecordRepos, DBEditRecordInput{
+			Actor:  model.DBEditActorUser,
+			UserID: &userID,
+			Action: model.DBEditActionDelete,
+			Animes: []AnimeRevisionInput{{AnimeID: existingAnime.ID, Before: &before, After: after}},
+		})
+		if err != nil {
+			return nil, fmt.Errorf("編集履歴の記録の準備に失敗しました: %w", err)
+		}
 	}
 
 	tx, err := uc.db.BeginTx(ctx, nil)
@@ -113,13 +145,24 @@ func (uc *DeleteWorkUsecase) deleteWork(ctx context.Context, current *model.Work
 	}
 	defer func() { _ = tx.Rollback() }()
 
-	if err := uc.workRepo.WithTx(tx).UpdateDeletedAt(ctx, current.ID, &now); err != nil {
+	updated, err := uc.workRepo.WithTx(tx).UpdateDeletedAt(ctx, current.ID, &now, current.UpdatedAt)
+	if err != nil {
 		return nil, fmt.Errorf("作品の削除に失敗しました: %w", err)
+	}
+	if !updated {
+		return nil, &model.AppError{
+			Code:     model.AppErrCodeConflict,
+			UserMsg:  i18n.T(ctx, "validation_version_conflict"),
+			Metadata: map[string]string{"work_id": current.ID.String()},
+		}
 	}
 
 	if existingAnime != nil {
 		if err := uc.animeRepo.WithTx(tx).Update(ctx, animeParams); err != nil {
 			return nil, fmt.Errorf("animeの更新に失敗しました: %w", err)
+		}
+		if err := writeDBEditRecord(ctx, uc.dbEditRecordRepos.WithTx(tx), recordPlan); err != nil {
+			return nil, fmt.Errorf("編集履歴の記録に失敗しました: %w", err)
 		}
 	}
 

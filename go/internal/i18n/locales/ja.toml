@@ -1182,8 +1182,8 @@ description = "人物一覧の状態のバッジ - 掲載停止 (管理者にだ
 other = "掲載停止"
 
 [db_people_index_table_actions_label]
-description = "人物一覧のテーブルヘッダー - 操作"
-other = "操作"
+description = "人物一覧のテーブルヘッダー - メニュー"
+other = "メニュー"
 
 [db_people_index_id_link_aria_label]
 description = "人物IDリンク (公開ページを新しいタブで開く) のaria-label"
@@ -1558,8 +1558,8 @@ description = "テーブルヘッダー - 画像"
 other = "画像"
 
 [db_works_index_table_actions_label]
-description = "テーブルヘッダー - 操作"
-other = "操作"
+description = "テーブルヘッダー - メニュー"
+other = "メニュー"
 
 [db_works_index_id_link_aria_label]
 description = "作品IDリンク (公開ページを新しいタブで開く) のaria-label"
@@ -1702,8 +1702,8 @@ description = "エピソード一覧から一括作成フォームへのリン�
 other = "新規登録"
 
 [db_episodes_index_table_actions_label]
-description = "テーブルヘッダー - 操作"
-other = "操作"
+description = "テーブルヘッダー - メニュー"
+other = "メニュー"
 
 [db_episodes_index_action_target_label]
 description = "エピソード一覧の操作リンク・ボタンのアクセシブルネームに足す対象エピソード (画面には表示しない)"
@@ -3013,3 +3013,675 @@ other = "旧IDは合計{{.Max}}件まで指定できます"
 [api_error_invalid_cursor]
 description = "REST API V2の一覧で、カーソルが読めない場合のProblem Detailsのdetail"
 other = "カーソルを読めません。前のページの応答のnext_cursorを、cursor以外のパラメーターを変えずにそのまま渡してください"
+
+[db_works_edit_revisions_link]
+description = "作品編集ページの作品の履歴へのリンク"
+other = "履歴"
+
+[db_works_index_revisions_link]
+description = "作品一覧から作品の履歴へのリンク"
+other = "履歴"
+
+[db_episodes_index_revisions_link]
+description = "エピソード一覧からエピソードの履歴へのリンク"
+other = "履歴"
+
+[db_people_index_revisions_link]
+description = "人物一覧から人物の履歴へのリンク"
+other = "履歴"
+
+[db_work_revisions_index_edit_link]
+description = "作品の履歴ページから作品の編集ページへのリンク"
+other = "編集に戻る"
+
+[db_episode_revisions_index_edit_link]
+description = "エピソードの履歴ページからエピソードの編集ページへのリンク"
+other = "編集に戻る"
+
+[db_person_revisions_index_edit_link]
+description = "人物の履歴ページから人物の編集ページへのリンク"
+other = "編集に戻る"
+
+[db_work_revisions_index_title]
+description = "作品の履歴ページのタイトル"
+other = "作品の履歴"
+
+[db_revision_work_label]
+description = "Annict DBの作品の履歴 - 作品の版の対象の見出し"
+other = "作品:"
+
+[db_revision_episode_label]
+description = "Annict DBの作品の履歴 - エピソードの版の対象の見出し"
+other = "エピソード:"
+
+[db_revision_episode_caption]
+description = "Annict DBの作品の履歴 - エピソードの版の表の見出し"
+other = "{{.Episode}}: {{.Caption}}"
+
+[db_revision_episode_untitled]
+description = "Annict DBの履歴 - 話数もタイトルも無いエピソードの名前"
+other = "名前の無いエピソード"
+
+[db_episode_revisions_index_title]
+description = "エピソードの履歴ページのタイトル"
+other = "エピソードの履歴"
+
+[db_episode_revisions_index_heading]
+description = "エピソードの履歴ページの版の一覧の見出し"
+other = "{{.Episode}}の履歴"
+
+[db_episode_revisions_index_document_title]
+description = "エピソードを識別できるエピソードの履歴ページの文書タイトル"
+other = "エピソードの履歴 | {{.Episode}} | {{.Work}}"
+
+[db_episodes_edit_revisions_link]
+description = "エピソード編集ページのエピソードの履歴へのリンク"
+other = "履歴"
+
+[db_work_revisions_index_document_title]
+description = "作品を識別できる作品の履歴ページの文書タイトル"
+other = "作品の履歴 | {{.WorkTitle}}"
+
+[db_revision_list_empty]
+description = "Annict DBの履歴に版が無いときの案内"
+other = "まだ履歴がありません"
+
+[db_revision_editor_system]
+description = "Annict DBの履歴 - システムの書き込みの編集者"
+other = "システム"
+
+[db_revision_editor_deleted_user]
+description = "Annict DBの履歴 - 退会したユーザーの編集の編集者"
+other = "退会したユーザー"
+
+[db_revision_field_name]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "名前"
+
+[db_revision_field_name_kana]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "名前 (かな)"
+
+[db_revision_field_name_en]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "名前 (英語)"
+
+[db_revision_field_nickname]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "ニックネーム"
+
+[db_revision_field_nickname_en]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "ニックネーム (英語)"
+
+[db_revision_field_gender]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "性別"
+
+[db_revision_field_blood_type]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "血液型"
+
+[db_revision_field_prefecture_id]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "出身地"
+
+[db_revision_field_birthday]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "誕生日"
+
+[db_revision_field_height]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "身長 (cm)"
+
+[db_revision_field_url]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "URL"
+
+[db_revision_field_url_en]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "URL (英語)"
+
+[db_revision_field_wikipedia_url]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "Wikipedia URL"
+
+[db_revision_field_wikipedia_url_en]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "Wikipedia URL (英語)"
+
+[db_revision_field_twitter_username]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "Xユーザー名"
+
+[db_revision_field_twitter_username_en]
+description = "Annict DBの履歴 - 人物の項目名"
+other = "Xユーザー名 (英語)"
+
+[db_person_revisions_index_title]
+description = "人物の履歴ページのタイトル"
+other = "人物の履歴"
+
+[db_person_revisions_index_heading]
+description = "人物の履歴ページの版の一覧の見出し"
+other = "履歴"
+
+[db_person_revisions_index_document_title]
+description = "人物を識別できる人物の履歴ページの文書タイトル"
+other = "人物の履歴 | {{.PersonName}}"
+
+[db_people_edit_revisions_link]
+description = "人物編集ページの人物の履歴へのリンク"
+other = "履歴"
+
+[db_sidebar_edits]
+description = "Annict DBのサイドバーの編集履歴のリンク"
+other = "編集履歴"
+
+[db_edits_index_title]
+description = "Annict DB全体の編集履歴ページのタイトル"
+other = "編集履歴"
+
+[db_edits_index_untitled_work]
+description = "Annict DB全体の編集履歴 - タイトルの無い作品の名前"
+other = "名前の無い作品"
+
+[db_edits_index_untitled_person]
+description = "Annict DB全体の編集履歴 - 名前の無い人物の名前"
+other = "名前の無い人物"
+
+[db_edits_episode_name]
+description = "Annict DB全体の編集履歴 - 今の親作品の名前を添えたエピソードの名前"
+other = "{{.Episode}} ({{.Work}})"
+
+[db_edits_target_work_label]
+description = "Annict DB全体の編集履歴 - 版が指す作品の見出し"
+other = "作品:"
+
+[db_edits_target_episode_label]
+description = "Annict DB全体の編集履歴 - 版が指すエピソードの見出し"
+other = "エピソード:"
+
+[db_edits_target_person_label]
+description = "Annict DB全体の編集履歴 - 版が指す人物の見出し"
+other = "人物:"
+
+[db_revision_target_caption]
+description = "Annict DB全体の編集履歴 - 対象のリソースを含む表の見出し"
+other = "{{.Target}}: {{.Caption}}"
+
+[db_revision_action_create]
+description = "Annict DBの履歴 - 操作 (作成)"
+other = "作成"
+
+[db_revision_action_update]
+description = "Annict DBの履歴 - 操作 (更新)"
+other = "更新"
+
+[db_revision_action_archive]
+description = "Annict DBの履歴 - 操作 (非公開)"
+other = "非公開"
+
+[db_revision_action_unarchive]
+description = "Annict DBの履歴 - 操作 (再公開)"
+other = "再公開"
+
+[db_revision_action_delete]
+description = "Annict DBの履歴 - 操作 (削除)"
+other = "削除"
+
+[db_revision_action_delist]
+description = "Annict DBの履歴 - 操作 (掲載停止)"
+other = "掲載停止"
+
+[db_revision_action_undelist]
+description = "Annict DBの履歴 - 操作 (掲載再開)"
+other = "掲載再開"
+
+[db_revision_sentence_create]
+description = "Annict DBの履歴 - 編集者と操作の文 (作成)"
+other = "{{.Editor}}が作成しました"
+
+[db_revision_sentence_update]
+description = "Annict DBの履歴 - 編集者と操作の文 (更新)"
+other = "{{.Editor}}が更新しました"
+
+[db_revision_sentence_archive]
+description = "Annict DBの履歴 - 編集者と操作の文 (非公開)"
+other = "{{.Editor}}が非公開にしました"
+
+[db_revision_sentence_unarchive]
+description = "Annict DBの履歴 - 編集者と操作の文 (再公開)"
+other = "{{.Editor}}が再公開しました"
+
+[db_revision_sentence_delete]
+description = "Annict DBの履歴 - 編集者と操作の文 (削除)"
+other = "{{.Editor}}が削除しました"
+
+[db_revision_sentence_delist]
+description = "Annict DBの履歴 - 編集者と操作の文 (掲載停止)"
+other = "{{.Editor}}が掲載を停止しました"
+
+[db_revision_sentence_undelist]
+description = "Annict DBの履歴 - 編集者と操作の文 (掲載再開)"
+other = "{{.Editor}}が掲載を再開しました"
+
+[db_revision_fields_caption]
+description = "Annict DBの履歴 - 変わった項目の表の見出し"
+other = "{{.Action}} ({{.CreatedAt}}) で変わった項目"
+
+[db_revision_fields_item_label]
+description = "Annict DBの履歴 - 変わった項目の表の列見出し (項目)"
+other = "項目"
+
+[db_revision_fields_before_label]
+description = "Annict DBの履歴 - 変わった項目の表の列見出し (変更前)"
+other = "変更前"
+
+[db_revision_fields_after_label]
+description = "Annict DBの履歴 - 変わった項目の表の列見出し (変更後)"
+other = "変更後"
+
+[db_revision_rows_caption]
+description = "Annict DBの履歴 - 追加・削除した行の表の見出し"
+other = "{{.Action}} ({{.CreatedAt}}) で追加・削除した行"
+
+[db_revision_rows_table_label]
+description = "Annict DBの履歴 - 追加・削除した行の表の列見出し (対象)"
+other = "対象"
+
+[db_revision_rows_change_label]
+description = "Annict DBの履歴 - 追加・削除した行の表の列見出し (変化)"
+other = "変化"
+
+[db_revision_rows_values_label]
+description = "Annict DBの履歴 - 追加・削除した行の表の列見出し (内容)"
+other = "内容"
+
+[db_revision_rows_added]
+description = "Annict DBの履歴 - 行の変化 (追加)"
+other = "追加"
+
+[db_revision_rows_removed]
+description = "Annict DBの履歴 - 行の変化 (削除)"
+other = "削除"
+
+[db_revision_field_title]
+description = "Annict DBの履歴 - 項目名 (title)"
+other = "タイトル"
+
+[db_revision_field_title_kana]
+description = "Annict DBの履歴 - 項目名 (title_kana)"
+other = "タイトル (かな)"
+
+[db_revision_field_title_ro]
+description = "Annict DBの履歴 - 項目名 (title_ro)"
+other = "タイトル (ローマ字)"
+
+[db_revision_field_title_en]
+description = "Annict DBの履歴 - 項目名 (title_en)"
+other = "タイトル (英語)"
+
+[db_revision_field_title_alter]
+description = "Annict DBの履歴 - 項目名 (title_alter)"
+other = "タイトル (別名)"
+
+[db_revision_field_title_alter_ro]
+description = "Annict DBの履歴 - 項目名 (title_alter_ro)"
+other = "タイトル (ローマ字別名)"
+
+[db_revision_field_title_alter_en]
+description = "Annict DBの履歴 - 項目名 (title_alter_en)"
+other = "タイトル (英語別名)"
+
+[db_revision_field_title_alter_other]
+description = "Annict DBの履歴 - 項目名 (title_alter_other)"
+other = "タイトル (その他の別名)"
+
+[db_revision_field_media]
+description = "Annict DBの履歴 - 項目名 (media)"
+other = "メディア"
+
+[db_revision_field_release_status]
+description = "Annict DBの履歴 - 項目名 (release_status)"
+other = "放送・公開の状況"
+
+[db_revision_field_synopsis]
+description = "Annict DBの履歴 - 項目名 (synopsis)"
+other = "あらすじ"
+
+[db_revision_field_synopsis_en]
+description = "Annict DBの履歴 - 項目名 (synopsis_en)"
+other = "あらすじ (英語)"
+
+[db_revision_field_synopsis_source]
+description = "Annict DBの履歴 - 項目名 (synopsis_source)"
+other = "あらすじの引用元"
+
+[db_revision_field_synopsis_source_en]
+description = "Annict DBの履歴 - 項目名 (synopsis_source_en)"
+other = "あらすじの引用元 (英語)"
+
+[db_revision_field_status]
+description = "Annict DBの履歴 - 項目名 (status)"
+other = "状態"
+
+[db_revision_status_published]
+description = "Annict DBの履歴 - 「状態」の値 (公開)"
+other = "公開"
+
+[db_revision_status_archived]
+description = "Annict DBの履歴 - 「状態」の値 (非公開)"
+other = "非公開"
+
+[db_revision_status_delisted]
+description = "Annict DBの履歴 - 「状態」の値 (掲載停止 (管理者にだけ見える版))"
+other = "掲載停止"
+
+[db_revision_media_tv]
+description = "Annict DBの履歴 - 「メディア」の値 (TV)"
+other = "TV"
+
+[db_revision_media_ova]
+description = "Annict DBの履歴 - 「メディア」の値 (OVA)"
+other = "OVA"
+
+[db_revision_media_movie]
+description = "Annict DBの履歴 - 「メディア」の値 (映画)"
+other = "映画"
+
+[db_revision_media_ona]
+description = "Annict DBの履歴 - 「メディア」の値 (Web)"
+other = "Web"
+
+[db_revision_media_other]
+description = "Annict DBの履歴 - 「メディア」の値 (その他)"
+other = "その他"
+
+[db_revision_release_status_not_yet_released]
+description = "Annict DBの履歴 - 「放送・公開の状況」の値 (放送・公開前)"
+other = "放送・公開前"
+
+[db_revision_release_status_released]
+description = "Annict DBの履歴 - 「放送・公開の状況」の値 (放送・公開済み)"
+other = "放送・公開済み"
+
+[db_revision_release_status_cancelled]
+description = "Annict DBの履歴 - 「放送・公開の状況」の値 (中止)"
+other = "中止"
+
+[db_revision_boolean_true]
+description = "Annict DBの履歴 - 真偽値の項目の値 (はい)"
+other = "○"
+
+[db_revision_boolean_false]
+description = "Annict DBの履歴 - 真偽値の項目の値 (いいえ)"
+other = "×"
+
+[db_revision_gender_male]
+description = "Annict DBの履歴 - 「性別」の値 (男性)"
+other = "男性"
+
+[db_revision_gender_female]
+description = "Annict DBの履歴 - 「性別」の値 (女性)"
+other = "女性"
+
+[db_revision_blood_type_a]
+description = "Annict DBの履歴 - 「血液型」の値 (A型)"
+other = "A型"
+
+[db_revision_blood_type_b]
+description = "Annict DBの履歴 - 「血液型」の値 (B型)"
+other = "B型"
+
+[db_revision_blood_type_ab]
+description = "Annict DBの履歴 - 「血液型」の値 (AB型)"
+other = "AB型"
+
+[db_revision_blood_type_o]
+description = "Annict DBの履歴 - 「血液型」の値 (O型)"
+other = "O型"
+
+[db_revision_external_service_syobocal]
+description = "Annict DBの履歴 - 外部IDの「サービス」の値 (しょぼいカレンダー)"
+other = "しょぼいカレンダー"
+
+[db_revision_external_service_mal]
+description = "Annict DBの履歴 - 外部IDの「サービス」の値 (MyAnimeList)"
+other = "MyAnimeList"
+
+[db_revision_account_service_bluesky]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (Bluesky)"
+other = "Bluesky"
+
+[db_revision_account_service_instagram]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (Instagram)"
+other = "Instagram"
+
+[db_revision_account_service_line]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (LINE)"
+other = "LINE"
+
+[db_revision_account_service_mastodon]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (Mastodon)"
+other = "Mastodon"
+
+[db_revision_account_service_mixi2]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (mixi2)"
+other = "mixi2"
+
+[db_revision_account_service_threads]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (Threads)"
+other = "Threads"
+
+[db_revision_account_service_tiktok]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (TikTok)"
+other = "TikTok"
+
+[db_revision_account_service_x]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (X)"
+other = "X"
+
+[db_revision_account_service_youtube]
+description = "Annict DBの履歴 - 公式アカウントの「サービス」の値 (YouTube)"
+other = "YouTube"
+
+[db_revision_link_kind_official_site]
+description = "Annict DBの履歴 - リンクの「種類」の値 (公式サイト)"
+other = "公式サイト"
+
+[db_revision_link_kind_wikipedia]
+description = "Annict DBの履歴 - リンクの「種類」の値 (Wikipedia)"
+other = "Wikipedia"
+
+[db_revision_link_kind_other]
+description = "Annict DBの履歴 - リンクの「種類」の値 (その他)"
+other = "その他"
+
+[db_revision_language_ja]
+description = "Annict DBの履歴 - リンクの「言語」の値 (日本語)"
+other = "日本語"
+
+[db_revision_language_en]
+description = "Annict DBの履歴 - リンクの「言語」の値 (英語)"
+other = "英語"
+
+[db_revision_language_other]
+description = "Annict DBの履歴 - リンクの「言語」の値 (その他)"
+other = "その他"
+
+[db_revision_season_winter]
+description = "Annict DBの履歴 - リリース時期の「季節」の値 (冬)"
+other = "冬"
+
+[db_revision_season_spring]
+description = "Annict DBの履歴 - リリース時期の「季節」の値 (春)"
+other = "春"
+
+[db_revision_season_summer]
+description = "Annict DBの履歴 - リリース時期の「季節」の値 (夏)"
+other = "夏"
+
+[db_revision_season_fall]
+description = "Annict DBの履歴 - リリース時期の「季節」の値 (秋)"
+other = "秋"
+
+[db_revision_event_kind_broadcast]
+description = "Annict DBの履歴 - イベントの「種類」の値 (放送)"
+other = "放送"
+
+[db_revision_event_kind_revival_screening]
+description = "Annict DBの履歴 - イベントの「種類」の値 (リバイバル上映)"
+other = "リバイバル上映"
+
+[db_revision_event_kind_other]
+description = "Annict DBの履歴 - イベントの「種類」の値 (その他)"
+other = "その他"
+
+[db_revision_field_archive_message]
+description = "Annict DBの履歴 - 項目名 (archive_message)"
+other = "非公開の案内"
+
+[db_revision_field_kind]
+description = "Annict DBの履歴 - 項目名 (kind)"
+other = "種類"
+
+[db_revision_field_parent_anime_id]
+description = "Annict DBの履歴 - 項目名 (parent_anime_id)"
+other = "親の作品"
+
+[db_revision_field_number]
+description = "Annict DBの履歴 - 項目名 (number)"
+other = "話数"
+
+[db_revision_field_number_text]
+description = "Annict DBの履歴 - 項目名 (number_text)"
+other = "表示用話数"
+
+[db_revision_field_sort_number]
+description = "Annict DBの履歴 - 項目名 (sort_number)"
+other = "ソート番号"
+
+[db_revision_field_standalone]
+description = "Annict DBの履歴 - 項目名 (standalone)"
+other = "エピソードなし"
+
+[db_revision_field_number_format_id]
+description = "Annict DBの履歴 - 項目名 (number_format_id)"
+other = "話数フォーマット"
+
+[db_revision_field_episode_start_number]
+description = "Annict DBの履歴 - 項目名 (episode_start_number)"
+other = "開始話数"
+
+[db_revision_field_expected_episodes_count]
+description = "Annict DBの履歴 - 項目名 (expected_episodes_count)"
+other = "予定エピソード数"
+
+[db_revision_row_field_service]
+description = "Annict DBの履歴 - 別表の行の項目名 (service)"
+other = "サービス"
+
+[db_revision_row_field_external_id]
+description = "Annict DBの履歴 - 別表の行の項目名 (external_id)"
+other = "外部ID"
+
+[db_revision_row_field_kind]
+description = "Annict DBの履歴 - 別表の行の項目名 (kind)"
+other = "種類"
+
+[db_revision_row_field_language]
+description = "Annict DBの履歴 - 別表の行の項目名 (language)"
+other = "言語"
+
+[db_revision_row_field_url]
+description = "Annict DBの履歴 - 別表の行の項目名 (url)"
+other = "URL"
+
+[db_revision_row_field_label]
+description = "Annict DBの履歴 - 別表の行の項目名 (label)"
+other = "ラベル"
+
+[db_revision_row_field_label_en]
+description = "Annict DBの履歴 - 別表の行の項目名 (label_en)"
+other = "ラベル (英語)"
+
+[db_revision_row_field_sort_number]
+description = "Annict DBの履歴 - 別表の行の項目名 (sort_number)"
+other = "ソート番号"
+
+[db_revision_row_field_account]
+description = "Annict DBの履歴 - 別表の行の項目名 (account)"
+other = "アカウント"
+
+[db_revision_row_field_hashtag]
+description = "Annict DBの履歴 - 別表の行の項目名 (hashtag)"
+other = "ハッシュタグ"
+
+[db_revision_row_field_year]
+description = "Annict DBの履歴 - 別表の行の項目名 (year)"
+other = "年"
+
+[db_revision_row_field_name]
+description = "Annict DBの履歴 - 別表の行の項目名 (name)"
+other = "季節"
+
+[db_revision_row_field_is_primary]
+description = "Annict DBの履歴 - 別表の行の項目名 (is_primary)"
+other = "主なリリース時期"
+
+[db_revision_row_field_started_on]
+description = "Annict DBの履歴 - 別表の行の項目名 (started_on)"
+other = "開始日"
+
+[db_revision_row_field_ended_on]
+description = "Annict DBの履歴 - 別表の行の項目名 (ended_on)"
+other = "終了日"
+
+[db_revision_row_field_title]
+description = "Annict DBの履歴 - 別表の行の項目名 (title)"
+other = "タイトル"
+
+[db_revision_row_field_title_en]
+description = "Annict DBの履歴 - 別表の行の項目名 (title_en)"
+other = "タイトル (英語)"
+
+[db_revision_row_field_description]
+description = "Annict DBの履歴 - 別表の行の項目名 (description)"
+other = "説明"
+
+[db_revision_row_field_description_en]
+description = "Annict DBの履歴 - 別表の行の項目名 (description_en)"
+other = "説明 (英語)"
+
+[db_revision_table_external_ids]
+description = "Annict DBの履歴 - 別表の名前 (external_ids)"
+other = "外部ID"
+
+[db_revision_table_links]
+description = "Annict DBの履歴 - 別表の名前 (links)"
+other = "リンク"
+
+[db_revision_table_official_accounts]
+description = "Annict DBの履歴 - 別表の名前 (official_accounts)"
+other = "公式アカウント"
+
+[db_revision_table_hashtags]
+description = "Annict DBの履歴 - 別表の名前 (hashtags)"
+other = "ハッシュタグ"
+
+[db_revision_table_seasons]
+description = "Annict DBの履歴 - 別表の名前 (seasons)"
+other = "リリース時期"
+
+[db_revision_table_events]
+description = "Annict DBの履歴 - 別表の名前 (events)"
+other = "イベント"
+
+[error_conflict_title]
+description = "編集の競合で保存しなかったときのページ見出し"
+other = "他の編集と競合しました"
+
+[error_conflict_message]
+description = "別の編集と競合したため操作を保存しなかった案内"
+other = "他の編集者によって更新されたため、操作を保存していません。現在の状態を確認し、必要ならもう一度操作してください"

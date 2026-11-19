@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
 	"time"
@@ -14,7 +15,8 @@ import (
 
 // DelistPersonUsecaseはAnnict DB管理画面から、本人の申出に応じて人物の掲載を停止する。
 // people.statusをdelistedにして対応記録 (delist_message) を書き、Rails版の表示とAPIから除外
-// されるよう橋渡しのunpublished_atも書く。キャスト・スタッフは書き換えず、編集履歴にも記録しない。
+// されるよう橋渡しのunpublished_atも書く。キャスト・スタッフは書き換えず、db_activitiesにも記録しない。
+// Annict DBの編集履歴には記録し、対応記録は版に入れない。
 // 掲載を停止できるのは公開中とアーカイブの人物で、状態と確認時の版の照合を書き込みと同じ文で
 // 行う。確認後に編集された人物への送信は競合になり、停止できない状態になった人物はnot foundになる。
 //
@@ -22,12 +24,14 @@ import (
 // リクエストを手前で拒否する。UseCase側に検査を残すことで、そのルート以外から到達した呼び出し元
 // にも同じ権限を要求する。
 type DelistPersonUsecase struct {
-	personRepo *repository.PersonRepository
+	db                *sql.DB
+	personRepo        *repository.PersonRepository
+	dbEditRecordRepos DBEditRecordRepos
 }
 
 // NewDelistPersonUsecaseは新しいDelistPersonUsecaseを作成する。
-func NewDelistPersonUsecase(personRepo *repository.PersonRepository) *DelistPersonUsecase {
-	return &DelistPersonUsecase{personRepo: personRepo}
+func NewDelistPersonUsecase(db *sql.DB, personRepo *repository.PersonRepository, dbEditRecordRepos DBEditRecordRepos) *DelistPersonUsecase {
+	return &DelistPersonUsecase{db: db, personRepo: personRepo, dbEditRecordRepos: dbEditRecordRepos}
 }
 
 // DelistPersonInputは掲載を停止する人物と確認時の版、対応記録、認可するユーザーを指定する。
@@ -67,9 +71,9 @@ func (uc *DelistPersonUsecase) Execute(ctx context.Context, input DelistPersonIn
 		delistMessage = &message
 	}
 
-	written, err := uc.personRepo.Delist(ctx, input.PersonID, version, delistMessage)
+	written, err := uc.delist(ctx, input, version, delistMessage)
 	if err != nil {
-		return nil, fmt.Errorf("人物の掲載停止に失敗しました: %w", err)
+		return nil, err
 	}
 	if !written {
 		current, err := uc.personRepo.GetForDelistingByID(ctx, input.PersonID)
@@ -87,4 +91,28 @@ func (uc *DelistPersonUsecase) Execute(ctx context.Context, input DelistPersonIn
 	}
 
 	return &DelistPersonOutput{PersonID: input.PersonID}, nil
+}
+
+// delistは、掲載停止を編集履歴の記録と同じトランザクションで書く。編集履歴の版は事前に読んだ人物から組み立て、
+// 書き込みは確認時の版を照合するため、読んだ人物が確認時の版と違えば書き込まない。掲載を停止できない人物と、
+// 確認時の版が進んでいた人物ではfalseを返す。
+func (uc *DelistPersonUsecase) delist(ctx context.Context, input DelistPersonInput, version time.Time, delistMessage *string) (bool, error) {
+	before, err := uc.personRepo.GetForRevisionByID(ctx, input.PersonID)
+	if err != nil {
+		return false, fmt.Errorf("人物の取得に失敗しました: %w", err)
+	}
+	if before == nil || (before.Status != model.PersonStatusPublished && before.Status != model.PersonStatusArchived) {
+		return false, nil
+	}
+	recordPlan, err := planPersonStatusRecord(ctx, uc.dbEditRecordRepos, input.User, model.DBEditActionDelist, before, model.PersonStatusDelisted)
+	if err != nil {
+		return false, err
+	}
+	written, err := writePersonWithRecord(ctx, uc.db, uc.personRepo, uc.dbEditRecordRepos, recordPlan, func(repo *repository.PersonRepository) (bool, error) {
+		return repo.Delist(ctx, input.PersonID, version, delistMessage)
+	})
+	if err != nil {
+		return false, fmt.Errorf("人物の掲載停止に失敗しました: %w", err)
+	}
+	return written, nil
 }

@@ -222,3 +222,53 @@ func TestEdit_DocumentTitleWithoutWorkName(t *testing.T) {
 		}
 	}
 }
+
+// TestEdit_RevisionsLinkByDeviceTokenは、フィーチャーフラグdb_edit_historyをデバイスで有効にした閲覧者に、
+// 履歴の画面をゲートするリバースプロキシと同じく、編集画面の見出しに作品の「履歴」を出すことを検証する。
+func TestEdit_RevisionsLinkByDeviceToken(t *testing.T) {
+	t.Parallel()
+
+	// feature_flagsは (device_token, name) で一意のため、並行するサブテストが互いを待たないよう
+	// ケースごとに別のトークンを使う。Cookieの値に使える文字だけで書く。
+	for _, tt := range []struct {
+		name        string
+		deviceToken string
+		flagged     bool
+	}{
+		{name: "フラグを有効にしたデバイス", deviceToken: "db-work-edit-revisions-flagged", flagged: true},
+		{name: "フラグを有効にしていないデバイス", deviceToken: "db-work-edit-revisions-unflagged", flagged: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db, tx := testutil.SetupTx(t)
+			userID := testutil.NewUserBuilder(t, tx).WithRole(model.RoleEditor).Build()
+			workID := testutil.NewWorkBuilder(t, tx).WithTitle("履歴リンク対象").Build()
+			deviceToken := tt.deviceToken
+			if tt.flagged {
+				testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(deviceToken).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+
+			r := chi.NewRouter()
+			r.Get("/db/works/{id}/edit", newTestHandler(t, db, tx).Edit)
+
+			req := httptest.NewRequest("GET", fmt.Sprintf("/db/works/%d/edit", int64(workID)), nil)
+			req.AddCookie(&http.Cookie{Name: authMiddleware.DeviceTokenCookieName, Value: deviceToken})
+			req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, &model.User{ID: userID, Role: model.RoleEditor}))
+			rr := httptest.NewRecorder()
+			r.ServeHTTP(rr, req)
+
+			if status := rr.Code; status != http.StatusOK {
+				t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusOK)
+			}
+			revisionsLink := fmt.Sprintf(`href="/db/works/%d/revisions"`, int64(workID))
+			if got := strings.Contains(rr.Body.String(), revisionsLink); got != tt.flagged {
+				t.Errorf("履歴へのリンクの有無 = %v、期待値 = %v", got, tt.flagged)
+			}
+			// 見出しの「履歴」には、履歴を表すアイコンを装飾としてテキストの左に付ける。
+			if got := strings.Contains(rr.Body.String(), revisionsLink+` class="btn rounded-full" data-variant="outline" data-size="sm"><svg data-icon="inline-start" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" viewBox="0 0 256 256"><path d="M136,80v43.47`); got != tt.flagged {
+				t.Errorf("アイコン付きの履歴へのリンクの有無 = %v、期待値 = %v", got, tt.flagged)
+			}
+		})
+	}
+}

@@ -23,6 +23,7 @@ func newGetDBEpisodesUsecase(t *testing.T) (*GetDBEpisodesUsecase, *sql.Tx) {
 	return NewGetDBEpisodesUsecase(
 		repository.NewWorkRepository(queries),
 		repository.NewEpisodeRepository(queries),
+		repository.NewFeatureFlagRepository(queries),
 	), tx
 }
 
@@ -190,4 +191,55 @@ func insertEpisodeWithSortNumber(t *testing.T, tx *sql.Tx, workID model.WorkID, 
 	}
 
 	return model.EpisodeID(id)
+}
+
+// TestGetDBEpisodesUsecase_Execute_CanShowRevisionsは、ログインしていなくても見られる一覧でも、履歴へのリンクを
+// 出すかが、リバースプロキシのゲートと同じくデバイスかユーザーのフラグで決まることを検証する。
+func TestGetDBEpisodesUsecase_Execute_CanShowRevisions(t *testing.T) {
+	t.Parallel()
+
+	for _, tt := range []struct {
+		name       string
+		loggedIn   bool
+		flagUser   bool
+		flagDevice bool
+		noDevice   bool
+		want       bool
+	}{
+		{name: "ログインしていない閲覧者のデバイスでフラグが有効", flagDevice: true, want: true},
+		{name: "ログインしていない閲覧者でデバイストークンが無い", noDevice: true, want: false},
+		{name: "ユーザーでフラグが有効な閲覧者", loggedIn: true, flagUser: true, want: true},
+		{name: "フラグが無効な閲覧者", loggedIn: true, want: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			uc, tx := newGetDBEpisodesUsecase(t)
+			workID := testutil.NewWorkBuilder(t, tx).WithTitle("履歴リンクテスト").Build()
+			userID := testutil.NewUserBuilder(t, tx).Build()
+			// feature_flagsは (device_token, name) で一意のため、テストごとに別のトークンを使う。
+			device := "db-episodes-revisions-" + t.Name()
+			if tt.flagUser {
+				testutil.NewFeatureFlagBuilder(t, tx).WithUserID(userID).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+			if tt.flagDevice {
+				testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(device).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+			input := GetDBEpisodesInput{WorkID: workID, Page: 1, PerPage: 10, DeviceToken: device}
+			if tt.noDevice {
+				input.DeviceToken = ""
+			}
+			if tt.loggedIn {
+				input.User = &model.User{ID: userID, Role: model.RoleUser}
+			}
+
+			output, err := uc.Execute(context.Background(), input)
+			if err != nil {
+				t.Fatalf("Execute()のエラー = %v", err)
+			}
+			if output.CanShowRevisions != tt.want {
+				t.Errorf("CanShowRevisions = %v、期待値 = %v", output.CanShowRevisions, tt.want)
+			}
+		})
+	}
 }

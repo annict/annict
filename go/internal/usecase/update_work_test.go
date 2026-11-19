@@ -27,6 +27,7 @@ func newUpdateWorkUsecase(db *sql.DB) *UpdateWorkUsecase {
 		repository.NewAnimeRepository(queries),
 		repository.NewAnimeClassificationRepository(queries),
 		newTestWorkSatelliteRepos(queries),
+		newTestDBEditRecordRepos(queries),
 		validator.NewDBWorkCreateValidator(workRepo, numberFormatRepo),
 	)
 }
@@ -61,7 +62,7 @@ func validUpdateWorkInput(t *testing.T, db *sql.DB, workID model.WorkID, title s
 
 	return UpdateWorkInput{
 		WorkID:    workID,
-		User:      &model.User{ID: 1, Role: model.RoleEditor},
+		User:      committedEditorForTest(t, model.RoleEditor),
 		UpdatedAt: readWorkVersion(t, db, workID),
 		WorkFormInput: WorkFormInput{
 			Title:                 title,
@@ -95,7 +96,7 @@ func validUpdateWorkInput(t *testing.T, db *sql.DB, workID model.WorkID, title s
 // される)、そのIDを返す。更新対象の既存マッピング済みworkが要るテストで使う。
 func createMappedWork(t *testing.T, db *sql.DB, title string) model.WorkID {
 	t.Helper()
-	output, err := newCreateWorkUsecase(db).Execute(context.Background(), validCreateWorkInput(title))
+	output, err := newCreateWorkUsecase(db).Execute(context.Background(), validCreateWorkInput(t, title))
 	if err != nil {
 		t.Fatalf("前提の作品作成に失敗: %v", err)
 	}

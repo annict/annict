@@ -195,3 +195,21 @@ type OAuthAccessTokenID int64
 
 // Stringは文字列表現を返す
 func (id OAuthAccessTokenID) String() string { return strconv.FormatInt(int64(id), 10) }
+
+// DBEditIDはAnnict DBの編集履歴の操作 (db_edits) のID型
+type DBEditID int64
+
+// Stringは文字列表現を返す
+func (id DBEditID) String() string { return strconv.FormatInt(int64(id), 10) }
+
+// AnimeRevisionIDは作品・エピソードの版 (anime_revisions) のID型
+type AnimeRevisionID int64
+
+// Stringは文字列表現を返す
+func (id AnimeRevisionID) String() string { return strconv.FormatInt(int64(id), 10) }
+
+// PersonRevisionIDは人物の版 (person_revisions) のID型
+type PersonRevisionID int64
+
+// Stringは文字列表現を返す
+func (id PersonRevisionID) String() string { return strconv.FormatInt(int64(id), 10) }

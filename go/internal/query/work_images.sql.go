@@ -20,9 +20,11 @@ INSERT INTO work_images (
     asin,
     color_rgb,
     created_at,
-    updated_at
+    updated_at,
+    anime_id
 ) VALUES (
-    $1, $2, $3, $4, $5, $6, $7, $8
+    $1, $2, $3, $4, $5, $6, $7, $8,
+    (SELECT works.anime_id FROM works WHERE works.id = $1)
 ) RETURNING id
 `
 
@@ -37,6 +39,7 @@ type CreateWorkImageParams struct {
 	UpdatedAt time.Time     `db:"updated_at"`
 }
 
+// anime_idは作品のanime_idを写す。
 func (q *Queries) CreateWorkImage(ctx context.Context, arg CreateWorkImageParams) (int64, error) {
 	row := q.db.QueryRowContext(ctx, createWorkImage,
 		arg.WorkID,
@@ -85,8 +88,9 @@ type ReconcileWorkImageAnimeIDsAfterRow struct {
 }
 
 // animes同期バッチの関連テーブルの照合。idがafter_idより大きいwork_imagesの1ページについて、
-// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。work_idがNULLの行と、
-// 作品のanime_idがまだ無い行はNULLにする。updated_atは編集者が行を変えた時刻のため変えない。
+// anime_idをwork_idの指す作品のanime_idと照合し、違う行だけを書き換える。anime_idはNOT NULLのため、
+// 作品のanime_idがまだ無い行があると、NULLを書こうとして制約違反で失敗する。updated_atは編集者が
+// 行を変えた時刻のため変えない。
 // last_idはページの最後の行のid (ページが空なら0) で、次のページのafter_idに使う。
 func (q *Queries) ReconcileWorkImageAnimeIDsAfter(ctx context.Context, arg ReconcileWorkImageAnimeIDsAfterParams) (ReconcileWorkImageAnimeIDsAfterRow, error) {
 	row := q.db.QueryRowContext(ctx, reconcileWorkImageAnimeIDsAfter, arg.AfterID, arg.BatchSize)

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"context"
+	"database/sql"
 	"errors"
 	"fmt"
 
@@ -13,18 +14,24 @@ import (
 
 // UpdatePersonUsecaseはAnnict DBの人物編集フォームの1回の送信を適用する。
 type UpdatePersonUsecase struct {
-	personRepo *repository.PersonRepository
-	validator  *validator.DBPersonUpdateValidator
+	db                *sql.DB
+	personRepo        *repository.PersonRepository
+	validator         *validator.DBPersonUpdateValidator
+	dbEditRecordRepos DBEditRecordRepos
 }
 
 // NewUpdatePersonUsecaseはUpdatePersonUsecaseを生成する。
 func NewUpdatePersonUsecase(
+	db *sql.DB,
 	personRepo *repository.PersonRepository,
 	validator *validator.DBPersonUpdateValidator,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *UpdatePersonUsecase {
 	return &UpdatePersonUsecase{
-		personRepo: personRepo,
-		validator:  validator,
+		db:                db,
+		personRepo:        personRepo,
+		validator:         validator,
+		dbEditRecordRepos: dbEditRecordRepos,
 	}
 }
 
@@ -62,7 +69,7 @@ type UpdatePersonOutput struct {
 // Executeは送信された値を人物に適用する。
 //
 // 認可と形式検証の後、保存済みの版を確認する。DBを要する入力検証はその後に行う。
-// 更新は1文 (編集履歴の記録を含む) で完結するため、トランザクションは開かない。
+// 更新はdb_activitiesへの記録を含む1文で、Annict DBの編集履歴の記録と同じトランザクションで書く。
 func (uc *UpdatePersonUsecase) Execute(ctx context.Context, input UpdatePersonInput) (*UpdatePersonOutput, error) {
 	// 送信はcommitterに限られ、変更者に帰属するため、ユーザーを伴わない呼び出しと
 	// 一般ユーザーの呼び出しは何かを読む前に拒否する。
@@ -96,11 +103,12 @@ func (uc *UpdatePersonUsecase) Execute(ctx context.Context, input UpdatePersonIn
 	if err != nil {
 		return nil, err
 	}
-	current, err := uc.personRepo.GetForEditByID(ctx, input.PersonID)
+	// 編集履歴の書き込む前の版にも使うため、版の列をすべて読む。編集できるのは公開中と非公開の人物だけ。
+	current, err := uc.personRepo.GetForRevisionByID(ctx, input.PersonID)
 	if err != nil {
 		return nil, fmt.Errorf("人物の取得に失敗しました: %w", err)
 	}
-	if current == nil {
+	if current == nil || (current.Status != model.PersonStatusPublished && current.Status != model.PersonStatusArchived) {
 		return nil, personNotFoundError(ctx, input.PersonID)
 	}
 	if !current.UpdatedAt.Equal(fields.UpdatedAt) {
@@ -111,7 +119,7 @@ func (uc *UpdatePersonUsecase) Execute(ctx context.Context, input UpdatePersonIn
 		return nil, err
 	}
 
-	updated, err := uc.personRepo.Update(ctx, repository.UpdatePersonParams{
+	params := repository.UpdatePersonParams{
 		ID:                input.PersonID,
 		Name:              fields.Name,
 		NameKana:          fields.NameKana,
@@ -131,6 +139,23 @@ func (uc *UpdatePersonUsecase) Execute(ctx context.Context, input UpdatePersonIn
 		TwitterUsernameEn: fields.TwitterUsernameEn,
 		Version:           fields.UpdatedAt,
 		UserID:            input.User.ID,
+	}
+	// 更新は保存済みの版を照合するため、書き込む前の状態は上で読んだ人物と一致する。
+	before := personSnapshotFromPerson(current)
+	after := before
+	setPersonSnapshotColumns(&after, params)
+	recordPlan, err := planDBEditRecord(ctx, uc.dbEditRecordRepos, DBEditRecordInput{
+		Actor:  model.DBEditActorUser,
+		UserID: &input.User.ID,
+		Action: model.DBEditActionUpdate,
+		People: []PersonRevisionInput{{PersonID: input.PersonID, Before: &before, After: after}},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("編集履歴の記録の計画に失敗しました: %w", err)
+	}
+
+	updated, err := writePersonWithRecord(ctx, uc.db, uc.personRepo, uc.dbEditRecordRepos, recordPlan, func(repo *repository.PersonRepository) (bool, error) {
+		return repo.Update(ctx, params)
 	})
 	if err != nil {
 		if errors.Is(err, repository.ErrPersonNameTaken) {

@@ -21,14 +21,9 @@ func newDeleteEpisodeUsecase(db *sql.DB) *DeleteEpisodeUsecase {
 		db,
 		repository.NewEpisodeRepository(queries),
 		repository.NewAnimeRepository(queries),
+		repository.NewAnimeClassificationRepository(queries),
+		newTestDBEditRecordRepos(queries),
 	)
-}
-
-// unsavedDeleteActorは削除テストが認可に使う管理者。非公開がcommitterに開かれているのに
-// 対し削除はadmin専用のため (ADR 0009)、これらのテストはunsavedCreateActorが返す編集者を
-// 使えない。行は永続化しない。削除はdb_activityを作らず、ユーザーを参照するものが無いため。
-func unsavedDeleteActor() *model.User {
-	return &model.User{ID: 1, Role: model.RoleAdmin}
 }
 
 // readDeletedEpisodeStateは削除が書く状態カラムを返す。削除されたエピソードと、送信が手を
@@ -69,7 +64,7 @@ func TestDeleteEpisodeUsecase_Execute_DeletesEpisodeAndAnime(t *testing.T) {
 		t.Fatalf("animeの準備に失敗: %v", err)
 	}
 
-	output, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: unsavedDeleteActor()})
+	output, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleAdmin)})
 	if err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
@@ -118,7 +113,7 @@ func TestDeleteEpisodeUsecase_Execute_DeletesArchivedEpisode(t *testing.T) {
 	episodeID := insertUpdateTargetEpisode(t, db, workID, sql.NullInt64{}, 100)
 	archiveFixtureEpisode(t, db, episodeID)
 
-	if _, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: unsavedDeleteActor()}); err != nil {
+	if _, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleAdmin)}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -144,7 +139,7 @@ func TestDeleteEpisodeUsecase_Execute_SkipsAnimeForUnmappedEpisode(t *testing.T)
 	workID := insertCreateTargetWork(t, db, sql.NullInt64{})
 	episodeID := insertUpdateTargetEpisode(t, db, workID, sql.NullInt64{}, 100)
 
-	if _, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: unsavedDeleteActor()}); err != nil {
+	if _, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleAdmin)}); err != nil {
 		t.Fatalf("Execute()のエラー = %v", err)
 	}
 
@@ -180,7 +175,7 @@ func TestDeleteEpisodeUsecase_Execute_RequiresAdmin(t *testing.T) {
 		{name: "未認証", user: nil, wantForbidden: true},
 		{name: "一般ユーザー", user: &model.User{ID: 1, Role: model.RoleUser}, wantForbidden: true},
 		{name: "編集者", user: &model.User{ID: 1, Role: model.RoleEditor}, wantForbidden: true},
-		{name: "管理者", user: unsavedDeleteActor()},
+		{name: "管理者", user: committedEditorForTest(t, model.RoleAdmin)},
 	}
 
 	for _, tt := range tests {
@@ -254,10 +249,11 @@ func TestDeleteEpisodeUsecase_Execute_RollsBackWhenParentIsDeletedWhileEpisodeWr
 		err    error
 	}
 	resultCh := make(chan deleteResult, 1)
+	editor := committedEditorForTest(t, model.RoleAdmin)
 	go func() {
 		output, err := uc.Execute(ctx, DeleteEpisodeInput{
 			EpisodeID: episodeID,
-			User:      unsavedDeleteActor(),
+			User:      editor,
 		})
 		resultCh <- deleteResult{output: output, err: err}
 	}()
@@ -343,11 +339,95 @@ func TestDeleteEpisodeUsecase_Execute_NotFound(t *testing.T) {
 	}
 	for name, episodeID := range tests {
 		t.Run(name, func(t *testing.T) {
-			_, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: unsavedDeleteActor()})
+			_, err := uc.Execute(context.Background(), DeleteEpisodeInput{EpisodeID: episodeID, User: committedEditorForTest(t, model.RoleAdmin)})
 			appErr := model.AsAppError(err)
 			if appErr == nil || appErr.Code != model.AppErrCodeResourceNotFound {
 				t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeResourceNotFound", err)
 			}
 		})
+	}
+}
+
+// このテストは削除の事前読み取りと書き込みの間の実行順を固定する。削除がロック済みのepisodeを待つ
+// 間に別トランザクションがanimeの写像を変える。編集履歴の版はトランザクションの前に読んだanimeから
+// 組み立てるため、解放後の削除は書き込みをやめ、episodeもどちらのanimeのstatusも変えない。
+func TestDeleteEpisodeUsecase_Execute_RejectsWhenMappingChangesWhileEpisodeWriteWaits(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	uc := newDeleteEpisodeUsecase(db)
+	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
+	episodeID, formerAnimeID := insertMappedUpdateTargetEpisode(t, db, workID, parentAnimeID, 100)
+	currentAnimeID := insertBareAnime(t, db)
+
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	blockerTx, err := db.BeginTx(ctx, nil)
+	if err != nil {
+		t.Fatalf("ブロッカー用トランザクションのBeginTx()のエラー = %v", err)
+	}
+	defer func() { _ = blockerTx.Rollback() }()
+
+	var blockerPID int
+	if err := blockerTx.QueryRowContext(ctx, `SELECT pg_backend_pid()`).Scan(&blockerPID); err != nil {
+		t.Fatalf("ブロッカーのbackend PIDの取得に失敗: %v", err)
+	}
+	if _, err := blockerTx.ExecContext(ctx, `SELECT id FROM episodes WHERE id = $1 FOR UPDATE`, int64(episodeID)); err != nil {
+		t.Fatalf("episodeのロック取得に失敗: %v", err)
+	}
+
+	type deleteResult struct {
+		output *DeleteEpisodeOutput
+		err    error
+	}
+	resultCh := make(chan deleteResult, 1)
+	admin := committedEditorForTest(t, model.RoleAdmin)
+	go func() {
+		output, err := uc.Execute(ctx, DeleteEpisodeInput{
+			EpisodeID: episodeID,
+			User:      admin,
+		})
+		resultCh <- deleteResult{output: output, err: err}
+	}()
+
+	// 写像を変更する前に、削除がblockerTxを待っていることを観測する。
+	awaitBlockedByBackend(t, ctx, db, blockerPID, resultCh)
+
+	if _, err := blockerTx.ExecContext(
+		ctx,
+		`UPDATE episodes SET anime_id = $1 WHERE id = $2`,
+		int64(currentAnimeID),
+		int64(episodeID),
+	); err != nil {
+		t.Fatalf("episodeのanime写像変更に失敗: %v", err)
+	}
+	if err := blockerTx.Commit(); err != nil {
+		t.Fatalf("ブロッカー用トランザクションのCommit()のエラー = %v", err)
+	}
+
+	var result deleteResult
+	select {
+	case result = <-resultCh:
+	case <-ctx.Done():
+		t.Fatalf("ブロッカーのコミット後にExecute()を待つcontextのエラー = %v、期待値 = nil (Execute()が完了すること)", ctx.Err())
+	}
+	appErr := model.AsAppError(result.err)
+	if appErr == nil || appErr.Code != model.AppErrCodeConflict {
+		t.Fatalf("Execute()のエラー = %v、期待値 = AppErrCodeConflict", result.err)
+	}
+	if deletedAt := readDeletedEpisodeState(t, db, episodeID); deletedAt.Valid {
+		t.Errorf("episodes.deleted_at = %v、期待値 = NULLのまま", deletedAt.Time)
+	}
+
+	animeRepo := repository.NewAnimeRepository(query.New(db))
+	for _, animeID := range []model.AnimeID{formerAnimeID, currentAnimeID} {
+		anime, err := animeRepo.GetByID(ctx, animeID)
+		if err != nil || anime == nil {
+			t.Fatalf("anime%dのGetByID() anime=%v err=%v", animeID, anime, err)
+		}
+		if anime.Status != model.AnimeStatusPublished {
+			t.Errorf("anime%d.Status = %q、期待値 = %q", animeID, anime.Status, model.AnimeStatusPublished)
+		}
 	}
 }

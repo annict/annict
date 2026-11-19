@@ -16,17 +16,20 @@ import (
 //
 // HTTPルートのRequireCommitter middlewareに加えて、すべてのentry pointで同じ規則になる
 // ようUseCase自身もcommitter認可を強制する。Railsの非公開はdb_activityを記録しないため、
-// 編集者は認可に使うが活動履歴の作成者としては記録しない。
+// db_activityには記録しない。Annict DBの編集履歴には、編集者の非公開の操作として記録する。
 //
-// episodesの更新は、行が今も公開中であり、確認ページ用の射影が観測した作品に今も属し、その作品
-// も未削除の場合だけ行う。親作品のtouchとカウンター更新にも成功した場合だけ結果を返し、親作品が
-// 同時に削除された場合はトランザクションをロールバックする。実際に非公開にした行からanime_idを
-// 返すため、写像が同時に変わっても以前のanimeへstatusを書かない。statusだけを更新することで、
-// 事前読み取り後にコミットされたanimeの内容も保持する。
+// episodesの更新は、行が今も公開中であり、トランザクションの前に読んだ版 (updated_at) のままで、
+// 確認ページ用の射影が観測した作品に今も属し、その作品も未削除の場合だけ行う。親作品のtouchと
+// カウンター更新にも成功した場合だけ結果を返し、親作品が同時に削除された場合はトランザクションを
+// ロールバックする。編集履歴の版はトランザクションの前に読んだanimeから組み立てるため、実際に
+// 非公開にした行が返すanime_idがその読み取りと違えば、競合を返して何も書かない。statusだけを
+// 更新することで、事前読み取り後にコミットされたanimeの内容も保持する。
 type ArchiveEpisodeUsecase struct {
-	db          *sql.DB
-	episodeRepo *repository.EpisodeRepository
-	animeRepo   *repository.AnimeRepository
+	db                      *sql.DB
+	episodeRepo             *repository.EpisodeRepository
+	animeRepo               *repository.AnimeRepository
+	animeClassificationRepo *repository.AnimeClassificationRepository
+	dbEditRecordRepos       DBEditRecordRepos
 }
 
 // NewArchiveEpisodeUsecaseはArchiveEpisodeUsecaseを生成する。
@@ -34,11 +37,15 @@ func NewArchiveEpisodeUsecase(
 	db *sql.DB,
 	episodeRepo *repository.EpisodeRepository,
 	animeRepo *repository.AnimeRepository,
+	animeClassificationRepo *repository.AnimeClassificationRepository,
+	dbEditRecordRepos DBEditRecordRepos,
 ) *ArchiveEpisodeUsecase {
 	return &ArchiveEpisodeUsecase{
-		db:          db,
-		episodeRepo: episodeRepo,
-		animeRepo:   animeRepo,
+		db:                      db,
+		episodeRepo:             episodeRepo,
+		animeRepo:               animeRepo,
+		animeClassificationRepo: animeClassificationRepo,
+		dbEditRecordRepos:       dbEditRecordRepos,
 	}
 }
 
@@ -80,7 +87,12 @@ func (uc *ArchiveEpisodeUsecase) Execute(ctx context.Context, input ArchiveEpiso
 		return nil, episodeNotFoundError(ctx, input.EpisodeID)
 	}
 
-	return uc.archiveEpisode(ctx, target.Episode)
+	recordPlan, err := planEpisodeStatusRecord(ctx, uc.animeRepo, uc.animeClassificationRepo, uc.dbEditRecordRepos, input.User, model.DBEditActionArchive, target.Episode.AnimeID, model.AnimeStatusArchived)
+	if err != nil {
+		return nil, fmt.Errorf("編集履歴の記録の計画に失敗しました: %w", err)
+	}
+
+	return uc.archiveEpisode(ctx, target.Episode, recordPlan)
 }
 
 // archiveEpisodeは非公開をepisodesに、そして実際に更新した行がマッピング済みならその
@@ -90,6 +102,7 @@ func (uc *ArchiveEpisodeUsecase) Execute(ctx context.Context, input ArchiveEpiso
 func (uc *ArchiveEpisodeUsecase) archiveEpisode(
 	ctx context.Context,
 	current *model.Episode,
+	recordPlan *dbEditRecordPlan,
 ) (*ArchiveEpisodeOutput, error) {
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -98,8 +111,9 @@ func (uc *ArchiveEpisodeUsecase) archiveEpisode(
 	defer func() { _ = tx.Rollback() }()
 
 	archived, err := uc.episodeRepo.WithTx(tx).Archive(ctx, repository.ArchiveEpisodeParams{
-		ID:     current.ID,
-		WorkID: current.WorkID,
+		ID:      current.ID,
+		WorkID:  current.WorkID,
+		Version: current.UpdatedAt,
 	})
 	if err != nil {
 		return nil, fmt.Errorf("エピソードの非公開に失敗しました: %w", err)
@@ -107,11 +121,19 @@ func (uc *ArchiveEpisodeUsecase) archiveEpisode(
 	if archived == nil {
 		return nil, episodeNotFoundError(ctx, current.ID)
 	}
+	// 版はトランザクションの前に読んだanimeから組み立てたため、写像がその後に変わっていたら書き込みをやめる。
+	if episodeAnimeIDChanged(current.AnimeID, archived.AnimeID) {
+		return nil, episodeConflictError(ctx, current.ID)
+	}
 
 	if archived.AnimeID != nil {
 		if err := uc.animeRepo.WithTx(tx).UpdateStatus(ctx, *archived.AnimeID, model.AnimeStatusArchived); err != nil {
 			return nil, fmt.Errorf("animeの状態更新に失敗しました: %w", err)
 		}
+	}
+
+	if err := writeDBEditRecord(ctx, uc.dbEditRecordRepos.WithTx(tx), recordPlan); err != nil {
+		return nil, err
 	}
 
 	if err := tx.Commit(); err != nil {

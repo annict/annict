@@ -2892,8 +2892,9 @@ func TestEpisodeRepository_Archive(t *testing.T) {
 		workBefore := readDBArchiveWork(t, tx, workID)
 
 		result, err := repo.Archive(context.Background(), repository.ArchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Archive()のエラー = %v", err)
@@ -2940,8 +2941,9 @@ func TestEpisodeRepository_Archive(t *testing.T) {
 		})
 
 		result, err := repo.Archive(context.Background(), repository.ArchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Archive()のエラー = %v", err)
@@ -2951,6 +2953,33 @@ func TestEpisodeRepository_Archive(t *testing.T) {
 		}
 		if work := readDBArchiveWork(t, tx, workID); work.episodesCount != 3 {
 			t.Errorf("works.episodes_count = %d、期待値 = 3", work.episodesCount)
+		}
+	})
+
+	// 送信が読んだ後に行が書かれていたら、送信が組み立てた編集履歴の版と食い違うため書かない。
+	t.Run("版の食い違うエピソードはnilを返す", func(t *testing.T) {
+		t.Parallel()
+
+		db, tx := testutil.SetupTx(t)
+		repo := repository.NewEpisodeRepository(query.New(db).WithTx(tx))
+
+		workID := insertDBArchiveWork(t, tx, 3)
+		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{workID: workID})
+		staleVersion := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+
+		result, err := repo.Archive(context.Background(), repository.ArchiveEpisodeParams{
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: &staleVersion,
+		})
+		if err != nil {
+			t.Fatalf("Archive()のエラー = %v", err)
+		}
+		if result != nil {
+			t.Fatal("版の食い違うエピソードへのArchive()の戻り値 = 結果あり、期待値 = nil")
+		}
+		if state := readDBArchiveEpisode(t, tx, episodeID); state.unpublishedAt.Valid {
+			t.Error("版の食い違うエピソードのunpublished_atを立てた")
 		}
 	})
 
@@ -2969,8 +2998,9 @@ func TestEpisodeRepository_Archive(t *testing.T) {
 		})
 
 		result, err := repo.Archive(context.Background(), repository.ArchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Archive()のエラー = %v", err)
@@ -2995,8 +3025,9 @@ func TestEpisodeRepository_Archive(t *testing.T) {
 		}
 
 		result, err := repo.Archive(context.Background(), repository.ArchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Archive()のエラー = %v", err)
@@ -3025,8 +3056,9 @@ func TestEpisodeRepository_Archive(t *testing.T) {
 		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{workID: movedWorkID})
 
 		result, err := repo.Archive(context.Background(), repository.ArchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: originalWorkID,
+			ID:      episodeID,
+			WorkID:  originalWorkID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Archive()のエラー = %v", err)
@@ -3073,8 +3105,9 @@ func TestEpisodeRepository_Unarchive(t *testing.T) {
 		workBefore := readDBArchiveWork(t, tx, workID)
 
 		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Unarchive()のエラー = %v", err)
@@ -3118,8 +3151,9 @@ func TestEpisodeRepository_Unarchive(t *testing.T) {
 		episodeID := insertDBArchiveEpisode(t, tx, dbArchiveEpisodeRow{workID: workID})
 
 		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Unarchive()のエラー = %v", err)
@@ -3148,8 +3182,9 @@ func TestEpisodeRepository_Unarchive(t *testing.T) {
 		})
 
 		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Unarchive()のエラー = %v", err)
@@ -3180,8 +3215,9 @@ func TestEpisodeRepository_Unarchive(t *testing.T) {
 		}
 
 		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Unarchive()のエラー = %v", err)
@@ -3213,8 +3249,9 @@ func TestEpisodeRepository_Unarchive(t *testing.T) {
 		})
 
 		result, err := repo.Unarchive(context.Background(), repository.UnarchiveEpisodeParams{
-			ID:     episodeID,
-			WorkID: originalWorkID,
+			ID:      episodeID,
+			WorkID:  originalWorkID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Unarchive()のエラー = %v", err)
@@ -3429,8 +3466,9 @@ func TestEpisodeRepository_Delete(t *testing.T) {
 		workBefore := readDBArchiveWork(t, tx, workID)
 
 		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Delete()のエラー = %v", err)
@@ -3479,8 +3517,9 @@ func TestEpisodeRepository_Delete(t *testing.T) {
 		workBefore := readDBArchiveWork(t, tx, workID)
 
 		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Delete()のエラー = %v", err)
@@ -3541,8 +3580,9 @@ func TestEpisodeRepository_Delete(t *testing.T) {
 		publishedFollowerBefore := readDBDeleteEpisode(t, tx, publishedFollowerID)
 
 		if _, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
-			ID:     targetID,
-			WorkID: workID,
+			ID:      targetID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, targetID),
 		}); err != nil {
 			t.Fatalf("Delete()のエラー = %v", err)
 		}
@@ -3589,8 +3629,9 @@ func TestEpisodeRepository_Delete(t *testing.T) {
 		})
 
 		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Delete()のエラー = %v", err)
@@ -3618,8 +3659,9 @@ func TestEpisodeRepository_Delete(t *testing.T) {
 		}
 
 		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
-			ID:     episodeID,
-			WorkID: workID,
+			ID:      episodeID,
+			WorkID:  workID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Delete()のエラー = %v", err)
@@ -3648,8 +3690,9 @@ func TestEpisodeRepository_Delete(t *testing.T) {
 		episodeID := insertDBDeleteEpisode(t, tx, dbDeleteEpisodeRow{workID: movedWorkID})
 
 		result, err := repo.Delete(context.Background(), repository.DeleteEpisodeParams{
-			ID:     episodeID,
-			WorkID: originalWorkID,
+			ID:      episodeID,
+			WorkID:  originalWorkID,
+			Version: readEpisodeVersionForTest(t, tx, episodeID),
 		})
 		if err != nil {
 			t.Fatalf("Delete()のエラー = %v", err)
@@ -3994,9 +4037,20 @@ func TestEpisodeRepository_UpdateEmptyTitle(t *testing.T) {
 	repo := repository.NewEpisodeRepository(query.New(db)).WithTx(tx)
 
 	rawNumber := 1.0
-	target := repository.DBEpisodeTitleFillTarget{Episode: &model.Episode{ID: emptyID, WorkID: workID, RawNumber: &rawNumber}, ScTid: 6309}
+	staleVersion := time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
+	target := repository.DBEpisodeTitleFillTarget{Episode: &model.Episode{ID: emptyID, WorkID: workID, RawNumber: &rawNumber, UpdatedAt: &staleVersion}, ScTid: 6309}
 	createdFrom := time.Now().Add(-7 * 24 * time.Hour)
+	// 読み取りの後に行が書かれていたら、編集履歴の版がその読み取りと食い違うため書かない。
 	updated, err := repo.UpdateEmptyTitle(ctx, target, "妻役を確保せよ", createdFrom)
+	if err != nil {
+		t.Fatalf("UpdateEmptyTitle()のエラー = %v", err)
+	}
+	if updated != nil {
+		t.Error("版の食い違うエピソードを更新した")
+	}
+
+	target.Episode.UpdatedAt = readEpisodeVersionForTest(t, tx, emptyID)
+	updated, err = repo.UpdateEmptyTitle(ctx, target, "妻役を確保せよ", createdFrom)
 	if err != nil {
 		t.Fatalf("UpdateEmptyTitle()のエラー = %v", err)
 	}
@@ -4005,6 +4059,7 @@ func TestEpisodeRepository_UpdateEmptyTitle(t *testing.T) {
 	}
 
 	target.Episode.ID = titledID
+	target.Episode.UpdatedAt = readEpisodeVersionForTest(t, tx, titledID)
 	updated, err = repo.UpdateEmptyTitle(ctx, target, "妻役を確保せよ", createdFrom)
 	if err != nil {
 		t.Fatalf("UpdateEmptyTitle()のエラー = %v", err)
@@ -4029,4 +4084,18 @@ func TestEpisodeRepository_UpdateEmptyTitle(t *testing.T) {
 	if title != "編集者のタイトル" {
 		t.Errorf("title = %q、期待値 = 編集者のタイトル", title)
 	}
+}
+
+// readEpisodeVersionForTestは、状態を変える書き込みが照合するエピソードの版 (updated_at) を返す。
+func readEpisodeVersionForTest(t *testing.T, tx *sql.Tx, episodeID model.EpisodeID) *time.Time {
+	t.Helper()
+
+	var updatedAt sql.NullTime
+	if err := tx.QueryRow(`SELECT updated_at FROM episodes WHERE id = $1`, int64(episodeID)).Scan(&updatedAt); err != nil {
+		t.Fatalf("episodes.updated_atの取得に失敗: %v", err)
+	}
+	if !updatedAt.Valid {
+		return nil
+	}
+	return &updatedAt.Time
 }

@@ -24,24 +24,30 @@ func newTestHandler(t *testing.T, db *sql.DB, tx *sql.Tx) *Handler {
 	sessionManager := session.NewManager(repository.NewSessionRepository(queries), cfg)
 	personRepo := repository.NewPersonRepository(queries)
 
-	// 一括登録UseCaseは自前のトランザクションを開くため、テスト用トランザクションではなく
-	// プールに対して組み立てる。コミットされた行はそのテスト側で後始末する。
-	poolPersonRepo := repository.NewPersonRepository(query.New(db))
-	createPeopleUC := usecase.NewCreatePeopleUsecase(db, poolPersonRepo, validator.NewDBPersonCreateValidator(poolPersonRepo))
+	// 一括登録・更新・削除のUseCaseは編集履歴と同じトランザクションで書くため自前のトランザクションを開く。
+	// テスト用トランザクションではなくプールに対して組み立て、前提の人物はコミットして作る。
+	poolQueries := query.New(db)
+	poolPersonRepo := repository.NewPersonRepository(poolQueries)
+	poolPrefectureRepo := repository.NewPrefectureRepository(poolQueries)
+	dbEditRecordRepos := usecase.DBEditRecordRepos{
+		DBEdit:         repository.NewDBEditRepository(poolQueries),
+		AnimeRevision:  repository.NewAnimeRevisionRepository(poolQueries),
+		PersonRevision: repository.NewPersonRevisionRepository(poolQueries),
+	}
+	createPeopleUC := usecase.NewCreatePeopleUsecase(db, poolPersonRepo, validator.NewDBPersonCreateValidator(poolPersonRepo), dbEditRecordRepos)
 
-	// 編集の取得・更新と削除のUseCaseは自前のトランザクションを開かないため、テスト用
-	// トランザクションに対して組み立て、書き込みはテスト終了時に巻き戻す。
+	// 編集の取得は、テスト用トランザクションに対して組み立てる。
 	prefectureRepo := repository.NewPrefectureRepository(queries)
 
 	return NewHandler(
 		cfg,
 		sessionManager,
 		testutil.NewTestFlashManager(),
-		usecase.NewGetDBPeopleUsecase(personRepo),
+		usecase.NewGetDBPeopleUsecase(personRepo, repository.NewFeatureFlagRepository(queries)),
 		usecase.NewGetDBPersonNewUsecase(),
 		createPeopleUC,
-		usecase.NewGetDBPersonEditUsecase(personRepo, prefectureRepo),
-		usecase.NewUpdatePersonUsecase(personRepo, validator.NewDBPersonUpdateValidator(personRepo, prefectureRepo)),
-		usecase.NewDeletePersonUsecase(personRepo),
+		usecase.NewGetDBPersonEditUsecase(personRepo, prefectureRepo, repository.NewFeatureFlagRepository(queries)),
+		usecase.NewUpdatePersonUsecase(db, poolPersonRepo, validator.NewDBPersonUpdateValidator(poolPersonRepo, poolPrefectureRepo), dbEditRecordRepos),
+		usecase.NewDeletePersonUsecase(db, poolPersonRepo, dbEditRecordRepos),
 	)
 }

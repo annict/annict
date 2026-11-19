@@ -8,23 +8,23 @@ import (
 	"github.com/annict/annict/go/internal/query"
 )
 
-// DbCommentRepositoryはAnnict DBのコメント関連のデータアクセスを担当します
-type DbCommentRepository struct {
+// DBCommentRepositoryはAnnict DBのコメント関連のデータアクセスを担当します
+type DBCommentRepository struct {
 	queries *query.Queries
 }
 
-// NewDbCommentRepositoryはDbCommentRepositoryを作成します
-func NewDbCommentRepository(queries *query.Queries) *DbCommentRepository {
-	return &DbCommentRepository{queries: queries}
+// NewDBCommentRepositoryはDBCommentRepositoryを作成します
+func NewDBCommentRepository(queries *query.Queries) *DBCommentRepository {
+	return &DBCommentRepository{queries: queries}
 }
 
 // WithTxはトランザクションを使用する新しいRepositoryを返します
-func (r *DbCommentRepository) WithTx(tx *sql.Tx) *DbCommentRepository {
-	return &DbCommentRepository{queries: r.queries.WithTx(tx)}
+func (r *DBCommentRepository) WithTx(tx *sql.Tx) *DBCommentRepository {
+	return &DBCommentRepository{queries: r.queries.WithTx(tx)}
 }
 
 // DeleteByUserIDはユーザーが書いたAnnict DBのコメントを最大limit件削除し、削除した件数を返します。
-func (r *DbCommentRepository) DeleteByUserID(ctx context.Context, userID model.UserID, limit int32) (int64, error) {
+func (r *DBCommentRepository) DeleteByUserID(ctx context.Context, userID model.UserID, limit int32) (int64, error) {
 	return r.queries.DeleteDbCommentsByUserID(ctx, query.DeleteDbCommentsByUserIDParams{
 		UserID:    int64(userID),
 		BatchSize: limit,

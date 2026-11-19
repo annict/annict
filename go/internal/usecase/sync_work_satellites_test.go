@@ -55,7 +55,7 @@ func TestSyncWorkSatellitesUsecase_Execute_FiltersUnresolvedAndAggregates(t *tes
 	db, tx := testutil.SetupTx(t)
 	// anime解決済みの2件と、anime_id未解決の1件。
 	resolved1 := buildWorkWithAnimeInTx(t, tx)
-	unresolved := testutil.NewWorkBuilder(t, tx).Build()
+	unresolved := testutil.NewWorkBuilder(t, tx).WithoutAnime().Build()
 	resolved2 := buildWorkWithAnimeInTx(t, tx)
 
 	r1 := &fakeSatelliteReconciler{counts: satelliteReconcileCounts{Created: 1, Updated: 2, Unchanged: 1}}
@@ -98,8 +98,8 @@ func TestSyncWorkSatellitesUsecase_Execute_NoResolvedWorksSkipsReconcilers(t *te
 
 	db, tx := testutil.SetupTx(t)
 	workIDs := []model.WorkID{
-		testutil.NewWorkBuilder(t, tx).Build(),
-		testutil.NewWorkBuilder(t, tx).Build(),
+		testutil.NewWorkBuilder(t, tx).WithoutAnime().Build(),
+		testutil.NewWorkBuilder(t, tx).WithoutAnime().Build(),
 	}
 	reconciler := &fakeSatelliteReconciler{counts: satelliteReconcileCounts{Created: 99}}
 

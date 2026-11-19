@@ -17,6 +17,7 @@ type CreateWorkUsecase struct {
 	animeRepo               *repository.AnimeRepository
 	animeClassificationRepo *repository.AnimeClassificationRepository
 	satelliteRepos          WorkSatelliteRepos
+	dbEditRecordRepos       DBEditRecordRepos
 	validator               *validator.DBWorkCreateValidator
 }
 
@@ -26,6 +27,7 @@ func NewCreateWorkUsecase(
 	animeRepo *repository.AnimeRepository,
 	animeClassificationRepo *repository.AnimeClassificationRepository,
 	satelliteRepos WorkSatelliteRepos,
+	dbEditRecordRepos DBEditRecordRepos,
 	validator *validator.DBWorkCreateValidator,
 ) *CreateWorkUsecase {
 	return &CreateWorkUsecase{
@@ -34,6 +36,7 @@ func NewCreateWorkUsecase(
 		animeRepo:               animeRepo,
 		animeClassificationRepo: animeClassificationRepo,
 		satelliteRepos:          satelliteRepos,
+		dbEditRecordRepos:       dbEditRecordRepos,
 		validator:               validator,
 	}
 }
@@ -71,7 +74,7 @@ func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput)
 		return nil, fmt.Errorf("入力値の変換に失敗: %w", err)
 	}
 
-	return uc.createWork(ctx, params)
+	return uc.createWork(ctx, input.User.ID, params)
 }
 
 // createWorkは新規作品をanimes / anime_classifications / worksと6つの別表に
@@ -79,12 +82,28 @@ func (uc *CreateWorkUsecase) Execute(ctx context.Context, input CreateWorkInput)
 // kind='work' 分類を挿入し、worksを挿入し、works.anime_idを書き戻し、workがsourceとする
 // 別表行を両書きする。移行期間中はworksが正本のため、worksへの書き込み (Create +
 // UpdateAnimeID) は正本切り替え (フェーズ17) でまるごと外せるよう1ブロックにまとめてある。
-func (uc *CreateWorkUsecase) createWork(ctx context.Context, params repository.CreateWorkParams) (*CreateWorkOutput, error) {
+func (uc *CreateWorkUsecase) createWork(ctx context.Context, userID model.UserID, params repository.CreateWorkParams) (*CreateWorkOutput, error) {
 	// createパラメータを *model.Workに射影し、フェーズ2同期の写像ヘルパーを
 	// 再利用して、work -> anime / 分類 の写像の正本を1つに保つ。
 	work := workFromCreateWorkParams(params)
 	animeParams := animeCreateParamsFromWork(work)
 	classificationParams := classificationCreateParamsFromWork(work, 0)
+
+	// 作成の版のスナップショットは、作成する値から組み立てる。別表の行はanime_idに依らないため、
+	// 仮のanime_idで導出した計画から求め、版のanime_idは挿入した直後に差し替える。
+	placeholderAnimeID := model.AnimeID(0)
+	work.AnimeID = &placeholderAnimeID
+	snapshot := animeSnapshotFromCreateParams(animeParams, classificationParams, planWorkSatellites(work, workSatelliteExisting{}))
+	work.AnimeID = nil
+	recordPlan, err := planDBEditRecord(ctx, uc.dbEditRecordRepos, DBEditRecordInput{
+		Actor:  model.DBEditActorUser,
+		UserID: &userID,
+		Action: model.DBEditActionCreate,
+		Animes: []AnimeRevisionInput{{AnimeID: placeholderAnimeID, After: snapshot}},
+	})
+	if err != nil {
+		return nil, fmt.Errorf("編集履歴の記録の準備に失敗しました: %w", err)
+	}
 
 	tx, err := uc.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -125,6 +144,11 @@ func (uc *CreateWorkUsecase) createWork(ctx context.Context, params repository.C
 	work.AnimeID = &anime.ID
 	if err := applyWorkSatellitePlans(ctx, uc.satelliteRepos.WithTx(tx), planWorkSatellites(work, workSatelliteExisting{})); err != nil {
 		return nil, fmt.Errorf("別表テーブルの両書きに失敗しました: %w", err)
+	}
+
+	recordPlan.setCreatedAnimeID(0, anime.ID)
+	if err := writeDBEditRecord(ctx, uc.dbEditRecordRepos.WithTx(tx), recordPlan); err != nil {
+		return nil, fmt.Errorf("編集履歴の記録に失敗しました: %w", err)
 	}
 
 	if err := tx.Commit(); err != nil {

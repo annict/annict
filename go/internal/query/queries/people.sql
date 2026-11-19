@@ -237,6 +237,33 @@ WITH current_person AS (
 SELECT up.id
 FROM updated_person up;
 
+-- name: GetPersonForRevisionByID :one
+-- 編集履歴の版を組み立てるため、書き込む前の人物の状態を読む。スナップショットの列と状態と版を持ち、
+-- 掲載停止の対応記録 (delist_message) は版に入れないため読まない。どの状態の人物も返す。
+SELECT
+    p.id,
+    p.name,
+    p.name_kana,
+    p.name_en,
+    p.nickname,
+    p.nickname_en,
+    p.gender,
+    p.blood_type,
+    p.prefecture_id,
+    p.birthday,
+    p.height,
+    p.url,
+    p.url_en,
+    p.wikipedia_url,
+    p.wikipedia_url_en,
+    p.twitter_username,
+    p.twitter_username_en,
+    p.status,
+    p.archive_message,
+    p.updated_at
+FROM people p
+WHERE p.id = sqlc.arg('id');
+
 -- name: GetPersonForStateChangeByID :one
 -- アーカイブ・アーカイブ解除・削除の確認画面が、対象の名前と現在の状態を読む。その画面が
 -- 操作できない人物を呼び出し側で弾けるよう、状態で絞り込まずに返す
@@ -249,6 +276,9 @@ FROM people p
 WHERE p.id = sqlc.arg('id');
 
 -- name: ArchiveDBPerson :one
+-- versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+-- 間に別の編集が入った場合は状態も履歴も書き込まない。
+--
 -- 公開中の人物を非公開 (archived) にする。Rails版はperson_statusを読まないため、Rails版の表示と
 -- APIから除外されるようunpublished_atにも時刻を書く (作品の非公開と同じRails版への橋渡し)。
 -- 状態の確認と書き込みを1文で行うため、確認画面を開いた後に他者が状態を変えた場合も、1行も
@@ -260,9 +290,13 @@ SET
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = sqlc.arg('id')
     AND status = 'published'
+    AND updated_at = sqlc.arg('version')::timestamp
 RETURNING id;
 
 -- name: UnarchiveDBPerson :one
+-- versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+-- 間に別の編集が入った場合は状態も履歴も書き込まない。
+--
 -- 非公開の人物を公開中に戻し、Rails版への橋渡しのunpublished_atをNULLに戻す。ArchiveDBPersonの
 -- 逆で、非公開の人物だけを対象にする。
 UPDATE people
@@ -272,9 +306,13 @@ SET
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = sqlc.arg('id')
     AND status = 'archived'
+    AND updated_at = sqlc.arg('version')::timestamp
 RETURNING id;
 
 -- name: DeleteDBPerson :one
+-- versionはトランザクションの前に読んだupdated_atで、編集履歴の版をその読み取りから組み立てるため、
+-- 間に別の編集が入った場合は状態も履歴も書き込まない。
+--
 -- 人物を論理削除する。Rails版の物理削除 (destroy_in_batches) と異なり、キャスト・スタッフ・
 -- 編集履歴は残す。Rails版はperson_statusを読まないため、Rails版の表示から除外されるよう
 -- deleted_atにも時刻を書く (Rails版への橋渡し)。削除できるのは一覧に表示する公開中と
@@ -286,6 +324,7 @@ SET
     updated_at = (NOW() AT TIME ZONE 'UTC')
 WHERE id = sqlc.arg('id')
     AND status IN ('published', 'archived')
+    AND updated_at = sqlc.arg('version')::timestamp
 RETURNING id;
 
 -- name: GetPersonForDelistingByID :one

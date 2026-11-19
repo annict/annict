@@ -57,7 +57,8 @@ type Work struct {
 	DeletedAt     *time.Time
 
 	// UpdatedAtは行が最後に書かれた時刻。値を入れるのはAnnict DB編集フォームの
-	// ローダー (GetForEditByID) で、フォームは送信が前提とする版としてこれを持ち帰る。
+	// ローダー (GetForEditByID) とanime同期のローダー (ListForAnimeSyncByIDs)。フォームは送信の版として、
+	// 状態変更は読み取りから書き込みまでの間の別の編集を検出する版として使う。
 	// 他者の変更を黙って上書きする送信を、更新側で却下できるようにするため。カラムを選択
 	// しないローダーと、保存済みのupdated_atがNULLの行ではnilのまま残る。
 	UpdatedAt *time.Time

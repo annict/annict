@@ -322,6 +322,95 @@ func (ns NullAnimeStatus) Value() (driver.Value, error) {
 	return string(ns.AnimeStatus), nil
 }
 
+type DbEditAction string
+
+const (
+	DbEditActionCreate    DbEditAction = "create"
+	DbEditActionUpdate    DbEditAction = "update"
+	DbEditActionArchive   DbEditAction = "archive"
+	DbEditActionUnarchive DbEditAction = "unarchive"
+	DbEditActionDelete    DbEditAction = "delete"
+	DbEditActionDelist    DbEditAction = "delist"
+	DbEditActionUndelist  DbEditAction = "undelist"
+)
+
+func (e *DbEditAction) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = DbEditAction(s)
+	case string:
+		*e = DbEditAction(s)
+	default:
+		return fmt.Errorf("unsupported scan type for DbEditAction: %T", src)
+	}
+	return nil
+}
+
+type NullDbEditAction struct {
+	DbEditAction DbEditAction
+	Valid        bool // Valid is true if DbEditAction is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullDbEditAction) Scan(value interface{}) error {
+	if value == nil {
+		ns.DbEditAction, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.DbEditAction.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullDbEditAction) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.DbEditAction), nil
+}
+
+type DbEditActor string
+
+const (
+	DbEditActorUser   DbEditActor = "user"
+	DbEditActorSystem DbEditActor = "system"
+)
+
+func (e *DbEditActor) Scan(src interface{}) error {
+	switch s := src.(type) {
+	case []byte:
+		*e = DbEditActor(s)
+	case string:
+		*e = DbEditActor(s)
+	default:
+		return fmt.Errorf("unsupported scan type for DbEditActor: %T", src)
+	}
+	return nil
+}
+
+type NullDbEditActor struct {
+	DbEditActor DbEditActor
+	Valid       bool // Valid is true if DbEditActor is not NULL
+}
+
+// Scan implements the Scanner interface.
+func (ns *NullDbEditActor) Scan(value interface{}) error {
+	if value == nil {
+		ns.DbEditActor, ns.Valid = "", false
+		return nil
+	}
+	ns.Valid = true
+	return ns.DbEditActor.Scan(value)
+}
+
+// Value implements the driver Valuer interface.
+func (ns NullDbEditActor) Value() (driver.Value, error) {
+	if !ns.Valid {
+		return nil, nil
+	}
+	return string(ns.DbEditActor), nil
+}
+
 type Language string
 
 const (
@@ -678,6 +767,16 @@ type AnimeRedirect struct {
 	UpdatedAt        time.Time `db:"updated_at"`
 }
 
+type AnimeRevision struct {
+	ID              int64           `db:"id"`
+	DbEditID        sql.NullInt64   `db:"db_edit_id"`
+	AnimeID         int64           `db:"anime_id"`
+	ParentAnimeID   sql.NullInt64   `db:"parent_anime_id"`
+	Snapshot        json.RawMessage `db:"snapshot"`
+	SnapshotVersion int16           `db:"snapshot_version"`
+	CreatedAt       time.Time       `db:"created_at"`
+}
+
 type AnimeSeason struct {
 	ID        int64          `db:"id"`
 	AnimeID   int64          `db:"anime_id"`
@@ -696,19 +795,19 @@ type ArInternalMetadatum struct {
 }
 
 type Cast struct {
-	ID            int64         `db:"id"`
-	PersonID      int64         `db:"person_id"`
-	WorkID        int64         `db:"work_id"`
-	Name          string        `db:"name"`
-	AasmState     string        `db:"aasm_state"`
-	SortNumber    int32         `db:"sort_number"`
-	CreatedAt     time.Time     `db:"created_at"`
-	UpdatedAt     time.Time     `db:"updated_at"`
-	CharacterID   int64         `db:"character_id"`
-	NameEn        string        `db:"name_en"`
-	DeletedAt     sql.NullTime  `db:"deleted_at"`
-	UnpublishedAt sql.NullTime  `db:"unpublished_at"`
-	AnimeID       sql.NullInt64 `db:"anime_id"`
+	ID            int64        `db:"id"`
+	PersonID      int64        `db:"person_id"`
+	WorkID        int64        `db:"work_id"`
+	Name          string       `db:"name"`
+	AasmState     string       `db:"aasm_state"`
+	SortNumber    int32        `db:"sort_number"`
+	CreatedAt     time.Time    `db:"created_at"`
+	UpdatedAt     time.Time    `db:"updated_at"`
+	CharacterID   int64        `db:"character_id"`
+	NameEn        string       `db:"name_en"`
+	DeletedAt     sql.NullTime `db:"deleted_at"`
+	UnpublishedAt sql.NullTime `db:"unpublished_at"`
+	AnimeID       int64        `db:"anime_id"`
 }
 
 type Channel struct {
@@ -862,6 +961,14 @@ type DbComment struct {
 	CreatedAt    time.Time `db:"created_at"`
 	UpdatedAt    time.Time `db:"updated_at"`
 	Locale       string    `db:"locale"`
+}
+
+type DbEdit struct {
+	ID        int64         `db:"id"`
+	Actor     DbEditActor   `db:"actor"`
+	UserID    sql.NullInt64 `db:"user_id"`
+	Action    DbEditAction  `db:"action"`
+	CreatedAt time.Time     `db:"created_at"`
 }
 
 type DelayedJob struct {
@@ -1275,6 +1382,15 @@ type PersonFavorite struct {
 	WatchedWorksCount int32     `db:"watched_works_count"`
 }
 
+type PersonRevision struct {
+	ID              int64           `db:"id"`
+	DbEditID        sql.NullInt64   `db:"db_edit_id"`
+	PersonID        int64           `db:"person_id"`
+	Snapshot        json.RawMessage `db:"snapshot"`
+	SnapshotVersion int16           `db:"snapshot_version"`
+	CreatedAt       time.Time       `db:"created_at"`
+}
+
 type Prefecture struct {
 	ID        int64     `db:"id"`
 	Name      string    `db:"name"`
@@ -1318,7 +1434,7 @@ type Program struct {
 	MinimumEpisodeGeneratableNumber int32          `db:"minimum_episode_generatable_number"`
 	DeletedAt                       sql.NullTime   `db:"deleted_at"`
 	UnpublishedAt                   sql.NullTime   `db:"unpublished_at"`
-	AnimeID                         sql.NullInt64  `db:"anime_id"`
+	AnimeID                         int64          `db:"anime_id"`
 }
 
 type Provider struct {
@@ -1447,17 +1563,17 @@ type Series struct {
 }
 
 type SeriesWork struct {
-	ID            int64         `db:"id"`
-	SeriesID      int64         `db:"series_id"`
-	WorkID        int64         `db:"work_id"`
-	Summary       string        `db:"summary"`
-	SummaryEn     string        `db:"summary_en"`
-	AasmState     string        `db:"aasm_state"`
-	CreatedAt     time.Time     `db:"created_at"`
-	UpdatedAt     time.Time     `db:"updated_at"`
-	DeletedAt     sql.NullTime  `db:"deleted_at"`
-	UnpublishedAt sql.NullTime  `db:"unpublished_at"`
-	AnimeID       sql.NullInt64 `db:"anime_id"`
+	ID            int64        `db:"id"`
+	SeriesID      int64        `db:"series_id"`
+	WorkID        int64        `db:"work_id"`
+	Summary       string       `db:"summary"`
+	SummaryEn     string       `db:"summary_en"`
+	AasmState     string       `db:"aasm_state"`
+	CreatedAt     time.Time    `db:"created_at"`
+	UpdatedAt     time.Time    `db:"updated_at"`
+	DeletedAt     sql.NullTime `db:"deleted_at"`
+	UnpublishedAt sql.NullTime `db:"unpublished_at"`
+	AnimeID       int64        `db:"anime_id"`
 }
 
 type Session struct {
@@ -1529,7 +1645,7 @@ type Slot struct {
 	Irregular      bool          `db:"irregular"`
 	DeletedAt      sql.NullTime  `db:"deleted_at"`
 	UnpublishedAt  sql.NullTime  `db:"unpublished_at"`
-	AnimeID        sql.NullInt64 `db:"anime_id"`
+	AnimeID        int64         `db:"anime_id"`
 	EpisodeAnimeID sql.NullInt64 `db:"episode_anime_id"`
 }
 
@@ -1558,7 +1674,7 @@ type Staff struct {
 	RoleOtherEn   string         `db:"role_other_en"`
 	DeletedAt     sql.NullTime   `db:"deleted_at"`
 	UnpublishedAt sql.NullTime   `db:"unpublished_at"`
-	AnimeID       sql.NullInt64  `db:"anime_id"`
+	AnimeID       int64          `db:"anime_id"`
 }
 
 type Status struct {
@@ -1627,7 +1743,7 @@ type Trailer struct {
 	ImageData            sql.NullString `db:"image_data"`
 	DeletedAt            sql.NullTime   `db:"deleted_at"`
 	UnpublishedAt        sql.NullTime   `db:"unpublished_at"`
-	AnimeID              sql.NullInt64  `db:"anime_id"`
+	AnimeID              int64          `db:"anime_id"`
 }
 
 type TwitterBot struct {
@@ -1849,7 +1965,7 @@ type WorkImage struct {
 	UpdatedAt             time.Time      `db:"updated_at"`
 	ColorRgb              string         `db:"color_rgb"`
 	ImageData             string         `db:"image_data"`
-	AnimeID               sql.NullInt64  `db:"anime_id"`
+	AnimeID               int64          `db:"anime_id"`
 }
 
 type WorkRecord struct {

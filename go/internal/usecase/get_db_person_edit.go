@@ -12,28 +12,34 @@ import (
 // GetDBPersonEditUsecaseはDB管理画面の人物編集フォームのユースケース。フォームの初期値に
 // なる保存済みの人物と、出身地の選択肢を取得する。
 type GetDBPersonEditUsecase struct {
-	personRepo     *repository.PersonRepository
-	prefectureRepo *repository.PrefectureRepository
+	personRepo      *repository.PersonRepository
+	prefectureRepo  *repository.PrefectureRepository
+	featureFlagRepo *repository.FeatureFlagRepository
 }
 
 // NewGetDBPersonEditUsecaseは新しいGetDBPersonEditUsecaseを作成する。
 func NewGetDBPersonEditUsecase(
 	personRepo *repository.PersonRepository,
 	prefectureRepo *repository.PrefectureRepository,
+	featureFlagRepo *repository.FeatureFlagRepository,
 ) *GetDBPersonEditUsecase {
-	return &GetDBPersonEditUsecase{personRepo: personRepo, prefectureRepo: prefectureRepo}
+	return &GetDBPersonEditUsecase{personRepo: personRepo, prefectureRepo: prefectureRepo, featureFlagRepo: featureFlagRepo}
 }
 
 // GetDBPersonEditInputはユースケースの入力。
 type GetDBPersonEditInput struct {
 	User     *model.User
 	PersonID model.PersonID
+	// DeviceTokenは閲覧中のデバイスのトークン (Cookieが無いときは空文字列)。履歴へのリンクを出すかの判定に使う。
+	DeviceToken string
 }
 
 // GetDBPersonEditOutputはユースケースの出力。
 type GetDBPersonEditOutput struct {
 	Person      *model.Person
 	Prefectures []model.Prefecture
+	// CanShowRevisionsは人物の履歴へのリンクを出すかを表す。
+	CanShowRevisions bool
 }
 
 // Executeは人物を取得する前にコミッターを認可し、編集対象の人物と出身地の選択肢を返す。
@@ -65,8 +71,14 @@ func (uc *GetDBPersonEditUsecase) Execute(ctx context.Context, input GetDBPerson
 		return nil, fmt.Errorf("出身地の取得に失敗: %w", err)
 	}
 
+	canShowRevisions, err := canShowDBRevisions(ctx, uc.featureFlagRepo, input.DeviceToken, input.User)
+	if err != nil {
+		return nil, err
+	}
+
 	return &GetDBPersonEditOutput{
-		Person:      person,
-		Prefectures: prefectures,
+		Person:           person,
+		Prefectures:      prefectures,
+		CanShowRevisions: canShowRevisions,
 	}, nil
 }

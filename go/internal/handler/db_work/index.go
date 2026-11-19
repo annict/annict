@@ -29,6 +29,10 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 	filterNoSlots := r.URL.Query().Get("filter_no_slots") == "1"
 	seasonSlugs := r.URL.Query()["season_slugs"]
 	seasonYears, seasonNames := viewmodel.ParseSeasonSlugs(seasonSlugs)
+	// 作品一覧は公開のため、閲覧者のロールを解決して操作列を出し分ける。編集・非公開・
+	// 公開の操作はcommitter、削除はadminを要する。CSRFトークンはhtmxのDELETE操作
+	// (公開 / 削除) のX-CSRF-Tokenヘッダーで送る。
+	user := middleware.GetUserFromContext(ctx)
 
 	result, err := h.getDBWorksUC.Execute(ctx, usecase.GetDBWorksInput{
 		FilterNoEpisodes: filterNoEpisodes,
@@ -39,6 +43,8 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 		SeasonNames:      seasonNames,
 		Page:             page,
 		PerPage:          perPage,
+		User:             user,
+		DeviceToken:      middleware.GetDeviceToken(r),
 	})
 	if err != nil {
 		slog.ErrorContext(ctx, "DB作品一覧の取得エラー", "error", err)
@@ -72,11 +78,6 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 
 	worksVM := viewmodel.NewDBWorkListItems(ctx, result.Works, h.imageHelper)
 
-	// 作品一覧は公開のため、閲覧者のロールを解決して操作列を出し分ける。編集・非公開・
-	// 公開の操作はcommitter、削除はadminを要する。CSRFトークンはhtmxのDELETE操作
-	// (公開 / 削除) のX-CSRF-Tokenヘッダーで送る。
-	user := middleware.GetUserFromContext(ctx)
-
 	component := layouts.Db(
 		meta,
 		h.cfg.GetAssetVersion(),
@@ -91,6 +92,7 @@ func (h *Handler) Index(w http.ResponseWriter, r *http.Request) {
 			IsCommitter:         middleware.IsCommitter(user),
 			IsAdmin:             middleware.IsAdmin(user),
 			CSRFToken:           middleware.GetCSRFToken(r, h.sessionManager),
+			ShowRevisions:       result.CanShowRevisions,
 		}),
 	)
 	var body bytes.Buffer

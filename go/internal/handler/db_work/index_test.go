@@ -413,3 +413,48 @@ func TestIndex_WithSeasonNoneFilter(t *testing.T) {
 		}
 	}
 }
+
+// TestIndex_RevisionsLinkは、ログインしていない閲覧者でも、フィーチャーフラグdb_edit_historyを有効にした
+// デバイスなら各行に「履歴」とメニューの列を出すことを検証する。閲覧者とフラグの組み合わせはテンプレートのテストに任せ、
+// ここではデバイスのフラグがハンドラーからユースケースとテンプレートへ渡ることを確かめる。
+func TestIndex_RevisionsLink(t *testing.T) {
+	t.Parallel()
+
+	// feature_flagsは (device_token, name) で一意のため、ケースごとに別のトークンを使う。
+	for _, tt := range []struct {
+		name        string
+		deviceToken string
+		flagged     bool
+	}{
+		{name: "フラグを有効にしたデバイス", deviceToken: "db-works-index-revisions-flagged", flagged: true},
+		{name: "フラグを有効にしていないデバイス", deviceToken: "db-works-index-revisions-unflagged", flagged: false},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Parallel()
+
+			db, tx := testutil.SetupTx(t)
+			workID := testutil.NewWorkBuilder(t, tx).WithTitle("履歴リンクの作品").Build()
+			if tt.flagged {
+				testutil.NewFeatureFlagBuilder(t, tx).WithDeviceToken(tt.deviceToken).WithName(string(model.FeatureFlagDBEditHistory)).Build()
+			}
+
+			req := httptest.NewRequest("GET", "/db/works", nil)
+			req.AddCookie(&http.Cookie{Name: authMiddleware.DeviceTokenCookieName, Value: tt.deviceToken})
+			rr := httptest.NewRecorder()
+			newTestHandler(t, db, tx).Index(rr, req)
+
+			if rr.Code != http.StatusOK {
+				t.Fatalf("ステータスコード = %d、期待値 = %d", rr.Code, http.StatusOK)
+			}
+			body := rr.Body.String()
+			for _, s := range []string{
+				fmt.Sprintf(`href="/db/works/%d/revisions"`, int64(workID)),
+				`<th scope="col" class="text-center">メニュー</th>`,
+			} {
+				if got := strings.Contains(body, s); got != tt.flagged {
+					t.Errorf("%qの有無 = %v、期待値 = %v", s, got, tt.flagged)
+				}
+			}
+		})
+	}
+}
