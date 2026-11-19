@@ -10,11 +10,10 @@ import (
 	"github.com/annict/annict/go/internal/repository"
 )
 
-// episodeGenerationWindowは、自動生成が対象にする放送枠の開始日時の範囲を、実行時刻の前後に
-// 取る幅。後ろ側はRailsと同じく7日後まで。前側は、予定エピソード数との比較を直したことで
-// 過去の放送枠が新しく対象に入り、リリース後の最初の実行でまとめて作らないように設ける。
-// 7日あれば、実行が数日止まっても残りを拾える。
-const episodeGenerationWindow = 7 * 24 * time.Hour
+// episodeGenerationLookaheadは、自動生成が対象にする放送枠の開始日時の上限を、実行時刻から
+// どれだけ先に取るか。放送の7日前から、その話のエピソードを用意する。下限は設けず、放送日を
+// 過ぎてから登録された放送枠も拾う。
+const episodeGenerationLookahead = 7 * 24 * time.Hour
 
 // CreateEpisodesFromSlotsUsecaseは、エピソードが紐づいていない放送枠に、対応するエピソードを
 // 紐づける。無ければエピソードを作る。
@@ -52,8 +51,8 @@ func NewCreateEpisodesFromSlotsUsecase(
 	}
 }
 
-// CreateEpisodesFromSlotsInputは実行時刻を持つ。対象にする放送枠の開始日時の範囲は、
-// この時刻の前後に取る。
+// CreateEpisodesFromSlotsInputは実行時刻を持つ。対象にする放送枠の開始日時の上限は、
+// この時刻のepisodeGenerationLookahead後に取る。
 type CreateEpisodesFromSlotsInput struct {
 	Now time.Time
 }
@@ -98,11 +97,7 @@ type FailedSlot struct {
 // 結果に返す。ctxが終わったために失敗した放送枠は、トランザクションが戻るため処理しなかった
 // 件数に数え、放送枠ごとのエラーにしない。
 func (uc *CreateEpisodesFromSlotsUsecase) Execute(ctx context.Context, input CreateEpisodesFromSlotsInput) (*CreateEpisodesFromSlotsOutput, error) {
-	slots, err := uc.slotRepo.ListForEpisodeGeneration(
-		ctx,
-		input.Now.Add(-episodeGenerationWindow),
-		input.Now.Add(episodeGenerationWindow),
-	)
+	slots, err := uc.slotRepo.ListForEpisodeGeneration(ctx, input.Now.Add(episodeGenerationLookahead))
 	if err != nil {
 		return nil, fmt.Errorf("自動生成の対象の放送枠の取得に失敗: %w", err)
 	}
@@ -138,7 +133,8 @@ func (uc *CreateEpisodesFromSlotsUsecase) Execute(ctx context.Context, input Cre
 }
 
 // slotResultは1件の放送枠の処理結果。どのフィールドも空のときは、報告するまでもなく何も
-// しなかったこと (予定エピソード数に達している、一覧を読んだ後に紐づけられたなど) を表す。
+// しなかったこと (予定エピソード数を超える話にあたる、公開中のエピソード数が予定エピソード数に
+// 達している、一覧を読んだ後に紐づけられたなど) を表す。
 type slotResult struct {
 	created *GeneratedEpisode
 	linked  bool
@@ -166,7 +162,7 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, candi
 		return slotResult{}, nil
 	}
 
-	slot, err := slotRepo.GetForEpisodeGenerationByID(ctx, candidate.ID, candidate.WorkID, now.Add(-episodeGenerationWindow), now.Add(episodeGenerationWindow))
+	slot, err := slotRepo.GetForEpisodeGenerationByID(ctx, candidate.ID, candidate.WorkID, now.Add(episodeGenerationLookahead))
 	if err != nil {
 		return slotResult{}, fmt.Errorf("放送枠の再取得に失敗しました: %w", err)
 	}
@@ -204,6 +200,9 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, candi
 	}
 	if candidatesFound {
 		return slotResult{skipped: skippedSlot(slot, work.Work, model.EpisodeGenerationSkipReasonCandidatesLinked)}, nil
+	}
+	if reachesManualEpisodesCount(work.Work, siblings) {
+		return slotResult{}, nil
 	}
 
 	position, ok := generatedEpisodePosition(siblings, work.MaxSortNumber, rawNumber)
@@ -286,9 +285,26 @@ func (uc *CreateEpisodesFromSlotsUsecase) processSlot(ctx context.Context, candi
 
 // exceedsManualEpisodesCountは、放送枠が作品の予定エピソード数を超える話にあたるかを返す。
 // 回数ではなく不定期放送を除いた作品内の順番で比べる。回数で比べると、不定期放送のある番組で
-// 最後の話が作られないため。
+// 最後の話が作られないため。不定期放送でない放送枠が最終話のあとに残っている作品では、この比較だけ
+// では余分な話を通してしまうため、作る前にreachesManualEpisodesCountでも確かめる。
 func exceedsManualEpisodesCount(work *model.Work, slot *model.Slot) bool {
 	return work.ManualEpisodesCount != nil && *work.ManualEpisodesCount < slot.EpisodeOrder()
+}
+
+// reachesManualEpisodesCountは、作品の公開中のエピソード数が予定エピソード数に達しているかを返す。
+// 達した作品には、手動登録と同じく自動生成でも新しいエピソードを作らない。編集者は総集編や特番も
+// エピソードとして登録して予定エピソード数に含めるため、放送枠の順番だけでは最終話を見分けられない。
+func reachesManualEpisodesCount(work *model.Work, siblings []repository.DBEpisodeGenerationSibling) bool {
+	if work.ManualEpisodesCount == nil {
+		return false
+	}
+	published := 0
+	for _, sibling := range siblings {
+		if sibling.Published {
+			published++
+		}
+	}
+	return published >= int(*work.ManualEpisodesCount)
 }
 
 // matchGeneratedEpisodeは、放送枠を紐づける既存のエピソードを返す。候補は公開中で話数が

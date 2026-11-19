@@ -54,7 +54,7 @@ func cancelBlockedEpisodeGeneration[T any](t *testing.T, ctx context.Context, bl
 func TestCreateEpisodesFromSlotsUsecase_Execute_CancelsDuringWrite(t *testing.T) {
 	t.Parallel()
 	db := testutil.GetTestDB()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 	goodWorkID, _ := insertMappedCreateTargetWork(t, db)
 	goodProgram := insertGenerationProgram(t, db, goodWorkID, 1)
 	goodSlot := goodProgram.insertSlot(1, now, nil)

@@ -25,14 +25,12 @@ func (r *SlotRepository) WithTx(tx *sql.Tx) *SlotRepository {
 	return &SlotRepository{queries: r.queries.WithTx(tx)}
 }
 
-// ListForEpisodeGenerationは、開始日時がstartedFrom以上startedBefore未満の放送枠のうち、
-// 自動生成がエピソードを紐づける対象のIDと所属作品を開始日時の順に返す。
+// ListForEpisodeGenerationは、開始日時がstartedBeforeより前の放送枠のうち、自動生成が
+// エピソードを紐づける対象のIDと所属作品を開始日時の順に返す。予定エピソード数を超える話にあたる
+// 放送枠と、公開中のエピソード数が予定エピソード数に達した作品で紐づけの候補も無い放送枠は返さない。
 // 話数の計算に使う値は、作品ロック後にGetForEpisodeGenerationByIDで読み直す。
-func (r *SlotRepository) ListForEpisodeGeneration(ctx context.Context, startedFrom, startedBefore time.Time) ([]*model.Slot, error) {
-	rows, err := r.queries.ListSlotsForEpisodeGeneration(ctx, query.ListSlotsForEpisodeGenerationParams{
-		StartedFrom:   startedFrom,
-		StartedBefore: startedBefore,
-	})
+func (r *SlotRepository) ListForEpisodeGeneration(ctx context.Context, startedBefore time.Time) ([]*model.Slot, error) {
+	rows, err := r.queries.ListSlotsForEpisodeGeneration(ctx, startedBefore)
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +45,10 @@ func (r *SlotRepository) ListForEpisodeGeneration(ctx context.Context, startedFr
 // GetForEpisodeGenerationByIDは、作品ロック後に対象の放送枠をロックして現在の値を返す。
 // WithTxで使い、同じトランザクション内でLinkEpisodeを呼ぶ。対象外・紐づき済み・所属変更で
 // 見つからないときと、ほかのトランザクションが放送枠をロックしているときはnilを返す。
-func (r *SlotRepository) GetForEpisodeGenerationByID(ctx context.Context, id model.SlotID, workID model.WorkID, startedFrom, startedBefore time.Time) (*model.Slot, error) {
+func (r *SlotRepository) GetForEpisodeGenerationByID(ctx context.Context, id model.SlotID, workID model.WorkID, startedBefore time.Time) (*model.Slot, error) {
 	row, err := r.queries.GetSlotForEpisodeGenerationByID(ctx, query.GetSlotForEpisodeGenerationByIDParams{
 		ID:            int64(id),
 		WorkID:        int64(workID),
-		StartedFrom:   startedFrom,
 		StartedBefore: startedBefore,
 	})
 	if err != nil {

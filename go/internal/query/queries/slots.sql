@@ -1,11 +1,30 @@
 -- name: ListSlotsForEpisodeGeneration :many
--- 自動生成の対象はRailsのepisode:generateと同じ条件 (未削除・公開中で、エピソードが紐づいて
--- おらず、再放送でも不定期放送でもなく、番組と回数を持つ) の放送枠に、開始日時の範囲と作品が
--- 未削除・公開中であることを加えたもの。
+-- 自動生成の対象は、未削除・公開中で、エピソードが紐づいておらず、再放送でも不定期放送でもなく、
+-- 番組と回数を持つ放送枠のうち、開始日時がstarted_beforeより前で、作品が未削除・公開中のもの。
+-- 開始日時の下限は設けず、放送日を過ぎてから登録された放送枠も拾う。
+--
+-- 作品の予定エピソード数があるときは、作品をロックしたあとの判定で何もしないと分かっている放送枠を
+-- 除く。予定エピソード数を超える話にあたる放送枠と、公開中のエピソード数が予定エピソード数に達した
+-- 作品で、紐づけの候補 (計算した話数と等しい公開中のエピソード) も無い放送枠である。
+-- 作品内の順番と話数はGetSlotForEpisodeGenerationByIDと同じ数え方にする。
+--
 -- 一覧では処理するidと所属作品だけを読み、話数の計算に使う値は作品ロック後に読み直す。
 SELECT s.id, s.work_id
 FROM slots s
+JOIN programs p ON p.id = s.program_id
 JOIN works w ON w.id = s.work_id
+CROSS JOIN LATERAL (
+    SELECT s.number - (
+        SELECT COUNT(*)
+        FROM slots i
+        WHERE i.program_id = s.program_id
+            AND i.irregular
+            AND i.deleted_at IS NULL
+            AND i.unpublished_at IS NULL
+            AND i.number >= p.minimum_episode_generatable_number
+            AND i.number < s.number
+    ) AS episode_order
+) o
 WHERE s.deleted_at IS NULL
     AND s.unpublished_at IS NULL
     AND s.episode_id IS NULL
@@ -13,10 +32,32 @@ WHERE s.deleted_at IS NULL
     AND NOT s.irregular
     AND s.program_id IS NOT NULL
     AND s.number IS NOT NULL
-    AND s.started_at >= sqlc.arg('started_from')
     AND s.started_at < sqlc.arg('started_before')
     AND w.deleted_at IS NULL
     AND w.unpublished_at IS NULL
+    AND (
+        w.manual_episodes_count IS NULL
+        OR (
+            o.episode_order <= w.manual_episodes_count
+            AND (
+                (
+                    SELECT COUNT(*)
+                    FROM episodes e
+                    WHERE e.work_id = w.id
+                        AND e.deleted_at IS NULL
+                        AND e.unpublished_at IS NULL
+                ) < w.manual_episodes_count
+                OR EXISTS (
+                    SELECT 1
+                    FROM episodes e
+                    WHERE e.work_id = w.id
+                        AND e.deleted_at IS NULL
+                        AND e.unpublished_at IS NULL
+                        AND e.raw_number = o.episode_order + w.start_episode_raw_number - 1
+                )
+            )
+        )
+    )
 ORDER BY s.started_at, s.id;
 
 -- name: GetSlotForEpisodeGenerationByID :one
@@ -57,7 +98,6 @@ WHERE s.id = sqlc.arg('id')
     AND NOT s.rebroadcast
     AND NOT s.irregular
     AND s.number IS NOT NULL
-    AND s.started_at >= sqlc.arg('started_from')
     AND s.started_at < sqlc.arg('started_before')
     AND w.deleted_at IS NULL
     AND w.unpublished_at IS NULL
