@@ -474,6 +474,42 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_LinksOnlyWhenEpisodesCountReache
 	}
 }
 
+// TestCreateEpisodesFromSlotsUsecase_Execute_ExcludesArchivedEpisodeFromCountは、非公開の
+// エピソードを含めると予定数に達する作品でも、公開中のエピソードが足りなければ生成することを検証する。
+func TestCreateEpisodesFromSlotsUsecase_Execute_ExcludesArchivedEpisodeFromCount(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := lockEpisodeGeneration(t)
+
+	workID, _ := insertMappedCreateTargetWork(t, db)
+	if _, err := db.Exec(`UPDATE works SET manual_episodes_count = 2 WHERE id = $1`, int64(workID)); err != nil {
+		t.Fatalf("予定エピソード数の設定に失敗: %v", err)
+	}
+	insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
+	archived := generationEpisodeInput(workID, 1.5, 150)
+	archived.unpublishedAt = sql.NullTime{Time: now, Valid: true}
+	insertSyncEpisode(t, db, archived)
+	program := insertGenerationProgram(t, db, workID, 1)
+	slotID := program.insertSlot(2, now, nil)
+
+	output, err := newCreateEpisodesFromSlotsUsecase(db).Execute(ctx, CreateEpisodesFromSlotsInput{Now: now})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if len(output.CreatedEpisodes) != 1 {
+		t.Fatalf("結果 = %+v、期待値 = 作成1件", output)
+	}
+	created := output.CreatedEpisodes[0]
+	if created.SlotID != slotID || created.Number != "第2話" {
+		t.Errorf("CreatedEpisodes[0] = %+v、期待値 = 放送枠%d・第2話", created, slotID)
+	}
+	if got := readSlotEpisodeID(t, db, slotID); !got.Valid || got.Int64 != int64(created.EpisodeID) {
+		t.Errorf("放送枠のepisode_id = %+v、期待値 = %d", got, created.EpisodeID)
+	}
+}
+
 // TestCreateEpisodesFromSlotsUsecase_RechecksEpisodesCountAfterLockは、一覧を読んだあとに公開中の
 // エピソード数が予定エピソード数に達したとき、作品をロックしたあとの判定で作らずに終え、報告も
 // しないことを検証する。

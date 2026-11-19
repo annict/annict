@@ -136,17 +136,21 @@ func TestSlotRepository_ListForEpisodeGeneration_ManualEpisodesCount(t *testing.
 
 	// 公開中のエピソード数が予定エピソード数に達した作品では、計算した話数と等しい公開中の
 	// エピソードがある放送枠だけが載る。話数は開始話数 (11) を起点に数える。
-	filledWorkID := testutil.NewWorkBuilder(t, tx).WithManualEpisodesCount(2).Build()
+	filledWorkID := testutil.NewWorkBuilder(t, tx).WithManualEpisodesCount(3).Build()
 	if _, err := tx.Exec(`UPDATE works SET start_episode_raw_number = 11 WHERE id = $1`, int64(filledWorkID)); err != nil {
 		t.Fatalf("開始話数の設定に失敗: %v", err)
 	}
 	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithRawNumber(11).Build()
 	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithRawNumber(15).Build()
+	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithRawNumber(16).Build()
+	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithRawNumber(12).WithUnpublishedAt(time.Now()).Build()
+	testutil.NewEpisodeBuilder(t, tx, filledWorkID).WithRawNumber(13).WithDeletedAt(time.Now()).Build()
 	filledSlot := newProgram(filledWorkID)
 	candidateSlot := filledSlot(1, nil)
 	filledSlot(2, nil)
+	filledSlot(3, nil)
 
-	// 非公開・削除済みのエピソードは公開中のエピソード数にも、紐づけの候補にも数えない。
+	// 非公開・削除済みのエピソードは公開中のエピソード数に含めない。
 	partlyPublishedWorkID := testutil.NewWorkBuilder(t, tx).WithManualEpisodesCount(2).Build()
 	testutil.NewEpisodeBuilder(t, tx, partlyPublishedWorkID).WithRawNumber(1).Build()
 	testutil.NewEpisodeBuilder(t, tx, partlyPublishedWorkID).WithRawNumber(2).WithUnpublishedAt(time.Now()).Build()
