@@ -209,7 +209,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_RecordsSystemDBEdit(t *testing.T
 	t.Parallel()
 
 	db := testutil.GetTestDB()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
 	program := insertGenerationProgram(t, db, workID, 1)
 	program.insertSlot(1, now.Add(time.Hour), nil)

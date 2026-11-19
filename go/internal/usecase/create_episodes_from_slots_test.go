@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"math"
+	"sync"
 	"sync/atomic"
 	"testing"
 	"time"
@@ -33,14 +34,21 @@ func newCreateEpisodesFromSlotsUsecase(db *sql.DB) *CreateEpisodesFromSlotsUseca
 	)
 }
 
-var generationNowCounter atomic.Int64
+// episodeGenerationMuは、自動生成のテストを1件ずつ流すためのロック。自動生成は実行時刻の7日後
+// より前に始まる放送枠をすべて拾うため、共有DBにコミットしたほかの自動生成のテストの放送枠を
+// 拾わないよう、放送枠を置いてから後片付けが終わるまでを順に流す。
+var episodeGenerationMu sync.Mutex
 
-// generationNowはテストごとに60日ずつ離れた実行時刻を返す。自動生成は実行時刻の前後7日の
-// 放送枠をすべて拾うため、共有DBにコミットしたほかのテストの放送枠を、別のテストの実行が
-// 拾わないようにする。
-func generationNow() time.Time {
-	n := generationNowCounter.Add(1)
-	return time.Date(1990, 1, 1, 0, 0, 0, 0, time.UTC).Add(time.Duration(n) * 60 * 24 * time.Hour)
+// lockEpisodeGenerationは、自動生成のテストのロックを取り、テストの実行時刻を返す。放送枠を置く
+// 前に呼ぶ。t.Cleanupは後に登録したものから動くため、ロックの解除はこの後に登録する番組と放送枠の
+// 後片付けが終わってから行われる。実行時刻は、ほかのテストが現在時刻の前後にコミットする放送枠より
+// 十分前に取る。
+func lockEpisodeGeneration(t *testing.T) time.Time {
+	t.Helper()
+
+	episodeGenerationMu.Lock()
+	t.Cleanup(episodeGenerationMu.Unlock)
+	return time.Date(2000, 1, 1, 0, 0, 0, 0, time.UTC)
 }
 
 // generationProgramは自動生成のテストが放送枠を置く番組。
@@ -84,7 +92,7 @@ func insertGenerationProgram(t *testing.T, db *sql.DB, workID model.WorkID, mini
 		}
 		for _, statement := range statements {
 			if _, err := db.Exec(statement.sql, statement.arg); err != nil {
-				t.Logf("番組の後始末に失敗 (%s): %v", statement.sql, err)
+				t.Errorf("番組の後始末に失敗 (%s): %v", statement.sql, err)
 			}
 		}
 	})
@@ -162,7 +170,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_CreatesEpisode(t *testing.T) {
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 
 	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
 	firstID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
@@ -246,7 +254,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_LinksExistingEpisode(t *testing.
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	secondID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 2, 200))
@@ -286,7 +294,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_LinksExistingMappedEpisode(t *te
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	episodeAnimeID := insertBareAnime(t, db)
@@ -320,7 +328,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_SkipsWhenCandidatesLinked(t *tes
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	thirdID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 3, 300))
@@ -358,7 +366,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_CountsPrecedingIrregularSlots(t 
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	if _, err := db.Exec(`UPDATE works SET manual_episodes_count = 2 WHERE id = $1`, int64(workID)); err != nil {
@@ -392,6 +400,163 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_CountsPrecedingIrregularSlots(t 
 	}
 }
 
+// TestCreateEpisodesFromSlotsUsecase_Execute_TargetsPastSlotsは、実行時刻より前に始まった
+// 放送枠も、開始日時によらず紐づけ・作成の対象にすることを検証する (放送日を過ぎてから放送予定を
+// 登録した場合)。
+func TestCreateEpisodesFromSlotsUsecase_Execute_TargetsPastSlots(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := lockEpisodeGeneration(t)
+
+	workID, _ := insertMappedCreateTargetWork(t, db)
+	firstID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
+	program := insertGenerationProgram(t, db, workID, 1)
+	linkedSlotID := program.insertSlot(1, now.Add(-60*24*time.Hour), nil)
+	createdSlotID := program.insertSlot(2, now.Add(-30*24*time.Hour), nil)
+
+	output, err := newCreateEpisodesFromSlotsUsecase(db).Execute(ctx, CreateEpisodesFromSlotsInput{Now: now})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+
+	if output.LinkedSlotCount != 1 || len(output.CreatedEpisodes) != 1 || len(output.SkippedSlots) != 0 || len(output.FailedSlots) != 0 {
+		t.Fatalf("output = %+v、期待値 = 紐づけ1件・作成1件", output)
+	}
+	if got := readSlotEpisodeID(t, db, linkedSlotID); got.Int64 != int64(firstID) {
+		t.Errorf("60日前の放送枠のepisode_id = %+v、期待値 = %d", got, firstID)
+	}
+	created := output.CreatedEpisodes[0]
+	if created.SlotID != createdSlotID || created.Number != "第2話" {
+		t.Errorf("CreatedEpisodes[0] = %+v、期待値 = 放送枠%d・第2話", created, createdSlotID)
+	}
+}
+
+// TestCreateEpisodesFromSlotsUsecase_Execute_LinksOnlyWhenEpisodesCountReachedは、公開中の
+// エピソード数が予定エピソード数に達した作品では、新しいエピソードを作らず、既存のエピソードへの
+// 紐づけだけを行い、作らなかった放送枠を報告しないことを検証する (特番を予定エピソード数に含めた
+// 作品で、最終話のあとに不定期放送でない放送枠が残っている場合)。
+func TestCreateEpisodesFromSlotsUsecase_Execute_LinksOnlyWhenEpisodesCountReached(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := lockEpisodeGeneration(t)
+
+	workID, _ := insertMappedCreateTargetWork(t, db)
+	if _, err := db.Exec(`UPDATE works SET manual_episodes_count = 2 WHERE id = $1`, int64(workID)); err != nil {
+		t.Fatalf("予定エピソード数の設定に失敗: %v", err)
+	}
+	firstID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
+	// 総集編の特番も予定エピソード数に含まれるため、公開中のエピソード数が予定エピソード数に達する。
+	insertSyncEpisode(t, db, generationEpisodeInput(workID, 1.5, 150))
+	program := insertGenerationProgram(t, db, workID, 1)
+	linkedSlotID := program.insertSlot(1, now.Add(-2*24*time.Hour), nil)
+	notCreatedSlotID := program.insertSlot(2, now.Add(24*time.Hour), nil)
+
+	output, err := newCreateEpisodesFromSlotsUsecase(db).Execute(ctx, CreateEpisodesFromSlotsInput{Now: now})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+
+	if output.LinkedSlotCount != 1 || len(output.CreatedEpisodes) != 0 || len(output.SkippedSlots) != 0 || len(output.FailedSlots) != 0 {
+		t.Fatalf("output = %+v、期待値 = 紐づけ1件のみ", output)
+	}
+	if got := readSlotEpisodeID(t, db, linkedSlotID); got.Int64 != int64(firstID) {
+		t.Errorf("回数1の放送枠のepisode_id = %+v、期待値 = %d", got, firstID)
+	}
+	if got := readSlotEpisodeID(t, db, notCreatedSlotID); got.Valid {
+		t.Errorf("回数2の放送枠のepisode_id = %+v、期待値 = NULL", got)
+	}
+	if got := countWorkEpisodes(t, db, workID); got != 2 {
+		t.Errorf("作品のエピソード = %d件、期待値 = 2", got)
+	}
+}
+
+// TestCreateEpisodesFromSlotsUsecase_Execute_ExcludesArchivedEpisodeFromCountは、非公開の
+// エピソードを含めると予定数に達する作品でも、公開中のエピソードが足りなければ生成することを検証する。
+func TestCreateEpisodesFromSlotsUsecase_Execute_ExcludesArchivedEpisodeFromCount(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := lockEpisodeGeneration(t)
+
+	workID, _ := insertMappedCreateTargetWork(t, db)
+	if _, err := db.Exec(`UPDATE works SET manual_episodes_count = 2 WHERE id = $1`, int64(workID)); err != nil {
+		t.Fatalf("予定エピソード数の設定に失敗: %v", err)
+	}
+	insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
+	archived := generationEpisodeInput(workID, 1.5, 150)
+	archived.unpublishedAt = sql.NullTime{Time: now, Valid: true}
+	insertSyncEpisode(t, db, archived)
+	program := insertGenerationProgram(t, db, workID, 1)
+	slotID := program.insertSlot(2, now, nil)
+
+	output, err := newCreateEpisodesFromSlotsUsecase(db).Execute(ctx, CreateEpisodesFromSlotsInput{Now: now})
+	if err != nil {
+		t.Fatalf("Execute()のエラー = %v", err)
+	}
+	if len(output.CreatedEpisodes) != 1 {
+		t.Fatalf("結果 = %+v、期待値 = 作成1件", output)
+	}
+	created := output.CreatedEpisodes[0]
+	if created.SlotID != slotID || created.Number != "第2話" {
+		t.Errorf("CreatedEpisodes[0] = %+v、期待値 = 放送枠%d・第2話", created, slotID)
+	}
+	if got := readSlotEpisodeID(t, db, slotID); !got.Valid || got.Int64 != int64(created.EpisodeID) {
+		t.Errorf("放送枠のepisode_id = %+v、期待値 = %d", got, created.EpisodeID)
+	}
+}
+
+// TestCreateEpisodesFromSlotsUsecase_RechecksEpisodesCountAfterLockは、一覧を読んだあとに公開中の
+// エピソード数が予定エピソード数に達したとき、作品をロックしたあとの判定で作らずに終え、報告も
+// しないことを検証する。
+func TestCreateEpisodesFromSlotsUsecase_RechecksEpisodesCountAfterLock(t *testing.T) {
+	t.Parallel()
+
+	db := testutil.GetTestDB()
+	ctx := context.Background()
+	now := lockEpisodeGeneration(t)
+
+	workID, _ := insertMappedCreateTargetWork(t, db)
+	if _, err := db.Exec(`UPDATE works SET manual_episodes_count = 2 WHERE id = $1`, int64(workID)); err != nil {
+		t.Fatalf("予定エピソード数の設定に失敗: %v", err)
+	}
+	insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
+	program := insertGenerationProgram(t, db, workID, 1)
+	slotID := program.insertSlot(2, now, nil)
+	uc := newCreateEpisodesFromSlotsUsecase(db)
+	candidates, err := uc.slotRepo.ListForEpisodeGeneration(ctx, now.Add(episodeGenerationLookahead))
+	if err != nil {
+		t.Fatalf("ListForEpisodeGeneration()のエラー = %v", err)
+	}
+	var candidate *model.Slot
+	for _, slot := range candidates {
+		if slot.ID == slotID {
+			candidate = slot
+		}
+	}
+	if candidate == nil {
+		t.Fatal("一覧に対象の放送枠が含まれていません")
+	}
+
+	// 一覧を読んだあとに、編集者が特番を登録して公開中のエピソード数が予定エピソード数に達する。
+	insertSyncEpisode(t, db, generationEpisodeInput(workID, 1.5, 150))
+
+	result, err := uc.processSlot(ctx, candidate, now)
+	if err != nil {
+		t.Fatalf("processSlot()のエラー = %v", err)
+	}
+	if result.created != nil || result.linked || result.skipped != nil {
+		t.Errorf("結果 = %+v、期待値 = 生成・紐づけ・報告なし", result)
+	}
+	if readSlotEpisodeID(t, db, slotID).Valid || countWorkEpisodes(t, db, workID) != 2 {
+		t.Error("エピソード数に達した作品にエピソードが作られています")
+	}
+}
+
 // TestCreateEpisodesFromSlotsUsecase_Execute_InsertsBeforeLargerEpisodeは、より大きい話数の
 // エピソードがあればその直前に入れ、直後のエピソードの前のエピソードを付け替えることを検証する。
 func TestCreateEpisodesFromSlotsUsecase_Execute_InsertsBeforeLargerEpisode(t *testing.T) {
@@ -399,7 +564,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_InsertsBeforeLargerEpisode(t *te
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	firstID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
@@ -446,7 +611,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_SkipsWhenNoSortNumberGap(t *test
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
@@ -497,7 +662,7 @@ func TestCreateEpisodesFromSlotsUsecase_RereadsSlot(t *testing.T) {
 			t.Parallel()
 			db := testutil.GetTestDB()
 			ctx := context.Background()
-			now := generationNow()
+			now := lockEpisodeGeneration(t)
 			workID, _ := insertMappedCreateTargetWork(t, db)
 			program := insertGenerationProgram(t, db, workID, 2)
 			var precedingSlotID model.SlotID
@@ -512,7 +677,7 @@ func TestCreateEpisodesFromSlotsUsecase_RereadsSlot(t *testing.T) {
 			}
 			slotID := program.insertSlot(number, now, nil)
 			uc := newCreateEpisodesFromSlotsUsecase(db)
-			candidates, err := uc.slotRepo.ListForEpisodeGeneration(ctx, now.Add(-episodeGenerationWindow), now.Add(episodeGenerationWindow))
+			candidates, err := uc.slotRepo.ListForEpisodeGeneration(ctx, now.Add(episodeGenerationLookahead))
 			if err != nil {
 				t.Fatalf("ListForEpisodeGeneration()のエラー = %v", err)
 			}
@@ -570,7 +735,7 @@ func TestCreateEpisodesFromSlotsUsecase_IgnoresAlreadyLinkedSlot(t *testing.T) {
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	program := insertGenerationProgram(t, db, workID, 1)
 	slotID := program.insertSlot(1, now, nil)
@@ -596,7 +761,7 @@ func TestCreateEpisodesFromSlotsUsecase_SkipsLockedSlot(t *testing.T) {
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	program := insertGenerationProgram(t, db, workID, 1)
 	slotID := program.insertSlot(1, now, nil)
@@ -643,7 +808,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_ContinuesAfterRollback(t *testin
 
 	db := testutil.GetTestDB()
 	ctx := context.Background()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 	workID, parentAnimeID := insertMappedCreateTargetWork(t, db)
 	firstID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 1, 100))
 	thirdID := insertSyncEpisode(t, db, generationEpisodeInput(workID, 3, 300))
@@ -724,7 +889,7 @@ func TestCreateEpisodesFromSlotsUsecase_Execute_StopsWhenContextEnds(t *testing.
 	t.Parallel()
 
 	db := testutil.GetTestDB()
-	now := generationNow()
+	now := lockEpisodeGeneration(t)
 	workID, _ := insertMappedCreateTargetWork(t, db)
 	program := insertGenerationProgram(t, db, workID, 1)
 	firstID := program.insertSlot(1, now, nil)
