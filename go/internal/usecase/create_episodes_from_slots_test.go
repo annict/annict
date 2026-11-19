@@ -92,7 +92,7 @@ func insertGenerationProgram(t *testing.T, db *sql.DB, workID model.WorkID, mini
 		}
 		for _, statement := range statements {
 			if _, err := db.Exec(statement.sql, statement.arg); err != nil {
-				t.Logf("番組の後始末に失敗 (%s): %v", statement.sql, err)
+				t.Errorf("番組の後始末に失敗 (%s): %v", statement.sql, err)
 			}
 		}
 	})
