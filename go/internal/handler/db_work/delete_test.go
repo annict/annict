@@ -24,13 +24,14 @@ func TestDelete_Success(t *testing.T) {
 
 	db := testutil.GetTestDB()
 	workID := newCommittedWork(t, db, false)
+	adminID := newCommittedUser(t, db, model.RoleAdmin)
 	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
 	r.Delete("/db/works/{id}", handler.Delete)
 
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, deleteRequest(t, fmt.Sprintf("/db/works/%d", int64(workID))))
+	r.ServeHTTP(rr, deleteRequest(t, adminID, fmt.Sprintf("/db/works/%d", int64(workID))))
 
 	if status := rr.Code; status != http.StatusSeeOther {
 		t.Fatalf("ステータスコード = %v、期待値 = %v", status, http.StatusSeeOther)
@@ -58,7 +59,7 @@ func TestDelete_NotFound(t *testing.T) {
 	r.Delete("/db/works/{id}", handler.Delete)
 
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, deleteRequest(t, "/db/works/999999999"))
+	r.ServeHTTP(rr, deleteRequest(t, newCommittedUser(t, db, model.RoleAdmin), "/db/works/999999999"))
 
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
@@ -79,7 +80,7 @@ func TestDelete_NotFoundForDeletedWork(t *testing.T) {
 	r.Delete("/db/works/{id}", handler.Delete)
 
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, deleteRequest(t, fmt.Sprintf("/db/works/%d", int64(workID))))
+	r.ServeHTTP(rr, deleteRequest(t, newCommittedUser(t, db, model.RoleAdmin), fmt.Sprintf("/db/works/%d", int64(workID))))
 
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
@@ -98,7 +99,7 @@ func TestDelete_InvalidID(t *testing.T) {
 	r.Delete("/db/works/{id}", handler.Delete)
 
 	rr := httptest.NewRecorder()
-	r.ServeHTTP(rr, deleteRequest(t, "/db/works/abc"))
+	r.ServeHTTP(rr, deleteRequest(t, newCommittedUser(t, db, model.RoleAdmin), "/db/works/abc"))
 
 	if status := rr.Code; status != http.StatusNotFound {
 		t.Errorf("ステータスコード = %v、期待値 = %v", status, http.StatusNotFound)
@@ -114,12 +115,13 @@ func TestDelete_HTMXRedirect(t *testing.T) {
 
 	db := testutil.GetTestDB()
 	workID := newCommittedWork(t, db, false)
+	adminID := newCommittedUser(t, db, model.RoleAdmin)
 	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
 	r.Delete("/db/works/{id}", handler.Delete)
 
-	req := deleteRequest(t, fmt.Sprintf("/db/works/%d", int64(workID)))
+	req := deleteRequest(t, adminID, fmt.Sprintf("/db/works/%d", int64(workID)))
 	req.Header.Set("HX-Request", "true")
 	rr := httptest.NewRecorder()
 	r.ServeHTTP(rr, req)
@@ -145,6 +147,7 @@ func TestDelete_RequiresAdmin(t *testing.T) {
 
 	db := testutil.GetTestDB()
 	workID := newCommittedWork(t, db, false)
+	userID := newCommittedUser(t, db, model.RoleAdmin)
 	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
@@ -158,9 +161,9 @@ func TestDelete_RequiresAdmin(t *testing.T) {
 		wantLocation string
 	}{
 		{name: "未認証はサインインへリダイレクト", user: nil, wantStatus: http.StatusSeeOther},
-		{name: "一般ユーザーは403", user: &model.User{ID: 1, Role: model.RoleUser}, wantStatus: http.StatusForbidden},
-		{name: "編集者は403", user: &model.User{ID: 1, Role: model.RoleEditor}, wantStatus: http.StatusForbidden},
-		{name: "管理者は削除成功でリダイレクト", user: &model.User{ID: 1, Role: model.RoleAdmin}, wantStatus: http.StatusSeeOther, wantLocation: "/db/works"},
+		{name: "一般ユーザーは403", user: &model.User{ID: userID, Role: model.RoleUser}, wantStatus: http.StatusForbidden},
+		{name: "編集者は403", user: &model.User{ID: userID, Role: model.RoleEditor}, wantStatus: http.StatusForbidden},
+		{name: "管理者は削除成功でリダイレクト", user: &model.User{ID: userID, Role: model.RoleAdmin}, wantStatus: http.StatusSeeOther, wantLocation: "/db/works"},
 	}
 
 	for _, tt := range tests {
@@ -183,11 +186,12 @@ func TestDelete_RequiresAdmin(t *testing.T) {
 }
 
 // deleteRequestは管理者からの削除リクエストを組み立てる。ルートが要求しUseCaseでも
-// 繰り返すロールに合わせるため。
-func deleteRequest(t *testing.T, target string) *http.Request {
+// 繰り返すロールに合わせるため。削除は編集履歴に利用者を記録するため、userIDには
+// newCommittedUserでコミットした利用者を渡す。
+func deleteRequest(t *testing.T, userID model.UserID, target string) *http.Request {
 	t.Helper()
 	req := httptest.NewRequest("DELETE", target, nil)
-	user := &model.User{ID: 1, Role: model.RoleAdmin}
+	user := &model.User{ID: userID, Role: model.RoleAdmin}
 	return req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, user))
 }
 
@@ -218,6 +222,7 @@ func TestDelete_ReturnsToSubmittedListing(t *testing.T) {
 	t.Parallel()
 
 	db := testutil.GetTestDB()
+	adminID := newCommittedUser(t, db, model.RoleAdmin)
 	handler := newTestHandler(t, db, nil)
 
 	r := chi.NewRouter()
@@ -242,7 +247,7 @@ func TestDelete_ReturnsToSubmittedListing(t *testing.T) {
 			form := url.Values{"_method": {"DELETE"}, "return_to": {tt.returnTo}}
 			req := httptest.NewRequest("POST", fmt.Sprintf("/db/works/%d", int64(workID)), strings.NewReader(form.Encode()))
 			req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-			req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, &model.User{ID: 1, Role: model.RoleAdmin}))
+			req = req.WithContext(context.WithValue(req.Context(), authMiddleware.UserContextKey, &model.User{ID: adminID, Role: model.RoleAdmin}))
 
 			rr := httptest.NewRecorder()
 			r.ServeHTTP(rr, req)
@@ -279,5 +284,23 @@ func newCommittedWork(t *testing.T, db *sql.DB, archived bool) model.WorkID {
 			t.Errorf("作品の後片付けに失敗: %v", err)
 		}
 	})
+	return id
+}
+
+// newCommittedUserは、状態変更UseCaseが編集履歴に記録する利用者をコミットして作る。
+// 編集履歴は利用者を外部キーで参照するため、コミットした作品を書き換えるリクエストには
+// 実在する利用者が要る。テストが終わると利用者を削除する。
+func newCommittedUser(t *testing.T, db *sql.DB, role int32) model.UserID {
+	t.Helper()
+	tx, err := db.Begin()
+	if err != nil {
+		t.Fatalf("利用者の準備トランザクションの開始に失敗: %v", err)
+	}
+	defer func() { _ = tx.Rollback() }()
+	id := testutil.NewUserBuilder(t, tx).WithRole(role).Build()
+	if err := tx.Commit(); err != nil {
+		t.Fatalf("利用者の準備のコミットに失敗: %v", err)
+	}
+	t.Cleanup(func() { testutil.DeleteUser(t, db, id) })
 	return id
 }
